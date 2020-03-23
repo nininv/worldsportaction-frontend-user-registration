@@ -1,0 +1,412 @@
+@import "../../themes/colorVariables.css";
+.checkbox-row-wise {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.transfer-image-view {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.comp-ladder-recalculate {
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+  margin-left: 15px;
+}
+
+.comp-buttons-view {
+  text-align: right;
+}
+
+.comp-finals-button-view {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comp-open-single-checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.comp-open-reg-check-inpt-view {
+  padding-top: 5px;
+  padding-left: 25px;
+}
+
+.advan-setting-single-checkbox {
+  margin-top: 15px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter;
+}
+
+.comp-player-grades-header-view {
+  margin-top: 28px;
+  background-color: transparent;
+}
+
+.comp-player-grades-header-view-design {
+  margin-top: 28px;
+  padding-left: 2.8%;
+}
+
+.comp-player-grades-header-drop-down-view {
+  padding-left: 2.8%;
+  padding-right: 2.8%;
+  padding-top: 20px;
+}
+
+.comp-player-table-tag {
+  background-color: var(--app-ebf0f3);
+  color: var(--app-77778f);
+  font-family: inter-semi-bold;
+  font-weight: 600;
+  font-size: 10px;
+  height: 24px;
+}
+
+.input-inside-player-grades-table {
+  height: 40px;
+  width: 74px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.input-inside-player-grades-table-for-grade {
+  height: 40px;
+  width: 57px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.input-inside-player-grades-table-comments {
+  height: 40px;
+  width: 90px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.comp-player-grades-footer-view {
+  padding-left: 12.5%;
+  padding-bottom: 5%;
+  padding-top: 10px;
+}
+
+.select-inside-team-grades-table .ant-select-selection {
+  width: 80px;
+  height: 40px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+}
+
+.input-inside-team-grades-table {
+  height: 40px;
+  min-width: 100px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.comp-venue-courts-header-view {
+  height: 44px;
+  background-color: transparent;
+  padding-left: 15%;
+  padding-right: 15%;
+  margin-top: 2%;
+  margin-bottom: 1%;
+}
+
+.comp-venue-courts-dropdown-view {
+  padding-left: 15%;
+  padding-right: 15%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.input-inside-table-venue-court {
+  height: 44px;
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.comp-replicate-single-checkbox {
+  margin-top: 19px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.comp-replicate-primary-edit {
+  font-weight: 600;
+  font-family: inter-semi-bold;
+  font-size: 13px;
+  height: 32.5px;
+  border-radius: 8px;
+  justify-content: center;
+  display: flex;
+  background-color: var(--app-e0e1e3);
+  border-color: var(--app-e0e1e3);
+  color: var(--app-4c4c6d);
+  margin-right: 20px;
+  margin-top: 14px;
+}
+
+.comp-replicate-bottom-view {
+  padding-left: 7%;
+}
+
+.comp-match-sheets-game-time-track-radio-view {
+  padding-top: 10px;
+  padding-left: 50px;
+}
+
+.comp-grading-final-text {
+  font-size: 13px;
+  color: var(--app-red);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.primary-add-comp-form {
+  font-weight: 600;
+  font-family: inter-semi-bold;
+  font-size: 13px;
+  color: var(--app-f7fafc);
+  height: 32.5px;
+  border-radius: 7px;
+  background-image: var(--app-gradient-right);
+  justify-content: center;
+  display: flex;
+  background-color: var(--app-ff6c4f);
+  border-color: var(--app-ff6c4f);
+}
+
+.inside-table-view {
+  margin: auto;
+  background-color: var(--app-white);
+  padding: 24px;
+  border-radius: 10px;
+}
+
+.add-another-venue-div {
+  display: flex;
+  margin-left: 27%;
+  margin-bottom: 2%;
+}
+
+.comp-draw-list-top-head {
+  padding: 30px;
+}
+
+.comp-draw-edit-btn-view {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comp-dashboard-table-tag {
+  font-family: inter-semi-bold;
+  font-weight: 600;
+  font-size: 10px;
+  height: 24px;
+}
+
+.comp-venue-time-inside-container-view {
+  background-color: var(--app-f7fafc);
+  padding-top: 24px;
+  padding-bottom: 24px;
+  margin-top: 5px;
+  border-radius: 10px;
+  padding-right: 24px;
+  padding-left: 24px;
+  border: 1px solid;
+  border-color: var(--app-d9d9d9);
+  border-width: 1px;
+}
+
+.com-year-select-heading-view {
+  width: "100%";
+  display: "flex";
+  flex-direction: "row";
+  align-items: "center";
+  margin-left: 5px;
+}
+
+.comp-dash-table-view {
+  padding: 10px 2.8%;
+}
+
+.comp-expanded-row-view {
+  padding-left: 20%;
+}
+
+.player-grading-draggable-view {
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: var(--app-4c4c6d);
+  padding: 19px 15px;
+  border-top: 0;
+  border-bottom: 1px solid rgba(27, 27, 52, 0.07);
+  background-color: var(--app-white);
+}
+
+.player-grading-droppable-view {
+  width: 45vw;
+  margin-bottom: 5%;
+}
+
+.player-grading-droppable-heading-view {
+  border-radius: 10px !important;
+  background-color: var(--app-white);
+  overflow: hidden;
+  border: none;
+  padding: 25px 15px;
+  margin-bottom: 5px;
+}
+
+.player-grading-haeding-team-name-text {
+  margin: 0;
+  color: var(--app-1b1b34);
+  /* font-family: "inter-medium"; */
+  line-height: 1.5;
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.player-grading-haeding-player-count-text {
+  font-size: 16px;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-align: left;
+  /* font-family: "Inter-Medium"; */
+  color: var(--app-color) !important;
+}
+
+.player-grading-haeding-player-name-text{
+  font-size: 15px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: var(--app-4c4c6d);
+    border-color: rgba(27, 27, 52, 0.07);
+    margin: 0;
+}
+
+@media (max-width: 991px) {
+  .comp-buttons-view .open-reg-button {
+    margin-top: 20px;
+  }
+  .comp-buttons-view .save-draft-text {
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .comp-buttons-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  .reg-add-save-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  .comp-buttons-view .ant-btn {
+    margin-top: 12px;
+  }
+  .ant-checkbox-wrapper+.ant-checkbox-wrapper {
+    margin-left: 0;
+  }
+  .ant-select-selection__rendered {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .ant-select-selection--multiple::after {
+    clear: both;
+  }
+  .comp-buttons-view .save-draft-text {
+    margin-right: 0px;
+  }
+  .comp-finals-button-view {
+    display: flex;
+    justify-content: center;
+  }
+  .breadcrumb-product {
+    font-size: 18px;
+  }
+  .breadcrumb-add {
+    font-size: 18px;
+  }
+  .comp-dashboard-botton-view-mobile {
+    padding-top: 5%;
+  }
+  .reg-competition-radio {
+    overflow-x: auto;
+  }
+  .add-another-venue-div {
+    margin-left: 1%;
+    margin-bottom: 2%;
+  }
+  .form-heading {
+    font-size: 18px;
+  }
+  .comp-grading-final-text {
+    margin-left: 15px;
+  }
+  .com-year-select-heading-view {
+    margin-left: 1px;
+  }
+  .comp-venue-courts-dropdown-view {
+    padding-left: 7%;
+    padding-right: 15%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+  }
+  .comp-venue-courts-header-view {
+    padding-left: 7%;
+  }
+}

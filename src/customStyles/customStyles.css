@@ -1,0 +1,212 @@
+/* Styling for fees table inside the forms*/
+
+.fees-table .ant-table-tbody>tr>td {
+  border-bottom: 0px;
+  padding: 6px 6px;
+  overflow-wrap: break-word;
+}
+
+.fees-table .ant-table-thead>tr>th {
+  border-bottom: 0px;
+  font-weight: 500;
+  font-family: inter-medium;
+  font-size: 13px;
+  padding: 7px 7px;
+  overflow-wrap: break-word;
+  background-color: transparent;
+}
+
+/* Styling for data list table inside the home dashboard ,list products etc*/
+
+.home-dashboard-table .ant-table-thead>tr>th {
+  font-weight: 500;
+  font-family: inter-medium;
+  font-size: 13px;
+  overflow-wrap: break-word;
+  color: var(--app-9b9bad);
+  padding-left: 21px;
+  height: 48px;
+  background-color: var(--app-white);
+}
+
+.home-dashboard-table .ant-table-tbody>tr>td {
+  overflow-wrap: break-word;
+  color: var(--app-4c4c6d);
+  font-size: 15px;
+  font-family: inter;
+  height: 64px;
+  background-color: var(--app-white);
+  padding-left: 21px;
+}
+
+.home-dashboard-table .ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .home-dashboard-table .ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .home-dashboard-table .ant-table-thead>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .home-dashboard-table .ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
+  background: var(--app-f1c2a2);
+}
+
+/*on Hover remove on link click */
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+/*Input with heading component styling */
+
+.input {
+  height: 56px;
+  color: var(--app-1b1b34);
+}
+
+.input-heading {
+  display: flex;
+  align-content: flex-start;
+  padding-top: 20px;
+  padding-bottom: 11px;
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.form-err {
+  margin-top: 1%;
+  color: tomato;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+}
+
+.custom-heading-text {
+  display: flex;
+  align-content: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.head-decription-text {
+  display: flex;
+  align-content: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+/*time slot table in venue and times table*/
+
+.time-slot-table .ant-table-tbody>tr>td {
+  border-bottom: 0px;
+  padding: 6px 6px;
+  overflow-wrap: break-word;
+}
+
+.time-slot-table .ant-table-thead>tr>th {
+  border-bottom: 0px;
+  font-weight: 500;
+  font-family: inter-medium;
+  font-size: 13px;
+  padding: 7px 7px;
+  overflow-wrap: break-word;
+  background-color: transparent;
+}
+
+.time-slot-table .ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .time-slot-table .ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .time-slot-table .ant-table-thead>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .time-slot-table .ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
+  background: transparent;
+}
+
+/* time picker antd on venue and times add screen*/
+
+.comp-venue-time-timepicker .ant-time-picker-input {
+  height: 56px;
+}
+
+/* time picker antd on venue and times prioritisation screen*/
+
+.comp-venue-time-datepicker .ant-input-lg {
+  height: 44px;
+  color: var(--app-1b1b34);
+  font-size: 13px;
+  font-family: inter;
+}
+
+/*header view and content view for drag and drag screens*/
+
+.comp-draws-header-view.ant-layout-header {
+  background-color: transparent;
+  margin-top: 3%;
+  padding: 0 0px;
+  display: flex;
+  align-content: flex-end;
+}
+
+.comp-draw-head-content-view {
+  padding: 0 15.5%;
+}
+
+.comp-draw-content-view {
+  border-radius: 10px;
+  box-shadow: 0px 8px 16px 0 rgba(27, 27, 52, 0.06);
+  background-color: var(--app-white);
+  margin-top: 5%;
+}
+
+/*antd year select overide styles for small select*/
+
+.year-select-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.year-select-heading {
+  font-size: 13px;
+  color: var(--app-9b9bad);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.year-select .ant-select-selection {
+  height: 29px;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 0px;
+}
+
+.year-select .ant-select-arrow svg {
+  display: inline-block;
+  height: 7px;
+  width: 10px;
+}
+
+.year-select .ant-select-arrow {
+  right: 10px;
+}
+
+.year-select .ant-select-focused .ant-select-selection, .year-select .ant-select-selection:focus, .year-select .ant-select-selection:active {
+  border-color: transparent;
+  -webkit-box-shadow: 0 0 0 1px transparent;
+  box-shadow: 0 0 0 1px transparent;
+}
+
+/*header overide for mobile*/
+
+.form-header-view.ant-layout-header {
+  padding: 0 4.5%;
+}
+
+@media (max-width: 767px) {
+  .form-header-view.ant-layout-header {
+    padding: 0 0px;
+  }
+  .comp-draw-head-content-view {
+    padding: 0 7%;
+  }
+}

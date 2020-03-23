@@ -1,0 +1,473 @@
+@import "../themes/colorVariables.css";
+/* antd input overrided styles */
+
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+  border-color: var(--app-color);
+  border-right-width: 1px !important;
+}
+
+.ant-input:hover {
+  border-color: var(--app-color);
+}
+
+.ant-input:focus {
+  border-color: var(--app-color);
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+}
+
+.ant-input:hover {
+  border-color: var(--app-color);
+}
+
+.ant-input:focus {
+  border-color: var(--app-color);
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+}
+
+.ant-input::-webkit-input-placeholder {
+  font-size: 13px;
+  /* color: var(--app-4c4c6d); */
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+/* antd Select overrided styles */
+
+.ant-select-selection {
+  min-height: 56px;
+  height: auto;
+  /* display:flex; */
+  display: grid;
+  align-items: center;
+}
+
+.ant-select {
+  color: var(--app-1b1b34);
+  font-size: 15px;
+  font-family: "inter";
+  /* overflow: hidden; */
+  white-space: pre;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+}
+
+.ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active {
+  border-color: var(--app-color);
+  border-radius: 5px;
+  /* background-color: yellowgreen; */
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+  border-width: 1px;
+}
+
+.ant-select-selection:hover {
+  border-color: var(--app-color);
+  -webkit-box-shadow: 0 0 0 0px var(--app-color);
+  box-shadow: 0 0 0 0px var(--app-color);
+}
+
+.ant-select-arrow {
+  right: 19.5px;
+}
+
+.ant-select-arrow svg {
+  display: inline-block;
+  height: 14px;
+  width: 20px;
+}
+
+.ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active {
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+}
+
+/* antd checkbox overrided styles */
+
+.ant-checkbox-group-item {
+  /* float: left; */
+  display: flex;
+  margin-right: 0;
+  align-items: center;
+  text-align: center;
+  padding-top: 16px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: "inter";
+  font-weight: normal;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus+.ant-checkbox-inner {
+  border-color: var(--app-color);
+}
+
+.ant-checkbox-checked::after {
+  border: 1px solid var(--app-color);
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+.ant-checkbox-inner {
+  width: 24px;
+  height: 24px;
+}
+
+.ant-checkbox-inner::after {
+  width: 7.71428571px;
+  height: 12.14285714px;
+}
+
+/* antd buttons overrided styles */
+
+.ant-btn-save-draft-text {
+  background-color: var(--app-white);
+  border-color: white;
+  color: var(--app-color);
+  height: 50px;
+  font-weight: 600;
+  font-size: 15px;
+  width: 135px;
+  height: 48px;
+  border-radius: 8px;
+  font-family: inter-semi-bold;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+}
+
+.ant-btn:hover, .ant-btn:focus {
+  color: var(--app-white);
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+.ant-btn-cancel-button {
+  background-color: var(--app-e0e1e3);
+  border-color: var(--app-e0e1e3);
+  color: var(--app-4c4c6d);
+  height: 50px;
+  font-weight: 500;
+  font-family: inter-medium;
+  font-size: 15px;
+  /* width: 89px; */
+  height: 48px;
+  border-radius: 8px;
+}
+
+.ant-btn-primary:hover, .ant-btn-primary:focus {
+  color: var(--app-white);
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+/* antd tree overrided styles */
+
+.ant-tree li span.ant-tree-checkbox {
+  height: 24px;
+}
+
+.ant-tree li .ant-tree-node-content-wrapper {
+  color: var(--app-1b1b34);
+  line-height: 32px;
+  height: 30px;
+}
+
+.ant-tree-checkbox-inner {
+  width: 24px;
+  height: 24px;
+}
+
+.ant-tree-checkbox-inner::after {
+  width: 7.71428571px;
+  height: 12.14285714px;
+}
+
+.ant-tree-checkbox-checked::after {
+  border: 1px solid var(--app-color);
+  width: 24px;
+  height: 24px;
+}
+
+.ant-tree-checkbox-wrapper:hover .ant-tree-checkbox-inner, .ant-tree-checkbox:hover .ant-tree-checkbox-inner, .ant-tree-checkbox-input:focus+.ant-tree-checkbox-inner {
+  border-color: var(--app-color);
+}
+
+.ant-tree li {
+  padding-top: 12px;
+}
+
+.ant-tree-checkbox-checked .ant-tree-checkbox-inner {
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+.ant-tree-checkbox-indeterminate .ant-tree-checkbox-inner::after {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: var(--app-color);
+  border: 0;
+  -webkit-transform: translate(-50%, -50%) scale(1);
+  -ms-transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  content: " ";
+}
+
+/* antd calender overrided styles */
+
+.ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled) {
+  border-color: var(--app-color);
+}
+
+.ant-calendar-picker:focus .ant-calendar-picker-input:not(.ant-input-disabled) {
+  border-color: var(--app-color);
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+  border-width: 5px;
+}
+
+.ant-input-lg {
+  height: 56px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-size: 14px;
+}
+
+/*antd time picker styles*/
+
+.ant-time-picker-input:hover {
+  border-color: var(--app-color);
+  border-right-width: 1px !important;
+}
+
+.ant-time-picker-input:focus {
+  border-color: var(--app-color);
+  border-right-width: 1.5px !important;
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+  border-width: 1.5px;
+}
+
+.ant-time-picker-input::-webkit-input-placeholder {
+  font-size: 13px;
+  /* color: var(--app-4c4c6d); */
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.ant-time-picker-input {
+  height: 44px;
+}
+
+/* antd table overrided styles */
+
+.fees-table .ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .fees-table .ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .fees-table .ant-table-thead>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .fees-table .ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
+  background: var(--app-f1c2a2);
+}
+
+.ant-table-thead>tr>th .ant-table-column-sorter .ant-table-column-sorter-inner .ant-table-column-sorter-up.on, .ant-table-thead>tr>th .ant-table-column-sorter .ant-table-column-sorter-inner .ant-table-column-sorter-down.on {
+  color: var(--app-color);
+}
+
+/* antd radio overrided styles */
+
+.ant-radio-wrapper:hover .ant-radio, .ant-radio:hover .ant-radio-inner, .ant-radio-input:focus+.ant-radio-inner {
+  border-color: var(--app-color);
+}
+
+.ant-radio-inner::after {
+  background-color: var(--app-color);
+}
+
+.ant-radio-checked::after {
+  border: 1px solid var(--app-color);
+}
+
+.ant-radio-checked .ant-radio-inner {
+  border-color: var(--app-ffa033);
+}
+
+.ant-radio-wrapper {
+  padding: 5px;
+  color: var(--app-1b1b34);
+  font-size: 15px;
+  margin-right: 8px;
+  font-family: inter;
+  font-weight: normal;
+}
+
+/* overrider text area clear icon and padding text ,input style*/
+
+.ant-input-textarea-clear-icon {
+  color: rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  cursor: pointer;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 4px 17px 0 0;
+}
+
+.ant-input-affix-wrapper.ant-input-affix-wrapper-textarea-with-clear-btn .ant-input {
+  padding-right: 27px;
+}
+
+textarea.ant-input {
+  min-height: 128px !important;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-size: 15px;
+}
+
+/*antd layout overide the background color*/
+
+.ant-layout {
+  background-color: var(--app-f7fafc);
+}
+
+.ant-layout-footer {
+  background-color: var(--app-f7fafc);
+}
+
+/*breadcrumb separator*/
+
+.ant-breadcrumb-separator {
+  margin: 4px 8px;
+  color: rgba(0, 0, 0, 0.45);
+  vertical-align: 3px;
+}
+
+/*tabs antd overide*/
+
+.ant-tabs {
+  font-size: 15px;
+  color: var(--app-9b9bad);
+  font-family: inter;
+  font-weight: normal;
+}
+
+.ant-tabs-bar {
+  border-bottom: none;
+}
+
+.ant-tabs-nav .ant-tabs-tab:hover {
+  color: var(--app-1b1b34);
+}
+
+.ant-tabs-nav .ant-tabs-tab-active {
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+}
+
+.ant-tabs-ink-bar {
+  background-color: transparent;
+}
+
+.ant-tabs-nav .ant-tabs-tab {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 2px;
+  padding-right: 16px;
+}
+
+/*antd pagination styling override*/
+
+.antd-pagination {
+  margin-top: 15px;
+  color: var(--app-4c4c6d);
+  font-size: 15px;
+  font-family: inter;
+}
+
+.ant-pagination-item {
+  vertical-align: middle;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.antd-pagination .anticon svg {
+  margin-bottom: 5px;
+}
+
+.ant-pagination-item:focus, .ant-pagination-item:hover {
+  border-color: var(--app-color);
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.ant-pagination-item-active {
+  border-color: var(--app-color);
+}
+
+.ant-pagination-prev:focus .ant-pagination-item-link, .ant-pagination-next:focus .ant-pagination-item-link, .ant-pagination-prev:hover .ant-pagination-item-link, .ant-pagination-next:hover .ant-pagination-item-link {
+  color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+.ant-input-number {
+  display: flex;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  width: 100%;
+  height: 56px;
+}
+
+.ant-input-number:hover {
+  border-color: var(--app-color);
+  border-top-width: 1px !important;
+}
+
+.ant-input-number-handler:hover .ant-input-number-handler-up-inner, .ant-input-number-handler:hover .ant-input-number-handler-down-inner {
+  color: var(--app-color);
+}
+
+.ant-input-number:focus {
+  border-color: var(--app-color);
+}
+
+.ant-input-number-focused {
+  border-color: var(--app-color);
+  border-right-width: 1px !important;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px var(--app-color);
+  box-shadow: 0 0 0 1px var(--app-color);
+}
+
+.ant-spin-dot-item {
+  background-color: var(--app-color);
+}
+
+/* .ant-select-arrow{
+  color:var(--app-color);
+} */
+
+/*antd  form item*/
+
+.ant-form-item {
+  margin: 0!important;
+}
+
+.add-membership-type-modal .ant-btn-primary {
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+}
+
+.ant-spin {
+  color: var(--app-color);
+}
+
+@media (max-width: 767px) {
+  .ant-tabs-nav .ant-tabs-tab {
+    padding: 12px 16px;
+  }
+}

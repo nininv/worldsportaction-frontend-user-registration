@@ -1,0 +1,584 @@
+@import "../../themes/colorVariables.css";
+.table-view {
+  width: 95%;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 50px;
+}
+
+.required-field::after {
+  content: "*";
+  color: red;
+  /* margin-top: 1px; */
+  /* position: absolute;
+  margin: 0px 0px 0px -20px;
+  font-size: xx-large;
+  padding: 0 1px 0 0; */
+}
+
+.save-draft-text {
+  text-align: center;
+  margin-right: 20px;
+  align-self: center;
+}
+
+.footer-view {
+  padding-left: 12.5%;
+  padding-right: 12.5%;
+  padding-bottom: 5%;
+  padding-top: 10px;
+}
+
+.primary-add-product {
+  font-weight: 600;
+  font-family: inter-semi-bold;
+  font-size: 13px;
+  /* width: 123px; */
+  color: var(--app-f7fafc);
+  height: 32.5px;
+  border-radius: 7px;
+  background-image: var(--app-gradient-right);
+  justify-content: center;
+  display: flex;
+  background-color: var(--app-ff6c4f);
+  border-color: var(--app-ff6c4f);
+}
+
+.formView {
+  width: 70%;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.tab-view {
+  /* background-color: var(--app-ffa033); */
+  width: 70%;
+  margin: auto;
+}
+
+.tab-formView {
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.content-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 39px;
+  padding-bottom: 40px;
+}
+
+.form-heading {
+  display: flex;
+  align-content: flex-start;
+  text-align: center;
+  font-size: 22px;
+  color: var(--app-1b1b34);
+  padding-bottom: 7.5px;
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.payment-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 32px;
+  padding-top: 39px;
+  padding-bottom: 40px;
+}
+
+.fees-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 32px;
+  padding-top: 39px;
+  padding-bottom: 40px;
+}
+
+.discount-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 32px;
+  padding-top: 39px;
+  padding-bottom: 40px;
+}
+
+.save-draft-text {
+  text-align: center;
+  margin-right: 20px;
+  align-self: center;
+}
+
+.advanced-setting-view {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 32px;
+  padding-top: 39px;
+  padding-bottom: 40px;
+}
+
+.breadcrumb-product {
+  text-align: center;
+  color: var(--app-9b9bad);
+  font-family: inter-medium;
+  font-size: 22px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.breadcrumb-add {
+  text-align: center;
+  font-family: inter-medium;
+  font-size: 22px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: var(--app-1b1b34);
+}
+
+.header-view {
+  padding-left: 11%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.publish-button {
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  font-family: inter-semi-bold;
+  font-size: 15px;
+  width: 92.5px;
+  height: 48px;
+  border-radius: 8px;
+  background-image: var(--app-gradient-right);
+}
+
+.file {
+  display: none;
+}
+
+.single-checkbox {
+  /* height: 44px; */
+  margin-top: 15px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.gst-single-checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 26px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: normal;
+  font-family: inter;
+}
+
+.input-heading-add-another {
+  display: flex;
+  align-content: flex-start;
+  padding-top: 22px;
+  font-size: 15px;
+  color: var(--app-color);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.inside-container-view {
+  background-color: var(--app-f7fafc);
+  padding-top: 24px;
+  padding-bottom: 24px;
+  margin-top: 24px;
+  border-radius: 10px;
+  padding-right: 24px;
+  padding-left: 24px;
+  border: 1px solid;
+  border-color: var(--app-d9d9d9);
+  border-width: 1px;
+}
+
+.prod-reg-inside-container-view {
+  background-color: var(--app-f7fafc);
+  /* border: solid 1px var(--dark-6); */
+  padding-bottom: 24px;
+  margin-top: 24px;
+  border-radius: 10px;
+  padding-right: 24px;
+  padding-left: 24px;
+  border: 1px solid;
+  border-color: var(--app-d9d9d9);
+  border-width: 1px;
+}
+
+.input-inside-table-fees {
+  height: 44px;
+  width: 81.5px;
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.date-picker-inside-table-fees {
+  height: 44px;
+  width: 135px;
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.tree-government-rebate {
+  display: flex;
+  align-content: flex-start;
+  font-size: 15px;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+  font-weight: normal;
+  font-family: inter;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.registration-product-view {
+  display: flex;
+  justify-content: flex-end;
+  width: 83%;
+}
+
+.product-reg-club-header-view {
+  margin-top: 28px;
+}
+
+.product-reg-club-table-view {
+  width: 95%;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.reg-competition-radio {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  font-size: 15px;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+  font-weight: normal;
+  font-family: inter;
+  /* overflow-x: auto; */
+  white-space: nowrap;
+}
+
+.reg-competition-logo-view {
+  height: 120px;
+  width: 120px;
+  border-radius: 100%;
+  /* border: solid 1.5px rgba(0, 0, 0, 0.3); */
+  /* border-style: dashed; */
+  display: flex;
+  /* justify-content: center; */
+  /* align-items: center; */
+  margin-top: 4px;
+}
+
+.select-inside-table-fees .ant-select-selection {
+  height: 29px;
+  width: 81.5px;
+  display: flex;
+  align-items: center;
+  height: 43px;
+}
+
+.select-inside-table-fees .ant-select-arrow svg {
+  display: inline-block;
+  height: 7px;
+  width: 10px;
+}
+
+.select-inside-table-fees .ant-select-arrow {
+  right: 5px;
+}
+
+.open-reg-button {
+  background-color: var(--app-color);
+  border-color: var(--app-color);
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  font-family: inter-semi-bold;
+  font-size: 15px;
+  height: 48px;
+  border-radius: 8px;
+  background-image: var(--app-gradient-right);
+}
+
+.date-picker-inside-table-fees .ant-calendar-picker-input.ant-input {
+  height: 44px;
+}
+
+.applicable-to-heading {
+  display: flex;
+  align-content: flex-start;
+  padding-top: 24px;
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.reg-pro-rename-text {
+  font-size: 13px;
+  color: var(--app-color);
+  font-weight: 500;
+  font-family: inter-medium;
+  padding-left: 10px;
+}
+
+.input-inside-table-fees-category {
+  height: 44px;
+  width: 115px;
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-family: inter;
+  font-weight: normal;
+  padding-right: 0px;
+}
+
+.reg-payment-select .ant-select-selection {
+  height: 44px;
+}
+
+.reg-payment-select .ant-select-arrow svg {
+  display: inline-block;
+  height: 12px;
+  width: 14px;
+}
+
+.reg-payment-select .ant-select-arrow {
+  right: 12px;
+}
+
+.reg-payment-layuot-view {
+  padding: 0 15%;
+  background-color: var(--app-f7fafc);
+}
+
+.reg-payment-datepicker .ant-input-lg {
+  height: 44px;
+}
+
+.reg-payment-header-view.ant-layout-header {
+  background-color: transparent;
+  margin-top: 8%;
+  padding: 0 0px;
+}
+
+.reg-payment-white-box-view {
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 12%;
+  padding: 40px 25px;
+}
+
+.reg-payment-price-text {
+  font-size: 32px;
+  color: var(--app-color);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.reg-payment-paid-reg-text {
+  font-size: 13px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  line-height: 1.3;
+  color: var(--app-4c4c6d);
+  display: block;
+}
+
+.reg-payment-regist-view {
+  background-color: var(--app-f5e4d9);
+  height: 35px;
+  width: 35px;
+  border-radius: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reg-payment-white-box-view:hover .view-more-btn {
+  background-image: var(--app-gradient-top);
+  color: var(--app-white) !important;
+}
+
+.reg-form-disclaimers-inpt {
+  padding: 1% 5%;
+}
+
+.reg-membership-fee-mandate-check-view {
+  padding: 0% 5%;
+}
+
+.login-formView {
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  width: 70%;
+  margin-top: 5%;
+  margin-bottom: 3%;
+}
+
+.login-footer-view {
+  padding-left: 14.5%;
+  padding-right: 14.5%;
+  padding-bottom: 10%;
+  padding-top: 3%;
+}
+
+.login-header-view {
+  background-color: transparent;
+  padding-left: 15%;
+  padding-right: 15%;
+  margin-top: 9%;
+  margin-bottom: 1%;
+}
+
+.app-reg-inner-heading {
+  display: flex;
+  align-content: flex-start;
+  text-align: center;
+  font-size: 18px;
+  color: var(--app-1b1b34);
+  padding-top: 22.5px;
+  padding-bottom: 7.5px;
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.app-reg-terms {
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+  text-decoration: underline;
+}
+
+.label-text {
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.description-text {
+  font-size: 13px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.action-triple-dot-submenu {
+  background-color: transparent;
+  border-bottom: none;
+  width: fit-content;
+}
+
+.reg-form-multple-select .ant-select-selection {
+  height: auto;
+  min-height: 56px;
+  padding-top: 1px;
+  padding-bottom: 6px;
+}
+
+.delete-image-view {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.delete-image-timeSlot-view {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5%
+}
+
+@media (max-width: 767px) {
+  .reg-add-save-button {
+    display: flex;
+    justify-content: center;
+  }
+  .reg-payment-layuot-view {
+    padding: 0 5%;
+    background-color: var(--app-f7fafc);
+  }
+  .formView {
+    width: 87%;
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .header-view {
+    padding-left: 7%;
+  }
+  .tab-view {
+    /* background-color: var(--app-ffa033); */
+    width: 87%;
+    margin: auto;
+  }
+}
+
+.another-competition{
+  margin-left: 20px;
+  text-decoration: underline;
+}
+
+.applicable-to-text {
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+}
+
+.end-user-divider-header{
+  background: none;
+  font-size: 19px;
+}
+
+.end-user-divider-side{
+  height: 2px;
+  border: 1.5px solid var(--app-color);
+  align-self: center;
+}
+
+.end-user-divider-text{
+  padding-left:10px;
+  padding-right: 10px;
+}
+
+.pointer{
+  cursor: pointer;
+}

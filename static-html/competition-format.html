@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+         <meta charset="utf-8">
+         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+         <title>Netball</title>
+         <!-- bootstrap -->
+         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+         <!-- custom -->
+         <link rel="stylesheet" href="assets/css/style.css">
+         <link rel="stylesheet" href="assets/css/global.css">
+         <link rel="stylesheet" href="assets/css/responsive.css">
+         <link rel="stylesheet" href="assets/css/antdStyles.css">
+         <title>Netball LiveScores - Competition Management System</title>
+     <link href="static/css/2.0125a00d.chunk.css" rel="stylesheet">
+      <link href="static/css/main.f4879364.chunk.css" rel="stylesheet">
+   </head>
+   <body>
+      <noscript>You need to enable JavaScript to run this app.</noscript>
+      <div id="root">
+         <div class="App">
+            <header class="site-header">
+               <div class="header-wrap">
+                  <div class="row m-0-res">
+                     <div class="col-sm-12 d-flex">
+                        <div class="logo-box"><a aria-current="page" class="site-brand active" href="/"><img src="assets/images/logo1.png" alt=""></a></div>
+                        <div class="user-right">
+                           <ul class="d-flex">
+                              <li>
+                                 <button id="srach-button"><img src="/static/media/search-icons.e003bbb7.svg" alt=""></button>
+                                 <form class="search-form">
+                                    <div class="search-wrap"><span> <img src="/static/media/search.6a20d799.svg" alt=""></span><input class="top_search" type="text" placeholder="Search..."></div>
+                                 </form>
+                              </li>
+                              <li>
+                                 <div class="site-menu">
+                                    <div class="dropdown">
+                                       <button class="dropdown-toggle" type="button" data-toggle="dropdown"><img src="/static/media/home.a515d584.svg"></button>
+                                       <ul class="dropdown-menu">
+                                          <li class="active">
+                                             <div class="home-menu menu-wrap"><a href="https://comp-management-test.firebaseapp.com/index.html"><span class="icon"></span>Home</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="user-menu menu-wrap"><a href="https://comp-management-test.firebaseapp.com/user-dashboard.html"><span class="icon"></span>user</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="registration-menu menu-wrap"><a href="/registration"><span class="icon"></span>Registration</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="competitions-menu menu-wrap"><a aria-current="page" class="active" href="/competitionDashboard"><span class="icon"></span>Competitions</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="lives-cores menu-wrap"><a href="#"><span class="icon"></span>Live Scores</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="events-menu menu-wrap"><a href="#"><span class="icon"></span>Events</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="shop-menu menu-wrap"><a href="#"><span class="icon"></span>Shop</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="umpires-menu menu-wrap"><a href="https://comp-management-test.firebaseapp.com/umpire-allocation.html"><span class="icon"></span>Umpires</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="incidents-menu menu-wrap"><a href="#"><span class="icon"></span>Incidents</a></div>
+                                          </li>
+                                          <li>
+                                             <div class="finance-menu menu-wrap"><a href="#"><span class="icon"></span>Finance</a></div>
+                                          </li>
+                                       </ul>
+                                    </div>
+                                 </div>
+                              </li>
+                              <li>
+                                 <div class="user-profile-box">
+                                    <div class="dropdown">
+                                       <button class="dropdown-toggle" type="button" data-toggle="dropdown"><img src="assets/images/dd.png" alt=""></button>
+                                       <ul class="dropdown-menu">
+                                          <li>
+                                             <div class="media">
+                                                <div class="media-left">
+                                                   <figure class="user-img-wrap"><img src="assets/images/dd.png" alt=""></figure>
+                                                </div>
+                                                <div class="media-body"><span class="user-name">Marissa Cooper</span><span class="user-name-btm">Queensland Netball</span></div>
+                                             </div>
+                                          </li>
+                                          <li><a href="#">Account Settings</a></li>
+                                          <li><a href="#"> Help &amp; Support</a></li>
+                                          <li class="log-out"><a href="#">Log Out</a></li>
+                                       </ul>
+                                    </div>
+                                 </div>
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </header>
+            
+            <div class="fluid-width" style="background-color: rgb(247, 250, 252);">
+               <div>
+                  <ul class="ant-menu ant-menu-root ant-menu-horizontal" role="menu" style="line-height: 64px;">
+                     <li class="ant-menu-item" role="menuitem"><a  href="/competitionDashboard">Dashboard</a></li>
+                     <li class="ant-menu-submenu ant-menu-submenu-selected ant-menu-submenu-horizontal" role="menuitem">
+                        <div class="ant-menu-submenu-title" aria-expanded="false" aria-haspopup="true"><span>Own Competitions</span></div>
+                        <ul>
+                           <li><a href="https://comp-management-test.firebaseapp.com/quick-competitions.html">Quick Competition</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionOpenRegForm">Competition Details</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPlayerGrades">Player Grading</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionProposedTeamGrading">Team Grading</a></li>
+
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionVenueTimesPrioritisation">Venue &amp; Times</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionLadder">Ladder</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionFormat">Competition Format</a></li>
+
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionFinals">Finals</a></li>
+                           <li><a href="https://comp-management-test.firebaseapp.com/fixtures.html">Fixtures</a></li>
+                           <li><a href="https://comp-management-test.firebaseapp.com/competitions-draws.html">Draw</a></li>
+
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionReGrading">Re-grading</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionMatchSheets">Match sheets</a></li>
+                        </ul>
+                     </li>
+                     <li class="ant-menu-submenu ant-menu-submenu-horizontal" role="menuitem">
+                        <div class="ant-menu-submenu-title" aria-expanded="false" aria-haspopup="true"><span>Participating-In Competitions</span></div>
+                        <ul>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPartPlayerGrades">Player Grading</a></li>
+                           <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPartProposedTeamGrading">Team Grading</a></li>
+                           <li><a href="#">Fixtures</a></li>
+                           <li><a href="#">Draws</a></li>
+                        </ul>
+                     </li>
+                  </ul>
+               </div>
+               <section class="ant-layout">
+                  <main class="ant-layout-content">
+                     <div class="comp-player-grades-header-drop-down-view" style="margin-top: 15px;">
+                        <div class="fluid-width">
+                           <div class="row">
+                              <div class="col-sm-3"><span class="form-heading">Participating-In Competitions</span></div>
+                              <div class="col-sm-9">
+                                 <div style="width: 100%; display: flex; flex-direction: row; align-items: center; margin-left: 7px;">
+                                    <span class="year-select-heading">Year:</span>
+                                    <div class="year-select ant-select ant-select-enabled">
+                                       <div class="ant-select-selection
+                                          ant-select-selection--single" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-controls="53fc48df-7d25-475c-e796-39cd24d800e5" aria-expanded="false" tabindex="0">
+                                          <div class="ant-select-selection__rendered">
+                                             <div class="ant-select-selection-selected-value" title="2019" style="display: block; opacity: 1;">2019</div>
+                                          </div>
+                                          <span class="ant-select-arrow" unselectable="on" style="user-select: none;">
+                                             <i aria-label="icon: down" class="anticon anticon-down ant-select-arrow-icon">
+                                                <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="down" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+                                                   <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                                                </svg>
+                                             </i>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="player-grades-table-view">
+                        <div class="inside-table-view">
+                           <div class="table-responsive">
+                              <div class="ant-table-wrapper product-reg-table">
+                                 <div class="ant-spin-nested-loading">
+                                    <div class="ant-spin-container">
+                                       <div class="ant-table ant-table-default ant-table-scroll-position-left">
+                                          <div class="ant-table-content">
+                                             <div class="ant-table-body">
+                                                <table class="">
+                                                   <colgroup>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                   </colgroup>
+                                                   <thead class="ant-table-thead">
+                                                      <tr>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Name</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Division/Age</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Grade</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Teams</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Players</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Status</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                      </tr>
+                                                   </thead>
+                                                   <tbody class="ant-table-tbody">
+                                                      <tr class="ant-table-row ant-table-row-level-0" data-row-key="1">
+                                                         <td class="">2019 Winter</td>
+                                                         <td class="">AR1,AR2,16,15,14,13,12,11,10,NetSetGo</td>
+                                                         <td class="">A,B,C,D,E</td>
+                                                         <td class="">100</td>
+                                                         <td class="">900</td>
+                                                         <td class="">Player Grading</td>
+                                                      </tr>
+                                                      <tr class="ant-table-row ant-table-row-level-0" data-row-key="2">
+                                                         <td class="">2019 Summer</td>
+                                                         <td class="">AR1,AR2,16,15,14,13,12,11,10</td>
+                                                         <td class="">A,B,C,D,E</td>
+                                                         <td class="">120</td>
+                                                         <td class="">1200</td>
+                                                         <td class="">Draw Published</td>
+                                                      </tr>
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="comp-player-grades-header-drop-down-view">
+                        <div class="fluid-width">
+                           <div class="row">
+                              <div class="col-sm-3"><span class="form-heading">Owned Competitions</span></div>
+                              <div class="col-sm-2">
+                                 <div style="width: 100%; display: flex; flex-direction: row; align-items: center; margin-left: 7px;">
+                                    <span class="year-select-heading">Year:</span>
+                                    <div class="year-select ant-select ant-select-enabled">
+                                       <div class="ant-select-selection
+                                          ant-select-selection--single" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-controls="adee1d82-e1ad-4b87-f47d-e35bac1b71c2" aria-expanded="false" tabindex="0">
+                                          <div class="ant-select-selection__rendered">
+                                             <div class="ant-select-selection-selected-value" title="2019" style="display: block; opacity: 1;">2019</div>
+                                          </div>
+                                          <span class="ant-select-arrow" unselectable="on" style="user-select: none;">
+                                             <i aria-label="icon: down" class="anticon anticon-down ant-select-arrow-icon">
+                                                <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="down" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+                                                   <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                                                </svg>
+                                             </i>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-sm-7">
+                                 <div class="row">
+                                    <div class="col-sm-9">
+                                       <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: flex-end;"><a href="/registrationCompetitionForm"><button type="button" class="ant-btn primary-add-comp-form ant-btn-primary"><span>+ Add Competition</span></button></a></div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                       <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: flex-end;"><a href="/competitionReplicate"><button type="button" class="ant-btn primary-add-comp-form ant-btn-primary"><span>+ Replicate Competition</span></button></a></div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="player-grades-table-view">
+                        <div class="inside-table-view">
+                           <div class="table-responsive">
+                              <div class="ant-table-wrapper product-reg-table">
+                                 <div class="ant-spin-nested-loading">
+                                    <div class="ant-spin-container">
+                                       <div class="ant-table ant-table-default ant-table-scroll-position-left">
+                                          <div class="ant-table-content">
+                                             <div class="ant-table-body">
+                                                <table class="">
+                                                   <colgroup>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                      <col>
+                                                   </colgroup>
+                                                   <thead class="ant-table-thead">
+                                                      <tr>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Name</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Division/Age</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Grade</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Teams</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Players</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                         <th class="">
+                                                            <span class="ant-table-header-column">
+                                                               <div><span class="ant-table-column-title">Status</span><span class="ant-table-column-sorter"></span></div>
+                                                            </span>
+                                                         </th>
+                                                      </tr>
+                                                   </thead>
+                                                   <tbody class="ant-table-tbody">
+                                                      <tr class="ant-table-row ant-table-row-level-0" data-row-key="1">
+                                                         <td class="">Trial rep carnival</td>
+                                                         <td class="">12.13.14,15</td>
+                                                         <td class="">Challenge Championship</td>
+                                                         <td class="">200</td>
+                                                         <td class="">2000</td>
+                                                         <td class="">Registration Open</td>
+                                                      </tr>
+                                                      <tr class="ant-table-row ant-table-row-level-0" data-row-key="2">
+                                                         <td class="">NetSetGo fun day</td>
+                                                         <td class="">NetSetGo</td>
+                                                         <td class="">NetSetGo</td>
+                                                         <td class="">50</td>
+                                                         <td class="">500</td>
+                                                         <td class="">Draw Finalised</td>
+                                                      </tr>
+                                                   </tbody>
+                                                </table>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </main>
+               </section>
+            </div>
+         </div>
+      </div>
+      <script src="assets/js/jquery.min.js"></script>
+      <script src="assets/js/jquery-ui.min.js"></script>
+      <script src="assets/js/bootstrap.min.js"></script>
+      <script src="assets/js/custom.js"></script>
+      <!--<script>!function(f){function e(e){for(var t,r,n=e[0],o=e[1],u=e[2],l=0,a=[];l<n.length;l++)r=n[l],Object.prototype.hasOwnProperty.call(p,r)&&p[r]&&a.push(p[r][0]),p[r]=0;for(t in o)Object.prototype.hasOwnProperty.call(o,t)&&(f[t]=o[t]);for(s&&s(e);a.length;)a.shift()();return c.push.apply(c,u||[]),i()}function i(){for(var e,t=0;t<c.length;t++){for(var r=c[t],n=!0,o=1;o<r.length;o++){var u=r[o];0!==p[u]&&(n=!1)}n&&(c.splice(t--,1),e=l(l.s=r[0]))}return e}var r={},p={1:0},c=[];function l(e){if(r[e])return r[e].exports;var t=r[e]={i:e,l:!1,exports:{}};return f[e].call(t.exports,t,t.exports,l),t.l=!0,t.exports}l.m=f,l.c=r,l.d=function(e,t,r){l.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},l.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},l.t=function(t,e){if(1&e&&(t=l(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(l.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)l.d(r,n,function(e){return t[e]}.bind(null,n));return r},l.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return l.d(t,"a",t),t},l.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},l.p="/";var t=this.webpackJsonpnetball=this.webpackJsonpnetball||[],n=t.push.bind(t);t.push=e,t=t.slice();for(var o=0;o<t.length;o++)e(t[o]);var s=n;i()}([])</script>
+      <script src="sstatic/js/2.f84cf008.chunk.js"></script>
+      script src="static/js/main.c7679652.chunk.js"></script
+      <div style="position: absolute; top: 0px; left: 0px; width: 100%;">
+         <div>
+            <div class="ant-menu-submenu ant-menu-submenu-popup ant-menu-light ant-menu-submenu-placement-bottomLeft  ant-menu-submenu-hidden" style="left: 112px; top: 158px;">
+               <ul id="sub1$Menu" class="ant-menu ant-menu-sub ant-menu-hidden ant-menu-vertical" role="menu">
+                  <li class="ant-menu-item" role="menuitem"><a href="https://comp-management-test.firebaseapp.com/quick-competitions.html">Quick Competition</a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionOpenRegForm"><span> Competition Details</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionPlayerGrades"><span>Player Grading</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionProposedTeamGrading"><span>Team Grading</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionVenueTimesPrioritisation"><span>Venue &amp; Times</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionLadder"><span>Ladder</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionFormat"><span>Competition Format</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionFinals"><span>Finals</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="http://clixlogix.org/test/netball/fixtures.html">Fixtures</a></li>
+                  <li class="ant-menu-submenu ant-menu-submenu-vertical" role="menuitem">
+                     <div class="ant-menu-submenu-title" aria-expanded="false" aria-haspopup="true"><span>Draw</span><i class="ant-menu-submenu-arrow"></i></div>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   -->
+      <div style="position: absolute; top: 0px; left: 0px; width: 100%;">
+         <div>
+            <div class="ant-menu-submenu ant-menu-submenu-popup ant-menu-light ant-menu-submenu-placement-bottomLeft  ant-menu-submenu-hidden" style="left: 274px; top: 158px;">
+               <ul id="sub3$Menu" class="ant-menu ant-menu-sub ant-menu-hidden ant-menu-vertical" role="menu" style="min-width: 234px;">
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionPartPlayerGrades"><span>Player Grading</span></a></li>
+                  <li class="ant-menu-item" role="menuitem"><a href="/competitionPartProposedTeamGrading"><span>Team Grading</span></a></li>
+                  <li class="ant-menu-item" role="menuitem">Fixtures</li>
+                  <li class="ant-menu-item" role="menuitem">Draw</li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>
+   

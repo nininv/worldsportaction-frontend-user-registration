@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+   <title>Netball</title>
+   <!-- bootstrap -->
+   <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <!-- custom -->
+   <link rel="stylesheet" href="assets/css/style.css">
+   <link rel="stylesheet" href="assets/css/global.css">
+   <link rel="stylesheet" href="assets/css/responsive.css">
+
+   <link href="static/css/2.0125a00d.chunk.css" rel="stylesheet">
+   <link href="static/css/main.360c57aa.chunk.css" rel="stylesheet">
+   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+   <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+   <header class="site-header">
+      <div class="header-wrap">
+         <div class="row m-0-res">
+            <div class="col-sm-12 d-flex">
+               <div class="logo-box">
+                  <a class="site-brand" href="index.html"><img src="assets/images/logo1.png" alt=""></a>
+               </div>
+               <div class="user-right">
+                  <ul class="d-flex">
+                     <!-- <li>
+                           <a class="create-comp" href="fixtures.html">Create Competition</a>
+                        </li> -->
+                     <li>
+                        <button id="srach-button"><img src="assets/images/search-icons.svg" alt=""></button>
+                        <form class="search-form">
+                           <div class="search-wrap">
+                              <span><img src="assets/images/search.svg" alt=""></span>
+                              <input type="text" placeholder="Search..." />
+                           </div>
+                        </form>
+                     </li>
+                     <li>
+                        <div class="site-menu">
+                           <div class="dropdown">
+                              <button class="dropdown-toggle" type="button" data-toggle="dropdown"
+                                 style="background: url('assets/images/home.svg');">
+                              </button>
+                              <ul class="dropdown-menu">
+                                 <li class="active">
+                                    <div class="home-menu menu-wrap">
+                                       <a href="https://comp-management-test.firebaseapp.com/index.html">
+                                          <span class="icon"></span>
+                                          Home
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="user-menu menu-wrap">
+                                       <a href="https://comp-management-test.firebaseapp.com/user-dashboard.html">
+                                          <span class="icon"></span>
+                                          Users
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="registration-menu menu-wrap">
+                                       <a href="https://state-comp-management-test.firebaseapp.com/registration">
+                                          <span class="icon"></span>
+                                          Registration
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="competitions-menu menu-wrap">
+                                       <a href="https://state-comp-management-test.firebaseapp.com/competitionDashboard">
+                                          <span class="icon"></span>
+                                          Competitions
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="lives-cores menu-wrap">
+                                       <a href="#">
+                                          <span class="icon"></span>
+                                          Live Scores
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="events-menu menu-wrap">
+                                       <a href="#">
+                                          <span class="icon"></span>
+                                          Events
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="shop-menu menu-wrap">
+                                       <a href="#">
+                                          <span class="icon"></span>
+                                          Shop
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="umpires-menu menu-wrap">
+                                       <a href="umpire-allocation.html">
+                                          <span class="icon"></span>
+                                          Umpires
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="incidents-menu menu-wrap">
+                                       <a href="#">
+                                          <span class="icon"></span>
+                                          Incidents
+                                       </a>
+                                    </div>
+                                 </li>
+                                 <li>
+                                    <div class="finance-menu menu-wrap">
+                                       <a href="#">
+                                          <span class="icon"></span>
+                                          Finance
+                                       </a>
+                                    </div>
+                                 </li>
+                              </ul>
+                           </div>
+                        </div>
+                     </li>
+                     <li>
+                        <div class="user-profile-box">
+                           <div class="dropdown">
+                              <button class="dropdown-toggle" type="button" data-toggle="dropdown">
+                                 <img src="assets/images/dd.png" alt="">
+                              </button>
+                              <ul class="dropdown-menu">
+                                 <li>
+                                    <div class="media">
+                                       <div class="media-left">
+                                          <figure class="user-img-wrap">
+                                             <img src="assets/images/dd.png" alt="">
+                                          </figure>
+                                       </div>
+                                       <div class="media-body">
+                                          <span class="user-name">Marissa Cooper</span>
+                                          <span class="user-name-btm">Queensland Netball</span>
+                                       </div>
+                                    </div>
+                                 </li>
+                                 <li><a href="#">Account Settings</a></li>
+                                 <li><a href="#"> Help & Support</a></li>
+                                 <li class="log-out">
+                                    <a href="#">Log Out</a>
+                                 </li>
+                              </ul>
+                           </div>
+                        </div>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+   </header>
+   <div class="second-level-menu">
+      <ul class="ant-menu ant-menu-root ant-menu-horizontal" role="menu" style="line-height: 64px;">
+         <li class="ant-menu-item" role="menuitem"><a  href="/competitionDashboard">Dashboard</a></li>
+         <li class="ant-menu-submenu ant-menu-submenu-selected ant-menu-submenu-horizontal" role="menuitem">
+            <div class="ant-menu-submenu-title" aria-expanded="false" aria-haspopup="true"><span>Own Competitions</span></div>
+            <ul>
+               <li><a href="https://comp-management-test.firebaseapp.com/quick-competitions.html">Quick Competition</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionOpenRegForm">Competition Details</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPlayerGrades">Player Grading</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionProposedTeamGrading">Team Grading</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionVenueTimesPrioritisation">Venue &amp; Times</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionLadder">Ladder</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionFormat">Competition Format</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionFinals">Finals</a></li>
+               <li><a href="https://comp-management-test.firebaseapp.com/fixtures.html">Fixtures</a></li>
+               <li><a href="https://comp-management-test.firebaseapp.com/competitions-draws.html">Draw</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionReGrading">Re-grading</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionMatchSheets">Match sheets</a></li>
+            </ul>
+         </li>
+         <li class="ant-menu-submenu ant-menu-submenu-horizontal" role="menuitem">
+            <div class="ant-menu-submenu-title" aria-expanded="false" aria-haspopup="true"><span>Participating-In Competitions</span></div>
+            <ul>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPartPlayerGrades">Player Grading</a></li>
+               <li><a href="https://state-comp-management-test.firebaseapp.com/competitionPartProposedTeamGrading">Team Grading</a></li>
+               <li><a href="#">Fixtures</a></li>
+               <li><a href="#">Draws</a></li>
+            </ul>
+         </li>
+      </ul>
+   </div>
+   <div class="grey-bg">
+      <div class="container">
+         <!--<div class="secondary-menu">
+            <div class="secondary-menu-item"> <a href="fixtures.html"
+                  class="secondary-menu-active secondary-menu-link">Fixtures</a> </div>
+            <div class="secondary-menu-item"> <a href="draw.html" class="secondary-menu-link">Draws</a>
+            </div>
+            <div class="secondary-menu-item"> <a href="umpire-allocation.html" class="secondary-menu-link">Umpires</a>
+            </div>
+         </div>-->
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="draggable-conatiner">
+                  <div class="breadcrumb-wrap">
+                     <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                           <li class="breadcrumb-item" aria-current="page">Fixtures</li>
+                        </ol>
+                     </nav>
+                     <div class="table-data-dropdwn d-flex d-block-res">
+                        <div class="select-y">
+                           <label for="">Year:</label>
+                           <select name="" id="">
+                              <option value="2019">2019</option>
+                           </select>
+                        </div>
+                        <div class="select-y">
+                           <label for="">Competition:</label>
+                           <select name="" id="">
+                              <option value="2019">Winter 2019</option>
+                              <option value="2019">Sapphire Series</option>
+                              <option value="2019">Junior Premier</option>
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="white-bg-style mt-40">
+                     <div class="list-top-head">
+                        <div class="main-heading">
+                           <h3 class="black-text midum-font"> Winter 2019 </h3>
+                           <h5 class="sub-heading">Venue: Abbott Road Curl Curl</h5>
+                        </div>
+                        <div class="view-all-box text-right">
+                           <div class="button-row">
+                              <button class="orange-button big-btn">
+                                 <i class="fa fa-plus"></i> Add Time Slot
+                              </button>
+                              <button class="orange-button big-btn">
+                                 <i class="fa fa-plus"></i> Add Court
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="draggable-wrap fixtures">
+                        <div class="horizontal-scroll">
+                           <div class="table-head-wrap">
+                              <div class="tablehead-row">
+                                 <div class="sr-no empty-bx"></div>
+                                 <span class="left-25">7:45</span>
+                                 <span class="left-100">8:45</span>
+                                 <span class="left-175">9:45</span>
+                                 <span class="left-250">10:45</span>
+                                 <span class="left-325">11:45</span>
+                                 <span class="left-400">12:45</span>
+                                 <span class="left-475">1:55</span>
+                                 <span class="left-550">3:05</span>
+                                 <span class="left-625">4:15</span>
+                              </div>
+                           </div>
+                           <div class="main-canvas">
+                              <div class="sr-no">1</div>
+                              <span class="border left-25"></span>
+                              <div class="box left-25 grey--bg">N/A</div>
+                              <span class="border left-100"></span>
+                              <div class="box left-100 purple-bg">12A</div>
+                              <span class="border left-175"></span>
+                              <div class="box left-175 green-bg">13A</div>
+                              <span class="border left-250"></span>
+                              <div class="box left-250 yellow-bg black-text">14A</div>
+                              <span class="border left-325"></span>
+                              <div class="box left-325 red-bg">15A</div>
+                              <span class="border left-400"> </span>
+                              <div class="box left-400 blue-bg">2A</div>
+                              <span class="border left-475"></span>
+                              <div class="box left-475 blue-bg">2A</div>
+                              <span class="border left-550"></span>
+                              <div class="box left-550 blue-bg">1A</div>
+                              <span class="border left-625"></span>
+                              <div class="box left-625 blue-bg">12A</div>
+
+
+
+
+                              <div class="sr-no m-top-10">2</div>
+                              <span class="border left-25 top-50"></span>
+                              <div class="box left-25 top-50 grey--bg">N/A</div>
+                              <span class="border left-100 top-50"></span>
+                              <div class="box left-100 top-50 purple-bg">12A</div>
+                              <span class="border left-175 top-50"></span>
+                              <div class="box left-175 top-50 green-bg">13A</div>
+                              <span class="border left-250 top-50"></span>
+                              <div class="box left-250 top-50 yellow-bg black-text">14A</div>
+                              <span class="border left-325 top-50"></span>
+                              <div class="box left-325 top-50 red-bg">15A</div>
+                              <span class="border left-400 top-50"> </span>
+                              <div class="box left-400 top-50 blue-bg">2A</div>
+                              <span class="border left-475 top-50"></span>
+                              <div class="box left-475 top-50 blue-bg">2A</div>
+                              <span class="border left-550 top-50"></span>
+                              <div class="box left-550 top-50 blue-bg">1A</div>
+                              <span class="border left-625 top-50"></span>
+                              <div class="box left-625 top-50 blue-bg">12A</div>
+                              <div class="sr-no m-top-10">3</div>
+                              <span class="border left-25  top-100"></span>
+                              <div class="box left-25 top-100 green-bg">13D</div>
+                              <span class="border left-100 top-100"></span>
+                              <div class="box left-100 top-100 yellow-bg black-text">14D</div>
+                              <span class="border left-175 top-100"></span>
+                              <div class="box left-175 top-100 red-bg">15F</div>
+                              <span class="border left-250 top-100"></span>
+                              <div class="box left-250 top-100 yellow-bg black-text">14C</div>
+                              <span class="border left-325 top-100"></span>
+                              <div class="box left-325 top-100 red-bg">15E</div>
+                              <span class="border left-400 top-100"> </span>
+                              <div class="box left-400 top-100 orange-bg">5B</div>
+                              <span class="border left-475 top-100"></span>
+                              <div class="box left-475 top-100 skyblue-bg">1CD</div>
+                              <span class="border left-550 top-100"></span>
+                              <div class="box left-550 top-100 orange-bg">4B</div>
+                              <span class="border left-625 top-100"></span>
+                              <div class="box left-625 top-100 aquamarine-bg">5C</div>
+
+                              <div class="sr-no m-top-10">4</div>
+                              <span class="border left-25  top-150"></span>
+                              <div class="box left-25 top-150 green-bg">13D</div>
+                              <span class="border left-100 top-150"></span>
+                              <div class="box left-100 top-150 yellow-bg black-text">14D</div>
+                              <span class="border left-175 top-150"></span>
+                              <div class="box left-175 top-150 red-bg">15F</div>
+                              <span class="border left-250 top-150"></span>
+                              <div class="box left-250 top-150 yellow-bg black-text">14C</div>
+                              <span class="border left-325 top-150"></span>
+                              <div class="box left-325 top-150 red-bg">15E</div>
+                              <span class="border left-400 top-150"> </span>
+                              <div class="box left-400 top-150 orange-bg">5B</div>
+                              <span class="border left-475 top-150"></span>
+                              <div class="box left-475 top-150 skyblue-bg">1CD</div>
+                              <span class="border left-550 top-150"></span>
+                              <div class="box left-550 top-150 orange-bg">4B</div>
+                              <span class="border left-625 top-150"></span>
+                              <div class="box left-625 top-150 aquamarine-bg">5C</div>
+
+
+                              <div class="sr-no m-top-10">5</div>
+                              <span class="border left-25  top-200"></span>
+                              <div class="box left-25 top-200 green-bg">13D</div>
+                              <span class="border left-100 top-200"></span>
+                              <div class="box left-100 top-200 yellow-bg black-text">14D</div>
+                              <span class="border left-175 top-200"></span>
+                              <div class="box left-175 top-200 red-bg">15F</div>
+                              <span class="border left-250 top-200"></span>
+                              <div class="box left-250 top-200 yellow-bg black-text">14C</div>
+                              <span class="border left-325 top-200"></span>
+                              <div class="box left-325 top-200 red-bg">15E</div>
+                              <span class="border left-400 top-200"> </span>
+                              <div class="box left-400 top-200 orange-bg">5B</div>
+                              <span class="border left-475 top-200"></span>
+                              <div class="box left-475 top-200 skyblue-bg">1CD</div>
+                              <span class="border left-550 top-200"></span>
+                              <div class="box left-550 top-200 orange-bg">4B</div>
+                              <span class="border left-625 top-200"></span>
+                              <div class="box left-625 top-200 aquamarine-bg">5C</div>
+                              <div class="sr-no m-top-10">6</div>
+                              <span class="border left-25  top-250"></span>
+                              <div class="box left-25 top-250 green-bg">13D</div>
+                              <span class="border left-100 top-250"></span>
+                              <div class="box left-100 top-250 green-bg">13C</div>
+                              <span class="border left-175 top-250"></span>
+                              <div class="box left-175 top-250 red-bg">15F</div>
+                              <span class="border left-250 top-250"></span>
+                              <div class="box left-250 top-250 red-bg">15C</div>
+                              <span class="border left-325 top-250"></span>
+                              <div class="box left-325 top-250 red-bg">15E</div>
+                              <span class="border left-400 top-250"> </span>
+                              <div class="box left-400 top-250 orange-bg">5B</div>
+                              <span class="border left-475 top-250"></span>
+                              <div class="box left-475 top-250 skyblue-bg">1CD</div>
+                              <span class="border left-550 top-250"></span>
+                              <div class="box left-550 top-250 orange-bg">4B</div>
+                              <span class="border left-625 top-250"></span>
+                              <div class="box left-625 top-250 aquamarine-bg">5C</div>
+                              <div class="sr-no m-top-10">7</div>
+                              <span class="border left-25  top-300"></span>
+                              <div class="box left-25 top-300 green-bg">13B</div>
+                              <span class="border left-100 top-300"></span>
+                              <div class="box left-100 top-300 green-bg">13C</div>
+                              <span class="border left-175 top-300"></span>
+                              <div class="box left-175 top-300 yellow-bg black-text">14B </div>
+                              <span class="border left-250 top-300"></span>
+                              <div class="box left-250 top-300 red-bg">15C</div>
+                              <span class="border left-325 top-300"></span>
+                              <div class="box left-325 top-300 red-bg">15B</div>
+                              <span class="border left-400 top-300"> </span>
+                              <div class="box left-400 top-300 blue-bg">5A</div>
+                              <span class="border left-475 top-300"></span>
+                              <div class="box left-475 top-300 orange-bg">2B</div>
+                              <span class="border left-550 top-300"></span>
+                              <div class="box left-550 top-300 orange-bg">3B</div>
+                              <span class="border left-625 top-300"></span>
+                              <div class="box left-625 top-300 aquamarine-bg">4C</div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="ftr-button d-flex">
+                     <button class="grey-btn back-btn">back</button>
+                     <a href="competitions-draws.html" class="orange-button next-btn">Next</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <script src="assets/js/jquery.min.js"></script>
+      <script src="assets/js/jquery-ui.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js">
+      </script>
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      <script src="assets/js/bootstrap.min.js"></script>
+      <script src="assets/js/custom.js"></script>
+</body>
+
+</html>
