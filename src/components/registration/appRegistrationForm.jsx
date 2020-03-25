@@ -92,7 +92,7 @@ class AppRegistrationForm extends Component {
 
     }
     componentDidUpdate(nextProps){
-        console.log(" componentDidUpdate");
+        console.log("Component componentDidUpdate");
         let commonReducerState = this.props.commonReducerState;
         let registrationState = this.props.endUserRegistrationState;
         if (nextProps.commonReducerState !== commonReducerState) {
