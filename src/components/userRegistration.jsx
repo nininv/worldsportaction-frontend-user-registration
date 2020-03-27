@@ -78,7 +78,7 @@ class UserRegistration extends Component {
     contentView = () => {
         return (
             <div className="content-view">
-                <InputWithHead heading={AppConstants.areYouAnExistingUser} ></InputWithHead>
+                <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
                     onChange={(e) => this.onChange(e.target.value)}>

@@ -1023,7 +1023,7 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
-                <InputWithHead heading={AppConstants.areYouRegisteringYourself} ></InputWithHead>
+                <InputWithHead heading={AppConstants.areYouRegisteringYourself} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
                     onChange={(e) => this.onChangeSetRegYourself(e.target.value)}
@@ -1044,24 +1044,35 @@ class AppRegistrationForm extends Component {
                  <span className="form-heading"> {AppConstants.registration}</span>
                  {this.state.registeringYourself == 3 ? (
                      <div>
-                        <InputWithHead heading={AppConstants.whoAreYouRegistering} ></InputWithHead>
-                        <Radio.Group
-                            className="reg-competition-radio"
-                            onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "whoAreYouRegistering", index)}
-                            value={item.whoAreYouRegistering}>
-                            <Radio value={1}>{AppConstants.child}</Radio>
-                            <Radio value={2}>{AppConstants.other}</Radio>
-                            <Radio value={3}>{AppConstants.team}</Radio>
-                        </Radio.Group>
-
-                        <InputWithHead heading={AppConstants.whatTypeOfRegistration} ></InputWithHead>
-                        <Radio.Group
-                            className="reg-competition-radio"
-                            onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "whatTypeOfRegistration", index)}
-                            value={item.whatTypeOfRegistration}>
-                            <Radio value={1}>{AppConstants.player}</Radio>
-                            <Radio value={2}>{AppConstants.nonPlayer}</Radio>
-                        </Radio.Group>
+                        <InputWithHead heading={AppConstants.whoAreYouRegistering} required={"required-field"}></InputWithHead>
+                        <Form.Item >
+                        {getFieldDecorator(`whoAreYouRegistering${index}`, {
+                            rules: [{ required: true, message: ValidationConstants.whoAreYouRegistering }],
+                        })(
+                            <Radio.Group
+                                className="reg-competition-radio"
+                                onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "whoAreYouRegistering", index)}
+                                value={item.whoAreYouRegistering}>
+                                <Radio value={1}>{AppConstants.child}</Radio>
+                                <Radio value={2}>{AppConstants.other}</Radio>
+                                <Radio value={3}>{AppConstants.team}</Radio>
+                            </Radio.Group>
+                        )}
+                        </Form.Item>
+                        <InputWithHead heading={AppConstants.whatTypeOfRegistration} required={"required-field"}></InputWithHead>
+                        <Form.Item >
+                        {getFieldDecorator(`whatTypeOfRegistration${index}`, {
+                            rules: [{ required: true, message: ValidationConstants.whatTypeOfRegistration }],
+                        })(
+                            <Radio.Group
+                                className="reg-competition-radio"
+                                onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "whatTypeOfRegistration", index)}
+                                value={item.whatTypeOfRegistration}>
+                                <Radio value={1}>{AppConstants.player}</Radio>
+                                <Radio value={2}>{AppConstants.nonPlayer}</Radio>
+                            </Radio.Group>
+                        )}
+                        </Form.Item>
                     </div>
                 ): null}
 
@@ -1107,13 +1118,23 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
-             {index == 0?  <InputWithHead
-                    heading={AppConstants.enterPostCode}
-                    placeholder={AppConstants.enterPostCode}
-                    onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "postalCode" )} 
-                    value={registrationDetail.postalCode}
-                    maxLength={4}
-                /> :null}
+             {index == 0?  
+                <Form.Item >
+                {getFieldDecorator(`postalCode${index}`, {
+                    rules: [{ required: true, message: ValidationConstants.postCodeField }],
+                })(
+                    <InputWithHead
+                        required={"required-field"}
+                        heading={AppConstants.enterPostCode}
+                        placeholder={AppConstants.enterPostCode}
+                        onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "postalCode" )} 
+                        value={registrationDetail.postalCode}
+                        maxLength={4}
+                    /> 
+                    )}
+                    </Form.Item>
+                :null}
+                
                  {index == 0?  <InputWithHead
                     heading={AppConstants.alternate_location}
                     placeholder={AppConstants.alternate_location}
@@ -1152,7 +1173,7 @@ class AppRegistrationForm extends Component {
                     </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.divisions} />
+                <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                     <div className="applicable-to-text">{item.divisionName}</div>
                 {/* <Select
                     style={{ width: "100%", paddingRight: 1 }}
@@ -1779,47 +1800,47 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.additionalInfoReqd} </span>   
-                 <InputWithHead heading={AppConstants.existingMedConditions}  required={"required-field"}/>
-                 <Form.Item>
+                 <InputWithHead heading={AppConstants.existingMedConditions}/>
+                 {/* <Form.Item>
                     {getFieldDecorator(`existingMedicalCondition${index}`, {
                         rules: [{ required: true, message: ValidationConstants.existingMedicalCondition[0] }],
-                    })(
+                    })( */}
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "existingMedicalCondition", index )} 
-                        setFieldsValue={item.existingMedicalCondition}
+                        value={item.existingMedicalCondition}
                         allowClear
                     />
-                    )}
-                 </Form.Item>    
+                    {/* )}
+                 </Form.Item>     */}
 
-                <InputWithHead heading={AppConstants.redularMedicalConditions}  required={"required-field"} />
-                <Form.Item>
+                <InputWithHead heading={AppConstants.redularMedicalConditions}  />
+                {/* <Form.Item>
                     {getFieldDecorator(`regularMedication${index}`, {
                         rules: [{ required: true, message: ValidationConstants.regularMedication[0] }],
-                    })(
+                    })( */}
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "regularMedication", index )} 
-                        setFieldsValue={item.regularMedication}
+                        value={item.regularMedication}
                         allowClear/>
-                    )}
-                </Form.Item> 
-                <InputWithHead heading={AppConstants.hearAbouttheCompition}  required={"required-field"}/>
-                <Form.Item>
+                    {/* )}
+                </Form.Item>  */}
+                <InputWithHead heading={AppConstants.hearAbouttheCompition} />
+                {/* <Form.Item>
                     {getFieldDecorator(`heardByRefId${index}`, {
                         rules: [{ required: true, message: ValidationConstants.heardBy[0] }],
-                    })(  
+                    })(   */}
                     <Radio.Group
                         className="reg-competition-radio"
                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "heardByRefId", index )} 
-                        setFieldsValue={item.heardByRefId}>
+                        value={item.heardByRefId}>
                             {(heardByList || []).map((heard, index) => (
                                 <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
                             ))}
                     </Radio.Group>
-                )}
-                </Form.Item> 
+                {/* )}
+                </Form.Item>  */}
                 {item.heardByRefId == 4 && (
                     <div className="pl-5 pr-5">
                         <InputWithHead placeholder={AppConstants.other} 
@@ -1828,29 +1849,29 @@ class AppRegistrationForm extends Component {
                     </div>
                 )}
 
-                <InputWithHead heading={AppConstants.favouriteTeam} required={"required-field"}/>
-                <Form.Item>
+                <InputWithHead heading={AppConstants.favouriteTeam}/>
+                {/* <Form.Item>
                     {getFieldDecorator(`favouriteTeamRefId${index}`, {
                         rules: [{ required: true, message: ValidationConstants.favoriteTeamField[0] }],
-                    })(  
+                    })(   */}
                     <Select
                         style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                         onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteTeamRefId", index )}
-                        setFieldsValue={item.favouriteTeamRefId}>  
+                        value={item.favouriteTeamRefId}>  
                         {(favouriteTeamsList || []).map((fav, index) => (
                             <Option key={fav.id} value={fav.id}>{fav.description}</Option>
                         ))}
                     </Select>
-                    )}
-                </Form.Item> 
+                    {/* )}
+                </Form.Item>  */}
                    
                 {item.favouriteTeamRefId === 6?(
                     <div>
-                        <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"}/>
-                        <Form.Item>
+                        <InputWithHead heading={AppConstants.who_fav_bird} />
+                        {/* <Form.Item>
                             {getFieldDecorator(`favouriteFireBird${index}`, {
                                 rules: [{ required: item.favouriteTeamRefId === 6, message: ValidationConstants.firebirdField[0] }],
-                            })(  
+                            })(   */}
                             <Select
                                 style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                 onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteFireBird", index )}
@@ -1859,8 +1880,8 @@ class AppRegistrationForm extends Component {
                                     <Option key={fire.id} value={fire.id}>{fire.description}</Option>
                                 ))}
                             </Select>
-                            )}
-                        </Form.Item> 
+                            {/* )}
+                        </Form.Item>  */}
                  </div>
                 ) : null}
 
@@ -2049,18 +2070,23 @@ class AppRegistrationForm extends Component {
                     <div>{this.state.competitionName}</div>
                 </div>
 
-                <InputWithHead heading={AppConstants.membershipProduct} />
-                <Select
-                    style={{ width: "100%", paddingRight: 1 }}
-                    onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex)}
-                    value={prod.competitionMembershipProductTypeId}>
-                    {(item.membershipProducts || []).map((mem, index) => (
-                        <Option key={mem.competitionMembershipProductTypeId} 
-                        value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
-                    ))}
-                </Select>
-
-                <InputWithHead heading={AppConstants.divisions} />
+                <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"}/>
+                <Form.Item >
+                    {getFieldDecorator(`participantMembershipProductTypeId${index}${prodIndex}`, {
+                        rules: [{ required: true, message: ValidationConstants.membershipProductRequired }],
+                    })(
+                    <Select
+                        style={{ width: "100%", paddingRight: 1 }}
+                        onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex)}
+                        setFieldsValue={prod.competitionMembershipProductTypeId}>
+                        {(item.membershipProducts || []).map((mem, index) => (
+                            <Option key={mem.competitionMembershipProductTypeId} 
+                            value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
+                <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                 <InputWithHead heading={prod.divisionName} />
             </div>
         )
@@ -2242,6 +2268,7 @@ class AppRegistrationForm extends Component {
                                     <span className="app-reg-terms">
                                         {AppConstants.termsAndConditions}{" "}
                                     </span>
+                                    <span className="required-field"></span>
                                 </Checkbox>
                             </div>
                             )}

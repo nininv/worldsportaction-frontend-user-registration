@@ -34,6 +34,8 @@ const ValidationConstants = {
     favoriteTeamField: ["Favorite Team is required"],
     firebirdField: ["Firebird is required"],
     termsAndCondition: ["Terms and Condition is required"],
+    whoAreYouRegistering: ["Who are you registering is required"],
+    whatTypeOfRegistration: ["What type of registration is required"],
 
     /////////////membership 
     membershipProductIsRequired: "Membership product name is required.",
