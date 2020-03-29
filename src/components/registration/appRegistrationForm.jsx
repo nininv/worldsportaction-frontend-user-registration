@@ -1145,9 +1145,13 @@ class AppRegistrationForm extends Component {
                 <InputWithHead heading={AppConstants.competition_name}/>
                  <div style={{display:'flex'}} className="applicable-to-text">
                     <div>{membershipProdecutInfo.competitionName}</div>
-                    {index == 0 ? <div className="another-competition">Find Another Competition</div> : null}
+                    {index == 0 ? <div className="another-competition">{AppConstants.findAnotherCompetition}</div> : null}
                 </div>
-
+                <InputWithHead heading={AppConstants.organisationName}/>
+                 <div style={{display:'flex'}} className="applicable-to-text">
+                    <div>{membershipProdecutInfo.organisationName}</div>
+                </div>
+                
                 {index == 0 ? 
                 <div>
                     <InputWithHead heading={AppConstants.specialNotes}/>
@@ -2331,6 +2335,7 @@ class AppRegistrationForm extends Component {
                 <Layout>
                     {this.headerView()}
                     <Form
+                        autocomplete="off"
                         onSubmit={this.saveRegistrationForm}
                         noValidate="noValidate">
                         <Content>

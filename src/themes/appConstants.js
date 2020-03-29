@@ -460,6 +460,7 @@ const AppConstants = {
   perDivision: "Per Division",
   paymentOptions: "Payment Options",
   organisationName: "Organisation Name",
+  findAnotherCompetition: "Find Another Organisation or Competition",
   organisationLogo: "Organisation Logo",
   registrationOpen: "Registration Open",
   registrationLock: "Registration Lock",
