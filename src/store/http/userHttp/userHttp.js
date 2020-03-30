@@ -4,7 +4,7 @@ const http = axios.create({
     // baseURL: "http://192.168.3.252:3000"
     // baseURL: "http://192.168.3.98:3000"
     // baseURL: "https://world-sport-action-socket.appspot.com"
-    baseURL: "http://ac3812371ecb342998edfafd640b8ad7-673095728.ap-southeast-2.elb.amazonaws.com/users/"
+    baseURL: "https://netball-api-stg.worldsportaction.com/users/"
 });
 
 http.interceptors.request.use(function (config) {
