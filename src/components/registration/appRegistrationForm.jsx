@@ -542,9 +542,24 @@ class AppRegistrationForm extends Component {
         }
         else if(key == "isSameParentContact" && value)
         {
+            let mobileNumber;
+            let contactName;
+            if(userRegistration.parentOrGuardian[0] == null || userRegistration.parentOrGuardian[0] == undefined)
+            {
+                if(userRegistration.tempParents!= null && userRegistration.tempParents.length > 0){
+                  let parentId =   userRegistration.tempParents[0];
+                  userRegistrations.map((x, index) => {
+                    let parent =   x.parentOrGuardian.find(y=> y.tempParentId == parentId);
+                    if(parent!= null && parent!= undefined){
+                        mobileNumber = parent.mobileNumber;
+                        contactName = parent.firstName + " " + parent.lastName; 
+                    }
+                  })
+                }
+            }
             if(userRegistration.emergencyContactNumber == null || userRegistration.emergencyContactNumber == "")
             {
-                if(userRegistration.parentOrGuardian[0]!= null || userRegistration.parentOrGuardian[0]!= undefined)
+                if(userRegistration.parentOrGuardian[0]!= null && userRegistration.parentOrGuardian[0]!= undefined)
                 {
                     if(userRegistration.parentOrGuardian[0].mobileNumber!= null && userRegistration.parentOrGuardian[0].mobileNumber!= "")
                     {
@@ -554,11 +569,17 @@ class AppRegistrationForm extends Component {
                         });
                     }
                 }
+                else{
+                    userRegistration["emergencyContactNumber"] = mobileNumber;
+                    this.props.form.setFieldsValue({
+                        [`participantEmergencyContactNumber${index}`]: mobileNumber
+                    });
+                }
             }
 
             if(userRegistration.emergencyContactName == null || userRegistration.emergencyContactName == "")
             {
-                if(userRegistration.parentOrGuardian[0]!= null || userRegistration.parentOrGuardian[0]!= undefined)
+                if(userRegistration.parentOrGuardian[0]!= null && userRegistration.parentOrGuardian[0]!= undefined)
                 {
                     if(userRegistration.parentOrGuardian[0].firstName!= null && userRegistration.parentOrGuardian[0].firstName!= "")
                     {
@@ -568,6 +589,12 @@ class AppRegistrationForm extends Component {
                             [`participantEmergencyContactName${index}`]: emergencyContactName,
                         });
                     }
+                }
+                else{
+                    userRegistration["emergencyContactName"] = contactName;
+                    this.props.form.setFieldsValue({
+                        [`participantEmergencyContactName${index}`]: contactName,
+                    });
                 }
             }
         }
@@ -1593,12 +1620,14 @@ class AppRegistrationForm extends Component {
                  <span className="form-heading">
                     {AppConstants.emergency_contact}
                 </span>
-                <Checkbox
-                    className="single-checkbox"
-                    checked={item.isSameParentContact}
-                    onChange={e => this.onChangeSetParticipantValue(e.target.checked, "isSameParentContact", index )} >
-                    {AppConstants.useParentInfo}
-                </Checkbox>
+                {(getAge(item.dateOfBirth) <= 18) ? 
+                    <Checkbox
+                        className="single-checkbox"
+                        checked={item.isSameParentContact}
+                        onChange={e => this.onChangeSetParticipantValue(e.target.checked, "isSameParentContact", index )} >
+                        {AppConstants.useParentInfo}
+                    </Checkbox> : null
+                }
                 <Form.Item >
                     {getFieldDecorator(`participantEmergencyContactName${index}`, {
                         rules: [{ required: true, message: ValidationConstants.emergencyContactName[0] }],
