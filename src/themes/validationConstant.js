@@ -26,6 +26,7 @@ const ValidationConstants = {
     genderField: "Gender is required",
     dateOfBirth: "DOB is required",
     membershipProductRequired: "Please select the competition membership product",
+    membershipProductDivisionRequired: "Please select the competition membership product division",
     emergencyContactNumber: ["Emergency contact number is required"],
     emergencyContactName: ["Emergency contact name is required"],
     existingMedicalCondition: ["Existing Medical Conditions is required"],

@@ -314,7 +314,7 @@ let AxiosApi = {
     },
 
     saveEndUserRegistration(payload) {
-        var url = `/api/registration/save?userId=${userId}`;
+        var url = `/api/registration/save?userId=${userId == undefined ? 0 : userId}`;
         return Method.dataPost(url, token, payload);
     },
     getOrgRegistrationRegistrationSettings(payload) {
