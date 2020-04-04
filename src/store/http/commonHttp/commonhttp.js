@@ -13,7 +13,7 @@ const http = axios.create({
     // baseURL: "http://192.168.3.98:3009"
     // baseURL: "https://common-api-dev.worldsportaction.com"
     // baseURL: "https://world-sport-action-socket.appspot.com"
-    baseURL: "https://netball-api-stg.worldsportaction.com/common"
+    baseURL: "https://common-api-dev.worldsportaction.com"
 
 });
 

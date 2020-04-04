@@ -3,7 +3,7 @@ import axios from "axios";
 const competitionHttp = axios.create({
 
     // baseURL: "http://192.168.3.98:3005",
-    baseURL: "https://netball-api-stg.worldsportaction.com/competition"
+    baseURL: "https://competition-api-dev.worldsportaction.com"
 });
 
 competitionHttp.interceptors.request.use(function (config) {
