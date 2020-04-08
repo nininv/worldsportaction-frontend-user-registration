@@ -503,6 +503,7 @@ const AppConstants = {
   other: "Other",
   participant: "Participant",
   specialNotes: "Special Notes",
+  contactDetails: "Contact Details",
   sunday: "Sunday",
   monday: "Monday",
   tuesday: "Tuesday",

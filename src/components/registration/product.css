@@ -582,3 +582,12 @@
 .pointer{
   cursor: pointer;
 }
+
+.contact-detail-container{
+  display: flex;
+  margin-top: -20px;
+}
+
+.contact-detail-container div{
+  width: 200px;
+}

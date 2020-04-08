@@ -1227,6 +1227,31 @@ class AppRegistrationForm extends Component {
                         <div className="applicable-to-text">{membershipProdecutInfo.training}</div>
                 </div> : null}
 
+
+                {index == 0 ? 
+                    <div>
+                        <InputWithHead heading={AppConstants.contactDetails}/>
+                        <div className="contact-detail-container">
+                            <div>
+                            <InputWithHead heading={AppConstants.name}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyName}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.role}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyRole}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.email}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyEmail}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.phone}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyPhone}</div>
+                            </div>
+                        </div>
+                    </div>
+                : null}
+
                 <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionMembershipProductTypeId${index}`, {
