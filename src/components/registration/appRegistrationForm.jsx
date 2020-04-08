@@ -2156,7 +2156,6 @@ class AppRegistrationForm extends Component {
             divisions = membershipProdecutInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
                 prod.competitionMembershipProductTypeId).divisions;
         }
-//console.log("item" + JSON.stringify(item));
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -2313,7 +2312,7 @@ class AppRegistrationForm extends Component {
                             ): null}
                             {(item.products || []).map((prod, prodIndex) => (
                                 <div key={"prod" + prodIndex}>
-                                    {this.dividerTextView("PARTICIPANT " + (index + 1) + " - MEMBERSHIP " + (prodIndex + 1), stylesProd, "product", index, prodIndex)}
+                                    {this.dividerTextView("PARTICIPANT " + (index + 1) + " - MEMBERSHIP " + (prodIndex + 2), stylesProd, "product", index, prodIndex)}
                                     <div>
                                         {this.membershipProductProductView(item, prod, prodIndex, index, getFieldDecorator)}
                                     </div>
