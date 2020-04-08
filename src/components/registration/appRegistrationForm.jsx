@@ -2163,7 +2163,7 @@ class AppRegistrationForm extends Component {
              
                 <InputWithHead heading={AppConstants.competition_name}/>
                  <div style={{display:'flex'}} className="applicable-to-text">
-                    <div>{this.state.competitionName}</div>
+                    <div>{membershipProdecutInfo.competitionName}</div>
                 </div>
 
                 <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"}/>
