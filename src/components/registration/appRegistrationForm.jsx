@@ -279,11 +279,12 @@ class AppRegistrationForm extends Component {
 
         console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         let parentListLength = userRegistrations.filter(x=>x.parentOrGuardian.length > 0);
-        console.log("parentListLength" +  parentListLength + "**" + JSON.stringify(parentListLength));
+        console.log("parentListLength" +  parentListLength);
 
-        if(parentListLength == undefined || parentListLength == null || parentListLength.length == 0)
-            participantObj.parentOrGuardian.push(parentObj);
-        
+        // if(parentListLength == undefined || parentListLength == null || 
+        //     parentListLength.length == 0 || parentListLength == ""){
+        //         participantObj.parentOrGuardian.push(parentObj);
+        //     }
 
         let newMembershipProducts = deepCopyFunction(membershipProductInfo.membershipProducts); // Deep Copy
         participantObj.membershipProducts = newMembershipProducts;
@@ -433,9 +434,12 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    addParent = (index) => {
+    addParent = (index, userRegistrations) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-        let userRegistrations = registrationDetail.userRegistrations;
+
+        if(userRegistrations == null)
+            userRegistrations = registrationDetail.userRegistrations;
+
         let userRegistration = userRegistrations[index];
 
         let parentObj = {
@@ -611,6 +615,24 @@ class AppRegistrationForm extends Component {
                         [`participantEmergencyContactName${index}`]: contactName,
                     });
                 }
+            }
+        }
+        else if(key == "dateOfBirth")
+        {
+            
+           // let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != userRegistration.tempParticipantId);
+            let isParentAvailable = false;
+      
+            (userRegistrations ||[]).map((item, index) => {
+                    if(item.parentOrGuardian.length > 0){
+                        isParentAvailable = true;
+                    }
+            });
+            console.log("^^^^^^^^^^^^" + isParentAvailable);
+            if(getAge(value) <= 18 && !isParentAvailable)
+            {
+                console.log("inside");
+                this.addParent(index, userRegistrations);
             }
         }
 
@@ -1503,14 +1525,19 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != item.tempParticipantId);
-        
-        //filteredRegistrations.filter(x=>x.parentOrGuardian)
+        let isParentAvailable = false;
+       //console.log("@@@@@@@@@" + JSON.stringify(filteredRegistrations));
+       (filteredRegistrations ||[]).map((item, index) => {
+            if(item.parentOrGuardian.length > 0){
+                isParentAvailable = true;
+            }
+       });
         return (
             <div className="formView content-view pt-5" >
                 <span className="form-heading">
                     {AppConstants.parents_guardians}
                 </span>
-                {filteredRegistrations.filter(x=> x.parentOrGuardian.length > 0).length > 0 ?(
+                {isParentAvailable ? (
                 <div >
                     <Checkbox
                             className="single-checkbox" 
@@ -1687,7 +1714,7 @@ class AppRegistrationForm extends Component {
                     }
                 </div>
                 ))}
-                <span className="input-heading-add-another pointer" onClick={()=> this.addParent(index)}>
+                <span className="input-heading-add-another pointer" onClick={()=> this.addParent(index, null)}>
                     + {AppConstants.addParent_guardian}
                 </span>
 
