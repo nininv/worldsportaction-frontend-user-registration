@@ -26,7 +26,7 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
     registrationOtherInfoReferenceAction,
     countryReferenceAction,
     nationalityReferenceAction, heardByReferenceAction,playerPositionReferenceAction,
-    genderReferenceAction } from '../../store/actions/commonAction/commonAction';
+    genderReferenceAction, disabilityReferenceAction } from '../../store/actions/commonAction/commonAction';
 
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction} from 
@@ -74,7 +74,7 @@ class AppRegistrationForm extends Component {
         this.props.heardByReferenceAction();
         this.props.playerPositionReferenceAction();
         this.props.genderReferenceAction();
-
+        this.props.disabilityReferenceAction();
         this.getUserInfo();
        
     }
@@ -247,6 +247,8 @@ class AppRegistrationForm extends Component {
             profileUrl: null,
             voucherLink: "",
             isDisability: 0,
+            disabilityCareNumber: '',
+            disabilityTypeRefId: 0,
             playerId:0,
             position1: null,
             position2:  null,
@@ -633,6 +635,14 @@ class AppRegistrationForm extends Component {
             {
                 console.log("inside");
                 this.addParent(index, userRegistrations);
+            }
+        }
+        else if(key == "isDisability")
+        {
+            if(value == 0)
+            {
+                userRegistration["disabilityTypeRefId"] = 0;
+                userRegistration["disabilityCareNumber"] = null;
             }
         }
 
@@ -1937,7 +1947,7 @@ class AppRegistrationForm extends Component {
     additionalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let regSetting = registrationState.registrationSettings;
-        const {favouriteTeamsList, firebirdPlayerList, heardByList} = this.props.commonReducerState;
+        const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.additionalInfoReqd} </span>   
@@ -2034,7 +2044,7 @@ class AppRegistrationForm extends Component {
                     </Checkbox>
                 )}
 
-                {regSetting.disability === 1 && (
+                {regSetting.disability === 0 && (
                     <div>
                         <InputWithHead heading={AppConstants.haveDisability} />
                         <Radio.Group
@@ -2042,8 +2052,26 @@ class AppRegistrationForm extends Component {
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
                             value={item.isDisability}>
                             <Radio value={1}>{AppConstants.yes}</Radio>
+                                {item.isDisability == 1 ? 
+                                <div style={{marginLeft: '25px'}}>
+                                    <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
+                                        value={item.disabilityCareNumber}/>
+                                    <InputWithHead heading={AppConstants.typeOfDisability} />
+                                    <Radio.Group
+                                        className="reg-competition-radio"
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
+                                        value={item.disabilityTypeRefId}>
+                                            {(disabilityList || []).map((dis, disIndex) => (
+                                            <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
+                                        ))}
+                                    </Radio.Group>
+                                </div> 
+                                : null
+                                }
                             <Radio value={0}>{AppConstants.no}</Radio>
                         </Radio.Group>
+
                     </div>
                 )}
             </div>
@@ -2537,7 +2565,8 @@ function mapDispatchToProps(dispatch)
         membershipProductEndUserRegistrationAction,
         saveEndUserRegistrationAction,
         genderReferenceAction,
-        getUserRegistrationUserInfoAction
+        getUserRegistrationUserInfoAction,
+        disabilityReferenceAction
     }, dispatch);
 
 }

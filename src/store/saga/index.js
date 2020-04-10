@@ -7,7 +7,7 @@ import {
   getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
-  genderReferenceSaga
+  genderReferenceSaga, disabilityReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -61,6 +61,7 @@ export default function* root_saga() {
    /// Gender Reference Saga
    yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
 
-  
+    /// Disability Reference Saga
+    yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)
 
 }
