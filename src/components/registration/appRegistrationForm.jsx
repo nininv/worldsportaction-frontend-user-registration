@@ -90,6 +90,8 @@ class AppRegistrationForm extends Component {
         this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
 
+        this.addParticipant(0, 1);
+
     }
     componentDidUpdate(nextProps){
         console.log("Component componentDidUpdate");
@@ -204,6 +206,7 @@ class AppRegistrationForm extends Component {
         }
         let participantObj = {
             tempParticipantId: userRegistrations.length + 1,
+            registeringYourself: 0,
             isSameParentContact: false,
             isLinkExistingParent: false,
             isVoucherAdded: false,
@@ -263,21 +266,21 @@ class AppRegistrationForm extends Component {
             languages: ""
         }
         
-        if(registeringYourself === 1){
-            participantObj.friends.push(friendObj);
-            participantObj.referFriends.push(referFriendObj);
-            participantObj.isPlayer = 1;
-            if(registrationDetail.vouchers.length == 0)
-            {
-                this.addVoucher();
-            }
-        }
-        else if(registeringYourself === 2){
-            participantObj.isPlayer = 0;
-        }
-        else {
-            participantObj.isPlayer = -1;
-        }
+        // if(registeringYourself === 1){
+        //     participantObj.friends.push(friendObj);
+        //     participantObj.referFriends.push(referFriendObj);
+        //     participantObj.isPlayer = 1;
+        //     if(registrationDetail.vouchers.length == 0)
+        //     {
+        //         this.addVoucher();
+        //     }
+        // }
+        // else if(registeringYourself === 2){
+        //     participantObj.isPlayer = 0;
+        // }
+        // else {
+        //     participantObj.isPlayer = -1;
+        // }
 
         console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         let parentListLength = userRegistrations.filter(x=>x.parentOrGuardian.length > 0);
@@ -798,19 +801,23 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    onChangeSetRegYourself = (e)  => {
-        console.log("registeringYourself" + e);
-      let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-      let userRegistrations = registrationDetail.userRegistrations;
+    onChangeSetRegYourself = (value, key, index)  => {
+        console.log("registeringYourself" + value);
+        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index]; 
+
       //clearing up the existing participants
-      let newUserRegistration = [];
-      let vouchers = [];
-      this.props.updateEndUserRegisrationAction(newUserRegistration, "userRegistrations");
-      this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
-      this.setState({registeringYourself: e});
-      //if(e === 1 || e === 2){
-        this.addParticipant(e, 1);
-      //}
+      //let newUserRegistration = [];
+      //let vouchers = [];
+     // this.props.updateEndUserRegisrationAction(newUserRegistration, "userRegistrations");
+     // this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
+      //this.setState({registeringYourself: e});
+      userRegistration[key] = value;
+      this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+     
+      //this.addParticipant(e, 1);
+     
     }
 
     onChangeSetVoucherValue = (value, key, index) => {
@@ -2339,11 +2346,9 @@ class AppRegistrationForm extends Component {
 
                 {(userRegistrations || []).map((item, index) => (
                     <div key={"userReg" + index}>
-                        {index > 0 ?
-                            <div style={{marginBottom: "20px"}}>
-                                {this.registeringYourselfView()}
-                            </div> : null
-                        }
+                        <div style={{marginBottom: "20px"}}>
+                            {this.registeringYourselfView()}
+                        </div>
                         {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
                         <div style={{marginBottom: "20px"}}>
                             {this.registrationQuestionView(item, index, getFieldDecorator)}
