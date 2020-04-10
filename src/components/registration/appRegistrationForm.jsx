@@ -47,10 +47,8 @@ class AppRegistrationForm extends Component {
         super(props);
         this.state = {
             agreeTerm: false,
-            registeringYourself: 0,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
-            competitionName: "NWA Winter 2020",
             showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
@@ -232,7 +230,7 @@ class AppRegistrationForm extends Component {
             statusRefId: 0,
             emergencyContactName: "",
             emergencyContactNumber: "",
-            isPlayer: 0,
+            isPlayer: -1,
             userRegistrationId:0,
             playedBefore: 0,
             playedYear: null,
@@ -814,6 +812,15 @@ class AppRegistrationForm extends Component {
      // this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
       //this.setState({registeringYourself: e});
       userRegistration[key] = value;
+      if(value == 1){
+        userRegistration["isPlayer"] = 1;
+      }
+      else if(value == 2){
+        userRegistration["isPlayer"] = 0;
+      }
+      else{
+        userRegistration["isPlayer"] = -1;
+      }
       this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
      
       //this.addParticipant(e, 1);
@@ -1118,15 +1125,15 @@ class AppRegistrationForm extends Component {
         );
     };
 
-    registeringYourselfView = () => {
+    registeringYourselfView = (item, index, getFieldDecorator) => {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
                 <InputWithHead heading={AppConstants.areYouRegisteringYourself} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
-                    onChange={(e) => this.onChangeSetRegYourself(e.target.value)}
-                    value={this.state.registeringYourself}>
+                    onChange={(e) => this.onChangeSetRegYourself(e.target.value, "registeringYourself", index)}
+                    value={item.registeringYourself}>
                     <Radio value={1}>{AppConstants.yesAsAPlayer}</Radio>
                     <Radio value={2}>{AppConstants.yesAsANonPlayer}</Radio>
                     <Radio value={3}>{AppConstants.registeringSomeoneElse}</Radio>
@@ -1141,7 +1148,7 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
-                 {this.state.registeringYourself == 3 ? (
+                 {item.registeringYourself == 3 ? (
                      <div>
                         <InputWithHead heading={AppConstants.whoAreYouRegistering} required={"required-field"}></InputWithHead>
                         <Form.Item >
@@ -2334,25 +2341,29 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let regSetting = registrationState.registrationSettings;
-        //console.log("registrationDetail::" + JSON.stringify(registrationDetail));
+       // console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         //console.log("registrationSettings" + JSON.stringify(regSetting));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
         return (
             <div>
-                <div style={{marginBottom: "20px"}}>
+                {/* <div style={{marginBottom: "20px"}}>
                     {this.registeringYourselfView()}
-                </div>
+                </div> */}
 
                 {(userRegistrations || []).map((item, index) => (
                     <div key={"userReg" + index}>
                         <div style={{marginBottom: "20px"}}>
-                            {this.registeringYourselfView()}
+                            {this.registeringYourselfView(item, index, getFieldDecorator)}
                         </div>
-                        {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
-                        <div style={{marginBottom: "20px"}}>
-                            {this.registrationQuestionView(item, index, getFieldDecorator)}
+                        {item.registeringYourself != 0 ? 
+                        <div>
+                            {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
+                            <div style={{marginBottom: "20px"}}>
+                                {this.registrationQuestionView(item, index, getFieldDecorator)}
+                            </div>
                         </div>
+                        : null }
                         {item.isPlayer != -1 ? (
                         <div>
                             <div style={{marginBottom: "20px"}}>
