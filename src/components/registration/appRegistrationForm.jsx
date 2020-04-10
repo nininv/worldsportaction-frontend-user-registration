@@ -2044,7 +2044,7 @@ class AppRegistrationForm extends Component {
                     </Checkbox>
                 )}
 
-                {regSetting.disability === 0 && (
+                {regSetting.disability === 1 && (
                     <div>
                         <InputWithHead heading={AppConstants.haveDisability} />
                         <Radio.Group
@@ -2339,6 +2339,11 @@ class AppRegistrationForm extends Component {
 
                 {(userRegistrations || []).map((item, index) => (
                     <div key={"userReg" + index}>
+                        {index > 0 ?
+                            <div style={{marginBottom: "20px"}}>
+                                {this.registeringYourselfView()}
+                            </div> : null
+                        }
                         {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
                         <div style={{marginBottom: "20px"}}>
                             {this.registrationQuestionView(item, index, getFieldDecorator)}
