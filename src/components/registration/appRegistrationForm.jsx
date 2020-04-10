@@ -26,7 +26,7 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
     registrationOtherInfoReferenceAction,
     countryReferenceAction,
     nationalityReferenceAction, heardByReferenceAction,playerPositionReferenceAction,
-    genderReferenceAction } from '../../store/actions/commonAction/commonAction';
+    genderReferenceAction, disabilityReferenceAction } from '../../store/actions/commonAction/commonAction';
 
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction} from 
@@ -47,10 +47,8 @@ class AppRegistrationForm extends Component {
         super(props);
         this.state = {
             agreeTerm: false,
-            registeringYourself: 0,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
-            competitionName: "NWA Winter 2020",
             showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
@@ -74,7 +72,7 @@ class AppRegistrationForm extends Component {
         this.props.heardByReferenceAction();
         this.props.playerPositionReferenceAction();
         this.props.genderReferenceAction();
-
+        this.props.disabilityReferenceAction();
         this.getUserInfo();
        
     }
@@ -89,6 +87,8 @@ class AppRegistrationForm extends Component {
 
         this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
+
+        this.addParticipant(0, 1);
 
     }
     componentDidUpdate(nextProps){
@@ -204,6 +204,7 @@ class AppRegistrationForm extends Component {
         }
         let participantObj = {
             tempParticipantId: userRegistrations.length + 1,
+            registeringYourself: 0,
             isSameParentContact: false,
             isLinkExistingParent: false,
             isVoucherAdded: false,
@@ -229,7 +230,7 @@ class AppRegistrationForm extends Component {
             statusRefId: 0,
             emergencyContactName: "",
             emergencyContactNumber: "",
-            isPlayer: 0,
+            isPlayer: -1,
             userRegistrationId:0,
             playedBefore: 0,
             playedYear: null,
@@ -247,6 +248,8 @@ class AppRegistrationForm extends Component {
             profileUrl: null,
             voucherLink: "",
             isDisability: 0,
+            disabilityCareNumber: '',
+            disabilityTypeRefId: 0,
             playerId:0,
             position1: null,
             position2:  null,
@@ -261,29 +264,30 @@ class AppRegistrationForm extends Component {
             languages: ""
         }
         
-        if(registeringYourself === 1){
-            participantObj.friends.push(friendObj);
-            participantObj.referFriends.push(referFriendObj);
-            participantObj.isPlayer = 1;
-            if(registrationDetail.vouchers.length == 0)
-            {
-                this.addVoucher();
-            }
-        }
-        else if(registeringYourself === 2){
-            participantObj.isPlayer = 0;
-        }
-        else {
-            participantObj.isPlayer = -1;
-        }
+        // if(registeringYourself === 1){
+        //     participantObj.friends.push(friendObj);
+        //     participantObj.referFriends.push(referFriendObj);
+        //     participantObj.isPlayer = 1;
+        //     if(registrationDetail.vouchers.length == 0)
+        //     {
+        //         this.addVoucher();
+        //     }
+        // }
+        // else if(registeringYourself === 2){
+        //     participantObj.isPlayer = 0;
+        // }
+        // else {
+        //     participantObj.isPlayer = -1;
+        // }
 
         console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         let parentListLength = userRegistrations.filter(x=>x.parentOrGuardian.length > 0);
-        console.log("parentListLength" +  parentListLength + "**" + JSON.stringify(parentListLength));
+        console.log("parentListLength" +  parentListLength);
 
-        if(parentListLength == undefined || parentListLength == null || parentListLength.length == 0)
-            participantObj.parentOrGuardian.push(parentObj);
-        
+        // if(parentListLength == undefined || parentListLength == null || 
+        //     parentListLength.length == 0 || parentListLength == ""){
+        //         participantObj.parentOrGuardian.push(parentObj);
+        //     }
 
         let newMembershipProducts = deepCopyFunction(membershipProductInfo.membershipProducts); // Deep Copy
         participantObj.membershipProducts = newMembershipProducts;
@@ -433,9 +437,12 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    addParent = (index) => {
+    addParent = (index, userRegistrations) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-        let userRegistrations = registrationDetail.userRegistrations;
+
+        if(userRegistrations == null)
+            userRegistrations = registrationDetail.userRegistrations;
+
         let userRegistration = userRegistrations[index];
 
         let parentObj = {
@@ -613,6 +620,32 @@ class AppRegistrationForm extends Component {
                 }
             }
         }
+        else if(key == "dateOfBirth")
+        {
+            
+           // let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != userRegistration.tempParticipantId);
+            let isParentAvailable = false;
+      
+            (userRegistrations ||[]).map((item, index) => {
+                    if(item.parentOrGuardian.length > 0){
+                        isParentAvailable = true;
+                    }
+            });
+            console.log("^^^^^^^^^^^^" + isParentAvailable);
+            if(getAge(value) <= 18 && !isParentAvailable)
+            {
+                console.log("inside");
+                this.addParent(index, userRegistrations);
+            }
+        }
+        else if(key == "isDisability")
+        {
+            if(value == 0)
+            {
+                userRegistration["disabilityTypeRefId"] = 0;
+                userRegistration["disabilityCareNumber"] = null;
+            }
+        }
 
         userRegistration[key] = value;
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
@@ -766,19 +799,32 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    onChangeSetRegYourself = (e)  => {
-        console.log("registeringYourself" + e);
-      let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-      let userRegistrations = registrationDetail.userRegistrations;
+    onChangeSetRegYourself = (value, key, index)  => {
+        console.log("registeringYourself" + value);
+        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index]; 
+
       //clearing up the existing participants
-      let newUserRegistration = [];
-      let vouchers = [];
-      this.props.updateEndUserRegisrationAction(newUserRegistration, "userRegistrations");
-      this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
-      this.setState({registeringYourself: e});
-      //if(e === 1 || e === 2){
-        this.addParticipant(e, 1);
-      //}
+      //let newUserRegistration = [];
+      //let vouchers = [];
+     // this.props.updateEndUserRegisrationAction(newUserRegistration, "userRegistrations");
+     // this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
+      //this.setState({registeringYourself: e});
+      userRegistration[key] = value;
+      if(value == 1){
+        userRegistration["isPlayer"] = 1;
+      }
+      else if(value == 2){
+        userRegistration["isPlayer"] = 0;
+      }
+      else{
+        userRegistration["isPlayer"] = -1;
+      }
+      this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+     
+      //this.addParticipant(e, 1);
+     
     }
 
     onChangeSetVoucherValue = (value, key, index) => {
@@ -1079,15 +1125,15 @@ class AppRegistrationForm extends Component {
         );
     };
 
-    registeringYourselfView = () => {
+    registeringYourselfView = (item, index, getFieldDecorator) => {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
                 <InputWithHead heading={AppConstants.areYouRegisteringYourself} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
-                    onChange={(e) => this.onChangeSetRegYourself(e.target.value)}
-                    value={this.state.registeringYourself}>
+                    onChange={(e) => this.onChangeSetRegYourself(e.target.value, "registeringYourself", index)}
+                    value={item.registeringYourself}>
                     <Radio value={1}>{AppConstants.yesAsAPlayer}</Radio>
                     <Radio value={2}>{AppConstants.yesAsANonPlayer}</Radio>
                     <Radio value={3}>{AppConstants.registeringSomeoneElse}</Radio>
@@ -1102,7 +1148,7 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
-                 {this.state.registeringYourself == 3 ? (
+                 {item.registeringYourself == 3 ? (
                      <div>
                         <InputWithHead heading={AppConstants.whoAreYouRegistering} required={"required-field"}></InputWithHead>
                         <Form.Item >
@@ -1226,6 +1272,31 @@ class AppRegistrationForm extends Component {
                     <InputWithHead heading={AppConstants.training} />
                         <div className="applicable-to-text">{membershipProdecutInfo.training}</div>
                 </div> : null}
+
+
+                {index == 0 ? 
+                    <div>
+                        <InputWithHead heading={AppConstants.contactDetails}/>
+                        <div className="contact-detail-container">
+                            <div>
+                            <InputWithHead heading={AppConstants.name}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyName}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.role}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyRole}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.email}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyEmail}</div>
+                            </div>
+                            <div>
+                            <InputWithHead heading={AppConstants.phone}/>
+                            <div className="applicable-to-text">{membershipProdecutInfo.replyPhone}</div>
+                            </div>
+                        </div>
+                    </div>
+                : null}
 
                 <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>
                 <Form.Item>
@@ -1478,14 +1549,19 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != item.tempParticipantId);
-        
-        //filteredRegistrations.filter(x=>x.parentOrGuardian)
+        let isParentAvailable = false;
+       //console.log("@@@@@@@@@" + JSON.stringify(filteredRegistrations));
+       (filteredRegistrations ||[]).map((item, index) => {
+            if(item.parentOrGuardian.length > 0){
+                isParentAvailable = true;
+            }
+       });
         return (
             <div className="formView content-view pt-5" >
                 <span className="form-heading">
                     {AppConstants.parents_guardians}
                 </span>
-                {filteredRegistrations.filter(x=> x.parentOrGuardian.length > 0).length > 0 ?(
+                {isParentAvailable ? (
                 <div >
                     <Checkbox
                             className="single-checkbox" 
@@ -1662,7 +1738,7 @@ class AppRegistrationForm extends Component {
                     }
                 </div>
                 ))}
-                <span className="input-heading-add-another pointer" onClick={()=> this.addParent(index)}>
+                <span className="input-heading-add-another pointer" onClick={()=> this.addParent(index, null)}>
                     + {AppConstants.addParent_guardian}
                 </span>
 
@@ -1885,7 +1961,7 @@ class AppRegistrationForm extends Component {
     additionalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let regSetting = registrationState.registrationSettings;
-        const {favouriteTeamsList, firebirdPlayerList, heardByList} = this.props.commonReducerState;
+        const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.additionalInfoReqd} </span>   
@@ -1990,8 +2066,26 @@ class AppRegistrationForm extends Component {
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
                             value={item.isDisability}>
                             <Radio value={1}>{AppConstants.yes}</Radio>
+                                {item.isDisability == 1 ? 
+                                <div style={{marginLeft: '25px'}}>
+                                    <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
+                                        value={item.disabilityCareNumber}/>
+                                    <InputWithHead heading={AppConstants.typeOfDisability} />
+                                    <Radio.Group
+                                        className="reg-competition-radio"
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
+                                        value={item.disabilityTypeRefId}>
+                                            {(disabilityList || []).map((dis, disIndex) => (
+                                            <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
+                                        ))}
+                                    </Radio.Group>
+                                </div> 
+                                : null
+                                }
                             <Radio value={0}>{AppConstants.no}</Radio>
                         </Radio.Group>
+
                     </div>
                 )}
             </div>
@@ -2156,14 +2250,13 @@ class AppRegistrationForm extends Component {
             divisions = membershipProdecutInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
                 prod.competitionMembershipProductTypeId).divisions;
         }
-//console.log("item" + JSON.stringify(item));
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
              
                 <InputWithHead heading={AppConstants.competition_name}/>
                  <div style={{display:'flex'}} className="applicable-to-text">
-                    <div>{this.state.competitionName}</div>
+                    <div>{membershipProdecutInfo.competitionName}</div>
                 </div>
 
                 <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"}/>
@@ -2248,22 +2341,29 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let regSetting = registrationState.registrationSettings;
-        //console.log("registrationDetail::" + JSON.stringify(registrationDetail));
+       // console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         //console.log("registrationSettings" + JSON.stringify(regSetting));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
         return (
             <div>
-                <div style={{marginBottom: "20px"}}>
+                {/* <div style={{marginBottom: "20px"}}>
                     {this.registeringYourselfView()}
-                </div>
+                </div> */}
 
                 {(userRegistrations || []).map((item, index) => (
                     <div key={"userReg" + index}>
-                        {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
                         <div style={{marginBottom: "20px"}}>
-                            {this.registrationQuestionView(item, index, getFieldDecorator)}
+                            {this.registeringYourselfView(item, index, getFieldDecorator)}
                         </div>
+                        {item.registeringYourself != 0 ? 
+                        <div>
+                            {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
+                            <div style={{marginBottom: "20px"}}>
+                                {this.registrationQuestionView(item, index, getFieldDecorator)}
+                            </div>
+                        </div>
+                        : null }
                         {item.isPlayer != -1 ? (
                         <div>
                             <div style={{marginBottom: "20px"}}>
@@ -2313,7 +2413,7 @@ class AppRegistrationForm extends Component {
                             ): null}
                             {(item.products || []).map((prod, prodIndex) => (
                                 <div key={"prod" + prodIndex}>
-                                    {this.dividerTextView("PARTICIPANT " + (index + 1) + " - MEMBERSHIP " + (prodIndex + 1), stylesProd, "product", index, prodIndex)}
+                                    {this.dividerTextView("PARTICIPANT " + (index + 1) + " - MEMBERSHIP " + (prodIndex + 2), stylesProd, "product", index, prodIndex)}
                                     <div>
                                         {this.membershipProductProductView(item, prod, prodIndex, index, getFieldDecorator)}
                                     </div>
@@ -2486,7 +2586,8 @@ function mapDispatchToProps(dispatch)
         membershipProductEndUserRegistrationAction,
         saveEndUserRegistrationAction,
         genderReferenceAction,
-        getUserRegistrationUserInfoAction
+        getUserRegistrationUserInfoAction,
+        disabilityReferenceAction
     }, dispatch);
 
 }

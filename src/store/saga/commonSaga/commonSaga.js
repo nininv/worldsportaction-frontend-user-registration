@@ -210,5 +210,23 @@ export function* genderReferenceSaga(action) {
     }
 }
 
+// Get the Disability Reference Saga
+export function* disabilityReferenceSaga(action) {
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.disability);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_DISABILITY_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
 
 

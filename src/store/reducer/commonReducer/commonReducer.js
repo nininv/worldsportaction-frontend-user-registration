@@ -20,7 +20,8 @@ const initialState = {
     nationalityList: [],
     heardByList: [],
     playerPositionList: [],
-    genderList: []
+    genderList: [],
+    disabilityList: []
 };
 
 function commonReducerState(state = initialState, action) {
@@ -176,6 +177,19 @@ function commonReducerState(state = initialState, action) {
                 ...state,
                 status: action.status,
                 genderList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        ///////get the  Gender list
+        case ApiConstants.API_DISABILITY_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_DISABILITY_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                disabilityList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
                 error: null
             };
