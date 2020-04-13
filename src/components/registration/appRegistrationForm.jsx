@@ -1296,7 +1296,8 @@ class AppRegistrationForm extends Component {
                 {index == 0 ? 
                     <div>
                         <InputWithHead heading={AppConstants.contactDetails}/>
-                        <div className="contact-detail-container">
+                        <span className="applicable-to-text">{membershipProdecutInfo.contactDetails}</span>
+                        {/* <div className="contact-detail-container">
                             <div>
                             <InputWithHead heading={AppConstants.name}/>
                             <div className="applicable-to-text">{membershipProdecutInfo.replyName}</div>
@@ -1313,7 +1314,7 @@ class AppRegistrationForm extends Component {
                             <InputWithHead heading={AppConstants.phone}/>
                             <div className="applicable-to-text">{membershipProdecutInfo.replyPhone}</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 : null}
 
