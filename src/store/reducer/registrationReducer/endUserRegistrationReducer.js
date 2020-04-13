@@ -13,7 +13,7 @@ let registrationObj = {
     childrenCheckNumber: "",
     userRegistrations:[],
     vouchers: [],
-    userInfo: null
+    userInfo: []
 }
 
 let membershipProdInfoObj = {
@@ -26,7 +26,7 @@ let membershipProdInfoObj = {
 
 const initialState = {
     onLoad: false,
-    onMembershipLoad: false,
+	onMembershipLoad: false,
     userInfoOnLoad: false,
     error: null,
     result: null,
@@ -35,7 +35,8 @@ const initialState = {
     registrationSettings: [],
     populateParticipantDetails: 0,
     membershipProductInfo: membershipProdInfoObj,
-    refFlag:""
+    refFlag:"",
+    user: null
 }
 
 
@@ -73,7 +74,7 @@ function  endUserRegistrationReducer(state = initialState, action)
             let oldData = state.registrationDetail;
             let updatedValue = action.updatedData;
             let getKey = action.key;
-            if(getKey == "populateParticipantDetails" || getKey == "refFlag")
+            if(getKey == "populateParticipantDetails" || getKey == "refFlag" || getKey == "user")
             {
                 state[getKey] = updatedValue;
             }

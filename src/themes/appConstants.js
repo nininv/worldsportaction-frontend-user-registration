@@ -279,6 +279,7 @@ const AppConstants = {
   addNewCompetitionFormat: "Add New Competition Format",
   createDraftDraw: "Create Draft Draw",
   applyLadderFor: "Apply Ladder Format to",
+  existingUserSelection: "Existion User Selection",
 
   /*******competition Ladder */
   mwnaPointScheme: "MWNA Points Scheme",
