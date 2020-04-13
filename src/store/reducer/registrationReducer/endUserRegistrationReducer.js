@@ -26,6 +26,7 @@ let membershipProdInfoObj = {
 
 const initialState = {
     onLoad: false,
+    onMembershipLoad: false,
     userInfoOnLoad: false,
     error: null,
     result: null,
@@ -84,13 +85,13 @@ function  endUserRegistrationReducer(state = initialState, action)
 
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
-            return { ...state, onLoad: true };
+            return { ...state, onMembershipLoad: true };
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
             let data = action.result;
             return {
                 ...state,
-                onLoad: false,
+                onMembershipLoad: false,
                 status: action.status,
                 membershipProductInfo: data
             };

@@ -60,7 +60,8 @@ class AppRegistrationForm extends Component {
             buttonPressed: "",
             loading: false,
             flag: 0,
-            tempParentId: 0
+            tempParentId: 0,
+            getMembershipLoad: false
         };
      
         this.props.getCommonRefData();
@@ -87,8 +88,8 @@ class AppRegistrationForm extends Component {
 
         this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
-
-        this.addParticipant(0, 1);
+        this.setState({getMembershipLoad: true})
+       
 
     }
     componentDidUpdate(nextProps){
@@ -102,6 +103,17 @@ class AppRegistrationForm extends Component {
                   });
                 this.setState({volunteerList: commonReducerState.registrationOtherInfoList});
             }
+        }
+
+        if(registrationState.onMembershipLoad == false && this.state.getMembershipLoad == true)
+        {
+            if(registrationState.membershipProductInfo!= null && 
+                registrationState.membershipProductInfo.membershipProducts!= null 
+                && registrationState.membershipProductInfo.membershipProducts.length > 0)
+                {
+                   this.setState({getMembershipLoad: false})
+                    this.addParticipant(0, 1);
+                }
         }
 
        if(registrationState.onLoad == false && this.state.loading === true)
@@ -290,6 +302,7 @@ class AppRegistrationForm extends Component {
         //     }
 
         let newMembershipProducts = deepCopyFunction(membershipProductInfo.membershipProducts); // Deep Copy
+        console.log("parentListLength" +  JSON.stringify(newMembershipProducts));
         participantObj.membershipProducts = newMembershipProducts;
        
         if(populateParticipantDetails == 1 && getUserId() != 0)
@@ -309,38 +322,43 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let userInfo = registrationState.userInfo;
         console.log("userInfo" + JSON.stringify(userInfo));
-        participantObj.firstName = userInfo.firstName;
-        participantObj.middleName = userInfo.middleName;
-        participantObj.lastName = userInfo.lastName;
-        participantObj.mobileNumber = userInfo.mobileNumber;
-        participantObj.email = userInfo.email;
-        participantObj.reEnterEmail = userInfo.email;
-        participantObj.street1 = userInfo.street1;
-        participantObj.street2 = userInfo.street2;
-        participantObj.suburb = userInfo.suburb;
-        participantObj.stateRefId = userInfo.stateRefId;
-        participantObj.postalCode = userInfo.postalCode;
-        participantObj.emergencyContactName = userInfo.emergencyContactName;
-        participantObj.emergencyContactNumber = userInfo.emergencyContactNumber;
-        participantObj.profileUrl = userInfo.photoUrl;
+        if(userInfo!= null && userInfo!= undefined)
+        {
+            participantObj.firstName = userInfo.firstName;
+            participantObj.middleName = userInfo.middleName;
+            participantObj.lastName = userInfo.lastName;
+            participantObj.mobileNumber = userInfo.mobileNumber;
+            participantObj.email = userInfo.email;
+            participantObj.reEnterEmail = userInfo.email;
+            participantObj.street1 = userInfo.street1;
+            participantObj.street2 = userInfo.street2;
+            participantObj.suburb = userInfo.suburb;
+            participantObj.stateRefId = userInfo.stateRefId;
+            participantObj.postalCode = userInfo.postalCode;
+            participantObj.emergencyContactName = userInfo.emergencyContactName;
+            participantObj.emergencyContactNumber = userInfo.emergencyContactNumber;
+            participantObj.profileUrl = userInfo.photoUrl;
+        }
     }
 
     setFormFields = (userInfo, index) => {
         console.log("setFormFields"+ JSON.stringify(userInfo));
-        this.props.form.setFieldsValue({
-            [`participantFirstName${index}`]: userInfo.firstName,
-            [`participantLastName${index}`]: userInfo.lastName,
-            [`participantMobileNumber${index}`]: userInfo.mobileNumber,
-            [`participantEmail${index}`]: userInfo.email,
-            [`participantReEnterEmail${index}`]: userInfo.email,
-            [`participantStreet1${index}`]: userInfo.street1,
-            [`participantSuburb${index}`]: userInfo.suburb,
-            [`participantStateRefId${index}`]: userInfo.stateRefId,
-            [`participantPostalCode${index}`]: userInfo.postalCode,
-            [`participantEmergencyContactName${index}`]: userInfo.emergencyContactName,
-            [`participantEmergencyContactNumber${index}`]: userInfo.emergencyContactNumber
-        });
-
+        if(userInfo!= null && userInfo!= undefined)
+        {
+            this.props.form.setFieldsValue({
+                [`participantFirstName${index}`]: userInfo.firstName,
+                [`participantLastName${index}`]: userInfo.lastName,
+                [`participantMobileNumber${index}`]: userInfo.mobileNumber,
+                [`participantEmail${index}`]: userInfo.email,
+                [`participantReEnterEmail${index}`]: userInfo.email,
+                [`participantStreet1${index}`]: userInfo.street1,
+                [`participantSuburb${index}`]: userInfo.suburb,
+                [`participantStateRefId${index}`]: userInfo.stateRefId,
+                [`participantPostalCode${index}`]: userInfo.postalCode,
+                [`participantEmergencyContactName${index}`]: userInfo.emergencyContactName,
+                [`participantEmergencyContactNumber${index}`]: userInfo.emergencyContactNumber
+            });
+        }
     }
 
     setParentFormFields = (index) => {
@@ -1221,6 +1239,7 @@ class AppRegistrationForm extends Component {
     membershipProductView = (item, index, getFieldDecorator) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
+        console.log("membershipProdecutInfo::" + JSON.stringify(membershipProdecutInfo));
         let divisions = [];
         if(item.competitionMembershipProductTypeId != null)
         {
