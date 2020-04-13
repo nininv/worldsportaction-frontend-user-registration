@@ -711,19 +711,23 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetUserSelection = (value, key, index) => {
+        console.log("UserId" + value);
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
-        let membershipProdecutInfo = registrationState.membershipProductInfo;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
         let userInfoList = registrationState.userInfo;
 
         let user = userInfoList.find(x=>x.id == value);
-        this.setUserInfo(userRegistration, user, userRegistrations, index);
+        if(user!= null && user!= undefined)
+        {
+            this.setUserInfo(userRegistration, user, userRegistrations, index);
+        }
+
        // this.setFormFields(user);
 
         if(userRegistration.whatTypeOfRegistration == 1 || 
-            userRegistration.registeringYourself == 1){
+            userRegistration.registeringYourself == 1 ){
             userRegistration["isPlayer"] = 1;
           }
           else if(userRegistration.whatTypeOfRegistration == 2 || 
@@ -734,9 +738,23 @@ class AppRegistrationForm extends Component {
             userRegistration["isPlayer"] = -1;
           }
 
+          let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
+          if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
+          {
+            oldUser.isDisabled = 0;
+          }
+
+        
+        if(user!= null && user!= undefined)
+        {
+            user.isDisabled = 1;
+            this.props.updateEndUserRegisrationAction(user, "user");
+            this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
+            this.setState({participantIndex: index});
+        }
+
         userRegistration[key] = value;
-        this.props.updateEndUserRegisrationAction(user, "user");
-        this.setState({participantIndex: index});
+        
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
@@ -1238,6 +1256,8 @@ class AppRegistrationForm extends Component {
 
     registrationQuestionView = (item, index, getFieldDecorator) =>{
         const {genderList} = this.props.commonReducerState;
+        let registrationState = this.props.endUserRegistrationState;
+        let userInfo = registrationState.userInfo;
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
@@ -1276,7 +1296,8 @@ class AppRegistrationForm extends Component {
                     </div>
                 ): null}
 
-                { item.registeringYourself!= 0 ? this.userSelectionView(item, index) : null}
+                { (item.registeringYourself!= 0 && (userInfo!= null && userInfo.length > 0))? 
+                    this.userSelectionView(item, index) : null}
                 {item.isPlayer!= -1  ? 
                 <div>
                    
@@ -2447,8 +2468,9 @@ class AppRegistrationForm extends Component {
                     placeholder={AppConstants.select}
                     onChange={(e) => this.onChangeSetUserSelection(e, "userId", index )}
                     value={item.userId}>
+                      <Option key={0} value={0}> {AppConstants.newUser}</Option>   
                     {(userInfo || []).map((user, userIndex) => (
-                    <Option key={user.id} value={user.id}> {user.firstName + " " + user.lastName}</Option>
+                    <Option disabled={parseInt(user.isDisabled)} key={user.id} value={user.id}> {user.firstName + " " + user.lastName}</Option>
                     ))}
                 </Select>
                
@@ -2571,7 +2593,7 @@ class AppRegistrationForm extends Component {
                         </div>
                         ): null}
 
-                        {userRegistrations.length > 0 ? (
+                        {(userRegistrations.length > 0 && userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
                         <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
                             <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
                                 + {AppConstants.addAnotherParticipant}
