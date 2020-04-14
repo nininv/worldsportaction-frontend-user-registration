@@ -127,12 +127,12 @@ class AppRegistrationForm extends Component {
             }
        }
 
-       if(registrationState.user != null)
+       if(registrationState.populateParticipantDetails  == 1)
        {
            console.log("&&&&&&&&&&&");
            let user = registrationState.user;
            this.setFormFields(user, this.state.participantIndex);
-           this.props.updateEndUserRegisrationAction(null, "user");
+           this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
        }
 
     //    if(registrationState.populateParticipantDetails === 1 )
@@ -327,30 +327,30 @@ class AppRegistrationForm extends Component {
 
     setUserInfo = (participantObj, userInfo, userRegistrations, index) => {
         console.log("userInfo" + JSON.stringify(userInfo));
-        participantObj.firstName = userInfo.firstName;
-        participantObj.middleName = userInfo.middleName;
-        participantObj.lastName = userInfo.lastName;
-        participantObj.mobileNumber = userInfo.mobileNumber;
-        participantObj.email = userInfo.email;
-        participantObj.reEnterEmail = userInfo.email;
-        participantObj.street1 = userInfo.street1;
-        participantObj.street2 = userInfo.street2;
-        participantObj.suburb = userInfo.suburb;
-        participantObj.stateRefId = userInfo.stateRefId;
-        participantObj.postalCode = userInfo.postalCode;
-        participantObj.emergencyContactName = userInfo.emergencyContactName;
-        participantObj.emergencyContactNumber = userInfo.emergencyContactNumber;
-        participantObj.profileUrl = userInfo.photoUrl;
-        participantObj.genderRefId = userInfo.genderRefId;
-        participantObj.dateOfBirth = new Date(userInfo.dateOfBirth);
-        participantObj.userId = userInfo.id;
+        participantObj.firstName = userInfo!= null ? userInfo.firstName : "";
+        participantObj.middleName = userInfo!= null ? userInfo.middleName : "";
+        participantObj.lastName =  userInfo!= null ? userInfo.lastName : "";
+        participantObj.mobileNumber =  userInfo!= null ? userInfo.mobileNumber : "";
+        participantObj.email =  userInfo!= null ? userInfo.email : "";
+        participantObj.reEnterEmail =  userInfo!= null ? userInfo.email : "";
+        participantObj.street1 =  userInfo!= null ? userInfo.street1 : "";
+        participantObj.street2 =  userInfo!= null ? userInfo.street2 : "";
+        participantObj.suburb =  userInfo!= null ? userInfo.suburb : "";
+        participantObj.stateRefId =  userInfo!= null ? userInfo.stateRefId : null;
+        participantObj.postalCode =  userInfo!= null ? userInfo.postalCode : "";
+        participantObj.emergencyContactName =  userInfo!= null ? userInfo.emergencyContactName : "";
+        participantObj.emergencyContactNumber =  userInfo!= null ? userInfo.emergencyContactNumber : "";
+        participantObj.profileUrl =  userInfo!= null ? userInfo.photoUrl : "";
+        participantObj.genderRefId =  userInfo!= null ? userInfo.genderRefId : 0;
+        participantObj.dateOfBirth =  userInfo!= null ? new Date(userInfo.dateOfBirth) : null;
+        participantObj.userId =  userInfo!= null ? userInfo.id: 0;
 
-        console.log("*****" + getAge(new Date(userInfo.dateOfBirth)));
-        console.log("********" + userInfo.dateOfBirth);
-        if(getAge(new Date(userInfo.dateOfBirth)) < 18){
-            (userInfo.parentsOrGaurdian || []).map((item, userIndex) => {
-                this.addParent(index, userRegistrations, item);
-            })
+        if(userInfo!= null && userInfo!= undefined){
+            if(getAge(new Date(userInfo.dateOfBirth)) < 18){
+                (userInfo.parentsOrGaurdian || []).map((item, userIndex) => {
+                    this.addParent(index, userRegistrations, item);
+                })
+            }
         }
     }
 
@@ -361,28 +361,31 @@ class AppRegistrationForm extends Component {
         let userRegistration = userRegistrations[index]; 
 
         this.props.form.setFieldsValue({
-            [`participantFirstName${index}`]: userInfo.firstName,
-            [`participantLastName${index}`]: userInfo.lastName,
-            [`participantMobileNumber${index}`]: userInfo.mobileNumber,
-            [`participantEmail${index}`]: userInfo.email,
-            [`participantReEnterEmail${index}`]: userInfo.email,
-            [`participantStreet1${index}`]: userInfo.street1,
-            [`participantSuburb${index}`]: userInfo.suburb,
-            [`participantStateRefId${index}`]: userInfo.stateRefId,
-            [`participantPostalCode${index}`]: userInfo.postalCode,
-            [`participantEmergencyContactName${index}`]: userInfo.emergencyContactName,
-            [`participantEmergencyContactNumber${index}`]: userInfo.emergencyContactNumber,
-            [`genderRefId${index}`]: userInfo.genderRefId,
-            [`dateOfBirth${index}`]: (userInfo.dateOfBirth!= null && userInfo.dateOfBirth!= '') ? 
-                moment(userInfo.dateOfBirth, "YYYY-MM-DD") : null,
+            [`participantFirstName${index}`]: userInfo!= null ? userInfo.firstName : "",
+            [`participantLastName${index}`]:  userInfo!= null ? userInfo.lastName : "",
+            [`participantMobileNumber${index}`]:  userInfo!= null ? userInfo.mobileNumber : "",
+            [`participantEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`participantReEnterEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`participantStreet1${index}`]:  userInfo!= null ? userInfo.street1 : "",
+            [`participantSuburb${index}`]:  userInfo!= null ? userInfo.suburb : "",
+            [`participantStateRefId${index}`]:  userInfo!= null ? userInfo.stateRefId : null,
+            [`participantPostalCode${index}`]:  userInfo!= null ? userInfo.postalCode : "",
+            [`participantEmergencyContactName${index}`]:  userInfo!= null ? userInfo.emergencyContactName : "",
+            [`participantEmergencyContactNumber${index}`]:  userInfo!= null ? userInfo.emergencyContactNumber : "",
+            [`genderRefId${index}`]:  userInfo!= null ? userInfo.genderRefId : 0,
+            [`dateOfBirth${index}`]:  userInfo!= null ? ((userInfo.dateOfBirth!= null && userInfo.dateOfBirth!= '') ? 
+                moment(userInfo.dateOfBirth, "YYYY-MM-DD") : null) : null,
         });
 
-        if(getAge(new Date(userInfo.dateOfBirth)) < 18){
-            (userInfo.parentsOrGaurdian || []).map((item, parentIndex) => {
-                this.setParentformFieldsValue(index, parentIndex, item);
-            })
+        if(userInfo!= null && userInfo!= undefined){
+            if(getAge(new Date(userInfo.dateOfBirth)) < 18){
+                (userInfo.parentsOrGaurdian || []).map((item, parentIndex) => {
+                    this.setParentformFieldsValue(index, parentIndex, item);
+                })
+            }
         }
     }
+        
 
     setParentFormFields = (index) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
@@ -724,12 +727,12 @@ class AppRegistrationForm extends Component {
         {
             oldUser.isDisabled = 0;
         }
-
-        if(user!= null && user!= undefined)
-        {
-            userRegistration.parentOrGuardian = [];
-            this.setUserInfo(userRegistration, user, userRegistrations, index);
-        }
+        userRegistration.parentOrGuardian = [];
+        this.setUserInfo(userRegistration, user, userRegistrations, index);
+        // if(user!= null && user!= undefined)
+        // {
+        //     this.setUserInfo(userRegistration, user, userRegistrations, index);
+        // }
 
        // this.setFormFields(user);
 
@@ -748,10 +751,11 @@ class AppRegistrationForm extends Component {
         if(user!= null && user!= undefined)
         {
             user.isDisabled = 1;
-            this.props.updateEndUserRegisrationAction(user, "user");
-            this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
-            this.setState({participantIndex: index});
         }
+        this.setState({participantIndex: index});
+        this.props.updateEndUserRegisrationAction(user, "user");
+        this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
+        this.props.updateEndUserRegisrationAction(1, "populateParticipantDetails");
 
         console.log("userInfoList" + JSON.stringify(userInfoList));
 

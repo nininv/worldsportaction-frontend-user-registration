@@ -74,7 +74,8 @@ function  endUserRegistrationReducer(state = initialState, action)
             let oldData = state.registrationDetail;
             let updatedValue = action.updatedData;
             let getKey = action.key;
-            if(getKey == "userInfo" || getKey == "refFlag" || getKey == "user")
+            if(getKey == "userInfo" || getKey == "refFlag" || getKey == "user" 
+                    || getKey == "populateParticipantDetails")
             {
                 state[getKey] = updatedValue;
             }
