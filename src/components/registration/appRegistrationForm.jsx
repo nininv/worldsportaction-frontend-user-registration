@@ -719,8 +719,15 @@ class AppRegistrationForm extends Component {
         let userInfoList = registrationState.userInfo;
 
         let user = userInfoList.find(x=>x.id == value);
+        let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
+        if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
+        {
+            oldUser.isDisabled = 0;
+        }
+
         if(user!= null && user!= undefined)
         {
+            userRegistration.parentOrGuardian = [];
             this.setUserInfo(userRegistration, user, userRegistrations, index);
         }
 
@@ -737,13 +744,6 @@ class AppRegistrationForm extends Component {
           else{
             userRegistration["isPlayer"] = -1;
           }
-
-          let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
-          if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
-          {
-            oldUser.isDisabled = 0;
-          }
-
         
         if(user!= null && user!= undefined)
         {
@@ -752,6 +752,8 @@ class AppRegistrationForm extends Component {
             this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
             this.setState({participantIndex: index});
         }
+
+        console.log("userInfoList" + JSON.stringify(userInfoList));
 
         userRegistration[key] = value;
         
