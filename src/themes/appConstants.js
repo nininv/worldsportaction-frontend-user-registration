@@ -279,6 +279,7 @@ const AppConstants = {
   addNewCompetitionFormat: "Add New Competition Format",
   createDraftDraw: "Create Draft Draw",
   applyLadderFor: "Apply Ladder Format to",
+  existingUserSelection: "Existing User Selection",
 
   /*******competition Ladder */
   mwnaPointScheme: "MWNA Points Scheme",
@@ -849,7 +850,8 @@ const AppConstants = {
   friendDeleteConfirmMsg: "Are you sure you want to delete this friend?",
   registrationOptionConfirmMsg: "Changing the registration type will clear the information you have entered already. Please confirm you wish to proceed.",
   parentDeleteConfirmMsg: "Are you sure you want to delete this parent?",
-  areYouAnExistingUser: "Are you an existing user?"
+  areYouAnExistingUser: "Are you an existing user?",
+  newUser: "New User"
 };
 
 export default AppConstants;

@@ -11,7 +11,7 @@ async function logout() {
 }
 
 let token = getAuthToken();
-let userId = getUserId();
+
 // let organisationUniqueKey = "sd-gdf45df-09486-sdg5sfd-546sdf"
 let AxiosApi = {
     // /login Api call
@@ -37,73 +37,6 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
-    ////registrationMembershipFeeList in membership table in the registration tab
-    registrationCompetitionFeeList(offset, yearRefId) {
-        let body = {
-            paging: {
-                offset: offset,
-                limit: 10
-            }
-        };
-        var url = `/api/competitionfee/listing/${yearRefId}`;
-        return Method.dataPost(url, token, body);
-    },
-
-    ////registrationMembershipFeeList in membership table in the registration tab
-    registrationMembershipFeeList(offset, yearRefId) {
-        let body = {
-            paging: {
-                offset: offset,
-                limit: 10
-            }
-        };
-        var url = `/api/membershipproductfee/${yearRefId}`;
-        return Method.dataPost(url, token, body);
-    },
-
-    ///registration Competition fee list product delete
-    registrationCompetitionFeeListDelete(competitionId) {
-        var url = `/api/competitionfee/${competitionId}`;
-        return Method.dataDelete(url, token);
-    },
-
-    ///registration membership fee list product delete
-    registrationMembershipFeeListDelete(payload) {
-        let productId = payload.productId;
-        var url = `/api/membershipproduct/${productId}`;
-        return Method.dataDelete(url, token);
-    },
-
-    //////get the membership  product details
-    regGetMembershipProductDetails(payload) {
-        let productId = payload.productId;
-        var url = `/api/membershipproduct/${productId}`;
-        return Method.dataGet(url, token);
-    },
-
-
-    //////get the membership  product details
-    regGetMembershipProductDetails(payload) {
-        let productId = payload.productId
-        var url = `api/membershipproduct/details/${productId}`;
-        return Method.dataGet(url, token);
-    },
-
-    //////save the membership  product details
-    async regSaveMembershipProductDetails(payload) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/membershipproduct?organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-
-    async regSaveRegistrationForm(payload) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/orgregistration?organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-
     /////get the common year list reference
     getYearList() {
         var url = `/common/reference/year`;
@@ -121,11 +54,7 @@ let AxiosApi = {
         var url = `/api/orgregistration/competitionyear/${year}`;
         return Method.dataGet(url, token);
     },
-
-    getVenue() {
-        var url = `/api/venue/all`;
-        return Method.dataGet(url, token);
-    },
+  
     getRegFormSetting() {
         var url = "/common/reference/RegistrationSettings";
         return Method.dataGet(url, token);
@@ -138,51 +67,12 @@ let AxiosApi = {
         var url = `/api/details/membershipproduct/${CompetitionId}`;
         return Method.dataGet(url, token);
     },
-    getRegistrationForm(year, CompetitionId) {
-        let body = {
-            yearRefId: year,
-            competitionUniqueKey: CompetitionId
-        };
-        var url = "/api/orgregistration/details";
-        return Method.dataPost(url, token, body);
-    },
-    ///////////get the default membership  product types in registartion membership fees
-    regDefaultMembershipProductTypes() {
-        var url = `api/membershipproducttype/default`;
-        return Method.dataGet(url, token);
-    },
-
-    //////save the membership  product Fees
-    async regSaveMembershipProductFee(payload) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/membershipproduct/fees?organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-    //////save the membership  product Discount
-    async  regSaveMembershipProductDiscount(payload) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/membershipproduct/discount?organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
+    
     /////get the membership product discount Types
     membershipProductDiscountTypes() {
         var url = `/api/membershipproductdiscounttype/default`;
         return Method.dataGet(url, token);
     },
-
-    /////get the common Membership Product Fees Type
-    getMembershipProductFeesType() {
-        var url = `/common/reference/MembershipProductFeesType`;
-        return Method.dataGet(url, token);
-    },
-    ////get commom reference discount type
-    getCommonDiscountTypeType() {
-        var url = `/common/reference/discountType`;
-        return Method.dataGet(url, token);
-    },
-
     /////types of competition in competition fees section from reference table
     getTypesOfCompetition() {
         var url = `/common/reference/CompetitionType`;
@@ -200,120 +90,13 @@ let AxiosApi = {
         return Method.dataGet(url, token)
     },
 
-    getCharityRoundUp() {
-        var url = "/common/reference/CharityRoundUp";
-        return Method.dataGet(url, token)
-    },
-    getPaymentOption() {
-        var url = "/common/reference/PaymentOption";
-        return Method.dataGet(url, token)
-    },
-
     getGovtVouchers() {
         var url = '/common/reference/GovernmentVoucher';
         return Method.dataGet(url, token)
     },
 
-    ////get the competition fees all the data in one API
-    async getAllCompetitionFeesDeatils(competitionId) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/competitiondetails?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataGet(url, token);
-    },
-
-    ///////////save the competition fees deatils 
-    async saveCompetitionFeesDetails(payload) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/detail?organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-
-    /////save the competition membership tab details
-    async  saveCompetitionFeesMembershipTab(payload, competitionId) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `api/competitionfee/membership?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-
-    ////get default competition membershipproduct tab details
-    getDefaultCompFeesMembershipProduct() {
-        var url = `/api/competitionfee/membershipdetails`;
-        return Method.dataGet(url, token);
-    },
-
-    /////save the division table data  in the competition fees section
-    async  saveCompetitionFeesDivisionAction(payload, competitionId) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/division?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`;
-        return Method.dataPost(url, token, payload);
-    },
-    //casual PaymentOption
-    getCasualPayment() {
-        var url = "/common/reference/CasualPaymentOption";
-        return Method.dataGet(url, token)
-    },
-
-    //seasonal PaymentOption
-    getSeasonalPayment() {
-        var url = "/common/reference/SeasonalPaymentOption";
-        return Method.dataGet(url, token)
-    },
-
-    //post payment
-    async postCompetitionPayment(payload, competitionId, organisationKey) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/paymentoption?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`
-        return Method.dataPost(url, token, payload)
-    },
-
-
-    // Post competition fee section
-    async postCompetitionFeeSection(payload, competitionId, organisationKey) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/fees?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`
-        return Method.dataPost(url, token, payload)
-    },
-    //post competition fee discount 
-    async postCompetitonFeeDiscount(payload, competitionId, organisationKey) {
-        let orgItem = await getOrganisationData()
-        let organisationUniqueKey = orgItem ? orgItem.organisationUniqueKey : 1;
-        var url = `/api/competitionfee/discount?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`
-        return Method.dataPost(url, token, payload)
-    },
-
-    /////get the membership product discount Types
-    competitionFeeDiscountTypes() {
-        var url = `/api/competitionfee/competitiondiscounttype/default`;
-        return Method.dataGet(url, token);
-    },
-
-    ///////get the default competition logo api
-    getDefaultCompFeesLogo() {
-        // var url = `/api/competitionfee/getOrganisationLogo/${organisationUniqueKey}`;
-        var url = `/api/competitionfee/getOrganisationLogo/${"sd-gdf45df-09486-sdg5sfd-546sdf"}`;
-        return Method.dataGet(url, token);
-    },
-
-    //////get the divisions list on the basis of year and competition
-    getDivisionsList(yearRefId, competitionId) {
-        var url = `/api/competitionfee/divisionsByCompetition?competitionUniqueKey=${competitionId}&yearRefId=${yearRefId}`;
-        return Method.dataPost(url, token);
-    },
-
-    ///// Get Competition Venue 
-
-    getCompetitionVenue(competitionId) {
-        var url = `/api/competitionfee/getVenues/${competitionId}`;
-        return Method.dataGet(url, token);
-    },
-
-    saveEndUserRegistration(payload) {
+   async saveEndUserRegistration(payload) {
+        let userId = await getUserId();
         var url = `/api/registration/save?userId=${userId == undefined ? 0 : userId}`;
         return Method.dataPost(url, token, payload);
     },

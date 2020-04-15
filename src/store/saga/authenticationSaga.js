@@ -8,6 +8,7 @@ import AppConstants from "../../themes/appConstants";
 export function* loginApiSaga(action) {
   try {
     const result = yield call(userAxiosApi.Login, action.payload);
+    console.log("result.status" + result.status);
     if (result.status === 1) {
       yield put({
         type: ApiConstants.API_LOGIN_SUCCESS,
@@ -25,6 +26,7 @@ export function* loginApiSaga(action) {
       }, 800);
     }
   } catch (error) {
+    console.log("ERROR: !!!!!!!!!!!!1" + error);
     yield put({
       type: ApiConstants.API_LOGIN_ERROR,
       error: error,

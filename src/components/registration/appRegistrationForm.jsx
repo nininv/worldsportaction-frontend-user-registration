@@ -12,6 +12,7 @@ import {
  import "./product.css";
  import "../user/user.css";
  import '../competition/competition.css';
+ import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
@@ -60,7 +61,8 @@ class AppRegistrationForm extends Component {
             buttonPressed: "",
             loading: false,
             flag: 0,
-            tempParentId: 0
+            tempParentId: 0,
+			getMembershipLoad: false
         };
      
         this.props.getCommonRefData();
@@ -87,8 +89,7 @@ class AppRegistrationForm extends Component {
 
         this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
-
-        this.addParticipant(0, 1);
+		 this.setState({getMembershipLoad: true})
 
     }
     componentDidUpdate(nextProps){
@@ -103,6 +104,17 @@ class AppRegistrationForm extends Component {
                 this.setState({volunteerList: commonReducerState.registrationOtherInfoList});
             }
         }
+		
+		 if(registrationState.onMembershipLoad == false && this.state.getMembershipLoad == true)
+        {
+            if(registrationState.membershipProductInfo!= null && 
+                registrationState.membershipProductInfo.membershipProducts!= null 
+                && registrationState.membershipProductInfo.membershipProducts.length > 0)
+                {
+                   this.setState({getMembershipLoad: false})
+                    this.addParticipant(0, 1);
+                }
+        }
 
        if(registrationState.onLoad == false && this.state.loading === true)
        {
@@ -115,13 +127,21 @@ class AppRegistrationForm extends Component {
             }
        }
 
-       if(registrationState.populateParticipantDetails === 1 )
+       if(registrationState.populateParticipantDetails  == 1)
        {
-           let registrationState = this.props.endUserRegistrationState;
-           let userInfo = registrationState.userInfo;
-           this.setFormFields(userInfo, 0);
+           console.log("&&&&&&&&&&&");
+           let user = registrationState.user;
+           this.setFormFields(user, this.state.participantIndex);
            this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
        }
+
+    //    if(registrationState.populateParticipantDetails === 1 )
+    //    {
+    //        let registrationState = this.props.endUserRegistrationState;
+    //        let userInfo = registrationState.userInfo;
+    //        this.setFormFields(userInfo, 0);
+    //        this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
+    //    }
        if(registrationState.refFlag === "parent")
        {
             this.setParentFormFields(this.state.participantIndex);
@@ -210,7 +230,7 @@ class AppRegistrationForm extends Component {
             isVoucherAdded: false,
             whoAreYouRegistering: 0,
             whatTypeOfRegistration: 0,
-            userId: 0,
+            userId: null,
             competitionMembershipProductTypeId:null,
             competitionMembershipProductDivisionId: 0,
             divisionName:"",
@@ -292,78 +312,116 @@ class AppRegistrationForm extends Component {
         let newMembershipProducts = deepCopyFunction(membershipProductInfo.membershipProducts); // Deep Copy
         participantObj.membershipProducts = newMembershipProducts;
        
-        if(populateParticipantDetails == 1 && getUserId() != 0)
-        {
-            this.setUserInfo(participantObj);
-        }
+        // if(populateParticipantDetails == 1 && getUserId() != 0)
+        // {
+        //     this.setUserInfo(participantObj);
+        // }
         console.log("participantObj" + JSON.stringify(participantObj));
         userRegistrations.push(participantObj);
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
-        if(populateParticipantDetails == 1  && getUserId() != 0)
-        {
-            this.props.updateEndUserRegisrationAction(populateParticipantDetails, "populateParticipantDetails");
-        }
+        // if(populateParticipantDetails == 1  && getUserId() != 0)
+        // {
+        //     this.props.updateEndUserRegisrationAction(populateParticipantDetails, "populateParticipantDetails");
+        // }
     }
 
-    setUserInfo = (participantObj) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let userInfo = registrationState.userInfo;
+    setUserInfo = (participantObj, userInfo, userRegistrations, index) => {
         console.log("userInfo" + JSON.stringify(userInfo));
-        participantObj.firstName = userInfo.firstName;
-        participantObj.middleName = userInfo.middleName;
-        participantObj.lastName = userInfo.lastName;
-        participantObj.mobileNumber = userInfo.mobileNumber;
-        participantObj.email = userInfo.email;
-        participantObj.reEnterEmail = userInfo.email;
-        participantObj.street1 = userInfo.street1;
-        participantObj.street2 = userInfo.street2;
-        participantObj.suburb = userInfo.suburb;
-        participantObj.stateRefId = userInfo.stateRefId;
-        participantObj.postalCode = userInfo.postalCode;
-        participantObj.emergencyContactName = userInfo.emergencyContactName;
-        participantObj.emergencyContactNumber = userInfo.emergencyContactNumber;
-        participantObj.profileUrl = userInfo.photoUrl;
+        participantObj.firstName = userInfo!= null ? userInfo.firstName : "";
+        participantObj.middleName = userInfo!= null ? userInfo.middleName : "";
+        participantObj.lastName =  userInfo!= null ? userInfo.lastName : "";
+        participantObj.mobileNumber =  userInfo!= null ? userInfo.mobileNumber : "";
+        participantObj.email =  userInfo!= null ? userInfo.email : "";
+        participantObj.reEnterEmail =  userInfo!= null ? userInfo.email : "";
+        participantObj.street1 =  userInfo!= null ? userInfo.street1 : "";
+        participantObj.street2 =  userInfo!= null ? userInfo.street2 : "";
+        participantObj.suburb =  userInfo!= null ? userInfo.suburb : "";
+        participantObj.stateRefId =  userInfo!= null ? userInfo.stateRefId : null;
+        participantObj.postalCode =  userInfo!= null ? userInfo.postalCode : "";
+        participantObj.emergencyContactName =  userInfo!= null ? userInfo.emergencyContactName : "";
+        participantObj.emergencyContactNumber =  userInfo!= null ? userInfo.emergencyContactNumber : "";
+        participantObj.profileUrl =  userInfo!= null ? userInfo.photoUrl : "";
+        participantObj.genderRefId =  userInfo!= null ? userInfo.genderRefId : 0;
+        participantObj.dateOfBirth =  userInfo!= null ? new Date(userInfo.dateOfBirth) : null;
+        participantObj.userId =  userInfo!= null ? userInfo.id: 0;
+
+        if(userInfo!= null && userInfo!= undefined){
+            if(getAge(new Date(userInfo.dateOfBirth)) < 18){
+                (userInfo.parentsOrGaurdian || []).map((item, userIndex) => {
+                    this.addParent(index, userRegistrations, item);
+                })
+            }
+        }
     }
 
     setFormFields = (userInfo, index) => {
         console.log("setFormFields"+ JSON.stringify(userInfo));
-        this.props.form.setFieldsValue({
-            [`participantFirstName${index}`]: userInfo.firstName,
-            [`participantLastName${index}`]: userInfo.lastName,
-            [`participantMobileNumber${index}`]: userInfo.mobileNumber,
-            [`participantEmail${index}`]: userInfo.email,
-            [`participantReEnterEmail${index}`]: userInfo.email,
-            [`participantStreet1${index}`]: userInfo.street1,
-            [`participantSuburb${index}`]: userInfo.suburb,
-            [`participantStateRefId${index}`]: userInfo.stateRefId,
-            [`participantPostalCode${index}`]: userInfo.postalCode,
-            [`participantEmergencyContactName${index}`]: userInfo.emergencyContactName,
-            [`participantEmergencyContactNumber${index}`]: userInfo.emergencyContactNumber
-        });
-
-    }
-
-    setParentFormFields = (index) => {
-        console.log("setParentFormFields" + index);
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
 
+        this.props.form.setFieldsValue({
+            [`participantFirstName${index}`]: userInfo!= null ? userInfo.firstName : "",
+            [`participantLastName${index}`]:  userInfo!= null ? userInfo.lastName : "",
+            [`participantMobileNumber${index}`]:  userInfo!= null ? userInfo.mobileNumber : "",
+            [`participantEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`participantReEnterEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`participantStreet1${index}`]:  userInfo!= null ? userInfo.street1 : "",
+            [`participantSuburb${index}`]:  userInfo!= null ? userInfo.suburb : "",
+            [`participantStateRefId${index}`]:  userInfo!= null ? userInfo.stateRefId : null,
+            [`participantPostalCode${index}`]:  userInfo!= null ? userInfo.postalCode : "",
+            [`participantEmergencyContactName${index}`]:  userInfo!= null ? userInfo.emergencyContactName : "",
+            [`participantEmergencyContactNumber${index}`]:  userInfo!= null ? userInfo.emergencyContactNumber : "",
+            [`genderRefId${index}`]:  userInfo!= null ? userInfo.genderRefId : 0,
+            [`dateOfBirth${index}`]:  userInfo!= null ? ((userInfo.dateOfBirth!= null && userInfo.dateOfBirth!= '') ? 
+                moment(userInfo.dateOfBirth, "YYYY-MM-DD") : null) : null,
+        });
+
+        if(userInfo!= null && userInfo!= undefined){
+            if(getAge(new Date(userInfo.dateOfBirth)) < 18){
+                (userInfo.parentsOrGaurdian || []).map((item, parentIndex) => {
+                    this.setParentformFieldsValue(index, parentIndex, item);
+                })
+            }
+        }
+    }
+        
+
+    setParentFormFields = (index) => {
+        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index]; 
+      
         console.log("userRegistration.parentOrGuardian" + JSON.stringify(userRegistration.parentOrGuardian));
         (userRegistration.parentOrGuardian || []).map((item, parentIndex) => {
-            this.props.form.setFieldsValue({
-                [`parentFirstName${index}${parentIndex}`]: item.firstName,
-                [`parentLastName${index}${parentIndex}`]: item.lastName,
-                [`parentContactField${index}${parentIndex}`]: item.mobileNumber,
-                [`parentEmail${index}${parentIndex}`]: item.email,
-                [`parentReEnterEmail${index}${parentIndex}`]: item.email,
-                [`parentStreet1${index}${parentIndex}`]: item.street1,
-                [`parentSuburb${index}${parentIndex}`]: item.suburb,
-                [`parentStateRefId${index}${parentIndex}`]: item.stateRefId,
-                [`parentPostalCode${index}${parentIndex}`]: item.postalCode,
-            });
+            this.setParentformFieldsValue(index, parentIndex, item);
+            // this.props.form.setFieldsValue({
+            //     [`parentFirstName${index}${parentIndex}`]: item.firstName,
+            //     [`parentLastName${index}${parentIndex}`]: item.lastName,
+            //     [`parentContactField${index}${parentIndex}`]: item.mobileNumber,
+            //     [`parentEmail${index}${parentIndex}`]: item.email,
+            //     [`parentReEnterEmail${index}${parentIndex}`]: item.email,
+            //     [`parentStreet1${index}${parentIndex}`]: item.street1,
+            //     [`parentSuburb${index}${parentIndex}`]: item.suburb,
+            //     [`parentStateRefId${index}${parentIndex}`]: item.stateRefId,
+            //     [`parentPostalCode${index}${parentIndex}`]: item.postalCode,
+            // });
         })
 
+    }
+
+    setParentformFieldsValue = (index, parentIndex, item) => {
+        this.props.form.setFieldsValue({
+            [`parentFirstName${index}${parentIndex}`]: item.firstName,
+            [`parentLastName${index}${parentIndex}`]: item.lastName,
+            [`parentContactField${index}${parentIndex}`]: item.mobileNumber,
+            [`parentEmail${index}${parentIndex}`]: item.email,
+            [`parentReEnterEmail${index}${parentIndex}`]: item.email,
+            [`parentStreet1${index}${parentIndex}`]: item.street1,
+            [`parentSuburb${index}${parentIndex}`]: item.suburb,
+            [`parentStateRefId${index}${parentIndex}`]: item.stateRefId,
+            [`parentPostalCode${index}${parentIndex}`]: item.postalCode,
+        });
     }
 
     addProduct = (index) => {
@@ -437,7 +495,7 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    addParent = (index, userRegistrations) => {
+    addParent = (index, userRegistrations, parent) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
 
         if(userRegistrations == null)
@@ -447,18 +505,18 @@ class AppRegistrationForm extends Component {
 
         let parentObj = {
             tempParentId: ++this.state.tempParentId,
-            userId:0,
-            firstName:"",
-            lastName: "",
-            mobileNumber:"",
-            email:"",
-            street1: "",
-            street2: "",
-            suburb: "",
-            stateRefId: 1,
-            postalCode: "",
+            userId: parent!= null ? parent.userId : 0,
+            firstName: parent!= null ? parent.firstName : "",
+            lastName: parent!= null ? parent.lastName : "",
+            mobileNumber: parent!= null ? parent.mobileNumber: "",
+            email:  parent!= null ? parent.email: "",
+            street1: parent!= null ? parent.street1 : "",
+            street2: parent!= null ? parent.street2 : "",
+            suburb: parent!= null ? parent.suburb: "",
+            stateRefId: parent!= null ? parent.stateRefId: 1,
+            postalCode: parent!= null ? parent.postalCode: "",
             isSameAddress: 0,
-            reEnterEmail: ""
+            reEnterEmail: parent!= null ? parent.email : ""
         }
         console.log("parentObj ::" + JSON.stringify(parentObj));
         console.log("ParentOrGuardian" + JSON.stringify(userRegistration.parentOrGuardian));
@@ -479,10 +537,12 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetParticipantValue = (value, key, index) => {
-        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-        let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
+        let membershipProdecutInfo = registrationState.membershipProductInfo;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
+        let userInfo = registrationState.userInfo;
         if(key =="playedBefore" && value == 0)
         {
             userRegistration["playedYear"] = 0;
@@ -539,27 +599,29 @@ class AppRegistrationForm extends Component {
         }
         else if(key === "whatTypeOfRegistration")
         {
-            if(value === 1){
-                let friendObj = {
-                    friendId: 0,
-                    firstName:"",
-                    lastName:"",
-                    email:"",
-                    mobileNumber:""
+            if(getUserId()  == 0 || userInfo.length == 0){
+                if(value === 1){
+                    let friendObj = {
+                        friendId: 0,
+                        firstName:"",
+                        lastName:"",
+                        email:"",
+                        mobileNumber:""
+                    }
+                    let referFriendObj = {
+                        friendId: 0,
+                        firstName:"",
+                        lastName:"",
+                        email:"",
+                        mobileNumber:""
+                    }
+                    userRegistration["isPlayer"] = 1;
+                    userRegistration.friends.push(friendObj);
+                    userRegistration.referFriends.push(referFriendObj);
                 }
-                let referFriendObj = {
-                    friendId: 0,
-                    firstName:"",
-                    lastName:"",
-                    email:"",
-                    mobileNumber:""
+                else {
+                    userRegistration["isPlayer"] = 0;
                 }
-                userRegistration["isPlayer"] = 1;
-                userRegistration.friends.push(friendObj);
-                userRegistration.referFriends.push(referFriendObj);
-            }
-            else {
-                userRegistration["isPlayer"] = 0;
             }
         }
         else if(key == "isSameParentContact" && value)
@@ -648,6 +710,57 @@ class AppRegistrationForm extends Component {
         }
 
         userRegistration[key] = value;
+        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+    }
+
+    onChangeSetUserSelection = (value, key, index) => {
+        console.log("UserId" + value);
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index]; 
+        let userInfoList = registrationState.userInfo;
+
+        let user = userInfoList.find(x=>x.id == value);
+        let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
+        if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
+        {
+            oldUser.isDisabled = 0;
+        }
+        userRegistration.parentOrGuardian = [];
+        this.setUserInfo(userRegistration, user, userRegistrations, index);
+        // if(user!= null && user!= undefined)
+        // {
+        //     this.setUserInfo(userRegistration, user, userRegistrations, index);
+        // }
+
+       // this.setFormFields(user);
+
+        if(userRegistration.whatTypeOfRegistration == 1 || 
+            userRegistration.registeringYourself == 1 ){
+            userRegistration["isPlayer"] = 1;
+          }
+          else if(userRegistration.whatTypeOfRegistration == 2 || 
+            userRegistration.registeringYourself == 2){
+            userRegistration["isPlayer"] = 0;
+          }
+          else{
+            userRegistration["isPlayer"] = -1;
+          }
+        
+        if(user!= null && user!= undefined)
+        {
+            user.isDisabled = 1;
+        }
+        this.setState({participantIndex: index});
+        this.props.updateEndUserRegisrationAction(user, "user");
+        this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
+        this.props.updateEndUserRegisrationAction(1, "populateParticipantDetails");
+
+        console.log("userInfoList" + JSON.stringify(userInfoList));
+
+        userRegistration[key] = value;
+        
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
@@ -801,10 +914,11 @@ class AppRegistrationForm extends Component {
 
     onChangeSetRegYourself = (value, key, index)  => {
         console.log("registeringYourself" + value);
-        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
-
+        let userInfo = registrationState.userInfo;
       //clearing up the existing participants
       //let newUserRegistration = [];
       //let vouchers = [];
@@ -812,15 +926,19 @@ class AppRegistrationForm extends Component {
      // this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
       //this.setState({registeringYourself: e});
       userRegistration[key] = value;
-      if(value == 1){
-        userRegistration["isPlayer"] = 1;
+      if(getUserId() == 0 || userInfo.length == 0)
+      {
+        if(value == 1){
+            userRegistration["isPlayer"] = 1;
+          }
+          else if(value == 2){
+            userRegistration["isPlayer"] = 0;
+          }
+          else{
+            userRegistration["isPlayer"] = -1;
+          }
       }
-      else if(value == 2){
-        userRegistration["isPlayer"] = 0;
-      }
-      else{
-        userRegistration["isPlayer"] = -1;
-      }
+     
       this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
      
       //this.addParticipant(e, 1);
@@ -914,10 +1032,18 @@ class AppRegistrationForm extends Component {
     }
 
     removeParticipant = () => {
-        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[this.state.participantIndex];
         let vouchers = registrationDetail.vouchers;
+
+        let userInfoList = registrationState.userInfo;
+        let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
+        if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
+        {
+            oldUser.isDisabled = 0;
+        }
 
         let deletedTempParticipant = vouchers.find(x=>x.tempParticipantId === userRegistration.tempParticipantId);
 
@@ -934,7 +1060,7 @@ class AppRegistrationForm extends Component {
         }
         
         userRegistrations.splice(this.state.participantIndex, 1);
-
+        this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
 
     }
@@ -1144,10 +1270,12 @@ class AppRegistrationForm extends Component {
 
     registrationQuestionView = (item, index, getFieldDecorator) =>{
         const {genderList} = this.props.commonReducerState;
-        console.log("registeringYourself::" + this.state.registeringYourself);
+        let registrationState = this.props.endUserRegistrationState;
+        let userInfo = registrationState.userInfo;
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.registration}</span>
+                
                  {item.registeringYourself == 3 ? (
                      <div>
                         <InputWithHead heading={AppConstants.whoAreYouRegistering} required={"required-field"}></InputWithHead>
@@ -1182,38 +1310,44 @@ class AppRegistrationForm extends Component {
                     </div>
                 ): null}
 
-                <InputWithHead heading={AppConstants.gender}   required={"required-field"}></InputWithHead>
-                <Form.Item >
-                {getFieldDecorator(`genderRefId${index}`, {
-                    rules: [{ required: true, message: ValidationConstants.genderField }],
-                })(
-                    <Radio.Group
-                        className="reg-competition-radio"
-                        onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "genderRefId", index)}
-                       // value={item.genderRefId}
-                        setFieldsValue={item.genderRefId}>
-                            {(genderList || []).map((gender, genderIndex) => (
-                                <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
-                            ))}
-                    </Radio.Group>
-                 )}
-                 </Form.Item>
+                { (item.registeringYourself!= 0 && (userInfo!= null && userInfo.length > 0))? 
+                    this.userSelectionView(item, index) : null}
+                {item.isPlayer!= -1  ? 
+                <div>
+                   
+                    <InputWithHead heading={AppConstants.gender}   required={"required-field"}></InputWithHead>
+                    <Form.Item >
+                    {getFieldDecorator(`genderRefId${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.genderField }],
+                    })(
+                        <Radio.Group
+                            className="reg-competition-radio"
+                            onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "genderRefId", index)}
+                        // value={item.genderRefId}
+                            setFieldsValue={item.genderRefId}>
+                                {(genderList || []).map((gender, genderIndex) => (
+                                    <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
+                                ))}
+                        </Radio.Group>
+                    )}
+                    </Form.Item>
 
-                <InputWithHead heading={AppConstants.dob}   required={"required-field"}/>
-                <Form.Item >
-                {getFieldDecorator(`dateOfBirth${index}`, {
-                    rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
-                })(
-                <DatePicker
-                    size="large"
-                    style={{ width: "100%" }}
-                    onChange={e => this.onChangeSetParticipantValue(e, "dateOfBirth", index) }
-                    format={"DD-MM-YYYY"}
-                    showTime={false}
-                    name={'Dob'}
-                />
-                )}
-                </Form.Item>
+                    <InputWithHead heading={AppConstants.dob}   required={"required-field"}/>
+                    <Form.Item >
+                    {getFieldDecorator(`dateOfBirth${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+                    })(
+                    <DatePicker
+                        size="large"
+                        style={{ width: "100%" }}
+                        onChange={e => this.onChangeSetParticipantValue(e, "dateOfBirth", index) }
+                        format={"DD-MM-YYYY"}
+                        showTime={false}
+                        name={'dateOfBirth'}
+                    />
+                    )}
+                    </Form.Item>
+                </div> : null}
             </div>
         )
     }
@@ -1277,7 +1411,8 @@ class AppRegistrationForm extends Component {
                 {index == 0 ? 
                     <div>
                         <InputWithHead heading={AppConstants.contactDetails}/>
-                        <div className="contact-detail-container">
+                        <span className="applicable-to-text">{membershipProdecutInfo.contactDetails}</span>
+                        {/* <div className="contact-detail-container">
                             <div>
                             <InputWithHead heading={AppConstants.name}/>
                             <div className="applicable-to-text">{membershipProdecutInfo.replyName}</div>
@@ -1294,7 +1429,7 @@ class AppRegistrationForm extends Component {
                             <InputWithHead heading={AppConstants.phone}/>
                             <div className="applicable-to-text">{membershipProdecutInfo.replyPhone}</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 : null}
 
@@ -2336,12 +2471,33 @@ class AppRegistrationForm extends Component {
           );
     }
 
+    userSelectionView = (item, index) => {
+        let registrationState = this.props.endUserRegistrationState;
+        let userInfo = registrationState.userInfo;
+        return (
+            <div>
+                <InputWithHead heading={AppConstants.existingUserSelection}/>
+                <Select
+                    style={{ width: "100%" }}
+                    placeholder={AppConstants.select}
+                    onChange={(e) => this.onChangeSetUserSelection(e, "userId", index )}
+                    value={item.userId}>
+                      <Option key={0} value={0}> {AppConstants.newUser}</Option>   
+                    {(userInfo || []).map((user, userIndex) => (
+                    <Option disabled={parseInt(user.isDisabled)} key={user.id} value={user.id}> {user.firstName + " " + user.lastName}</Option>
+                    ))}
+                </Select>
+               
+            </div>
+        )
+    }
+
     contentView = (getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let regSetting = registrationState.registrationSettings;
-       // console.log("userRegistrations::" + JSON.stringify(userRegistrations));
+        //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         //console.log("registrationSettings" + JSON.stringify(regSetting));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
@@ -2360,6 +2516,7 @@ class AppRegistrationForm extends Component {
                         <div>
                             {this.dividerTextView("PARTICIPANT " + (index + 1), styles, "participant", index, -1)}
                             <div style={{marginBottom: "20px"}}>
+                               
                                 {this.registrationQuestionView(item, index, getFieldDecorator)}
                             </div>
                         </div>
@@ -2449,15 +2606,23 @@ class AppRegistrationForm extends Component {
                             </div>
                         </div>
                         ): null}
+
+                        {(userRegistrations.length > 0 && userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
+                        <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
+                            <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
+                                + {AppConstants.addAnotherParticipant}
+                            </span> 
+                        </div>
+                        ) : null}
                     </div>
                 ))}
-                {this.state.registeringYourself != 0 && userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
+                {userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
                 <div>
-                    <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
+                    {/* <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
                         <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(this.state.registeringYourself)}>
                             + {AppConstants.addAnotherParticipant}
                         </span> 
-                    </div>
+                    </div> */}
                     {(regSetting.club_volunteer === 1) && (
                         <div style={{marginBottom: "20px"}}>
                             {this.otherInfoReqdView(getFieldDecorator)}
@@ -2508,7 +2673,7 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
         return (
             <div className="fluid-width">
-                 {this.state.registeringYourself !=0 && userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
+                 {userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
                 <div className="footer-view">
                     <div className="row">
                         <div className="col-sm">
