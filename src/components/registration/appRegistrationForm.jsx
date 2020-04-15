@@ -1032,10 +1032,18 @@ class AppRegistrationForm extends Component {
     }
 
     removeParticipant = () => {
-        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[this.state.participantIndex];
         let vouchers = registrationDetail.vouchers;
+
+        let userInfoList = registrationState.userInfo;
+        let oldUser = userInfoList.find(x=>x.id == userRegistration.userId);
+        if(oldUser!= null && oldUser!= "" && oldUser!= undefined)
+        {
+            oldUser.isDisabled = 0;
+        }
 
         let deletedTempParticipant = vouchers.find(x=>x.tempParticipantId === userRegistration.tempParticipantId);
 
@@ -1052,7 +1060,7 @@ class AppRegistrationForm extends Component {
         }
         
         userRegistrations.splice(this.state.participantIndex, 1);
-
+        this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
 
     }
