@@ -15,7 +15,8 @@ class UserRegistration extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            headers : null,
+            queryParams: null
         }
     }
 
@@ -31,8 +32,10 @@ class UserRegistration extends Component {
         req.send(null);
         var headers = this.parseHttpHeaders(req.getAllResponseHeaders());
             
-        alert("headers" + JSON.stringify(headers));
-        alert("query::" + JSON.stringify(query));
+      //  alert("headers" + JSON.stringify(headers));
+      //  alert("query::" + JSON.stringify(query));
+        this.setState({headers:JSON.stringify(headers)});
+        this.setState({queryParams: JSON.stringify(query)});
     }
 
     parseHttpHeaders(httpHeaders) {
@@ -92,6 +95,8 @@ class UserRegistration extends Component {
     contentView = () => {
         return (
             <div className="content-view">
+                <div>{this.state.headers}</div>
+                <div>{this.state.queryParams}</div>
                 <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
