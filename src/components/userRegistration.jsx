@@ -15,7 +15,6 @@ class UserRegistration extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
         }
     }
 
@@ -25,7 +24,38 @@ class UserRegistration extends Component {
         let organisationUniqueKey = query.organisationId;
         setOrganistaionId(organisationUniqueKey);
         setCompetitionID(competitionUniqueKey);
-      
+
+        let userIdFromQuery = query.userId;
+        let tokenFromQuery = query.token;
+
+        console.log("userIdFromQuery" + userIdFromQuery);
+        console.log("tokenFromQuery::" + tokenFromQuery);
+
+        if(userIdFromQuery!= undefined && tokenFromQuery!= undefined && 
+            userIdFromQuery!= null && tokenFromQuery!= null && 
+            userIdFromQuery!= "" && tokenFromQuery!= "" && userIdFromQuery!= 0)
+            {
+                setUserId(userIdFromQuery);
+                setAuthToken(tokenFromQuery);
+                history.push("/appRegistrationForm")
+            }
+
+        // var req = new XMLHttpRequest();
+        // req.open('GET', document.location, false);
+        // req.send(null);
+        // var headers = this.parseHttpHeaders(req.getAllResponseHeaders());
+            
+      //  alert("headers" + JSON.stringify(headers));
+      //  alert("query::" + JSON.stringify(query));
+        // this.setState({headers:JSON.stringify(headers)});
+        // this.setState({queryParams: JSON.stringify(query)});
+    }
+
+    parseHttpHeaders(httpHeaders) {
+        return httpHeaders.split("\n")
+         .map(x=>x.split(/: */,2))
+         .filter(x=>x[0])
+         .reduce((ac, x)=>{ac[x[0]] = x[1];return ac;}, {});
     }
 
     queryfie(string){
