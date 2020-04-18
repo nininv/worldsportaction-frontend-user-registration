@@ -5,7 +5,7 @@ import AppImages from "../themes/appImages";
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import "../pages/layout.css";
-import { setAuthToken, setUserId, setOrganistaionId, setCompetitionID } from '../util/sessionStorage'
+import { setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId } from '../util/sessionStorage'
 
 const { Content, Header } = Layout;
 
@@ -18,37 +18,28 @@ class UserRegistration extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
-        setOrganistaionId(organisationUniqueKey);
-        setCompetitionID(competitionUniqueKey);
+        if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined)
+        {
+            setOrganistaionId(organisationUniqueKey);
+            setCompetitionID(competitionUniqueKey);
+        }
 
-        let userIdFromQuery = query.userId;
-        let tokenFromQuery = query.token;
+        let userIdFromLocalStorage = await getUserId();
+        let tokenFromLocalStorage = await getAuthToken();
 
-        console.log("userIdFromQuery" + userIdFromQuery);
-        console.log("tokenFromQuery::" + tokenFromQuery);
+        console.log("userIdFromQuery" + userIdFromLocalStorage);
+        console.log("tokenFromQuery::" + tokenFromLocalStorage);
 
-        if(userIdFromQuery!= undefined && tokenFromQuery!= undefined && 
-            userIdFromQuery!= null && tokenFromQuery!= null && 
-            userIdFromQuery!= "" && tokenFromQuery!= "" && userIdFromQuery!= 0)
+        if(userIdFromLocalStorage!= undefined && tokenFromLocalStorage!= undefined && 
+            userIdFromLocalStorage!= null && tokenFromLocalStorage!= null && 
+            userIdFromLocalStorage!= "" && tokenFromLocalStorage!= "")
             {
-                setUserId(userIdFromQuery);
-                setAuthToken(tokenFromQuery);
                 history.push("/appRegistrationForm")
             }
-
-        // var req = new XMLHttpRequest();
-        // req.open('GET', document.location, false);
-        // req.send(null);
-        // var headers = this.parseHttpHeaders(req.getAllResponseHeaders());
-            
-      //  alert("headers" + JSON.stringify(headers));
-      //  alert("query::" + JSON.stringify(query));
-        // this.setState({headers:JSON.stringify(headers)});
-        // this.setState({queryParams: JSON.stringify(query)});
     }
 
     parseHttpHeaders(httpHeaders) {
