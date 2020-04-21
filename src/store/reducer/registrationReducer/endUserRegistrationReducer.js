@@ -33,10 +33,11 @@ const initialState = {
     registrationDetail: registrationObj,
     registrationSettings: [],
     populateParticipantDetails: 0,
-    membershipProductInfo: membershipProdInfoObj,
+    membershipProductInfo: [],
     refFlag:"",
     user: null,
-    userInfo: []
+    userInfo: [],
+    isSetCompOrgKey: false
 }
 
 
@@ -75,7 +76,7 @@ function  endUserRegistrationReducer(state = initialState, action)
             let updatedValue = action.updatedData;
             let getKey = action.key;
             if(getKey == "userInfo" || getKey == "refFlag" || getKey == "user" 
-                    || getKey == "populateParticipantDetails")
+                    || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey")
             {
                 state[getKey] = updatedValue;
             }

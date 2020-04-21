@@ -76,7 +76,9 @@ const ValidationConstants = {
     messageStatus401: "The user is not authorized to make the request.",
 
     //venue court
-    emptyAddCourtValidation: "Please add court to add venue."
+    emptyAddCourtValidation: "Please add court to add venue.",
+    organisationRequired: "Please select Organisation",
+    competitionRequired: "Please select Competition"
 };
 
 export default ValidationConstants;
