@@ -1170,7 +1170,7 @@ class AppRegistrationForm extends Component {
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: " + err);
             if(!err)
             {
