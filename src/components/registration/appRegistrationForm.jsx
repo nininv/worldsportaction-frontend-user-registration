@@ -298,7 +298,9 @@ class AppRegistrationForm extends Component {
             competitionInfo: null,
             specialNote:null,
             training: null,
-            contactDetails: null
+            contactDetails: null,
+            postalCode: "",
+	        alternativeLocation: ""
         }
 
         let parentListLength = userRegistrations.filter(x=>x.parentOrGuardian.length > 0);
@@ -1245,8 +1247,8 @@ class AppRegistrationForm extends Component {
                     console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                     formData.append("registrationDetail", JSON.stringify(registrationDetail));
 
-                    // this.props.saveEndUserRegistrationAction(formData);
-                    // this.setState({ loading: true });
+                     this.props.saveEndUserRegistrationAction(formData);
+                     this.setState({ loading: true });
                 }
                 else{
                     message.error(ValidationConstants.userPhotoIsRequired);
@@ -1399,7 +1401,7 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
-             {index == 0?  
+               
                 <Form.Item >
                 {getFieldDecorator(`postalCode${index}`, {
                     rules: [{ required: true, message: ValidationConstants.postCodeField }],
@@ -1408,20 +1410,20 @@ class AppRegistrationForm extends Component {
                         required={"required-field"}
                         heading={AppConstants.enterPostCode}
                         placeholder={AppConstants.enterPostCode}
-                        onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "postalCode" )} 
+                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "postalCode", index )} 
                         setFieldsValue={registrationDetail.postalCode}
                         maxLength={4}
                     /> 
                     )}
                     </Form.Item>
-                :null}
+               
                 
-                 {index == 0?  <InputWithHead
+                <InputWithHead
                     heading={AppConstants.alternate_location}
                     placeholder={AppConstants.alternate_location}
-                    onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "alternativeLocation" )} 
+                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "alternativeLocation", index )} 
                     value={registrationDetail.alternativeLocation}
-                /> : null }
+                /> 
                
                <InputWithHead heading={AppConstants.organisationName}  required={"required-field"}/>
                 <Form.Item>

@@ -6,8 +6,6 @@ let registrationObj = {
     organisationUniqueKey: "",
 	registrationId: 0,
 	orgRegistrationId: 0,
-	postalCode: "",
-	alternativeLocation: "",
 	volunteers:[],
     competitionUniqueKey: "",
     childrenCheckNumber: "",
