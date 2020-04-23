@@ -310,8 +310,9 @@ class AppRegistrationForm extends Component {
             if(this.state.competitionUniqueKey!= null && this.state.organisationUniqueKey!= null &&
                 this.state.competitionUniqueKey!= undefined && this.state.organisationUniqueKey!= undefined)
                 {
-                    participantObj.organisationInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                    let orgInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
                         this.state.organisationUniqueKey);
+                    participantObj.organisationInfo = deepCopyFunction(orgInfo);
                     participantObj.competitionUniqueKey = this.state.competitionUniqueKey;
                     participantObj.organisationUniqueKey = this.state.organisationUniqueKey;
                     let competitionInfo = participantObj.organisationInfo.competitions.
@@ -728,7 +729,7 @@ class AppRegistrationForm extends Component {
                 }
             }
            
-            userRegistration.organisationInfo = organisationInfo;
+            userRegistration.organisationInfo = deepCopyFunction(organisationInfo);
             userRegistration.competitionInfo = [];
             userRegistration.competitionUniqueKey = null;
             userRegistration.competitionMembershipProductTypeId = null;
@@ -759,7 +760,7 @@ class AppRegistrationForm extends Component {
 
             let competitionInfo = userRegistration.organisationInfo.competitions.
                                     find(x=>x.competitionUniqueKey == value);
-            userRegistration.competitionInfo = competitionInfo;
+            userRegistration.competitionInfo = deepCopyFunction(competitionInfo);
             userRegistration.competitionMembershipProductTypeId = null;
             userRegistration.competitionMembershipProductDivisionId = null;
             console.log("competitionInfo.specialNote::" + competitionInfo.specialNote);
@@ -2686,7 +2687,8 @@ class AppRegistrationForm extends Component {
                         </div>
                         ): null}
 
-                        {(userRegistrations.length > 0 && userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
+                        {(userRegistrations.length > 0 && (index + 1 == userRegistrations.length) &&
+                            userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
                         <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
                             <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
                                 + {AppConstants.addAnotherParticipant}
