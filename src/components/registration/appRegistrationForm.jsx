@@ -310,16 +310,17 @@ class AppRegistrationForm extends Component {
             if(this.state.competitionUniqueKey!= null && this.state.organisationUniqueKey!= null &&
                 this.state.competitionUniqueKey!= undefined && this.state.organisationUniqueKey!= undefined)
                 {
-                    participantObj.organisationInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                    let orgInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
                         this.state.organisationUniqueKey);
+                    participantObj.organisationInfo = deepCopyFunction(orgInfo);
                     participantObj.competitionUniqueKey = this.state.competitionUniqueKey;
                     participantObj.organisationUniqueKey = this.state.organisationUniqueKey;
                     let competitionInfo = participantObj.organisationInfo.competitions.
                                     find(x=>x.competitionUniqueKey == this.state.competitionUniqueKey);
                     participantObj.competitionInfo = deepCopyFunction(competitionInfo);
-                    participantObj.specialNote = participantObj.organisationInfo.specialNote;
-                    participantObj.training = participantObj.organisationInfo.training;
-                    participantObj.contactDetails = participantObj.organisationInfo.contactDetails;
+                    participantObj.specialNote = participantObj.competitionInfo.specialNote;
+                    participantObj.training = participantObj.competitionInfo.training;
+                    participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
                    flag = true;
                 }
         }
@@ -585,6 +586,12 @@ class AppRegistrationForm extends Component {
                     divisions[0].competitionMembershipProductDivisionId;
                     userRegistration["divisionName"] =  divisions[0].divisionName;
                 }
+                else{
+                    userRegistration.competitionMembershipProductDivisionId = null;
+                    this.props.form.setFieldsValue({
+                        [`competitionMembershipProductDivisionId${index}`]:  null,
+                    });
+                }
             }
            
             userRegistration["isPlayer"] = memProd.isPlayer;
@@ -711,15 +718,26 @@ class AppRegistrationForm extends Component {
         {
             let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
             console.log("organisationInfo::" + JSON.stringify(organisationInfo));
-            userRegistration.organisationInfo = organisationInfo;
+            if(userRegistration.competitionInfo!= undefined && 
+                userRegistration.competitionInfo.membershipProducts!= undefined)
+            {
+                let oldMemProd = userRegistration.competitionInfo.membershipProducts.
+                find(x=>x.competitionMembershipProductTypeId === userRegistration.competitionMembershipProductTypeId);
+                if(oldMemProd!= null && oldMemProd!= "" && oldMemProd!= undefined)
+                {
+                    oldMemProd.isDisabled = false;
+                }
+            }
+           
+            userRegistration.organisationInfo = deepCopyFunction(organisationInfo);
             userRegistration.competitionInfo = [];
             userRegistration.competitionUniqueKey = null;
             userRegistration.competitionMembershipProductTypeId = null;
             userRegistration.competitionMembershipProductDivisionId = null;
             userRegistration.products = [];
-            userRegistration.specialNote = organisationInfo.specialNote;
-            userRegistration.training = organisationInfo.training;
-            userRegistration.contactDetails = organisationInfo.contactDetails;
+            userRegistration.specialNote = null;
+            userRegistration.training = null;
+            userRegistration.contactDetails = null;
             userRegistration.divisionName = null;
             this.props.form.setFieldsValue({
                 [`competitionUniqueKey${index}`]:  null,
@@ -729,21 +747,40 @@ class AppRegistrationForm extends Component {
             });
         }
         else if(key == "competitionUniqueKey"){
+            if(userRegistration.competitionInfo!= undefined && 
+                userRegistration.competitionInfo.membershipProducts!= undefined)
+            {
+                let oldMemProd = userRegistration.competitionInfo.membershipProducts.
+                find(x=>x.competitionMembershipProductTypeId === userRegistration.competitionMembershipProductTypeId);
+                if(oldMemProd!= null && oldMemProd!= "" && oldMemProd!= undefined)
+                {
+                    oldMemProd.isDisabled = false;
+                }
+            }
+
             let competitionInfo = userRegistration.organisationInfo.competitions.
                                     find(x=>x.competitionUniqueKey == value);
-            userRegistration.competitionInfo = competitionInfo;
+            userRegistration.competitionInfo = deepCopyFunction(competitionInfo);
             userRegistration.competitionMembershipProductTypeId = null;
             userRegistration.competitionMembershipProductDivisionId = null;
+            console.log("competitionInfo.specialNote::" + competitionInfo.specialNote);
+            console.log("competitionInfo.training::" + competitionInfo.training);
+            console.log("competitionInfo.contactDetails::" + competitionInfo.contactDetails);
+            userRegistration.specialNote = competitionInfo.specialNote;
+            userRegistration.training = competitionInfo.training;
+            userRegistration.contactDetails = competitionInfo.contactDetails;
             userRegistration.products = [];
             userRegistration.divisionName = null;
             this.props.form.setFieldsValue({
                 [`competitionMembershipProductTypeId${index}`]:  null,
                 [`competitionMembershipProductDivisionId${index}`]:  null,
-                
             });
+           
         }
 
         userRegistration[key] = value;
+
+        console.log("UserRegistrations::" + JSON.stringify(userRegistrations));
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
@@ -2650,7 +2687,8 @@ class AppRegistrationForm extends Component {
                         </div>
                         ): null}
 
-                        {(userRegistrations.length > 0 && userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
+                        {(userRegistrations.length > 0 && (index + 1 == userRegistrations.length) &&
+                            userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
                         <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
                             <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
                                 + {AppConstants.addAnotherParticipant}
