@@ -1445,13 +1445,13 @@ class AppRegistrationForm extends Component {
                     </Form.Item>
                
                 
-                <InputWithHead
+                {/* <InputWithHead
                     heading={AppConstants.alternate_location}
                     placeholder={AppConstants.alternate_location}
                     onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "alternativeLocation", index )} 
                     value={registrationDetail.alternativeLocation}
                 /> 
-               
+                */}
                <InputWithHead heading={AppConstants.organisationName}  required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`organisationUniqueKey${index}`, {
