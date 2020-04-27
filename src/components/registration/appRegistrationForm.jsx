@@ -212,36 +212,6 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
         let membershipProductInfo = registrationState.membershipProductInfo;
        
-
-        let friendObj = {
-            friendId: 0,
-            firstName:"",
-            lastName:"",
-            email:"",
-            mobileNumber:""
-        }
-        let referFriendObj = {
-            friendId: 0,
-            firstName:"",
-            lastName:"",
-            email:"",
-            mobileNumber:""
-        }
-        let parentObj = {
-                tempParentId: ++this.state.tempParentId,
-                userId:0,
-                firstName:"",
-                lastName: "",
-                mobileNumber:"",
-                email:"",
-                street1: "",
-                street2: "",
-                suburb: "",
-                stateRefId: 1,
-                postalCode: "",
-                isSameAddress: 0,
-                reEnterEmail: ""
-        }
         let participantObj = {
             tempParticipantId: userRegistrations.length + 1,
             competitionUniqueKey: null,
@@ -310,7 +280,10 @@ class AppRegistrationForm extends Component {
             training: null,
             contactDetails: null,
             postalCode: "",
-	        alternativeLocation: ""
+            alternativeLocation: "",
+            registrationOpenDate: null,
+            registrationCloseDate: null,
+            venue: []
         }
 
         let parentListLength = userRegistrations.filter(x=>x.parentOrGuardian.length > 0);
@@ -332,6 +305,11 @@ class AppRegistrationForm extends Component {
                         participantObj.specialNote = participantObj.competitionInfo.specialNote;
                         participantObj.training = participantObj.competitionInfo.training;
                         participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
+                       
+                        participantObj.registrationOpenDate = participantObj.competitionInfo.registrationOpenDate;
+                        participantObj.registrationCloseDate = participantObj.competitionInfo.registrationCloseDate;
+                        participantObj.venue = participantObj.competitionInfo.venues!= null ? 
+                                        participantObj.competitionInfo.venues: [];
                         this.getRegistrationSettings(this.state.competitionUniqueKey, this.state.organisationUniqueKey);
                     }
                     else{
@@ -342,23 +320,13 @@ class AppRegistrationForm extends Component {
                 }
         }
         
-        // let newMembershipProducts = deepCopyFunction(membershipProductInfo.membershipProducts); // Deep Copy
-        // participantObj.membershipProducts = newMembershipProducts;
-       
-        // if(populateParticipantDetails == 1 && getUserId() != 0)
-        // {
-        //     this.setUserInfo(participantObj);
-        // }
         userRegistrations.push(participantObj);
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
         if(flag)
         {
             this.props.updateEndUserRegisrationAction(true, "setCompOrgKey");
         }
-        // if(populateParticipantDetails == 1  && getUserId() != 0)
-        // {
-        //     this.props.updateEndUserRegisrationAction(populateParticipantDetails, "populateParticipantDetails");
-        // }
+       
     }
 
     setUserInfo = (participantObj, userInfo, userRegistrations, index) => {
@@ -754,8 +722,11 @@ class AppRegistrationForm extends Component {
             userRegistration.products = [];
             userRegistration.specialNote = null;
             userRegistration.training = null;
+            userRegistration.registrationOpenDate = null;
+            userRegistration.registrationCloseDate = null;
             userRegistration.contactDetails = null;
             userRegistration.divisionName = null;
+            userRegistration.venue = [];
             this.props.form.setFieldsValue({
                 [`competitionUniqueKey${index}`]:  null,
                 [`competitionMembershipProductTypeId${index}`]:  null,
@@ -780,12 +751,12 @@ class AppRegistrationForm extends Component {
             userRegistration.competitionInfo = deepCopyFunction(competitionInfo);
             userRegistration.competitionMembershipProductTypeId = null;
             userRegistration.competitionMembershipProductDivisionId = null;
-            console.log("competitionInfo.specialNote::" + competitionInfo.specialNote);
-            console.log("competitionInfo.training::" + competitionInfo.training);
-            console.log("competitionInfo.contactDetails::" + competitionInfo.contactDetails);
             userRegistration.specialNote = competitionInfo.specialNote;
             userRegistration.training = competitionInfo.training;
             userRegistration.contactDetails = competitionInfo.contactDetails;
+            userRegistration.registrationOpenDate = competitionInfo.registrationOpenDate;
+            userRegistration.registrationCloseDate = competitionInfo.registrationCloseDate;
+            userRegistration.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
             userRegistration.products = [];
             userRegistration.divisionName = null;
             this.props.form.setFieldsValue({
@@ -1523,6 +1494,23 @@ class AppRegistrationForm extends Component {
                
                 {item.organisationUniqueKey != null ? 
                 <div>
+                    <div style={{display: 'flex'}}>
+                        <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
+                            <InputWithHead heading={AppConstants.startDate}/>
+                            <div className="applicable-to-text">{item.registrationOpenDate}</div>
+                        </div>
+                        <div className="col-sm-6"> 
+                            <InputWithHead heading={AppConstants.endDate}/>
+                            <div className="applicable-to-text">{item.registrationCloseDate}</div>
+                        </div>
+                    </div>
+                    <InputWithHead heading={AppConstants.venue}/>
+                    {(item.venue || []).map((v, vIndex) =>(
+                        <span>
+                            <span>{v.venueName}</span>
+                            <span>{item.venue.length != (vIndex + 1) ? ', ': ''}</span>
+                        </span>
+                    ))}
                     <InputWithHead heading={AppConstants.specialNotes}/>
                         <div className="applicable-to-text">{item.specialNote}</div>
                     <InputWithHead heading={AppConstants.training} />

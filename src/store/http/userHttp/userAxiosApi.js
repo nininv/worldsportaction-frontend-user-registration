@@ -39,43 +39,14 @@ let userHttpApi = {
     return Method.dataGet(url, token);
   },
 
-  saveAffiliate(payload) {
-    var url = `api/affiliates/save?userId=${userId}`;
-    return Method.dataPost(url, token, payload);
-  },
-  affiliateByOrganisationId(organisationId) {
-    var url = `api/affiliate/${organisationId}?userId=${userId}`;
-    return Method.dataGet(url, token);
-  },
-  affiliatesListing(payload) {
-    var url = `api/affiliateslisting?userId=${userId}`;
-    return Method.dataPost(url, token, payload);
-  },
-  affiliateToOrganisation(organisationId) {
-    var url = `api/affiliatedtoorganisation/${organisationId}?userId=${userId}`;
-    return Method.dataGet(url, token);
-  },
-  getVenueOrganisation() {
-    var url = `api/organisation?userId=${userId}`;
-    return Method.dataGet(url, token)
-  },
-  liveScoreManagerList(roleId, entityTypeId, entityId) {
-    var url = `/users/byRole?roleId=${roleId}&entityTypeId=${entityTypeId}&entityId=${entityId}`;
-    return Method.dataGet(url, token)
-  },
-
-  affiliateDelete(affiliateId) {
-    var url = `api/affiliate/delete?userId=${userId}`;
-    let payload = { affiliateId: affiliateId };
-    return Method.dataPost(url, token, payload);
-  },
-
   //// get particular user organisation 
-  getUserOrganisation() {
-    var url = `api/userorganisation?userId=${userId}`;
-   // return Method.dataGet(url, token)
+  async getUserOrganisation() {
+    let userId =  await getUserId()
+    if(userId!= 0){
+      var url = `api/userorganisation?userId=${userId}`;
+      return Method.dataGet(url, token)
+    }
   }
-
 }
 
 let Method = {

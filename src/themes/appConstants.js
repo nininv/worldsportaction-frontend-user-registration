@@ -371,6 +371,7 @@ const AppConstants = {
   newCompetitionName: "New Competition Name",
   competitionType: "Competition Type",
   startDate: "Start Date",
+  endDate: "End Date",
   registrationFees: "Registration Fees",
   divisions: "Divisions",
   grades: "Grades",
