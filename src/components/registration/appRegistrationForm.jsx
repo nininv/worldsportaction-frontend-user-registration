@@ -87,7 +87,7 @@ class AppRegistrationForm extends Component {
             organisationUniqueKey: this.state.organisationUniqueKey
         }
 
-        this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
+      //  this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
 		 this.setState({getMembershipLoad: true})
 
@@ -157,6 +157,14 @@ class AppRegistrationForm extends Component {
             this.props.updateEndUserRegisrationAction(false, "setCompOrgKey");
            }
         }
+    }
+
+    getRegistrationSettings = (competitionUniqueKey, organisationUniqueKey) => {
+        let payload = {
+            competitionUniqueKey: competitionUniqueKey,
+            organisationUniqueKey: organisationUniqueKey
+        }
+        this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
     }
 
     getUserInfo = () => {
@@ -322,6 +330,7 @@ class AppRegistrationForm extends Component {
                         participantObj.specialNote = participantObj.competitionInfo.specialNote;
                         participantObj.training = participantObj.competitionInfo.training;
                         participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
+                        this.getRegistrationSettings(this.state.competitionUniqueKey, this.state.organisationUniqueKey);
                     }
                     else{
                         participantObj.competitionUniqueKey = null;
@@ -781,6 +790,8 @@ class AppRegistrationForm extends Component {
                 [`competitionMembershipProductTypeId${index}`]:  null,
                 [`competitionMembershipProductDivisionId${index}`]:  null,
             });
+
+            this.getRegistrationSettings(competitionInfo.competitionUniqueKey, userRegistration.organisationUniqueKey);
            
         }
 
