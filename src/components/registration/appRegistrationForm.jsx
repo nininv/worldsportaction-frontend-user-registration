@@ -323,6 +323,9 @@ class AppRegistrationForm extends Component {
                         participantObj.training = participantObj.competitionInfo.training;
                         participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
                     }
+                    else{
+                        participantObj.competitionUniqueKey = null;
+                    }
                    flag = true;
                 }
         }
