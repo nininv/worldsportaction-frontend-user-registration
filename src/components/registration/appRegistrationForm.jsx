@@ -325,6 +325,7 @@ class AppRegistrationForm extends Component {
                     }
                     else{
                         participantObj.competitionUniqueKey = null;
+                        this.setState({competitionUniqueKey: null});
                     }
                    flag = true;
                 }
