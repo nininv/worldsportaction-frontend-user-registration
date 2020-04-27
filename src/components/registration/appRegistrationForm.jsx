@@ -30,7 +30,8 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
     genderReferenceAction, disabilityReferenceAction } from '../../store/actions/commonAction/commonAction';
 
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
-    membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction} from 
+    membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
+    clearRegistrationDataAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -76,6 +77,7 @@ class AppRegistrationForm extends Component {
         this.props.genderReferenceAction();
         this.props.disabilityReferenceAction();
         this.getUserInfo();
+       // this.props.clearRegistrationDataAction();
        
     }
 
@@ -2851,7 +2853,8 @@ function mapDispatchToProps(dispatch)
         saveEndUserRegistrationAction,
         genderReferenceAction,
         getUserRegistrationUserInfoAction,
-        disabilityReferenceAction
+        disabilityReferenceAction,
+        clearRegistrationDataAction
     }, dispatch);
 
 }

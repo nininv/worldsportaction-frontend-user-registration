@@ -6,7 +6,9 @@ import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import "../pages/layout.css";
 import { setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId } from '../util/sessionStorage'
-
+import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 const { Content, Header } = Layout;
 
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c95d69a0e179191e4422d8df456c7dc7268069d560e9e677eb64ca0d506751ea12c34b087a73bc319ba9b17a67ffc69fde351109f091cb2e64e6a60042bcbb11bf6d73e2be792c9658cc5604e115967a82eb0f2f944a1e2950e0116df2065b0ba2fb5dcf34f9341f6b7b6f2e64839339d24123ea015526f05fe22cec9cf96aa86ff990588beafbc3675f550605d72d25247';
@@ -14,11 +16,11 @@ const userId = 0;
 class UserRegistration extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-        }
+        this.props.clearRegistrationDataAction();
     }
 
     async componentDidMount() {
+ 
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
@@ -126,4 +128,19 @@ class UserRegistration extends Component {
     }
 }
 
-export default UserRegistration;
+
+function mapDispatchToProps(dispatch)
+{
+    return bindActionCreators({
+        clearRegistrationDataAction
+    }, dispatch);
+
+}
+
+function mapStatetoProps(state){
+    return {
+        endUserRegistrationState: state.EndUserRegistrationState,
+    }
+}
+
+export default connect(mapStatetoProps,mapDispatchToProps)(UserRegistration);

@@ -120,6 +120,32 @@ function  endUserRegistrationReducer(state = initialState, action)
                 status: action.status,
                 userInfo: userInfoData
             };
+        case ApiConstants.REGISTRATION_CLEAR_DATA:
+            let registrationObj1 = {
+                organisationUniqueKey: "",
+                registrationId: 0,
+                orgRegistrationId: 0,
+                volunteers:[],
+                competitionUniqueKey: "",
+                childrenCheckNumber: "",
+                userRegistrations:[],
+                vouchers: []
+            }
+            
+            state.status = 0;
+            state.registrationDetail = registrationObj1;
+            state.registrationSettings =[];
+            state.populateParticipantDetails = 0;
+            state.membershipProductInfo = [];
+            state.refFlag = "";
+            state.user =  null;
+            state.userInfo = [];
+            state.isSetCompOrgKey = false;
+
+            console.log("$$$$$$$$$$$44" + JSON.stringify( state.registrationDetail));
+            return {
+                ...state
+            };
 
         default:
             return state;
