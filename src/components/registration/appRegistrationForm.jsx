@@ -318,9 +318,11 @@ class AppRegistrationForm extends Component {
                     let competitionInfo = participantObj.organisationInfo.competitions.
                                     find(x=>x.competitionUniqueKey == this.state.competitionUniqueKey);
                     participantObj.competitionInfo = deepCopyFunction(competitionInfo);
-                    participantObj.specialNote = participantObj.competitionInfo.specialNote;
-                    participantObj.training = participantObj.competitionInfo.training;
-                    participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
+                    if(competitionInfo!= null && competitionInfo!= undefined){
+                        participantObj.specialNote = participantObj.competitionInfo.specialNote;
+                        participantObj.training = participantObj.competitionInfo.training;
+                        participantObj.contactDetails = participantObj.competitionInfo.contactDetails;
+                    }
                    flag = true;
                 }
         }
