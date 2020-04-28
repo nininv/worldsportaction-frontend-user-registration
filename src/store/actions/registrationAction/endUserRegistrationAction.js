@@ -48,10 +48,20 @@ function getUserRegistrationUserInfoAction(payload) {
     return action;
 }
 
+function clearRegistrationDataAction()
+{
+    const action = {
+        type: ApiConstants.REGISTRATION_CLEAR_DATA
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
     orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction,
-    getUserRegistrationUserInfoAction
+    getUserRegistrationUserInfoAction,
+    clearRegistrationDataAction
 }

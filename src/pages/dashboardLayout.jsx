@@ -7,7 +7,7 @@ import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getUserOrganisationAction, onOrganisationChangeAction } from "../store/actions/userAction/userAction";
+import { getUserOrganisationAction } from "../store/actions/userAction/userAction";
 import {
   setOrganisationData,
   getOrganisationData
@@ -31,7 +31,6 @@ class DashboardLayout extends React.Component {
         let orgData = getOrganisationData()
         let organisationItem = orgData ? orgData : organisationData[0]
         setOrganisationData(organisationItem)
-        this.props.onOrganisationChangeAction(organisationItem, "organisationChange")
         this.setState({ dataOnload: false })
       }
     }
@@ -45,6 +44,8 @@ class DashboardLayout extends React.Component {
 
   setOrganisationKey() {
     let organisationData = getOrganisationData()
+    console.log("organisationData::" + organisationData);
+    console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
     if (!organisationData) {
       this.props.userState.getUserOrganisation.length == 0 && this.props.getUserOrganisationAction()
       this.setState({ dataOnload: true })
@@ -439,8 +440,7 @@ class DashboardLayout extends React.Component {
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    getUserOrganisationAction,
-    onOrganisationChangeAction
+    getUserOrganisationAction
   }, dispatch)
 }
 
