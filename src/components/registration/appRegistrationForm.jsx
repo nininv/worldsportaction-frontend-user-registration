@@ -1426,7 +1426,7 @@ class AppRegistrationForm extends Component {
         }
         //console.log("item" + JSON.stringify(item));
         return (
-            <div className="formView content-view pt-5">
+            <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
                
                 <Form.Item >
@@ -1517,6 +1517,21 @@ class AppRegistrationForm extends Component {
                         <div className="applicable-to-text">{item.training}</div>
                     <InputWithHead heading={AppConstants.contactDetails}/>
                         <span className="applicable-to-text">{item.contactDetails}</span>
+                    <InputWithHead heading={AppConstants.photos}/>
+                    <div className="org-photos">
+                    {((item.organisationInfo!=null && item.organisationInfo.organisationPhotos) || [] )
+                    .map((ph, phIndex) => (
+                        <div key={ph.organisationPhotoId}>
+                            <div>
+                                <img src={ph.photoUrl} alt=""height= {125} width={125}
+                                    style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
+                                        onError={ev => {ev.target.src = AppImages.circleImage;}}
+                                />
+                            </div>
+                            <span>{ph.photoType}</span>
+                        </div>
+                    ))}
+                    </div>
                 </div> : null}
 
                 <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>

@@ -591,3 +591,23 @@
 .contact-detail-container div{
   width: 200px;
 }
+
+.org-photos{
+  display: flex;
+  justify-content: flex-start;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+.org-photos > div{
+  padding: 10px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  background-color: var(--app-white);
+  border-radius: 10px;
+  box-shadow: 0 0 2px 1px var(--app-white);
+}
+
+.org-photos :last-child{
+  margin-bottom: 10px !important;
+}
