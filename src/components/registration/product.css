@@ -608,6 +608,11 @@
   box-shadow: 0 0 2px 1px var(--app-white);
 }
 
-.org-photos :last-child{
+/* .org-photos :last-child{
   margin-bottom: 10px !important;
+} */
+
+.photo-type{
+  text-align: center;
+  padding-top: 10px;
 }

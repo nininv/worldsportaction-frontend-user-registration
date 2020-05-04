@@ -1528,7 +1528,7 @@ class AppRegistrationForm extends Component {
                                         onError={ev => {ev.target.src = AppImages.circleImage;}}
                                 />
                             </div>
-                            <span>{ph.photoType}</span>
+                            <div className="photo-type">{ph.photoType}</div>
                         </div>
                     ))}
                     </div>
