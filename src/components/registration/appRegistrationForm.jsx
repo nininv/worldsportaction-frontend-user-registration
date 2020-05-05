@@ -2769,6 +2769,14 @@ class AppRegistrationForm extends Component {
         )
     }
 
+    //////navigate to stripe payment screen
+    navigatePaymentScreen = () => {
+        history.push("/checkoutPayment", {
+            competitionId: this.state.competitionUniqueKey,
+            organisationUniqueKey: this.state.organisationUniqueKey
+        })
+    }
+
     //////footer view containing all the buttons like submit and cancel
     footerView = (isSubmitting) => {
         let registrationState = this.props.endUserRegistrationState;
@@ -2776,34 +2784,37 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
         return (
             <div className="fluid-width">
-                 {userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
-                <div className="footer-view">
-                    <div className="row">
-                        <div className="col-sm">
-                            <div className="reg-add-save-button"></div>
-                        </div>
-                        <div className="col-sm">
-                            <div className="comp-buttons-view">
-                                <Button className="save-draft-text" type="save-draft-text"
-                                         onClick={() => this.setState({ buttonPressed: "save" })}>
-                                    {AppConstants.reviewOrder}
-                                </Button>
-                                <Button
-                                    className="open-reg-button"
-                                    htmlType="submit"
+                {userRegistrations.length > 0 && userRegistrations[0].isPlayer != -1 ? (
+                    <div className="footer-view">
+                        <div className="row">
+                            <div className="col-sm">
+                                <div className="reg-add-save-button">
+                                    <Button className="save-draft-text" type="save-draft-text"
+                                        onClick={() => this.navigatePaymentScreen()}>
+                                        {AppConstants.pay}
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="col-sm">
+                                <div className="comp-buttons-view">
+                                    <Button className="save-draft-text" type="save-draft-text"
+                                        onClick={() => this.setState({ buttonPressed: "save" })}>
+                                        {AppConstants.reviewOrder}
+                                    </Button>
+                                    <Button
+                                        className="open-reg-button"
+                                        htmlType="submit"
                                     type="primary"
-                                    disabled={isSubmitting}  
+                                    disabled={isSubmitting}
                                     onClick={() => this.setState({ buttonPressed: "save" })}>
                                     {AppConstants.checkOptions}
-                                   
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </div>
-                 ): null}
+                ): null}
             </div>
-           
         );
     };
 
