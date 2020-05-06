@@ -32,7 +32,8 @@ const AppImages = {
   commentEmpty: require("../images/chat-empty.png"),
   commentFilled: require("../images/chat-filled.png"),
   defaultUser: require("../images/default_user.png"),
-  successTick: require("../images/success-tick.png")
+  successTick: require("../images/success-tick.png"),
+  purpleDot: require("../images/PurpleDot.png"),
 };
 
 export default AppImages;

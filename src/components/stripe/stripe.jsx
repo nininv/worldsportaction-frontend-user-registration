@@ -18,8 +18,10 @@ import StripeKeys from "./stripeKeys";
 import { getOrganisationData } from "../../util/sessionStorage";
 import Loader from '../../customComponents/loader';
 import { message } from "antd";
+import history from "../../util/history";
 
 const { Header, Content } = Layout;
+var screenProps = null
 // Custom styling can be passed to options when creating an Element.
 const CARD_ELEMENT_OPTIONS = {
     style: {
@@ -133,7 +135,9 @@ const CheckoutForm = (props) => {
 // Setup Stripe.js and the Elements provider
 const stripePromise = loadStripe(StripeKeys.publicKey);
 
-const Stripe = () => {
+const Stripe = (props) => {
+    screenProps = props
+    console.log("props", props)
     const [loading, setLoading] = useState(false);
     return (
         <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
@@ -159,9 +163,9 @@ const Stripe = () => {
 
 // POST the token ID to your backend.
 async function stripeTokenHandler(token, props) {
-    let competitionId = props.location.state ? props.location.state.competitionId : null;
-    let organisationUniqueKey = props.location.state ? props.location.state.organisationUniqueKey : null;
-    const response = await fetch(`http:192.168.31.141:5000/api/payments/calculateFee?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`, {
+    let competitionId = screenProps.location.state ? screenProps.location.state.competitionId : null;
+    let organisationUniqueKey = screenProps.location.state ? screenProps.location.state.organisationUniqueKey : null;
+    const response = await fetch(`https://registration-api-dev.worldsportaction.com/api/payments/calculateFee?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -171,8 +175,15 @@ async function stripeTokenHandler(token, props) {
     });
     return response.json().then(res => {
         props.onLoad(false)
-        if (res) {
+        if (response.status === 200) {
             message.success(res.message);
+            history.push('/appRegistrationSuccess');
+        }
+        else if (response.status === 400) {
+            message.error(res.message);
+        }
+        else {
+            message.error("Something went wrong.")
         }
     })
         .catch(err => {
