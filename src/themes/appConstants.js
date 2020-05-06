@@ -636,6 +636,7 @@ const AppConstants = {
   shootingState: "Shooting Stats",
   incidentDetails: "Incident Detail",
   photos: "Photos",
+  
   // 24-Jan
   forfiet: "Forfeit",
   abandon: "Abandon",
@@ -857,6 +858,7 @@ const AppConstants = {
   payment: "Payment",
   submitPayment: "Submit Payment",
   pay: "Pay",
+  logo: "Logo"
 };
 
 export default AppConstants;
