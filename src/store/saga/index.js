@@ -15,6 +15,11 @@ import * as userSaga from '../saga/userSaga/userSaga';
 // EndUserRegistrationSaga
 import * as endUserRegSaga from '../saga/registrationSaga/endUserRegistrationSaga';
 
+//Live Score
+import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
+import {  liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
+import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
+import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
@@ -63,5 +68,17 @@ export default function* root_saga() {
 
     /// Disability Reference Saga
     yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)
+
+     // Live Score
+
+     yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_FIXTURE_COMP_LOAD, getLiveScoreFixtureCompSaga)
+
+     yield takeEvery(ApiConstants.API_LIVE_SCORE_LADDERS_LIST_LOAD, liveScoreLaddersListSaga)
+ 
+      // liveScore division saga
+   yield takeEvery(ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_LOAD, divisionsaga.liveScoreDivisionsaga)
+ 
+   //// Round List Saga
+   yield takeEvery(ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD, liveScoreRoundListSaga)
 
 }

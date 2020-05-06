@@ -18,6 +18,7 @@ import StripeKeys from "./stripeKeys";
 import { getOrganisationData } from "../../util/sessionStorage";
 import Loader from '../../customComponents/loader';
 import { message } from "antd";
+import history from "../../util/history";
 
 const { Header, Content } = Layout;
 var screenProps = null
@@ -174,8 +175,15 @@ async function stripeTokenHandler(token, props) {
     });
     return response.json().then(res => {
         props.onLoad(false)
-        if (res) {
+        if (response.status === 200) {
             message.success(res.message);
+            history.push('/appRegistrationSuccess');
+        }
+        else if (response.status === 400) {
+            message.error(res.message);
+        }
+        else {
+            message.error("Something went wrong.")
         }
     })
         .catch(err => {

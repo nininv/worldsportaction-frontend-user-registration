@@ -9,7 +9,9 @@ import CommonReducerState from "./commonReducer/commonReducer";
 import EndUserRegistrationState from "./registrationReducer/endUserRegistrationReducer";
 import UserState from "./userReducer/userReducer";
 
-
+import LiveScoreFixturCompState from './liveScoreReducer/liveScoreFixtureCompetitionReducer';
+import LiveScoreLadderState from './liveScoreReducer/liveScoreLadderReducer'
+import LiveScoreRoundState from './liveScoreReducer/liveScoreRound';
 
 const rootReducer = combineReducers({
   LoginState,
@@ -18,7 +20,10 @@ const rootReducer = combineReducers({
   CommonAppState,
   UserState,
   EndUserRegistrationState,
-  CommonReducerState
+  CommonReducerState,
+  LiveScoreFixturCompState,
+  LiveScoreLadderState,
+  LiveScoreRoundState
 });
 
 export default rootReducer;
