@@ -869,7 +869,7 @@ class AppRegistrationForm extends Component {
                 find(x=>x.competitionMembershipProductTypeId === value);
             let  divisions = userRegistration.competitionInfo.membershipProducts.
                     find(x=>x.competitionMembershipProductTypeId == value).divisions;
-            console.log("&&&&&&&&&&" + JSON.stringify(divisions));
+            console.log("&&&&&&&&&&memProd::" + JSON.stringify(memProd));
             if(divisions!= null && divisions!= undefined)
             {
                 if(divisions.length == 1)
@@ -882,7 +882,7 @@ class AppRegistrationForm extends Component {
             }
 
             product["isPlayer"] =  memProd.isPlayer;
-            product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
+           
             // Enable the existing one and disable the new one
             let oldMemProd = userRegistration.competitionInfo.membershipProducts.
                         find(x=>x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId);
@@ -891,7 +891,7 @@ class AppRegistrationForm extends Component {
                 oldMemProd.isDisabled = false;
             }
             memProd.isDisabled = true;
-    
+            product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
             if(memProd.isPlayer){
                 this.addFriend(index,"friend","product", prodIndex);
                 this.addFriend(index,"referFriend","product", prodIndex);
