@@ -7,7 +7,7 @@ import NotFound from "./404";
 import UserRegistration from "../components/userRegistration";
 import Login from '../components/login';
 import AppRegistrationSuccess from "../components/registration/appRegistrationSuccess";
-
+import Stripe from "../components/stripe/stripe";
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -29,7 +29,7 @@ class Routes extends React.Component {
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationForm)}
         />
-         <PrivateRoute
+        <PrivateRoute
           path="/login"
           component={lazyLoad(Login)}
         />
@@ -37,9 +37,13 @@ class Routes extends React.Component {
           path="/userRegistration"
           component={lazyLoad(UserRegistration)}
         />
-         <PrivateRoute
+        <PrivateRoute
           path="/appRegistrationSuccess"
           component={lazyLoad(AppRegistrationSuccess)}
+        />
+        <PrivateRoute
+          path="/checkoutPayment"
+          component={lazyLoad(Stripe)}
         />
         <Route path="/" component={lazyLoad(NotFound)} />
         <Redirect from="*" to="/404" />

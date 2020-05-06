@@ -852,7 +852,11 @@ const AppConstants = {
   registrationOptionConfirmMsg: "Changing the registration type will clear the information you have entered already. Please confirm you wish to proceed.",
   parentDeleteConfirmMsg: "Are you sure you want to delete this parent?",
   areYouAnExistingUser: "Are you an existing user?",
-  newUser: "New User"
+  newUser: "New User",
+
+  payment: "Payment",
+  submitPayment: "Submit Payment",
+  pay: "Pay",
 };
 
 export default AppConstants;
