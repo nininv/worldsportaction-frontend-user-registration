@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { liveScoreLaddersListAction,clearLadderList } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
 import history from "../../util/history";
-import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
+// import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
+import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID,getLiveScoreCompetiton } from '../../util/sessionStorage'
 import { isArrayNotEmpty } from '../../util/helpers'
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
 
@@ -146,14 +147,24 @@ class LiveScorePublicLadder extends Component {
         )
     }
 
-    componentDidMount() {
+   async componentDidMount() {
         setUserId(userId);
         setAuthToken(token);
         let orgParam =  this.props.location.search.split("?organisationId=")
         let orgId  =  orgParam[1]
 
-        this.setState({ onCompLoad: true })
-        this.props.fixtureCompetitionListAction(orgId)
+        
+        let organisationId = await getliveScoreOrgID()
+
+        if(organisationId != undefined){
+            this.setState({ onCompLoad: true })
+            this.props.fixtureCompetitionListAction(organisationId)
+        }else{
+            setliveScoreOrgID(orgId)
+            history.push('/liveScorePublicLadder')
+        }
+
+        // this.props.fixtureCompetitionListAction(orgId)
     }
 
     async getCompDetails() {

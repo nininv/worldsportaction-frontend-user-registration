@@ -857,6 +857,9 @@ const AppConstants = {
   payment: "Payment",
   submitPayment: "Submit Payment",
   pay: "Pay",
+  disput_description:"Result in dispute",
+  draft_description:"Final result entered and unconfirmed",
+  final_description:"Final result entered and confirmed",
 };
 
 export default AppConstants;
