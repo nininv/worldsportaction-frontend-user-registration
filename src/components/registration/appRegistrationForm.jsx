@@ -1519,6 +1519,15 @@ class AppRegistrationForm extends Component {
                         <span className="applicable-to-text">{item.contactDetails}</span>
                     <InputWithHead heading={AppConstants.photos}/>
                     <div className="org-photos">
+                        <div>
+                            <div>
+                                <img src={ item.organisationInfo.organisationLogoUrl} alt=""height= {125} width={125}
+                                    style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
+                                        onError={ev => {ev.target.src = AppImages.circleImage;}}
+                                />
+                            </div>
+                            <div className="photo-type">{AppConstants.logo}</div>
+                        </div>
                     {((item.organisationInfo!=null && item.organisationInfo.organisationPhotos) || [] )
                     .map((ph, phIndex) => (
                         <div key={ph.organisationPhotoId}>
