@@ -444,13 +444,15 @@
 
 .login-formView {
   margin: auto;
-  background-color: white;
+  /* background-color: white; */
   border-radius: 10px;
-  width: 70%;
-  margin-top: 5%;
-  margin-bottom: 3%;
+  width: 47%;
+  margin-top: 20vh;
+  background-color: transparent;
+  box-shadow: 0px 10px 22px 0px rgba(0,0,0,0.3);
+  border-top-left-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
-
 .login-footer-view {
   padding-left: 14.5%;
   padding-right: 14.5%;
@@ -528,6 +530,30 @@
   padding-top: 5%
 }
 
+img.bg {
+  animation: increase 60s linear 10ms infinite;
+  -webkit-transition: all 2.2s ease-in-out;
+  -moz-transition: all 2.2s ease-in-out;
+  -ms-transition: all 2.2s ease-in-out;
+  -o-transition: all 2.2s ease-in-out;
+  transition: all 2.2s ease-in-out;
+  min-height: 100%;
+  min-width: 1024px;
+  width: 100%;
+  height: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+@media screen and (max-width: 1024px) { 
+  img.bg {
+    left: 50%;
+    margin-left: -512px;  
+  }
+}
+
 @media (max-width: 767px) {
   .reg-add-save-button {
     display: flex;
@@ -550,6 +576,9 @@
     /* background-color: var(--app-ffa033); */
     width: 87%;
     margin: auto;
+  }
+  .login-formView {
+    width: 100%;
   }
 }
 

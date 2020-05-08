@@ -854,10 +854,12 @@ const AppConstants = {
   parentDeleteConfirmMsg: "Are you sure you want to delete this parent?",
   areYouAnExistingUser: "Are you an existing user?",
   newUser: "New User",
-
   payment: "Payment",
   submitPayment: "Submit Payment",
   pay: "Pay",
+  disput_description:"Result in dispute",
+  draft_description:"Final result entered and unconfirmed",
+  final_description:"Final result entered and confirmed",
   logo: "Logo"
 };
 

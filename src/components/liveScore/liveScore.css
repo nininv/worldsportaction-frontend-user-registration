@@ -221,7 +221,7 @@
     color: var(--app-9b9bad);
     padding-left: 21px;
     height: 48px;
-    background-color: var(--app-white);
+    background-color: var(--app-white) !important;
   }
   
   .livescore-seasonfixture-table .ant-table-tbody>tr>td {
@@ -231,7 +231,7 @@
     font-family: inter;
     height: 64px;
     background-color: var(--app-white);
-    padding:0px !important;
+    padding:0px 0px !important;
   }
   
   .livescore-seasonfixture-table .ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-thead>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
@@ -246,6 +246,9 @@
     color: var(--app-color);
   }
 
+  .livescore-seasonfixture-table .ant-table-small > .ant-table-content > .ant-table-body{
+          margin: 0 0px;
+  }
 
 
 

@@ -9,10 +9,11 @@ import { bindActionCreators } from 'redux';
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
 import { liveScoreRoundListAction, clearRoundData } from '../../store/actions/LiveScoreAction/liveScoreRoundAction'
 // import Loader from '../../customComponents/loader'
-import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
+import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID } from '../../util/sessionStorage'
 import AppImages from "../../themes/appImages";
 import { fixtureCompetitionListAction } from "../../store/actions/LiveScoreAction/LiveScoreFixtureAction"
 import { isArrayNotEmpty } from "../../util/helpers";
+import history from "../../util/history";
 import './liveScore.css'
 const { Content } = Layout;
 const { Option } = Select;
@@ -52,10 +53,10 @@ const columns2 = [
             if (record.isRoundChnage) {
                 return (
                     <div className="table-live-score-table-fixture-style-main">
-                        <div className="table-live-score-table-fixture-style" style={{ borderBottom: " 1px solid #e8e8e8" }}>
+                        <div className="table-live-score-table-fixture-style pl-3" style={{ borderBottom: " 1px solid #e8e8e8" }}>
                             <span className="inner-table-row-heading-text">{record.roundName}</span>
                         </div>
-                        <div className="table-live-score-table-fixture-style"  >
+                        <div className="table-live-score-table-fixture-style pl-3"  >
                             <span  >{startTime ? liveScore_MatchFormate(startTime) : ""}</span>
                         </div>
                     </div >
@@ -63,7 +64,9 @@ const columns2 = [
                 )
             } else {
                 return (
-                    <span>{startTime ? liveScore_MatchFormate(startTime) : ""}</span>
+                    <div className="pl-3">
+                        <span>{startTime ? liveScore_MatchFormate(startTime) : ""}</span>
+                    </div>
                 )
             }
         },
@@ -81,12 +84,12 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <NavLink to={{
+                            {/* <NavLink to={{
                                 pathname: '/liveScoreTeamView',
                                 state: { tableRecord: team1, screenName: 'fromMatchList' }
-                            }} >
-                                <span class="input-heading-add-another pt-0" >{team1 ? team1.name : ""}</span>
-                            </NavLink>
+                            }} > */}
+                            <span  >{team1 ? team1.name : ""}</span>
+                            {/* </NavLink> */}
                         </div>
                     </div >
 
@@ -94,12 +97,12 @@ const columns2 = [
             } else {
 
                 return (
-                    <NavLink to={{
-                        pathname: '/liveScoreTeamView',
-                        state: { tableRecord: team1, screenName: 'fromMatchList' }
-                    }} >
-                        <span class="input-heading-add-another pt-0" >{team1 ? team1.name : ""}</span>
-                    </NavLink>
+                    // <NavLink to={{
+                    //     pathname: '/liveScoreTeamView',
+                    //     state: { tableRecord: team1, screenName: 'fromMatchList' }
+                    // }} >
+                    <span  >{team1 ? team1.name : ""}</span>
+                    // </NavLink>
                 )
             }
         }
@@ -117,12 +120,12 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <NavLink to={{
+                            {/* <NavLink to={{
                                 pathname: '/liveScoreTeamView',
                                 state: { tableRecord: team2, screenName: 'fromMatchList' }
-                            }} >
-                                <span class="input-heading-add-another pt-0" >{team2 ? team2.name : ""}</span>
-                            </NavLink>
+                            }} > */}
+                            <span>{team2 ? team2.name : ""}</span>
+                            {/* </NavLink> */}
                         </div>
                     </div >
 
@@ -130,12 +133,12 @@ const columns2 = [
             } else {
 
                 return (
-                    <NavLink to={{
-                        pathname: '/liveScoreTeamView',
-                        state: { tableRecord: team2, screenName: 'fromMatchList' }
-                    }} >
-                        <span class="input-heading-add-another pt-0" >{team2 ? team2.name : ""}</span>
-                    </NavLink>
+                    // <NavLink to={{
+                    //     pathname: '/liveScoreTeamView',
+                    //     state: { tableRecord: team2, screenName: 'fromMatchList' }
+                    // }} >
+                    <span  >{team2 ? team2.name : ""}</span>
+                    // </NavLink>
                 )
             }
         }
@@ -247,14 +250,24 @@ class LiveScoreSeasonFixture extends Component {
 
         }
     }
-    componentDidMount() {
+    async  componentDidMount() {
         setUserId(userId);
         setAuthToken(token);
-        this.setState({ onCompLoad: true })
-        let orgParam =  this.props.location.search.split("?organisationId=")
-        let orgId  =  orgParam[1]
-        // let orgKey = getOrganisationData() ? getOrganisationData().organisationId : null
-        this.props.fixtureCompetitionListAction(orgId)
+
+
+        let orgParam = this.props.location.search.split("?organisationId=")
+        let orgId = orgParam[1]
+
+        let organisationId = await getliveScoreOrgID()
+
+        if (organisationId != undefined) {
+            this.setState({ onCompLoad: true })
+            this.props.fixtureCompetitionListAction(organisationId)
+        } else {
+            setliveScoreOrgID(orgId)
+            history.push('/liveScoreSeasonFixture')
+        }
+
     }
 
     componentDidUpdate(nextProps) {
@@ -266,7 +279,7 @@ class LiveScoreSeasonFixture extends Component {
             }
         }
 
-      
+
 
         if (this.props.liveScoreLadderState !== nextProps.liveScoreLadderState) {
             if (this.props.liveScoreLadderState.onLoad == false && this.state.onDivisionLoad == true) {
@@ -320,7 +333,7 @@ class LiveScoreSeasonFixture extends Component {
         const { liveScoreLadderState } = this.props;
         let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
         // let division = this.props.liveScoreMatchState.divisionList ? this.props.liveScoreMatchState.divisionList : []
-        let division =isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
+        let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
@@ -437,7 +450,7 @@ class LiveScoreSeasonFixture extends Component {
 
 
     render() {
-    
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.liveScores} menuName={AppConstants.liveScores} />
@@ -469,7 +482,7 @@ function mapStatetoProps(state) {
         liveScoreFixturCompState: state.LiveScoreFixturCompState,
         liveScoreLadderState: state.LiveScoreLadderState,
         liveScoreCompetition: state.liveScoreCompetition,
-        liveScoreRoundState :state.LiveScoreRoundState
+        liveScoreRoundState: state.LiveScoreRoundState
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(LiveScoreSeasonFixture));
