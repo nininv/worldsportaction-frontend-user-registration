@@ -24,7 +24,7 @@ class UserRegistration extends Component {
     }
 
     async componentDidMount() {
-        message.error("componentDidMount");
+        alert("componentDidMount");
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
@@ -36,8 +36,8 @@ class UserRegistration extends Component {
 
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
-        message.error("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
-        message.error("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
+        alert("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
+        alert("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
        await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
             tokenFromLocalStorage: tokenFromLocalStorage});
 
@@ -53,21 +53,21 @@ class UserRegistration extends Component {
     }
 
     async componentWillMount(){
-        message.error("componentWillMount");
+        alert("componentWillMount");
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
-        message.error("componentWillMount userIdFromLocalStorage::" + userIdFromLocalStorage);
-        message.error("componentWillMount tokenFromLocalStorage" + tokenFromLocalStorage);
+        alert("componentWillMount userIdFromLocalStorage::" + userIdFromLocalStorage);
+        alert("componentWillMount tokenFromLocalStorage" + tokenFromLocalStorage);
        await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
             tokenFromLocalStorage: tokenFromLocalStorage});
     }
 
     async componentWillUpdate(){
-        message.error("componentWillUpdate");
+        alert("componentWillUpdate");
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
-        message.error("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
-        message.error("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
+        alert("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
+        alert("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
        await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
             tokenFromLocalStorage: tokenFromLocalStorage}); 
     }
