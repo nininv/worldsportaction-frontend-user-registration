@@ -24,7 +24,7 @@ class UserRegistration extends Component {
     }
 
     async componentDidMount() {
-        alert("componentDidMount");
+       // alert("componentDidMount");
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
@@ -34,12 +34,12 @@ class UserRegistration extends Component {
             setCompetitionID(competitionUniqueKey);
         }
 
-        // let userIdFromLocalStorage = await getUserId();
-        // let tokenFromLocalStorage = await getAuthToken();
-        alert("componentDidMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
-        alert("componentDidMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
-    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
-    //         tokenFromLocalStorage: tokenFromLocalStorage});
+        let userIdFromLocalStorage = await getUserId();
+        let tokenFromLocalStorage = await getAuthToken();
+       // alert("componentDidMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+       // alert("componentDidMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+            tokenFromLocalStorage: tokenFromLocalStorage});
 
         // console.log("userIdFromQuery" + userIdFromLocalStorage);
         // console.log("tokenFromQuery::" + tokenFromLocalStorage);
@@ -53,11 +53,11 @@ class UserRegistration extends Component {
     }
 
     async componentWillMount(){
-        alert("componentWillMount");
+       // alert("componentWillMount");
         // let userIdFromLocalStorage = await getUserId();
         // let tokenFromLocalStorage = await getAuthToken();
-        alert("componentWillMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
-        alert("componentWillMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+       // alert("componentWillMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+       // alert("componentWillMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
     //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
     //         tokenFromLocalStorage: tokenFromLocalStorage});
     }
@@ -72,14 +72,14 @@ class UserRegistration extends Component {
     //         tokenFromLocalStorage: tokenFromLocalStorage}); 
     }
 
-    componentDidUpdate(nextProps){
-        if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
-            this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
-            this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
-            {
-                history.push("/appRegistrationForm")
-            }
-    }
+    // componentDidUpdate(nextProps){
+    //     if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+    //         this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+    //         this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
+    //         {
+    //             history.push("/appRegistrationForm")
+    //         }
+    // }
 
     parseHttpHeaders(httpHeaders) {
         return httpHeaders.split("\n")
