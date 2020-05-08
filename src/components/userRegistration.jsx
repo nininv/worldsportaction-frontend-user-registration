@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Radio } from 'antd';
+import { Layout, Radio, message } from 'antd';
 import InputWithHead from "../customComponents/InputWithHead";
 import AppImages from "../themes/appImages";
 import history from "../util/history";
@@ -24,7 +24,7 @@ class UserRegistration extends Component {
     }
 
     async componentDidMount() {
- 
+        message.error("componentDidMount");
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
@@ -36,8 +36,8 @@ class UserRegistration extends Component {
 
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
-        alert("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
-        alert("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
+        message.error("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
+        message.error("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
        await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
             tokenFromLocalStorage: tokenFromLocalStorage});
 
@@ -47,6 +47,35 @@ class UserRegistration extends Component {
         if(userIdFromLocalStorage!= undefined && tokenFromLocalStorage!= undefined && 
             userIdFromLocalStorage!= null && tokenFromLocalStorage!= null && 
             userIdFromLocalStorage!= "" && tokenFromLocalStorage!= "")
+            {
+                history.push("/appRegistrationForm")
+            }
+    }
+
+    async componentWillMount(){
+        message.error("componentWillMount");
+        let userIdFromLocalStorage = await getUserId();
+        let tokenFromLocalStorage = await getAuthToken();
+        message.error("componentWillMount userIdFromLocalStorage::" + userIdFromLocalStorage);
+        message.error("componentWillMount tokenFromLocalStorage" + tokenFromLocalStorage);
+       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+            tokenFromLocalStorage: tokenFromLocalStorage});
+    }
+
+    async componentWillUpdate(){
+        message.error("componentWillUpdate");
+        let userIdFromLocalStorage = await getUserId();
+        let tokenFromLocalStorage = await getAuthToken();
+        message.error("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
+        message.error("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
+       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+            tokenFromLocalStorage: tokenFromLocalStorage}); 
+    }
+
+    componentDidUpdate(nextProps){
+        if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+            this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+            this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
             {
                 history.push("/appRegistrationForm")
             }
