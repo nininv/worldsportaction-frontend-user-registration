@@ -17,6 +17,10 @@ class UserRegistration extends Component {
     constructor(props) {
         super(props);
         this.props.clearRegistrationDataAction();
+        this.state = {
+            userIdFromLocalStorage: null,
+            tokenFromLocalStorage: null
+        }
     }
 
     async componentDidMount() {
@@ -32,6 +36,10 @@ class UserRegistration extends Component {
 
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
+        alert("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
+        alert("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
+       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+            tokenFromLocalStorage: tokenFromLocalStorage});
 
         console.log("userIdFromQuery" + userIdFromLocalStorage);
         console.log("tokenFromQuery::" + tokenFromLocalStorage);
@@ -101,6 +109,8 @@ class UserRegistration extends Component {
     contentView = () => {
         return (
             <div className="content-view">
+                <div>{"UserId::" + this.state.userIdFromLocalStorage}</div>
+                <div>{"Token::" + this.state.tokenFromLocalStorage}</div>
                 <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"

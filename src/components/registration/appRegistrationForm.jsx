@@ -1521,7 +1521,8 @@ class AppRegistrationForm extends Component {
                     <div className="org-photos">
                         <div>
                             <div>
-                                <img src={ item.organisationInfo.organisationLogoUrl} alt=""height= {125} width={125}
+                                <img src={item.organisationInfo!= null && item.organisationInfo!= undefined &&
+                                             item.organisationInfo.organisationLogoUrl} alt=""height= {125} width={125}
                                     style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
                                         onError={ev => {ev.target.src = AppImages.circleImage;}}
                                 />
