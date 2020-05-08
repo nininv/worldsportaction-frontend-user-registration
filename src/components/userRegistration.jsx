@@ -63,13 +63,13 @@ class UserRegistration extends Component {
     }
 
     async componentWillUpdate(){
-        alert("componentWillUpdate");
-        let userIdFromLocalStorage = await getUserId();
-        let tokenFromLocalStorage = await getAuthToken();
-        alert("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
-        alert("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
-       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
-            tokenFromLocalStorage: tokenFromLocalStorage}); 
+    //     alert("componentWillUpdate");
+    //     let userIdFromLocalStorage = await getUserId();
+    //     let tokenFromLocalStorage = await getAuthToken();
+    //     alert("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
+    //     alert("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage}); 
     }
 
     componentDidUpdate(nextProps){
