@@ -18,8 +18,8 @@ class UserRegistration extends Component {
         super(props);
         this.props.clearRegistrationDataAction();
         this.state = {
-            userIdFromLocalStorage: null,
-            tokenFromLocalStorage: null
+            userIdFromLocalStorage: getUserId(),
+            tokenFromLocalStorage: getAuthToken()
         }
     }
 
@@ -34,19 +34,19 @@ class UserRegistration extends Component {
             setCompetitionID(competitionUniqueKey);
         }
 
-        let userIdFromLocalStorage = await getUserId();
-        let tokenFromLocalStorage = await getAuthToken();
-        alert("componentDidMount userIdFromLocalStorage::" + userIdFromLocalStorage);
-        alert("componentDidMount tokenFromLocalStorage" + tokenFromLocalStorage);
-       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
-            tokenFromLocalStorage: tokenFromLocalStorage});
+        // let userIdFromLocalStorage = await getUserId();
+        // let tokenFromLocalStorage = await getAuthToken();
+        alert("componentDidMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+        alert("componentDidMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage});
 
-        console.log("userIdFromQuery" + userIdFromLocalStorage);
-        console.log("tokenFromQuery::" + tokenFromLocalStorage);
+        // console.log("userIdFromQuery" + userIdFromLocalStorage);
+        // console.log("tokenFromQuery::" + tokenFromLocalStorage);
 
-        if(userIdFromLocalStorage!= undefined && tokenFromLocalStorage!= undefined && 
-            userIdFromLocalStorage!= null && tokenFromLocalStorage!= null && 
-            userIdFromLocalStorage!= "" && tokenFromLocalStorage!= "")
+        if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+            this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+            this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
             {
                 history.push("/appRegistrationForm")
             }
@@ -54,12 +54,12 @@ class UserRegistration extends Component {
 
     async componentWillMount(){
         alert("componentWillMount");
-        let userIdFromLocalStorage = await getUserId();
-        let tokenFromLocalStorage = await getAuthToken();
-        alert("componentWillMount userIdFromLocalStorage::" + userIdFromLocalStorage);
-        alert("componentWillMount tokenFromLocalStorage" + tokenFromLocalStorage);
-       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
-            tokenFromLocalStorage: tokenFromLocalStorage});
+        // let userIdFromLocalStorage = await getUserId();
+        // let tokenFromLocalStorage = await getAuthToken();
+        alert("componentWillMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+        alert("componentWillMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage});
     }
 
     async componentWillUpdate(){
