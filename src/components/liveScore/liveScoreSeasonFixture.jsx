@@ -257,14 +257,13 @@ class LiveScoreSeasonFixture extends Component {
 
         let orgParam = this.props.location.search.split("?organisationId=")
         let orgId = orgParam[1]
-
+        setliveScoreOrgID(orgId)
         let organisationId = await getliveScoreOrgID()
 
         if (organisationId != undefined) {
             this.setState({ onCompLoad: true })
             this.props.fixtureCompetitionListAction(organisationId)
-        } else {
-            setliveScoreOrgID(orgId)
+        }else{
             history.push('/liveScoreSeasonFixture')
         }
 
