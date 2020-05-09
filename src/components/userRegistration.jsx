@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Radio } from 'antd';
+import { Layout, Radio, message } from 'antd';
 import InputWithHead from "../customComponents/InputWithHead";
 import AppImages from "../themes/appImages";
 import history from "../util/history";
@@ -17,10 +17,14 @@ class UserRegistration extends Component {
     constructor(props) {
         super(props);
         this.props.clearRegistrationDataAction();
+        this.state = {
+            userIdFromLocalStorage: getUserId(),
+            tokenFromLocalStorage: getAuthToken()
+        }
     }
 
     async componentDidMount() {
- 
+       // alert("componentDidMount");
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
@@ -32,17 +36,50 @@ class UserRegistration extends Component {
 
         let userIdFromLocalStorage = await getUserId();
         let tokenFromLocalStorage = await getAuthToken();
+       // alert("componentDidMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+       // alert("componentDidMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+       await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+            tokenFromLocalStorage: tokenFromLocalStorage});
 
-        console.log("userIdFromQuery" + userIdFromLocalStorage);
-        console.log("tokenFromQuery::" + tokenFromLocalStorage);
+        // console.log("userIdFromQuery" + userIdFromLocalStorage);
+        // console.log("tokenFromQuery::" + tokenFromLocalStorage);
 
-        if(userIdFromLocalStorage!= undefined && tokenFromLocalStorage!= undefined && 
-            userIdFromLocalStorage!= null && tokenFromLocalStorage!= null && 
-            userIdFromLocalStorage!= "" && tokenFromLocalStorage!= "")
+        if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+            this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+            this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
             {
                 history.push("/appRegistrationForm")
             }
     }
+
+    async componentWillMount(){
+       // alert("componentWillMount");
+        // let userIdFromLocalStorage = await getUserId();
+        // let tokenFromLocalStorage = await getAuthToken();
+       // alert("componentWillMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+       // alert("componentWillMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage});
+    }
+
+    async componentWillUpdate(){
+    //     alert("componentWillUpdate");
+    //     let userIdFromLocalStorage = await getUserId();
+    //     let tokenFromLocalStorage = await getAuthToken();
+    //     alert("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
+    //     alert("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage}); 
+    }
+
+    // componentDidUpdate(nextProps){
+    //     if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+    //         this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+    //         this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
+    //         {
+    //             history.push("/appRegistrationForm")
+    //         }
+    // }
 
     parseHttpHeaders(httpHeaders) {
         return httpHeaders.split("\n")
@@ -101,6 +138,8 @@ class UserRegistration extends Component {
     contentView = () => {
         return (
             <div className="content-view">
+                <div>{"UserId::" + this.state.userIdFromLocalStorage}</div>
+                <div>{"Token::" + this.state.tokenFromLocalStorage}</div>
                 <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"

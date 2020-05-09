@@ -37,7 +37,7 @@ import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getOrganisationId,  getCompetitonId, getUserId } from "../../util/sessionStorage";
+import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken } from "../../util/sessionStorage";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -51,6 +51,8 @@ class AppRegistrationForm extends Component {
             agreeTerm: false,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
+            // locUserId: getUserId(),
+            // locToken: getAuthToken(),
             showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
@@ -88,6 +90,9 @@ class AppRegistrationForm extends Component {
             competitionUniqueKey: this.state.competitionUniqueKey,
             organisationUniqueKey: this.state.organisationUniqueKey
         }
+
+        // alert("UserId::" + this.state.locUserId);
+        // alert("Token::" + this.state.locToken);
 
       //  this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
         this.props.membershipProductEndUserRegistrationAction(payload);
@@ -1518,16 +1523,22 @@ class AppRegistrationForm extends Component {
                     <InputWithHead heading={AppConstants.contactDetails}/>
                         <span className="applicable-to-text">{item.contactDetails}</span>
                     <InputWithHead heading={AppConstants.photos}/>
+                   
                     <div className="org-photos">
+                        {(item.organisationInfo!= null && item.organisationInfo!= undefined &&
+                                             item.organisationInfo.organisationLogoUrl!= null) ?(
                         <div>
                             <div>
-                                <img src={ item.organisationInfo.organisationLogoUrl} alt=""height= {125} width={125}
+                                <img src={item.organisationInfo!= null && item.organisationInfo!= undefined &&
+                                             item.organisationInfo.organisationLogoUrl} alt=""height= {125} width={125}
                                     style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
                                         onError={ev => {ev.target.src = AppImages.circleImage;}}
                                 />
                             </div>
                             <div className="photo-type">{AppConstants.logo}</div>
                         </div>
+                        ) : null 
+                        }
                     {((item.organisationInfo!=null && item.organisationInfo.organisationPhotos) || [] )
                     .map((ph, phIndex) => (
                         <div key={ph.organisationPhotoId}>
