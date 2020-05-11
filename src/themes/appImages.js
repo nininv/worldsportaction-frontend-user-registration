@@ -35,6 +35,7 @@ const AppImages = {
   successTick: require("../images/success-tick.png"),
   purpleDot: require("../images/PurpleDot.png"),
   loginImage: require("../images/sign_in.jpg"),
+  suceessImg: require("../images/shapes.png"),
 };
 
 export default AppImages;

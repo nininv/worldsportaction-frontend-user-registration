@@ -547,6 +547,14 @@ img.bg {
   z-index: 1;
 }
 
+.success-screen-view {
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  width: 35%;
+  margin-top: 12vh;
+}
+
 @media screen and (max-width: 1024px) { 
   img.bg {
     left: 50%;
@@ -579,6 +587,10 @@ img.bg {
   }
   .login-formView {
     width: 100%;
+  }
+  .success-screen-view {
+    width: 95%;
+    margin-top: 18vh;
   }
 }
 

@@ -148,7 +148,7 @@ const Stripe = (props) => {
             <Layout >
                 <Content className="container">
                     {headerView()}
-                    <div className="login-formView">
+                    <div className="stripe-payment-formView">
                         <Elements stripe={stripePromise}>
                             <CheckoutForm onLoad={(status) => setLoading(status)} />
                         </Elements>

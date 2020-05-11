@@ -78,3 +78,10 @@
     padding: 4px 0;
     color: #fa755a;
 }
+
+.stripe-payment-formView{
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  width: 70%;
+}
