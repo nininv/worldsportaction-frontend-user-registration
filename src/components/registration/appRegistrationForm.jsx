@@ -154,6 +154,16 @@ class AppRegistrationForm extends Component {
             this.props.updateEndUserRegisrationAction("", "refFlag");
        }
 
+       if(registrationState.refFlag === "participant")
+       {
+            this.props.updateEndUserRegisrationAction("", "refFlag");
+            let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+            let userRegistrations = registrationDetail.userRegistrations;
+            (userRegistrations || []).map((item, index) => {
+                this.setFormFields(item, index);
+            });
+       }
+
        if(registrationState.setCompOrgKey == true){
            if(registrationState.registrationDetail.userRegistrations[0].isPlayer!= -1)
            {
@@ -775,7 +785,7 @@ class AppRegistrationForm extends Component {
 
         userRegistration[key] = value;
 
-        console.log("UserRegistrations::" + JSON.stringify(userRegistrations));
+       // console.log("UserRegistrations::" + JSON.stringify(userRegistrations));
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
@@ -1083,6 +1093,7 @@ class AppRegistrationForm extends Component {
     }
 
     removeParticipant = () => {
+        console.log("Index:::::" + this.state.participantIndex);
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
@@ -1113,6 +1124,7 @@ class AppRegistrationForm extends Component {
         userRegistrations.splice(this.state.participantIndex, 1);
         this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        this.props.updateEndUserRegisrationAction("participant", "refFlag");
 
     }
 
@@ -1318,10 +1330,22 @@ class AppRegistrationForm extends Component {
         );
     };
 
-    registeringYourselfView = (item, index, getFieldDecorator) => {
+    registeringYourselfView = (item, index, getFieldDecorator, styles) => {
         return (
             <div className="formView content-view pt-5">
-                 <span className="form-heading"> {AppConstants.registration}</span>
+                <div style={{display:'flex'}}>
+                    <div className="form-heading"> {AppConstants.registration}</div>
+                    {index  == 0 ? null :
+                    <div className="transfer-image-view pointer" style={{paddingLeft: '33px', marginLeft: 'auto'}} onClick={() => 
+                                            this.deleteEnableOrDisablePopup( "participant", true, index)}>
+                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        <span className="user-remove-text">
+                            {AppConstants.remove}
+                        </span>
+                    </div> 
+                    }
+                </div>
+                
                 <InputWithHead heading={AppConstants.areYouRegisteringYourself} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
@@ -1510,20 +1534,33 @@ class AppRegistrationForm extends Component {
                         </div>
                     </div>
                     <InputWithHead heading={AppConstants.venue}/>
-                    {(item.venue || []).map((v, vIndex) =>(
-                        <span>
-                            <span>{v.venueName}</span>
-                            <span>{item.venue.length != (vIndex + 1) ? ', ': ''}</span>
-                        </span>
-                    ))}
+                    {item.venue == null || item.venue.length == 0 ? AppConstants.noInformationProvided :
+                    <span>
+                        {(item.venue || []).map((v, vIndex) =>(
+                            <span>
+                                <span>{v.venueName}</span>
+                                <span>{item.venue.length != (vIndex + 1) ? ', ': ''}</span>
+                            </span>
+                        ))}</span>
+                    }
                     <InputWithHead heading={AppConstants.specialNotes}/>
-                        <div className="applicable-to-text">{item.specialNote}</div>
+                        <div className="applicable-to-text">
+                            {item.specialNote == null || item.specialNote == "" ? AppConstants.noInformationProvided : 
+                            item.specialNote}
+                        </div>
                     <InputWithHead heading={AppConstants.training} />
-                        <div className="applicable-to-text">{item.training}</div>
+                        <div className="applicable-to-text">
+                            {item.training == null || item.training == "" ? AppConstants.noInformationProvided : 
+                            item.training}
+                        </div>
                     <InputWithHead heading={AppConstants.contactDetails}/>
-                        <span className="applicable-to-text">{item.contactDetails}</span>
+                        <span className="applicable-to-text">
+                            {item.contactDetails == null || item.contactDetails == "" ? AppConstants.noInformationProvided : 
+                            item.contactDetails}
+                        </span>
                     <InputWithHead heading={AppConstants.photos}/>
-                   
+                    {item.organisationInfo == null ||  item.organisationInfo == undefined ? 
+                            AppConstants.noPhotosAvailable :
                     <div className="org-photos">
                         {(item.organisationInfo!= null && item.organisationInfo!= undefined &&
                                              item.organisationInfo.organisationLogoUrl!= null) ?(
@@ -1551,7 +1588,7 @@ class AppRegistrationForm extends Component {
                             <div className="photo-type">{ph.photoType}</div>
                         </div>
                     ))}
-                    </div>
+                    </div>}
                 </div> : null}
 
                 <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>
@@ -2053,7 +2090,7 @@ class AppRegistrationForm extends Component {
                  <span className="form-heading">
                     {AppConstants.additionalPersonalInfoReqd}
                 </span>
-                {regSetting.played_before === 1 && (
+                {regSetting.last_captain === 1 && (
                     <div>
                         <span className="applicable-to-heading">
                             {" "}
@@ -2568,13 +2605,15 @@ class AppRegistrationForm extends Component {
                 <div className="end-user-divider-side" style={{width:'75px'}}></div>
                 <div className="end-user-divider-text">{text}</div>
                 <div className="end-user-divider-side" style={{flexGrow: '1'}}></div>
+                {playerOrProduct == "parent" && prodIndex == 0 ? null :
                 <div className="transfer-image-view pointer" style={{paddingLeft: '33px'}} onClick={() => 
                                         this.deleteEnableOrDisablePopup(playerOrProduct, true, index, prodIndex, 0, "", null)}>
                     <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                     <span className="user-remove-text">
                         {AppConstants.remove}
                     </span>
-                </div>
+                </div> 
+                }
             </div>
         )
     }
@@ -2632,7 +2671,7 @@ class AppRegistrationForm extends Component {
                 {(userRegistrations || []).map((item, index) => (
                     <div key={"userReg" + index}>
                         <div style={{marginBottom: "20px"}}>
-                            {this.registeringYourselfView(item, index, getFieldDecorator)}
+                            {this.registeringYourselfView(item, index, getFieldDecorator, styles)}
                         </div>
                         {item.registeringYourself != 0 ? 
                         <div>
@@ -2666,7 +2705,7 @@ class AppRegistrationForm extends Component {
                             <div style={{marginBottom: "20px"}}>
                                {this.emergencyContactView(item, index, getFieldDecorator)} 
                             </div>
-                            {(regSetting.played_before === 1) && (
+                            {(regSetting.last_captain === 1) && (
                                 <div style={{marginBottom: "20px"}}>
                                     {this.additionalPersonalInfoView(item, index, getFieldDecorator)}
                                 </div>

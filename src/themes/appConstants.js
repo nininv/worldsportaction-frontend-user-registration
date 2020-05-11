@@ -636,7 +636,7 @@ const AppConstants = {
   shootingState: "Shooting Stats",
   incidentDetails: "Incident Detail",
   photos: "Photos",
-  
+
   // 24-Jan
   forfiet: "Forfeit",
   abandon: "Abandon",
@@ -860,7 +860,8 @@ const AppConstants = {
   disput_description:"Result in dispute",
   draft_description:"Final result entered and unconfirmed",
   final_description:"Final result entered and confirmed",
-  logo: "Logo"
+  logo: "Logo",
+  noInformationProvided: "No information provided"
 };
 
 export default AppConstants;
