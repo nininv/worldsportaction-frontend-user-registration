@@ -366,7 +366,7 @@ class AppRegistrationForm extends Component {
 
         if(userInfo!= null && userInfo!= undefined){
             if(getAge(new Date(userInfo.dateOfBirth)) < 18){
-                (userInfo.parentsOrGaurdian || []).map((item, userIndex) => {
+                (userInfo.parentOrGuardian || []).map((item, userIndex) => {
                     this.addParent(index, userRegistrations, item);
                 })
             }
@@ -398,7 +398,7 @@ class AppRegistrationForm extends Component {
 
         if(userInfo!= null && userInfo!= undefined){
             if(getAge(new Date(userInfo.dateOfBirth)) < 18){
-                (userInfo.parentsOrGaurdian || []).map((item, parentIndex) => {
+                (userInfo.parentOrGuardian || []).map((item, parentIndex) => {
                     this.setParentformFieldsValue(index, parentIndex, item);
                 })
             }
@@ -1051,7 +1051,9 @@ class AppRegistrationForm extends Component {
         }
         if(key == "participant" && subKey == null)
         {
-            modalMessage = AppConstants.participantDeleteConfirmMsg;
+            if(message == null || message == "" || message == undefined){
+                modalMessage = AppConstants.participantDeleteConfirmMsg;
+            }
         }
         else if(key == "product" && subKey == null)
         {
@@ -1337,7 +1339,7 @@ class AppRegistrationForm extends Component {
                     <div className="form-heading"> {AppConstants.registration}</div>
                     {(index  == 0 || item.isPlayer != -1 )? null :
                     <div className="transfer-image-view pointer" style={{paddingLeft: '33px', marginLeft: 'auto'}} onClick={() => 
-                                            this.deleteEnableOrDisablePopup( "participant", true, index)}>
+                                            this.deleteEnableOrDisablePopup( "participant", true, index, -1, -1, AppConstants.registrationDeleteConfirmMsg)}>
                         <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                         <span className="user-remove-text">
                             {AppConstants.remove}
