@@ -79,6 +79,14 @@ const getOrganisationId = () => {
     return localStorage.organisationId;
 }
 
+const setliveScoreOrgID=(Orgid)=>{
+    localStorage.setItem("liveScoreOrgID", Orgid)
+}
+
+const getliveScoreOrgID = () => {
+    return localStorage.liveScoreOrgID
+}
+
 
 module.exports = {
     setCompetitionID, getCompetitonId,
@@ -95,5 +103,7 @@ module.exports = {
     setParticipating_competition,
     getParticipating_competition,
     getOrganisationId,
-    setOrganistaionId
+    setOrganistaionId,
+    setliveScoreOrgID,
+    getliveScoreOrgID
 }

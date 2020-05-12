@@ -152,7 +152,7 @@
 
 .bulk-match-heading {
     font-weight: bold;
-    font-size: 15px;
+    font-size: 17px;
     display: flex;
     margin-bottom: 10px;
 }
@@ -195,6 +195,73 @@
     border-color: var(--app-color);
     border-right-width: 1px !important;
 }
+.slct-in-add-manager-livescore .ant-form-item-control{
+    line-height: 15px; 
+}
+
+.table-live-score-table-fixture-style{
+    /* background-color: aqua; */
+    height: 55px;
+    display: flex;
+    align-self: center;
+    align-items: center;
+   
+}
+.table-live-score-table-fixture-style-main{
+    height: 110px;
+    /* background-color: red */
+}
+
+
+.livescore-seasonfixture-table .ant-table-thead>tr>th {
+    font-weight: 500;
+    font-family: inter-medium;
+    font-size: 13px;
+    overflow-wrap: break-word;
+    color: var(--app-9b9bad);
+    padding-left: 21px;
+    height: 48px;
+    background-color: var(--app-white) !important;
+  }
+  
+  .livescore-seasonfixture-table .ant-table-tbody>tr>td {
+    overflow-wrap: break-word;
+    color: var(--app-4c4c6d);
+    font-size: 15px;
+    font-family: inter;
+    height: 64px;
+    background-color: var(--app-white);
+    padding:0px 0px !important;
+  }
+  
+  .livescore-seasonfixture-table .ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-thead>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td, .livescore-seasonfixture-table .ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
+    background: transparent;
+  }
+
+  .inner-table-row-heading-text{
+    font-weight: 500;
+    font-family: inter-medium;
+    font-size: 18px;
+    overflow-wrap: break-word;
+    color: var(--app-color);
+  }
+
+  .livescore-seasonfixture-table .ant-table-small > .ant-table-content > .ant-table-body{
+          margin: 0 0px;
+  }
+
+
+
+@media(min-width: 768px) and (max-width: 1024px) {
+    .live-score-edit-match-buttons {
+        display: flex;
+        width:   10px;
+        /* background-color:seagreen; */
+        justify-content: space-between;
+        align-items: center
+    }
+  }
+
 @media(max-width:767px) {
     .live-score-edit {
         background-color: var(--app-e0e1e3);

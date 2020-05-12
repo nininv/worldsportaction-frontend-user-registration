@@ -7,8 +7,12 @@ import NotFound from "./404";
 import UserRegistration from "../components/userRegistration";
 import Login from '../components/login';
 import AppRegistrationSuccess from "../components/registration/appRegistrationSuccess";
+import Stripe from "../components/stripe/stripe";
 
+// Live Score Screesn 
 
+import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder"
+import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
 const lazyLoad = Component => {
   const lazy = props => {
     return (
@@ -29,7 +33,7 @@ class Routes extends React.Component {
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationForm)}
         />
-         <PrivateRoute
+        <PrivateRoute
           path="/login"
           component={lazyLoad(Login)}
         />
@@ -37,10 +41,25 @@ class Routes extends React.Component {
           path="/userRegistration"
           component={lazyLoad(UserRegistration)}
         />
-         <PrivateRoute
+        <PrivateRoute
           path="/appRegistrationSuccess"
           component={lazyLoad(AppRegistrationSuccess)}
         />
+        <PrivateRoute
+          path="/checkoutPayment"
+          component={lazyLoad(Stripe)}
+        />
+
+        <PrivateRoute
+          path="/liveScorePublicLadder"
+          component={lazyLoad(LiveScorePublicLadder)}
+        />
+
+        <PrivateRoute
+          path="/liveScoreSeasonFixture"
+          component={lazyLoad(LiveScoreSeasonFixture)}
+        />
+
         <Route path="/" component={lazyLoad(NotFound)} />
         <Redirect from="*" to="/404" />
       </Switch>

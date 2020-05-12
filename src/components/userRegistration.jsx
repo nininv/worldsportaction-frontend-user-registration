@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Radio } from 'antd';
+import { Layout, Radio, message } from 'antd';
 import InputWithHead from "../customComponents/InputWithHead";
 import AppImages from "../themes/appImages";
 import history from "../util/history";
@@ -17,32 +17,64 @@ class UserRegistration extends Component {
     constructor(props) {
         super(props);
         this.props.clearRegistrationDataAction();
+        this.state = {}
     }
 
     async componentDidMount() {
- 
+       // alert("componentDidMount");
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
+        let userId = query.userId;
+        let token = query.token;
         if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined)
         {
-            setOrganistaionId(organisationUniqueKey);
-            setCompetitionID(competitionUniqueKey);
+            await setOrganistaionId(organisationUniqueKey);
+            await setCompetitionID(competitionUniqueKey);
         }
 
-        let userIdFromLocalStorage = await getUserId();
-        let tokenFromLocalStorage = await getAuthToken();
+        if(userId!= undefined && token!= undefined){
+            await setUserId(userId);
+            await setAuthToken(token);
+        }
 
-        console.log("userIdFromQuery" + userIdFromLocalStorage);
-        console.log("tokenFromQuery::" + tokenFromLocalStorage);
-
-        if(userIdFromLocalStorage!= undefined && tokenFromLocalStorage!= undefined && 
-            userIdFromLocalStorage!= null && tokenFromLocalStorage!= null && 
-            userIdFromLocalStorage!= "" && tokenFromLocalStorage!= "")
+        if(userId!= undefined && token!= undefined && 
+            userId!= null && token!= null && 
+            userId!= "" && token!= "" &&
+            userId!= 0)
             {
                 history.push("/appRegistrationForm")
             }
     }
+
+    async componentWillMount(){
+       // alert("componentWillMount");
+        // let userIdFromLocalStorage = await getUserId();
+        // let tokenFromLocalStorage = await getAuthToken();
+       // alert("componentWillMount userIdFromLocalStorage::" + this.state.userIdFromLocalStorage);
+       // alert("componentWillMount tokenFromLocalStorage" + this.state.tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage});
+    }
+
+    async componentWillUpdate(){
+    //     alert("componentWillUpdate");
+    //     let userIdFromLocalStorage = await getUserId();
+    //     let tokenFromLocalStorage = await getAuthToken();
+    //     alert("componentWillUpdate userIdFromLocalStorage::" + userIdFromLocalStorage);
+    //     alert("componentWillUpdate tokenFromLocalStorage" + tokenFromLocalStorage);
+    //    await this.setState({userIdFromLocalStorage: userIdFromLocalStorage, 
+    //         tokenFromLocalStorage: tokenFromLocalStorage}); 
+    }
+
+    // componentDidUpdate(nextProps){
+    //     if(this.state.userIdFromLocalStorage!= undefined && this.state.tokenFromLocalStorage!= undefined && 
+    //         this.state.userIdFromLocalStorage!= null && this.state.tokenFromLocalStorage!= null && 
+    //         this.state.userIdFromLocalStorage!= "" && this.state.tokenFromLocalStorage!= "")
+    //         {
+    //             history.push("/appRegistrationForm")
+    //         }
+    // }
 
     parseHttpHeaders(httpHeaders) {
         return httpHeaders.split("\n")

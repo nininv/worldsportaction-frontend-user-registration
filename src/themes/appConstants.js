@@ -636,6 +636,7 @@ const AppConstants = {
   shootingState: "Shooting Stats",
   incidentDetails: "Incident Detail",
   photos: "Photos",
+
   // 24-Jan
   forfiet: "Forfeit",
   abandon: "Abandon",
@@ -848,11 +849,21 @@ const AppConstants = {
   voucherDeleteConfirmMsg: "Are you sure you want to delete this voucher?",
   productDeleteConfirmMsg: "Are you sure you want to delete this product?",
   participantDeleteConfirmMsg: "Are you sure you want to delete this participant?",
+  registrationDeleteConfirmMsg: "Are you sure you want to delete this registration?",
   friendDeleteConfirmMsg: "Are you sure you want to delete this friend?",
   registrationOptionConfirmMsg: "Changing the registration type will clear the information you have entered already. Please confirm you wish to proceed.",
   parentDeleteConfirmMsg: "Are you sure you want to delete this parent?",
   areYouAnExistingUser: "Are you an existing user?",
-  newUser: "New User"
+  newUser: "New User",
+  payment: "Payment",
+  submitPayment: "Submit Payment",
+  pay: "Pay",
+  disput_description:"Result in dispute",
+  draft_description:"Final result entered and unconfirmed",
+  final_description:"Final result entered and confirmed",
+  logo: "Logo",
+  noInformationProvided: "No information provided",
+  noPhotosAvailable: "No photos available",
 };
 
 export default AppConstants;

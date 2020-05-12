@@ -41,6 +41,11 @@ function formatDateTime(date_time) {
     console.log(formatedValue)
     return formatedValue
 }
+function liveScore_MatchFormate(date) {
+    let formatedDate = moment(date).format("DD/MM/YYYY HH:mm")
+    return formatedDate
+
+}
 
 export {
     liveScore_formateDate,
@@ -50,5 +55,6 @@ export {
     getTime,
     isDateSame,
     sortArrayByDate,
-    formatDateTime
+    formatDateTime,
+    liveScore_MatchFormate
 }

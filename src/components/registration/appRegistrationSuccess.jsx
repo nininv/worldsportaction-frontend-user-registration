@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import AppImages from "../../themes/appImages";
-import { Layout} from 'antd';
+import { Layout } from 'antd';
 import "../../pages/layout.css";
 
 const { Header, Content } = Layout;
 
-class AppRegistrationSuccess extends Component{
+class AppRegistrationSuccess extends Component {
 
     headerView = () => {
         return (
@@ -30,24 +30,26 @@ class AppRegistrationSuccess extends Component{
 
     contentView = () => {
         return (
-            <div style={{display: 'flex',justifyContent: 'center', alignItems: 'center',
-                            flexDirection: 'column', height: '450px'}}>
+            <div style={{
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                flexDirection: 'column', height: '350px'
+            }}>
                 <div className="form-heading">Thank You!</div>
                 <div>
-                    <img src={AppImages.successTick}  height="120" width="120"/>
+                    <img src={AppImages.suceessImg} height="90" width="90" />
                 </div>
-                <div className="form-heading">Your Registration is successfull</div>
+                <div className="form-heading">Your Registration is Successful.</div>
             </div>
         )
     }
 
     render() {
         return (
-            <div>
+            <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 {this.headerView()}
                 <Layout>
                     <Content>
-                        <div className="formView">
+                        <div className="success-screen-view">
                             {this.contentView()}
                         </div>
                     </Content>

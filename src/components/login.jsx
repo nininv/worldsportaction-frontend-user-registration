@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
+import AppImages from "../themes/appImages";
 
 const { Header, Content } = Layout;
 const loginFormSchema = Yup.object().shape({
@@ -33,32 +34,34 @@ class Login extends Component {
 
         let loginstate = this.props.loginstate;
 
-        if(loginstate.onLoad == false && this.state.loginButton == false)
-        {
+        if (loginstate.onLoad == false && this.state.loginButton == false) {
             history.push('/appRegistrationForm');
         }
     }
 
     ///////view for breadcrumb
-    headerView = () => {
-        return (
-            <Header className="login-header-view" >
-                <div className="row" >
-                    <div className="col-sm" style={{ display: "flex", alignContent: "center" }} >
-                        <Breadcrumb style={{
-                            display: 'flex', lignItems: 'center', alignSelf: 'center'
-                        }} separator=" > ">
-                            <Breadcrumb.Item className="breadcrumb-add">{AppConstants.login}</Breadcrumb.Item>
-                        </Breadcrumb>
-                    </div>
-                </div>
-            </Header >
-        )
-    }
+    // headerView = () => {
+    //     return (
+    //         <Header className="login-header-view" >
+    //             <div className="row" >
+    //                 <div className="col-sm" style={{ display: "flex", alignContent: "center" }} >
+    //                     <Breadcrumb style={{
+    //                         display: 'flex', lignItems: 'center', alignSelf: 'center'
+    //                     }} separator=" > ">
+    //                         <Breadcrumb.Item className="breadcrumb-add">{AppConstants.login}</Breadcrumb.Item>
+    //                     </Breadcrumb>
+    //                 </div>
+    //             </div>
+    //         </Header >
+    //     )
+    // }
 
     contentView = (values, errors, setFieldValue, touched, handleChange, handleBlur) => {
         return (
             <div className="content-view">
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <img src={AppImages.netballLogo1} alt="" />
+                </div>
                 <InputWithHead heading={AppConstants.username} placeholder={AppConstants.username}
                     name={"userName"}
                     onChange={handleChange}
@@ -78,34 +81,41 @@ class Login extends Component {
                 {errors.password && touched.password && (
                     <span className="form-err">{errors.password}</span>
                 )}
+                <div className="row pt-5" >
+                    <div className="col-sm" >
+                        <div className="comp-finals-button-view">
+                            <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
 
     //////footer view containing all the buttons
-    footerView = (isSubmitting) => {
-        return (
-            <div className="container" >
-                <div className="login-footer-view">
-                    <div className="row" >
-                        <div className="col-sm" >
-                            <div className="comp-finals-button-view">
-                                <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div >
-        )
-    }
+    // footerView = (isSubmitting) => {
+    //     return (
+    //         <div className="container" >
+    //             <div className="login-footer-view">
+    //                 <div className="row" >
+    //                     <div className="col-sm" >
+    //                         <div className="comp-finals-button-view">
+    //                             <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div >
+    //     )
+    // }
 
     render() {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
+                <img src={AppImages.loginImage} className="bg" />
                 <Layout >
-
-                    <Content className="container">
-                        {this.headerView()}
+                    <Content className="container" style={{ zIndex: 15 }}>
+                        {/* {this.headerView()} */}
                         <Formik
                             enableReinitialize
                             initialValues={{
@@ -136,10 +146,10 @@ class Login extends Component {
                                 setFieldValue
                             }) => (
                                     <Form onSubmit={handleSubmit}>
-                                        <div className="login-formView">
+                                        <div className="login-formView" style={{ zIndex: 15 }}>
                                             {this.contentView(values, errors, setFieldValue, touched, handleChange, handleBlur)}
                                         </div>
-                                        {this.footerView(isSubmitting)}
+                                        {/* {this.footerView(isSubmitting)} */}
                                     </Form>
                                 )}
                         </Formik>
