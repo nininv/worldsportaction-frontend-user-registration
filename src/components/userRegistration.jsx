@@ -27,11 +27,13 @@ class UserRegistration extends Component {
         let organisationUniqueKey = query.organisationId;
         let userId = query.userId;
         let token = query.token;
-        if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined && 
-            userId!= undefined && token!= undefined)
+        if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined)
         {
             await setOrganistaionId(organisationUniqueKey);
             await setCompetitionID(competitionUniqueKey);
+        }
+
+        if(userId!= undefined && token!= undefined){
             await setUserId(userId);
             await setAuthToken(token);
         }
