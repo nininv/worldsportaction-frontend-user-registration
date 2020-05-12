@@ -1887,7 +1887,7 @@ class AppRegistrationForm extends Component {
                
                 {(item.parentOrGuardian || []).map((parent, parentIndex) => (
                 <div key={"parent"+parentIndex}>
-                   {this.dividerTextView("PARENT " + (parentIndex + 1), styles, "parent", index, parentIndex)}
+                   {this.dividerTextView("PARENT " + (parentIndex + 1), styles, "parent", index, parentIndex, item.parentOrGuardian)}
                     <Form.Item>
                         {getFieldDecorator(`parentFirstName${index}${parentIndex}`, {
                             rules: [{ required: true, message: ValidationConstants.nameField[0] }],
@@ -2599,13 +2599,13 @@ class AppRegistrationForm extends Component {
         )
     }
 
-    dividerTextView = (text, styles, playerOrProduct, index, prodIndex) => {
+    dividerTextView = (text, styles, playerOrProduct, index, prodIndex, parentOrGuardian) => {
         return(
             <div className="form-heading formView end-user-divider-header" style={styles}>
                 <div className="end-user-divider-side" style={{width:'75px'}}></div>
                 <div className="end-user-divider-text">{text}</div>
                 <div className="end-user-divider-side" style={{flexGrow: '1'}}></div>
-                {playerOrProduct == "parent" && prodIndex == 0 ? null :
+                {playerOrProduct == "parent" && parentOrGuardian.length < 2 ? null :
                 <div className="transfer-image-view pointer" style={{paddingLeft: '33px'}} onClick={() => 
                                         this.deleteEnableOrDisablePopup(playerOrProduct, true, index, prodIndex, 0, "", null)}>
                     <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
