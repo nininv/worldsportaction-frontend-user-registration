@@ -1335,7 +1335,7 @@ class AppRegistrationForm extends Component {
             <div className="formView content-view pt-5">
                 <div style={{display:'flex'}}>
                     <div className="form-heading"> {AppConstants.registration}</div>
-                    {index  == 0 ? null :
+                    {(index  == 0 || item.isPlayer != -1 )? null :
                     <div className="transfer-image-view pointer" style={{paddingLeft: '33px', marginLeft: 'auto'}} onClick={() => 
                                             this.deleteEnableOrDisablePopup( "participant", true, index)}>
                         <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
