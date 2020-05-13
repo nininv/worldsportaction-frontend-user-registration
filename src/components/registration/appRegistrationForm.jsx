@@ -278,8 +278,8 @@ class AppRegistrationForm extends Component {
             disabilityCareNumber: '',
             disabilityTypeRefId: 0,
             playerId:0,
-            position1: null,
-            position2:  null,
+            positionId1: null,
+            positionId2:  null,
             parentOrGuardian: [],
             friends: [],
             referFriends: [],
@@ -449,8 +449,8 @@ class AppRegistrationForm extends Component {
             playerId: 0,
             divisionName: "",
             isPlayer: 0,
-            position1: null,
-            position2: null,
+            positionId1: null,
+            positionId2: null,
             competitionMembershipProductTypeId: null,
             competitionMembershipProductDivisionId: null,
             friends: [],
@@ -2149,8 +2149,8 @@ class AppRegistrationForm extends Component {
                 <InputWithHead heading={AppConstants.position1} />
                 <Select
                     style={{ width: "100%", paddingRight: 1 }}
-                    onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex, "position1" )}
-                    value={item.position1}>
+                    onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex, "positionId1" )}
+                    value={item.positionId1}>
                     {(playerPositionList || []).map((play1, index) => (
                         <Option key={play1.id} value={play1.id}>{play1.name}</Option>
                     ))}
@@ -2159,8 +2159,8 @@ class AppRegistrationForm extends Component {
                 <InputWithHead heading={AppConstants.position2} />
                 <Select
                     style={{ width: "100%", paddingRight: 1 }}
-                    onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex,"position2" )}
-                    value={item.position2}>
+                    onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex,"positionId2" )}
+                    value={item.positionId2}>
                     {(playerPositionList || []).map((play2, index) => (
                         <Option key={play2.id} value={play2.id}>{play2.name}</Option>
                     ))}
@@ -2552,7 +2552,7 @@ class AppRegistrationForm extends Component {
              
                 <InputWithHead heading={AppConstants.competition_name}/>
                  <div style={{display:'flex'}} className="applicable-to-text">
-                    <div>{(item.competitionInfo!= undefined && item.competitionInfo!= null)? item.competitionInfo.competitionName : null}</div>
+                    <div>{(item.competitfionInfo!= undefined && item.competitionInfo!= null)? item.competitionInfo.competitionName : null}</div>
                 </div>
 
                 <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"}/>
