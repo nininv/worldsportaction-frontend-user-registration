@@ -191,9 +191,9 @@ class DashboardLayout extends React.Component {
           <div className="row m-0-res">
             <div className="col-sm-12 d-flex">
               <div className="logo-box">
-                <NavLink to="/" className="site-brand">
+                {/* <NavLink to="/" className="site-brand"> */}
                   <img src={AppImages.netballLogo1} alt="" />
-                </NavLink>
+                {/* </NavLink> */}
                 <div className="col-sm dashboard-layout-menu-heading-view">
                   <span className="dashboard-layout-menu-heading">
                     {this.props.menuHeading}
