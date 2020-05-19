@@ -35,7 +35,7 @@ const initialState = {
     refFlag:"",
     user: null,
     userInfo: [],
-    isSetCompOrgKey: false
+    setCompOrgKey: false
 }
 
 
