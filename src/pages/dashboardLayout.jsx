@@ -10,7 +10,8 @@ import { bindActionCreators } from 'redux';
 import { getUserOrganisationAction } from "../store/actions/userAction/userAction";
 import {
   setOrganisationData,
-  getOrganisationData
+  getOrganisationData,
+  getUserId
 } from "../util/sessionStorage";
 
 const { Option } = Select;
@@ -126,7 +127,7 @@ class DashboardLayout extends React.Component {
             alt="" />
         </button>
         <ul className="dropdown-menu">
-          <li>
+          <li style={{paddingBottom: '0px'}}>
             <div className="media">
               <div className="media-left">
                 <figure className="user-img-wrap">
@@ -142,17 +143,17 @@ class DashboardLayout extends React.Component {
                     {selectedOrgData.firstName + " " + selectedOrgData.lastName}
                   </span>
                   : null}
-                <span className="user-name-btm pt-3">
+                {/* <span className="user-name-btm pt-3">
                   {selectedOrgData ?
                     <span style={{ textTransform: "capitalize" }}>
                       {selectedOrgData.name + "(" + selectedOrgData.userRole + ")"}
                     </span>
                     : null}
-                </span>
+                </span> */}
               </div>
             </div>
           </li>
-          {userData.length > 0 ?
+          {/* {userData.length > 0 ?
             <div className="acc-help-support-list-view">
               {userData.map((item, index) => {
                 return (
@@ -164,15 +165,15 @@ class DashboardLayout extends React.Component {
                 )
               })}
             </div>
-            : null}
-          <div className="acc-help-support-list-view">
+            : null} */}
+          {/* <div className="acc-help-support-list-view">
             <li>
               <a href="#">{"Account Settings"}</a>
             </li>
             <li>
               <a href="#"> {"Help & Support"}</a>
             </li>
-          </div>
+          </div> */}
           <li className="log-out">
             <a onClick={() => this.logout()}>{"Log Out"}</a>
           </li>
@@ -408,7 +409,7 @@ class DashboardLayout extends React.Component {
                   </li> */}
                   <li>
                     <div className="user-profile-box">
-                      {this.userProfileDropdown()}
+                      {getUserId()!= 0 && getUserId()!= undefined && getUserId!= "" && this.userProfileDropdown()}
                     </div>
                   </li>
                 </ul>
