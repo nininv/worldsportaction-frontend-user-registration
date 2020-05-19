@@ -165,14 +165,18 @@ class AppRegistrationForm extends Component {
        }
 
        if(registrationState.setCompOrgKey == true){
-           if(registrationState.registrationDetail.userRegistrations[0].isPlayer!= -1)
-           {
-            this.props.form.setFieldsValue({
-                [`organisationUniqueKey0`]: this.state.organisationUniqueKey,
-                [`competitionUniqueKey0`]:  this.state.competitionUniqueKey,
-            });
-            this.props.updateEndUserRegisrationAction(false, "setCompOrgKey");
-           }
+           if(registrationState.registrationDetail!= null && 
+            registrationState.registrationDetail.userRegistrations!= null && 
+            registrationState.registrationDetail.userRegistrations.length > 0){
+                if(registrationState.registrationDetail.userRegistrations[0].isPlayer!= -1)
+                {
+                 this.props.form.setFieldsValue({
+                     [`organisationUniqueKey0`]: this.state.organisationUniqueKey,
+                     [`competitionUniqueKey0`]:  this.state.competitionUniqueKey,
+                 });
+                 this.props.updateEndUserRegisrationAction(false, "setCompOrgKey");
+                }
+            }
         }
     }
 
