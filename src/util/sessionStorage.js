@@ -25,6 +25,22 @@ const setUserId = userId => {
 const getUserId = () => {
     return localStorage.userId
 }
+
+const getName = () =>{
+    return localStorage.name
+}
+
+const setName = (name) => {
+    localStorage.setItem("name", name)
+}
+
+const getPhotoUrl = () => {
+    return localStorage.photoUrl
+}
+
+const setPhotoUrl = (photoUrl) => {
+    localStorage.setItem("photoUrl", photoUrl)
+}
 // Set Own  Year
 const setOwnCompetitionYear = own_year => {
     localStorage.setItem("own_year", own_year)
@@ -92,6 +108,8 @@ module.exports = {
     setCompetitionID, getCompetitonId,
     setAuthToken, getAuthToken,
     setUserId, getUserId,
+    setName, getName,
+    setPhotoUrl, getPhotoUrl,
     setOwnCompetitionYear,
     getOwnCompetitionYear,
     setOwn_competition,

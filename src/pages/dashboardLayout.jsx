@@ -11,7 +11,8 @@ import { getUserOrganisationAction } from "../store/actions/userAction/userActio
 import {
   setOrganisationData,
   getOrganisationData,
-  getUserId
+  getUserId,
+  getName,getPhotoUrl
 } from "../util/sessionStorage";
 
 const { Option } = Select;
@@ -39,14 +40,14 @@ class DashboardLayout extends React.Component {
 
 
   componentDidMount() {
-    this.setOrganisationKey()
+    //this.setOrganisationKey()
   }
 
 
   setOrganisationKey() {
     let organisationData = getOrganisationData()
-    console.log("organisationData::" + organisationData);
-    console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
+   console.log("organisationData::" + organisationData);
+   console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
     if (!organisationData) {
       this.props.userState.getUserOrganisation.length == 0 && this.props.getUserOrganisationAction()
       this.setState({ dataOnload: true })
@@ -114,7 +115,11 @@ class DashboardLayout extends React.Component {
   userProfileDropdown() {
     let userData = this.props.userState.getUserOrganisation
     let selectedOrgData = getOrganisationData()
-    let userImage = selectedOrgData ? (selectedOrgData.photoUrl ? selectedOrgData.photoUrl : AppImages.defaultUser) : AppImages.defaultUser
+    console.log("*********" + getPhotoUrl())
+    let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
+        getPhotoUrl() : AppImages.defaultUser)
+   
+   
     return (
       <div className="dropdown">
         <button
@@ -138,11 +143,11 @@ class DashboardLayout extends React.Component {
                 </figure>
               </div>
               <div className="media-body">
-                {selectedOrgData ?
+                {
                   <span className="user-name">
-                    {selectedOrgData.firstName + " " + selectedOrgData.lastName}
+                    {getName()}
                   </span>
-                  : null}
+                 }
                 {/* <span className="user-name-btm pt-3">
                   {selectedOrgData ?
                     <span style={{ textTransform: "capitalize" }}>
