@@ -2,7 +2,7 @@ import ApiConstants from "../../themes/apiConstants";
 import { Encrypt, Decrypt } from "../../util/encryption";
 import { JwtEncrypt, JwtDecrypt } from "../../util/jwt";
 import history from "../../util/history";
-import { setAuthToken, setUserId } from '../../util/sessionStorage'
+import { setAuthToken, setUserId, setName, setPhotoUrl } from '../../util/sessionStorage'
 
 const initialState = {
   onLoad: false,
@@ -20,6 +20,9 @@ function login(state = initialState, action) {
     case ApiConstants.API_LOGIN_SUCCESS:
       setUserId(action.result.user.id)
       setAuthToken(action.result.authToken)
+      let name = action.result.user.firstName + ' ' + action.result.user.lastName;
+      setName(name);
+      setPhotoUrl(action.result.user.photoUrl);
       // localStorage.setItem("token", action.result.authToken);
       // let jwtEncrypt = JwtEncrypt(action.result.result.data.user_data)
       // let encryptText = Encrypt(jwtEncrypt)

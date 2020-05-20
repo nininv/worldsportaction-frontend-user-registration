@@ -10,7 +10,9 @@ import { bindActionCreators } from 'redux';
 import { getUserOrganisationAction } from "../store/actions/userAction/userAction";
 import {
   setOrganisationData,
-  getOrganisationData
+  getOrganisationData,
+  getUserId,
+  getName,getPhotoUrl
 } from "../util/sessionStorage";
 
 const { Option } = Select;
@@ -38,14 +40,14 @@ class DashboardLayout extends React.Component {
 
 
   componentDidMount() {
-    this.setOrganisationKey()
+    //this.setOrganisationKey()
   }
 
 
   setOrganisationKey() {
     let organisationData = getOrganisationData()
-    console.log("organisationData::" + organisationData);
-    console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
+   console.log("organisationData::" + organisationData);
+   console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
     if (!organisationData) {
       this.props.userState.getUserOrganisation.length == 0 && this.props.getUserOrganisationAction()
       this.setState({ dataOnload: true })
@@ -113,7 +115,11 @@ class DashboardLayout extends React.Component {
   userProfileDropdown() {
     let userData = this.props.userState.getUserOrganisation
     let selectedOrgData = getOrganisationData()
-    let userImage = selectedOrgData ? (selectedOrgData.photoUrl ? selectedOrgData.photoUrl : AppImages.defaultUser) : AppImages.defaultUser
+    console.log("*********" + getPhotoUrl())
+    let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
+        getPhotoUrl() : AppImages.defaultUser)
+   
+   
     return (
       <div className="dropdown">
         <button
@@ -126,7 +132,7 @@ class DashboardLayout extends React.Component {
             alt="" />
         </button>
         <ul className="dropdown-menu">
-          <li>
+          <li style={{paddingBottom: '0px'}}>
             <div className="media">
               <div className="media-left">
                 <figure className="user-img-wrap">
@@ -137,22 +143,22 @@ class DashboardLayout extends React.Component {
                 </figure>
               </div>
               <div className="media-body">
-                {selectedOrgData ?
+                {
                   <span className="user-name">
-                    {selectedOrgData.firstName + " " + selectedOrgData.lastName}
+                    {getName()}
                   </span>
-                  : null}
-                <span className="user-name-btm pt-3">
+                 }
+                {/* <span className="user-name-btm pt-3">
                   {selectedOrgData ?
                     <span style={{ textTransform: "capitalize" }}>
                       {selectedOrgData.name + "(" + selectedOrgData.userRole + ")"}
                     </span>
                     : null}
-                </span>
+                </span> */}
               </div>
             </div>
           </li>
-          {userData.length > 0 ?
+          {/* {userData.length > 0 ?
             <div className="acc-help-support-list-view">
               {userData.map((item, index) => {
                 return (
@@ -164,15 +170,15 @@ class DashboardLayout extends React.Component {
                 )
               })}
             </div>
-            : null}
-          <div className="acc-help-support-list-view">
+            : null} */}
+          {/* <div className="acc-help-support-list-view">
             <li>
               <a href="#">{"Account Settings"}</a>
             </li>
             <li>
               <a href="#"> {"Help & Support"}</a>
             </li>
-          </div>
+          </div> */}
           <li className="log-out">
             <a onClick={() => this.logout()}>{"Log Out"}</a>
           </li>
@@ -191,9 +197,9 @@ class DashboardLayout extends React.Component {
           <div className="row m-0-res">
             <div className="col-sm-12 d-flex">
               <div className="logo-box">
-                <NavLink to="/" className="site-brand">
+                {/* <NavLink to="/" className="site-brand"> */}
                   <img src={AppImages.netballLogo1} alt="" />
-                </NavLink>
+                {/* </NavLink> */}
                 <div className="col-sm dashboard-layout-menu-heading-view">
                   <span className="dashboard-layout-menu-heading">
                     {this.props.menuHeading}
@@ -408,7 +414,7 @@ class DashboardLayout extends React.Component {
                   </li> */}
                   <li>
                     <div className="user-profile-box">
-                      {this.userProfileDropdown()}
+                      {getUserId()!= 0 && getUserId()!= undefined && getUserId!= "" && this.userProfileDropdown()}
                     </div>
                   </li>
                 </ul>
