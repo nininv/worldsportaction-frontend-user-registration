@@ -5,7 +5,7 @@ const http = axios.create({
     // baseURL: "https://world-sport-action-socket.appspot.com"
     // baseURL: "http://192.168.3.98:3001"
     // baseURL: "http://127.0.0.1:5000"
-    baseURL: "https://livescores-api-dev.worldsportaction.com/"
+    baseURL: "https://livescores-api.worldsportaction.com/"
 });
 
 http.interceptors.request.use(function (config) {
