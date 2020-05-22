@@ -65,7 +65,8 @@ class AppRegistrationForm extends Component {
             loading: false,
             flag: 0,
             tempParentId: 0,
-			getMembershipLoad: false
+            getMembershipLoad: false,
+            getUserLoad:false
         };
      
         this.props.getCommonRefData();
@@ -78,14 +79,14 @@ class AppRegistrationForm extends Component {
         this.props.playerPositionReferenceAction();
         this.props.genderReferenceAction();
         this.props.disabilityReferenceAction();
-        this.getUserInfo();
+       // this.getUserInfo();
        // this.props.clearRegistrationDataAction();
        
     }
 
     componentDidMount(){
         console.log("Component Did mount");
-     
+        this.getUserInfo();
         let payload = {
             competitionUniqueKey: this.state.competitionUniqueKey,
             organisationUniqueKey: this.state.organisationUniqueKey
@@ -117,8 +118,17 @@ class AppRegistrationForm extends Component {
             if(registrationState.membershipProductInfo!= null
                 && registrationState.membershipProductInfo.length > 0)
                 {
-                   this.setState({getMembershipLoad: false})
-                    this.addParticipant(0, 1);
+                    if(getUserId() != 0 ){
+                        if(registrationState.userInfoOnLoad == false && this.state.getUserLoad == true){
+                            this.setState({getMembershipLoad: false, getUserLoad: false})
+                            this.addParticipant(0, 1);
+                        }
+                    }
+                    else{
+                        this.setState({getMembershipLoad: false})
+                        this.addParticipant(0, 1);
+                    }
+                   
                 }
         }
 
@@ -178,6 +188,17 @@ class AppRegistrationForm extends Component {
                 }
             }
         }
+
+        if(registrationState.refFlag == "userInfo"){
+            this.props.updateEndUserRegisrationAction("", "refFlag");
+            let userInfoList = registrationState.userInfo;
+            let userFilteredList = userInfoList.filter(x=>x.isDisabled == 0);
+            if(userFilteredList!= null && userFilteredList!= undefined && userFilteredList.length > 0){
+                let user = userFilteredList.find(x=>x);
+                this.onChangeSetUserSelection( user.id, "userId", this.state.participantIndex);
+            }
+            
+        }
     }
 
     getRegistrationSettings = (competitionUniqueKey, organisationUniqueKey) => {
@@ -198,6 +219,7 @@ class AppRegistrationForm extends Component {
                 userId: getUserId()
             }
             console.log("payload::" + JSON.stringify(payload));
+            this.setState({getUserLoad: true});
             this.props.getUserRegistrationUserInfoAction(payload);
         }
         
@@ -345,7 +367,6 @@ class AppRegistrationForm extends Component {
         {
             this.props.updateEndUserRegisrationAction(true, "setCompOrgKey");
         }
-       
     }
 
     setUserInfo = (participantObj, userInfo, userRegistrations, index) => {
@@ -373,6 +394,22 @@ class AppRegistrationForm extends Component {
                 (userInfo.parentOrGuardian || []).map((item, userIndex) => {
                     this.addParent(index, userRegistrations, item);
                 })
+            }
+        }
+    }
+
+    existingUserPopulate =() =>{
+        let registrationState = this.props.endUserRegistrationState;
+        if(getUserId() != 0){
+            let userInfoList = registrationState.userInfo;
+            console.log("**********" + JSON.stringify(userInfoList));
+            if(userInfoList!= null && userInfoList.length == 1){
+                let user = userInfoList.find(x=>x);
+               
+                if(user.isDisabled == 0){
+                    console.log("##########")
+                    this.props.updateEndUserRegisrationAction("userInfo", "refFlag");
+                }
             }
         }
     }
@@ -609,7 +646,11 @@ class AppRegistrationForm extends Component {
         }
         else if(key === "whatTypeOfRegistration")
         {
-            if(getUserId()  == 0 || userInfo.length == 0){
+            let userInfoLen = [];
+            if(userInfo!= null && userInfo!= undefined){
+                userInfoLen = userInfo.filter(x=>x.isDisabled == 0);
+            }
+            if(getUserId()  == 0 || (userInfoLen.length <= 1)){
                 if(value === 1){
                     let friendObj = {
                         friendId: 0,
@@ -632,6 +673,7 @@ class AppRegistrationForm extends Component {
                 else {
                     userRegistration["isPlayer"] = 0;
                 }
+                this.setState({participantIndex: index});
             }
         }
         else if(key == "isSameParentContact" && value)
@@ -791,6 +833,11 @@ class AppRegistrationForm extends Component {
 
        // console.log("UserRegistrations::" + JSON.stringify(userRegistrations));
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+
+        if(key === "whatTypeOfRegistration")
+        {
+            this.existingUserPopulate(); 
+        }
     }
 
     onChangeSetUserSelection = (value, key, index) => {
@@ -837,7 +884,7 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         this.props.updateEndUserRegisrationAction(1, "populateParticipantDetails");
 
-        console.log("userInfoList" + JSON.stringify(userInfoList));
+        console.log("userRegistrations" + JSON.stringify(userRegistrations));
 
         userRegistration[key] = value;
         
@@ -988,8 +1035,13 @@ class AppRegistrationForm extends Component {
      // this.props.updateEndUserRegisrationAction(newUserRegistration, "userRegistrations");
      // this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
       //this.setState({registeringYourself: e});
+      let userInfoLen = [];
+      if(userInfo!= null && userInfo!= undefined){
+        userInfoLen = userInfo.filter(x=>x.isDisabled == 0);
+      }
+
       userRegistration[key] = value;
-      if(getUserId() == 0 || userInfo.length == 0)
+      if(getUserId() == 0 || (userInfoLen.length <= 1))
       {
         if(value == 1){
             userRegistration["isPlayer"] = 1;
@@ -999,12 +1051,15 @@ class AppRegistrationForm extends Component {
           }
           else{
             userRegistration["isPlayer"] = -1;
-          }
-
-          
+          } 
       }
      
       this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+
+      if(value == 1 || value == 2){
+        this.setState({participantIndex: index});
+        this.existingUserPopulate();
+      }
      
       //this.addParticipant(e, 1);
      
@@ -1407,7 +1462,7 @@ class AppRegistrationForm extends Component {
                     </div>
                 ): null}
 
-                { (item.registeringYourself!= 0 && (userInfo!= null && userInfo.length > 0))? 
+                { (item.registeringYourself!= 0 && (userInfo!= null && userInfo.length > 1))? 
                     this.userSelectionView(item, index) : null}
                 {item.isPlayer!= -1  ? 
                 <div>
