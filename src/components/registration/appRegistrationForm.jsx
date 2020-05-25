@@ -836,7 +836,7 @@ class AppRegistrationForm extends Component {
 
         if(key === "whatTypeOfRegistration")
         {
-            this.existingUserPopulate(); 
+            //this.existingUserPopulate(); 
         }
     }
 
