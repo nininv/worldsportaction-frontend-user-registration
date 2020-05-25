@@ -1051,6 +1051,7 @@ class AppRegistrationForm extends Component {
           }
           else{
             userRegistration["isPlayer"] = -1;
+            userRegistration["profileUrl"] = null;
           } 
       }
      
