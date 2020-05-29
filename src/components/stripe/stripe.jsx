@@ -163,15 +163,22 @@ const Stripe = (props) => {
 
 // POST the token ID to your backend.
 async function stripeTokenHandler(token, props) {
-    let competitionId = screenProps.location.state ? screenProps.location.state.competitionId : null;
-    let organisationUniqueKey = screenProps.location.state ? screenProps.location.state.organisationUniqueKey : null;
-    const response = await fetch(`https://registration-api-dev.worldsportaction.com/api/payments/calculateFee?competitionUniqueKey=${competitionId}&organisationUniqueKey=${organisationUniqueKey}`, {
+    let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
+    // let organisationUniqueKey = screenProps.location.state ? screenProps.location.state.organisationUniqueKey : null;
+    let stripeToken = token.id
+    let body = {
+        registrationId: registrationId,
+        token: {
+            id: stripeToken
+        }
+    }
+    const response = await fetch(`https://registration-api-dev.worldsportaction.com/api/payments/createPayments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             "Authorization": localStorage.token,
         },
-        body: JSON.stringify({ token: { id: token.id } })
+        body: JSON.stringify(body)
     });
     return response.json().then(res => {
         props.onLoad(false)

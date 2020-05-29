@@ -138,7 +138,12 @@ class AppRegistrationForm extends Component {
             if(!registrationState.error)
             {
                 if (this.state.buttonPressed == "save" ) {
-                    history.push('/appRegistrationSuccess');
+                    let registrationId=registrationState.registrationId
+                    console.log("registrationId",registrationId)
+                    history.push("/invoice", {
+                        registrationId: registrationId,
+                    })
+                    // history.push('/appRegistrationSuccess');
                 }
             }
        }
@@ -2914,12 +2919,12 @@ class AppRegistrationForm extends Component {
     }
 
     //////navigate to stripe payment screen
-    navigatePaymentScreen = () => {
-        history.push("/checkoutPayment", {
-            competitionId: this.state.competitionUniqueKey,
-            organisationUniqueKey: this.state.organisationUniqueKey
-        })
-    }
+    // navigatePaymentScreen = () => {
+    //     history.push("/checkoutPayment", {
+    //         competitionId: this.state.competitionUniqueKey,
+    //         organisationUniqueKey: this.state.organisationUniqueKey
+    //     })
+    // }
 
     //////footer view containing all the buttons like submit and cancel
     footerView = (isSubmitting) => {
@@ -2933,10 +2938,10 @@ class AppRegistrationForm extends Component {
                         <div className="row">
                             <div className="col-sm">
                                 <div className="reg-add-save-button">
-                                    <Button className="save-draft-text" type="save-draft-text"
+                                    {/* <Button className="save-draft-text" type="save-draft-text"
                                         onClick={() => this.navigatePaymentScreen()}>
                                         {AppConstants.pay}
-                                    </Button>
+                                    </Button> */}
                                 </div>
                             </div>
                             <div className="col-sm">
