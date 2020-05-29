@@ -34,7 +34,7 @@ class RegistrationInvoice extends Component {
 
     componentDidMount() {
         this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoice("397")
+        // this.props.getInvoice("545")
     }
 
     ///////view for breadcrumb
@@ -408,7 +408,7 @@ class RegistrationInvoice extends Component {
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         console.log("charityRoundUpData", charityRoundUpData)
         return (
-            <div className="d-flex justify-content-end">
+            <div className="d-flex justify-content-start mb-5">
                 {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
                     return (
                         <div >
@@ -424,7 +424,9 @@ class RegistrationInvoice extends Component {
                                     })} */}
 
                             </Radio.Group>
+                            <div className="pl-5">
                             <span className="roundUpDescription-text">{item.roundUpDescription}</span>
+                            </div>
                             <div className="ml-5">
                                 {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
                                     return (

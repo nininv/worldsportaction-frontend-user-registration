@@ -47,11 +47,22 @@ function calculateSubTotal(allData) {
         invoiceGstTotal: 0
     }
     for (let i in fees_All_Data) {
-        resultData.invoiceSubtotal = Number(resultData.invoiceSubtotal) + fees_All_Data[i].totalAmount.affiliateFees ? Number(fees_All_Data[i].totalAmount.affiliateFees) : 0 +
-            Number(fees_All_Data[i].totalAmount.competitionFees) + Number(fees_All_Data[i].totalAmount.membershipFees)
 
-        resultData.invoiceGstTotal = Number(resultData.invoiceGstTotal) + fees_All_Data[i].totalAmount.affiliateGst ? Number(fees_All_Data[i].totalAmount.affiliateGst) : 0 +
-            Number(fees_All_Data[i].totalAmount.competitionGst) + Number(fees_All_Data[i].totalAmount.membershipGst)
+        if (fees_All_Data[i].totalAmount.affiliateFees && fees_All_Data[i].totalAmount.affiliateGst) {
+            resultData.invoiceSubtotal = Number(resultData.invoiceSubtotal) + Number(fees_All_Data[i].totalAmount.affiliateFees) +
+                Number(fees_All_Data[i].totalAmount.competitionFees) + Number(fees_All_Data[i].totalAmount.membershipFees)
+
+            resultData.invoiceGstTotal = Number(resultData.invoiceGstTotal) + Number(fees_All_Data[i].totalAmount.affiliateGst) +
+                Number(fees_All_Data[i].totalAmount.competitionGst) + Number(fees_All_Data[i].totalAmount.membershipGst)
+        }
+        else {
+            resultData.invoiceSubtotal = Number(resultData.invoiceSubtotal) +
+                Number(fees_All_Data[i].totalAmount.competitionFees) + Number(fees_All_Data[i].totalAmount.membershipFees)
+
+            resultData.invoiceGstTotal = Number(resultData.invoiceGstTotal) +
+                Number(fees_All_Data[i].totalAmount.competitionGst) + Number(fees_All_Data[i].totalAmount.membershipGst)
+        }
+
     }
     return resultData
 }

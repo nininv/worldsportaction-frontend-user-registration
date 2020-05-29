@@ -148,8 +148,7 @@ display: flex;
 
 .charity-invoice-div{
   display: flex;
-  justify-content: flex-end;
-  padding-right: 10vw;
+  justify-content: flex-start;
 }
 
 .roundUpDescription-text{
@@ -157,7 +156,6 @@ display: flex;
   color: var(--app-4c4c6d);
   font-weight: 500;
   font-family: inter;
-  padding-left: 35px;
 }
 
 @media (max-width: 767px) {
