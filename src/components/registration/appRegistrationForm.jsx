@@ -775,7 +775,7 @@ class AppRegistrationForm extends Component {
         else if(key == "organisationUniqueKey")
         {
             let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
-            console.log("organisationInfo::" + JSON.stringify(organisationInfo));
+           // console.log("organisationInfo::" + JSON.stringify(organisationInfo));
             if(userRegistration.competitionInfo!= undefined && 
                 userRegistration.competitionInfo.membershipProducts!= undefined)
             {
@@ -947,12 +947,12 @@ class AppRegistrationForm extends Component {
                 find(x=>x.competitionMembershipProductTypeId === value);
             let  divisions = userRegistration.competitionInfo.membershipProducts.
                     find(x=>x.competitionMembershipProductTypeId == value).divisions;
-            console.log("&&&&&&&&&&memProd::" + JSON.stringify(memProd));
+           // console.log("&&&&&&&&&&memProd::" + JSON.stringify(memProd));
             if(divisions!= null && divisions!= undefined)
             {
                 if(divisions.length == 1)
                 {
-                    console.log("&&&&&&" + divisions[0].competitionMembershipProductDivisionId);
+                   // console.log("&&&&&&" + divisions[0].competitionMembershipProductDivisionId);
                     product["competitionMembershipProductDivisionId"] = 
                     divisions[0].competitionMembershipProductDivisionId;
                     product["divisionName"] =  divisions[0].divisionName;
@@ -1694,31 +1694,33 @@ class AppRegistrationForm extends Component {
                     </Select>
                     )}
                 </Form.Item>
-                
-                <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
-                { 
-                    divisions.length > 1 ?
-                    <div>
-                        <Form.Item>
-                            {getFieldDecorator(`competitionMembershipProductDivisionId${index}`, {
-                                rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
-                            })(
-                            <Select
-                                style={{ width: "100%", paddingRight: 1 }}
-                                onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductDivisionId", index )}
-                                setFieldsValue={item.competitionMembershipProductDivisionId}
-                                >
-                                {(divisions || []).map((division, index) => (
-                                    <Option key={division.competitionMembershipProductDivisionId} 
-                                    value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
-                                ))}
-                            </Select>
-                        )}
-                        </Form.Item>
-                    </div>
-                    : 
-                     <div className="applicable-to-text">{item.divisionName}</div> 
-                }
+                {item.isPlayer == 1 &&
+                <div>
+                    <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
+                    { 
+                        divisions.length > 1 ?
+                        <div>
+                            <Form.Item>
+                                {getFieldDecorator(`competitionMembershipProductDivisionId${index}`, {
+                                    rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
+                                })(
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1 }}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductDivisionId", index )}
+                                    setFieldsValue={item.competitionMembershipProductDivisionId}
+                                    >
+                                    {(divisions || []).map((division, index) => (
+                                        <Option key={division.competitionMembershipProductDivisionId} 
+                                        value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
+                                    ))}
+                                </Select>
+                            )}
+                            </Form.Item>
+                        </div>
+                        : 
+                        <div className="applicable-to-text">{item.divisionName}</div> 
+                    }
+                </div> }
             </div>
         )
     }
@@ -2636,7 +2638,7 @@ class AppRegistrationForm extends Component {
              
                 <InputWithHead heading={AppConstants.competition_name}/>
                  <div style={{display:'flex'}} className="applicable-to-text">
-                    <div>{(item.competitfionInfo!= undefined && item.competitionInfo!= null)? item.competitionInfo.competitionName : null}</div>
+                    <div>{(item.competitionInfo!= undefined && item.competitionInfo!= null)? item.competitionInfo.competitionName : null}</div>
                 </div>
 
                 <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"}/>
@@ -2657,30 +2659,31 @@ class AppRegistrationForm extends Component {
                 </Form.Item>
                 {/* <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                 <InputWithHead heading={prod.divisionName} /> */}
-
-
-                <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
-                {
-                     divisions.length > 1 ?
-                     <Form.Item>
-                    {getFieldDecorator(`competitionMembershipProductDivisionId${index}${prodIndex}`, {
-                        rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
-                    })(
-                    <Select
-                        style={{ width: "100%", paddingRight: 1 }}
-                        onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex, "competitionMembershipProductDivisionId" )}
-                        setFieldsValue={prod.competitionMembershipProductDivisionId}
-                        >
-                        {(divisions || []).map((division, index) => (
-                            <Option key={division.competitionMembershipProductDivisionId} 
-                            value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
-                        ))}
-                    </Select>
-                 )}
-                 </Form.Item> : 
-                  <InputWithHead heading={prod.divisionName} /> 
+                {prod.isPlayer == 1 && 
+                <div>
+                    <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
+                    {
+                        divisions.length > 1 ?
+                        <Form.Item>
+                        {getFieldDecorator(`competitionMembershipProductDivisionId${index}${prodIndex}`, {
+                            rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
+                        })(
+                        <Select
+                            style={{ width: "100%", paddingRight: 1 }}
+                            onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex, "competitionMembershipProductDivisionId" )}
+                            setFieldsValue={prod.competitionMembershipProductDivisionId}
+                            >
+                            {(divisions || []).map((division, index) => (
+                                <Option key={division.competitionMembershipProductDivisionId} 
+                                value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
+                            ))}
+                        </Select>
+                    )}
+                    </Form.Item> : 
+                    <InputWithHead heading={prod.divisionName} /> 
+                    }
+                </div>
                 }
-                
             </div>
         )
     }
