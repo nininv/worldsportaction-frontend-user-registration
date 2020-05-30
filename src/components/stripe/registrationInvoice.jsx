@@ -34,7 +34,7 @@ class RegistrationInvoice extends Component {
 
     componentDidMount() {
         this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoice("545")
+        // this.props.getInvoice("584")
     }
 
     ///////view for breadcrumb
@@ -326,8 +326,14 @@ class RegistrationInvoice extends Component {
                                     <div className="invoice-col-View pb-0 pl-0 pr-0" >
                                         {userDetail && userDetail.firstName &&
                                             <InputWithHead
-                                                heading={"Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
-                                                    + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName}
+                                                heading=
+                                                {competitionDetails.competitionDivisionName ?
+                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName
+                                                    :
+                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    + ", " + competitionDetails.competitionName
+                                                }
                                             />
                                         }
                                     </div>
@@ -409,45 +415,41 @@ class RegistrationInvoice extends Component {
         console.log("charityRoundUpData", charityRoundUpData)
         return (
             <div className="d-flex justify-content-start mb-5">
-                {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
-                    return (
-                        <div >
-                            <Radio.Group
-                                className="reg-competition-radio"
-                                // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
-                                value={index == 0 && item.competitionId}
-                            >
-                                {/* {item.charityDetail.length > 0 && item.charityDetail.map(charityRoundUpItem => {
-                                        return ( */}
-                                <Radio key={item.competitionId} value={item.competitionId}>{"Support " + item.charityTitle}</Radio>
-                                {/* );
-                                    })} */}
 
-                            </Radio.Group>
-                            <div className="pl-5">
-                            <span className="roundUpDescription-text">{item.roundUpDescription}</span>
-                            </div>
-                            <div className="ml-5">
-                                {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
-                                    return (
+                <div  >
+                    <Radio.Group
+                        className="reg-competition-radio"
+                        // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
+                        // value={index == 0 && item.competitionId}
+                        defaultValue={0}
+                    >
+                        {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
+                            return (
+                                <div>
+                                    <Radio key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
+                                    <div className="d-flex justify-content-start pl-5">
+                                        <span className="roundUpDescription-text">{item.roundUpDescription}</span>
+                                    </div>
+                                    <div className="ml-5">
                                         <Radio.Group
                                             className="reg-competition-radio"
-                                            // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
-                                            value={charityRoundUpIndex == 0 && charityRoundUpItem.charitySelectedId}
+                                        // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
+                                        // value={charityRoundUpIndex == 0 && charityRoundUpItem.charitySelectedId}
                                         >
-                                            {/* {item.charityDetail.length > 0 && item.charityDetail.map(charityRoundUpItem => {
-                                        return ( */}
-                                            <Radio key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
-                                            {/* );
-                                    })} */}
-
+                                            {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
+                                                return (
+                                                    <Radio key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
+                                                )
+                                            })}
                                         </Radio.Group>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    )
-                })}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </Radio.Group>
+
+                </div>
+
             </div>
         )
     }
@@ -460,11 +462,14 @@ class RegistrationInvoice extends Component {
         let subTotalFees = this.props.stripeState.subTotalFees
         let subTotalGst = this.props.stripeState.subTotalGst
         return (
-            <div className="content-view ">
+            <div className="content-view">
                 <div className="charity-invoice-div">
                     <span className="charity-invoice-heading">{"Charity Support"}</span>
                 </div>
                 {this.charityRoundUpView(result)}
+                <div className="charity-invoice-div mb-5">
+                    <span className="charity-invoice-heading">{"Total Charity Amount: $0"}</span>
+                </div>
                 <div className="drop-reverse" >
                     <div className="col-sm ">
                         <TextArea

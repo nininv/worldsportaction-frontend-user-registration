@@ -156,7 +156,10 @@ display: flex;
   color: var(--app-4c4c6d);
   font-weight: 500;
   font-family: inter;
+  white-space: initial;
+  word-wrap: break-word
 }
+
 
 @media (max-width: 767px) {
   .invoiceImage{

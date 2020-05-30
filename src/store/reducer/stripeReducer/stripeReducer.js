@@ -34,6 +34,14 @@ function getCharityRoundUpArray(allData) {
         }
 
     }
+    let charityNoneObject = {
+        competitionId: 0,
+        competitionName: "None",
+        charityTitle: "None",
+        roundUpDescription: "",
+        charityDetail: [],
+    }
+    getCharityRoundUpArray.push(charityNoneObject)
     console.log("getCharityRoundUpArray", getCharityRoundUpArray)
     return getCharityRoundUpArray
 }
