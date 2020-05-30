@@ -85,3 +85,121 @@
   border-radius: 10px;
   width: 70%;
 }
+
+.invoice
+{
+  font-weight: 900;
+  /* justify-content: center */
+}
+
+.invoice-row-view{
+ display: flex;
+ flex-wrap: wrap;
+ margin-right:-15px;
+ margin-left: -15px
+ 
+}
+.invoice-col-View{
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  position: relative;
+  width: 100%
+}
+
+.invoice-col-View-30{
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  position: relative;
+  width: 100%
+
+}
+.invoice-total{
+  display: flex;
+  width: 87%;
+  justify-content: flex-end
+}
+.invoice-total-Amount{
+display: flex;
+  width: 13%;
+  padding-right: 15px;
+  justify-content: flex-end
+}
+.drop-reverse{
+  display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.invoiceImageMain{
+  display: flex;
+  justify-content: flex-end
+}
+
+.charity-invoice-heading {
+  /* display: flex; */
+  /* align-content: flex-start; */
+  font-size: 16px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-bold;
+}
+
+.charity-invoice-div{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.roundUpDescription-text{
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter;
+  white-space: initial;
+  word-wrap: break-word
+}
+
+
+@media (max-width: 767px) {
+  .invoiceImage{
+    display: flex;
+    justify-content: center
+  }
+  .invoiceImageMain{
+    justify-content: center
+  }
+  .invoice-total{
+    display: flex;
+  width: 70%;
+  justify-content: flex-end
+  }
+  .drop-reverse{
+    display: flex;
+    flex-wrap: wrap-reverse;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  .invoice-total-Amount{
+    display: flex;
+      width: 25%;
+      justify-content: center
+    }
+.invoice-col-View-30{
+  max-width: 30%;
+  width: 30%;
+  align-self: center;
+}
+.invoice{
+  justify-content: center
+}
+.invoice-description{
+  display: none
+}
+.invoice-col-View{
+  position: relative;
+  width: 70%;
+  }
+
+  
+}

@@ -177,6 +177,33 @@ const columns2 = [
         dataIndex: 'resultStatus',
         key: 'resultStatus',
         sorter: (a, b) => tableSort(a, b, "resultStatus"),
+        render: (matchStatus, record) => {
+            if (record.isRoundChnage) {
+                return (
+                    <div className="table-live-score-table-fixture-style-main">
+                        <div className="table-live-score-table-fixture-style" style={{ borderBottom: " 1px solid #e8e8e8" }}>
+
+                        </div>
+                        <div className="table-live-score-table-fixture-style"  >
+                            <span>{record ? record.team1Score + " : " + record.team2Score : ""}</span>
+                        </div>
+                    </div >
+
+                )
+            } else {
+
+                return (
+                    <span>{record ? record.team1Score + " : " + record.team2Score : ""}</span>
+                )
+            }
+        }
+
+    },
+    {
+        title: 'Match Status',
+        dataIndex: 'matchStatus',
+        key: 'matchStatus',
+        sorter: (a, b) => tableSort(a, b, "matchStatus"),
         render: (resultStatus, record) => {
             if (record.isRoundChnage) {
                 return (
@@ -185,7 +212,11 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            {/* <span >{venueCourt ? venueCourt.name : ""}</span> */}
+                            <span style={{ display: 'flex', justifyContent: 'center', width: '50%' }}>
+                                <img className="dot-image"
+                                    src={matchResultImag(resultStatus)}
+                                    alt="" width="12" height="12" />
+                            </span>
                         </div>
                     </div >
 
@@ -201,32 +232,7 @@ const columns2 = [
                 )
             }
         }
-    },
-    {
-        title: 'Match Status',
-        dataIndex: 'matchStatus',
-        key: 'matchStatus',
-        sorter: (a, b) => tableSort(a, b, "matchStatus"),
-        render: (matchStatus, record) => {
-            if (record.isRoundChnage) {
-                return (
-                    <div className="table-live-score-table-fixture-style-main">
-                        <div className="table-live-score-table-fixture-style" style={{ borderBottom: " 1px solid #e8e8e8" }}>
 
-                        </div>
-                        <div className="table-live-score-table-fixture-style"  >
-                            {/* <span >{venueCourt ? venueCourt.name : ""}</span> */}
-                        </div>
-                    </div >
-
-                )
-            } else {
-
-                return (
-                    <span>{matchStatus ? matchStatus : ""}</span>
-                )
-            }
-        }
     },
 
 ];
@@ -263,7 +269,7 @@ class LiveScoreSeasonFixture extends Component {
         if (organisationId != undefined) {
             this.setState({ onCompLoad: true })
             this.props.fixtureCompetitionListAction(organisationId)
-        }else{
+        } else {
             history.push('/liveScoreSeasonFixture')
         }
 

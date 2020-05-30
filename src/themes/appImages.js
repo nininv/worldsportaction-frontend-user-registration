@@ -36,6 +36,9 @@ const AppImages = {
   purpleDot: require("../images/PurpleDot.png"),
   loginImage: require("../images/sign_in.jpg"),
   suceessImg: require("../images/shapes.png"),
+  squareImage: require("../images/squareImage.png"),
+  netballImages: require("../images/imagesNetball.png"),
+  netballLogoMain: require("../images/netball.png"),
 };
 
 export default AppImages;

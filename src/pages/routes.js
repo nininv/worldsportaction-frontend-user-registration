@@ -8,6 +8,7 @@ import UserRegistration from "../components/userRegistration";
 import Login from '../components/login';
 import AppRegistrationSuccess from "../components/registration/appRegistrationSuccess";
 import Stripe from "../components/stripe/stripe";
+import RegistrationInvoice from "../components/stripe/registrationInvoice"
 
 // Live Score Screesn 
 
@@ -58,6 +59,11 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/liveScoreSeasonFixture"
           component={lazyLoad(LiveScoreSeasonFixture)}
+        />
+
+        <PrivateRoute
+          path="/invoice"
+          component={lazyLoad(RegistrationInvoice)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />
