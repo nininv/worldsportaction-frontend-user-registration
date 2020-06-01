@@ -164,10 +164,11 @@ const Stripe = (props) => {
 // POST the token ID to your backend.
 async function stripeTokenHandler(token, props) {
     let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
-    // let organisationUniqueKey = screenProps.location.state ? screenProps.location.state.organisationUniqueKey : null;
+    let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
     let stripeToken = token.id
     let body = {
         registrationId: registrationId,
+        invoiceId: invoiceId,
         token: {
             id: stripeToken
         }

@@ -17,14 +17,20 @@ let AxiosApi = {
 
 
     ///get invoice
-    getInvoice(registrationId) {
+    getInvoice(registrationId, invoiceId) {
         let body = {
             registrationId: JSON.parse(registrationId),
+            invoiceId: JSON.parse(invoiceId)
         }
         let url = `/api/invoice`
         return Method.dataPost(url, token, body)
     },
 
+    /////invoice save post api
+    saveInvoice(body) {
+        let url = `/api/payments/saveInvoice`
+        return Method.dataPost(url, token, body)
+    }
 
 
 

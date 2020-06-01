@@ -6,7 +6,11 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import InputWithHead from "../../customComponents/InputWithHead"
 import AppImages from "../../themes/appImages";
-import { getInvoice } from "../../store/actions/stripeAction/stripeAction"
+import {
+    getInvoice,
+    onChangeCharityAction,
+    saveInvoiceAction,
+} from "../../store/actions/stripeAction/stripeAction"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Loader from '../../customComponents/loader';
@@ -25,6 +29,7 @@ class RegistrationInvoice extends Component {
             year: "2019winter",
             value: "playingMember",
             competition: "all",
+            loading: false,
         }
 
     }
@@ -33,8 +38,38 @@ class RegistrationInvoice extends Component {
 
 
     componentDidMount() {
-        this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoice("584")
+        this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, null)
+        // this.props.getInvoice("598", null)
+
+    }
+
+    componentDidUpdate() {
+        let stripeState = this.props.stripeState
+        if (stripeState.onLoad == false && this.state.loading === true) {
+            this.setState({ loading: false });
+            if (!stripeState.error) {
+                history.push("/checkoutPayment", {
+                    registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
+                    invoiceId: this.props.stripeState.invoiceId,
+                })
+            }
+        }
+    }
+
+
+    saveInvoiceAPICall = () => {
+        let charitySelected = JSON.parse(JSON.stringify(this.props.stripeState.charitySelected))
+        let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
+        let payload = {
+            registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
+            // registrationId: 584,
+            invoiceId: this.props.stripeState.invoiceId,
+            transactionId: this.props.stripeState.transactionId,
+            charity: finalCharityPost,
+        }
+        console.log("payload", payload)
+        this.props.saveInvoiceAction(payload)
+        this.setState({ loading: true });
     }
 
     ///////view for breadcrumb
@@ -409,19 +444,27 @@ class RegistrationInvoice extends Component {
     }
 
 
+    charityCompetitionIdChange = (value, key) => {
+        this.props.onChangeCharityAction(value, key)
+    }
+
+    charitySelectedIdChange = (value, key, charityItem) => {
+        this.props.onChangeCharityAction(value, key, charityItem)
+    }
+
 
     charityRoundUpView = () => {
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         console.log("charityRoundUpData", charityRoundUpData)
+        let charitySelected = this.props.stripeState.charitySelected
+        console.log("charitySelected", charitySelected)
         return (
             <div className="d-flex justify-content-start mb-5">
-
                 <div  >
                     <Radio.Group
                         className="reg-competition-radio"
-                        // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
-                        // value={index == 0 && item.competitionId}
-                        defaultValue={0}
+                        onChange={e => this.charityCompetitionIdChange(e.target.value, "competitionId")}
+                        value={charitySelected.competitionId}
                     >
                         {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
                             return (
@@ -433,8 +476,8 @@ class RegistrationInvoice extends Component {
                                     <div className="ml-5">
                                         <Radio.Group
                                             className="reg-competition-radio"
-                                        // onChange={e => this.props.add_editcompetitionFeeDeatils(e.target.value, "competitionTypeRefId")}
-                                        // value={charityRoundUpIndex == 0 && charityRoundUpItem.charitySelectedId}
+                                            onChange={e => this.charitySelectedIdChange(e.target.value, "charitySelectedId", item)}
+                                            value={charitySelected.charitySelectedId}
                                         >
                                             {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
                                                 return (
@@ -455,12 +498,11 @@ class RegistrationInvoice extends Component {
     }
 
 
-
-
-
     totalInvoiceView = (result) => {
         let subTotalFees = this.props.stripeState.subTotalFees
         let subTotalGst = this.props.stripeState.subTotalGst
+        let amountTotal = this.props.stripeState.amountTotal
+        let charitySelected = this.props.stripeState.charitySelected
         return (
             <div className="content-view">
                 <div className="charity-invoice-div">
@@ -468,7 +510,7 @@ class RegistrationInvoice extends Component {
                 </div>
                 {this.charityRoundUpView(result)}
                 <div className="charity-invoice-div mb-5">
-                    <span className="charity-invoice-heading">{"Total Charity Amount: $0"}</span>
+                    <span className="charity-invoice-heading">{"Total Charity Amount: $" + charitySelected.charityValue}</span>
                 </div>
                 <div className="drop-reverse" >
                     <div className="col-sm ">
@@ -478,7 +520,6 @@ class RegistrationInvoice extends Component {
                     </div>
                     <div className="col-sm pl-0 pr-0"
                     >
-
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
                             <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
@@ -524,11 +565,10 @@ class RegistrationInvoice extends Component {
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={"AUD" + " " + Number(subTotalFees + subTotalGst).toFixed(2)}
+                                heading={"AUD" + " " + Number(amountTotal).toFixed(2)}
                             />
                         </div>
                     </div>
-
                 </div>
                 <div className="row">
                     <div className="col-sm pt-5 invoiceImage">
@@ -564,12 +604,12 @@ class RegistrationInvoice extends Component {
         )
     }
 
-    ////navigate to stripe payment screen
-    navigatePaymentScreen = () => {
-        history.push("/checkoutPayment", {
-            registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-        })
-    }
+    // ////navigate to stripe payment screen
+    // navigatePaymentScreen = () => {
+    //     history.push("/checkoutPayment", {
+    //         registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
+    //     })
+    // }
 
     //////footer view containing all the buttons like submit and cancel
     footerView = () => {
@@ -581,7 +621,8 @@ class RegistrationInvoice extends Component {
                             className="open-reg-button"
                             htmlType="submit"
                             type="primary"
-                            onClick={() => this.navigatePaymentScreen()}>
+                            // onClick={() => this.navigatePaymentScreen()}>
+                            onClick={() => this.saveInvoiceAPICall()}>
                             {AppConstants.pay}
                         </Button>
                     </div>
@@ -622,7 +663,9 @@ class RegistrationInvoice extends Component {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getInvoice
+        getInvoice,
+        onChangeCharityAction,
+        saveInvoiceAction,
     }, dispatch)
 }
 

@@ -37,10 +37,29 @@ function* errorSaga(error) {
 //get invoice saga
 export function* getInvoiceSaga(action) {
     try {
-        const result = yield call(AxiosApi.getInvoice, action.registrationid);
+        const result = yield call(AxiosApi.getInvoice, action.registrationid, action.invoiceId);
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_INVOICE_SUCCESS,
+                result: result.result.data,
+                status: result.result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+
+////////invoice save post api
+export function* saveInvoiceSaga(action) {
+    try {
+        const result = yield call(AxiosApi.saveInvoice, action.payload);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_SAVE_INVOICE_SUCCESS,
                 result: result.result.data,
                 status: result.result.status
             });

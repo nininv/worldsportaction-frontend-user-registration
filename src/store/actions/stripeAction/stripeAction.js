@@ -1,10 +1,30 @@
 import ApiConstants from "../../../themes/apiConstants";
 
 /////get invoice 
-function getInvoice(registrationid) {
+function getInvoice(registrationid, invoiceId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_LOAD,
-        registrationid
+        registrationid,
+        invoiceId
+    }
+    return action
+}
+
+/////onchange charity roundup
+function onChangeCharityAction(value, key, charityItem) {
+    const action = {
+        type: ApiConstants.API_ONCHANGE_CHARITY_ROUNDUP_DATA_DATA,
+        value, key, charityItem
+    }
+    return action
+}
+
+
+///invoice save post api
+function saveInvoiceAction(payload) {
+    const action = {
+        type: ApiConstants.API_SAVE_INVOICE_LOAD,
+        payload
     }
     return action
 }
@@ -12,4 +32,6 @@ function getInvoice(registrationid) {
 
 export {
     getInvoice,
+    onChangeCharityAction,
+    saveInvoiceAction,
 }
