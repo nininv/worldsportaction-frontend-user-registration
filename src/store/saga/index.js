@@ -17,15 +17,16 @@ import * as endUserRegSaga from '../saga/registrationSaga/endUserRegistrationSag
 
 //Live Score
 import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
-import {  liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
+import { liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
 import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
 import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
+import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
   yield takeEvery(ApiConstants.API_URE_LOAD, userSaga.getUreSaga);
-  
+
   yield takeEvery(ApiConstants.API_GET_COMMON_REF_DATA_LOAD, getCommonDataSaga)
   /// Favourite Team Reference Saga
   yield takeEvery(ApiConstants.API_FAVOURITE_TEAM_REFERENCE_LOAD, favouriteTeamReferenceSaga)
@@ -63,22 +64,27 @@ export default function* root_saga() {
   /// Gender Reference Saga
   yield takeEvery(ApiConstants.API_GENDER_REFERENCE_LOAD, genderReferenceSaga)
 
-   /// Gender Reference Saga
-   yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
+  /// Gender Reference Saga
+  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
 
-    /// Disability Reference Saga
-    yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)
+  /// Disability Reference Saga
+  yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)
 
-     // Live Score
+  // Live Score
 
-     yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_FIXTURE_COMP_LOAD, getLiveScoreFixtureCompSaga)
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_FIXTURE_COMP_LOAD, getLiveScoreFixtureCompSaga)
 
-     yield takeEvery(ApiConstants.API_LIVE_SCORE_LADDERS_LIST_LOAD, liveScoreLaddersListSaga)
- 
-      // liveScore division saga
-   yield takeEvery(ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_LOAD, divisionsaga.liveScoreDivisionsaga)
- 
-   //// Round List Saga
-   yield takeEvery(ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD, liveScoreRoundListSaga)
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_LADDERS_LIST_LOAD, liveScoreLaddersListSaga)
+
+  // liveScore division saga
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_LOAD, divisionsaga.liveScoreDivisionsaga)
+
+  //// Round List Saga
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD, liveScoreRoundListSaga)
+
+  /////API_GET_INVOICE data
+  yield takeEvery(ApiConstants.API_GET_INVOICE_LOAD, stripeSaga.getInvoiceSaga)
+
+
 
 }

@@ -4,12 +4,12 @@ import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
 
 let registrationObj = {
     organisationUniqueKey: "",
-	registrationId: 0,
-	orgRegistrationId: 0,
-	volunteers:[],
+    registrationId: 0,
+    orgRegistrationId: 0,
+    volunteers: [],
     competitionUniqueKey: "",
     childrenCheckNumber: "",
-    userRegistrations:[],
+    userRegistrations: [],
     vouchers: []
 }
 
@@ -23,7 +23,7 @@ let membershipProdInfoObj = {
 
 const initialState = {
     onLoad: false,
-	onMembershipLoad: false,
+    onMembershipLoad: false,
     userInfoOnLoad: false,
     error: null,
     result: null,
@@ -32,17 +32,16 @@ const initialState = {
     registrationSettings: [],
     populateParticipantDetails: 0,
     membershipProductInfo: [],
-    refFlag:"",
+    refFlag: "",
     user: null,
     userInfo: [],
-    setCompOrgKey: false
+    setCompOrgKey: false,
+    registrationId: null,
 }
 
 
-function  endUserRegistrationReducer(state = initialState, action)
-{
-    switch(action.type)
-    {
+function endUserRegistrationReducer(state = initialState, action) {
+    switch (action.type) {
         case ApiConstants.API_END_USER_REGISTRATION_FAIL:
             return {
                 ...state,
@@ -62,6 +61,7 @@ function  endUserRegistrationReducer(state = initialState, action)
             return { ...state, onLoad: true };
 
         case ApiConstants.API_SAVE_END_USER_REGISTRATION_SUCCESS:
+            state.registrationId = action.result ? action.result.id : null
             return {
                 ...state,
                 onLoad: false,
@@ -73,16 +73,15 @@ function  endUserRegistrationReducer(state = initialState, action)
             let oldData = state.registrationDetail;
             let updatedValue = action.updatedData;
             let getKey = action.key;
-            if(getKey == "userInfo" || getKey == "refFlag" || getKey == "user" 
-                    || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey")
-            {
+            if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
+                || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey") {
                 state[getKey] = updatedValue;
             }
-            else{
+            else {
                 oldData[getKey] = updatedValue;
             }
-            
-            return { ...state, error: null };  
+
+            return { ...state, error: null };
 
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
@@ -125,24 +124,24 @@ function  endUserRegistrationReducer(state = initialState, action)
                 organisationUniqueKey: "",
                 registrationId: 0,
                 orgRegistrationId: 0,
-                volunteers:[],
+                volunteers: [],
                 competitionUniqueKey: "",
                 childrenCheckNumber: "",
-                userRegistrations:[],
+                userRegistrations: [],
                 vouchers: []
             }
-            
+
             state.status = 0;
             state.registrationDetail = registrationObj1;
-            state.registrationSettings =[];
+            state.registrationSettings = [];
             state.populateParticipantDetails = 0;
             state.membershipProductInfo = [];
             state.refFlag = "";
-            state.user =  null;
+            state.user = null;
             state.userInfo = [];
             state.isSetCompOrgKey = false;
 
-            console.log("$$$$$$$$$$$44" + JSON.stringify( state.registrationDetail));
+            console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {
                 ...state
             };
