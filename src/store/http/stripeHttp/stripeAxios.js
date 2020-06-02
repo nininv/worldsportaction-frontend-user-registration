@@ -30,9 +30,16 @@ let AxiosApi = {
     saveInvoice(body) {
         let url = `/api/payments/saveInvoice`
         return Method.dataPost(url, token, body)
-    }
+    },
 
-
+    //////get invoice status
+    getInvoiceStatus(registrationId) {
+        let body = {
+            registrationId: JSON.parse(registrationId),
+        }
+        let url = `/api/payments/getInvoiceStatus`
+        return Method.dataPost(url, token, body)
+    },
 
 };
 
