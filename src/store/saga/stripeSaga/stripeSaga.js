@@ -70,3 +70,21 @@ export function* saveInvoiceSaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+///////////get invoice status
+export function* getInvoiceStatusSaga(action) {
+    try {
+        const result = yield call(AxiosApi.getInvoiceStatus, action.registrationid);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_INVOICE_STATUS_SUCCESS,
+                result: result.result.data,
+                status: result.result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}

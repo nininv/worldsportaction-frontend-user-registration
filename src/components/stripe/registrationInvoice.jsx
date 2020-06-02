@@ -10,6 +10,7 @@ import {
     getInvoice,
     onChangeCharityAction,
     saveInvoiceAction,
+    getInvoiceStatusAction,
 } from "../../store/actions/stripeAction/stripeAction"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +21,6 @@ import history from "../../util/history";
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
 const { TextArea } = Input
-let totalArray = []
 
 class RegistrationInvoice extends Component {
     constructor(props) {
@@ -30,17 +30,19 @@ class RegistrationInvoice extends Component {
             value: "playingMember",
             competition: "all",
             loading: false,
+            checkStatusLoad: false,
         }
-
     }
 
 
-
-
     componentDidMount() {
-        this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, null)
-        // this.props.getInvoice("598", null)
+        this.getInvoiceStatusAPI()
+    }
 
+    getInvoiceStatusAPI = () => {
+        this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
+        // this.props.getInvoiceStatusAction("639")
+        this.setState({ checkStatusLoad: true });
     }
 
     componentDidUpdate() {
@@ -54,6 +56,12 @@ class RegistrationInvoice extends Component {
                 })
             }
         }
+        if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
+            this.setState({ checkStatusLoad: false });
+            let invoiceId = this.props.stripeState.invoiceId
+            this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
+            // this.props.getInvoice("639", invoiceId)
+        }
     }
 
 
@@ -62,7 +70,7 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 584,
+            // registrationId: 634,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
@@ -457,7 +465,6 @@ class RegistrationInvoice extends Component {
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         console.log("charityRoundUpData", charityRoundUpData)
         let charitySelected = this.props.stripeState.charitySelected
-        console.log("charitySelected", charitySelected)
         return (
             <div className="d-flex justify-content-start mb-5">
                 <div  >
@@ -503,15 +510,21 @@ class RegistrationInvoice extends Component {
         let subTotalGst = this.props.stripeState.subTotalGst
         let amountTotal = this.props.stripeState.amountTotal
         let charitySelected = this.props.stripeState.charitySelected
+        let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
+        let showCharity = isArrayNotEmpty(charityRoundUpData) && isArrayNotEmpty(charityRoundUpData[0].charityDetail)
+        console.log("showCharity", showCharity)
         return (
             <div className="content-view">
-                <div className="charity-invoice-div">
-                    <span className="charity-invoice-heading">{"Charity Support"}</span>
-                </div>
-                {this.charityRoundUpView(result)}
-                <div className="charity-invoice-div mb-5">
-                    <span className="charity-invoice-heading">{"Total Charity Amount: $" + charitySelected.charityValue}</span>
-                </div>
+                {showCharity &&
+                    <div className="charity-invoice-div">
+                        <span className="charity-invoice-heading">{"Charity Support"}</span>
+                    </div>}
+                {showCharity && this.charityRoundUpView(result)}
+                {showCharity &&
+                    <div className="charity-invoice-div mb-5">
+                        <span className="charity-invoice-heading">{"Total Charity Amount: $" + charitySelected.charityValue}</span>
+                    </div>
+                }
                 <div className="drop-reverse" >
                     <div className="col-sm ">
                         <TextArea
@@ -666,6 +679,7 @@ function mapDispatchToProps(dispatch) {
         getInvoice,
         onChangeCharityAction,
         saveInvoiceAction,
+        getInvoiceStatusAction,
     }, dispatch)
 }
 

@@ -107,6 +107,31 @@ function charityAppliedAmount(total, charityId) {
     }
 }
 
+//for calculating charity  amount 
+function set_Charity_Selected(invoiceData) {
+    let charitySelected = {
+        roundUpId: 0,
+        charitySelectedId: 0,
+        charityValue: 0,
+        competitionId: 0,
+        competitionOrganisationId: 0,
+        membershipMappingId: 0,
+    }
+    let charity_Selected_get_data = invoiceData[0].charitySelected ? invoiceData[0].charitySelected : null
+    if (charity_Selected_get_data) {
+        let competitionId_Index = invoiceData[0].fees.findIndex(x => x.competitionDetail.competitionId == charity_Selected_get_data.competitionId)
+        let defaultCharitySelectedId = isArrayNotEmpty(invoiceData[0].fees[competitionId_Index].charityDetail) ?
+            invoiceData[0].fees[competitionId_Index].charityDetail[0].charitySelectedId : 0
+        charitySelected.roundUpId = 0
+        charitySelected.charitySelectedId = defaultCharitySelectedId
+        charitySelected.charityValue = charity_Selected_get_data.feeAmount
+        charitySelected.competitionId = charity_Selected_get_data.competitionId
+        charitySelected.competitionOrganisationId = charity_Selected_get_data.organisationId
+        charitySelected.membershipMappingId = charity_Selected_get_data.membershipProductMappingId
+    }
+    return charitySelected
+}
+
 
 
 
@@ -145,10 +170,12 @@ function stripe(state = initialState, action) {
             let calculateSubTotalData = calculateSubTotal(invoicedata)
             state.subTotalFees = calculateSubTotalData.invoiceSubtotal
             state.subTotalGst = calculateSubTotalData.invoiceGstTotal
-            state.amountTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
-            state.fixedTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
             state.charityRoundUpFilter = charityRoundUpData
             state.getInvoicedata = action.result
+            let charity_Selected = set_Charity_Selected(invoicedata)
+            state.charitySelected = charity_Selected
+            state.amountTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal) + Number(charity_Selected.charityValue)
+            state.fixedTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
             return {
                 ...state,
                 onLoad: false,
@@ -192,7 +219,6 @@ function stripe(state = initialState, action) {
                 state.charitySelected.competitionOrganisationId = action.charityItem.competitionOrganisationId
                 state.charitySelected.membershipMappingId = action.charityItem.membershipMappingId
                 let charityAppliedValue = charityAppliedAmount(state.fixedTotal, action.value)
-                console.log("charityAppliedValue", charityAppliedValue)
                 state.amountTotal = Number(fixed__Total) + Number(charityAppliedValue)
                 state.charitySelected.charityValue = Number(charityAppliedValue)
             }
@@ -213,9 +239,28 @@ function stripe(state = initialState, action) {
 
         case ApiConstants.API_SAVE_INVOICE_SUCCESS:
             let saveInvoiceSuccessData = action.result.data
-            console.log("saveInvoiceSuccessData", saveInvoiceSuccessData)
             state.invoiceId = saveInvoiceSuccessData.invoiceId
             state.transactionId = saveInvoiceSuccessData.transactionDetails ? saveInvoiceSuccessData.transactionDetails.transactionId : 0
+            return {
+                ...state,
+                onLoad: false,
+                error: null,
+            }
+
+        ////////get invoice status
+        case ApiConstants.API_GET_INVOICE_STATUS_LOAD:
+            return {
+                ...state,
+                onLoad: true,
+                error: null,
+
+            }
+
+        case ApiConstants.API_GET_INVOICE_STATUS_SUCCESS:
+            let getInvoiceStatusSuccessData = action.result.data
+            state.invoiceId = getInvoiceStatusSuccessData ? getInvoiceStatusSuccessData.invoiceId : 0
+            state.transactionId = getInvoiceStatusSuccessData ? getInvoiceStatusSuccessData.transactionId ?
+                getInvoiceStatusSuccessData.transactionId : 0 : 0
             return {
                 ...state,
                 onLoad: false,

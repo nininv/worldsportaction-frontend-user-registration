@@ -29,9 +29,18 @@ function saveInvoiceAction(payload) {
     return action
 }
 
+///////get invoice status
+function getInvoiceStatusAction(registrationid) {
+    const action = {
+        type: ApiConstants.API_GET_INVOICE_STATUS_LOAD,
+        registrationid
+    }
+    return action
+}
 
 export {
     getInvoice,
     onChangeCharityAction,
     saveInvoiceAction,
+    getInvoiceStatusAction,
 }
