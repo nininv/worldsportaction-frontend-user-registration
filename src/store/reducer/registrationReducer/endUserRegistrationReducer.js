@@ -107,8 +107,9 @@ function endUserRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
             let registrationSettings = action.result;
-            console.log("*******))))))))))" + state["participantIndex"] + "^^^^" + state["refFlag"]);
+            console.log("*******))))))))))" + JSON.stringify(registrationSettings));
     
+            console.log("*******&&&&&&" + state.commonRegSetting.club_volunteer);
             if(registrationSettings.club_volunteer == 1){
                 state.commonRegSetting.club_volunteer = 1
             }
@@ -118,6 +119,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             if(registrationSettings.voucher == 1){
                 state.commonRegSetting.voucher = 1
             }
+
+            console.log("*******(((((((" + state.commonRegSetting.club_volunteer);
 
             if(state.participantIndex!= null){
                 let index = state.participantIndex;
@@ -142,8 +145,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             return {
                 ...state,
                 onLoad: false,
-                status: action.status,
-                registrationSettings: registrationSettings
+                status: action.status
             };
 
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:

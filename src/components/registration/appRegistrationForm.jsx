@@ -1337,7 +1337,6 @@ class AppRegistrationForm extends Component {
             if(!err)
             {
                 let registrationState = this.props.endUserRegistrationState;
-                let regSetting = registrationState.registrationSettings;
                 let registrationDetail = registrationState.registrationDetail;
                 let userRegistrations = registrationDetail.userRegistrations;
                 let volunteers = [];
@@ -2204,7 +2203,6 @@ class AppRegistrationForm extends Component {
 
     additionalPersonalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
-        let regSetting = registrationState.registrationSettings;
         return(
             <div className="formView content-view pt-5" >
                  <span className="form-heading">
@@ -2373,7 +2371,6 @@ class AppRegistrationForm extends Component {
 
     additionalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
-        let regSetting = registrationState.registrationSettings;
         const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
         return (
             <div className="formView content-view pt-5">
@@ -2508,7 +2505,6 @@ class AppRegistrationForm extends Component {
     otherParticipantReqInfo = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         const { countryList, nationalityList} = this.props.commonReducerState;
-        let regSetting = registrationState.registrationSettings;
         return(
             <div className="formView content-view pt-5" >
                 <span className="form-heading">
@@ -2557,13 +2553,13 @@ class AppRegistrationForm extends Component {
     otherInfoReqdView = (getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-        let regSetting = registrationState.registrationSettings;
+        let commonRegSetting = registrationState.commonRegSetting;
         return (
             <div className="formView content-view pt-5" >
                 <span className="form-heading">
                     {AppConstants.OtherInfoReqd}
                 </span>
-                {regSetting.club_volunteer === 1 && (
+                {commonRegSetting.club_volunteer === 1 && (
                     <div>
                         <span className="applicable-to-heading">
                             {AppConstants.yourSupportImportant}{" "}
@@ -2800,10 +2796,8 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
-        let regSetting = registrationState.registrationSettings;
         let commonRegSetting = registrationState.commonRegSetting;
         //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
-        //console.log("registrationSettings" + JSON.stringify(regSetting));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
         return (
