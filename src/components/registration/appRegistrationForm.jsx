@@ -378,10 +378,19 @@ class AppRegistrationForm extends Component {
             alternativeLocation: "",
             registrationOpenDate: null,
             registrationCloseDate: null,
-            venue: []
+            venue: [],
+            regSetting: this.getOrgSettingsObj()
         }
 
         return participantObj;
+    }
+
+    getOrgSettingsObj = () =>{
+       let obj =  {"updates":0,"daily":0,"weekly":0,"monthly":0,"played_before":0,
+                    "nominate_positions":0,"last_captain":0,"play_friend":0,"refer_friend":0,
+                    "attended_state_game":0,"photo_consent":0,"club_volunteer":0,"country":0,
+                    "nationality":0,"language":0,"disability":0,"shop":0,"voucher":0}
+        return obj;
     }
 
     setUserInfo = (participantObj, userInfo, userRegistrations, index) => {
