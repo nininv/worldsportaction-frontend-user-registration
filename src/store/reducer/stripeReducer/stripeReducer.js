@@ -119,12 +119,9 @@ function set_Charity_Selected(invoiceData) {
     }
     let charity_Selected_get_data = invoiceData[0].charitySelected ? invoiceData[0].charitySelected : null
     if (charity_Selected_get_data) {
-        let competitionId_Index = invoiceData[0].fees.findIndex(x => x.competitionDetail.competitionId == charity_Selected_get_data.competitionId)
-        let defaultCharitySelectedId = isArrayNotEmpty(invoiceData[0].fees[competitionId_Index].charityDetail) ?
-            invoiceData[0].fees[competitionId_Index].charityDetail[0].charitySelectedId : 0
-        charitySelected.roundUpId = 0
-        charitySelected.charitySelectedId = defaultCharitySelectedId
-        charitySelected.charityValue = charity_Selected_get_data.feeAmount
+        charitySelected.roundUpId = charity_Selected_get_data.roundUpId
+        charitySelected.charitySelectedId = charity_Selected_get_data.charitySelectedId
+        charitySelected.charityValue = charity_Selected_get_data.charityValue
         charitySelected.competitionId = charity_Selected_get_data.competitionId
         charitySelected.competitionOrganisationId = charity_Selected_get_data.organisationId
         charitySelected.membershipMappingId = charity_Selected_get_data.membershipProductMappingId

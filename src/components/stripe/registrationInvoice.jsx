@@ -70,7 +70,7 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 634,
+            // registrationId: 639,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
@@ -173,7 +173,8 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(membershipDetail.mCasualFee) + Number(membershipDetail.mSeasonalFee)).toFixed(2)}
+                                    // heading={(Number(membershipDetail.mCasualFee) + Number(membershipDetail.mSeasonalFee)).toFixed(2)}
+                                    heading={(Number(membershipDetail.mSeasonalFee)).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -183,13 +184,15 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(membershipDetail.mCasualGst) + Number(membershipDetail.mSeasonalGst)).toFixed(2)}
+                                    // heading={(Number(membershipDetail.mCasualGst) + Number(membershipDetail.mSeasonalGst)).toFixed(2)}
+                                    heading={(Number(membershipDetail.mSeasonalGst)).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm " >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(Number(membershipDetail.mCasualFee) + Number(membershipDetail.mSeasonalFee) + Number(membershipDetail.mCasualGst) + Number(membershipDetail.mSeasonalGst)).toFixed(2)}
+                                    // heading={(Number(membershipDetail.mCasualFee) + Number(membershipDetail.mSeasonalFee) + Number(membershipDetail.mCasualGst) + Number(membershipDetail.mSeasonalGst)).toFixed(2)}
+                                    heading={(Number(membershipDetail.mSeasonalFee) + Number(membershipDetail.mSeasonalGst)).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -222,7 +225,8 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(competitionDetails.cCasualFee) + Number(competitionDetails.cSeasonalFee)).toFixed(2)}
+                                    // heading={(Number(competitionDetails.cCasualFee) + Number(competitionDetails.cSeasonalFee)).toFixed(2)}
+                                    heading={(Number(competitionDetails.cSeasonalFee)).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -232,13 +236,15 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(competitionDetails.cCasualGst) + Number(competitionDetails.cSeasonalGst)).toFixed(2)}
+                                    // heading={(Number(competitionDetails.cCasualGst) + Number(competitionDetails.cSeasonalGst)).toFixed(2)}
+                                    heading={(Number(competitionDetails.cSeasonalGst)).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={((Number(competitionDetails.cCasualFee) + Number(competitionDetails.cSeasonalFee)) + (Number(competitionDetails.cCasualGst) + Number(competitionDetails.cSeasonalGst))).toFixed(2)}
+                                    // heading={((Number(competitionDetails.cCasualFee) + Number(competitionDetails.cSeasonalFee)) + (Number(competitionDetails.cCasualGst) + Number(competitionDetails.cSeasonalGst))).toFixed(2)}
+                                    heading={((Number(competitionDetails.cSeasonalFee)) + Number(competitionDetails.cSeasonalGst)).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -272,7 +278,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                        heading={(Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
+                                    // heading={(Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
+                                    heading={( Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
                                     />
                                 }
                             </div>
@@ -286,14 +293,16 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     < InputWithHead
-                                        heading={(Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
+                                    // heading={(Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
+                                    heading={(Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
                                     />}
                             </div>
                             <div className="col-sm" >
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={((Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)) + (Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst))).toFixed(2)}
+                                        // heading={((Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)) + (Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst))).toFixed(2)}
+                                        heading={(Number(affiliateDetail.aSeasonalFee) + Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
                                     />}
                             </div>
 
