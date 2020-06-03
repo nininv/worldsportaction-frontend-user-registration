@@ -125,6 +125,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             if(state.participantIndex!= null){
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
+                
                 if(state.prodIndex == undefined || state.prodIndex == null){
                     existingParticipant["regSetting"] = registrationSettings;
                 }

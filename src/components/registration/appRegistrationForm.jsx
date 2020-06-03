@@ -954,6 +954,30 @@ class AppRegistrationForm extends Component {
             product["competitionMembershipProductDivisionId"] = value;
             //product["divisionName"] = divisionName;
         }
+        else if(key == "organisationUniqueKey"){
+            product["organisationUniqueKey"] = value;
+            product["competitionUniqueKey"] = null;
+            product["competitionInfo"] = [];
+
+
+            this.props.form.setFieldsValue({
+                [`competitionUniqueKey${index}${prodIndex}`]:null,
+                [`participantMembershipProductTypeId${index}${prodIndex}`]:  null,
+                [`competitionMembershipProductDivisionId${index}${prodIndex}`]:  null,
+            });
+            product["competitionMembershipProductTypeId"] = null;
+            product["competitionMembershipProductDivisionId"] = null;
+            product["divisionName"] = null;
+            product["friends"] = [];
+            product["referFriends"] = [];
+            product["positionId1"] = null;
+            product["positionId1"] = null;
+
+            let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
+         
+            product["organisationInfo"] = deepCopyFunction(organisationInfo);
+
+        }
         else if(key == "competitionUniqueKey"){
             product["competitionUniqueKey"] = value;
             this.props.form.setFieldsValue({
@@ -967,7 +991,7 @@ class AppRegistrationForm extends Component {
             product["referFriends"] = [];
             product["positionId1"] = null;
             product["positionId1"] = null;
-            let competitionInfo = userRegistration.organisationInfo.competitions.
+            let competitionInfo = product.organisationInfo.competitions.
                             find(x=>x.competitionUniqueKey == value);
                             console.log("competitionInfo" + JSON.stringify(competitionInfo));
             product["competitionInfo"] = deepCopyFunction(competitionInfo);
@@ -2663,7 +2687,25 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
-             
+              <InputWithHead heading={AppConstants.organisationName}  required={"required-field"}/>
+                <Form.Item>
+                    {getFieldDecorator(`organisationUniqueKey${index}${prodIndex}`, {
+                        rules: [{ required: true, message: ValidationConstants.organisationRequired }],
+                    })(
+                    <Select
+                        showSearch
+                        optionFilterProp="children"
+                        style={{ width: "100%", paddingRight: 1 }}
+                        onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex,"organisationUniqueKey")}
+                       
+                        >
+                    {(membershipProdecutInfo || []).map((org, orgIndex) => (
+                            <Option key={org.organisationUniqueKey} 
+                            value={org.organisationUniqueKey}>{org.organisationName}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
                 <InputWithHead heading={AppConstants.competition_name}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionUniqueKey${index}${prodIndex}`, {
@@ -2676,7 +2718,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex,  "competitionUniqueKey")}
                        
                         >
-                    {(item.organisationInfo!= null && item.organisationInfo.competitions || []).map((comp, compIndex) => (
+                    {(prod.organisationInfo!= null && prod.organisationInfo.competitions || []).map((comp, compIndex) => (
                             <Option key={comp.competitionUniqueKey} 
                             value={comp.competitionUniqueKey}>{comp.competitionName}</Option>
                         ))}
