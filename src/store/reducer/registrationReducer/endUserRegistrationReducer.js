@@ -218,20 +218,6 @@ function endUserRegistrationReducer(state = initialState, action) {
     }
 }
 
-function mergeRegistrationSettings(existingSetting, newSetting){
-    let keys = Object.keys(existingSetting);
-    console.log("existingSetting11::" + JSON.stringify(existingSetting));
-    for(let i in keys){
-        if(newSetting[keys[i]] == 1){
-            existingSetting[keys[i]] = 1;
-        }
-    }
-
-    console.log("existingSetting22::" + JSON.stringify(existingSetting));
-
-    return existingSetting;
-} 
-
 function mergeRegistrationSettings1(settings, commonRegSetting){
     try{
       //  console.log("existingSetting11::" + JSON.stringify(settings));

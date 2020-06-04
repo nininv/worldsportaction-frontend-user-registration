@@ -1091,7 +1091,7 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetRegYourself = (value, key, index)  => {
-        console.log("registeringYourself" + value);
+        console.log("registeringYourself" + value + "key::" + key);
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
@@ -1106,6 +1106,7 @@ class AppRegistrationForm extends Component {
         
 
     console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
+    let flag = false;
     if(userRegistrations[index][key]!= 0 && userRegistrations[index][key] != value ){
         let userId = userRegistrations[index].userId;
         let userRegistration1 = this.getParticipantObj( userRegistrations[index].tempParticipantId);
@@ -1117,6 +1118,15 @@ class AppRegistrationForm extends Component {
         {
             oldUser.isDisabled = 0;
         }
+
+        flag = true;
+
+        this.props.form.setFieldsValue({
+            [`organisationUniqueKey${index}`]:  null,
+            [`competitionUniqueKey${index}`]:  null,
+            [`competitionMembershipProductTypeId${index}`]:  null,
+            [`competitionMembershipProductDivisionId${index}`]:  null,
+        });
     }
      
       userRegistrations[index][key] = value;
