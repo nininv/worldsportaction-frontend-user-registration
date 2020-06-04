@@ -485,8 +485,8 @@ class RegistrationInvoice extends Component {
                         {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
                             return (
                                 <div>
-                                    <Radio key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
-                                    <div className="d-flex justify-content-start pl-5">
+                                    <Radio className="invoice-main-radio-charity" key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
+                                    <div  className="d-flex justify-content-start pl-5">
                                         <span className="roundUpDescription-text">{item.roundUpDescription}</span>
                                     </div>
                                     <div className="ml-5">
@@ -497,7 +497,7 @@ class RegistrationInvoice extends Component {
                                         >
                                             {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
                                                 return (
-                                                    <Radio key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
+                                                    <Radio className="invoice-second-radio-charity" key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
                                                 )
                                             })}
                                         </Radio.Group>
