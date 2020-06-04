@@ -954,6 +954,30 @@ class AppRegistrationForm extends Component {
             product["competitionMembershipProductDivisionId"] = value;
             //product["divisionName"] = divisionName;
         }
+        else if(key == "organisationUniqueKey"){
+            product["organisationUniqueKey"] = value;
+            product["competitionUniqueKey"] = null;
+            product["competitionInfo"] = [];
+
+
+            this.props.form.setFieldsValue({
+                [`competitionUniqueKey${index}${prodIndex}`]:null,
+                [`participantMembershipProductTypeId${index}${prodIndex}`]:  null,
+                [`competitionMembershipProductDivisionId${index}${prodIndex}`]:  null,
+            });
+            product["competitionMembershipProductTypeId"] = null;
+            product["competitionMembershipProductDivisionId"] = null;
+            product["divisionName"] = null;
+            product["friends"] = [];
+            product["referFriends"] = [];
+            product["positionId1"] = null;
+            product["positionId1"] = null;
+
+            let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
+         
+            product["organisationInfo"] = deepCopyFunction(organisationInfo);
+
+        }
         else if(key == "competitionUniqueKey"){
             product["competitionUniqueKey"] = value;
             this.props.form.setFieldsValue({
@@ -967,12 +991,12 @@ class AppRegistrationForm extends Component {
             product["referFriends"] = [];
             product["positionId1"] = null;
             product["positionId1"] = null;
-            let competitionInfo = userRegistration.organisationInfo.competitions.
+            let competitionInfo = product.organisationInfo.competitions.
                             find(x=>x.competitionUniqueKey == value);
                             console.log("competitionInfo" + JSON.stringify(competitionInfo));
             product["competitionInfo"] = deepCopyFunction(competitionInfo);
             console.log("product" + JSON.stringify(product));
-            this.getRegistrationSettings(competitionInfo.competitionUniqueKey, userRegistration.organisationUniqueKey, index,prodIndex);
+            this.getRegistrationSettings(competitionInfo.competitionUniqueKey, product.organisationUniqueKey, index,prodIndex);
         }
         else{
             let memProd = product.competitionInfo.membershipProducts.
@@ -1370,51 +1394,48 @@ class AppRegistrationForm extends Component {
                     delete item.organisationInfo;
                     delete item.competitionInfo;
                 });
-                // for(let y = 0; y< userRegistrations.length; y++)
-                // {
-                //     let dob = userRegistrations[y].dateOfBirth;
-                //     if(getAge(dob) > 18){
-                //         userRegistrations[y].parentOrGuardian = [];
-                //     }
+               
+                let err = false;
+                userRegistrations.map((item, index) =>{
+                    let membershipProductId = item.competitionMembershipProductTypeId;
 
-                //     if(regSetting.play_friend == 0)
-                //     {
-                //         userRegistrations[y].friends = [];
-                //     }
-                //     if(regSetting.refer_friend == 0)
-                //     {
-                //         userRegistrations[y].referFriends = [];
-                //     }
-                // }
+                    (item.products || []).map((it, itIndex) => {
+                        if(it.competitionMembershipProductTypeId == membershipProductId){
+                            err = true;
+                        }
+                    })
+                });
 
-
-
-                let formData = new FormData();
-                let isError = false;
-                for(let x = 0; x< userRegistrations.length; x++)
-                {
-                    let userRegistration = userRegistrations[x];
-                    if(userRegistration.profileUrl == null){
-                        isError = true;
-                        break;
+                if(!err){
+                    let formData = new FormData();
+                    let isError = false;
+                    for(let x = 0; x< userRegistrations.length; x++)
+                    {
+                        let userRegistration = userRegistrations[x];
+                        if(userRegistration.profileUrl == null){
+                            isError = true;
+                            break;
+                        }
+                        else{
+                            formData.append("participantPhoto", userRegistration.participantPhoto);
+                        }
+                    }
+    
+                    if(!isError)
+                    {
+                        console.log("FINAL DATA" + JSON.stringify(registrationDetail));
+                        formData.append("registrationDetail", JSON.stringify(registrationDetail));
+    
+                         this.props.saveEndUserRegistrationAction(formData);
+                         this.setState({ loading: true });
                     }
                     else{
-                        formData.append("participantPhoto", userRegistration.participantPhoto);
+                        message.error(ValidationConstants.userPhotoIsRequired);
                     }
                 }
-
-                if(!isError)
-                {
-                    console.log("FINAL DATA" + JSON.stringify(registrationDetail));
-                    formData.append("registrationDetail", JSON.stringify(registrationDetail));
-
-                     this.props.saveEndUserRegistrationAction(formData);
-                     this.setState({ loading: true });
-                }
                 else{
-                    message.error(ValidationConstants.userPhotoIsRequired);
+                    message.error(ValidationConstants.membershipProductValidation); 
                 }
-               
             }
         });
     }
@@ -2663,7 +2684,25 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
-             
+              <InputWithHead heading={AppConstants.organisationName}  required={"required-field"}/>
+                <Form.Item>
+                    {getFieldDecorator(`organisationUniqueKey${index}${prodIndex}`, {
+                        rules: [{ required: true, message: ValidationConstants.organisationRequired }],
+                    })(
+                    <Select
+                        showSearch
+                        optionFilterProp="children"
+                        style={{ width: "100%", paddingRight: 1 }}
+                        onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex,"organisationUniqueKey")}
+                       
+                        >
+                    {(membershipProdecutInfo || []).map((org, orgIndex) => (
+                            <Option key={org.organisationUniqueKey} 
+                            value={org.organisationUniqueKey}>{org.organisationName}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
                 <InputWithHead heading={AppConstants.competition_name}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionUniqueKey${index}${prodIndex}`, {
@@ -2676,7 +2715,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex,  "competitionUniqueKey")}
                        
                         >
-                    {(item.organisationInfo!= null && item.organisationInfo.competitions || []).map((comp, compIndex) => (
+                    {(prod.organisationInfo!= null && prod.organisationInfo.competitions || []).map((comp, compIndex) => (
                             <Option key={comp.competitionUniqueKey} 
                             value={comp.competitionUniqueKey}>{comp.competitionName}</Option>
                         ))}
