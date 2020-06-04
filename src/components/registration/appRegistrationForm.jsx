@@ -1426,8 +1426,8 @@ class AppRegistrationForm extends Component {
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
-                        //  this.props.saveEndUserRegistrationAction(formData);
-                        //  this.setState({ loading: true });
+                         this.props.saveEndUserRegistrationAction(formData);
+                         this.setState({ loading: true });
                     }
                     else{
                         message.error(ValidationConstants.userPhotoIsRequired);
