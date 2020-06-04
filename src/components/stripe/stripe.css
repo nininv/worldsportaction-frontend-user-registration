@@ -155,11 +155,22 @@ display: flex;
   font-size: 13px;
   color: var(--app-4c4c6d);
   font-weight: 500;
-  font-family: inter;
-  white-space: initial;
-  word-wrap: break-word
+  font-family: inter-medium;
 }
 
+.invoice-main-radio-charity {
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.invoice-second-radio-charity {
+  font-size: 11.5px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
 
 @media (max-width: 767px) {
   .invoiceImage{
@@ -200,6 +211,4 @@ display: flex;
   position: relative;
   width: 70%;
   }
-
-  
 }
