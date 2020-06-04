@@ -50,6 +50,7 @@ const ValidationConstants = {
     DisclaimerLinkIsRequired: "Disclaimer link is required.",
     pleaseSelectMembershipProduct: "Please select membership product.",
     userPhotoIsRequired: "User photo is required.",
+    membershipProductValidation: "Memberhsip product must be unique amoung products",
 
     /////Venuew and times
     suburbField: ["Suburb is required."],

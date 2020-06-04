@@ -996,7 +996,7 @@ class AppRegistrationForm extends Component {
                             console.log("competitionInfo" + JSON.stringify(competitionInfo));
             product["competitionInfo"] = deepCopyFunction(competitionInfo);
             console.log("product" + JSON.stringify(product));
-            this.getRegistrationSettings(competitionInfo.competitionUniqueKey, userRegistration.organisationUniqueKey, index,prodIndex);
+            this.getRegistrationSettings(competitionInfo.competitionUniqueKey, product.organisationUniqueKey, index,prodIndex);
         }
         else{
             let memProd = product.competitionInfo.membershipProducts.
@@ -1394,51 +1394,48 @@ class AppRegistrationForm extends Component {
                     delete item.organisationInfo;
                     delete item.competitionInfo;
                 });
-                // for(let y = 0; y< userRegistrations.length; y++)
-                // {
-                //     let dob = userRegistrations[y].dateOfBirth;
-                //     if(getAge(dob) > 18){
-                //         userRegistrations[y].parentOrGuardian = [];
-                //     }
+               
+                let err = false;
+                userRegistrations.map((item, index) =>{
+                    let membershipProductId = item.competitionMembershipProductTypeId;
 
-                //     if(regSetting.play_friend == 0)
-                //     {
-                //         userRegistrations[y].friends = [];
-                //     }
-                //     if(regSetting.refer_friend == 0)
-                //     {
-                //         userRegistrations[y].referFriends = [];
-                //     }
-                // }
+                    (item.products || []).map((it, itIndex) => {
+                        if(it.competitionMembershipProductTypeId == membershipProductId){
+                            err = true;
+                        }
+                    })
+                });
 
-
-
-                let formData = new FormData();
-                let isError = false;
-                for(let x = 0; x< userRegistrations.length; x++)
-                {
-                    let userRegistration = userRegistrations[x];
-                    if(userRegistration.profileUrl == null){
-                        isError = true;
-                        break;
+                if(!err){
+                    let formData = new FormData();
+                    let isError = false;
+                    for(let x = 0; x< userRegistrations.length; x++)
+                    {
+                        let userRegistration = userRegistrations[x];
+                        if(userRegistration.profileUrl == null){
+                            isError = true;
+                            break;
+                        }
+                        else{
+                            formData.append("participantPhoto", userRegistration.participantPhoto);
+                        }
+                    }
+    
+                    if(!isError)
+                    {
+                        console.log("FINAL DATA" + JSON.stringify(registrationDetail));
+                        formData.append("registrationDetail", JSON.stringify(registrationDetail));
+    
+                        //  this.props.saveEndUserRegistrationAction(formData);
+                        //  this.setState({ loading: true });
                     }
                     else{
-                        formData.append("participantPhoto", userRegistration.participantPhoto);
+                        message.error(ValidationConstants.userPhotoIsRequired);
                     }
                 }
-
-                if(!isError)
-                {
-                    console.log("FINAL DATA" + JSON.stringify(registrationDetail));
-                    formData.append("registrationDetail", JSON.stringify(registrationDetail));
-
-                     this.props.saveEndUserRegistrationAction(formData);
-                     this.setState({ loading: true });
-                }
                 else{
-                    message.error(ValidationConstants.userPhotoIsRequired);
+                    message.error(ValidationConstants.membershipProductValidation); 
                 }
-               
             }
         });
     }
