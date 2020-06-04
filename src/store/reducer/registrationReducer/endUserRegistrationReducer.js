@@ -20,6 +20,8 @@ let commonRegSetting = {
 }
 
 
+
+
 const initialState = {
     onLoad: false,
     onMembershipLoad: false,
@@ -37,8 +39,8 @@ const initialState = {
     setCompOrgKey: false,
     registrationId: null,
     participantIndex: null,
-    commonRegSetting: commonRegSetting
-
+    commonRegSetting: commonRegSetting,
+    regSettings: []
 }
 
 
@@ -102,47 +104,71 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
+           // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
             let registrationSettings = action.result;
-            console.log("*******))))))))))" + JSON.stringify(registrationSettings));
-    
-            console.log("*******&&&&&&" + state.commonRegSetting.club_volunteer);
-            if(registrationSettings.club_volunteer == 1){
-                state.commonRegSetting.club_volunteer = 1
-            }
-            if(registrationSettings.shop == 1){
-                state.commonRegSetting.shop = 1
-            }
-            if(registrationSettings.voucher == 1){
-                state.commonRegSetting.voucher = 1
-            }
-
-            console.log("*******(((((((" + state.commonRegSetting.club_volunteer);
+           // console.log("*******))))))))))" + state.participantIndex);
 
             if(state.participantIndex!= null){
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
-                
-                if(state.prodIndex == undefined || state.prodIndex == null){
-                    existingParticipant["regSetting"] = registrationSettings;
+                let settings = state.regSettings.find(x=>x.index == index);
+               // console.log("&&&&&&&" + JSON.stringify(settings));
+                if(settings!= null){
+                    let ind = index;
+                    if(state.prodIndex != undefined && state.prodIndex != null){
+                        ind = state.prodIndex + 1;
+                    }
+                    settings.settingArr[ind] = registrationSettings;
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                   // console.log("*******))))))))))" + JSON.stringify(setting));
+                    existingParticipant["regSetting"] = setting;
                 }
                 else{
-                   
-                    let existingSettings = existingParticipant.regSetting;
-                    if(existingSettings!= null){
-                        mergeRegistrationSettings(existingSettings, registrationSettings)
-                        existingParticipant["regSetting"] = existingSettings;
+                    let regSetObj = {
+                        index: 0,
+                        settingArr: []
                     }
-                    else{
-                        existingParticipant["regSetting"] = registrationSettings;
+                    regSetObj.settingArr.push(registrationSettings);
+                    state.regSettings.push(regSetObj);
+                    existingParticipant["regSetting"] = registrationSettings;
+                    if(registrationSettings.club_volunteer == 1){
+                        state.commonRegSetting.club_volunteer = 1
+                    }
+                    if(registrationSettings.shop == 1){
+                        state.commonRegSetting.shop = 1
+                    }
+                    if(registrationSettings.voucher == 1){
+                        state.commonRegSetting.voucher = 1
                     }
                 }
+
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
             }
+            
+            // if(state.participantIndex!= null){
+            //     let index = state.participantIndex;
+            //     let existingParticipant = state.registrationDetail.userRegistrations[index];
+                
+            //     if(state.prodIndex == undefined || state.prodIndex == null){
+            //         existingParticipant["regSetting"] = registrationSettings;
+            //     }
+            //     else{
+                   
+            //         let existingSettings = existingParticipant.regSetting;
+            //         if(existingSettings!= null){
+            //             mergeRegistrationSettings(existingSettings, registrationSettings)
+            //             existingParticipant["regSetting"] = existingSettings;
+            //         }
+            //         else{
+            //             existingParticipant["regSetting"] = registrationSettings;
+            //         }
+            //     }
+                
+            // }
             return {
                 ...state,
                 onLoad: false,
@@ -182,7 +208,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             state.userInfo = [];
             state.isSetCompOrgKey = false;
 
-            console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
+           // console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {
                 ...state
             };
@@ -196,8 +222,6 @@ function mergeRegistrationSettings(existingSetting, newSetting){
     let keys = Object.keys(existingSetting);
     console.log("existingSetting11::" + JSON.stringify(existingSetting));
     for(let i in keys){
-        // console.log("Keys::"+ keys[i]);
-        // console.log("Keys New Value ::" + newSetting[keys[i]]);
         if(newSetting[keys[i]] == 1){
             existingSetting[keys[i]] = 1;
         }
@@ -206,6 +230,46 @@ function mergeRegistrationSettings(existingSetting, newSetting){
     console.log("existingSetting22::" + JSON.stringify(existingSetting));
 
     return existingSetting;
-}   
+} 
+
+function mergeRegistrationSettings1(settings, commonRegSetting){
+    try{
+      //  console.log("existingSetting11::" + JSON.stringify(settings));
+        let obj =  {"updates":0,"daily":0,"weekly":0,"monthly":0,"played_before":0,
+        "nominate_positions":0,"last_captain":0,"play_friend":0,"refer_friend":0,
+        "attended_state_game":0,"photo_consent":0,"club_volunteer":0,"country":0,
+        "nationality":0,"language":0,"disability":0,"shop":0,"voucher":0};
+        commonRegSetting["club_volunteer"] = 0;
+        commonRegSetting["shop"] = 0;
+        commonRegSetting["voucher"] = 0;
+        for(let j in settings){
+            let setting = settings[j];
+           // console.log("&&&&&&" + JSON.stringify(setting));
+            let keys = Object.keys(setting);
+           // console.log("&&&&&&keys" + JSON.stringify(keys));
+            for(let i in keys){
+               // console.log("***" + keys[i] + "**" + i);
+                if(setting[keys[i]] == 1){
+                    obj[keys[i]] = 1;
+                }
+               // console.log("***" + JSON.stringify(obj))
+                if(keys[i] === "club_volunteer" || keys[i] === "shop" || keys[i] === "voucher"){
+                    if(setting[keys[i]] == 1){
+                        commonRegSetting[keys[i]] = 1
+                    }
+                }
+
+              //  console.log("commonRegSetting::" + JSON.stringify(commonRegSetting));
+            }
+        }
+    
+     //   console.log("existingSetting22::" + JSON.stringify(obj));
+    
+        return obj;
+    }
+    catch(error){
+        console.log("Error" + error);
+    }
+} 
 
 export default endUserRegistrationReducer;
