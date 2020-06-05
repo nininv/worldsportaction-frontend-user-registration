@@ -31,7 +31,7 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
 
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
-    clearRegistrationDataAction} from 
+    clearRegistrationDataAction, updateRegistrationSettingsAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -1295,6 +1295,7 @@ class AppRegistrationForm extends Component {
          }
 
          this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+         this.props.updateRegistrationSettingsAction(this.state.participantIndex, this.state.productIndex);
         
     }
 
@@ -3114,7 +3115,8 @@ function mapDispatchToProps(dispatch)
         genderReferenceAction,
         getUserRegistrationUserInfoAction,
         disabilityReferenceAction,
-        clearRegistrationDataAction
+        clearRegistrationDataAction,
+        updateRegistrationSettingsAction
     }, dispatch);
 
 }
