@@ -1016,6 +1016,9 @@ class AppRegistrationForm extends Component {
             }
 
             product["isPlayer"] =  memProd.isPlayer;
+            if(!memProd.isPlayer){
+                this.props.updateRegistrationSettingsAction(index, prodIndex, "nonPlayer");
+            }
            
             // Enable the existing one and disable the new one
             // let oldMemProd = userRegistration.competitionInfo.membershipProducts.
@@ -1030,6 +1033,7 @@ class AppRegistrationForm extends Component {
                 this.addFriend(index,"friend","product", prodIndex);
                 this.addFriend(index,"referFriend","product", prodIndex);
             }
+
         }
 
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
@@ -1318,10 +1322,6 @@ class AppRegistrationForm extends Component {
         }
 
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
-    }
-
-    removeRegistration = () => {
-        
     }
 
     removeVoucher = (modalOption) => {

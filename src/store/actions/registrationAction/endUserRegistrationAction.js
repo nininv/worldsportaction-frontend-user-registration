@@ -20,11 +20,12 @@ function updateEndUserRegisrationAction(data, key) {
     return action;
   }
 
-  function updateRegistrationSettingsAction(participantIndex, prodIndex) {
+  function updateRegistrationSettingsAction(participantIndex, prodIndex, key) {
     const action = {
       type: ApiConstants.UPDATE_REGISTRATION_SETTINGS,
       participantIndex: participantIndex,
-      prodIndex: prodIndex
+      prodIndex: prodIndex,
+      key: key
     };
     return action;
   }

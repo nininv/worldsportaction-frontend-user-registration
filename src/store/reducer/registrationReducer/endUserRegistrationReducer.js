@@ -93,10 +93,16 @@ function endUserRegistrationReducer(state = initialState, action) {
             let participantIndex = action.participantIndex;
             let existingParticipant = state.registrationDetail.userRegistrations[participantIndex];
             let settings = state.regSettings.find(x=>x.index == participantIndex);
-            settings.settingArr.splice(prodIndex + 1, 1);
-            let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-             existingParticipant["regSetting"] = setting;
-
+            if(action.key == "nonPlayer"){
+                existingParticipant["regSetting"]["nominate_positions"] = 0;
+                existingParticipant["regSetting"]["play_friend"] = 0;
+                existingParticipant["regSetting"]["refer_friend"] = 0;
+            }
+            else{
+                settings.settingArr.splice(prodIndex + 1, 1);
+                let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                existingParticipant["regSetting"] = setting;
+            }
             
             return { ...state, error: null };
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
