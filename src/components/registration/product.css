@@ -657,3 +657,9 @@ img.bg {
   text-align: center;
   padding-top: 10px;
 }
+
+
+.division-err{
+  color: var(--app-f5222d);
+  padding-top: 20px;
+}

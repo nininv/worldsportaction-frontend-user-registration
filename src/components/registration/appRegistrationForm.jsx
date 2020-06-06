@@ -204,6 +204,20 @@ class AppRegistrationForm extends Component {
             }
             
         }
+        if(registrationState.refFlag == "divisionParticipant"){
+            this.props.updateEndUserRegisrationAction("", "refFlag");
+            this.props.form.setFieldsValue({
+                [`competitionMembershipProductTypeId${this.state.participantIndex}`]:  null,
+                [`competitionMembershipProductDivisionId${this.state.participantIndex}`]:  null,
+            });
+        }
+        if(registrationState.refFlag == "divisionProduct"){
+            this.props.updateEndUserRegisrationAction("", "refFlag");
+            this.props.form.setFieldsValue({
+                [`participantMembershipProductTypeId${this.state.participantIndex}${this.state.productIndex}`]:  null,
+                [`competitionMembershipProductDivisionId${this.state.participantIndex}${this.state.productIndex}`]:  null,
+            });
+        }
     }
 
     getRegistrationSettings = (competitionUniqueKey, organisationUniqueKey, index, prodIndex) => {
@@ -379,7 +393,8 @@ class AppRegistrationForm extends Component {
             registrationOpenDate: null,
             registrationCloseDate: null,
             venue: [],
-            regSetting: this.getOrgSettingsObj()
+            regSetting: this.getOrgSettingsObj(),
+            divisions: []					 
         }
 
         return participantObj;
@@ -519,7 +534,8 @@ class AppRegistrationForm extends Component {
             competitionMembershipProductTypeId: null,
             competitionMembershipProductDivisionId: null,
             friends: [],
-            referFriends: []
+            referFriends: [],
+            divisions: []		 
         }
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = registrationDetail.userRegistrations[index];
@@ -635,31 +651,41 @@ class AppRegistrationForm extends Component {
 
         }
         else if(key === "competitionMembershipProductTypeId"){
-    
+            userRegistration["hasDivisionError"] = false;
             let memProd = userRegistration.competitionInfo.membershipProducts.
                 find(x=>x.competitionMembershipProductTypeId === value);
-            console.log("***********" + userRegistration.competitionMembershipProductDivisionId);
-            let  divisions = userRegistration.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
-                value).divisions;
+            console.log("***********" + value);
+        
+			let divisions = this.getDivisionByFilter(userRegistration, value, userRegistration);
             console.log("&&&&&&&&&&" + JSON.stringify(divisions));
-            if(divisions!= null && divisions!= undefined)
+            if(divisions!= null && divisions!= undefined && divisions.length > 0)
             {
+				userRegistration[key] = value;
+                userRegistration["isPlayer"] = memProd.isPlayer;												
                 if(divisions.length == 1)
                 {
-                    console.log("&&&&&&" + divisions[0].competitionMembershipProductDivisionId);
                     userRegistration["competitionMembershipProductDivisionId"] = 
                     divisions[0].competitionMembershipProductDivisionId;
                     userRegistration["divisionName"] =  divisions[0].divisionName;
+                    userRegistration["divisions"] = [];
                 }
                 else{
                     userRegistration.competitionMembershipProductDivisionId = null;
                     this.props.form.setFieldsValue({
                         [`competitionMembershipProductDivisionId${index}`]:  null,
                     });
+					userRegistration["divisions"] = divisions;
                 }
             }
+            else{
+                userRegistration["divisionName"] =  null;
+                userRegistration.competitionMembershipProductDivisionId = null;
+                userRegistration["divisions"] = [];
+                value = null;
+                console.log("^^^^^^^" + value);
+            }
            
-            userRegistration["isPlayer"] = memProd.isPlayer;
+            //userRegistration["isPlayer"] = memProd.isPlayer;
             // Enable the existing one and disable the new one
             // let oldMemProd = userRegistration.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId === userRegistration.competitionMembershipProductTypeId);
             // if(oldMemProd!= null && oldMemProd!= "" && oldMemProd!= undefined)
@@ -760,8 +786,6 @@ class AppRegistrationForm extends Component {
         }
         else if(key == "dateOfBirth")
         {
-            
-           // let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != userRegistration.tempParticipantId);
             let isParentAvailable = false;
       
             (userRegistrations ||[]).map((item, index) => {
@@ -769,12 +793,17 @@ class AppRegistrationForm extends Component {
                         isParentAvailable = true;
                     }
             });
-            console.log("^^^^^^^^^^^^" + isParentAvailable);
             if(getAge(value) <= 18 && !isParentAvailable)
             {
-                console.log("inside");
                 this.addParent(index, userRegistrations);
             }
+
+            userRegistration[key] = value;
+            this.validateDivision(userRegistration, index);
+        }
+        else if(key == "genderRefId"){
+            userRegistration[key] = value;
+            this.validateDivision(userRegistration, index);
         }
         else if(key == "isDisability")
         {
@@ -811,6 +840,7 @@ class AppRegistrationForm extends Component {
             userRegistration.registrationCloseDate = null;
             userRegistration.contactDetails = null;
             userRegistration.divisionName = null;
+            userRegistration["hasDivisionError"] = false;
             userRegistration.venue = [];
             this.props.form.setFieldsValue({
                 [`competitionUniqueKey${index}`]:  null,
@@ -842,6 +872,7 @@ class AppRegistrationForm extends Component {
             userRegistration.registrationOpenDate = competitionInfo.registrationOpenDate;
             userRegistration.registrationCloseDate = competitionInfo.registrationCloseDate;
             userRegistration.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
+            userRegistration["hasDivisionError"] = false;
             userRegistration.products = [];
             userRegistration.divisionName = null;
             this.props.form.setFieldsValue({
@@ -854,13 +885,85 @@ class AppRegistrationForm extends Component {
         }
 
         userRegistration[key] = value;
-
-       // console.log("UserRegistrations::" + JSON.stringify(userRegistrations));
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
 
-        if(key === "whatTypeOfRegistration")
-        {
-            //this.existingUserPopulate(); 
+        if(key == "competitionMembershipProductTypeId" && value == null){
+            this.setState({participantIndex: index})
+            this.props.updateEndUserRegisrationAction("divisionParticipant", "refFlag");
+        }
+    }
+
+    validateDivision = (userRegistration, index) => {
+        if(userRegistration!= null){
+            userRegistration["hasDivisionError"] = false;
+            let competitionMembershipProductTypeId = userRegistration.competitionMembershipProductTypeId;
+            if(competitionMembershipProductTypeId!= null){
+                let divisions = this.getDivisionByFilter(userRegistration, competitionMembershipProductTypeId, userRegistration);
+                let isAvailable = false;
+                if(divisions!= null && divisions.length > 0){
+                    (divisions || []).map((d, i) => {
+                        if(d.competitionMembershipProductDivisionId == userRegistration.competitionMembershipProductDivisionId){
+                            isAvailable = true;
+                        }
+                    })
+                }
+                if(!isAvailable){
+                    this.props.form.setFieldsValue({
+                        [`competitionMembershipProductTypeId${index}`]:  null,
+                        [`competitionMembershipProductDivisionId${index}`]:  null,
+                    });
+                    userRegistration["divisionName"] =  null;
+                    userRegistration["divisions"] = [];
+                    userRegistration.competitionMembershipProductTypeId = null;
+                    userRegistration.competitionMembershipProductDivisionId = null;
+                    
+                }
+                else{
+                    userRegistration["divisions"] = divisions;
+                }
+
+                if(divisions == null || divisions == undefined || divisions.length == 0){
+                    userRegistration["hasDivisionError"] = true;
+                }
+
+                (userRegistration.products || []).map((item, pIndex) => {
+                    if(item.competitionMembershipProductTypeId!= null){
+                        let divisions = this.getDivisionByFilter(item, item.competitionMembershipProductTypeId, userRegistration);
+                        let isAvailable = false;
+
+                        if(divisions!= null && divisions.length > 0){
+                            (divisions || []).map((d, i) => {
+                                if(d.competitionMembershipProductDivisionId == item.competitionMembershipProductDivisionId){
+                                    isAvailable = true;
+                                }
+                            })
+                        }
+                        if(!isAvailable){
+                            this.props.form.setFieldsValue({
+                                [`participantMembershipProductTypeId${index}${pIndex}`]:  null,
+                                [`competitionMembershipProductDivisionId${index}${pIndex}`]:  null,
+                            });
+                            item["divisionName"] =  null;
+                            item["divisions"] = [];
+                            item.competitionMembershipProductTypeId = null;
+                            item.competitionMembershipProductDivisionId = null;
+                            item.friends = [];
+                            item.referFriends = [];
+                            item.positionId1 = null;
+                            item.positionId2 = null;
+                        }
+                        else{
+                            item["divisions"] = divisions;
+                        }
+
+                        if(divisions == null || divisions == undefined || divisions.length == 0){
+                            userRegistration["hasDivisionError"] = true;
+                        }
+                        
+                    }
+                })
+                
+            }
         }
     }
 
@@ -949,8 +1052,9 @@ class AppRegistrationForm extends Component {
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let userRegistration = userRegistrations[index];
         let product = userRegistration.products[prodIndex];
-        
+        userRegistration["hasDivisionError"] = false;
         if(key == "competitionMembershipProductDivisionId"){
+
             product["competitionMembershipProductDivisionId"] = value;
             //product["divisionName"] = divisionName;
         }
@@ -1001,42 +1105,61 @@ class AppRegistrationForm extends Component {
         else{
             let memProd = product.competitionInfo.membershipProducts.
                 find(x=>x.competitionMembershipProductTypeId === value);
-            let  divisions = product.competitionInfo.membershipProducts.
-                    find(x=>x.competitionMembershipProductTypeId == value).divisions;
-           // console.log("&&&&&&&&&&memProd::" + JSON.stringify(memProd));
-            if(divisions!= null && divisions!= undefined)
+
+            let divisions = this.getDivisionByFilter(product, value, userRegistration);
+            console.log("divisions::" + JSON.stringify(divisions));
+            if(divisions!= null && divisions!= undefined && divisions.length > 0)
             {
                 if(divisions.length == 1)
                 {
-                   // console.log("&&&&&&" + divisions[0].competitionMembershipProductDivisionId);
                     product["competitionMembershipProductDivisionId"] = 
                     divisions[0].competitionMembershipProductDivisionId;
                     product["divisionName"] =  divisions[0].divisionName;
+                    product["divisions"] = [];
                 }
-            }
+                else{
+                    product.competitionMembershipProductDivisionId = null;
+                    this.props.form.setFieldsValue({
+                        [`competitionMembershipProductDivisionId${index}${prodIndex}`]:  null,
+                    });
+                    product["divisions"] = divisions;
+                }
+                product["isPlayer"] =  memProd.isPlayer;
+                product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
 
-            product["isPlayer"] =  memProd.isPlayer;
-            if(!memProd.isPlayer){
-                this.props.updateRegistrationSettingsAction(index, prodIndex, "nonPlayer");
-            }
-           
-            // Enable the existing one and disable the new one
-            // let oldMemProd = userRegistration.competitionInfo.membershipProducts.
-            //             find(x=>x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId);
-            // if(oldMemProd!= null && oldMemProd!= "" && oldMemProd!= undefined)
-            // {
-            //     oldMemProd.isDisabled = false;
-            // }
-            // memProd.isDisabled = true;
-            product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
-            if(memProd.isPlayer){
-                this.addFriend(index,"friend","product", prodIndex);
-                this.addFriend(index,"referFriend","product", prodIndex);
-            }
+                if(!memProd.isPlayer){
+                    this.props.updateRegistrationSettingsAction(index, prodIndex, "nonPlayer");
+                }
+                else{
+                    this.props.updateRegistrationSettingsAction(index, prodIndex, "player");  
+                }
 
+                if(memProd.isPlayer){
+                    this.addFriend(index,"friend","product", prodIndex);
+                    this.addFriend(index,"referFriend","product", prodIndex);
+                }
+                else{
+                    product["friends"] = [];
+                    product["referFriends"] = [];
+                    product["positionId1"] = null;
+                    product["positionId2"] = null;
+                }
+
+            }
+            else{
+                product["competitionMembershipProductDivisionId"] = null;
+                product["divisionName"] =  null;
+                product["divisions"] = [];
+                value = null;
+                console.log("^^^^^^^" + value);
+            }
         }
 
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        if(key == "competitionMembershipProductTypeId" && value == null){
+            this.setState({participantIndex: index, productIndex: prodIndex})
+            this.props.updateEndUserRegisrationAction("divisionProduct", "refFlag");
+        }
     }
 
     onChangeSetVolunteerValue = (value, index) =>{
@@ -1363,6 +1486,57 @@ class AppRegistrationForm extends Component {
         
     }
 
+	getDivisionByFilter = (item, competitionMembershipProductTypeId, userRegistration) => {
+        let divisionsArr = [];
+        let genderRefId = userRegistration.genderRefId;
+        console.log("genderRefId" + genderRefId)
+        var date = moment(userRegistration.dateOfBirth, "DD/MM/YYYY");
+
+        if(competitionMembershipProductTypeId != null && item.competitionInfo!= null &&
+            item.competitionInfo!= undefined)
+        {
+            let divisions = item.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
+                competitionMembershipProductTypeId).divisions;
+               // console.log("&&&&&&&&&&&&&&" + JSON.stringify(divisions));
+                (divisions || []).map((div, index) => {
+                    // console.log("div.genderRefId::" + div.genderRefId);
+                    // console.log("div.toDate::" + div.toDate);
+                    // console.log("div.fromDate::" + div.fromDate);
+                    if(div.genderRefId != null && (div.fromDate == null || div.toDate == null)){
+                        if(div.genderRefId == genderRefId || genderRefId == 3){
+                           
+                            divisionsArr.push(div);
+                        }
+                    }
+                    else if(div.genderRefId == null && (div.fromDate != null && div.toDate != null)){
+                        var startDate = moment(div.fromDate, "YYYY-MM-DD");
+                        var endDate = moment(div.toDate, "YYYY-MM-DD");
+                    //    console.log("#############" + startDate + "***" + endDate + "$$$" + date);
+                    //     console.log("#############" + date.isBefore(endDate)  + "***" +  date.isAfter(startDate)  + "$$$" + date.isSame(endDate));
+                        if (date.isBefore(endDate) 
+                            && date.isAfter(startDate) 
+                            || (date.isSame(startDate) || date.isSame(endDate))){
+                                divisionsArr.push(div);
+                            }
+                    }
+                    else if(div.genderRefId != null && (div.fromDate != null && div.toDate != null)){
+                        var startDate = moment(div.fromDate, "YYYY-MM-DD");
+                        var endDate = moment(div.toDate, "YYYY-MM-DD");
+                        if ((date.isBefore(endDate) 
+                            && date.isAfter(startDate) 
+                            || (date.isSame(startDate) || date.isSame(endDate))) 
+                            && (div.genderRefId == genderRefId || genderRefId == 3)){
+                                divisionsArr.push(div);
+                            }
+                    }
+                    else{
+                        divisionsArr.push(div); 
+                    }
+                })
+        }
+
+        return divisionsArr;
+    }
 
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
@@ -1588,6 +1762,9 @@ class AppRegistrationForm extends Component {
                     )}
                     </Form.Item>
                 </div> : null}
+                {item.hasDivisionError &&
+                <div className="division-err">{ValidationConstants.divisionValidation}</div>
+                }
             </div>
         )
     }
@@ -1595,14 +1772,6 @@ class AppRegistrationForm extends Component {
     membershipProductView = (item, index, getFieldDecorator) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
-        let divisions = [];
-        if(item.competitionMembershipProductTypeId != null && item.competitionInfo!= null &&
-            item.competitionInfo!= undefined)
-        {
-            divisions = item.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
-                item.competitionMembershipProductTypeId).divisions;
-        }
-       // console.log("item" + JSON.stringify(item));
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -1690,7 +1859,7 @@ class AppRegistrationForm extends Component {
                 <div>
                     <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                     { 
-                        divisions.length > 1 ?
+                        item.divisions.length > 1 ?
                         <div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductDivisionId${index}`, {
@@ -1701,7 +1870,7 @@ class AppRegistrationForm extends Component {
                                     onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductDivisionId", index )}
                                     setFieldsValue={item.competitionMembershipProductDivisionId}
                                     >
-                                    {(divisions || []).map((division, index) => (
+                                    {(item.divisions || []).map((division, index) => (
                                         <Option key={division.competitionMembershipProductDivisionId} 
                                         value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
                                     ))}
@@ -2685,13 +2854,7 @@ class AppRegistrationForm extends Component {
 
     membershipProductProductView = (item, prod, prodIndex, index, getFieldDecorator) => {
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
-        let divisions = [];
-        if(prod.competitionMembershipProductTypeId != null && prod.competitionInfo!= null &&
-            prod.competitionInfo!= undefined)
-        {
-            divisions = prod.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
-                prod.competitionMembershipProductTypeId).divisions;
-        }
+        
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -2759,7 +2922,7 @@ class AppRegistrationForm extends Component {
                 <div>
                     <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                     {
-                        divisions.length > 1 ?
+                        prod.divisions.length > 1 ?
                         <Form.Item>
                         {getFieldDecorator(`competitionMembershipProductDivisionId${index}${prodIndex}`, {
                             rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
@@ -2769,7 +2932,7 @@ class AppRegistrationForm extends Component {
                             onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex, "competitionMembershipProductDivisionId" )}
                             setFieldsValue={prod.competitionMembershipProductDivisionId}
                             >
-                            {(divisions || []).map((division, index) => (
+                            {(prod.divisions || []).map((division, index) => (
                                 <Option key={division.competitionMembershipProductDivisionId} 
                                 value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
                             ))}
