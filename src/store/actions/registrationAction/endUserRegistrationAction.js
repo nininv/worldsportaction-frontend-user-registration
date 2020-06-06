@@ -20,6 +20,18 @@ function updateEndUserRegisrationAction(data, key) {
     return action;
   }
 
+  function updateRegistrationSettingsAction(participantIndex, prodIndex, key) {
+    const action = {
+      type: ApiConstants.UPDATE_REGISTRATION_SETTINGS,
+      participantIndex: participantIndex,
+      prodIndex: prodIndex,
+      key: key
+    };
+    return action;
+  }
+
+  
+
 /////Organisation Registration Registration Settings
 function orgRegistrationRegSettingsEndUserRegAction(payload) {
     const action = {
@@ -63,5 +75,6 @@ export {
     orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction,
     getUserRegistrationUserInfoAction,
-    clearRegistrationDataAction
+    clearRegistrationDataAction,
+    updateRegistrationSettingsAction
 }
