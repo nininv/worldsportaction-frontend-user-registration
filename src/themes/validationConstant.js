@@ -79,7 +79,9 @@ const ValidationConstants = {
     //venue court
     emptyAddCourtValidation: "Please add court to add venue.",
     organisationRequired: "Please select Organisation",
-    competitionRequired: "Please select Competition"
+    competitionRequired: "Please select Competition",
+
+    divisionValidation: "Please review your competition selections."
 };
 
 export default ValidationConstants;
