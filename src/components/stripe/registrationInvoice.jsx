@@ -41,7 +41,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("639")
+        // this.props.getInvoiceStatusAction("721")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -60,7 +60,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("639", invoiceId)
+            // this.props.getInvoice("721", invoiceId)
         }
     }
 
@@ -70,7 +70,7 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 639,
+            // registrationId: 721,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
@@ -278,8 +278,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                    // heading={(Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
-                                    heading={( Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
+                                        // heading={(Number(affiliateDetail.aCasualFee) + Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
+                                        heading={(Number(affiliateDetail.aSeasonalFee)).toFixed(2)}
                                     />
                                 }
                             </div>
@@ -293,8 +293,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     < InputWithHead
-                                    // heading={(Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
-                                    heading={(Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
+                                        // heading={(Number(affiliateDetail.aCasualGst) + Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
+                                        heading={(Number(affiliateDetail.aSeasonalGst)).toFixed(2)}
                                     />}
                             </div>
                             <div className="col-sm" >
@@ -486,14 +486,14 @@ class RegistrationInvoice extends Component {
                             return (
                                 <div>
                                     <Radio className="invoice-main-radio-charity" key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
-                                    <div  className="d-flex justify-content-start pl-5">
+                                    <div className="d-flex justify-content-start pl-5">
                                         <span className="roundUpDescription-text">{item.roundUpDescription}</span>
                                     </div>
                                     <div className="ml-5">
                                         <Radio.Group
                                             className="reg-competition-radio"
                                             onChange={e => this.charitySelectedIdChange(e.target.value, "charitySelectedId", item)}
-                                            value={charitySelected.charitySelectedId}
+                                            value={charitySelected.competitionId == item.competitionId && charitySelected.charitySelectedId}
                                         >
                                             {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
                                                 return (
