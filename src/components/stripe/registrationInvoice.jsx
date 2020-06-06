@@ -41,7 +41,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("721")
+        // this.props.getInvoiceStatusAction("746")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -60,7 +60,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("721", invoiceId)
+            // this.props.getInvoice("746", invoiceId)
         }
     }
 
@@ -485,23 +485,30 @@ class RegistrationInvoice extends Component {
                         {charityRoundUpData.length > 0 && charityRoundUpData.map((item, index) => {
                             return (
                                 <div>
-                                    <Radio className="invoice-main-radio-charity" key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
-                                    <div className="d-flex justify-content-start pl-5">
-                                        <span className="roundUpDescription-text">{item.roundUpDescription}</span>
-                                    </div>
-                                    <div className="ml-5">
-                                        <Radio.Group
-                                            className="reg-competition-radio"
-                                            onChange={e => this.charitySelectedIdChange(e.target.value, "charitySelectedId", item)}
-                                            value={charitySelected.competitionId == item.competitionId && charitySelected.charitySelectedId}
-                                        >
-                                            {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
-                                                return (
-                                                    <Radio className="invoice-second-radio-charity" key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
-                                                )
-                                            })}
-                                        </Radio.Group>
-                                    </div>
+                                    {item.charityDetail.length > 0 || item.competitionId == 0 ?
+                                        <div>
+                                            <Radio className="invoice-main-radio-charity" key={item.competitionId} value={item.competitionId}>{item.competitionId == 0 ? (item.charityTitle) : ("Support " + item.charityTitle)}</Radio>
+                                            <div className="d-flex justify-content-start pl-5">
+                                                <span className="roundUpDescription-text">{item.roundUpDescription}</span>
+                                            </div>
+
+                                            <div className="ml-5">
+
+                                                <Radio.Group
+                                                    className="reg-competition-radio"
+                                                    onChange={e => this.charitySelectedIdChange(e.target.value, "charitySelectedId", item)}
+                                                    value={charitySelected.competitionId == item.competitionId && charitySelected.charitySelectedId}
+                                                >
+                                                    {item.charityDetail.length > 0 && item.charityDetail.map((charityRoundUpItem, charityRoundUpIndex) => {
+                                                        return (
+                                                            <Radio className="invoice-second-radio-charity" key={charityRoundUpItem.charitySelectedId} value={charityRoundUpItem.charitySelectedId}>{charityRoundUpItem.charitySelectedDescription}</Radio>
+                                                        )
+                                                    })}
+                                                </Radio.Group>
+                                            </div>
+
+                                        </div>
+                                        : null}
                                 </div>
                             )
                         })}
