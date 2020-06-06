@@ -50,6 +50,7 @@ const ValidationConstants = {
     DisclaimerLinkIsRequired: "Disclaimer link is required.",
     pleaseSelectMembershipProduct: "Please select membership product.",
     userPhotoIsRequired: "User photo is required.",
+    membershipProductValidation: "Memberhsip product must be unique amoung products",
 
     /////Venuew and times
     suburbField: ["Suburb is required."],
@@ -78,7 +79,9 @@ const ValidationConstants = {
     //venue court
     emptyAddCourtValidation: "Please add court to add venue.",
     organisationRequired: "Please select Organisation",
-    competitionRequired: "Please select Competition"
+    competitionRequired: "Please select Competition",
+
+    divisionValidation: "Please review your competition selections."
 };
 
 export default ValidationConstants;

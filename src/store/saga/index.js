@@ -85,6 +85,10 @@ export default function* root_saga() {
   /////API_GET_INVOICE data
   yield takeEvery(ApiConstants.API_GET_INVOICE_LOAD, stripeSaga.getInvoiceSaga)
 
+  ////////invoice save post api
+  yield takeEvery(ApiConstants.API_SAVE_INVOICE_LOAD, stripeSaga.saveInvoiceSaga)
 
+  ////////invoice save post api
+  yield takeEvery(ApiConstants.API_GET_INVOICE_STATUS_LOAD, stripeSaga.getInvoiceStatusSaga)
 
 }
