@@ -4,8 +4,8 @@ class DocService {
   createPdf = (html) => {
     savePDF(html, {
       paperSize: 'Letter',
-      fileName: 'form.pdf',
-      scale: 0.5,
+      fileName: 'invoice.pdf',
+      scale: 0.6,
       paperSize: "A4",
       margin: "0.5cm"
       // margin: 3

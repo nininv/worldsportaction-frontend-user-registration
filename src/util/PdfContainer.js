@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
+import AppImages from "../themes/appImages";
 
 class PdfContainer extends React.Component {
 
@@ -8,18 +9,28 @@ class PdfContainer extends React.Component {
     const createPdf = () => this.props.createPdf(bodyRef.current);
     return (
       <section >
-        <section className="pdf-body" ref={bodyRef}>
-          {this.props.children}
-        </section>
         <section className="pdf-toolbar">
-          {/* <button onClick={createPdf}>Create PDF</button> */}
           {this.props.showPdfButton &&
             <div className="container pdf-container-main-div">
-              <Button className="primary-add-comp-form" type="primary"
+              <img
+                src={AppImages.printImage}
+                onClick={createPdf}
+                style={{marginTop:12,cursor:"pointer"}}
+                height="28"
+                width="28"
+                name={'image'}
+                onError={ev => {
+                  ev.target.src = AppImages.printImage;
+                }}
+              />
+              {/* <Button className="primary-add-comp-form" type="primary"
                 onClick={createPdf} >
                 {"Download"}
-              </Button>
+              </Button> */}
             </div>}
+        </section>
+        <section className="pdf-body" ref={bodyRef}>
+          {this.props.children}
         </section>
       </section>
     )

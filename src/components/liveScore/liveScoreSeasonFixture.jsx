@@ -261,7 +261,7 @@ class LiveScoreSeasonFixture extends Component {
         setAuthToken(token);
 
 
-        let orgParam = this.props.location.search.split("?organisationId=")
+        let orgParam = this.props.location.search.split("?organisationKey=")
         let orgId = orgParam[1]
         setliveScoreOrgID(orgId)
         let organisationId = await getliveScoreOrgID()

@@ -46,7 +46,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("746")
+        // this.props.getInvoiceStatusAction("841")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -65,7 +65,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("746", invoiceId)
+            // this.props.getInvoice("841", invoiceId)
         }
     }
 
@@ -146,11 +146,11 @@ class RegistrationInvoice extends Component {
                         }
                     </div>
                     <div className="col-sm pt-5">
-                        {!invoiceDisabled &&
+                        {/* {!invoiceDisabled &&
                             <TextArea
                                 placeholder="Text Area"
                             />
-                        }
+                        } */}
                     </div>
                 </div>
 
@@ -531,11 +531,11 @@ class RegistrationInvoice extends Component {
                 }
                 <div className="drop-reverse" >
                     <div className="col-sm ">
-                        {!invoiceDisabled &&
+                        {/* {!invoiceDisabled &&
                             <TextArea
                                 placeholder="Text Area"
                             />
-                        }
+                        } */}
                     </div>
                     <div className="col-sm pl-0 pr-0"
                     >
@@ -664,21 +664,18 @@ class RegistrationInvoice extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-
                 <Layout>
-                    <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
-                        {this.headerView()}
-                        <Content className="container">
-                            <div className="formView">
-
+                    {this.headerView()}
+                    <Content className="container">
+                        <div className="formView">
+                            <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
                                 {this.topView(result)}
                                 {this.contentView(result)}
                                 {this.totalInvoiceView(result)}
-
-                            </div>
-                            <Loader visible={this.props.stripeState.onLoad} />
-                        </Content>
-                    </PdfContainer>
+                            </PdfContainer>
+                        </div>
+                        <Loader visible={this.props.stripeState.onLoad} />
+                    </Content>
                     {this.footerView()}
                 </Layout>
             </div>
