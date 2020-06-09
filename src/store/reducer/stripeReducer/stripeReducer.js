@@ -23,6 +23,7 @@ const initialState = {
     },
     invoiceId: 0,
     transactionId: 0,
+    showCharitySuccessData: null,
 }
 
 
@@ -129,7 +130,22 @@ function set_Charity_Selected(invoiceData) {
     return charitySelected
 }
 
-
+//for  showing charity after succesful payment 
+function makeCharitySuccessData(charitySelected, charityRoundUpFilter) {
+    let competitionId = charitySelected.competitionId
+    let charity_Selected = {
+        charityTitle: "",
+        roundUpDescription: "",
+    }
+    if (competitionId > 0) {
+        let index = charityRoundUpFilter.findIndex(x => x.competitionId == competitionId)
+        if (index > -1) {
+            charity_Selected.charityTitle = charityRoundUpFilter[index].charityTitle
+            charity_Selected.roundUpDescription = charityRoundUpFilter[index].roundUpDescription
+        }
+    }
+    return charity_Selected
+}
 
 
 function stripe(state = initialState, action) {
@@ -173,6 +189,8 @@ function stripe(state = initialState, action) {
             state.charitySelected = charity_Selected
             state.amountTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal) + Number(charity_Selected.charityValue)
             state.fixedTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
+            let showCharitySuccessData = makeCharitySuccessData(charity_Selected, charityRoundUpData)
+            state.showCharitySuccessData = showCharitySuccessData
             return {
                 ...state,
                 onLoad: false,

@@ -142,6 +142,7 @@ class AppRegistrationForm extends Component {
                     console.log("registrationId",registrationId)
                     history.push("/invoice", {
                         registrationId: registrationId,
+                        paymentSuccess: false
                     })
                     // history.push('/appRegistrationSuccess');
                 }

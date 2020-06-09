@@ -211,6 +211,7 @@
   display: flex;
   background-color: var(--app-ff6c4f);
   border-color: var(--app-ff6c4f);
+  align-items: center;
 }
 
 .inside-table-view {
