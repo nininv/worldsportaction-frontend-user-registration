@@ -93,6 +93,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             let participantIndex = action.participantIndex;
             let existingParticipant = state.registrationDetail.userRegistrations[participantIndex];
             let settings = state.regSettings.find(x=>x.index == participantIndex);
+           // console.log("participantIndex ::" + participantIndex + "prodIndex::" + prodIndex);
+           // console.log("state.regSettings" + JSON.stringify(state.regSettings));
             if(action.key == "nonPlayer"){
                 existingParticipant["regSetting"]["nominate_positions"] = 0;
                 existingParticipant["regSetting"]["play_friend"] = 0;
@@ -124,7 +126,7 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-           // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
+            //console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
@@ -147,8 +149,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                     existingParticipant["regSetting"] = setting;
                 }
                 else{
+                   // console.log("**** else");
                     let regSetObj = {
-                        index: 0,
+                        index: index,
                         settingArr: []
                     }
                     regSetObj.settingArr.push(registrationSettings);
@@ -167,6 +170,8 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
+
+                //console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(state.regSettings));
             }
             
             // if(state.participantIndex!= null){

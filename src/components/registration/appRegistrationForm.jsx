@@ -1108,7 +1108,7 @@ class AppRegistrationForm extends Component {
                 find(x=>x.competitionMembershipProductTypeId === value);
 
             let divisions = this.getDivisionByFilter(product, value, userRegistration);
-            console.log("divisions::" + JSON.stringify(divisions));
+           // console.log("divisions::" + JSON.stringify(divisions));
             if(divisions!= null && divisions!= undefined && divisions.length > 0)
             {
                 if(divisions.length == 1)
@@ -1233,7 +1233,7 @@ class AppRegistrationForm extends Component {
         }
         
 
-    console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
+   // console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
     let flag = false;
     if(userRegistrations[index][key]!= 0 && userRegistrations[index][key] != value ){
         let userId = userRegistrations[index].userId;
