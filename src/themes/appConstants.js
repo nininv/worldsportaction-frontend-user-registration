@@ -810,7 +810,7 @@ const AppConstants = {
   nonPlayer: "Non Player",
   yesAsAPlayer: "Yes, as a Player",
   yesAsANonPlayer: "Yes, as a Non-Player",
-  registeringSomeoneElse: "No, Registering someone else",
+  registeringSomeoneElse: "No, registering someone else",
   competitionMembershipProductDivision: "Competition, Membership Product and Division",
   participantDetails: "Participant Details",
   indicatePreferredPlayerPosition: "Indicate two preferred playing positions:",
