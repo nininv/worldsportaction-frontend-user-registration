@@ -42,6 +42,8 @@ class RegistrationInvoice extends Component {
         let paymentSuccess = this.props.location.state ? this.props.location.state.paymentSuccess : false
         this.setState({ invoiceDisabled: paymentSuccess })
         this.getInvoiceStatusAPI()
+
+        
     }
 
     getInvoiceStatusAPI = () => {
@@ -75,7 +77,7 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 706,
+            // registrationId: 841,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
@@ -101,10 +103,11 @@ class RegistrationInvoice extends Component {
         let userDetail = result.length > 0 ? result[0].billTo : []
         let organisationLogo = isArrayNotEmpty(result) ? result[0].organisationLogo : null
         let invoiceDisabled = this.state.invoiceDisabled
+        let getAffiliteDetailData = this.props.stripeState.getAffiliteDetailData
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
-                    <div className="col-sm "
+                    <div className="col-sm pt-3"
                     >
                         <label className="invoice-description">
                             <img
@@ -145,7 +148,29 @@ class RegistrationInvoice extends Component {
                             </Descriptions>
                         }
                     </div>
-                    <div className="col-sm pt-5">
+
+
+                    <div className="col-sm-4 mb-5">
+                        <div >
+                            {isArrayNotEmpty(getAffiliteDetailData) && getAffiliteDetailData.map((item, index) => {
+                                return (
+                                    <div className="affiliate-detail-View-Invoice" >
+                                        <div className="pt-3" >
+                                            <span className="roundUpDescription-text">{item.organisationName}</span>
+                                            <Descriptions >
+                                                <Descriptions.Item className="pb-0" label="E">
+                                                    {item.organiationEmailId}
+                                                </Descriptions.Item>
+                                            </Descriptions>
+                                            <Descriptions >
+                                                <Descriptions.Item className="pb-0" label="Ph">
+                                                    {item.organiationPhoneNo}
+                                                </Descriptions.Item>
+                                            </Descriptions>
+                                        </div>
+                                    </div>)
+                            })}
+                        </div>
                         {/* {!invoiceDisabled &&
                             <TextArea
                                 placeholder="Text Area"
