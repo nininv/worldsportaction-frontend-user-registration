@@ -802,7 +802,7 @@ const AppConstants = {
   ByMatch: "By Match",
   total: "Total",
   //End User Registration
-  areYouRegisteringYourself: "Are you registering yourself?",
+  areYouRegisteringYourself: "Are you registering yourself as an individual?",
   whoAreYouRegistering: "Who are you registering?",
   child: "Child",
   team: "Team",
@@ -864,6 +864,13 @@ const AppConstants = {
   logo: "Logo",
   noInformationProvided: "No information provided",
   noPhotosAvailable: "No photos available",
+  registrationType: "Registration Type",
+  inviteIndividualTeamMember: "Invite Individual Team Members to Register",
+  registerOnBehalf: "Register on behalf of Team",
+  areYouRegisteringAsPlayer: "Are you registering as a Player in this Team?",
+  noRegisteringATeam: "No, registering a Team",
+  personRegisteringRole: "Person Registering Role",
+  personRegRoleRef: "PersonRegisteringRole"										   
 };
 
 export default AppConstants;

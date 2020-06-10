@@ -21,7 +21,8 @@ const initialState = {
     heardByList: [],
     playerPositionList: [],
     genderList: [],
-    disabilityList: []
+    disabilityList: [],
+    personRegisteringRoleList: []		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -194,6 +195,17 @@ function commonReducerState(state = initialState, action) {
                 error: null
             };
 
+        case ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                personRegisteringRoleList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
         default:
             return state;
     }
