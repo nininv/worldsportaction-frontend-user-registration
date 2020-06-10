@@ -77,7 +77,7 @@ const teamColumns = [
                             userRegistration.competitionInfo.membershipProducts!= null &&  
                             userRegistration.competitionInfo.membershipProducts) || []).map((mem, pIndex) => (
                                 <Option key={mem.competitionMembershipProductTypeId} 
-                                value={mem.competitionMembershipProductTypeId} >{mem.name}</Option>
+                                value={mem.competitionMembershipProductTypeId} >{mem.shortName}</Option>
                             ))
                             }
                         
@@ -185,15 +185,29 @@ const teamColumns = [
         title: "Paying for?",
         dataIndex: "payingFor",
         key: "payingFor",
-        render: (payingFor, record, index) => (
-            <div>
-                <Checkbox
-                    checked={payingFor}
-                    className="single-checkbox mt-1 d-flex justify-content-center"
-                    onChange={(e) => this_Obj.onChangeSetTeam(e.target.checked, "payingFor", record.index,  "players", index  )} 
-                ></Checkbox>
-            </div>
-        )
+        render: (payingFor, record, index) => 
+        {
+            let registrationState = this_Obj.props.endUserRegistrationState;
+            let registrationDetail = registrationState.registrationDetail;
+            let userRegistrations = registrationDetail.userRegistrations;
+            let userRegistration = userRegistrations[record.index]; 
+            let registrationTypeId = 1;
+            let team = userRegistration.team;
+            if(team!= null && team.registrationTypeId!= null && team.registrationTypeId!= undefined){
+                registrationTypeId = team.registrationTypeId;
+            }
+            
+            return (
+                <div>
+                    <Checkbox
+                        checked={registrationTypeId == 1 ? payingFor : true}
+                        disabled={registrationTypeId == 2 ? true : false}
+                        className="single-checkbox mt-1 d-flex justify-content-center"
+                        onChange={(e) => this_Obj.onChangeSetTeam(e.target.checked, "payingFor", record.index,  "players", index  )} 
+                    ></Checkbox>
+                </div>
+            )
+        }
     },
     {
         title: "",
@@ -1734,6 +1748,7 @@ class AppRegistrationForm extends Component {
                     }
                     delete item.organisationInfo;
                     delete item.competitionInfo;
+                    delete item.divisions;
                 });
                
                 let err = false;
@@ -1753,12 +1768,14 @@ class AppRegistrationForm extends Component {
                     for(let x = 0; x< userRegistrations.length; x++)
                     {
                         let userRegistration = userRegistrations[x];
-                        if(userRegistration.profileUrl == null){
-                            isError = true;
-                            break;
-                        }
-                        else{
-                            formData.append("participantPhoto", userRegistration.participantPhoto);
+                        if(userRegistration.registeringYourself!= 4){
+                            if(userRegistration.profileUrl == null){
+                                isError = true;
+                                break;
+                            }
+                            else{
+                                formData.append("participantPhoto", userRegistration.participantPhoto);
+                            }
                         }
                     }
     
@@ -2016,7 +2033,7 @@ class AppRegistrationForm extends Component {
                 <div>
                     <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                     { 
-                        item.divisions.length > 1 ?
+                        item.divisions!= null && item.divisions!= undefined && item.divisions.length > 1 ?
                         <div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductDivisionId${index}`, {
@@ -2027,7 +2044,7 @@ class AppRegistrationForm extends Component {
                                     onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductDivisionId", index )}
                                     setFieldsValue={item.competitionMembershipProductDivisionId}
                                     >
-                                    {(item.divisions || []).map((division, index) => (
+                                    {(item.divisions!= null && item.divisions!= undefined && item.divisions || []).map((division, index) => (
                                         <Option key={division.competitionMembershipProductDivisionId} 
                                         value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
                                     ))}
@@ -3258,7 +3275,7 @@ class AppRegistrationForm extends Component {
                 <div>
                     <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
                     { 
-                        item.divisions.length > 1 ?
+                        item.divisions!= null && item.divisions!= undefined && item.divisions.length > 1 ?
                         <div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductDivisionId${index}`, {
@@ -3269,7 +3286,7 @@ class AppRegistrationForm extends Component {
                                     onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductDivisionId", index , "participant" )}
                                     setFieldsValue={item.competitionMembershipProductDivisionId}
                                     >
-                                    {(item.divisions || []).map((division, index) => (
+                                    {(item.divisions!= null && item.divisions!= undefined && item.divisions || []).map((division, index) => (
                                         <Option key={division.competitionMembershipProductDivisionId} 
                                         value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
                                     ))}

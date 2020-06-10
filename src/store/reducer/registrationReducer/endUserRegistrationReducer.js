@@ -189,7 +189,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 userInfo: userInfoData
             };
 		case ApiConstants.UPDATE_TEAM_ACTION:
-            console.log("action.index::" + action.index);
+           // console.log("action.index::" + action.index);
             let participant = state.registrationDetail.userRegistrations[action.index];
             if(action.subKey == "participant"){
                 if(action.key == "organisationUniqueKey"){
@@ -278,7 +278,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 if(action.key == "addPlayer"){
                     let obj = {
                         competitionMembershipProductTypeId:0,firstName: null, lastName: null,
-                         email: null, mobileNumber: null, payingfor: null, index: action.index
+                         email: null, mobileNumber: null, payingFor: null, index: action.index
                     }
                     if(participant["team"][action.subKey]){
                         participant["team"][action.subKey].push(obj);
