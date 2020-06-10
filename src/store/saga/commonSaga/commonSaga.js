@@ -229,4 +229,21 @@ export function* disabilityReferenceSaga(action) {
 }
 
 
+// Get the Person Registering Role Reference Saga
+export function* personRegisteringRoleReferenceSaga(action) {
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.personRegRoleRef);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
 

@@ -663,3 +663,7 @@ img.bg {
   color: var(--app-f5222d);
   padding-top: 20px;
 }
+
+.team-mem_prod_type .ant-select-selection{
+  min-height: 45px !important;
+}

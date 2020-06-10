@@ -7,7 +7,7 @@ import {
   getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
-  genderReferenceSaga, disabilityReferenceSaga
+  genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -91,4 +91,6 @@ export default function* root_saga() {
   ////////invoice save post api
   yield takeEvery(ApiConstants.API_GET_INVOICE_STATUS_LOAD, stripeSaga.getInvoiceStatusSaga)
 
+  /// Person Registering Role Reference Saga
+   yield takeEvery(ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD, personRegisteringRoleReferenceSaga)
 }
