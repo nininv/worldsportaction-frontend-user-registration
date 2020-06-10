@@ -300,7 +300,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         let memProd = participant.competitionInfo.membershipProducts.
                         find(x=>x.competitionMembershipProductTypeId == 
                             action.data);
-                            participant["team"][action.subKey][action.subIndex]["isPlayer"] = memProd.isPlaying;
+                            participant["team"][action.subKey][action.subIndex]["isPlayer"] = memProd.isPlayer;
                     }
                     participant["team"][action.subKey][action.subIndex][action.key] = action.data;
                 }
