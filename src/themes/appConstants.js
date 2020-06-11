@@ -868,7 +868,7 @@ const AppConstants = {
   inviteIndividualTeamMember: "Invite Individual Team Members to Register",
   registerOnBehalf: "Register on behalf of Team",
   areYouRegisteringAsPlayer: "Are you registering as a Player in this Team?",
-  noRegisteringATeam: "No, registering a Team",
+  noRegisteringATeam: "No, registering a team",
   personRegisteringRole: "Person Registering Role",
   personRegRoleRef: "PersonRegisteringRole"										   
 };
