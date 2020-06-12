@@ -254,6 +254,184 @@ const teamColumns = [
     }
 ];
 
+const teamColumnsOnBehalf = [
+    {
+        title: "Type",
+        dataIndex: "competitionMembershipProductTypeId",
+        key: "competitionMembershipProductTypeId",
+        width: 160,
+        render: (competitionMembershipProductTypeId, record, index) =>
+        {
+            const { getFieldDecorator } = this_Obj.props.form;
+            let registrationState = this_Obj.props.endUserRegistrationState;
+            let registrationDetail = registrationState.registrationDetail;
+            let userRegistrations = registrationDetail.userRegistrations;
+            let userRegistration = userRegistrations[record.index]; 
+
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
+                    })(
+                        <Select
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court team-mem_prod_type"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
+                            setFieldsValue={competitionMembershipProductTypeId}
+                            placeholder={'Type'}>
+                        {((userRegistration!= null && userRegistration.competitionInfo!= null && 
+                            userRegistration.competitionInfo.membershipProducts!= null &&  
+                            userRegistration.competitionInfo.membershipProducts) || []).map((mem, pIndex) => (
+                                <Option key={mem.competitionMembershipProductTypeId} 
+                                value={mem.competitionMembershipProductTypeId} >{mem.shortName}</Option>
+                            ))
+                            }
+                        
+                        </Select>
+                    )}
+                </Form.Item>
+            )
+        }, 
+    },
+    {
+        title: "First Name",
+        dataIndex: "firstName",
+        key: "firstName",
+        width: 160,
+        render: (firstName, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+
+                <Form.Item >
+                    {getFieldDecorator(`playerFirstName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                    })(
+                        <InputWithHead
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "firstName", record.index,  "players", index  )}
+                            setFieldsValue={firstName}
+                            placeholder={AppConstants.firstName}
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "Last Name",
+        dataIndex: "lastName",
+        key: "lastName",
+        width: 160,
+        render: (lastName, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+
+                <Form.Item >
+                    {getFieldDecorator(`playerLastName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                    })(
+                        <InputWithHead
+                            className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "lastName", record.index,  "players", index  )}
+                            setFieldsValue={lastName}
+                            placeholder={AppConstants.lastName}
+
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "DOB",
+        dataIndex: "dateOfBirth",
+        key: "dateOfBirth",
+        width: 160,
+        render: (dateOfBirth, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                    <Form.Item >
+                    {getFieldDecorator(`playerDateOfBirth${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+                    })(
+                    <DatePicker
+                        size="large"
+                        className="team-reg-player-dob"
+                        style={{ width: "100%" }}
+                        onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+                        format={"DD-MM-YYYY"}
+                        showTime={false}
+                        name={'dateOfBirth'}
+                    />
+                    )}
+                    </Form.Item>
+            )
+        }
+    },
+    {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+        width: 160,
+        render: (email, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`playerEmail${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                    })(
+                        <InputWithHead className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "email", record.index,  "players", index  )}
+                            setFieldsValue={email}
+                            placeholder={AppConstants.email}
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "Mobile",
+        dataIndex: "mobileNumber",
+        key: "mobileNumber",
+        width: 160,
+        render: (mobile, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`playerMobileNumber${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.contactField }],
+                    })(
+                        <InputWithHead className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
+                            setFieldsValue={mobile}
+                            placeholder={AppConstants.mobile}
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "",
+        dataIndex: "clear",
+        key: "clear",
+        render: (clear, record, index) => (
+            <span style={{ display: "flex", justifyContent: "center", width: "100%", cursor: 'pointer' }}>
+                <img
+                    className="dot-image"
+                    src={AppImages.redCross}
+                    alt=""
+                    width="16"
+                    height="16"
+                    onClick={() => this_Obj.onChangeSetTeam(null, "removePlayer", record.index,  "players", index  )} 
+                />
+            </span>
+        )
+    }
+];
+
 class AppRegistrationForm extends Component {
     constructor(props) {
         super(props);
@@ -3652,6 +3830,8 @@ class AppRegistrationForm extends Component {
 
     teamMemberView = (item, index, getFieldDecorator) => {
         let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
+        let registrationTypeId = item.team!= null && item.team.registrationTypeId!= null ? 
+                                        item.team.registrationTypeId : 1;
         return (
             <div className="formView content-view pt-5 reg-player-pad" >
                 <div style={{ display: 'flex' }}>
@@ -3662,7 +3842,7 @@ class AppRegistrationForm extends Component {
                 <div className="table-responsive">
                     <Table
                         className="fees-table"
-                        columns={teamColumns}
+                        columns={registrationTypeId === 1 ? teamColumns : teamColumnsOnBehalf}
                         dataSource={players}
                         pagination={false}
                         Divider=" false"
