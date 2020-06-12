@@ -138,6 +138,32 @@ const teamColumns = [
         }
     },
     {
+        title: "DOB",
+        dataIndex: "dateOfBirth",
+        key: "dateOfBirth",
+        width: 160,
+        render: (dateOfBirth, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                    <Form.Item >
+                    {getFieldDecorator(`playerDateOfBirth${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+                    })(
+                    <DatePicker
+                        size="large"
+                        className="team-reg-player-dob"
+                        style={{ width: "100%" }}
+                        onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+                        format={"DD-MM-YYYY"}
+                        showTime={false}
+                        name={'dateOfBirth'}
+                    />
+                    )}
+                    </Form.Item>
+            )
+        }
+    },
+    {
         title: "Email",
         dataIndex: "email",
         key: "email",
@@ -426,7 +452,8 @@ class AppRegistrationForm extends Component {
                     [`playerFirstName${pIndex}`]:  it.firstName,
                     [`playerLastName${pIndex}`]: it.lastName,
                     [`playerEmail${pIndex}`]: it.email,
-                    [`playerMobileNumber${pIndex}`]: it.mobileNumber
+                    [`playerMobileNumber${pIndex}`]: it.mobileNumber,
+                    [`playerDateOfBirth${pIndex}`]: it.dateOfBirth
                 });
             })
         })
@@ -3626,7 +3653,7 @@ class AppRegistrationForm extends Component {
     teamMemberView = (item, index, getFieldDecorator) => {
         let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
         return (
-            <div className="formView content-view pt-5">
+            <div className="formView content-view pt-5 reg-player-pad" >
                 <div style={{ display: 'flex' }}>
                     <span className="form-heading">
                         {item.team!= null && item.team.teamName!= null ? item.team.teamName + "- Team Members" : ""}
