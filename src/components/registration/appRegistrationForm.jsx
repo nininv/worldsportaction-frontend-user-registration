@@ -1760,6 +1760,18 @@ class AppRegistrationForm extends Component {
                     {
                         item.referFriends = [];
                     }
+                    let memArr = [];
+                    if(item.registeringYourself == 4){
+                        (item.competitionInfo.membershipProducts).map((i, ind) => {
+                            let obj = {
+                                competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
+                                name: i.shortName
+                            }
+                            memArr.push(obj);
+                        })
+                    }
+                    item["membershipProducts"] = memArr;
+
                     delete item.organisationInfo;
                     delete item.competitionInfo;
                     delete item.divisions;
