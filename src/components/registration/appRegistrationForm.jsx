@@ -169,7 +169,7 @@ const teamColumns = [
             return (
                 <Form.Item >
                     {getFieldDecorator(`playerMobileNumber${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.courtField[2] }],
+                        rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
