@@ -137,32 +137,32 @@ const teamColumns = [
             )
         }
     },
-    {
-        title: "DOB",
-        dataIndex: "dateOfBirth",
-        key: "dateOfBirth",
-        width: 160,
-        render: (dateOfBirth, record, index) => {
-            const { getFieldDecorator } = this_Obj.props.form;
-            return (
-                    <Form.Item >
-                    {getFieldDecorator(`playerDateOfBirth${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
-                    })(
-                    <DatePicker
-                        size="large"
-                        className="team-reg-player-dob"
-                        style={{ width: "100%" }}
-                        onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
-                        format={"DD-MM-YYYY"}
-                        showTime={false}
-                        name={'dateOfBirth'}
-                    />
-                    )}
-                    </Form.Item>
-            )
-        }
-    },
+    // {
+    //     title: "DOB",
+    //     dataIndex: "dateOfBirth",
+    //     key: "dateOfBirth",
+    //     width: 160,
+    //     render: (dateOfBirth, record, index) => {
+    //         const { getFieldDecorator } = this_Obj.props.form;
+    //         return (
+    //                 <Form.Item >
+    //                 {getFieldDecorator(`playerDateOfBirth${index}`, {
+    //                     rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+    //                 })(
+    //                 <DatePicker
+    //                     size="large"
+    //                     className="team-reg-player-dob"
+    //                     style={{ width: "100%" }}
+    //                     onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+    //                     format={"DD-MM-YYYY"}
+    //                     showTime={false}
+    //                     name={'dateOfBirth'}
+    //                 />
+    //                 )}
+    //                 </Form.Item>
+    //         )
+    //     }
+    // },
     {
         title: "Email",
         dataIndex: "email",
@@ -343,32 +343,32 @@ const teamColumnsOnBehalf = [
             )
         }
     },
-    {
-        title: "DOB",
-        dataIndex: "dateOfBirth",
-        key: "dateOfBirth",
-        width: 160,
-        render: (dateOfBirth, record, index) => {
-            const { getFieldDecorator } = this_Obj.props.form;
-            return (
-                    <Form.Item >
-                    {getFieldDecorator(`playerDateOfBirth${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
-                    })(
-                    <DatePicker
-                        size="large"
-                        className="team-reg-player-dob"
-                        style={{ width: "100%" }}
-                        onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
-                        format={"DD-MM-YYYY"}
-                        showTime={false}
-                        name={'dateOfBirth'}
-                    />
-                    )}
-                    </Form.Item>
-            )
-        }
-    },
+    // {
+    //     title: "DOB",
+    //     dataIndex: "dateOfBirth",
+    //     key: "dateOfBirth",
+    //     width: 160,
+    //     render: (dateOfBirth, record, index) => {
+    //         const { getFieldDecorator } = this_Obj.props.form;
+    //         return (
+    //                 <Form.Item >
+    //                 {getFieldDecorator(`playerDateOfBirth${index}`, {
+    //                     rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+    //                 })(
+    //                 <DatePicker
+    //                     size="large"
+    //                     className="team-reg-player-dob"
+    //                     style={{ width: "100%" }}
+    //                     onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+    //                     format={"DD-MM-YYYY"}
+    //                     showTime={false}
+    //                     name={'dateOfBirth'}
+    //                 />
+    //                 )}
+    //                 </Form.Item>
+    //         )
+    //     }
+    // },
     {
         title: "Email",
         dataIndex: "email",
