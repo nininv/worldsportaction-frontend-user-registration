@@ -137,6 +137,32 @@ const teamColumns = [
             )
         }
     },
+    // {
+    //     title: "DOB",
+    //     dataIndex: "dateOfBirth",
+    //     key: "dateOfBirth",
+    //     width: 160,
+    //     render: (dateOfBirth, record, index) => {
+    //         const { getFieldDecorator } = this_Obj.props.form;
+    //         return (
+    //                 <Form.Item >
+    //                 {getFieldDecorator(`playerDateOfBirth${index}`, {
+    //                     rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+    //                 })(
+    //                 <DatePicker
+    //                     size="large"
+    //                     className="team-reg-player-dob"
+    //                     style={{ width: "100%" }}
+    //                     onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+    //                     format={"DD-MM-YYYY"}
+    //                     showTime={false}
+    //                     name={'dateOfBirth'}
+    //                 />
+    //                 )}
+    //                 </Form.Item>
+    //         )
+    //     }
+    // },
     {
         title: "Email",
         dataIndex: "email",
@@ -169,7 +195,7 @@ const teamColumns = [
             return (
                 <Form.Item >
                     {getFieldDecorator(`playerMobileNumber${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.courtField[2] }],
+                        rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
@@ -185,6 +211,7 @@ const teamColumns = [
         title: "Paying for?",
         dataIndex: "payingFor",
         key: "payingFor",
+        width: 80,
         render: (payingFor, record, index) => 
         {
             let registrationState = this_Obj.props.endUserRegistrationState;
@@ -206,6 +233,185 @@ const teamColumns = [
                         onChange={(e) => this_Obj.onChangeSetTeam(e.target.checked, "payingFor", record.index,  "players", index  )} 
                     ></Checkbox>
                 </div>
+            )
+        }
+    },
+    {
+        title: "",
+        dataIndex: "clear",
+        key: "clear",
+        width: 30,
+        render: (clear, record, index) => (
+            <span style={{ display: "flex", justifyContent: "center", width: "100%", cursor: 'pointer' }}>
+                <img
+                    className="dot-image"
+                    src={AppImages.redCross}
+                    alt=""
+                    width="16"
+                    height="16"
+                    onClick={() => this_Obj.onChangeSetTeam(null, "removePlayer", record.index,  "players", index  )} 
+                />
+            </span>
+        )
+    }
+];
+
+const teamColumnsOnBehalf = [
+    {
+        title: "Type",
+        dataIndex: "competitionMembershipProductTypeId",
+        key: "competitionMembershipProductTypeId",
+        width: 160,
+        render: (competitionMembershipProductTypeId, record, index) =>
+        {
+            const { getFieldDecorator } = this_Obj.props.form;
+            let registrationState = this_Obj.props.endUserRegistrationState;
+            let registrationDetail = registrationState.registrationDetail;
+            let userRegistrations = registrationDetail.userRegistrations;
+            let userRegistration = userRegistrations[record.index]; 
+
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
+                    })(
+                        <Select
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court team-mem_prod_type"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
+                            setFieldsValue={competitionMembershipProductTypeId}
+                            placeholder={'Type'}>
+                        {((userRegistration!= null && userRegistration.competitionInfo!= null && 
+                            userRegistration.competitionInfo.membershipProducts!= null &&  
+                            userRegistration.competitionInfo.membershipProducts) || []).map((mem, pIndex) => (
+                                <Option key={mem.competitionMembershipProductTypeId} 
+                                value={mem.competitionMembershipProductTypeId} >{mem.shortName}</Option>
+                            ))
+                            }
+                        
+                        </Select>
+                    )}
+                </Form.Item>
+            )
+        }, 
+    },
+    {
+        title: "First Name",
+        dataIndex: "firstName",
+        key: "firstName",
+        width: 160,
+        render: (firstName, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+
+                <Form.Item >
+                    {getFieldDecorator(`playerFirstName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                    })(
+                        <InputWithHead
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "firstName", record.index,  "players", index  )}
+                            setFieldsValue={firstName}
+                            placeholder={AppConstants.firstName}
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "Last Name",
+        dataIndex: "lastName",
+        key: "lastName",
+        width: 160,
+        render: (lastName, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+
+                <Form.Item >
+                    {getFieldDecorator(`playerLastName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                    })(
+                        <InputWithHead
+                            className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "lastName", record.index,  "players", index  )}
+                            setFieldsValue={lastName}
+                            placeholder={AppConstants.lastName}
+
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    // {
+    //     title: "DOB",
+    //     dataIndex: "dateOfBirth",
+    //     key: "dateOfBirth",
+    //     width: 160,
+    //     render: (dateOfBirth, record, index) => {
+    //         const { getFieldDecorator } = this_Obj.props.form;
+    //         return (
+    //                 <Form.Item >
+    //                 {getFieldDecorator(`playerDateOfBirth${index}`, {
+    //                     rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+    //                 })(
+    //                 <DatePicker
+    //                     size="large"
+    //                     className="team-reg-player-dob"
+    //                     style={{ width: "100%" }}
+    //                     onChange={(e) => this_Obj.onChangeSetTeam(e, "dateOfBirth", record.index,  "players", index  )}
+    //                     format={"DD-MM-YYYY"}
+    //                     showTime={false}
+    //                     name={'dateOfBirth'}
+    //                 />
+    //                 )}
+    //                 </Form.Item>
+    //         )
+    //     }
+    // },
+    {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+        width: 160,
+        render: (email, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`playerEmail${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                    })(
+                        <InputWithHead className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "email", record.index,  "players", index  )}
+                            setFieldsValue={email}
+                            placeholder={AppConstants.email}
+                        />
+                    )}
+                </Form.Item>
+            )
+        }
+    },
+    {
+        title: "Mobile",
+        dataIndex: "mobileNumber",
+        key: "mobileNumber",
+        width: 160,
+        render: (mobile, record, index) => {
+            const { getFieldDecorator } = this_Obj.props.form;
+            return (
+                <Form.Item >
+                    {getFieldDecorator(`playerMobileNumber${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.contactField }],
+                    })(
+                        <InputWithHead className="input-inside-table-venue-court"
+                            onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
+                            setFieldsValue={mobile}
+                            placeholder={AppConstants.mobile}
+                        />
+                    )}
+                </Form.Item>
             )
         }
     },
@@ -353,8 +559,14 @@ class AppRegistrationForm extends Component {
     //    }
        if(registrationState.refFlag === "parent")
        {
-            this.setParentFormFields(this.state.participantIndex);
             this.props.updateEndUserRegisrationAction("", "refFlag");
+            this.setParentFormFields(this.state.participantIndex);
+       }
+
+       if(registrationState.refFlag === "parent")
+       {
+            this.props.updateEndUserRegisrationAction("", "refFlag");
+            this.setProductFormFields(this.state.participantIndex);
        }
 
        if(registrationState.refFlag === "participant")
@@ -426,7 +638,8 @@ class AppRegistrationForm extends Component {
                     [`playerFirstName${pIndex}`]:  it.firstName,
                     [`playerLastName${pIndex}`]: it.lastName,
                     [`playerEmail${pIndex}`]: it.email,
-                    [`playerMobileNumber${pIndex}`]: it.mobileNumber
+                    [`playerMobileNumber${pIndex}`]: it.mobileNumber,
+                    [`playerDateOfBirth${pIndex}`]: it.dateOfBirth
                 });
             })
         })
@@ -496,6 +709,7 @@ class AppRegistrationForm extends Component {
             if(this.state.competitionUniqueKey!= null && this.state.organisationUniqueKey!= null &&
                 this.state.competitionUniqueKey!= undefined && this.state.organisationUniqueKey!= undefined)
                 {
+                   // console.log("*************************************");
                     let orgInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
                         this.state.organisationUniqueKey);
                     participantObj.organisationInfo = deepCopyFunction(orgInfo);
@@ -524,6 +738,7 @@ class AppRegistrationForm extends Component {
         }
         
         userRegistrations.push(participantObj);
+        //console.log("******" + JSON.stringify(participantObj));
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
         if(flag)
         {
@@ -617,6 +832,10 @@ class AppRegistrationForm extends Component {
         let userRegistration = userRegistrations[index]; 
 
         this.props.form.setFieldsValue({
+            [`organisationUniqueKey${index}`]: userInfo!= null ? userInfo.organisationUniqueKey : null,
+            [`competitionUniqueKey${index}`]: userInfo!= null ? userInfo.competitionUniqueKey : null,
+            [`competitionMembershipProductTypeId${index}`]: userInfo!= null ? userInfo.competitionMembershipProductTypeId : null,
+            [`competitionMembershipProductDivisionId${index}`]: userInfo!= null ? userInfo.competitionMembershipProductDivisionId : null,
             [`participantFirstName${index}`]: userInfo!= null ? userInfo.firstName : "",
             [`participantLastName${index}`]:  userInfo!= null ? userInfo.lastName : "",
             [`participantMobileNumber${index}`]:  userInfo!= null ? userInfo.mobileNumber : "",
@@ -642,6 +861,22 @@ class AppRegistrationForm extends Component {
         }
     }
         
+    setProductFormFields = (index) => {
+        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index]; 
+      
+        (userRegistration.products || []).map((item, pIndex) => {
+            this.props.form.setFieldsValue({
+                [`organisationUniqueKey${index}${pIndex}`]: item.organisationUniqueKey,
+                [`competitionUniqueKey${index}${pIndex}`]: item.competitionUniqueKey,
+                [`participantMembershipProductTypeId${index}${pIndex}`]: item.competitionMembershipProductTypeId,
+                [`competitionMembershipProductDivisionId${index}${pIndex}`]: item.competitionMembershipProductDivisionId,
+               
+            });
+        })
+       
+    }
 
     setParentFormFields = (index) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
@@ -651,17 +886,6 @@ class AppRegistrationForm extends Component {
         console.log("userRegistration.parentOrGuardian" + JSON.stringify(userRegistration.parentOrGuardian));
         (userRegistration.parentOrGuardian || []).map((item, parentIndex) => {
             this.setParentformFieldsValue(index, parentIndex, item);
-            // this.props.form.setFieldsValue({
-            //     [`parentFirstName${index}${parentIndex}`]: item.firstName,
-            //     [`parentLastName${index}${parentIndex}`]: item.lastName,
-            //     [`parentContactField${index}${parentIndex}`]: item.mobileNumber,
-            //     [`parentEmail${index}${parentIndex}`]: item.email,
-            //     [`parentReEnterEmail${index}${parentIndex}`]: item.email,
-            //     [`parentStreet1${index}${parentIndex}`]: item.street1,
-            //     [`parentSuburb${index}${parentIndex}`]: item.suburb,
-            //     [`parentStateRefId${index}${parentIndex}`]: item.stateRefId,
-            //     [`parentPostalCode${index}${parentIndex}`]: item.postalCode,
-            // });
         })
 
     }
@@ -1381,7 +1605,7 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
        // let userRegistration = userRegistrations[index]; 
         let userInfo = registrationState.userInfo;
-
+        let membershipProductInfo = registrationState.membershipProductInfo;
      
         let userInfoLen = [];
         if(userInfo!= null && userInfo!= undefined){
@@ -1389,8 +1613,8 @@ class AppRegistrationForm extends Component {
         }
         
 
-    //console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
-    // let flag = false;
+    console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
+     let flag = false;
     if(userRegistrations[index][key]!= 0 && userRegistrations[index][key] != value ){
         let userId = userRegistrations[index].userId;
         let userRegistration1 = this.getParticipantObj( userRegistrations[index].tempParticipantId);
@@ -1403,7 +1627,7 @@ class AppRegistrationForm extends Component {
             oldUser.isDisabled = 0;
         }
 
-        // flag = true;
+         flag = true;
 
         this.props.form.setFieldsValue({
             [`organisationUniqueKey${index}`]:  null,
@@ -1438,6 +1662,18 @@ class AppRegistrationForm extends Component {
       if(value == 1 || value == 2){
         this.setState({participantIndex: index});
         this.existingUserPopulate();
+      }
+
+      if(flag){
+        // let orgInfo =  membershipProductInfo.find(x=>x.organisationUniqueKey == 
+        //     this.state.organisationUniqueKey);
+
+        // this.props.form.setFieldsValue({
+        //     [`organisationUniqueKey${index}`]:  null,
+        //     [`competitionUniqueKey${index}`]:  null,
+        //     [`competitionMembershipProductTypeId${index}`]:  null,
+        //     [`competitionMembershipProductDivisionId${index}`]:  null,
+        // });
       }
      
       //this.addParticipant(e, 1);
@@ -1576,15 +1812,16 @@ class AppRegistrationForm extends Component {
         userRegistration.products.splice(this.state.productIndex, 1);
 
          // Enable the existing one
-         let memProd = userRegistration.competitionInfo.membershipProducts
-                .find(x=>x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId);
-         if(memProd!= null && memProd!= "" && memProd!= undefined)
-         {
-            memProd.isDisabled = false;
-         }
+        //  let memProd = userRegistration.competitionInfo.membershipProducts
+        //         .find(x=>x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId);
+        //  if(memProd!= null && memProd!= "" && memProd!= undefined)
+        //  {
+        //     memProd.isDisabled = false;
+        //  }
 
          this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
          this.props.updateRegistrationSettingsAction(this.state.participantIndex, this.state.productIndex);
+         this.props.updateEndUserRegisrationAction("product", "refFlag");
         
     }
 
@@ -1746,6 +1983,18 @@ class AppRegistrationForm extends Component {
                     {
                         item.referFriends = [];
                     }
+                    let memArr = [];
+                    if(item.registeringYourself == 4){
+                        (item.competitionInfo.membershipProducts).map((i, ind) => {
+                            let obj = {
+                                competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
+                                name: i.shortName
+                            }
+                            memArr.push(obj);
+                        })
+                    }
+                    item["membershipProducts"] = memArr;
+
                     delete item.organisationInfo;
                     delete item.competitionInfo;
                     delete item.divisions;
@@ -1784,8 +2033,8 @@ class AppRegistrationForm extends Component {
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
-                         this.props.saveEndUserRegistrationAction(formData);
-                         this.setState({ loading: true });
+                          this.props.saveEndUserRegistrationAction(formData);
+                          this.setState({ loading: true });
                     }
                     else{
                         message.error(ValidationConstants.userPhotoIsRequired);
@@ -3051,7 +3300,7 @@ class AppRegistrationForm extends Component {
                     </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.competition_name}/>
+                <InputWithHead heading={AppConstants.competition_name} required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionUniqueKey${index}${prodIndex}`, {
                         rules: [{ required: true, message: ValidationConstants.competitionRequired }],
@@ -3180,6 +3429,32 @@ class AppRegistrationForm extends Component {
     }
 
     termsAndConditionView = (getFieldDecorator) => {
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let membershipProductInfo = registrationState.membershipProductInfo;
+        let text = '';
+        let orgMap = new Map();
+        userRegistrations.map((x, index) => {
+            if(orgMap.get(x.organisationUniqueKey) == undefined){
+                let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == x.organisationUniqueKey);
+                if(mem!= null){
+                    text +=  mem.organisationName + ', ';
+                    orgMap.set(x.organisationUniqueKey, mem.organisationName);
+                }
+            }
+
+            (x.products || []).map((z, index) => {
+                if(orgMap.get(z.organisationUniqueKey) == undefined){
+                    let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == z.organisationUniqueKey);
+                    if(mem!= null){
+                        text +=  mem.organisationName + ', ';
+                        orgMap.set(z.organisationUniqueKey, mem.organisationName);
+                    }
+                }
+            })
+        });
+        text = text.replace(/,\s*$/, "");   
         return(
             <div className="formView" style={{background: "none"}}>
                 <Form.Item>
@@ -3191,7 +3466,7 @@ class AppRegistrationForm extends Component {
                             className="single-checkbox pt-3"
                             checked={this.state.agreeTerm}
                             onChange={e => this.setState({ agreeTerm: e.target.checked })}>
-                            {AppConstants.agreeTerm}
+                            {AppConstants.agreeTerm.replace('(Affiliates name)', text)}
                             <span className="app-reg-terms">
                                 {AppConstants.termsAndConditions}{" "}
                             </span>
@@ -3252,7 +3527,7 @@ class AppRegistrationForm extends Component {
                     </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>
+                <InputWithHead heading={AppConstants.membershipProductTeam}  required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionMembershipProductTypeId${index}`, {
                         rules: [{ required: true, message: ValidationConstants.membershipProductRequired }],
@@ -3599,8 +3874,10 @@ class AppRegistrationForm extends Component {
 
     teamMemberView = (item, index, getFieldDecorator) => {
         let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
+        let registrationTypeId = item.team!= null && item.team.registrationTypeId!= null ? 
+                                        item.team.registrationTypeId : 1;
         return (
-            <div className="formView content-view pt-5">
+            <div className="formView content-view pt-5" >
                 <div style={{ display: 'flex' }}>
                     <span className="form-heading">
                         {item.team!= null && item.team.teamName!= null ? item.team.teamName + "- Team Members" : ""}
@@ -3609,7 +3886,7 @@ class AppRegistrationForm extends Component {
                 <div className="table-responsive">
                     <Table
                         className="fees-table"
-                        columns={teamColumns}
+                        columns={registrationTypeId === 1 ? teamColumns : teamColumnsOnBehalf}
                         dataSource={players}
                         pagination={false}
                         Divider=" false"

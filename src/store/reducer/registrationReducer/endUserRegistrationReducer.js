@@ -101,13 +101,17 @@ function endUserRegistrationReducer(state = initialState, action) {
                 existingParticipant["regSetting"]["refer_friend"] = 0;
             }
             else if(action.key == "player") {
-                let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-                existingParticipant["regSetting"] = setting;
+                if(settings!= null && settings!= undefined){
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                    existingParticipant["regSetting"] = setting;
+                }
             }
             else{
-                settings.settingArr.splice(prodIndex + 1, 1);
-                let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-                existingParticipant["regSetting"] = setting;
+                if(settings!= null && settings!= undefined){
+                    settings.settingArr.splice(prodIndex + 1, 1);
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                    existingParticipant["regSetting"] = setting;
+                }
             }
             
             return { ...state, error: null };
