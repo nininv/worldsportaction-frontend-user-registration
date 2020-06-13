@@ -23,6 +23,8 @@ const initialState = {
     },
     invoiceId: 0,
     transactionId: 0,
+    showCharitySuccessData: null,
+    getAffiliteDetailData: [],
 }
 
 
@@ -129,7 +131,54 @@ function set_Charity_Selected(invoiceData) {
     return charitySelected
 }
 
+//for  showing charity after succesful payment 
+function makeCharitySuccessData(charitySelected, charityRoundUpFilter) {
+    let competitionId = charitySelected.competitionId
+    let charity_Selected = {
+        charityTitle: "",
+        roundUpDescription: "",
+    }
+    if (competitionId > 0) {
+        let index = charityRoundUpFilter.findIndex(x => x.competitionId == competitionId)
+        if (index > -1) {
+            charity_Selected.charityTitle = charityRoundUpFilter[index].charityTitle
+            charity_Selected.roundUpDescription = charityRoundUpFilter[index].roundUpDescription
+        }
+    }
+    return charity_Selected
+}
 
+//for making affiliate detail array for showing on right top corner
+function getAffiliteDetailArray(allData) {
+    let getAffiliteDetailArray = []
+    let fees_All_Data = allData[0].fees
+    for (let i in fees_All_Data) {
+        if (fees_All_Data[i].isDirect == 1) {
+            let directCompObject = {
+                organisationId: fees_All_Data[i].competitionDetail.cOrganisationId,
+                organisationName: fees_All_Data[i].competitionDetail.cOrganisationName,
+                organiationEmailId: fees_All_Data[i].competitionDetail.cOrganiationEmailId,
+                organiationPhoneNo: fees_All_Data[i].competitionDetail.cOrganiationPhoneNo,
+            }
+            let organisationIdIndex = getAffiliteDetailArray.findIndex(x => x.organisationId == fees_All_Data[i].competitionDetail.cOrganisationId)
+            if (organisationIdIndex === -1) {
+                getAffiliteDetailArray.push(directCompObject)
+            }
+        } else {
+            let affiliateCompObject = {
+                organisationId: fees_All_Data[i].affiliateDetail.aOrganisationId,
+                organisationName: fees_All_Data[i].affiliateDetail.aOrganisationName,
+                organiationEmailId: fees_All_Data[i].affiliateDetail.aOrganiationEmailId,
+                organiationPhoneNo: fees_All_Data[i].affiliateDetail.aOrganiationPhoneNo,
+            }
+            let organisationIdIndex = getAffiliteDetailArray.findIndex(x => x.organisationId == fees_All_Data[i].affiliateDetail.aOrganisationId)
+            if (organisationIdIndex === -1) {
+                getAffiliteDetailArray.push(affiliateCompObject)
+            }
+        }
+    }
+    return getAffiliteDetailArray
+}
 
 
 function stripe(state = initialState, action) {
@@ -164,15 +213,19 @@ function stripe(state = initialState, action) {
         case ApiConstants.API_GET_INVOICE_SUCCESS:
             let invoicedata = isArrayNotEmpty(action.result) ? action.result : []
             let charityRoundUpData = getCharityRoundUpArray(invoicedata)
+            let getAffiliteDetailData = getAffiliteDetailArray(invoicedata)
             let calculateSubTotalData = calculateSubTotal(invoicedata)
             state.subTotalFees = calculateSubTotalData.invoiceSubtotal
             state.subTotalGst = calculateSubTotalData.invoiceGstTotal
             state.charityRoundUpFilter = charityRoundUpData
+            state.getAffiliteDetailData = getAffiliteDetailData
             state.getInvoicedata = action.result
             let charity_Selected = set_Charity_Selected(invoicedata)
             state.charitySelected = charity_Selected
             state.amountTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal) + Number(charity_Selected.charityValue)
             state.fixedTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
+            let showCharitySuccessData = makeCharitySuccessData(charity_Selected, charityRoundUpData)
+            state.showCharitySuccessData = showCharitySuccessData
             return {
                 ...state,
                 onLoad: false,

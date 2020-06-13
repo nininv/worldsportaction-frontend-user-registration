@@ -108,7 +108,7 @@ const AppConstants = {
   vouchers: "Vouchers",
   addvoucher: "Add voucher",
 
-  agreeTerm: "I have read and agree to the  ",
+  agreeTerm: "I have read and agree to (Affiliates name)  ",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
@@ -168,6 +168,7 @@ const AppConstants = {
   knockOut: "Knock Out",
   roundRobin: "Round Robin",
   membershipProduct: "Membership Product",
+  membershipProductTeam: "Membership Product - Team",
   membershipProductName: "Membership Product Name",
   validity: "Validity",
   calendarYear: "Calendar Year",
@@ -802,7 +803,7 @@ const AppConstants = {
   ByMatch: "By Match",
   total: "Total",
   //End User Registration
-  areYouRegisteringYourself: "Are you registering yourself?",
+  areYouRegisteringYourself: "Are you registering yourself as an individual?",
   whoAreYouRegistering: "Who are you registering?",
   child: "Child",
   team: "Team",
@@ -810,7 +811,7 @@ const AppConstants = {
   nonPlayer: "Non Player",
   yesAsAPlayer: "Yes, as a Player",
   yesAsANonPlayer: "Yes, as a Non-Player",
-  registeringSomeoneElse: "No, Registering someone else",
+  registeringSomeoneElse: "No, registering someone else",
   competitionMembershipProductDivision: "Competition, Membership Product and Division",
   participantDetails: "Participant Details",
   indicatePreferredPlayerPosition: "Indicate two preferred playing positions:",
@@ -864,6 +865,13 @@ const AppConstants = {
   logo: "Logo",
   noInformationProvided: "No information provided",
   noPhotosAvailable: "No photos available",
+  registrationType: "Registration Type",
+  inviteIndividualTeamMember: "Invite Individual Team Members to Register",
+  registerOnBehalf: "Register on behalf of Team",
+  areYouRegisteringAsPlayer: "Are you registering as a Player in this Team?",
+  noRegisteringATeam: "No, registering a team",
+  personRegisteringRole: "Person Registering Role",
+  personRegRoleRef: "PersonRegisteringRole"										   
 };
 
 export default AppConstants;

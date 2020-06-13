@@ -185,7 +185,11 @@ async function stripeTokenHandler(token, props) {
         props.onLoad(false)
         if (response.status === 200) {
             message.success(res.message);
-            history.push('/appRegistrationSuccess');
+            // history.push('/appRegistrationSuccess');
+            history.push("/invoice", {
+                registrationId: registrationId,
+                paymentSuccess: true
+            })
         }
         else if (response.status === 212) {
             message.error(res.message);

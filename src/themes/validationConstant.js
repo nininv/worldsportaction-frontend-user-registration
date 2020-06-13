@@ -81,7 +81,8 @@ const ValidationConstants = {
     organisationRequired: "Please select Organisation",
     competitionRequired: "Please select Competition",
 
-    divisionValidation: "Please review your competition selections."
+    divisionValidation: "Please review your competition selections.",
+    personRegRoleRequired: "Please select person registering role"
 };
 
 export default ValidationConstants;

@@ -17,6 +17,8 @@ import { bindActionCreators } from 'redux';
 import Loader from '../../customComponents/loader';
 import { isArrayNotEmpty, isNullOrEmptyString } from "../../util/helpers";
 import history from "../../util/history";
+import Doc from '../../util/DocService';
+import PdfContainer from '../../util/PdfContainer';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -31,17 +33,22 @@ class RegistrationInvoice extends Component {
             competition: "all",
             loading: false,
             checkStatusLoad: false,
+            invoiceDisabled: false,
         }
     }
 
 
     componentDidMount() {
+        let paymentSuccess = this.props.location.state ? this.props.location.state.paymentSuccess : false
+        this.setState({ invoiceDisabled: paymentSuccess })
         this.getInvoiceStatusAPI()
+
+        
     }
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("746")
+        // this.props.getInvoiceStatusAction("841")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -60,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("746", invoiceId)
+            // this.props.getInvoice("841", invoiceId)
         }
     }
 
@@ -70,12 +77,11 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 721,
+            // registrationId: 841,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
         }
-        console.log("payload", payload)
         this.props.saveInvoiceAction(payload)
         this.setState({ loading: true });
     }
@@ -83,7 +89,7 @@ class RegistrationInvoice extends Component {
     ///////view for breadcrumb
     headerView = () => {
         return (
-            <Header className="comp-player-grades-header-view container mb-n3" >
+            <Header className="comp-player-grades-header-view container  mt-0" >
                 <div className="row" >
                     <div className="col-sm" style={{ display: "flex", alignContent: "center" }} >
                     </div>
@@ -95,14 +101,17 @@ class RegistrationInvoice extends Component {
     ///top header view
     topView = (result) => {
         let userDetail = result.length > 0 ? result[0].billTo : []
+        let organisationLogo = isArrayNotEmpty(result) ? result[0].organisationLogo : null
+        let invoiceDisabled = this.state.invoiceDisabled
+        let getAffiliteDetailData = this.props.stripeState.getAffiliteDetailData
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
-                    <div className="col-sm "
+                    <div className="col-sm pt-3"
                     >
                         <label className="invoice-description">
                             <img
-                                src={AppImages.squareImage}
+                                src={organisationLogo ? organisationLogo : AppImages.squareImage}
                                 // alt="animated"
                                 height="120"
                                 width="120"
@@ -138,13 +147,35 @@ class RegistrationInvoice extends Component {
                                 </Descriptions.Item>
                             </Descriptions>
                         }
-
-                        {/* </div> */}
                     </div>
-                    <div className="col-sm pt-5">
-                        <TextArea
-                            placeholder="Text Area"
-                        />
+
+
+                    <div className="col-sm-4 mb-5">
+                        <div >
+                            {isArrayNotEmpty(getAffiliteDetailData) && getAffiliteDetailData.map((item, index) => {
+                                return (
+                                    <div className="affiliate-detail-View-Invoice" >
+                                        <div className="pt-3" >
+                                            <span className="roundUpDescription-text">{item.organisationName}</span>
+                                            <Descriptions >
+                                                <Descriptions.Item className="pb-0" label="E">
+                                                    {item.organiationEmailId}
+                                                </Descriptions.Item>
+                                            </Descriptions>
+                                            <Descriptions >
+                                                <Descriptions.Item className="pb-0" label="Ph">
+                                                    {item.organiationPhoneNo}
+                                                </Descriptions.Item>
+                                            </Descriptions>
+                                        </div>
+                                    </div>)
+                            })}
+                        </div>
+                        {/* {!invoiceDisabled &&
+                            <TextArea
+                                placeholder="Text Area"
+                            />
+                        } */}
                     </div>
                 </div>
 
@@ -167,7 +198,6 @@ class RegistrationInvoice extends Component {
                         < div className="row" >
                             <div className="col-sm invoice-description"  >
                                 <InputWithHead
-                                    // required='justify-content-center'
                                     heading={("1.00")}
                                 />
                             </div>
@@ -207,7 +237,6 @@ class RegistrationInvoice extends Component {
     competitionOrganiserView = (competitionDetails) => {
         return (
             <div className="row" >
-                {/* < Divider className="mt-0 mb-0" /> */}
                 <div className="invoice-col-View pr-0 pl-0" >
                     {competitionDetails && competitionDetails.cOrganisationName &&
                         <InputWithHead
@@ -309,10 +338,7 @@ class RegistrationInvoice extends Component {
                         </div>
                     </div>
                 </div>
-                {/* {data.length - 1 !== participantIndex && */}
                 < Divider className="mt-0 mb-0" />
-
-                {/* } */}
             </div>
         )
     }
@@ -362,9 +388,6 @@ class RegistrationInvoice extends Component {
                     <Divider className="mt-0 mb-0" />
                 </div>
 
-
-                {/* {data.membership && data.membership.length > 0 && data.membership.map((membershipItem, membershipIndex) => {
-                    return ( */}
                 {data && data.length > 0 && data.map((participantItem, participantIndex) => {
                     let competitionDetails = participantItem && participantItem.competitionDetail
                     let userDetail = participantItem.userDetail && participantItem.userDetail
@@ -389,36 +412,6 @@ class RegistrationInvoice extends Component {
                                             />
                                         }
                                     </div>
-
-                                    {/* {userDetail && userDetail.suburb &&
-                                        <Descriptions >
-                                            <Descriptions.Item className="pb-0 pt-0" >
-                                                {userDetail.suburb}
-                                            </Descriptions.Item>
-                                        </Descriptions>
-                                    }
-
-                                    {userDetail && userDetail.street1 &&
-                                        <Descriptions >
-                                            <Descriptions.Item className="pb-0" >
-                                                {userDetail.street1} {" "}{userDetail.street2}
-                                            </Descriptions.Item>
-                                        </Descriptions>
-                                    }
-                                    {userDetail && userDetail.PhoneNo &&
-                                        <Descriptions >
-                                            <Descriptions.Item className="pb-0" >
-                                                {userDetail.PhoneNo}
-                                            </Descriptions.Item>
-                                        </Descriptions>
-                                    }
-                                    {userDetail && userDetail.postalCode &&
-                                        <Descriptions >
-                                            <Descriptions.Item  >
-                                                {userDetail.postalCode}
-                                            </Descriptions.Item>
-                                        </Descriptions>
-                                    } */}
                                 </div>
                                 < Divider className="mt-0 mb-0" />
                             </ div>
@@ -452,10 +445,6 @@ class RegistrationInvoice extends Component {
                 }
                 )
                 }
-
-
-
-
             </div >
         )
     }
@@ -521,6 +510,22 @@ class RegistrationInvoice extends Component {
     }
 
 
+
+    showSuccessCharityView = () => {
+        let showCharitySuccessData = this.props.stripeState.showCharitySuccessData
+        let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
+        let showCharity = isArrayNotEmpty(charityRoundUpData) && isArrayNotEmpty(charityRoundUpData[0].charityDetail)
+        console.log("showCharitySuccessData", showCharitySuccessData)
+        return (
+            <div className="d-flex-column justify-content-start">
+                {showCharity && <span className="roundUpDescription-text">{showCharitySuccessData && showCharitySuccessData.charityTitle}</span>}
+                {showCharity && <div className="d-flex justify-content-start">
+                    <span className="invoice-second-radio-charity">{showCharitySuccessData && showCharitySuccessData.roundUpDescription}</span>
+                </div>}
+            </div>
+        )
+    }
+
     totalInvoiceView = (result) => {
         let subTotalFees = this.props.stripeState.subTotalFees
         let subTotalGst = this.props.stripeState.subTotalGst
@@ -528,24 +533,34 @@ class RegistrationInvoice extends Component {
         let charitySelected = this.props.stripeState.charitySelected
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         let showCharity = isArrayNotEmpty(charityRoundUpData) && isArrayNotEmpty(charityRoundUpData[0].charityDetail)
-        console.log("showCharity", showCharity)
+        console.log("charitySelected", charitySelected)
+        let invoiceDisabled = this.state.invoiceDisabled
         return (
             <div className="content-view">
-                {showCharity &&
+                {showCharity && !invoiceDisabled ?
                     <div className="charity-invoice-div">
                         <span className="charity-invoice-heading">{"Charity Support"}</span>
-                    </div>}
-                {showCharity && this.charityRoundUpView(result)}
-                {showCharity &&
+                    </div>
+                    : charitySelected.charityValue > 0 ? <div className="charity-invoice-div">
+                        <span className="charity-invoice-heading">{"Charity Support"}</span>
+                    </div> : null}
+                {showCharity && !invoiceDisabled ? this.charityRoundUpView(result) : this.showSuccessCharityView()}
+                {showCharity && !invoiceDisabled ?
                     <div className="charity-invoice-div mb-5">
                         <span className="charity-invoice-heading">{"Total Charity Amount: $" + charitySelected.charityValue}</span>
                     </div>
+                    : charitySelected.charityValue > 0 ?
+                        <div className="charity-invoice-div mb-5">
+                            <span className="charity-invoice-heading">{"Total Charity Amount: $" + charitySelected.charityValue}</span>
+                        </div> : null
                 }
                 <div className="drop-reverse" >
                     <div className="col-sm ">
-                        <TextArea
-                            placeholder="Text Area"
-                        />
+                        {/* {!invoiceDisabled &&
+                            <TextArea
+                                placeholder="Text Area"
+                            />
+                        } */}
                     </div>
                     <div className="col-sm pl-0 pr-0"
                     >
@@ -642,24 +657,27 @@ class RegistrationInvoice extends Component {
 
     //////footer view containing all the buttons like submit and cancel
     footerView = () => {
+        let invoiceDisabled = this.state.invoiceDisabled
         return (
             <div className="container" >
                 <div className="footer-view">
                     <div className="comp-buttons-view pt-5 pr-5">
-                        <Button
-                            className="open-reg-button"
-                            htmlType="submit"
-                            type="primary"
-                            // onClick={() => this.navigatePaymentScreen()}>
-                            onClick={() => this.saveInvoiceAPICall()}>
-                            {AppConstants.pay}
-                        </Button>
+                        {!invoiceDisabled &&
+                            <Button
+                                className="open-reg-button"
+                                htmlType="submit"
+                                type="primary"
+                                // onClick={() => this.navigatePaymentScreen()}>
+                                onClick={() => this.saveInvoiceAPICall()}>
+                                {AppConstants.pay}
+                            </Button>}
                     </div>
                 </div>
             </div>
         )
     }
 
+    createPdf = (html) => Doc.createPdf(html);
 
     render() {
         let result = this.props.stripeState.getInvoicedata
@@ -671,14 +689,15 @@ class RegistrationInvoice extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-
                 <Layout>
                     {this.headerView()}
                     <Content className="container">
                         <div className="formView">
-                            {this.topView(result)}
-                            {this.contentView(result)}
-                            {this.totalInvoiceView(result)}
+                            <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
+                                {this.topView(result)}
+                                {this.contentView(result)}
+                                {this.totalInvoiceView(result)}
+                            </PdfContainer>
                         </div>
                         <Loader visible={this.props.stripeState.onLoad} />
                     </Content>

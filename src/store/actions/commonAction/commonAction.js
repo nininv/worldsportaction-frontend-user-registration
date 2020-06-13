@@ -105,7 +105,12 @@ function disabilityReferenceAction() {
     return action;
 }
 
-
+function personRegisteringRoleReferenceAction(){
+    const action = {
+        type: ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD,
+    };
+    return action;
+}
 export {
     timeSlotInit,
     getCommonRefData,
@@ -119,5 +124,6 @@ export {
     playerPositionReferenceAction,
     clearFilter,
     genderReferenceAction,
-    disabilityReferenceAction
+    disabilityReferenceAction,
+    personRegisteringRoleReferenceAction		
 }

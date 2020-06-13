@@ -156,6 +156,8 @@ display: flex;
   color: var(--app-4c4c6d);
   font-weight: 500;
   font-family: inter-medium;
+  white-space: initial;
+    word-wrap: break-word
 }
 
 .invoice-main-radio-charity {
@@ -170,6 +172,19 @@ display: flex;
   color: var(--app-4c4c6d);
   font-weight: 500;
   font-family: inter-medium;
+}
+
+.pdf-container-main-div{
+  /* width: 70%; */
+  display: flex;
+  justify-content: flex-end;
+  /* padding-right: 6.5vw; */
+  /* margin-top: 7.5vh; */
+}
+
+.affiliate-detail-View-Invoice{
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 767px) {
@@ -211,4 +226,8 @@ display: flex;
   position: relative;
   width: 70%;
   }
+
+.pdf-container-main-div{
+  padding-right: 1vw;
+}
 }

@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
-
+import { getAge,deepCopyFunction} from '../../../util/helpers';
 
 let registrationObj = {
     organisationUniqueKey: "",
@@ -93,19 +93,25 @@ function endUserRegistrationReducer(state = initialState, action) {
             let participantIndex = action.participantIndex;
             let existingParticipant = state.registrationDetail.userRegistrations[participantIndex];
             let settings = state.regSettings.find(x=>x.index == participantIndex);
+           // console.log("participantIndex ::" + participantIndex + "prodIndex::" + prodIndex);
+           // console.log("state.regSettings" + JSON.stringify(state.regSettings));
             if(action.key == "nonPlayer"){
                 existingParticipant["regSetting"]["nominate_positions"] = 0;
                 existingParticipant["regSetting"]["play_friend"] = 0;
                 existingParticipant["regSetting"]["refer_friend"] = 0;
             }
             else if(action.key == "player") {
-                let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-                existingParticipant["regSetting"] = setting;
+                if(settings!= null && settings!= undefined){
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                    existingParticipant["regSetting"] = setting;
+                }
             }
             else{
-                settings.settingArr.splice(prodIndex + 1, 1);
-                let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-                existingParticipant["regSetting"] = setting;
+                if(settings!= null && settings!= undefined){
+                    settings.settingArr.splice(prodIndex + 1, 1);
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                    existingParticipant["regSetting"] = setting;
+                }
             }
             
             return { ...state, error: null };
@@ -124,7 +130,7 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-           // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
+            //console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
@@ -147,8 +153,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                     existingParticipant["regSetting"] = setting;
                 }
                 else{
+                   // console.log("**** else");
                     let regSetObj = {
-                        index: 0,
+                        index: index,
                         settingArr: []
                     }
                     regSetObj.settingArr.push(registrationSettings);
@@ -168,27 +175,6 @@ function endUserRegistrationReducer(state = initialState, action) {
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
             }
-            
-            // if(state.participantIndex!= null){
-            //     let index = state.participantIndex;
-            //     let existingParticipant = state.registrationDetail.userRegistrations[index];
-                
-            //     if(state.prodIndex == undefined || state.prodIndex == null){
-            //         existingParticipant["regSetting"] = registrationSettings;
-            //     }
-            //     else{
-                   
-            //         let existingSettings = existingParticipant.regSetting;
-            //         if(existingSettings!= null){
-            //             mergeRegistrationSettings(existingSettings, registrationSettings)
-            //             existingParticipant["regSetting"] = existingSettings;
-            //         }
-            //         else{
-            //             existingParticipant["regSetting"] = registrationSettings;
-            //         }
-            //     }
-                
-            // }
             return {
                 ...state,
                 onLoad: false,
@@ -206,6 +192,128 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status,
                 userInfo: userInfoData
             };
+		case ApiConstants.UPDATE_TEAM_ACTION:
+           // console.log("action.index::" + action.index);
+            let participant = state.registrationDetail.userRegistrations[action.index];
+            if(action.subKey == "participant"){
+                if(action.key == "organisationUniqueKey"){
+                    let membershipProductInfo = state.membershipProductInfo;
+                    let organisationInfo = membershipProductInfo.find(x=>x.organisationUniqueKey == action.data);
+                    participant.organisationInfo = deepCopyFunction(organisationInfo);
+                    participant.competitionInfo = [];
+                    participant.competitionUniqueKey = null;
+                    participant.competitionMembershipProductTypeId = null;
+                    participant.competitionMembershipProductDivisionId = null;
+                    participant.products = [];
+                    participant.specialNote = null;
+                    participant.training = null;
+                    participant.registrationOpenDate = null;
+                    participant.registrationCloseDate = null;
+                    participant.contactDetails = null;
+                    participant.divisionName = null;
+                    participant.venue = [];
+                    // this.props.form.setFieldsValue({
+                    //     [`competitionUniqueKey${index}`]:  null,
+                    //     [`competitionMembershipProductTypeId${index}`]:  null,
+                    //     [`competitionMembershipProductDivisionId${index}`]:  null,
+                        
+                    // });
+                }
+                else if(action.key == "competitionUniqueKey"){
+                    let competitionInfo = participant.organisationInfo.competitions.
+                                    find(x=>x.competitionUniqueKey == action.data);
+                    participant.competitionInfo = deepCopyFunction(competitionInfo);
+                    participant.competitionMembershipProductTypeId = null;
+                    participant.competitionMembershipProductDivisionId = null;
+                    participant.specialNote = competitionInfo.specialNote;
+                    participant.training = competitionInfo.training;
+                    participant.contactDetails = competitionInfo.contactDetails;
+                    participant.registrationOpenDate = competitionInfo.registrationOpenDate;
+                    participant.registrationCloseDate = competitionInfo.registrationCloseDate;
+                    participant.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
+                    participant.products = [];
+                    participant.divisionName = null;
+                    // this.props.form.setFieldsValue({
+                    //     [`competitionMembershipProductTypeId${index}`]:  null,
+                    //     [`competitionMembershipProductDivisionId${index}`]:  null,
+                    // });
+                }
+                else if(action.key == "competitionMembershipProductTypeId"){
+                    let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
+                        action.data);
+                    let divisions = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
+                        action.data).divisions;
+                        console.log("Divisions:" + JSON.stringify(divisions));
+                        if(divisions!= null && divisions!= undefined && divisions.length > 0)
+                        {
+                            participant[action.key] = action.data;											
+                            if(divisions.length == 1)
+                            {
+                                participant["competitionMembershipProductDivisionId"] = 
+                                divisions[0].competitionMembershipProductDivisionId;
+                                participant["divisionName"] =  divisions[0].divisionName;
+                                participant["divisions"] = [];
+                            }
+                            else{
+                                participant.competitionMembershipProductDivisionId = null;
+                                // this.props.form.setFieldsValue({
+                                //     [`competitionMembershipProductDivisionId${index}`]:  null,
+                                // });
+                                participant["divisions"] = divisions;
+                            }
+
+                            participant["team"]["registeringAsAPlayer"] = 2;
+                            participant["team"]["allowTeamRegistrationTypeRefId"] = memProd.allowTeamRegistrationTypeRefId;
+                            participant["team"]["registrationTypeId"] = 1;
+                        }
+                        else{
+                            participant["divisionName"] =  null;
+                            participant.competitionMembershipProductDivisionId = null;
+                            participant["divisions"] = [];
+                            participant[action.key] = null;		
+                        }
+                }
+                participant[action.key] = action.data;
+            }
+            else if(action.subKey == "team"){
+                participant[action.subKey][action.key] = action.data;
+            }
+            else if(action.subKey == "players"){
+                if(action.key == "addPlayer"){
+                    let obj = {
+                        competitionMembershipProductTypeId:0,firstName: null, lastName: null,
+                         email: null, mobileNumber: null, payingFor: null, index: action.index
+                    }
+                    if(participant["team"][action.subKey]){
+                        participant["team"][action.subKey].push(obj);
+                    }
+                    else{
+                        participant["team"][action.subKey] = [];
+                        participant["team"][action.subKey].push(obj);
+                    }
+
+                   // console.log("Player::" + JSON.stringify(participant));
+                    
+                }
+                else if(action.key == "removePlayer"){
+                    participant["team"][action.subKey].splice(action.subIndex, 1);
+                    state.refFlag = "players";
+                }
+                else {
+                    if(action.key == "competitionMembershipProductTypeId"){
+                        let memProd = participant.competitionInfo.membershipProducts.
+                        find(x=>x.competitionMembershipProductTypeId == 
+                            action.data);
+                            participant["team"][action.subKey][action.subIndex]["isPlayer"] = memProd.isPlayer;
+                    }
+                    participant["team"][action.subKey][action.subIndex][action.key] = action.data;
+                }
+            }
+
+            return {
+                ...state,
+                error: null
+            }			 
         case ApiConstants.REGISTRATION_CLEAR_DATA:
             let registrationObj1 = {
                 organisationUniqueKey: "",

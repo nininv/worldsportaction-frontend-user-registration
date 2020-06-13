@@ -69,6 +69,17 @@ function clearRegistrationDataAction()
     return action;
 }
 
+function updateTeamAction(data, index,key, subKey,subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_ACTION,
+        data: data,
+        index: index,
+        subIndex: subIndex,
+        key: key,
+        subKey:subKey
+    }
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -76,5 +87,6 @@ export {
     membershipProductEndUserRegistrationAction,
     getUserRegistrationUserInfoAction,
     clearRegistrationDataAction,
-    updateRegistrationSettingsAction
+    updateRegistrationSettingsAction,
+    updateTeamAction
 }
