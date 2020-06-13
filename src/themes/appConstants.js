@@ -168,6 +168,7 @@ const AppConstants = {
   knockOut: "Knock Out",
   roundRobin: "Round Robin",
   membershipProduct: "Membership Product",
+  membershipProductTeam: "Membership Product - Team",
   membershipProductName: "Membership Product Name",
   validity: "Validity",
   calendarYear: "Calendar Year",

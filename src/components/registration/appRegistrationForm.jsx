@@ -211,6 +211,7 @@ const teamColumns = [
         title: "Paying for?",
         dataIndex: "payingFor",
         key: "payingFor",
+        width: 80,
         render: (payingFor, record, index) => 
         {
             let registrationState = this_Obj.props.endUserRegistrationState;
@@ -239,6 +240,7 @@ const teamColumns = [
         title: "",
         dataIndex: "clear",
         key: "clear",
+        width: 30,
         render: (clear, record, index) => (
             <span style={{ display: "flex", justifyContent: "center", width: "100%", cursor: 'pointer' }}>
                 <img
@@ -3525,7 +3527,7 @@ class AppRegistrationForm extends Component {
                     </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.membershipProduct}  required={"required-field"}/>
+                <InputWithHead heading={AppConstants.membershipProductTeam}  required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`competitionMembershipProductTypeId${index}`, {
                         rules: [{ required: true, message: ValidationConstants.membershipProductRequired }],
@@ -3875,7 +3877,7 @@ class AppRegistrationForm extends Component {
         let registrationTypeId = item.team!= null && item.team.registrationTypeId!= null ? 
                                         item.team.registrationTypeId : 1;
         return (
-            <div className="formView content-view pt-5 reg-player-pad" >
+            <div className="formView content-view pt-5" >
                 <div style={{ display: 'flex' }}>
                     <span className="form-heading">
                         {item.team!= null && item.team.teamName!= null ? item.team.teamName + "- Team Members" : ""}
