@@ -173,7 +173,7 @@ async function stripeTokenHandler(token, props) {
             id: stripeToken
         }
     }
-    const response = await fetch(`https://registration-api-dev.worldsportaction.com/api/payments/createPayments`, {
+    const response = await fetch(`${StripeKeys.apiURL}/api/payments/createPayments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
