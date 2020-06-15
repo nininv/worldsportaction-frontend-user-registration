@@ -19,7 +19,6 @@ import { getOrganisationData } from "../../util/sessionStorage";
 import Loader from '../../customComponents/loader';
 import { message } from "antd";
 import history from "../../util/history";
-import http from "../../store/http/registrationHttp/registrationhttp";
 
 const { Header, Content } = Layout;
 var screenProps = null
@@ -174,7 +173,7 @@ async function stripeTokenHandler(token, props) {
             id: stripeToken
         }
     }
-    const response = await fetch(`${http}/api/payments/createPayments`, {
+    const response = await fetch(`${StripeKeys.apiURL}/api/payments/createPayments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
