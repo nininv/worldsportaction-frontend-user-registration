@@ -279,9 +279,11 @@ class LiveScoreSeasonFixture extends Component {
     componentDidUpdate(nextProps) {
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
-                let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
-                this.props.getLiveScoreDivisionList(firstComp)
-                this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true })
+                if( isArrayNotEmpty(this.props.liveScoreFixturCompState.comptitionList )){
+                    let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
+                    this.props.getLiveScoreDivisionList(firstComp)
+                    this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true })
+                }
             }
         }
 
@@ -289,7 +291,6 @@ class LiveScoreSeasonFixture extends Component {
 
         if (this.props.liveScoreLadderState !== nextProps.liveScoreLadderState) {
             if (this.props.liveScoreLadderState.onLoad == false && this.state.onDivisionLoad == true) {
-
                 if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0) {
                     let division = this.props.liveScoreLadderState.liveScoreLadderDivisionData[0].id
                     this.setState({ onDivisionLoad: false, division })
