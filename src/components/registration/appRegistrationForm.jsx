@@ -4021,15 +4021,6 @@ class AppRegistrationForm extends Component {
                         </div>
                         ): null}
 
-                        {(userRegistrations.length > 0 && (index + 1 == userRegistrations.length) &&
-                            userRegistrations[userRegistrations.length - 1].isPlayer != -1)? (
-                        <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
-                            <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
-                                + {AppConstants.addAnotherParticipant}
-                            </span> 
-                        </div>
-                        ) : null}
-
                         {item.registeringYourself == 4 &&
                         <div>
                             <div style={{marginBottom: "20px"}}>
@@ -4065,21 +4056,24 @@ class AppRegistrationForm extends Component {
                                         {this.additionalInfoView(item, index, getFieldDecorator)}
                                     </div>
                                 </div> }
-                                <div>
-                                    {this.termsAndConditionView(getFieldDecorator)}
-                                </div>
+                            
                             </div>}
                         </div>
                         }
+
+                        {(userRegistrations.length > 0 && (index + 1 == userRegistrations.length) &&
+                            (userRegistrations[userRegistrations.length - 1].isPlayer != -1 || 
+                                userRegistrations[userRegistrations.length - 1].registeringYourself == 4))? (
+                        <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
+                            <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
+                                + {AppConstants.addAnotherParticipant}
+                            </span> 
+                        </div>
+                        ) : null}
                     </div>
                 ))}
                 {userRegistrations.length > 0 && (userRegistrations[0].isPlayer != -1) ? (
                 <div>
-                    {/* <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
-                        <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(this.state.registeringYourself)}>
-                            + {AppConstants.addAnotherParticipant}
-                        </span> 
-                    </div> */}
                     {(commonRegSetting.club_volunteer === 1) && (
                         <div style={{marginBottom: "20px"}}>
                             {this.otherInfoReqdView(getFieldDecorator)}
@@ -4095,12 +4089,14 @@ class AppRegistrationForm extends Component {
                             {this.voucherView(getFieldDecorator)}
                         </div>
                     )}
-                    <div>
-                        {this.termsAndConditionView(getFieldDecorator)}
-                    </div>
-                    
                 </div>
                 ): null}
+                 {(userRegistrations.length > 0 &&
+                            (userRegistrations[0].isPlayer != -1 ||
+                                userRegistrations[0].registeringYourself == 4))? (
+                <div>
+                    {this.termsAndConditionView(getFieldDecorator)}
+                </div>) : null }
                 {this.removeModalView()}
             </div>
         )
