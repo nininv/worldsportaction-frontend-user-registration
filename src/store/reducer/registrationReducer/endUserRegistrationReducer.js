@@ -277,12 +277,21 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else if(action.subKey == "team"){
                 participant[action.subKey][action.key] = action.data;
+
+                if(action.key == "personRoleRefId" || action.key == "registeringAsAPlayer")
+                {
+                    addReadOnlyPlayer(participant, action)
+                }
+            
+                updatePlayerData(participant, action);
+                state.refFlag = "players";
             }
             else if(action.subKey == "players"){
                 if(action.key == "addPlayer"){
                     let obj = {
                         competitionMembershipProductTypeId:0,firstName: null, lastName: null,
-                         email: null, mobileNumber: null, payingFor: null, index: action.index
+                         email: null, mobileNumber: null, payingFor: null, index: action.index,
+                         isDisabled: false
                     }
                     if(participant["team"][action.subKey]){
                         participant["team"][action.subKey].push(obj);
@@ -343,6 +352,104 @@ function endUserRegistrationReducer(state = initialState, action) {
 
         default:
             return state;
+    }
+}
+
+function addReadOnlyPlayer(participant, action){
+    removeExistingPlayer(participant);
+                
+    if(participant[action.subKey]["registeringAsAPlayer"] == 1){
+        addPlayer(participant, action);
+        if(participant[action.subKey]["personRoleRefId"] == 2){
+            addCoach(participant, action);
+        }
+    }
+    else {
+        if(participant[action.subKey]["personRoleRefId"] == 2){
+            addCoach(participant,action);
+        }
+    }
+}
+
+function removeExistingPlayer(participant){
+    if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
+        let players = participant["team"]["players"].filter(x=>x.isDisabled == false);
+        console.log("players" + JSON.stringify(players));
+        // if(players!= null && players.length > 0){
+        //     let indexArr = [];
+        //     console.log("players" + JSON.stringify(players));
+        //     players.map((item,index) => {
+        //         indexArr.push(index);
+        //     })
+        //     console.log("indexArr" + JSON.stringify(indexArr));
+        //     indexArr.map((item, index) => {
+        //         players.splice(item,1);
+        //     })
+        //     console.log("players After" + JSON.stringify(players));
+
+        // }
+
+        participant["team"]["players"] = (players!= null && players!= undefined) ? players : [];
+    }
+}
+
+function addPlayer(participant, action){
+    let obj = {
+        competitionMembershipProductTypeId:participant["competitionMembershipProductTypeId"],
+        firstName: participant[action.subKey]["firstName"], 
+        lastName: participant[action.subKey]["lastName"],
+        email: participant[action.subKey]["email"], 
+        mobileNumber: participant[action.subKey]["mobileNumber"],
+        payingFor: true,
+        index: action.index,
+        isDisabled: true
+    }
+    if(participant["team"]["players"]){
+        participant["team"]["players"].push(obj);
+    }
+    else{
+        participant["team"]["players"] = [];
+        participant["team"]["players"].push(obj);
+    }
+}
+
+function addCoach(participant, action){
+    let memProds = participant.competitionInfo.membershipProducts;
+    if(memProds!= null && memProds.length > 0){
+        let memProd = memProds.find(x=>x.shortName == "Coach");
+        if(memProd!= null && memProd!= undefined){
+            let obj = {
+                competitionMembershipProductTypeId:memProd["competitionMembershipProductTypeId"],
+                firstName: participant[action.subKey]["firstName"], 
+                lastName: participant[action.subKey]["lastName"],
+                email: participant[action.subKey]["email"], 
+                mobileNumber: participant[action.subKey]["mobileNumber"],
+                payingFor: true,
+                index: action.index,
+                isDisabled: true
+            }
+            if(participant["team"]["players"]){
+                participant["team"]["players"].push(obj);
+            }
+            else{
+                participant["team"]["players"] = [];
+                participant["team"]["players"].push(obj);
+            }
+        }
+    }
+}
+
+function updatePlayerData(participant, action){
+    if(action.key == "firstName" || action.key == "lastName" || action.key == "email"
+    || action.key == "mobileNumber"){
+        if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
+            let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
+            if(players!= null && players.length > 0){
+                players.map((item,index) => {
+                    item[action.key] = action.data;
+                })
+            }
+        }
     }
 }
 

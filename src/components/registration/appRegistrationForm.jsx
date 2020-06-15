@@ -68,6 +68,7 @@ const teamColumns = [
                         rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
                     })(
                         <Select
+                            disabled = {record.isDisabled}
                             required={"required-field pt-0 pb-0"}
                             className="input-inside-table-venue-court team-mem_prod_type"
                             onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
@@ -101,6 +102,7 @@ const teamColumns = [
                         rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                     })(
                         <InputWithHead
+                            disabled = {record.isDisabled}
                             required={"required-field pt-0 pb-0"}
                             className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "firstName", record.index,  "players", index  )}
@@ -126,6 +128,7 @@ const teamColumns = [
                         rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                     })(
                         <InputWithHead
+                            disabled = {record.isDisabled}
                             className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "lastName", record.index,  "players", index  )}
                             setFieldsValue={lastName}
@@ -176,6 +179,7 @@ const teamColumns = [
                         rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
+                            disabled = {record.isDisabled}
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "email", record.index,  "players", index  )}
                             setFieldsValue={email}
                             placeholder={AppConstants.email}
@@ -198,6 +202,7 @@ const teamColumns = [
                         rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
+                            disabled = {record.isDisabled}
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
                             setFieldsValue={mobile}
                             placeholder={AppConstants.mobile}
@@ -228,7 +233,8 @@ const teamColumns = [
                 <div>
                     <Checkbox
                         checked={registrationTypeId == 1 ? payingFor : true}
-                        disabled={registrationTypeId == 2 ? true : false}
+                        disabled = {record.isDisabled}
+                        // disabled={registrationTypeId == 2 ? true : false}
                         className="single-checkbox mt-1 d-flex justify-content-center"
                         onChange={(e) => this_Obj.onChangeSetTeam(e.target.checked, "payingFor", record.index,  "players", index  )} 
                     ></Checkbox>
@@ -243,12 +249,14 @@ const teamColumns = [
         width: 30,
         render: (clear, record, index) => (
             <span style={{ display: "flex", justifyContent: "center", width: "100%", cursor: 'pointer' }}>
-                <img
+                <input
                     className="dot-image"
                     src={AppImages.redCross}
                     alt=""
+                    type="image"
                     width="16"
                     height="16"
+                    disabled = {record.isDisabled}
                     onClick={() => this_Obj.onChangeSetTeam(null, "removePlayer", record.index,  "players", index  )} 
                 />
             </span>
@@ -276,6 +284,7 @@ const teamColumnsOnBehalf = [
                         rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
                     })(
                         <Select
+                            disabled = {record.isDisabled}
                             required={"required-field pt-0 pb-0"}
                             className="input-inside-table-venue-court team-mem_prod_type"
                             onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
@@ -309,6 +318,7 @@ const teamColumnsOnBehalf = [
                         rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                     })(
                         <InputWithHead
+                            disabled = {record.isDisabled}
                             required={"required-field pt-0 pb-0"}
                             className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "firstName", record.index,  "players", index  )}
@@ -334,6 +344,7 @@ const teamColumnsOnBehalf = [
                         rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                     })(
                         <InputWithHead
+                            disabled = {record.isDisabled}
                             className="input-inside-table-venue-court"
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "lastName", record.index,  "players", index  )}
                             setFieldsValue={lastName}
@@ -384,6 +395,7 @@ const teamColumnsOnBehalf = [
                         rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
+                            disabled = {record.isDisabled}
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "email", record.index,  "players", index  )}
                             setFieldsValue={email}
                             placeholder={AppConstants.email}
@@ -406,6 +418,7 @@ const teamColumnsOnBehalf = [
                         rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
+                            disabled = {record.isDisabled}
                             onChange={(e) => this_Obj.onChangeSetTeam(e.target.value, "mobileNumber", record.index,  "players", index  )} 
                             setFieldsValue={mobile}
                             placeholder={AppConstants.mobile}
@@ -421,9 +434,11 @@ const teamColumnsOnBehalf = [
         key: "clear",
         render: (clear, record, index) => (
             <span style={{ display: "flex", justifyContent: "center", width: "100%", cursor: 'pointer' }}>
-                <img
+                <input
                     className="dot-image"
                     src={AppImages.redCross}
+                    type="image"
+                    disabled = {record.isDisabled}
                     alt=""
                     width="16"
                     height="16"
@@ -1970,36 +1985,6 @@ class AppRegistrationForm extends Component {
                 registrationDetail.organisationUniqueKey = this.state.organisationUniqueKey;
                 registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
 
-                userRegistrations.map((item, index) =>{
-                    if(getAge(item.dateOfBirth) > 18){
-                        item.parentOrGuardian = [];
-                    }
-
-                    if(item.regSetting.play_friend == 0)
-                    {
-                        item.friends = [];
-                    }
-                    if(item.regSetting.refer_friend == 0)
-                    {
-                        item.referFriends = [];
-                    }
-                    let memArr = [];
-                    if(item.registeringYourself == 4){
-                        (item.competitionInfo.membershipProducts).map((i, ind) => {
-                            let obj = {
-                                competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
-                                name: i.shortName
-                            }
-                            memArr.push(obj);
-                        })
-                    }
-                    item["membershipProducts"] = memArr;
-
-                    delete item.organisationInfo;
-                    delete item.competitionInfo;
-                    delete item.divisions;
-                });
-               
                 let err = false;
                 userRegistrations.map((item, index) =>{
                     let membershipProductId = item.competitionMembershipProductTypeId;
@@ -2030,6 +2015,41 @@ class AppRegistrationForm extends Component {
     
                     if(!isError)
                     {
+                        userRegistrations.map((item, index) =>{
+                            if(getAge(item.dateOfBirth) > 18){
+                                item.parentOrGuardian = [];
+                            }
+    
+                            if(item.regSetting.play_friend == 0)
+                            {
+                                item.friends = [];
+                            }
+                            if(item.regSetting.refer_friend == 0)
+                            {
+                                item.referFriends = [];
+                            }
+                            let memArr = [];
+                            if(item.registeringYourself == 4){
+                                (item.competitionInfo.membershipProducts).map((i, ind) => {
+                                    let obj = {
+                                        competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
+                                        name: i.shortName
+                                    }
+                                    memArr.push(obj);
+                                })
+
+                                if(item.team!= null && item.team.players!= null && item.team.players.length > 0){
+                                    let players = item.team.players.filter(x=> (x.isDisabled == false || x.isDisabled == null));
+                                    item.team.players = (players!= null && players!= undefined) ? players : [];
+                                }
+                            }
+                            item["membershipProducts"] = memArr;
+    
+                            delete item.organisationInfo;
+                            delete item.competitionInfo;
+                            delete item.divisions;
+                        });
+
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
