@@ -12,7 +12,7 @@ let stgStripeKeys = {
     apiURL: "https://netball-api-stg.worldsportaction.com/registration",
 };
 
-const StripeKeys = devStripeKeys  ////dev server
-// const StripeKeys = stgStripeKeys   ///staging server
+//const StripeKeys = devStripeKeys  ////dev server
+ const StripeKeys = stgStripeKeys   ///staging server
 
 export default StripeKeys;
