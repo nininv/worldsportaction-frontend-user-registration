@@ -4086,7 +4086,7 @@ class AppRegistrationForm extends Component {
                                 userRegistrations[userRegistrations.length - 1].registeringYourself == 4))? (
                         <div  className="formView" style={{background: "none", marginBottom: "40px"}}>
                             <span className="input-heading-add-another pointer" onClick={() => this.addParticipant(0)}>
-                                + {AppConstants.addAnotherParticipant}
+                                + {AppConstants.addAnotherRegitration}
                             </span> 
                         </div>
                         ) : null}

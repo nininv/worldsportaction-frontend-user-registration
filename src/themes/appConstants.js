@@ -871,7 +871,8 @@ const AppConstants = {
   areYouRegisteringAsPlayer: "Are you registering as a Player in this Team?",
   noRegisteringATeam: "No, registering a team",
   personRegisteringRole: "Person Registering Role",
-  personRegRoleRef: "PersonRegisteringRole"										   
+  personRegRoleRef: "PersonRegisteringRole",
+  addAnotherRegitration: "ADD ANOTHER REGISTRATION"								   
 };
 
 export default AppConstants;
