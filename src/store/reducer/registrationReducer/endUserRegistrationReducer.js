@@ -79,7 +79,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let getKey = action.key;
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
-                getKey == "participantIndex") {
+                getKey == "participantIndex" || getKey == "populateYourInfo") {
                 state[getKey] = updatedValue;
             }
             else {
@@ -192,6 +192,14 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status,
                 userInfo: userInfoData
             };
+        case ApiConstants.UPDATE_YOUR_INFO_ACTION:
+            let partUser = state.registrationDetail.userRegistrations[action.index];
+            partUser[action.subKey][action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            }
+
 		case ApiConstants.UPDATE_TEAM_ACTION:
            // console.log("action.index::" + action.index);
             let participant = state.registrationDetail.userRegistrations[action.index];

@@ -34,7 +34,7 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
     clearRegistrationDataAction, updateRegistrationSettingsAction, 
-    updateTeamAction} from 
+    updateTeamAction, updateYourInfoAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -565,13 +565,19 @@ class AppRegistrationForm extends Component {
            this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
        }
 
-    //    if(registrationState.populateParticipantDetails === 1 )
-    //    {
-    //        let registrationState = this.props.endUserRegistrationState;
-    //        let userInfo = registrationState.userInfo;
-    //        this.setFormFields(userInfo, 0);
-    //        this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
-    //    }
+       if(registrationState.populateYourInfo  == 1)
+       {
+           let userInfo = registrationState.userInfo;
+           if(userInfo!= null && userInfo.length > 0){
+                let user = userInfo.find(x=>x.id == getUserId());
+                if(user!= null && user!= undefined){
+                    this.props.updateEndUserRegisrationAction(0, "populateYourInfo");
+                    this.setUserInfoFormFields(user, this.state.participantIndex);
+                  
+                }
+           }
+       }
+       
        if(registrationState.refFlag === "parent")
        {
             this.props.updateEndUserRegisrationAction("", "refFlag");
@@ -694,14 +700,30 @@ class AppRegistrationForm extends Component {
             let registrationDetail = registrationState.registrationDetail;
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[index];
-            userRegistration[key] = data.files[0];
-            userRegistration["profileUrl"] = URL.createObjectURL(data.files[0]);
-            this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+            if(key == "participantPhoto"){
+                userRegistration[key] = data.files[0];
+                userRegistration["profileUrl"] = URL.createObjectURL(data.files[0]);
+                this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+            }
+            else if(key == "yourInfoPhoto"){
+                userRegistration["yourInfo"][key] = data.files[0];
+                userRegistration["yourInfo"]["profileUrl"] = URL.createObjectURL(data.files[0]);
+                this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+            }
         }
     };
 
     selectImage(index) {
         const fileInput = document.getElementById('user-pic' + index);
+        fileInput.setAttribute("type", "file");
+        fileInput.setAttribute("accept", "image/*");
+        if (!!fileInput) {
+            fileInput.click();
+        }
+    }
+
+    selectYourInfoImage(index) {
+        const fileInput = document.getElementById('user-your-info-pic' + index);
         fileInput.setAttribute("type", "file");
         fileInput.setAttribute("accept", "image/*");
         if (!!fileInput) {
@@ -781,7 +803,8 @@ class AppRegistrationForm extends Component {
             competitionInfo: null, specialNote:null, training: null, contactDetails: null,
             postalCode: "", alternativeLocation: "", registrationOpenDate: null,
             registrationCloseDate: null, venue: [], regSetting: this.getOrgSettingsObj(),
-            divisions: [], team:{}			 
+            divisions: [], team:{}, yourInfo:{firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
+            reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: ""}			 
         }
 
         return participantObj;
@@ -838,6 +861,22 @@ class AppRegistrationForm extends Component {
                 }
             }
         }
+    }
+
+    setUserInfoFormFields = (userInfo, index) => {
+        console.log("setUserInfoFormFields"+ JSON.stringify(userInfo));
+
+        this.props.form.setFieldsValue({
+            [`yFirstName${index}`]: userInfo!= null ? userInfo.firstName : "",
+            [`yLastName${index}`]:  userInfo!= null ? userInfo.lastName : "",
+            [`yMobileNumber${index}`]:  userInfo!= null ? userInfo.mobileNumber : "",
+            [`yEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`yReEnterEmail${index}`]:  userInfo!= null ? userInfo.email : "",
+            [`yStreet1${index}`]:  userInfo!= null ? userInfo.street1 : "",
+            [`ySuburb${index}`]:  userInfo!= null ? userInfo.suburb : "",
+            [`yStateRefId${index}`]:  userInfo!= null ? userInfo.stateRefId : null,
+            [`yPostalCode${index}`]:  userInfo!= null ? userInfo.postalCode : "",
+        });
     }
 
     setFormFields = (userInfo, index) => {
@@ -1279,6 +1318,21 @@ class AppRegistrationForm extends Component {
             this.getRegistrationSettings(competitionInfo.competitionUniqueKey, userRegistration.organisationUniqueKey, index);
            
         }
+        else if(key == "whoAreYouRegistering"){
+            if(value == 2){
+                if(userInfo!= null && userInfo.length > 0 && index == 0){
+                    let user = userInfo.find(x=>x.id == getUserId());
+                    if(user!= null && user!= "" && user!= undefined)
+                    {
+                        user.isDisabled = 1;
+                        userRegistration["yourInfo"]["userId"] = getUserId();
+                        this.props.updateEndUserRegisrationAction(userInfo, "userInfo");
+                        this.setState({participantIndex: index});
+                        this.setYourInfo(user, userRegistration);
+                    }
+                }
+            }
+        }
 
         userRegistration[key] = value;
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
@@ -1287,6 +1341,21 @@ class AppRegistrationForm extends Component {
             this.setState({participantIndex: index})
             this.props.updateEndUserRegisrationAction("divisionParticipant", "refFlag");
         }
+    }
+
+    setYourInfo = (userInfo, userRegistration) => {
+        userRegistration["yourInfo"]["userId"] = getUserId();
+        userRegistration["yourInfo"]["firstName"] = userInfo!= null ? userInfo.firstName : "";
+        userRegistration["yourInfo"]["middleName"] = userInfo!= null ? userInfo.middleName : "";
+        userRegistration["yourInfo"]["lastName"] =  userInfo!= null ? userInfo.lastName : "";
+        userRegistration["yourInfo"]["mobileNumber"] =  userInfo!= null ? userInfo.mobileNumber : "";
+        userRegistration["yourInfo"]["email"] =  userInfo!= null ? userInfo.email : "";
+        userRegistration["yourInfo"]["reEnterEmail"] =  userInfo!= null ? userInfo.email : "";
+        userRegistration["yourInfo"]["street1"] =  userInfo!= null ? userInfo.street1 : "";
+        userRegistration["yourInfo"]["street2"] =  userInfo!= null ? userInfo.street2 : "";
+        userRegistration["yourInfo"]["suburb"] =  userInfo!= null ? userInfo.suburb : "";
+        userRegistration["yourInfo"]["stateRefId"] =  userInfo!= null ? userInfo.stateRefId : null;
+        userRegistration["yourInfo"]["postalCode"] =  userInfo!= null ? userInfo.postalCode : "";
     }
 
     validateDivision = (userRegistration, index) => {
@@ -1410,6 +1479,10 @@ class AppRegistrationForm extends Component {
         console.log("userRegistrations" + JSON.stringify(userRegistrations));
 
         userRegistration[key] = value;
+
+        if(userRegistration.whoAreYouRegistering == 2 && index == 0){
+            this.props.updateEndUserRegisrationAction(1, "populateYourInfo");
+        }
         
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
@@ -1960,6 +2033,10 @@ class AppRegistrationForm extends Component {
         }
     }
 
+    onChangeSetYourInfo = (value, key, index) => {
+        this.props.updateYourInfoAction(value, index, key, "yourInfo");
+    }
+
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
@@ -2012,7 +2089,23 @@ class AppRegistrationForm extends Component {
                             }
                         }
                     }
-    
+
+                    for(let x = 0; x< userRegistrations.length; x++)
+                    {
+                        let userRegistration = userRegistrations[x];
+                        if(userRegistration.whoAreYouRegistering == 2 && x == 0){
+                            if(userRegistration.yourInfo!= null){
+                                if(userRegistration.yourInfo.profileUrl == null){
+                                    isError = true;
+                                    break;
+                                }
+                                else{
+                                    formData.append("yourInfoPhoto", userRegistration.yourInfo.participantPhoto);
+                                }
+                            }
+                        }
+                    }
+                    
                     if(!isError)
                     {
                         userRegistrations.map((item, index) =>{
@@ -2044,6 +2137,10 @@ class AppRegistrationForm extends Component {
                                 }
                             }
                             item["membershipProducts"] = memArr;
+
+                            if(item.whoAreYouRegistering != 2 || index > 0){
+                                item.yourInfo = null;
+                            }
     
                             delete item.organisationInfo;
                             delete item.competitionInfo;
@@ -2053,8 +2150,8 @@ class AppRegistrationForm extends Component {
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
-                          this.props.saveEndUserRegistrationAction(formData);
-                          this.setState({ loading: true });
+                         this.props.saveEndUserRegistrationAction(formData);
+                         this.setState({ loading: true });
                     }
                     else{
                         message.error(ValidationConstants.userPhotoIsRequired);
@@ -2394,6 +2491,187 @@ class AppRegistrationForm extends Component {
                     ))}
                     </div>}
                 </div> : null}
+
+                
+            </div>
+        )
+    }
+
+    yourInfoView = (item, index, getFieldDecorator) => {
+        const { stateList } = this.props.commonReducerState;
+        console.log("****************" + JSON.stringify(item.yourInfo))
+        return (
+            <div className="formView content-view pt-5">
+                 <span className="form-heading"> {AppConstants.yourInfo}</span>
+                 <Form.Item >
+                    {getFieldDecorator(`yFirstName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.firstName}
+                        placeholder={AppConstants.firstName}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "firstName",index )} 
+                       // value={item.firstName}
+                        setFieldsValue={item.yourInfo.firstName}
+                    />
+                    )}
+                </Form.Item>
+
+                <InputWithHead
+                    heading={AppConstants.middleName}
+                    placeholder={AppConstants.middleName}
+                    onChange={(e) => this.onChangeSetYourInfo(e.target.value, "middleName", index )} 
+                    value={item.yourInfo.middleName}
+                />
+
+                <Form.Item >
+                    {getFieldDecorator(`yLastName${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.lastName}
+                        placeholder={AppConstants.lastName}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "lastName", index )} 
+                        setFieldsValue={item.yourInfo.lastName}
+                    />
+                    )}
+                </Form.Item>
+                <Form.Item >
+                    {getFieldDecorator(`yMobileNumber${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.contactField }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.contactMobile}
+                        placeholder={AppConstants.contactMobile}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "mobileNumber", index )} 
+                        setFieldsValue={item.yourInfo.mobileNumber}
+                    />
+                    )}
+                </Form.Item>
+                <Form.Item >
+                    {getFieldDecorator(`yEmail${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.contactEmail}
+                        placeholder={AppConstants.contactEmail}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "email", index )} 
+                        setFieldsValue={item.yourInfo.email}
+                    />
+                    )}
+                </Form.Item>
+                <Form.Item >
+                    {getFieldDecorator(`yReEnterEmail${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.reenterEmail}
+                        placeholder={AppConstants.reenterEmail}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "reEnterEmail", index )} 
+                        setFieldsValue={item.yourInfo.reEnterEmail}
+                    />
+                    )}
+                </Form.Item>
+                <InputWithHead heading={AppConstants.photo} />
+                <div className="fluid-width">
+                    <div className="row">
+                        <div className="col-sm-6">
+                            <div className="reg-competition-logo-view" onClick={ () => this.selectYourInfoImage(index)}>
+                                <label>
+                                    <img
+                                        src={item.yourInfo.profileUrl == null ? AppImages.circleImage  : item.yourInfo.profileUrl}
+                                        alt=""
+                                        height="120"
+                                        width="120"
+                                        style={{ borderRadius: 60 }}
+                                        name={'image'}
+                                        onError={ev => {
+                                            ev.target.src = AppImages.circleImage;
+                                        }}
+                                    />
+                                </label>
+
+                            </div>
+                            <input
+                                type="file"
+                                id= {"user-your-info-pic" + index} 
+                                style={{ display: 'none' }}
+                                onChange={(evt) => this.setImage(evt.target, index, "yourInfoPhoto")} />
+
+                        </div>
+                    </div>
+                </div>
+
+                <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
+                <Form.Item >
+                    {getFieldDecorator(`yStreet1${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.addressField}],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.addressOne}
+                        placeholder={AppConstants.addressOne}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "street1", index )} 
+                        setFieldsValue={item.yourInfo.street1}
+                    />
+                    )}
+                </Form.Item>
+                <InputWithHead
+                    heading={AppConstants.addressTwo}
+                    placeholder={AppConstants.addressTwo}
+                    onChange={(e) => this.onChangeSetYourInfo(e.target.value, "street2", index )} 
+                    value={item.yourInfo.street2}
+                />
+                <Form.Item >
+                    {getFieldDecorator(`ySuburb${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.suburb}
+                        placeholder={AppConstants.suburb}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "suburb", index )} 
+                        setFieldsValue={item.yourInfo.suburb}
+                    />
+                    )}
+                </Form.Item>
+
+                <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
+                <Form.Item >
+                    {getFieldDecorator(`yStateRefId${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                    })(
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        onChange={(e) => this.onChangeSetYourInfo(e, "stateRefId", index )}
+                        setFieldsValue={item.yourInfo.stateRefId}>
+                        {stateList.length > 0 && stateList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.name}</Option>
+                        ))
+                        }
+                    </Select>
+                    )}
+                </Form.Item>
+
+                <Form.Item >
+                    {getFieldDecorator(`yPostalCode${index}`, {
+                        rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                    })(
+                    <InputWithHead
+                        required={"required-field pt-0 pb-0"}
+                        heading={AppConstants.postcode}
+                        placeholder={AppConstants.postcode}
+                        onChange={(e) => this.onChangeSetYourInfo(e.target.value, "postalCode", index )} 
+                        setFieldsValue={item.yourInfo.postalCode}
+                    />
+                    )}
+                </Form.Item>
 
                 
             </div>
@@ -3928,6 +4206,7 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let commonRegSetting = registrationState.commonRegSetting;
+        let userInfo = registrationState.userInfo;
         //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
@@ -3960,6 +4239,10 @@ class AppRegistrationForm extends Component {
                             <div style={{marginBottom: "20px"}}>
                                 {this.membershipProductView(item, index, getFieldDecorator)}
                             </div>
+                            {(item.whoAreYouRegistering == 2 && userInfo!= null && userInfo.length > 0 && index == 0) &&
+                            <div style={{marginBottom: "20px"}}>
+                                {this.yourInfoView(item, index, getFieldDecorator)}
+                            </div> }
                             <div style={{marginBottom: "20px"}}>
                                 {this.participantDetailView(item, index, getFieldDecorator)}
                             </div>
@@ -4225,7 +4508,8 @@ function mapDispatchToProps(dispatch)
         clearRegistrationDataAction,
         updateRegistrationSettingsAction,
         updateTeamAction,
-        personRegisteringRoleReferenceAction
+        personRegisteringRoleReferenceAction,
+        updateYourInfoAction
     }, dispatch);
 
 }
