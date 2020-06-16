@@ -216,7 +216,7 @@ const teamColumns = [
         title: "Paying for?",
         dataIndex: "payingFor",
         key: "payingFor",
-        width: 80,
+        width: 100,
         render: (payingFor, record, index) => 
         {
             let registrationState = this_Obj.props.endUserRegistrationState;
