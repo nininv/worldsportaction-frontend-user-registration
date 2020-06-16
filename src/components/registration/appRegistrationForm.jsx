@@ -2090,21 +2090,21 @@ class AppRegistrationForm extends Component {
                         }
                     }
 
-                    for(let x = 0; x< userRegistrations.length; x++)
-                    {
-                        let userRegistration = userRegistrations[x];
-                        if(userRegistration.whoAreYouRegistering == 2 && x == 0){
-                            if(userRegistration.yourInfo!= null){
-                                if(userRegistration.yourInfo.profileUrl == null){
-                                    isError = true;
-                                    break;
-                                }
-                                else{
-                                    formData.append("yourInfoPhoto", userRegistration.yourInfo.participantPhoto);
-                                }
-                            }
-                        }
-                    }
+                    // for(let x = 0; x< userRegistrations.length; x++)
+                    // {
+                    //     let userRegistration = userRegistrations[x];
+                    //     if(userRegistration.whoAreYouRegistering == 2 && x == 0){
+                    //         if(userRegistration.yourInfo!= null){
+                    //             if(userRegistration.yourInfo.profileUrl == null){
+                    //                 isError = true;
+                    //                 break;
+                    //             }
+                    //             else{
+                    //                 formData.append("yourInfoPhoto", userRegistration.yourInfo.participantPhoto);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     
                     if(!isError)
                     {
@@ -2499,7 +2499,6 @@ class AppRegistrationForm extends Component {
 
     yourInfoView = (item, index, getFieldDecorator) => {
         const { stateList } = this.props.commonReducerState;
-        console.log("****************" + JSON.stringify(item.yourInfo))
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.yourInfo}</span>
@@ -2577,7 +2576,7 @@ class AppRegistrationForm extends Component {
                     />
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.photo} />
+                {/* <InputWithHead heading={AppConstants.photo} />
                 <div className="fluid-width">
                     <div className="row">
                         <div className="col-sm-6">
@@ -2605,7 +2604,7 @@ class AppRegistrationForm extends Component {
 
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
                 <Form.Item >
