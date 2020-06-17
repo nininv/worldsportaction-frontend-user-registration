@@ -873,7 +873,10 @@ const AppConstants = {
   personRegisteringRole: "Person Registering Role",
   personRegRoleRef: "PersonRegisteringRole",
   addAnotherRegitration: "ADD ANOTHER REGISTRATION"	,
-  yourInfo: "YourInfo"							   
+  yourInfo: "YourInfo",
+  teamRegisteringYourself: 	"Are you registering yourself",
+  registeringPerson: "Registering Person",
+  invitedTeamMember: "Invited Team Member"			   
 };
 
 export default AppConstants;

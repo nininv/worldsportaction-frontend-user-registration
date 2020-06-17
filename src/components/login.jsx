@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
+import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId } from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
 const loginFormSchema = Yup.object().shape({
@@ -35,7 +36,12 @@ class Login extends Component {
         let loginstate = this.props.loginstate;
 
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            history.push('/appRegistrationForm');
+            if(getExistingUserRefId && getRegisteringYourselfRefId && getUserRegId){
+                history.push("/teamRegistrationForm");
+            }
+            else{
+                history.push('/appRegistrationForm');
+            }
         }
     }
 

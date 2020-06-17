@@ -26,6 +26,7 @@ const initialState = {
     onLoad: false,
     onMembershipLoad: false,
     userInfoOnLoad: false,
+    onInvLoad:false,
     error: null,
     result: null,
     status: 0,
@@ -40,7 +41,11 @@ const initialState = {
     registrationId: null,
     participantIndex: null,
     commonRegSetting: commonRegSetting,
-    regSettings: []
+    regSettings: [],
+    invCompetitionDetails: null,
+    invUserInfo: null,
+    invUserRegDetails: null,
+    registrationSetting: {}
 }
 
 
@@ -174,6 +179,9 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
+            }
+            else{
+                state.registrationSetting = action.result;
             }
             return {
                 ...state,
@@ -357,6 +365,60 @@ function endUserRegistrationReducer(state = initialState, action) {
             return {
                 ...state
             };
+
+        case ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD:
+            return { ...state, onInvLoad: true };
+
+        case ApiConstants.API_GET_INVITED_TEAM_REG_INFO_SUCCESS:
+            let invData = action.result;
+            state.registrationId = invData.userRegDetails!= null ? invData.userRegDetails.registrationId: 0;
+            let invUser = null;
+            if(!invData.userInfo){
+                invUser = {userId: 0, street2: null}
+            }
+            else{
+                invUser = invData.userInfo
+            }
+            return {
+                ...state,
+                onInvLoad: false,
+                status: action.status,
+                invCompetitionDetails: invData.competitionDetails,
+                invUserInfo: invUser,
+                invUserRegDetails: invData.userRegDetails
+            };
+
+        case ApiConstants.UPDATE_TEAM_PARENT_INFO:
+            let parentInfo = state.invUserInfo;
+            if(parentInfo == null){
+                parentInfo = {}
+            }
+            parentInfo[action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            }
+
+        case ApiConstants.UPDATE_TEAM_REG_SETTINGS:
+            let regSet = state.invUserRegDetails;
+            if(regSet == null){
+                regSet = {};
+            }
+            regSet[action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            } 
+
+        case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD:
+            return { ...state, onLoad: true };
+
+        case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status
+            };   
 
         default:
             return state;

@@ -30,8 +30,6 @@ function updateEndUserRegisrationAction(data, key) {
     return action;
   }
 
-  
-
 /////Organisation Registration Registration Settings
 function orgRegistrationRegSettingsEndUserRegAction(payload) {
     const action = {
@@ -91,6 +89,43 @@ function updateYourInfoAction(data, index, key, subKey){
     }
     return action;
 }
+
+// 
+function getInvitedTeamRegInfoAction(payload) {
+    const action = {
+        type: ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
+function updateTeamParentInfoAction(data,key){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_PARENT_INFO,
+        data: data,
+        key: key
+    }
+    return action;
+}
+
+function updateTeamRegSettingAction(data,key){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_REG_SETTINGS,
+        data: data,
+        key: key
+    }
+    return action;
+}
+
+/////Update Team Registration Invite
+function updateTeamRegistrationInvite(payload) {
+    const action = {
+        type: ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -100,5 +135,9 @@ export {
     clearRegistrationDataAction,
     updateRegistrationSettingsAction,
     updateTeamAction,
-    updateYourInfoAction
+    updateYourInfoAction,
+    getInvitedTeamRegInfoAction,
+    updateTeamParentInfoAction,
+    updateTeamRegSettingAction,
+    updateTeamRegistrationInvite
 }

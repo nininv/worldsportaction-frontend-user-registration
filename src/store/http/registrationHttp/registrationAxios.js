@@ -112,6 +112,16 @@ let AxiosApi = {
         var url = `/api/registration/userinfo`;
         return Method.dataPost(url, token, payload);
     },
+    getInvitedTeamRegInfo(payload) {
+        var url = `/api/teamregistration/invite?userRegUniqueKey=${payload.userRegId}&userId=${payload.userId}`;
+        return Method.dataGet(url, token);
+    },
+    updateTeamRegistrationInvite(payload) {
+        var url = `/api/teamregistration/invite/update`;
+        return Method.dataPost(url, token, payload);
+    },
+
+    
     
 };
 

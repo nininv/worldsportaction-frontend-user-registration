@@ -103,6 +103,33 @@ const getliveScoreOrgID = () => {
     return localStorage.liveScoreOrgID
 }
 
+const setUserRegId=(userRegId)=>{
+    localStorage.setItem("userRegId", userRegId)
+}
+
+const getUserRegId = () => {
+    return localStorage.userRegId
+}
+
+const setExistingUserRefId = (existingUserRefId) => {
+    localStorage.setItem("existingUserRefId", existingUserRefId)
+}
+
+const getExistingUserRefId = () => {
+    return localStorage.existingUserRefId
+}
+
+
+const setRegisteringYourselfRefId = (registeringYourselfRefId) => {
+    localStorage.setItem("registeringYourselfRefId", registeringYourselfRefId)
+}
+
+const getRegisteringYourselfRefId = () => {
+    return localStorage.registeringYourselfRefId
+}
+
+
+
 
 module.exports = {
     setCompetitionID, getCompetitonId,
@@ -123,5 +150,8 @@ module.exports = {
     getOrganisationId,
     setOrganistaionId,
     setliveScoreOrgID,
-    getliveScoreOrgID
+    getliveScoreOrgID,
+    setUserRegId,getUserRegId,
+    setExistingUserRefId,getExistingUserRefId,
+    setRegisteringYourselfRefId,getRegisteringYourselfRefId
 }
