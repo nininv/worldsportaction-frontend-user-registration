@@ -399,11 +399,11 @@ class TeamRegistrationForm extends Component {
                     {item.membershipProductName == null || item.membershipProductName == "" ? AppConstants.noInformationProvided : 
                     item.membershipProductName}
                 </div>
-                <InputWithHead heading={AppConstants.firstName}/>
+                {/* <InputWithHead heading={AppConstants.firstName}/>
                 <div className="applicable-to-text">
                     {item.firstName == null || item.firstName == "" ? AppConstants.noInformationProvided : 
                     item.firstName}
-                </div>
+                </div> */}
                 <InputWithHead heading={AppConstants.firstName}/>
                 <div className="applicable-to-text">
                     {item.firstName == null || item.firstName == "" ? AppConstants.noInformationProvided : 
