@@ -36,7 +36,7 @@ class Login extends Component {
         let loginstate = this.props.loginstate;
 
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            if(getExistingUserRefId && getRegisteringYourselfRefId && getUserRegId){
+            if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
                 history.push("/teamRegistrationForm");
             }
             else{
