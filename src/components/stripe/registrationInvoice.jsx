@@ -43,12 +43,12 @@ class RegistrationInvoice extends Component {
         this.setState({ invoiceDisabled: paymentSuccess })
         this.getInvoiceStatusAPI()
 
-        
+
     }
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("841")
+        // this.props.getInvoiceStatusAction("999")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("841", invoiceId)
+            // this.props.getInvoice("999", invoiceId)
         }
     }
 
@@ -580,7 +580,7 @@ class RegistrationInvoice extends Component {
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
                             <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
-                                    required={"pr-4 pt-0"}
+                                    required={"pr-5 pt-0"}
                                     heading={"GST"}
                                 />
                             </div>
@@ -591,26 +591,29 @@ class RegistrationInvoice extends Component {
                             />
 
                         </div>
-                        <div className="row" >
+                        {/* <div className="row" >
                             <div className="col-sm" />
-                            <div className="col-sm"  >
-                                <div style={{ display: 'flex', height: "1px", justifyContent: "flex-end", backgroundColor: "rgba(0, 0, 0, 0.65)" }}
+                            <div className="col-sm-7"  >
+                                <div style={{ display: 'flex', height: "1px", marginLeft: 15, marginRight: 10, justifyContent: "flex-end", backgroundColor: "rgba(0, 0, 0, 0.65)" }}
                                 >
                                 </div>
                             </div>
 
-                        </div>
+                        </div> */}
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-
-                            <InputWithHead
-                                required={"pr-4 pt-0"}
-                                heading={"Amount Due"}
-                            />
-                            <InputWithHead
-                                required={"pt-0"}
-                                style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={"AUD" + " " + Number(amountTotal).toFixed(2)}
-                            />
+                            <div className="invoice-amount-border">
+                                <InputWithHead
+                                    required={"pr-4 pt-3"}
+                                    heading={"Amount Due"}
+                                />
+                            </div>
+                            <div className="invoice-amount-border">
+                                <InputWithHead
+                                    required={"pt-3"}
+                                    style={{ display: "flex", justifyContent: 'flex-start' }}
+                                    heading={"AUD" + " " + Number(amountTotal).toFixed(2)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
