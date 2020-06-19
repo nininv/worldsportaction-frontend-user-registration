@@ -2029,7 +2029,25 @@ class AppRegistrationForm extends Component {
 
         this.props.updateTeamAction(value, index, key, subKey, subIndex);
         if(key == "competitionUniqueKey"){
+            this.props.form.setFieldsValue({
+                [`competitionMembershipProductTypeId${index}`]:  null,
+                [`competitionMembershipProductDivisionId${index}`]:  null,
+                
+            });
             this.getRegistrationSettings(value, item.organisationUniqueKey, index);
+        }
+        else if(key == "organisationUniqueKey"){
+            this.props.form.setFieldsValue({
+                [`competitionUniqueKey${index}`]:  null,
+                [`competitionMembershipProductTypeId${index}`]:  null,
+                [`competitionMembershipProductDivisionId${index}`]:  null,
+                
+            });
+        }
+        else if(key == "competitionMembershipProductTypeId"){
+            this.props.form.setFieldsValue({
+                [`competitionMembershipProductDivisionId${index}`]:  null,
+            });
         }
     }
 
