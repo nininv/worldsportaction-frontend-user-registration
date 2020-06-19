@@ -93,4 +93,11 @@ export default function* root_saga() {
 
   /// Person Registering Role Reference Saga
    yield takeEvery(ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD, personRegisteringRoleReferenceSaga)
+
+  //EndUserRegistration Membership Products
+  yield takeEvery(ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD, endUserRegSaga.getInvitedTeamRegInfoSaga)
+
+  //Update Team Registration Invite
+  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
+
 }

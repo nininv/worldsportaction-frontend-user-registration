@@ -11,9 +11,12 @@ import Stripe from "../components/stripe/stripe";
 import RegistrationInvoice from "../components/stripe/registrationInvoice"
 
 // Live Score Screesn 
-
 import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder"
 import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
+
+import TeamRegistration from "../components/registration/teamRegistration";
+import TeamRegistrationForm from "../components/registration/teamRegistrationForm";
+
 const lazyLoad = Component => {
   const lazy = props => {
     return (
@@ -65,6 +68,18 @@ class Routes extends React.Component {
           path="/invoice"
           component={lazyLoad(RegistrationInvoice)}
         />
+
+        <PrivateRoute
+          path="/teamRegistration"
+          component={lazyLoad(TeamRegistration)}
+        />
+
+        <PrivateRoute
+          path="/teamRegistrationForm"
+          component={lazyLoad(TeamRegistrationForm)}
+        />
+          
+
 
         <Route path="/" component={lazyLoad(NotFound)} />
         <Redirect from="*" to="/404" />
