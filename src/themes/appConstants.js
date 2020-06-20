@@ -876,7 +876,13 @@ const AppConstants = {
   yourInfo: "YourInfo",
   teamRegisteringYourself: 	"Are you registering yourself",
   registeringPerson: "Registering Person",
-  invitedTeamMember: "Invited Team Member"			   
+  invitedTeamMember: "Invited Team Member",
+  parentOrGuardianDetail: 'Parent/Guardian Details',
+  emergencyContacts: 'Emergency Contacts',
+  otherInformation: 'Other Information',
+  countryOfBirth: 'Country of Birth',
+  userProfile: 'User Profile',
+  noDataAvailable: 'No Data Available',
 };
 
 export default AppConstants;

@@ -510,10 +510,13 @@ function addCoach(participant, action){
 }
 
 function updatePlayerData(participant, action){
+    console.log("updatePlayerData !!!!!!!::" +  action.key);
     if(action.key == "firstName" || action.key == "lastName" || action.key == "email"
     || action.key == "mobileNumber"){
+        console.log("updatePlayerData !!!!!!!::" + participant["team"]["players"]);
         if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
             let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
+            console.log("players:::" + JSON.stringify(players));
             if(players!= null && players.length > 0){
                 players.map((item,index) => {
                     item[action.key] = action.data;
