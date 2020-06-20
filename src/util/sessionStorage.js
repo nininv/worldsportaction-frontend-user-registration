@@ -129,6 +129,16 @@ const getRegisteringYourselfRefId = () => {
 }
 
 
+const setIsUserRegistration = (isUserRegistration) => {
+    localStorage.setItem("isUserRegistration", isUserRegistration)
+}
+
+const getIsUserRegistration = () => {
+    return localStorage.isUserRegistration
+}
+
+
+
 
 
 module.exports = {
@@ -153,5 +163,6 @@ module.exports = {
     getliveScoreOrgID,
     setUserRegId,getUserRegId,
     setExistingUserRefId,getExistingUserRefId,
-    setRegisteringYourselfRefId,getRegisteringYourselfRefId
+    setRegisteringYourselfRefId,getRegisteringYourselfRefId,
+    setIsUserRegistration, getIsUserRegistration
 }

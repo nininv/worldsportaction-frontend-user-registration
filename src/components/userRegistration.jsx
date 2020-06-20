@@ -5,7 +5,9 @@ import AppImages from "../themes/appImages";
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import "../pages/layout.css";
-import { setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId } from '../util/sessionStorage'
+import { setAuthToken, setUserId, setOrganistaionId, 
+    setCompetitionID, getAuthToken, getUserId,
+    setIsUserRegistration } from '../util/sessionStorage'
 import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
@@ -22,11 +24,13 @@ class UserRegistration extends Component {
 
     async componentDidMount() {
        // alert("componentDidMount");
+
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
         let userId = query.userId;
         let token = query.token;
+        
         if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined)
         {
             await setOrganistaionId(organisationUniqueKey);
@@ -55,15 +59,9 @@ class UserRegistration extends Component {
             userId!= "" && token!= "" &&
             userId!= 0)
             {
+                await setIsUserRegistration(1);
                 history.push("/appRegistrationForm")
             }
-    }
-
-    async componentWillMount(){
-
-    }
-
-    async componentWillUpdate(){ 
     }
 
     parseHttpHeaders(httpHeaders) {
@@ -86,6 +84,7 @@ class UserRegistration extends Component {
 
     onChange = async(value) => {
         console.log("value" + value)
+        await setIsUserRegistration(1);
         if(value === 1)
         {
             await localStorage.removeItem("userId");
