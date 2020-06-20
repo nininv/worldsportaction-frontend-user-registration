@@ -211,6 +211,7 @@ function endUserRegistrationReducer(state = initialState, action) {
 		case ApiConstants.UPDATE_TEAM_ACTION:
            // console.log("action.index::" + action.index);
             let participant = state.registrationDetail.userRegistrations[action.index];
+           
             if(action.subKey == "participant"){
                 if(action.key == "organisationUniqueKey"){
                     let membershipProductInfo = state.membershipProductInfo;
@@ -228,12 +229,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.contactDetails = null;
                     participant.divisionName = null;
                     participant.venue = [];
-                    // this.props.form.setFieldsValue({
-                    //     [`competitionUniqueKey${index}`]:  null,
-                    //     [`competitionMembershipProductTypeId${index}`]:  null,
-                    //     [`competitionMembershipProductDivisionId${index}`]:  null,
-                        
-                    // });
+             
                 }
                 else if(action.key == "competitionUniqueKey"){
                     let competitionInfo = participant.organisationInfo.competitions.
@@ -249,17 +245,13 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
                     participant.products = [];
                     participant.divisionName = null;
-                    // this.props.form.setFieldsValue({
-                    //     [`competitionMembershipProductTypeId${index}`]:  null,
-                    //     [`competitionMembershipProductDivisionId${index}`]:  null,
-                    // });
                 }
                 else if(action.key == "competitionMembershipProductTypeId"){
                     let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
                         action.data);
                     let divisions = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
                         action.data).divisions;
-                        console.log("Divisions:" + JSON.stringify(divisions));
+                        //console.log("Divisions:" + JSON.stringify(divisions));
                         if(divisions!= null && divisions!= undefined && divisions.length > 0)
                         {
                             participant[action.key] = action.data;											
@@ -272,9 +264,6 @@ function endUserRegistrationReducer(state = initialState, action) {
                             }
                             else{
                                 participant.competitionMembershipProductDivisionId = null;
-                                // this.props.form.setFieldsValue({
-                                //     [`competitionMembershipProductDivisionId${index}`]:  null,
-                                // });
                                 participant["divisions"] = divisions;
                             }
 
@@ -444,7 +433,7 @@ function addReadOnlyPlayer(participant, action){
 function removeExistingPlayer(participant){
     if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
         let players = participant["team"]["players"].filter(x=>x.isDisabled == false);
-        console.log("players" + JSON.stringify(players));
+        //console.log("players" + JSON.stringify(players));
         // if(players!= null && players.length > 0){
         //     let indexArr = [];
         //     console.log("players" + JSON.stringify(players));
@@ -510,13 +499,13 @@ function addCoach(participant, action){
 }
 
 function updatePlayerData(participant, action){
-    console.log("updatePlayerData !!!!!!!::" +  action.key);
+    //console.log("updatePlayerData !!!!!!!::" +  action.key);
     if(action.key == "firstName" || action.key == "lastName" || action.key == "email"
     || action.key == "mobileNumber"){
-        console.log("updatePlayerData !!!!!!!::" + participant["team"]["players"]);
+        //console.log("updatePlayerData !!!!!!!::" + JSON.stringify(participant["team"]["players"]));
         if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
             let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
-            console.log("players:::" + JSON.stringify(players));
+            //console.log("players:::" + JSON.stringify(players));
             if(players!= null && players.length > 0){
                 players.map((item,index) => {
                     item[action.key] = action.data;

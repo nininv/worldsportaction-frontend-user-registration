@@ -64,7 +64,7 @@ const teamColumns = [
 
             return (
                 <Form.Item >
-                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${index}`, {
+                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
                     })(
                         <Select
@@ -98,7 +98,7 @@ const teamColumns = [
             return (
 
                 <Form.Item >
-                    {getFieldDecorator(`playerFirstName${index}`, {
+                    {getFieldDecorator(`playerFirstName${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                     })(
                         <InputWithHead
@@ -124,7 +124,7 @@ const teamColumns = [
             return (
 
                 <Form.Item >
-                    {getFieldDecorator(`playerLastName${index}`, {
+                    {getFieldDecorator(`playerLastName${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                     })(
                         <InputWithHead
@@ -175,7 +175,7 @@ const teamColumns = [
             const { getFieldDecorator } = this_Obj.props.form;
             return (
                 <Form.Item >
-                    {getFieldDecorator(`playerEmail${index}`, {
+                    {getFieldDecorator(`playerEmail${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
@@ -198,7 +198,7 @@ const teamColumns = [
             const { getFieldDecorator } = this_Obj.props.form;
             return (
                 <Form.Item >
-                    {getFieldDecorator(`playerMobileNumber${index}`, {
+                    {getFieldDecorator(`playerMobileNumber${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
@@ -224,9 +224,11 @@ const teamColumns = [
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[record.index]; 
             let registrationTypeId = 1;
-            let team = userRegistration.team;
-            if(team!= null && team.registrationTypeId!= null && team.registrationTypeId!= undefined){
-                registrationTypeId = team.registrationTypeId;
+            if(userRegistration!= null){
+                let team = userRegistration.team;
+                if(team!= null && team.registrationTypeId!= null && team.registrationTypeId!= undefined){
+                    registrationTypeId = team.registrationTypeId;
+                }
             }
             
             return (
@@ -280,7 +282,7 @@ const teamColumnsOnBehalf = [
 
             return (
                 <Form.Item >
-                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${index}`, {
+                    {getFieldDecorator(`tCompetitionMembershipProductTypeId${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
                     })(
                         <Select
@@ -314,7 +316,7 @@ const teamColumnsOnBehalf = [
             return (
 
                 <Form.Item >
-                    {getFieldDecorator(`playerFirstName${index}`, {
+                    {getFieldDecorator(`playerFirstName${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                     })(
                         <InputWithHead
@@ -340,7 +342,7 @@ const teamColumnsOnBehalf = [
             return (
 
                 <Form.Item >
-                    {getFieldDecorator(`playerLastName${index}`, {
+                    {getFieldDecorator(`playerLastName${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                     })(
                         <InputWithHead
@@ -391,7 +393,7 @@ const teamColumnsOnBehalf = [
             const { getFieldDecorator } = this_Obj.props.form;
             return (
                 <Form.Item >
-                    {getFieldDecorator(`playerEmail${index}`, {
+                    {getFieldDecorator(`playerEmail${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
@@ -414,7 +416,7 @@ const teamColumnsOnBehalf = [
             const { getFieldDecorator } = this_Obj.props.form;
             return (
                 <Form.Item >
-                    {getFieldDecorator(`playerMobileNumber${index}`, {
+                    {getFieldDecorator(`playerMobileNumber${record.index}${index}`, {
                         rules: [{ required: true, message: ValidationConstants.contactField }],
                     })(
                         <InputWithHead className="input-inside-table-venue-court"
@@ -552,6 +554,8 @@ class AppRegistrationForm extends Component {
                         registrationId: registrationId,
 						paymentSuccess: false					 
                     })
+
+                    this.clearLocalStorage();
                     // history.push('/appRegistrationSuccess');
                 }
             }
@@ -584,7 +588,7 @@ class AppRegistrationForm extends Component {
             this.setParentFormFields(this.state.participantIndex);
        }
 
-       if(registrationState.refFlag === "parent")
+       if(registrationState.refFlag === "product")
        {
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.setProductFormFields(this.state.participantIndex);
@@ -655,12 +659,12 @@ class AppRegistrationForm extends Component {
 
             (item.team.players || []).map((it, pIndex) => {
                 this.props.form.setFieldsValue({
-                    [`tCompetitionMembershipProductTypeId${pIndex}`]:  it.competitionMembershipProductTypeId,
-                    [`playerFirstName${pIndex}`]:  it.firstName,
-                    [`playerLastName${pIndex}`]: it.lastName,
-                    [`playerEmail${pIndex}`]: it.email,
-                    [`playerMobileNumber${pIndex}`]: it.mobileNumber,
-                    [`playerDateOfBirth${pIndex}`]: it.dateOfBirth
+                    [`tCompetitionMembershipProductTypeId${index}${pIndex}`]:  it.competitionMembershipProductTypeId,
+                    [`playerFirstName${index}${pIndex}`]:  it.firstName,
+                    [`playerLastName${index}${pIndex}`]: it.lastName,
+                    [`playerEmail${index}${pIndex}`]: it.email,
+                    [`playerMobileNumber${index}${pIndex}`]: it.mobileNumber,
+                    [`playerDateOfBirth${index}${pIndex}`]: it.dateOfBirth
                 });
             })
         })
@@ -2028,26 +2032,28 @@ class AppRegistrationForm extends Component {
     onChangeSetTeam = (value, key, index, subKey, subIndex, item) => {
 
         this.props.updateTeamAction(value, index, key, subKey, subIndex);
-        if(key == "competitionUniqueKey"){
-            this.props.form.setFieldsValue({
-                [`competitionMembershipProductTypeId${index}`]:  null,
-                [`competitionMembershipProductDivisionId${index}`]:  null,
-                
-            });
-            this.getRegistrationSettings(value, item.organisationUniqueKey, index);
-        }
-        else if(key == "organisationUniqueKey"){
-            this.props.form.setFieldsValue({
-                [`competitionUniqueKey${index}`]:  null,
-                [`competitionMembershipProductTypeId${index}`]:  null,
-                [`competitionMembershipProductDivisionId${index}`]:  null,
-                
-            });
-        }
-        else if(key == "competitionMembershipProductTypeId"){
-            this.props.form.setFieldsValue({
-                [`competitionMembershipProductDivisionId${index}`]:  null,
-            });
+        if(subKey == "participant"){
+            if(key == "competitionUniqueKey"){
+                this.props.form.setFieldsValue({
+                    [`competitionMembershipProductTypeId${index}`]:  null,
+                    [`competitionMembershipProductDivisionId${index}`]:  null,
+                    
+                });
+                this.getRegistrationSettings(value, item.organisationUniqueKey, index);
+            }
+            else if(key == "organisationUniqueKey"){
+                this.props.form.setFieldsValue({
+                    [`competitionUniqueKey${index}`]:  null,
+                    [`competitionMembershipProductTypeId${index}`]:  null,
+                    [`competitionMembershipProductDivisionId${index}`]:  null,
+                    
+                });
+            }
+            else if(key == "competitionMembershipProductTypeId"){
+                this.props.form.setFieldsValue({
+                    [`competitionMembershipProductDivisionId${index}`]:  null,
+                });
+            }
         }
     }
 
@@ -2181,6 +2187,14 @@ class AppRegistrationForm extends Component {
             }
         });
     }
+
+    clearLocalStorage = () => {
+        localStorage.removeItem("isUserRegistration");
+        localStorage.removeItem("registeringYourselfRefId");
+        localStorage.removeItem("existingUserRefId");
+        localStorage.removeItem("userRegId");
+    }
+
     ///////view for breadcrumb
     headerView = () => {
         return (
