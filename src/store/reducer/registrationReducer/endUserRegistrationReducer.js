@@ -26,6 +26,7 @@ const initialState = {
     onLoad: false,
     onMembershipLoad: false,
     userInfoOnLoad: false,
+    onInvLoad:false,
     error: null,
     result: null,
     status: 0,
@@ -40,7 +41,11 @@ const initialState = {
     registrationId: null,
     participantIndex: null,
     commonRegSetting: commonRegSetting,
-    regSettings: []
+    regSettings: [],
+    invCompetitionDetails: null,
+    invUserInfo: null,
+    invUserRegDetails: null,
+    registrationSetting: {}
 }
 
 
@@ -79,7 +84,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let getKey = action.key;
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
-                getKey == "participantIndex") {
+                getKey == "participantIndex" || getKey == "populateYourInfo") {
                 state[getKey] = updatedValue;
             }
             else {
@@ -175,6 +180,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
             }
+            else{
+                state.registrationSetting = action.result;
+            }
             return {
                 ...state,
                 onLoad: false,
@@ -192,6 +200,14 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status,
                 userInfo: userInfoData
             };
+        case ApiConstants.UPDATE_YOUR_INFO_ACTION:
+            let partUser = state.registrationDetail.userRegistrations[action.index];
+            partUser[action.subKey][action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            }
+
 		case ApiConstants.UPDATE_TEAM_ACTION:
            // console.log("action.index::" + action.index);
             let participant = state.registrationDetail.userRegistrations[action.index];
@@ -277,12 +293,21 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else if(action.subKey == "team"){
                 participant[action.subKey][action.key] = action.data;
+
+                if(action.key == "personRoleRefId" || action.key == "registeringAsAPlayer")
+                {
+                    addReadOnlyPlayer(participant, action)
+                }
+            
+                updatePlayerData(participant, action);
+                state.refFlag = "players";
             }
             else if(action.subKey == "players"){
                 if(action.key == "addPlayer"){
                     let obj = {
                         competitionMembershipProductTypeId:0,firstName: null, lastName: null,
-                         email: null, mobileNumber: null, payingFor: null, index: action.index
+                         email: null, mobileNumber: null, payingFor: null, index: action.index,
+                         isDisabled: false
                     }
                     if(participant["team"][action.subKey]){
                         participant["team"][action.subKey].push(obj);
@@ -341,8 +366,160 @@ function endUserRegistrationReducer(state = initialState, action) {
                 ...state
             };
 
+        case ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD:
+            return { ...state, onInvLoad: true };
+
+        case ApiConstants.API_GET_INVITED_TEAM_REG_INFO_SUCCESS:
+            let invData = action.result;
+            state.registrationId = invData.userRegDetails!= null ? invData.userRegDetails.registrationId: 0;
+            let invUser = null;
+            if(!invData.userInfo){
+                invUser = {userId: 0, street2: null}
+            }
+            else{
+                invUser = invData.userInfo
+            }
+            return {
+                ...state,
+                onInvLoad: false,
+                status: action.status,
+                invCompetitionDetails: invData.competitionDetails,
+                invUserInfo: invUser,
+                invUserRegDetails: invData.userRegDetails
+            };
+
+        case ApiConstants.UPDATE_TEAM_PARENT_INFO:
+            let parentInfo = state.invUserInfo;
+            if(parentInfo == null){
+                parentInfo = {}
+            }
+            parentInfo[action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            }
+
+        case ApiConstants.UPDATE_TEAM_REG_SETTINGS:
+            let regSet = state.invUserRegDetails;
+            if(regSet == null){
+                regSet = {};
+            }
+            regSet[action.key] = action.data;
+            return {
+                ...state,
+                error: null
+            } 
+
+        case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD:
+            return { ...state, onLoad: true };
+
+        case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status
+            };   
+
         default:
             return state;
+    }
+}
+
+function addReadOnlyPlayer(participant, action){
+    removeExistingPlayer(participant);
+                
+    if(participant[action.subKey]["registeringAsAPlayer"] == 1){
+        addPlayer(participant, action);
+        if(participant[action.subKey]["personRoleRefId"] == 2){
+            addCoach(participant, action);
+        }
+    }
+    else {
+        if(participant[action.subKey]["personRoleRefId"] == 2){
+            addCoach(participant,action);
+        }
+    }
+}
+
+function removeExistingPlayer(participant){
+    if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
+        let players = participant["team"]["players"].filter(x=>x.isDisabled == false);
+        console.log("players" + JSON.stringify(players));
+        // if(players!= null && players.length > 0){
+        //     let indexArr = [];
+        //     console.log("players" + JSON.stringify(players));
+        //     players.map((item,index) => {
+        //         indexArr.push(index);
+        //     })
+        //     console.log("indexArr" + JSON.stringify(indexArr));
+        //     indexArr.map((item, index) => {
+        //         players.splice(item,1);
+        //     })
+        //     console.log("players After" + JSON.stringify(players));
+
+        // }
+
+        participant["team"]["players"] = (players!= null && players!= undefined) ? players : [];
+    }
+}
+
+function addPlayer(participant, action){
+    let obj = {
+        competitionMembershipProductTypeId:participant["competitionMembershipProductTypeId"],
+        firstName: participant[action.subKey]["firstName"], 
+        lastName: participant[action.subKey]["lastName"],
+        email: participant[action.subKey]["email"], 
+        mobileNumber: participant[action.subKey]["mobileNumber"],
+        payingFor: true,
+        index: action.index,
+        isDisabled: true
+    }
+    if(participant["team"]["players"]){
+        participant["team"]["players"].push(obj);
+    }
+    else{
+        participant["team"]["players"] = [];
+        participant["team"]["players"].push(obj);
+    }
+}
+
+function addCoach(participant, action){
+    let memProds = participant.competitionInfo.membershipProducts;
+    if(memProds!= null && memProds.length > 0){
+        let memProd = memProds.find(x=>x.shortName == "Coach");
+        if(memProd!= null && memProd!= undefined){
+            let obj = {
+                competitionMembershipProductTypeId:memProd["competitionMembershipProductTypeId"],
+                firstName: participant[action.subKey]["firstName"], 
+                lastName: participant[action.subKey]["lastName"],
+                email: participant[action.subKey]["email"], 
+                mobileNumber: participant[action.subKey]["mobileNumber"],
+                payingFor: true,
+                index: action.index,
+                isDisabled: true
+            }
+            if(participant["team"]["players"]){
+                participant["team"]["players"].push(obj);
+            }
+            else{
+                participant["team"]["players"] = [];
+                participant["team"]["players"].push(obj);
+            }
+        }
+    }
+}
+
+function updatePlayerData(participant, action){
+    if(action.key == "firstName" || action.key == "lastName" || action.key == "email"
+    || action.key == "mobileNumber"){
+        if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
+            let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
+            if(players!= null && players.length > 0){
+                players.map((item,index) => {
+                    item[action.key] = action.data;
+                })
+            }
+        }
     }
 }
 

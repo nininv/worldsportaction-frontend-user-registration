@@ -187,6 +187,12 @@ display: flex;
   flex-direction: column;
 }
 
+.invoice-amount-border{
+  border-top-style: solid;
+   border-top-width: 1px;
+   border-top-color: var(--app-4c4c6d);
+}
+
 @media (max-width: 767px) {
   .invoiceImage{
     display: flex;

@@ -104,3 +104,42 @@ export function* endUserRegistrationUserInfoSaga(action) {
     yield call(errorSaga, error)
   }
 }
+
+////// Get Invited Team Reg Info
+export function* getInvitedTeamRegInfoSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getInvitedTeamRegInfo, 
+          action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_INVITED_TEAM_REG_INFO_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+ 
+////// Team Registration Invite Update
+export function* teamRegistrationInviteUpdateSaga(action) {
+  try {
+    const result = yield call(AxiosApi.updateTeamRegistrationInvite, 
+          action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
