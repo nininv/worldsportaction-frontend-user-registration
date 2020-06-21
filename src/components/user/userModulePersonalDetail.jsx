@@ -1337,7 +1337,7 @@ class UserModulePersonalDetail extends Component {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
-                <InnerHorizontalMenu menu={"user"} userSelectedKey={"1"} />
+                {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"1"} /> */}
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
                         <div className="fluid-width" >
