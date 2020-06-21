@@ -174,6 +174,9 @@ class UserProfileEdit extends Component {
                 data["disabilityTypeRefId"] = null;
             }
         }
+        else if (key == "dateOfBirth"){
+            value = (moment(value).format("YYYY-MM-DD"))
+        }
         data[key] = value;
       
         this.setState({userData: data});
@@ -833,7 +836,7 @@ class UserProfileEdit extends Component {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} onMenuHeadingClick ={()=>history.push("./userTextualDashboard")}/>
-                <InnerHorizontalMenu menu={"user"} userSelectedKey={"5"} />
+                {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"5"} /> */}
                 <Layout>
                     {this.headerView()}
                     <Form

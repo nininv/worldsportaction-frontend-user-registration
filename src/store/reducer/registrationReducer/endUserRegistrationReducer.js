@@ -19,9 +19,6 @@ let commonRegSetting = {
     voucher: 0
 }
 
-
-
-
 const initialState = {
     onLoad: false,
     onMembershipLoad: false,
@@ -339,6 +336,11 @@ function endUserRegistrationReducer(state = initialState, action) {
                 userRegistrations: [],
                 vouchers: []
             }
+            let commonRegSetting1 = {
+                club_volunteer: 0,
+                shop: 0,
+                voucher: 0
+            }
 
             state.status = 0;
             state.registrationDetail = registrationObj1;
@@ -349,6 +351,14 @@ function endUserRegistrationReducer(state = initialState, action) {
             state.user = null;
             state.userInfo = [];
             state.isSetCompOrgKey = false;
+            state.registrationId = null;
+            state.participantIndex =  null;
+            state.commonRegSetting = commonRegSetting1;
+            state.regSettings = [];
+            state.invCompetitionDetails =  null;
+            state.invUserInfo = null;
+            state.invUserRegDetails =  null;
+            state.registrationSetting = {}
 
            // console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {

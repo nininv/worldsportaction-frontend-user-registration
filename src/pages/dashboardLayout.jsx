@@ -111,11 +111,24 @@ class DashboardLayout extends React.Component {
     history.push("./")
   }
 
+  navigateTo = async () => {
+    console.log("navigateTo")
+    await this.clearLocalStorage();
+    history.push("/userPersonal")
+  }
+
+  clearLocalStorage =  () => {
+    localStorage.removeItem("isUserRegistration");
+    localStorage.removeItem("registeringYourselfRefId");
+    localStorage.removeItem("existingUserRefId");
+    localStorage.removeItem("userRegId");
+}
+
+
   ///////user profile dropdown
   userProfileDropdown() {
     let userData = this.props.userState.getUserOrganisation
     let selectedOrgData = getOrganisationData()
-    console.log("*********" + getPhotoUrl())
     let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
         getPhotoUrl() : AppImages.defaultUser)
    
@@ -144,7 +157,7 @@ class DashboardLayout extends React.Component {
               </div>
               <div className="media-body">
                 {
-                  <span className="user-name">
+                  <span className="user-name pointer" onClick={() => this.navigateTo() }>
                     {getName()}
                   </span>
                  }

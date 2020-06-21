@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox } from 'antd';
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -15,13 +15,15 @@ import {
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
     getUserModuleActivityManagerAction
 } from "../../store/actions/userAction/userAction";
+import { clearRegistrationDataAction } from 
+            '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
 import { getUserId } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
-
+import Loader from '../../customComponents/loader';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -30,31 +32,42 @@ const { SubMenu } = Menu;
 let this_Obj = null;
 let section = null ;
 const columns = [
-
+    {
+        title: "",
+        dataIndex: "pay",
+        key: "pay",
+        width: 20,
+        render: (pay, record, index) => 
+        {
+            return (
+                <div>
+                    <Checkbox
+                        className="single-checkbox mt-1 d-flex justify-content-center" 
+                    ></Checkbox>
+                </div>
+            )
+        }
+    },
     {
         title: 'Affiliate',
         dataIndex: 'affiliate',
-        key: 'affiliate',
-        sorter: (a, b) => a.affiliate.localeCompare(b.affiliate),
+        key: 'affiliate'
     },
     {
         title: 'Membership Product',
         dataIndex: 'membershipProduct',
-        key: 'membershipProduct',
-        sorter: (a, b) => a.membershipProduct.localeCompare(b.membershipProduct),
+        key: 'membershipProduct'
     },
     {
         title: 'Membership Type',
         dataIndex: 'membershipType',
-        key: 'membershipType',
-        sorter: (a, b) => a.membershipType.localeCompare(b.membershipType),
+        key: 'membershipType'
     },
     {
         title: 'Fees Paid (Incl. GST)',
         dataIndex: 'feesPaid',
         key: 'feesPaid',
-        width: 150,
-        sorter: (a, b) => a.feesPaid.localeCompare(b.feesPaid),
+        width: 120,
         render: (feesPaid, record, index) => {
             return (
                 <div>
@@ -66,14 +79,12 @@ const columns = [
     {
         title: 'Payment Method',
         dataIndex: 'vouchers',
-        key: 'vouchers',
-        sorter: (a, b) => a.vouchers.localeCompare(b.vouchers),
+        key: 'vouchers'
     },
     {
         title: 'Shop Purchases',
         dataIndex: 'shopPurchases',
-        key: 'shopPurchases',
-        sorter: (a, b) => a.shopPurchases.localeCompare(b.shopPurchases),
+        key: 'shopPurchases'
     },
     {
         title: "Reg.Form",
@@ -798,6 +809,7 @@ class UserModulePersonalDetail extends Component {
     };
 
     navigateTo = (screen) =>{
+        this.props.clearRegistrationDataAction();
         history.push(screen)
     }
 
@@ -1052,6 +1064,8 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalAddress}
                         dataSource={personalByCompData}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
+                        
                     />
                 </div>
 
@@ -1061,6 +1075,7 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalPrimaryContacts}
                         dataSource={primaryContacts}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
                     />
                 </div>
 
@@ -1070,6 +1085,7 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalEmergency}
                         dataSource={userState.personalEmergency}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
                     />
                 </div>
                 <div className="row ">
@@ -1178,7 +1194,7 @@ class UserModulePersonalDetail extends Component {
         let userRegistrationList = userState.userRegistrationList;
         let total = userState.userRegistrationDataTotalCount;
         return (
-            <div className="comp-dash-table-view mt-2">
+            <div className="mt-2">
                 <div className="table-responsive home-dash-table-view">
                     <Table className="home-dashboard-table"
                         columns={columns}
@@ -1340,7 +1356,7 @@ class UserModulePersonalDetail extends Component {
 
     render() {
         let {activityPlayerList, activityManagerList, activityScorerList, activityParentList} = this.props.userState;
-
+        let userState = this.props.userState;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
@@ -1386,6 +1402,7 @@ class UserModulePersonalDetail extends Component {
                                 </div>
                             </div>
                         </div>
+                        <Loader visible={this.props.userState.onMedicalLoad} />
                     </Content>
                 </Layout>
             </div>
@@ -1406,6 +1423,7 @@ function mapDispatchToProps(dispatch) {
         getUserModuleActivityScorerAction,
         getUserModuleActivityManagerAction,
         getOnlyYearListAction,
+        clearRegistrationDataAction
 
     }, dispatch);
 
@@ -1415,6 +1433,7 @@ function mapStatetoProps(state) {
     return {
         userState: state.UserState,
         appState: state.AppState,
+        endUserRegistrationState: state.EndUserRegistrationState,
     }
 }
 
