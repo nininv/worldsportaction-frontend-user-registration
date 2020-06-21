@@ -55,6 +55,13 @@ const columns = [
         key: 'feesPaid',
         width: 150,
         sorter: (a, b) => a.feesPaid.localeCompare(b.feesPaid),
+        render: (feesPaid, record, index) => {
+            return (
+                <div>
+                    {feesPaid != null ? '$'+feesPaid : ""}
+                </div>
+            )
+        }
     },
     {
         title: 'Payment Method',
