@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown } from 'antd';
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -50,13 +50,14 @@ const columns = [
         sorter: (a, b) => a.membershipType.localeCompare(b.membershipType),
     },
     {
-        title: 'Fees Paid',
+        title: 'Fees Paid (Incl. GST)',
         dataIndex: 'feesPaid',
         key: 'feesPaid',
+        width: 150,
         sorter: (a, b) => a.feesPaid.localeCompare(b.feesPaid),
     },
     {
-        title: 'Vouchers',
+        title: 'Payment Method',
         dataIndex: 'vouchers',
         key: 'vouchers',
         sorter: (a, b) => a.vouchers.localeCompare(b.vouchers),
@@ -533,6 +534,16 @@ const columnsMedical = [
     }
 ];
 
+const menu = (
+    <Menu>
+        <Menu.Item>
+            {AppConstants.transfer}
+      </Menu.Item>
+      <Menu.Item>
+            {AppConstants.deRegistration}
+      </Menu.Item>
+    </Menu>
+);
 
 class UserModulePersonalDetail extends Component {
     constructor(props) {
@@ -778,6 +789,10 @@ class UserModulePersonalDetail extends Component {
         }
         this.props.getUserModuleRegistrationAction(filter)
     };
+
+    navigateTo = (screen) =>{
+        history.push(screen)
+    }
 
     viewRegForm = async (item) => {
         await this.setState({ isRegistrationForm: true, registrationForm: item.registrationForm });
@@ -1292,13 +1307,26 @@ class UserModulePersonalDetail extends Component {
                         </Breadcrumb>
                     </Header >
                 </div>
-                {/* {(this.state.screenKey == "livescore" || this.state.screenKey == "umpireRoaster") && <div className="col-sm">
-                    <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                        <Button onClick={() => history.push(this.state.screen)} className='primary-add-comp-form' type='primary'>
-                            {this.state.screenKey == "umpireRoaster" ? AppConstants.backToUmpire : AppConstants.backToLiveScore}
-                        </Button>
-                    </div>
-                </div>} */}
+                { (this.state.tabKey == "5") && 
+                    <div className="col-sm" style={{display:'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+                        <div className="col-row" style={{display:'flex', alignItems: 'flex-end'}}>
+                            <div className="col-sm">
+                                <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='primary-add-comp-form' type='primary'>
+                                        {AppConstants.register}
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="col-sm">
+                                <Dropdown overlay={menu} placement="bottomLeft">
+                                    <Button className="primary-add-comp-form" type="primary">
+                                        {AppConstants.edit}
+                                    </Button>
+                                </Dropdown>
+                            </div>
+                        </div>
+                    </div> 
+                }
             </div>
         )
     }
