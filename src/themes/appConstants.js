@@ -883,6 +883,8 @@ const AppConstants = {
   countryOfBirth: 'Country of Birth',
   userProfile: 'User Profile',
   noDataAvailable: 'No Data Available',
+  transfer: "Transfer",
+  deRegistration: "De-registration"
 };
 
 export default AppConstants;

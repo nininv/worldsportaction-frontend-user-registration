@@ -162,7 +162,7 @@ class UserProfileEdit extends Component {
     setOtherInfoFormField = () => {
         let userData  = this.state.userData;
         this.props.form.setFieldsValue({
-            genderRefId: parseInt(userData.genderRefId)
+            genderRefId: userData.genderRefId!= null ?  parseInt(userData.genderRefId) : 0
         })
     }
 
@@ -173,6 +173,9 @@ class UserProfileEdit extends Component {
                 data["disabilityCareNumber"] = null;
                 data["disabilityTypeRefId"] = null;
             }
+        }
+        else if (key == "dateOfBirth"){
+            value = (moment(value).format("YYYY-MM-DD"))
         }
         data[key] = value;
       
@@ -624,8 +627,8 @@ class UserProfileEdit extends Component {
 
     otherInfoEdit = (getFieldDecorator) => {
         let userData = this.state.userData
-        const { countryList, nationalityList, genderData} = this.props.commonReducerState;
-        console.log()
+        const { countryList, nationalityList, genderList} = this.props.commonReducerState;
+       
         return (
             <div className="content-view pt-0">
                 <div className='row'>
@@ -658,7 +661,7 @@ class UserProfileEdit extends Component {
                                         className="reg-competition-radio"
                                         onChange={ (e) => this.onChangeSetValue(e.target.value, "genderRefId")}
                                         setFieldsValue={userData.genderRefId}>
-                                            {(genderData || []).map((gender, genderIndex) => (
+                                            {(genderList || []).map((gender, genderIndex) => (
                                                 <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
                                             ))}
                                     </Radio.Group>
@@ -833,7 +836,7 @@ class UserProfileEdit extends Component {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} onMenuHeadingClick ={()=>history.push("./userTextualDashboard")}/>
-                <InnerHorizontalMenu menu={"user"} userSelectedKey={"5"} />
+                {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"5"} /> */}
                 <Layout>
                     {this.headerView()}
                     <Form

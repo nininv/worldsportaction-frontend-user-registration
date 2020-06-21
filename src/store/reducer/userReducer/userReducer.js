@@ -37,6 +37,8 @@ const initialState = {
     userRegistrationPage: 1,
     userRegistrationTotalCount: 1,
     userRegistrationOnLoad: false,
+    onMedicalLoad:false,
+    onPersonLoad:false
 
 };
 
@@ -120,26 +122,26 @@ function userReducer(state = initialState, action) {
             };
 
         case ApiConstants.API_USER_MODULE_PERSONAL_BY_COMPETITION_LOAD:
-            return { ...state, onLoad: true };
+            return { ...state, onPersonLoad: true };
 
         case ApiConstants.API_USER_MODULE_PERSONAL_BY_COMPETITION_SUCCESS:
             let personalByCompData = action.result;
             return {
                 ...state,
-                onLoad: false,
+                onPersonLoad: false,
                 personalByCompData: personalByCompData,
                 status: action.status
             };
 
         case ApiConstants.API_USER_MODULE_MEDICAL_INFO_LOAD:
-            return { ...state, onLoad: true };
+            return { ...state, onMedicalLoad: true };
 
         case ApiConstants.API_USER_MODULE_MEDICAL_INFO_SUCCESS:
             let medicalData = action.result;
 
             return {
                 ...state,
-                onLoad: false,
+                onMedicalLoad: false,
                 medicalData: medicalData,
                 status: action.status
             };

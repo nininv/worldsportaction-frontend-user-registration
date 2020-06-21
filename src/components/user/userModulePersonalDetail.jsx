@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox } from 'antd';
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -15,13 +15,15 @@ import {
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
     getUserModuleActivityManagerAction
 } from "../../store/actions/userAction/userAction";
+import { clearRegistrationDataAction } from 
+            '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
 import { getUserId } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
-
+import Loader from '../../customComponents/loader';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -30,42 +32,59 @@ const { SubMenu } = Menu;
 let this_Obj = null;
 let section = null ;
 const columns = [
-
+    {
+        title: "",
+        dataIndex: "pay",
+        key: "pay",
+        width: 20,
+        render: (pay, record, index) => 
+        {
+            return (
+                <div>
+                    <Checkbox
+                        className="single-checkbox mt-1 d-flex justify-content-center" 
+                    ></Checkbox>
+                </div>
+            )
+        }
+    },
     {
         title: 'Affiliate',
         dataIndex: 'affiliate',
-        key: 'affiliate',
-        sorter: (a, b) => a.affiliate.localeCompare(b.affiliate),
+        key: 'affiliate'
     },
     {
         title: 'Membership Product',
         dataIndex: 'membershipProduct',
-        key: 'membershipProduct',
-        sorter: (a, b) => a.membershipProduct.localeCompare(b.membershipProduct),
+        key: 'membershipProduct'
     },
     {
         title: 'Membership Type',
         dataIndex: 'membershipType',
-        key: 'membershipType',
-        sorter: (a, b) => a.membershipType.localeCompare(b.membershipType),
+        key: 'membershipType'
     },
     {
-        title: 'Fees Paid',
+        title: 'Fees Paid (Incl. GST)',
         dataIndex: 'feesPaid',
         key: 'feesPaid',
-        sorter: (a, b) => a.feesPaid.localeCompare(b.feesPaid),
+        width: 120,
+        render: (feesPaid, record, index) => {
+            return (
+                <div>
+                    {feesPaid != null ? '$'+feesPaid : ""}
+                </div>
+            )
+        }
     },
     {
-        title: 'Vouchers',
+        title: 'Payment Method',
         dataIndex: 'vouchers',
-        key: 'vouchers',
-        sorter: (a, b) => a.vouchers.localeCompare(b.vouchers),
+        key: 'vouchers'
     },
     {
         title: 'Shop Purchases',
         dataIndex: 'shopPurchases',
-        key: 'shopPurchases',
-        sorter: (a, b) => a.shopPurchases.localeCompare(b.shopPurchases),
+        key: 'shopPurchases'
     },
     {
         title: "Reg.Form",
@@ -533,6 +552,16 @@ const columnsMedical = [
     }
 ];
 
+const menu = (
+    <Menu>
+        <Menu.Item>
+            {AppConstants.transfer}
+      </Menu.Item>
+      <Menu.Item>
+            {AppConstants.deRegistration}
+      </Menu.Item>
+    </Menu>
+);
 
 class UserModulePersonalDetail extends Component {
     constructor(props) {
@@ -778,6 +807,11 @@ class UserModulePersonalDetail extends Component {
         }
         this.props.getUserModuleRegistrationAction(filter)
     };
+
+    navigateTo = (screen) =>{
+        this.props.clearRegistrationDataAction();
+        history.push(screen)
+    }
 
     viewRegForm = async (item) => {
         await this.setState({ isRegistrationForm: true, registrationForm: item.registrationForm });
@@ -1030,6 +1064,8 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalAddress}
                         dataSource={personalByCompData}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
+                        
                     />
                 </div>
 
@@ -1039,6 +1075,7 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalPrimaryContacts}
                         dataSource={primaryContacts}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
                     />
                 </div>
 
@@ -1048,6 +1085,7 @@ class UserModulePersonalDetail extends Component {
                         columns={columnsPersonalEmergency}
                         dataSource={userState.personalEmergency}
                         pagination={false}
+                        loading={userState.onPersonLoad == true && true}
                     />
                 </div>
                 <div className="row ">
@@ -1156,7 +1194,7 @@ class UserModulePersonalDetail extends Component {
         let userRegistrationList = userState.userRegistrationList;
         let total = userState.userRegistrationDataTotalCount;
         return (
-            <div className="comp-dash-table-view mt-2">
+            <div className="mt-2">
                 <div className="table-responsive home-dash-table-view">
                     <Table className="home-dashboard-table"
                         columns={columns}
@@ -1292,24 +1330,37 @@ class UserModulePersonalDetail extends Component {
                         </Breadcrumb>
                     </Header >
                 </div>
-                {/* {(this.state.screenKey == "livescore" || this.state.screenKey == "umpireRoaster") && <div className="col-sm">
-                    <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                        <Button onClick={() => history.push(this.state.screen)} className='primary-add-comp-form' type='primary'>
-                            {this.state.screenKey == "umpireRoaster" ? AppConstants.backToUmpire : AppConstants.backToLiveScore}
-                        </Button>
-                    </div>
-                </div>} */}
+                { (this.state.tabKey == "5") && 
+                    <div className="col-sm" style={{display:'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+                        <div className="col-row" style={{display:'flex', alignItems: 'flex-end'}}>
+                            <div className="col-sm">
+                                <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='primary-add-comp-form' type='primary'>
+                                        {AppConstants.register}
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="col-sm">
+                                <Dropdown overlay={menu} placement="bottomLeft">
+                                    <Button className="primary-add-comp-form" type="primary">
+                                        {AppConstants.edit}
+                                    </Button>
+                                </Dropdown>
+                            </div>
+                        </div>
+                    </div> 
+                }
             </div>
         )
     }
 
     render() {
         let {activityPlayerList, activityManagerList, activityScorerList, activityParentList} = this.props.userState;
-
+        let userState = this.props.userState;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
-                <InnerHorizontalMenu menu={"user"} userSelectedKey={"1"} />
+                {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"1"} /> */}
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
                         <div className="fluid-width" >
@@ -1351,6 +1402,7 @@ class UserModulePersonalDetail extends Component {
                                 </div>
                             </div>
                         </div>
+                        <Loader visible={this.props.userState.onMedicalLoad} />
                     </Content>
                 </Layout>
             </div>
@@ -1371,6 +1423,7 @@ function mapDispatchToProps(dispatch) {
         getUserModuleActivityScorerAction,
         getUserModuleActivityManagerAction,
         getOnlyYearListAction,
+        clearRegistrationDataAction
 
     }, dispatch);
 
@@ -1380,6 +1433,7 @@ function mapStatetoProps(state) {
     return {
         userState: state.UserState,
         appState: state.AppState,
+        endUserRegistrationState: state.EndUserRegistrationState,
     }
 }
 
