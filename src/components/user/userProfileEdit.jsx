@@ -162,7 +162,7 @@ class UserProfileEdit extends Component {
     setOtherInfoFormField = () => {
         let userData  = this.state.userData;
         this.props.form.setFieldsValue({
-            genderRefId: parseInt(userData.genderRefId)
+            genderRefId: userData.genderRefId!= null ?  parseInt(userData.genderRefId) : 0
         })
     }
 
@@ -624,8 +624,8 @@ class UserProfileEdit extends Component {
 
     otherInfoEdit = (getFieldDecorator) => {
         let userData = this.state.userData
-        const { countryList, nationalityList, genderData} = this.props.commonReducerState;
-        console.log()
+        const { countryList, nationalityList, genderList} = this.props.commonReducerState;
+       
         return (
             <div className="content-view pt-0">
                 <div className='row'>
@@ -658,7 +658,7 @@ class UserProfileEdit extends Component {
                                         className="reg-competition-radio"
                                         onChange={ (e) => this.onChangeSetValue(e.target.value, "genderRefId")}
                                         setFieldsValue={userData.genderRefId}>
-                                            {(genderData || []).map((gender, genderIndex) => (
+                                            {(genderList || []).map((gender, genderIndex) => (
                                                 <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
                                             ))}
                                     </Radio.Group>
