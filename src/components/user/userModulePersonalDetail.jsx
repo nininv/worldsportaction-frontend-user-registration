@@ -343,13 +343,13 @@ const columnsPersonalAddress = [
     {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email',
-		width: 300		  
+        key: 'email'	  
     },
     {
         title: 'Action',
         dataIndex: 'isUsed',
         key: 'isUsed',
+        width:80,
         render: (data, record) => (
              <Menu
                 className="action-triple-dot-submenu" theme="light" mode="horizontal"
@@ -404,13 +404,13 @@ const columnsPersonalPrimaryContacts = [
     {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email',
-        width: 180
+        key: 'email'
     },
     {
         title: 'Action',
         dataIndex: 'isUser',
         key: 'isUser',
+        width:80,
         render: (data, record) => (
             <Menu className="action-triple-dot-submenu" theme="light"
                mode="horizontal" style={{ lineHeight: "25px" }}>
@@ -440,13 +440,13 @@ const columnsPersonalEmergency = [
     {
         title: 'Phone Number',
         dataIndex: 'emergencyContactNumber',
-        key: 'emergencyContactNumber',
-        width:450
+        key: 'emergencyContactNumber'
     },
     {
         title: 'Action',
         dataIndex: 'isUser',
         key: 'isUser',
+        width:80,
         render: (data, record) => (
             <Menu
                className="action-triple-dot-submenu" theme="light"

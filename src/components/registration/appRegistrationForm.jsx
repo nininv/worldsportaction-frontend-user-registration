@@ -61,6 +61,10 @@ const teamColumns = [
             let registrationDetail = registrationState.registrationDetail;
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[record.index]; 
+            let memProds = userRegistration!= null && userRegistration.competitionInfo!= null && 
+                            userRegistration.competitionInfo.membershipProducts!= null &&  
+                            userRegistration.competitionInfo.membershipProducts.filter(x=>x.allowTeamRegistrationTypeRefId!= null);
+           
 
             return (
                 <Form.Item >
@@ -74,9 +78,7 @@ const teamColumns = [
                             onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
                             setFieldsValue={competitionMembershipProductTypeId}
                             placeholder={'Type'}>
-                        {((userRegistration!= null && userRegistration.competitionInfo!= null && 
-                            userRegistration.competitionInfo.membershipProducts!= null &&  
-                            userRegistration.competitionInfo.membershipProducts) || []).map((mem, pIndex) => (
+                        {(memProds || []).map((mem, pIndex) => (
                                 <Option key={mem.competitionMembershipProductTypeId} 
                                 value={mem.competitionMembershipProductTypeId} >{mem.shortName}</Option>
                             ))
@@ -233,13 +235,14 @@ const teamColumns = [
             
             return (
                 <div>
+                    {(record.isPlayer == 1 || record.isPlayer == null) && 
                     <Checkbox
                         checked={registrationTypeId == 1 ? payingFor : true}
                         disabled = {record.isDisabled}
                         // disabled={registrationTypeId == 2 ? true : false}
                         className="single-checkbox mt-1 d-flex justify-content-center"
                         onChange={(e) => this_Obj.onChangeSetTeam(e.target.checked, "payingFor", record.index,  "players", index  )} 
-                    ></Checkbox>
+                    ></Checkbox>}
                 </div>
             )
         }
@@ -279,6 +282,10 @@ const teamColumnsOnBehalf = [
             let registrationDetail = registrationState.registrationDetail;
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[record.index]; 
+            let memProds = userRegistration!= null && userRegistration.competitionInfo!= null && 
+                            userRegistration.competitionInfo.membershipProducts!= null &&  
+                            userRegistration.competitionInfo.membershipProducts.filter(x=>x.allowTeamRegistrationTypeRefId!= null);
+           
 
             return (
                 <Form.Item >
@@ -292,9 +299,7 @@ const teamColumnsOnBehalf = [
                             onChange={(e) => this_Obj.onChangeSetTeam(e, "competitionMembershipProductTypeId", record.index, "players", index )}
                             setFieldsValue={competitionMembershipProductTypeId}
                             placeholder={'Type'}>
-                        {((userRegistration!= null && userRegistration.competitionInfo!= null && 
-                            userRegistration.competitionInfo.membershipProducts!= null &&  
-                            userRegistration.competitionInfo.membershipProducts) || []).map((mem, pIndex) => (
+                        {(memProds || []).map((mem, pIndex) => (
                                 <Option key={mem.competitionMembershipProductTypeId} 
                                 value={mem.competitionMembershipProductTypeId} >{mem.shortName}</Option>
                             ))
@@ -2148,11 +2153,13 @@ class AppRegistrationForm extends Component {
                             let memArr = [];
                             if(item.registeringYourself == 4){
                                 (item.competitionInfo.membershipProducts).map((i, ind) => {
-                                    let obj = {
-                                        competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
-                                        name: i.shortName
+                                    if(i.allowTeamRegistrationTypeRefId!= null){
+                                        let obj = {
+                                            competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
+                                            name: i.shortName
+                                        }
+                                        memArr.push(obj);
                                     }
-                                    memArr.push(obj);
                                 })
 
                                 if(item.team!= null && item.team.players!= null && item.team.players.length > 0){
@@ -3997,6 +4004,7 @@ class AppRegistrationForm extends Component {
 
     teamInfoView = (item, index, getFieldDecorator) => {
         const { stateList, personRegisteringRoleList } = this.props.commonReducerState;
+        //console.log("TEan::::" + JSON.stringify(item.team));
         return (
             <div className="formView content-view pt-5">
                  <Form.Item >
@@ -4186,7 +4194,7 @@ class AppRegistrationForm extends Component {
                     />
                     )}
                 </Form.Item>
-                {item.team.allowTeamRegistrationTypeRefId == 1 && 
+                {(item.team.allowTeamRegistrationTypeRefId == 1 && item.team.personRoleRefId!= 4) && 
                 <div>
                     <InputWithHead heading={AppConstants.areYouRegisteringAsPlayer} required={"required-field"}></InputWithHead>
                     <Radio.Group
