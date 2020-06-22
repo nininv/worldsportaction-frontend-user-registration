@@ -853,6 +853,48 @@ class AppRegistrationForm extends Component {
                     this.addParent(index, userRegistrations, item);
                 })
             }
+
+           (userInfo.friends || []).map((item, fIndex) => {
+               this.addFriend(index, "friend", "participant",null, item);
+           });
+
+           (userInfo.referFriends || []).map((item, fIndex) => {
+            this.addFriend(index, "referFriend", "participant",null, item);
+            })
+
+            if(userInfo.additionalInfo != null){
+                let addInfo = userInfo.additionalInfo;
+                participantObj.countryRefId = addInfo.countryRefId;
+                participantObj.disabilityCareNumber = addInfo.disabilityCareNumber
+                participantObj.disabilityTypeRefId = addInfo.disabilityTypeRefId
+                participantObj.existingMedicalCondition = addInfo.existingMedicalCondition
+                participantObj.favouriteFireBird = addInfo.favouriteFireBird
+                participantObj.favouriteTeamRefId = addInfo.favouriteTeamRefId
+                participantObj.heardByOther = addInfo.heardByOther
+                participantObj.heardByRefId = addInfo.heardByRefId
+                participantObj.isConsentPhotosGiven = addInfo.isConsentPhotosGiven
+                participantObj.isDisability = addInfo.isDisability
+                participantObj.languages = addInfo.languages
+                participantObj.lastCaptainName = addInfo.lastCaptainName
+                participantObj.nationalityRefId = addInfo.nationality
+                participantObj.playedBefore = addInfo.playedBefore
+                participantObj.playedClub = addInfo.playedClub
+                participantObj.playedGrade = addInfo.playedGrade
+                participantObj.regularMedication = addInfo.regularMedication
+                participantObj.positionId1 = addInfo.positionId1
+                participantObj.positionId2 = addInfo.positionId2
+               // participantObj.voucherLink = addInfo.voucherLink
+                if(addInfo.voucherLink!= null)
+                    this.addVoucher(participantObj, addInfo);
+            }
+            if(userInfo.registrationVolunteer!= null){
+                (this.state.volunteerList || []).map((info, index) => {
+                    let volun = (userInfo.registrationVolunteer.find(x=>x.registrationOtherInfoRefId == info.id));
+                    if(volun!= null){
+                    info.isActive = true;
+                    }
+                })
+            }
         }
     }
 
@@ -988,7 +1030,7 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
     }
 
-    addVoucher = () => {
+    addVoucher = (participantObj, userInfo) => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let vouchers = registrationDetail.vouchers;
@@ -996,21 +1038,29 @@ class AppRegistrationForm extends Component {
             tempParticipantId: null,
             voucherLink: ""
         }
+
+        if(participantObj!= null && userInfo!= null){
+            voucher.tempParticipantId = participantObj.tempParticipantId;
+            voucher.voucherLink = userInfo.voucherLink;
+        }
+
         vouchers.push(voucher);
         this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
     }
 
-    addFriend = (index, key, participantOrProduct, prodIndex) => {
+    addFriend = (index, key, participantOrProduct, prodIndex, data) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index];
        
         let friendObj = {
-            friendId: 0,
-            firstName:"",
-            lastName:"",
-            email:"",
-            mobileNumber:""
+            friendId: 0,firstName:"",lastName:"",email:"",mobileNumber:""
+        }
+        if(data!= null && data!= undefined){
+            friendObj = {
+                friendId: data.friendId,firstName:data.firstName,
+                lastName:data.lastName,email:data.email,mobileNumber:data.mobileNumber  
+            }
         }
         if(participantOrProduct === "participant")
         {
@@ -1485,7 +1535,6 @@ class AppRegistrationForm extends Component {
         this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         this.props.updateEndUserRegisrationAction(1, "populateParticipantDetails");
 
-        console.log("userRegistrations" + JSON.stringify(userRegistrations));
 
         userRegistration[key] = value;
 
@@ -1756,7 +1805,8 @@ class AppRegistrationForm extends Component {
     if(value == 4){
         if(userRegistrations.length == 1){
            let userReg =  userRegistrations[0];
-           let compInfo = userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
+           let compInfo = userReg.organisationInfo!= null && 
+                            userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
                && x.competitionUniqueKey == this.state.competitionUniqueKey);
            let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
                && x.organisationUniqueKey == this.state.organisationUniqueKey);
