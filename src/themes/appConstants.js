@@ -884,7 +884,8 @@ const AppConstants = {
   userProfile: 'User Profile',
   noDataAvailable: 'No Data Available',
   transfer: "Transfer",
-  deRegistration: "De-registration"
+  deRegistration: "De-registration",
+  emailValidationInfo : "Updating the email address will update the login information(User Name) while submitting this form. Please ensure that the information provided is correct.",
 };
 
 export default AppConstants;

@@ -1045,7 +1045,7 @@ class AppRegistrationForm extends Component {
         }
 
         vouchers.push(voucher);
-        this.props.updateEndUserRegisrationAction(vouchers, "vouchers");
+        this.props.updateEndUserRegisrationAction   (vouchers, "vouchers");
     }
 
     addFriend = (index, key, participantOrProduct, prodIndex, data) => {
@@ -2123,6 +2123,50 @@ class AppRegistrationForm extends Component {
         this.props.updateYourInfoAction(value, index, key, "yourInfo");
     }
 
+    showEmailValidationMsg = (item, index, key, value) =>{
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = registrationState.registrationDetail;
+        let userRegistrations = registrationDetail.userRegistrations;
+        let userRegistration = userRegistrations[index];
+        let userId = null;
+        let isValueChanged = false;
+        let modalShow = null;
+        if(key == "participant"){
+            userId = item.userId;
+            if(value != item.reEnterEmail){
+                isValueChanged = true
+            }
+            modalShow = item.modalShow;
+        }
+        else if(key == "yourInfo"){
+            userId = item.yourInfo.userId;
+            if(value != item.yourInfo.reEnterEmail){
+                isValueChanged = true
+            }
+            modalShow = item.yourInfo.modalShow;
+        }
+        if(!modalShow && userId != null && userId!= 0 && isValueChanged){
+            Modal.info({
+                content: (
+                  <div style={{paddingLeft:'11%'}}>
+                    <p>{AppConstants.emailValidationInfo}</p>
+                  </div>
+                ),
+                onOk() {},
+              });
+
+              if(key == "participant"){
+                userRegistration["modalShow"] = 1;
+              }
+              else if(key == "yourInfo"){
+                userRegistration["yourInfo"]["modalShow"] = 1;
+              }
+             
+              this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        }
+        
+    }
+
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
@@ -2655,6 +2699,7 @@ class AppRegistrationForm extends Component {
                         heading={AppConstants.contactEmail}
                         placeholder={AppConstants.contactEmail}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "email", index )} 
+                        onBlur = {(e) => this.showEmailValidationMsg(item, index, "yourInfo", e.target.value)}
                         setFieldsValue={item.yourInfo.email}
                     />
                     )}
@@ -2835,6 +2880,7 @@ class AppRegistrationForm extends Component {
                         heading={AppConstants.contactEmail}
                         placeholder={AppConstants.contactEmail}
                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email", index )} 
+                        onBlur = {(e) => this.showEmailValidationMsg(item, index, "participant", e.target.value)}
                         setFieldsValue={item.email}
                     />
                     )}
