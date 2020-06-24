@@ -879,6 +879,7 @@ class AppRegistrationForm extends Component {
                 participantObj.nationalityRefId = addInfo.nationality
                 participantObj.playedBefore = addInfo.playedBefore
                 participantObj.playedClub = addInfo.playedClub
+                participantObj.playedYear = addInfo.playedYear
                 participantObj.playedGrade = addInfo.playedGrade
                 participantObj.regularMedication = addInfo.regularMedication
                 participantObj.positionId1 = addInfo.positionId1
@@ -3286,7 +3287,7 @@ class AppRegistrationForm extends Component {
                                 <div className=" pl-5 pb-5">
                                     <InputWithHead heading={AppConstants.year} placeholder={AppConstants.year}
                                     onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "playedYear", index )} 
-                                    value={item.playedYear} 
+                                    value={item.playedYear!= null ? parseInt(item.playedYear) : item.playedYear} 
                                     maxLength={4}/>
 
                                     <InputWithHead heading={AppConstants.clubOther} placeholder={AppConstants.clubOther} 
