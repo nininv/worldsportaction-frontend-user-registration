@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("1092")
+        // this.props.getInvoiceStatusAction("1094")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("1092", invoiceId)
+            // this.props.getInvoice("1094", invoiceId)
         }
     }
 
@@ -165,12 +165,12 @@ class RegistrationInvoice extends Component {
                                             <span className="roundUpDescription-text">{item.organisationName}</span>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="E">
-                                                    {item.organiationEmailId}
+                                                    {item.organiationEmailId?item.organiationEmailId:"N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="Ph">
-                                                    {item.organiationPhoneNo}
+                                                    {item.organiationPhoneNo?item.organiationPhoneNo:"N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                         </div>
