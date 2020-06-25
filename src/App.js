@@ -46,10 +46,8 @@ function App() {
            <Route
             exact
             path="/"
-            render={() =>
-              (getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()) ? 
-                (<Redirect to="/teamRegistrationForm" />) : 
-                  ((getIsUserRegistration() == 1) ? (<Redirect to="/appRegistrationForm" />) : 
+           render={() =>
+              ( 
                     ( getUserId()!= 0  && getUserId()!= null && getUserId()!= undefined && 
                       getAuthToken() != null  && getAuthToken() != undefined)? (
                       <Redirect to="/userPersonal" />
@@ -58,9 +56,7 @@ function App() {
             }
           /> 
           <Route path="/login" component={lazyLoad(Login)} />
-          <Route path="/teamRegistrationForm" component={lazyLoad(TeamRegistrationForm)} />
           <Route path="/userPersonal" component={lazyLoad(UserModulePersonalDetail)} />
-          <Route path="/appRegistrationForm" component={lazyLoad(AppRegistrationForm)} />
           {/* <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} /> */}
           <PrivateRoute path="/" component={lazyLoad(Routes)} />
         </Switch>

@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("999")
+        // this.props.getInvoiceStatusAction("1094")
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("999", invoiceId)
+            // this.props.getInvoice("1094", invoiceId)
         }
     }
 
@@ -132,25 +132,31 @@ class RegistrationInvoice extends Component {
                                 </Descriptions.Item>
                             </Descriptions>
                         }
-                        {userDetail && (userDetail.suburb || userDetail.street1) &&
+                        {userDetail && userDetail.street1 &&
                             < Descriptions >
                                 <Descriptions.Item className="pb-0"  >
-                                    {userDetail.suburb} {" "}
-                                    {userDetail.street1} {' '}{userDetail.street2}
+                                    {userDetail.street1}
                                 </Descriptions.Item>
                             </Descriptions>
                         }
-                        {userDetail && userDetail.postalCode &&
+                        {userDetail && userDetail.street2 &&
+                            < Descriptions >
+                                <Descriptions.Item className="pb-0"  >
+                                    {userDetail.street2}
+                                </Descriptions.Item>
+                            </Descriptions>
+                        }
+                        {userDetail &&
                             < Descriptions >
                                 <Descriptions.Item >
-                                    {userDetail.postalCode} {" "}
+                                    {userDetail.suburb}{" "}{userDetail.state}{" "}{userDetail.postalCode}
                                 </Descriptions.Item>
                             </Descriptions>
                         }
                     </div>
 
 
-                    <div className="col-sm-4 mb-5">
+                    <div className="col-sm-5 mb-5">
                         <div >
                             {isArrayNotEmpty(getAffiliteDetailData) && getAffiliteDetailData.map((item, index) => {
                                 return (
@@ -159,12 +165,12 @@ class RegistrationInvoice extends Component {
                                             <span className="roundUpDescription-text">{item.organisationName}</span>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="E">
-                                                    {item.organiationEmailId}
+                                                    {item.organiationEmailId?item.organiationEmailId:"N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="Ph">
-                                                    {item.organiationPhoneNo}
+                                                    {item.organiationPhoneNo?item.organiationPhoneNo:"N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                         </div>

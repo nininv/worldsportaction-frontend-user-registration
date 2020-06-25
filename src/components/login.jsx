@@ -10,7 +10,7 @@ import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
 import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId, 
-    getIsUserRegistration } from '../util/sessionStorage'
+    getIsUserRegistration, getUserId } from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
 const loginFormSchema = Yup.object().shape({
@@ -27,14 +27,20 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        // if (localStorage.token != null) {
-        //     history.push("/")
-        // }
+        if(getUserId() == 0){
+            localStorage.removeItem("userId");
+            localStorage.removeItem("token");
+            localStorage.removeItem("isUserRegistration")
+            localStorage.removeItem("userRegId");
+            localStorage.removeItem("registeringYourselfRefId");
+            localStorage.removeItem("existingUserRefId");
+        }
     }
 
     componentDidUpdate(nextProps) {
 
         let loginstate = this.props.loginstate;
+       
 
         if (loginstate.onLoad == false && this.state.loginButton == false) {
             if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){

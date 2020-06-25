@@ -291,9 +291,9 @@ function endUserRegistrationReducer(state = initialState, action) {
             else if(action.subKey == "players"){
                 if(action.key == "addPlayer"){
                     let obj = {
-                        competitionMembershipProductTypeId:0,firstName: null, lastName: null,
+                        competitionMembershipProductTypeId: null,firstName: null, lastName: null,
                          email: null, mobileNumber: null, payingFor: null, index: action.index,
-                         isDisabled: false
+                         isDisabled: false, isPlayer: null
                     }
                     if(participant["team"][action.subKey]){
                         participant["team"][action.subKey].push(obj);
@@ -437,6 +437,9 @@ function addReadOnlyPlayer(participant, action){
         if(participant[action.subKey]["personRoleRefId"] == 2){
             addCoach(participant,action);
         }
+        else if(participant[action.subKey]["personRoleRefId"] == 4){
+            addPlayer(participant, action);
+        }
     }
 }
 
@@ -471,7 +474,8 @@ function addPlayer(participant, action){
         mobileNumber: participant[action.subKey]["mobileNumber"],
         payingFor: true,
         index: action.index,
-        isDisabled: true
+        isDisabled: true,
+        isPlayer: 1
     }
     if(participant["team"]["players"]){
         participant["team"]["players"].push(obj);
@@ -485,7 +489,7 @@ function addPlayer(participant, action){
 function addCoach(participant, action){
     let memProds = participant.competitionInfo.membershipProducts;
     if(memProds!= null && memProds.length > 0){
-        let memProd = memProds.find(x=>x.shortName == "Coach");
+        let memProd = memProds.find(x=>x.shortName == "Coach" && x.allowTeamRegistrationTypeRefId!= null);
         if(memProd!= null && memProd!= undefined){
             let obj = {
                 competitionMembershipProductTypeId:memProd["competitionMembershipProductTypeId"],
@@ -495,7 +499,8 @@ function addCoach(participant, action){
                 mobileNumber: participant[action.subKey]["mobileNumber"],
                 payingFor: true,
                 index: action.index,
-                isDisabled: true
+                isDisabled: true,
+                isPlayer: 0
             }
             if(participant["team"]["players"]){
                 participant["team"]["players"].push(obj);

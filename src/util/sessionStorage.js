@@ -137,7 +137,14 @@ const getIsUserRegistration = () => {
     return localStorage.isUserRegistration
 }
 
-
+// Set Temp User Id
+const setTempUserId = userId => {
+    localStorage.setItem("tempUserId", userId)
+}
+// get Temp User Id
+const getTempUserId = () => {
+    return localStorage.tempUserId
+}
 
 
 
@@ -164,5 +171,6 @@ module.exports = {
     setUserRegId,getUserRegId,
     setExistingUserRefId,getExistingUserRefId,
     setRegisteringYourselfRefId,getRegisteringYourselfRefId,
-    setIsUserRegistration, getIsUserRegistration
+    setIsUserRegistration, getIsUserRegistration,
+    setTempUserId, getTempUserId
 }

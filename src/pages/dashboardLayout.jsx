@@ -129,8 +129,9 @@ class DashboardLayout extends React.Component {
   userProfileDropdown() {
     let userData = this.props.userState.getUserOrganisation
     let selectedOrgData = getOrganisationData()
-    let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
-        getPhotoUrl() : AppImages.defaultUser)
+    // let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
+    //     getPhotoUrl() : AppImages.defaultUser)
+    let userImage = ((getPhotoUrl() && getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null')? getPhotoUrl() : AppImages.defaultUser)
    
    
     return (

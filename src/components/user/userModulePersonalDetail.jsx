@@ -18,7 +18,7 @@ import {
 import { clearRegistrationDataAction } from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId } from "../../util/sessionStorage";
+import { getUserId, setUserId, getTempUserId, setTempUserId } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate } from '../../themes/dateformate';
@@ -343,13 +343,13 @@ const columnsPersonalAddress = [
     {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email',
-		width: 300		  
+        key: 'email'	  
     },
     {
         title: 'Action',
         dataIndex: 'isUsed',
         key: 'isUsed',
+        width:80,
         render: (data, record) => (
              <Menu
                 className="action-triple-dot-submenu" theme="light" mode="horizontal"
@@ -374,7 +374,10 @@ const columnsPersonalPrimaryContacts = [
     {
         title: 'Name',
         dataIndex: 'parentName',
-        key: 'parentName'
+        key: 'parentName',
+        render: (parentName, record) =>
+        <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.parentUserId)}>
+                {parentName}</span>
     },
     {
         title: 'Street',
@@ -404,13 +407,76 @@ const columnsPersonalPrimaryContacts = [
     {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email',
-        width: 180
+        key: 'email'
+    }
+//     {
+//         title: 'Action',
+//         dataIndex: 'isUser',
+//         key: 'isUser',
+//         width:80,
+//         render: (data, record) => (
+//             <Menu className="action-triple-dot-submenu" theme="light"
+//                mode="horizontal" style={{ lineHeight: "25px" }}>
+//                <SubMenu
+//                    key="sub1"
+//                    title={<img className="dot-image" src={AppImages.moreTripleDot}
+//                            alt="" width="16" height="16"/>
+//                   }>
+//                    <Menu.Item key="1">
+//                        <NavLink to={{ pathname: `/userProfileEdit`,state: { userData : record , moduleFrom:"2" }}} >
+//                            <span>Edit</span>
+//                        </NavLink>
+//                    </Menu.Item>
+//                </SubMenu>
+//            </Menu>
+//        )
+//    }
+];
+
+const columnsPersonalChildContacts = [
+    {
+        title: 'Name',
+        dataIndex: 'childName',
+        key: 'childName',
+        render: (childName, record) =>
+        <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
+                {childName}</span>
+    },
+    {
+        title: 'Street',
+        dataIndex: 'street',
+        key: 'street'
+    },
+    {
+        title: 'Suburb',
+        dataIndex: 'suburb',
+        key: 'suburb'
+    },
+    {
+        title: 'State',
+        dataIndex: 'state',
+        key: 'state'
+    },
+    {
+        title: 'Postcode',
+        dataIndex: 'postalCode',
+        key: 'postalCode'
+    },
+    {
+        title: 'Phone Number',
+        dataIndex: 'mobileNumber',
+        key: 'mobileNumber'
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email'
     },
     {
         title: 'Action',
         dataIndex: 'isUser',
         key: 'isUser',
+        width:80,
         render: (data, record) => (
             <Menu className="action-triple-dot-submenu" theme="light"
                mode="horizontal" style={{ lineHeight: "25px" }}>
@@ -420,7 +486,7 @@ const columnsPersonalPrimaryContacts = [
                            alt="" width="16" height="16"/>
                   }>
                    <Menu.Item key="1">
-                       <NavLink to={{ pathname: `/userProfileEdit`,state: { userData : record , moduleFrom:"2" }}} >
+                       <NavLink to={{ pathname: `/userProfileEdit`,state: { userData : record , moduleFrom:"6" }}} >
                            <span>Edit</span>
                        </NavLink>
                    </Menu.Item>
@@ -440,13 +506,13 @@ const columnsPersonalEmergency = [
     {
         title: 'Phone Number',
         dataIndex: 'emergencyContactNumber',
-        key: 'emergencyContactNumber',
-        width:450
+        key: 'emergencyContactNumber'
     },
     {
         title: 'Action',
         dataIndex: 'isUser',
         key: 'isUser',
+        width:80,
         render: (data, record) => (
             <Menu
                className="action-triple-dot-submenu" theme="light"
@@ -577,12 +643,13 @@ class UserModulePersonalDetail extends Component {
             yearRefId: -1,
             competitions: [],
             teams: [],
-            divisions: []
+            divisions: [],
+            tempUserId: getTempUserId()
         }
     }
 
     componentWillMount(){
-        console.log("componentWillMount")
+        //console.log("componentWillMount")
         let competition =  this.getEmptyCompObj();
         this.setState({competition: competition});
         this.props.getOnlyYearListAction();
@@ -590,6 +657,12 @@ class UserModulePersonalDetail extends Component {
 
    async componentDidMount() {
         let userId = this.state.userId;
+        if(this.state.tempUserId!= undefined &&  this.state.tempUserId!= null){
+            userId = this.state.tempUserId;
+           await this.setState({userId: userId});
+            localStorage.removeItem("tempUserId");
+        }
+        
         if (this.props.location.state != null && this.props.location.state != undefined) {
             let tabKey = this.props.location.state.tabKey!= undefined ? this.props.location.state.tabKey : '1';
             await this.setState({ tabKey: tabKey });
@@ -598,7 +671,7 @@ class UserModulePersonalDetail extends Component {
     }
 
     componentDidUpdate(nextProps) {
-        console.log("Component componentDidUpdate");
+       // console.log("Component componentDidUpdate");
 
         let userState = this.props.userState;
         let personal = userState.personalData;
@@ -622,7 +695,7 @@ class UserModulePersonalDetail extends Component {
                 //     }
                 //     years.push(obj);
                 // });
-                console.log("personal.competitions::" + JSON.stringify(personal.competitions));
+               // console.log("personal.competitions::" + JSON.stringify(personal.competitions));
                  let yearRefId = -1;
                 this.setState({yearRefId: -1});
                 if(personal.competitions!=null && personal.competitions.length > 0 && yearRefId!= null){
@@ -661,7 +734,7 @@ class UserModulePersonalDetail extends Component {
     generateCompInfo = (competitions, yearRefId) => {
         let teams = []; 
         let divisions = [];
-        console.log("competitions::" + JSON.stringify(competitions));
+       // console.log("competitions::" + JSON.stringify(competitions));
         (competitions || []).map((item, index) => {
             if(item.teams!= null && item.teams.length > 0){
                 (item.teams || []).map((i, ind) => {
@@ -674,13 +747,17 @@ class UserModulePersonalDetail extends Component {
                 })
             }
             
-            let div = {
-                divisionId: item.divisionId,
-                divisionName : item.divisionName
+            if(item.divisions!= null && item.divisions.length > 0){
+                (item.divisions || []).map((j, ind) => {
+                    let div = {
+                        divisionId: j.divisionId,
+                        divisionName: j.divisionName
+                    }
+                    if(j.divisionId!= null){
+                        divisions.push(div);
+                    }
+                })
             }
-
-            if(item.divisionName!= null)
-                divisions.push(div);
         });
         
         let competition = this.getEmptyCompObj();
@@ -724,13 +801,18 @@ class UserModulePersonalDetail extends Component {
                 })
             }
     
-            let div = {
-                divisionId: competition.divisionId,
-                divisionName : competition.divisionName
+            if(competition.divisions!= null && competition.divisions.length > 0){
+                (competition.divisions || []).map((j, ind) => {
+                    let div = {
+                        divisionId: j.divisionId,
+                        divisionName: j.divisionName
+                    }
+                    if(j.divisionId!= null){
+                        divisions.push(div);
+                    }
+                })
             }
-    
-            if(competition.divisionName!= null)
-                divisions.push(div);
+
     
             this.setState({ competition: competition, divisions: divisions, teams: teams });
             this.tabApiCalls(this.state.tabKey, competition, this.state.userId, this.state.yearRefId);
@@ -811,6 +893,13 @@ class UserModulePersonalDetail extends Component {
     navigateTo = (screen) =>{
         this.props.clearRegistrationDataAction();
         history.push(screen)
+    }
+
+    loadAnotherUser = async (userId) =>{
+        console.log("userId::" + userId);
+        await setTempUserId(userId);
+        //history.push({pathname: '/userPersonal'})
+        window.location.reload();
     }
 
     viewRegForm = async (item) => {
@@ -1056,6 +1145,8 @@ class UserModulePersonalDetail extends Component {
         let personal = userState.personalData;
         let personalByCompData = userState.personalByCompData != null ? userState.personalByCompData : [];
         let primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
+        let childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
+       
         return (
             <div className="comp-dash-table-view mt-2">
                 <div className="user-module-row-heading">{AppConstants.address}</div>
@@ -1069,15 +1160,31 @@ class UserModulePersonalDetail extends Component {
                     />
                 </div>
 
-                <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.parentOrGuardianDetail}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsPersonalPrimaryContacts}
-                        dataSource={primaryContacts}
-                        pagination={false}
-                        loading={userState.onPersonLoad == true && true}
-                    />
+                {primaryContacts!= null && primaryContacts.length > 0 && 
+                <div>
+                    <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.parentOrGuardianDetail}</div>
+                    <div className="table-responsive home-dash-table-view">
+                        <Table className="home-dashboard-table"
+                            columns={columnsPersonalPrimaryContacts}
+                            dataSource={primaryContacts}
+                            pagination={false}
+                            loading={userState.onPersonLoad == true && true}
+                        />
+                    </div>
+                </div> }
+                {childContacts!= null && childContacts.length > 0 &&
+                <div>
+                    <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.childDetails}</div>
+                    <div className="table-responsive home-dash-table-view">
+                        <Table className="home-dashboard-table"
+                            columns={columnsPersonalChildContacts}
+                            dataSource={childContacts}
+                            pagination={false}
+                            loading={userState.onPersonLoad == true && true}
+                        />
+                    </div>
                 </div>
+                }
 
                 <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.emergencyContacts}</div>
                 <div className="table-responsive home-dash-table-view">
