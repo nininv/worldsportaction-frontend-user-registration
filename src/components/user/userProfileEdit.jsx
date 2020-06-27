@@ -272,6 +272,7 @@ class UserProfileEdit extends Component {
                         })(
                         <DatePicker
                             size="large"
+                            placeholder={"dd-mm-yyyy"}
                             style={{ width: "100%" , marginTop: "9px"}}
                             onChange={e => this.onChangeSetValue(e, "dateOfBirth") }
                             format={"DD-MM-YYYY"}

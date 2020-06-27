@@ -2434,6 +2434,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <DatePicker
                         size="large"
+                        placeholder={"dd-mm-yyyy"}
                         style={{ width: "100%" }}
                         onChange={e => this.onChangeSetParticipantValue(e, "dateOfBirth", index) }
                         format={"DD-MM-YYYY"}
@@ -2538,7 +2539,7 @@ class AppRegistrationForm extends Component {
                 </Form.Item>
                 {item.isPlayer == 1 &&
                 <div>
-                    <InputWithHead heading={AppConstants.divisions} required={"required-field"}/>
+                    <InputWithHead heading={AppConstants.registrationDivisions} required={"required-field"}/>
                     { 
                         item.divisions!= null && item.divisions!= undefined && item.divisions.length > 1 ?
                         <div>
@@ -4190,6 +4191,7 @@ class AppRegistrationForm extends Component {
                         style={{ width: "100%" }}
                         onChange={e => this.onChangeSetTeam(e, "dateOfBirth", index, "team") }
                         format={"DD-MM-YYYY"}
+                        placeholder={"dd-mm-yyyy"}
                         showTime={false}
                         name={'dateOfBirth'}
                     />

@@ -408,29 +408,29 @@ const columnsPersonalPrimaryContacts = [
         title: 'Email',
         dataIndex: 'email',
         key: 'email'
-    }
-//     {
-//         title: 'Action',
-//         dataIndex: 'isUser',
-//         key: 'isUser',
-//         width:80,
-//         render: (data, record) => (
-//             <Menu className="action-triple-dot-submenu" theme="light"
-//                mode="horizontal" style={{ lineHeight: "25px" }}>
-//                <SubMenu
-//                    key="sub1"
-//                    title={<img className="dot-image" src={AppImages.moreTripleDot}
-//                            alt="" width="16" height="16"/>
-//                   }>
-//                    <Menu.Item key="1">
-//                        <NavLink to={{ pathname: `/userProfileEdit`,state: { userData : record , moduleFrom:"2" }}} >
-//                            <span>Edit</span>
-//                        </NavLink>
-//                    </Menu.Item>
-//                </SubMenu>
-//            </Menu>
-//        )
-//    }
+    },
+    {
+        title: 'Action',
+        dataIndex: 'isUser',
+        key: 'isUser',
+        width:80,
+        render: (data, record) => (
+            <Menu className="action-triple-dot-submenu" theme="light"
+               mode="horizontal" style={{ lineHeight: "25px" }}>
+               <SubMenu
+                   key="sub1"
+                   title={<img className="dot-image" src={AppImages.moreTripleDot}
+                           alt="" width="16" height="16"/>
+                  }>
+                   <Menu.Item key="1">
+                       <NavLink to={{ pathname: `/userProfileEdit`,state: { userData : record , moduleFrom:"2" }}} >
+                           <span>Edit</span>
+                       </NavLink>
+                   </Menu.Item>
+               </SubMenu>
+           </Menu>
+       )
+   }
 ];
 
 const columnsPersonalChildContacts = [
