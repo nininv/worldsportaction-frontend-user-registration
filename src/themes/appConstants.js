@@ -887,7 +887,8 @@ const AppConstants = {
   deRegistration: "De-registration",
   emailValidationInfo : "Updating the email address will update the login information(User Name) while submitting this form. Please ensure that the information provided is correct.",
   stateHeading: 'State',
-  childDetails: "Child Details"
+  childDetails: "Child Details",
+  registrationDivisions:"Registration Divisions"
 };
 
 export default AppConstants;
