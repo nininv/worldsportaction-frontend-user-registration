@@ -928,15 +928,17 @@ class UserModulePersonalDetail extends Component {
         return (
             <div className="fluid-width mt-2" >
 
-                <div className='profile-image-view mr-5' >
+                <div className='profile-image-view mr-5' style={{marginTop: 20}}>
                     {/* <span className="user-contact-heading">{AppConstants.playerProfile}</span> */}
+                    <div className="circular--landscape">
                     {
                         personal.photoUrl ?
-                            <img className="live-score-user-image" src={personal.photoUrl} alt="" height="80" width="80" />
+                            <img src={personal.photoUrl} alt=""/>
                             :
                             <span className="user-contact-heading">{AppConstants.noImage}</span>
 
                     }
+                    </div>
                     <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
                     <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                 </div>

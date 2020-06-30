@@ -20,6 +20,7 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
+import { NavLink } from "react-router-dom";
 import {getUreAction} from 
                 "../../store/actions/userAction/userAction";
 import ValidationConstants from "../../themes/validationConstant";
@@ -41,12 +42,26 @@ import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken } from "../../util/sessionStorage";
+import CSVReader from 'react-csv-reader'
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
 let this_Obj = null;
+
+const papaparseOptions = {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    transformHeader: header =>
+      header
+        .toLowerCase()
+        .replace(/\W/g, '_'),
+    complete: function(results, file) {
+        console.log("Parsing complete:", results, file);
+    }
+  }
 
 const teamColumns = [
     {
@@ -2303,6 +2318,10 @@ class AppRegistrationForm extends Component {
         localStorage.removeItem("userRegId");
     }
 
+    onUploadTeamPlayerBtn = () => {
+
+    }
+
     ///////view for breadcrumb
     headerView = () => {
         return (
@@ -4320,10 +4339,41 @@ class AppRegistrationForm extends Component {
                                         item.team.registrationTypeId : 1;
         return (
             <div className="formView content-view pt-5" >
-                <div style={{ display: 'flex' }}>
-                    <span className="form-heading">
-                        {item.team!= null && item.team.teamName!= null ? item.team.teamName + "- Team Members" : ""}
-                    </span>
+                <div style={{display: 'flex', marginBottom:'20px'}}>
+                    <div style={{ display: 'flex' }}>
+                        <span className="form-heading">
+                            {item.team!= null && item.team.teamName!= null ? item.team.teamName + "- Team Members" : ""}
+                        </span>
+                    </div>
+                    <div className="reg-add-save-button" style={{marginLeft: 'auto'}}>
+                    <Button className="primary-add-comp-form" type="primary" > 
+                        <div className="row">
+                            <div className="col-sm">
+                                <label for="venueCourtUpload" className="csv-reader">
+                                    <img src={AppImages.import}  alt="" className="export-image"/> 
+                                    {AppConstants.import}
+                                </label>
+                                <CSVReader
+                                    inputId="venueCourtUpload"
+                                    inputStyle={{display:'none'}}
+                                    parserOptions={papaparseOptions}
+                                    onFileLoaded={this.readVenueCourtCSV}
+                                    />
+                            </div>
+                        </div>
+                    </Button>
+                        
+                        {/* <Button onClick={() => this.onUploadTeamPlayerBtn()} className="primary-add-comp-form" type="primary">
+                            {AppConstants.upload}
+                        </Button> */}
+                    </div>
+                    <div className="reg-add-save-button" style={{marginLeft: '20px'}}>
+                        <NavLink to="/templates/wsa-import-team-player.csv" target="_blank" download>
+                                <Button className="primary-add-comp-form" type="primary">
+                                    {AppConstants.downloadTemplate}
+                                </Button>
+                            </NavLink>
+                    </div>
                 </div>
                 <div className="table-responsive">
                     <Table

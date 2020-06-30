@@ -22,7 +22,7 @@
     "moment": "^2.24.0",
     "react": "^16.11.0",
     "react-beautiful-dnd": "^13.0.0",
-    "react-csv-reader": "^2.0.2",
+    "react-csv-reader": "^2.2.1",
     "react-dom": "^16.11.0",
     "react-draft-wysiwyg": "^1.14.4",
     "react-player": "^1.14.2",

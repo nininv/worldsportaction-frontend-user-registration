@@ -255,4 +255,16 @@
     height: 30px;
     border-radius: 5px;
     background-image: var(--app-gradient-right);
+}	
+.circular--landscape {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 50%;
 }
+
+.circular--landscape img {
+  width: 100%;
+}		  
