@@ -890,6 +890,7 @@ const AppConstants = {
   childDetails: "Child Details",
   registrationDivisions:"Registration Divisions",
   downloadTemplate: 'Download Template',
+  playerImpMsg: "Import will remove existing Team Members from the list and populate the new Team Members based on the data available in the Template."
 };
 
 export default AppConstants;

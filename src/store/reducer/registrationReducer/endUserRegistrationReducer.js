@@ -306,6 +306,48 @@ function endUserRegistrationReducer(state = initialState, action) {
                    // console.log("Player::" + JSON.stringify(participant));
                     
                 }
+                else if(action.key == "addPlayersCSV"){
+                    console.log("DATA::::", action.data);
+
+                    let playerData = action.data;
+                    if (isArrayNotEmpty(playerData)) {
+                        if(isArrayNotEmpty(participant["team"][action.subKey])){
+                            let prevData = participant["team"][action.subKey].filter(x=>x.isDisabled == true);
+                            participant["team"][action.subKey] = prevData!= null ? prevData : [];
+                        }
+
+                        if(!participant["team"][action.subKey]){
+                            participant["team"][action.subKey] = [];
+                        }
+
+                        for (let i in playerData) {
+                            let obj = {
+                                competitionMembershipProductTypeId: null,
+                                firstName: playerData[i].first_name, 
+                                lastName: playerData[i].last_name,
+                                email: playerData[i].email, 
+                                mobileNumber: playerData[i].mobile, 
+                                payingFor: null, 
+                                index: action.index,
+                                isDisabled: false, isPlayer: null
+                            }
+
+
+                            let memProd = participant.competitionInfo.membershipProducts.
+                                    find(x=>x.shortName == playerData[i].type && x.allowTeamRegistrationTypeRefId!= null);
+                    
+                           if(memProd!= null && memProd!= undefined){
+                                obj.competitionMembershipProductTypeId = memProd.competitionMembershipProductTypeId;
+                                obj.isPlayer =  memProd.isPlayer;
+                                participant["team"][action.subKey].push(obj);
+                           }
+                        }
+
+                        state.refFlag = "players";
+                    }
+
+                    console.log("participant", participant);
+                }
                 else if(action.key == "removePlayer"){
                     participant["team"][action.subKey].splice(action.subIndex, 1);
                     state.refFlag = "players";

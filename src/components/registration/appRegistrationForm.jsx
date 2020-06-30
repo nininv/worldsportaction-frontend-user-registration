@@ -494,7 +494,8 @@ class AppRegistrationForm extends Component {
             tempParentId: 0,
             getMembershipLoad: false,
             getUserLoad:false,
-				 
+            csvData: null,
+            uploadPlayerModalVisible: false
         };
         this_Obj = this;
      
@@ -1932,6 +1933,9 @@ class AppRegistrationForm extends Component {
             else if(this.state.modalKey == "parent"){
                 this.removeParent();
             }
+            else if(this.state.modalKey === "playerImport"){
+                this.uploadTeamPlayers();
+            }
         }
         this.setState({modalVisible: false});
         
@@ -2182,6 +2186,27 @@ class AppRegistrationForm extends Component {
         
     }
 
+    uploadTeamPlayers = () =>{
+        this.props.updateTeamAction(this.state.csvData, 
+            this.state.participantIndex, "addPlayersCSV", "players");
+    }
+
+    readTeamPlayersCSV = (data, item, index) => {
+         console.log("Data:: Item::", data, item, index);
+        this.setState({csvData: data, participantIndex: index});
+        let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
+        let filteredPlayer = players.find(x=>x.isDisabled == false);
+        if(filteredPlayer!= null){
+            this.setState({modalVisible: true, modalKey: "playerImport", 
+            modalMessage: AppConstants.playerImpMsg});
+        }
+        else{
+            this.props.updateTeamAction(data, index, "addPlayersCSV", "players");
+        }
+        let e = document.getElementById("teamPlayerUpload");
+        e.value = null;
+    }
+
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
@@ -2318,9 +2343,7 @@ class AppRegistrationForm extends Component {
         localStorage.removeItem("userRegId");
     }
 
-    onUploadTeamPlayerBtn = () => {
-
-    }
+   
 
     ///////view for breadcrumb
     headerView = () => {
@@ -3856,6 +3879,7 @@ class AppRegistrationForm extends Component {
         return (
             <div>
               <Modal
+                className="add-membership-type-modal"
                 title="End User Registration"
                 visible={this.state.modalVisible}
                 onOk={() => this.removeModalPopup("ok")}
@@ -4349,15 +4373,15 @@ class AppRegistrationForm extends Component {
                     <Button className="primary-add-comp-form" type="primary" > 
                         <div className="row">
                             <div className="col-sm">
-                                <label for="venueCourtUpload" className="csv-reader">
+                                <label for="teamPlayerUpload" className="csv-reader">
                                     <img src={AppImages.import}  alt="" className="export-image"/> 
                                     {AppConstants.import}
                                 </label>
                                 <CSVReader
-                                    inputId="venueCourtUpload"
+                                    inputId="teamPlayerUpload"
                                     inputStyle={{display:'none'}}
                                     parserOptions={papaparseOptions}
-                                    onFileLoaded={this.readVenueCourtCSV}
+                                    onFileLoaded={(e) => this.readTeamPlayersCSV(e, item, index)}
                                     />
                             </div>
                         </div>
