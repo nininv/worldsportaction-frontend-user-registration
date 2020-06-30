@@ -613,15 +613,14 @@ class AppRegistrationForm extends Component {
            if(registrationState.registrationDetail!= null && 
             registrationState.registrationDetail.userRegistrations!= null && 
             registrationState.registrationDetail.userRegistrations.length > 0){
-                this.props.updateEndUserRegisrationAction(false, "setCompOrgKey");
-                if(registrationState.registrationDetail.userRegistrations[0].isPlayer!= -1 ||
-                    registrationState.registrationDetail.userRegistrations[0].registeringYourself == 4)
+                if(registrationState.registrationDetail.userRegistrations[0].isPlayer!= -1 
+                    ||registrationState.registrationDetail.userRegistrations[0].registeringYourself == 4)
                 {
-                 this.props.form.setFieldsValue({
-                     [`organisationUniqueKey0`]: this.state.organisationUniqueKey,
-                     [`competitionUniqueKey0`]:  this.state.competitionUniqueKey,
-                 });
-                
+                    this.props.updateEndUserRegisrationAction(false, "setCompOrgKey");
+                    this.props.form.setFieldsValue({
+                        [`organisationUniqueKey0`]: this.state.organisationUniqueKey,
+                        [`competitionUniqueKey0`]:  this.state.competitionUniqueKey,
+                    });
                 }
             }
         }
