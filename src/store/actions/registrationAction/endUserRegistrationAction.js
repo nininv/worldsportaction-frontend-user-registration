@@ -11,11 +11,12 @@ function saveEndUserRegistrationAction(payload) {
 }
 
 // Update End user registration
-function updateEndUserRegisrationAction(data, key) {
+function updateEndUserRegisrationAction(data, key, subKey) {
     const action = {
       type: ApiConstants.UPDATE_END_USER_REGISTRATION,
       updatedData: data,
-      key: key
+      key: key,
+      subKey: subKey
     };
     return action;
   }

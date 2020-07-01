@@ -1413,7 +1413,7 @@ class AppRegistrationForm extends Component {
         }
 
         userRegistration[key] = value;
-        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations", key);
 
         if(key == "competitionMembershipProductTypeId" && value == null){
             this.setState({participantIndex: index})
@@ -1710,7 +1710,7 @@ class AppRegistrationForm extends Component {
             }
         }
 
-        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations", key );
         if(key == "competitionMembershipProductTypeId" && value == null){
             this.setState({participantIndex: index, productIndex: prodIndex})
             this.props.updateEndUserRegisrationAction("divisionProduct", "refFlag");
@@ -2141,6 +2141,7 @@ class AppRegistrationForm extends Component {
                     [`competitionMembershipProductDivisionId${index}`]:  null,
                     
                 });
+                this.callTermsAndConditions(value);
             }
             else if(key == "competitionMembershipProductTypeId"){
                 this.props.form.setFieldsValue({
@@ -3982,9 +3983,11 @@ class AppRegistrationForm extends Component {
             <span className="form-heading"> {AppConstants.termsAndConditions} </span>
             <div className="pt-2">
                    { (termsAndConditionsFinal || []).map((item, index) =>(
+                       <div className="pb-4">
                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
                             Terms and Conditions for {item.name}
                         </a>
+                        </div>
                     ))
                    }
                 </div>
@@ -4455,6 +4458,7 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
         let commonRegSetting = registrationState.commonRegSetting;
         let userInfo = registrationState.userInfo;
+        let termsAndConditionsFinal  = registrationState.termsAndConditionsFinal;  
         //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
@@ -4647,7 +4651,10 @@ class AppRegistrationForm extends Component {
                                 userRegistrations[0].registeringYourself == 4))? (
                 <div>
                     {this.termsAndConditionView(getFieldDecorator)}
-                    {this.termsAndConditionsOrgView(getFieldDecorator)}
+                    {termsAndConditionsFinal!= null && termsAndConditionsFinal.length > 0 &&
+                        <div>
+                        {this.termsAndConditionsOrgView(getFieldDecorator)}
+                        </div>}
                 </div>) : null }
                 {this.removeModalView()}
             </div>

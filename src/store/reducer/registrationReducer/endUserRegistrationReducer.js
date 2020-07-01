@@ -81,6 +81,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             let oldData = state.registrationDetail;
             let updatedValue = action.updatedData;
             let getKey = action.key;
+            let getSubkey = action.subKey;
+            let getSubData = action.subData;
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
                 getKey == "participantIndex" || getKey == "populateYourInfo") {
@@ -88,6 +90,15 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else {
                 oldData[getKey] = updatedValue;
+            }
+
+            if(getSubkey == "organisationUniqueKey"){
+               // console.log("&&&&&444444", state.termsAndConditionsFinal);
+                state.termsAndConditionsFinal = 
+                        updateTermsAndConditions(state.termsAndConditionsFinal,
+                    state.registrationDetail.userRegistrations);
+
+                  //  console.log("&&&&&333", state.termsAndConditionsFinal);
             }
 
             return { ...state, error: null };
@@ -228,6 +239,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.contactDetails = null;
                     participant.divisionName = null;
                     participant.venue = [];
+                    updateTermsAndConditions(state.termsAndConditionsFinal,
+                        state.registrationDetail.userRegistrations);
              
                 }
                 else if(action.key == "competitionUniqueKey"){
@@ -468,15 +481,21 @@ function endUserRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
             let tcData = action.result;
-            console.log("TC Input :::", tcData)
+          //  console.log("TC Input :::", tcData)
             if(tcData!= null && tcData.termsAndConditions.length > 0){
                 let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
+                let isExistsTCF = state.termsAndConditionsFinal.find(x=>x.organisationUniqueKey == tcData.organisationId)
                 if(isExistsTC == null || isExistsTC == undefined){
                     state.termsAndConditions.push(tcData);
-                    termsAndConditionsFinal(tcData, state.termsAndConditionsFinal);
+                    state.termsAndConditionsFinal = termsAndConditionsFinal(tcData, state.termsAndConditionsFinal, state.registrationDetail.userRegistrations);
                 }
-                console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
+                if(isExistsTCF == null || isExistsTCF == undefined){
+                    state.termsAndConditionsFinal = termsAndConditionsFinal(tcData, state.termsAndConditionsFinal, state.registrationDetail.userRegistrations);
+                }
+               // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
             }
+            state.termsAndConditionsFinal = updateTermsAndConditions(state.termsAndConditionsFinal,
+                state.registrationDetail.userRegistrations);
             return {
                 ...state,
                 onTCLoad: false,
@@ -619,7 +638,8 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
     }
 } 
 
-function termsAndConditionsFinal(data, finalTCData){
+function termsAndConditionsFinal(data, finalTCData, userRegistrations){
+    //console.log("^^^^^^^^^^^^^^ termsAndConditionsFinal");
     for(let i in data.termsAndConditions){
         let orgId = data.termsAndConditions[i].organisationUniqueKey;
         let finalTC = finalTCData.find(x=>x.organisationUniqueKey == orgId);
@@ -627,6 +647,42 @@ function termsAndConditionsFinal(data, finalTCData){
             finalTCData.push(data.termsAndConditions[i]);
         }
     }
+    finalTCData = updateTermsAndConditions(finalTCData, userRegistrations)
+
+    return finalTCData;
+}
+
+function updateTermsAndConditions(finalTCData, userRegistrations){
+   let arr = []
+    let tcMap = new Map();
+       // console.log("updateTermsAndConditions &&&&&", finalTCData);
+        userRegistrations.map((item, index) => {
+            let finalVal = finalTCData.find(x=>x.organisationUniqueKey == item.organisationUniqueKey);
+            if(finalVal!= null && finalVal!= undefined){
+                if(tcMap.get(item.organisationUniqueKey) == undefined){
+                    arr.push(finalVal);
+                    tcMap.set(item.organisationUniqueKey, finalVal);
+                }
+                
+            }
+
+            (item.products).map((p,pIndex) => {
+                let finalVal = finalTCData.find(x=>x.organisationUniqueKey == p.organisationUniqueKey);
+                if(finalVal!= null && finalVal!= undefined){
+                    if(tcMap.get(p.organisationUniqueKey) == undefined){
+                        arr.push(finalVal);
+                        tcMap.set(p.organisationUniqueKey, finalVal);
+                    }
+                }
+            });
+        })
+        finalTCData = [];
+        arr.map((item) =>{
+            finalTCData.push(item);
+        });
+        
+        return finalTCData;
+      //  console.log(" updateTermsAndConditions &&&&&2222", finalTCData);
 }
 
 export default endUserRegistrationReducer;
