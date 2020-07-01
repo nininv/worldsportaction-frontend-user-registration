@@ -3983,11 +3983,11 @@ class AppRegistrationForm extends Component {
             <span className="form-heading"> {AppConstants.termsAndConditions} </span>
             <div className="pt-2">
                    { (termsAndConditionsFinal || []).map((item, index) =>(
-                       <div className="pb-4">
-                        <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
-                            Terms and Conditions for {item.name}
-                        </a>
-                        </div>
+                      <div className="pb-4">
+                      <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                          Terms and Conditions for {item.name}
+                      </a>
+                      </div>
                     ))
                    }
                 </div>

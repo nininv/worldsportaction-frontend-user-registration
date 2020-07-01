@@ -93,12 +93,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
 
             if(getSubkey == "organisationUniqueKey"){
-               // console.log("&&&&&444444", state.termsAndConditionsFinal);
-                state.termsAndConditionsFinal = 
-                        updateTermsAndConditions(state.termsAndConditionsFinal,
-                    state.registrationDetail.userRegistrations);
-
-                  //  console.log("&&&&&333", state.termsAndConditionsFinal);
+                state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                    state.registrationDetail.userRegistrations, state);
             }
 
             return { ...state, error: null };
@@ -361,7 +357,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         state.refFlag = "players";
                     }
 
-                    console.log("participant", participant);
+                 //   console.log("participant", participant);
                 }
                 else if(action.key == "removePlayer"){
                     participant["team"][action.subKey].splice(action.subIndex, 1);
@@ -484,18 +480,16 @@ function endUserRegistrationReducer(state = initialState, action) {
           //  console.log("TC Input :::", tcData)
             if(tcData!= null && tcData.termsAndConditions.length > 0){
                 let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
-                let isExistsTCF = state.termsAndConditionsFinal.find(x=>x.organisationUniqueKey == tcData.organisationId)
+              //  console.log("isExistsTC", isExistsTC);
                 if(isExistsTC == null || isExistsTC == undefined){
                     state.termsAndConditions.push(tcData);
-                    state.termsAndConditionsFinal = termsAndConditionsFinal(tcData, state.termsAndConditionsFinal, state.registrationDetail.userRegistrations);
                 }
-                if(isExistsTCF == null || isExistsTCF == undefined){
-                    state.termsAndConditionsFinal = termsAndConditionsFinal(tcData, state.termsAndConditionsFinal, state.registrationDetail.userRegistrations);
-                }
-               // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
             }
-            state.termsAndConditionsFinal = updateTermsAndConditions(state.termsAndConditionsFinal,
-                state.registrationDetail.userRegistrations);
+           // console.log("TC:::TC Final1111", state.termsAndConditions)
+            state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                                            state.registrationDetail.userRegistrations, state);
+           
+           // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
             return {
                 ...state,
                 onTCLoad: false,
@@ -638,51 +632,49 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
     }
 } 
 
-function termsAndConditionsFinal(data, finalTCData, userRegistrations){
+function updateTermsAndConditions(data, userRegistrations, state){
     //console.log("^^^^^^^^^^^^^^ termsAndConditionsFinal");
-    for(let i in data.termsAndConditions){
-        let orgId = data.termsAndConditions[i].organisationUniqueKey;
-        let finalTC = finalTCData.find(x=>x.organisationUniqueKey == orgId);
-        if(finalTC == null || finalTC == undefined){
-            finalTCData.push(data.termsAndConditions[i]);
-        }
-    }
-    finalTCData = updateTermsAndConditions(finalTCData, userRegistrations)
-
-    return finalTCData;
-}
-
-function updateTermsAndConditions(finalTCData, userRegistrations){
-   let arr = []
+    let arr = [];
+    let finalArr = [];
     let tcMap = new Map();
-       // console.log("updateTermsAndConditions &&&&&", finalTCData);
-        userRegistrations.map((item, index) => {
-            let finalVal = finalTCData.find(x=>x.organisationUniqueKey == item.organisationUniqueKey);
-            if(finalVal!= null && finalVal!= undefined){
-                if(tcMap.get(item.organisationUniqueKey) == undefined){
-                    arr.push(finalVal);
-                    tcMap.set(item.organisationUniqueKey, finalVal);
-                }
-                
-            }
+    let tcFinalMap = new Map();
+    userRegistrations.map((item, index) => {
+        let finalVal = data.find(x=>x.organisationId == item.organisationUniqueKey);
+        if(finalVal!= null && finalVal!= undefined){
+            if(tcMap.get(item.organisationUniqueKey) == undefined){
+                arr.push(finalVal);
+                tcMap.set(item.organisationUniqueKey, finalVal);
 
-            (item.products).map((p,pIndex) => {
-                let finalVal = finalTCData.find(x=>x.organisationUniqueKey == p.organisationUniqueKey);
-                if(finalVal!= null && finalVal!= undefined){
-                    if(tcMap.get(p.organisationUniqueKey) == undefined){
-                        arr.push(finalVal);
-                        tcMap.set(p.organisationUniqueKey, finalVal);
+                finalVal.termsAndConditions.map((i) =>{
+                    if(tcFinalMap.get(i.organisationUniqueKey) == undefined){
+                        finalArr.push(i);
+                        tcFinalMap.set(i.organisationUniqueKey, i);
                     }
+                })
+
+            }
+        }
+
+        (item.products).map((p,pIndex) => {
+            let finalVal = data.find(x=>x.organisationId == p.organisationUniqueKey);
+            if(finalVal!= null && finalVal!= undefined){
+                if(tcMap.get(p.organisationUniqueKey) == undefined){
+                    arr.push(finalVal);
+                    tcMap.set(p.organisationUniqueKey, finalVal);
+                    finalVal.termsAndConditions.map((i) =>{
+                        if(tcFinalMap.get(i.organisationUniqueKey) == undefined){
+                            finalArr.push(i);
+                            tcFinalMap.set(i.organisationUniqueKey, i);
+                        }
+                    })
                 }
-            });
-        })
-        finalTCData = [];
-        arr.map((item) =>{
-            finalTCData.push(item);
+            }
         });
-        
-        return finalTCData;
-      //  console.log(" updateTermsAndConditions &&&&&2222", finalTCData);
+    })
+
+    state.termsAndConditionsFinal = finalArr;
+    
+    return arr;
 }
 
 export default endUserRegistrationReducer;
