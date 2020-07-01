@@ -126,6 +126,16 @@ function updateTeamRegistrationInvite(payload) {
     return action;
 }
 
+// Get Terms and Condition
+function getTermsAndConditionsAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -139,5 +149,6 @@ export {
     getInvitedTeamRegInfoAction,
     updateTeamParentInfoAction,
     updateTeamRegSettingAction,
-    updateTeamRegistrationInvite
+    updateTeamRegistrationInvite,
+    getTermsAndConditionsAction
 }

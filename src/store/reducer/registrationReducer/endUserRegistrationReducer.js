@@ -42,7 +42,9 @@ const initialState = {
     invCompetitionDetails: null,
     invUserInfo: null,
     invUserRegDetails: null,
-    registrationSetting: {}
+    registrationSetting: {},
+    termsAndConditions: [],
+    termsAndConditionsFinal: []
 }
 
 
@@ -401,6 +403,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             state.invUserInfo = null;
             state.invUserRegDetails =  null;
             state.registrationSetting = {}
+            state.termsAndConditions = []
 
            // console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {
@@ -460,6 +463,25 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onLoad: false,
                 status: action.status
             };   
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
+            return { ...state, onTCLoad: true };
+
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
+            let tcData = action.result;
+            console.log("TC Input :::", tcData)
+            if(tcData!= null && tcData.termsAndConditions.length > 0){
+                let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
+                if(isExistsTC == null || isExistsTC == undefined){
+                    state.termsAndConditions.push(tcData);
+                    termsAndConditionsFinal(tcData, state.termsAndConditionsFinal);
+                }
+                console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
+            }
+            return {
+                ...state,
+                onTCLoad: false,
+                status: action.status
+            };   
 
         default:
             return state;
@@ -488,21 +510,6 @@ function addReadOnlyPlayer(participant, action){
 function removeExistingPlayer(participant){
     if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
         let players = participant["team"]["players"].filter(x=>x.isDisabled == false);
-        //console.log("players" + JSON.stringify(players));
-        // if(players!= null && players.length > 0){
-        //     let indexArr = [];
-        //     console.log("players" + JSON.stringify(players));
-        //     players.map((item,index) => {
-        //         indexArr.push(index);
-        //     })
-        //     console.log("indexArr" + JSON.stringify(indexArr));
-        //     indexArr.map((item, index) => {
-        //         players.splice(item,1);
-        //     })
-        //     console.log("players After" + JSON.stringify(players));
-
-        // }
-
         participant["team"]["players"] = (players!= null && players!= undefined) ? players : [];
     }
 }
@@ -611,5 +618,15 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
         console.log("Error" + error);
     }
 } 
+
+function termsAndConditionsFinal(data, finalTCData){
+    for(let i in data.termsAndConditions){
+        let orgId = data.termsAndConditions[i].organisationUniqueKey;
+        let finalTC = finalTCData.find(x=>x.organisationUniqueKey == orgId);
+        if(finalTC == null || finalTC == undefined){
+            finalTCData.push(data.termsAndConditions[i]);
+        }
+    }
+}
 
 export default endUserRegistrationReducer;

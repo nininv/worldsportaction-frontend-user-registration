@@ -35,7 +35,7 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
     clearRegistrationDataAction, updateRegistrationSettingsAction, 
-    updateTeamAction, updateYourInfoAction} from 
+    updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -790,6 +790,7 @@ class AppRegistrationForm extends Component {
                         participantObj.venue = participantObj.competitionInfo.venues!= null ? 
                                         participantObj.competitionInfo.venues: [];
                         this.getRegistrationSettings(this.state.competitionUniqueKey, this.state.organisationUniqueKey, 0);
+                        this.callTermsAndConditions(this.state.organisationUniqueKey);
                     }
                     else{
                         participantObj.competitionUniqueKey = null;
@@ -1358,6 +1359,8 @@ class AppRegistrationForm extends Component {
                 [`competitionMembershipProductDivisionId${index}`]:  null,
                 
             });
+
+            this.callTermsAndConditions(value);
         }
         else if(key == "competitionUniqueKey"){
             if(userRegistration.competitionInfo!= undefined && 
@@ -1416,6 +1419,13 @@ class AppRegistrationForm extends Component {
             this.setState({participantIndex: index})
             this.props.updateEndUserRegisrationAction("divisionParticipant", "refFlag");
         }
+    }
+
+    callTermsAndConditions = (organisationUniqueKey) => {
+        let obj = {
+            organisationUniqueKey: organisationUniqueKey
+        }
+        this.props.getTermsAndConditionsAction(obj);
     }
 
     setYourInfo = (userInfo, userRegistration) => {
@@ -1623,6 +1633,8 @@ class AppRegistrationForm extends Component {
             let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
          
             product["organisationInfo"] = deepCopyFunction(organisationInfo);
+
+            this.callTermsAndConditions(value);
 
         }
         else if(key == "competitionUniqueKey"){
@@ -3939,7 +3951,7 @@ class AppRegistrationForm extends Component {
         });
         text = text.replace(/,\s*$/, "");   
         return(
-            <div className="formView" style={{background: "none"}}>
+            <div className="formView pb-5" style={{background: "none"}}>
                 <Form.Item>
                     {getFieldDecorator(`termsAndCondition`, {
                         rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
@@ -3958,6 +3970,24 @@ class AppRegistrationForm extends Component {
                     </div>
                     )}
                 </Form.Item> 
+            </div>
+        )
+    }
+
+    termsAndConditionsOrgView = (getFieldDecorator) => {
+        let {termsAndConditionsFinal}  = this.props.endUserRegistrationState;  
+
+        return(
+            <div className="formView content-view pt-5">
+            <span className="form-heading"> {AppConstants.termsAndConditions} </span>
+            <div className="pt-2">
+                   { (termsAndConditionsFinal || []).map((item, index) =>(
+                        <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                            Terms and Conditions for {item.name}
+                        </a>
+                    ))
+                   }
+                </div>
             </div>
         )
     }
@@ -4617,6 +4647,7 @@ class AppRegistrationForm extends Component {
                                 userRegistrations[0].registeringYourself == 4))? (
                 <div>
                     {this.termsAndConditionView(getFieldDecorator)}
+                    {this.termsAndConditionsOrgView(getFieldDecorator)}
                 </div>) : null }
                 {this.removeModalView()}
             </div>
@@ -4727,7 +4758,8 @@ function mapDispatchToProps(dispatch)
         updateRegistrationSettingsAction,
         updateTeamAction,
         personRegisteringRoleReferenceAction,
-        updateYourInfoAction
+        updateYourInfoAction,
+        getTermsAndConditionsAction
     }, dispatch);
 
 }

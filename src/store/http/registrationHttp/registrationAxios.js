@@ -120,7 +120,10 @@ let AxiosApi = {
         var url = `/api/teamregistration/invite/update`;
         return Method.dataPost(url, token, payload);
     },
-
+    getTermsAndConditions(payload) {
+        var url = `/api/registration/termsandconditions?organisationId=${payload.organisationUniqueKey}`;
+        return Method.dataGet(url, token);
+    },
     
     
 };
