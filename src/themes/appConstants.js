@@ -108,7 +108,8 @@ const AppConstants = {
   vouchers: "Vouchers",
   addvoucher: "Add voucher",
 
-  agreeTerm: "I have read and agree to (Affiliates name)  ",
+  //agreeTerm: "I have read and agree to (Affiliates name)  ",
+  agreeTerm: "I have read and agree to all of the above Terms and Conditions  ",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
@@ -891,7 +892,7 @@ const AppConstants = {
   registrationDivisions:"Registration Divisions",
   downloadTemplate: 'Download Template',
   playerImpMsg: "Import will remove existing Team Members from the list and populate the new Team Members based on the data available in the Template.",
-  termsAndConditions: "Terms & Conditions"
+  termsAndConditionsHeading: "Terms & Conditions"
 };
 
 export default AppConstants;

@@ -3925,32 +3925,32 @@ class AppRegistrationForm extends Component {
     }
 
     termsAndConditionView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let registrationDetail = registrationState.registrationDetail;
-        let userRegistrations = registrationDetail.userRegistrations;
-        let membershipProductInfo = registrationState.membershipProductInfo;
-        let text = '';
-        let orgMap = new Map();
-        userRegistrations.map((x, index) => {
-            if(orgMap.get(x.organisationUniqueKey) == undefined){
-                let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == x.organisationUniqueKey);
-                if(mem!= null){
-                    text +=  mem.organisationName + ', ';
-                    orgMap.set(x.organisationUniqueKey, mem.organisationName);
-                }
-            }
+        // let registrationState = this.props.endUserRegistrationState;
+        // let registrationDetail = registrationState.registrationDetail;
+        // let userRegistrations = registrationDetail.userRegistrations;
+        // let membershipProductInfo = registrationState.membershipProductInfo;
+        // let text = '';
+        // let orgMap = new Map();
+        // userRegistrations.map((x, index) => {
+        //     if(orgMap.get(x.organisationUniqueKey) == undefined){
+        //         let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == x.organisationUniqueKey);
+        //         if(mem!= null){
+        //             text +=  mem.organisationName + ', ';
+        //             orgMap.set(x.organisationUniqueKey, mem.organisationName);
+        //         }
+        //     }
 
-            (x.products || []).map((z, index) => {
-                if(orgMap.get(z.organisationUniqueKey) == undefined){
-                    let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == z.organisationUniqueKey);
-                    if(mem!= null){
-                        text +=  mem.organisationName + ', ';
-                        orgMap.set(z.organisationUniqueKey, mem.organisationName);
-                    }
-                }
-            })
-        });
-        text = text.replace(/,\s*$/, "");   
+        //     (x.products || []).map((z, index) => {
+        //         if(orgMap.get(z.organisationUniqueKey) == undefined){
+        //             let mem = membershipProductInfo.find(y=>y.organisationUniqueKey == z.organisationUniqueKey);
+        //             if(mem!= null){
+        //                 text +=  mem.organisationName + ', ';
+        //                 orgMap.set(z.organisationUniqueKey, mem.organisationName);
+        //             }
+        //         }
+        //     })
+        // });
+        // text = text.replace(/,\s*$/, "");   
         return(
             <div className="formView pb-5" style={{background: "none"}}>
                 <Form.Item>
@@ -3962,10 +3962,10 @@ class AppRegistrationForm extends Component {
                             className="single-checkbox pt-3"
                             checked={this.state.agreeTerm}
                             onChange={e => this.setState({ agreeTerm: e.target.checked })}>
-                            {AppConstants.agreeTerm.replace('(Affiliates name)', text)}
-                            <span className="app-reg-terms">
+                            {AppConstants.agreeTerm}
+                            {/* <span className="app-reg-terms">
                                 {AppConstants.termsAndConditions}{" "}
-                            </span>
+                            </span> */}
                             <span className="required-field"></span>
                         </Checkbox>
                     </div>
@@ -3980,7 +3980,7 @@ class AppRegistrationForm extends Component {
 
         return(
             <div className="formView content-view pt-5">
-            <span className="form-heading"> {AppConstants.termsAndConditions} </span>
+            <span className="form-heading"> {AppConstants.termsAndConditionsHeading} </span>
             <div className="pt-2">
                    { (termsAndConditionsFinal || []).map((item, index) =>(
                       <div className="pb-4">
@@ -4650,11 +4650,12 @@ class AppRegistrationForm extends Component {
                             (userRegistrations[0].isPlayer != -1 ||
                                 userRegistrations[0].registeringYourself == 4))? (
                 <div>
-                    {this.termsAndConditionView(getFieldDecorator)}
                     {termsAndConditionsFinal!= null && termsAndConditionsFinal.length > 0 &&
                         <div>
                         {this.termsAndConditionsOrgView(getFieldDecorator)}
-                        </div>}
+                        </div>
+                    }
+                    {this.termsAndConditionView(getFieldDecorator)}
                 </div>) : null }
                 {this.removeModalView()}
             </div>
