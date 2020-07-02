@@ -235,8 +235,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.contactDetails = null;
                     participant.divisionName = null;
                     participant.venue = [];
-                    updateTermsAndConditions(state.termsAndConditionsFinal,
-                        state.registrationDetail.userRegistrations);
+                    state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                        state.registrationDetail.userRegistrations, state);
              
                 }
                 else if(action.key == "competitionUniqueKey"){
