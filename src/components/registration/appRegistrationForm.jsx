@@ -1984,7 +1984,7 @@ class AppRegistrationForm extends Component {
         
         userRegistrations.splice(this.state.participantIndex, 1);
         this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
-        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+        this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations","removeParticipant");
         this.props.updateEndUserRegisrationAction("participant", "refFlag");
 
     }
@@ -2004,7 +2004,7 @@ class AppRegistrationForm extends Component {
         //     memProd.isDisabled = false;
         //  }
 
-         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
+         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations", "removeProduct");
          this.props.updateRegistrationSettingsAction(this.state.participantIndex, this.state.productIndex);
          this.props.updateEndUserRegisrationAction("product", "refFlag");
         

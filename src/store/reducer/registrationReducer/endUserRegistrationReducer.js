@@ -82,7 +82,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let updatedValue = action.updatedData;
             let getKey = action.key;
             let getSubkey = action.subKey;
-            let getSubData = action.subData;
+  
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
                 getKey == "participantIndex" || getKey == "populateYourInfo") {
@@ -92,7 +92,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                 oldData[getKey] = updatedValue;
             }
 
-            if(getSubkey == "organisationUniqueKey"){
+            if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
+                getSubkey == "removeParticipant"){
                 state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
                     state.registrationDetail.userRegistrations, state);
             }
