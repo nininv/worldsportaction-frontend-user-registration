@@ -518,7 +518,7 @@ class AppRegistrationForm extends Component {
     }
 
     componentDidMount(){
-        console.log("Component Did mount");
+       // console.log("Component Did mount");
         this.getUserInfo();
         let payload = {
             competitionUniqueKey: this.state.competitionUniqueKey,
@@ -2130,7 +2130,7 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetTeam = (value, key, index, subKey, subIndex, item) => {
-
+        console.log("onChangeSetTeam::",value, key, index, subKey, subIndex, item )
         this.props.updateTeamAction(value, index, key, subKey, subIndex);
         if(subKey == "participant"){
             if(key == "competitionUniqueKey"){
@@ -2209,13 +2209,14 @@ class AppRegistrationForm extends Component {
     }
 
     uploadTeamPlayers = () =>{
+       // console.log("uploadTeamPlayers Index" + this.state.participantIndex)
         this.props.updateTeamAction(this.state.csvData, 
             this.state.participantIndex, "addPlayersCSV", "players");
     }
 
-    readTeamPlayersCSV = (data, item, index) => {
-         console.log("Data:: Item::", data, item, index);
-        this.setState({csvData: data, participantIndex: index});
+    readTeamPlayersCSV = (event, item, index) => {
+        // console.log("Data:: Item::"+ index);
+        this.setState({csvData: event, participantIndex: index});
         let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
         let filteredPlayer = players.find(x=>x.isDisabled == false);
         if(filteredPlayer!= null){
@@ -2223,9 +2224,9 @@ class AppRegistrationForm extends Component {
             modalMessage: AppConstants.playerImpMsg});
         }
         else{
-            this.props.updateTeamAction(data, index, "addPlayersCSV", "players");
+            this.props.updateTeamAction(event, index, "addPlayersCSV", "players");
         }
-        let e = document.getElementById("teamPlayerUpload");
+        let e = document.getElementById("teamPlayerUpload" + index);
         e.value = null;
     }
 
@@ -4420,7 +4421,7 @@ class AppRegistrationForm extends Component {
         )
     }
 
-    teamMemberView = (item, index, getFieldDecorator) => {
+    teamMemberView =  (item, index, getFieldDecorator) => {
         let players = (item.team!= null && item.team.players!= null) ? item.team.players : [];
         let registrationTypeId = item.team!= null && item.team.registrationTypeId!= null ? 
                                         item.team.registrationTypeId : 1;
@@ -4436,12 +4437,12 @@ class AppRegistrationForm extends Component {
                     <Button className="primary-add-comp-form" type="primary" > 
                         <div className="row">
                             <div className="col-sm">
-                                <label for="teamPlayerUpload" className="csv-reader">
+                                <label for={"teamPlayerUpload" + index} className="csv-reader">
                                     <img src={AppImages.import}  alt="" className="export-image"/> 
                                     {AppConstants.import}
                                 </label>
                                 <CSVReader
-                                    inputId="teamPlayerUpload"
+                                    inputId={"teamPlayerUpload" + index}
                                     inputStyle={{display:'none'}}
                                     parserOptions={papaparseOptions}
                                     onFileLoaded={(e) => this.readTeamPlayersCSV(e, item, index)}

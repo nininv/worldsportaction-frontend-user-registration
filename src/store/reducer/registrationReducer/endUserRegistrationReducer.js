@@ -515,9 +515,9 @@ function endUserRegistrationReducer(state = initialState, action) {
             if(state.participantIndex != null){
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
-
+               // console.log("index:::", index, state.prodIndex);
                 if(state.prodIndex!= null && state.prodIndex!= undefined){
-                    existingParticipant[index]["products"]["fees"] = action.result;
+                    existingParticipant["products"][state.prodIndex]["fees"] = action.result;
                 }
                 else{
                     existingParticipant["fees"] = action.result;
