@@ -30,12 +30,14 @@ import { getCommonRefData,  favouriteTeamReferenceAction,
     countryReferenceAction,
     nationalityReferenceAction, heardByReferenceAction,playerPositionReferenceAction,
     genderReferenceAction, disabilityReferenceAction,
-    personRegisteringRoleReferenceAction } from '../../store/actions/commonAction/commonAction';
+    personRegisteringRoleReferenceAction }
+    from '../../store/actions/commonAction/commonAction';
 
 import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
     clearRegistrationDataAction, updateRegistrationSettingsAction, 
-    updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction} from 
+    updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction,
+    getRegistrationProductFeesAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -790,12 +792,13 @@ class AppRegistrationForm extends Component {
                         participantObj.venue = participantObj.competitionInfo.venues!= null ? 
                                         participantObj.competitionInfo.venues: [];
                         this.getRegistrationSettings(this.state.competitionUniqueKey, this.state.organisationUniqueKey, 0);
-                        this.callTermsAndConditions(this.state.organisationUniqueKey);
                     }
                     else{
                         participantObj.competitionUniqueKey = null;
                         this.setState({competitionUniqueKey: null});
                     }
+
+                    this.callTermsAndConditions(this.state.organisationUniqueKey);
                    flag = true;
                 }
         }
@@ -1195,15 +1198,9 @@ class AppRegistrationForm extends Component {
                 value = null;
                 //console.log("^^^^^^^" + value);
             }
+
            
-            //userRegistration["isPlayer"] = memProd.isPlayer;
-            // Enable the existing one and disable the new one
-            // let oldMemProd = userRegistration.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId === userRegistration.competitionMembershipProductTypeId);
-            // if(oldMemProd!= null && oldMemProd!= "" && oldMemProd!= undefined)
-            // {
-            //     oldMemProd.isDisabled = false;
-            // }
-            // memProd.isDisabled = true;
+            this.callRegistrationProductFees(userRegistration,value, index, null )
         }
         else if(key === "whatTypeOfRegistration")
         {
@@ -1353,6 +1350,7 @@ class AppRegistrationForm extends Component {
             userRegistration.divisionName = null;
             userRegistration["hasDivisionError"] = false;
             userRegistration.venue = [];
+            userRegistration["fees"] = null;
             this.props.form.setFieldsValue({
                 [`competitionUniqueKey${index}`]:  null,
                 [`competitionMembershipProductTypeId${index}`]:  null,
@@ -1388,6 +1386,7 @@ class AppRegistrationForm extends Component {
             userRegistration["hasDivisionError"] = false;
             userRegistration.products = [];
             userRegistration.divisionName = null;
+            userRegistration["fees"] = null;
             this.props.form.setFieldsValue({
                 [`competitionMembershipProductTypeId${index}`]:  null,
                 [`competitionMembershipProductDivisionId${index}`]:  null,
@@ -1629,6 +1628,7 @@ class AppRegistrationForm extends Component {
             product["referFriends"] = [];
             product["positionId1"] = null;
             product["positionId1"] = null;
+            product["fees"] = null;
 
             let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == value);
          
@@ -1650,6 +1650,7 @@ class AppRegistrationForm extends Component {
             product["referFriends"] = [];
             product["positionId1"] = null;
             product["positionId1"] = null;
+            product["fees"] = null;
             let competitionInfo = product.organisationInfo.competitions.
                             find(x=>x.competitionUniqueKey == value);
                             console.log("competitionInfo" + JSON.stringify(competitionInfo));
@@ -1690,8 +1691,12 @@ class AppRegistrationForm extends Component {
                 }
 
                 if(memProd.isPlayer){
-                    this.addFriend(index,"friend","product", prodIndex);
-                    this.addFriend(index,"referFriend","product", prodIndex);
+                    if(product.regSetting.play_friend == 1){
+                        this.addFriend(index,"friend","product", prodIndex);
+                    }
+                    if(product.regSetting.refer_friend == 1){
+                        this.addFriend(index,"referFriend","product", prodIndex);
+                    }
                 }
                 else{
                     product["friends"] = [];
@@ -1708,6 +1713,8 @@ class AppRegistrationForm extends Component {
                 value = null;
                 console.log("^^^^^^^" + value);
             }
+
+            this.callRegistrationProductFees(product,value, index, prodIndex )
         }
 
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations", key );
@@ -2147,6 +2154,8 @@ class AppRegistrationForm extends Component {
                 this.props.form.setFieldsValue({
                     [`competitionMembershipProductDivisionId${index}`]:  null,
                 });
+
+                this.callRegistrationProductFees(item,value, index, null )
             }
         }
     }
@@ -2218,6 +2227,19 @@ class AppRegistrationForm extends Component {
         }
         let e = document.getElementById("teamPlayerUpload");
         e.value = null;
+    }
+
+    callRegistrationProductFees = (item, competitionMembershipProductTypeId, participantIndex,
+                                prodIndex) =>{
+        let payload = {
+            competitionId: item.competitionUniqueKey,
+            organisationId: item.organisationUniqueKey,
+            competitionMembershipProductTypeId: competitionMembershipProductTypeId,
+            participantIndex: participantIndex,
+            prodIndex: prodIndex
+        }
+
+        this.props.getRegistrationProductFeesAction(payload);
     }
 
     saveRegistrationForm = (e) => {
@@ -2508,33 +2530,11 @@ class AppRegistrationForm extends Component {
     membershipProductView = (item, index, getFieldDecorator) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
+        let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
                
-                {/* <Form.Item >
-                {getFieldDecorator(`postalCode${index}`, {
-                    rules: [{ required: true, message: ValidationConstants.postCodeField }],
-                })(
-                    <InputWithHead
-                        required={"required-field"}
-                        heading={AppConstants.enterPostCode}
-                        placeholder={AppConstants.enterPostCode}
-                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "postalCode", index )} 
-                        setFieldsValue={registrationDetail.postalCode}
-                        maxLength={4}
-                    /> 
-                    )}
-                    </Form.Item> */}
-               
-                
-                {/* <InputWithHead
-                    heading={AppConstants.alternate_location}
-                    placeholder={AppConstants.alternate_location}
-                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "alternativeLocation", index )} 
-                    value={registrationDetail.alternativeLocation}
-                /> 
-                */}
                <InputWithHead heading={AppConstants.organisationName}  required={"required-field"}/>
                 <Form.Item>
                     {getFieldDecorator(`organisationUniqueKey${index}`, {
@@ -2620,6 +2620,16 @@ class AppRegistrationForm extends Component {
                 </div> }
                 {item.organisationUniqueKey != null ? 
                 <div>
+                    <div style={{display: 'flex'}}>
+                        <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
+                            <InputWithHead heading={AppConstants.totalCasualFees  + prodName }/>
+                            <div className="applicable-to-text">${(item.fees!= null ? item.fees.totalCasualFees : 0)  + AppConstants.includeGST}</div>
+                        </div>
+                        <div className="col-sm-6"> 
+                            <InputWithHead heading={AppConstants.totalSeasonalFees  +  prodName }/>
+                            <div className="applicable-to-text">${(item.fees!= null ? item.fees.totalSeasonalFees : 0) + AppConstants.includeGST} </div>
+                        </div>
+                    </div>
                     <div style={{display: 'flex'}}>
                         <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
                             <InputWithHead heading={AppConstants.startDate}/>
@@ -3772,7 +3782,7 @@ class AppRegistrationForm extends Component {
 
     membershipProductProductView = (item, prod, prodIndex, index, getFieldDecorator) => {
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
-        
+        let prodName = (prod.fees!= null && prod.fees!= undefined) ? ' ('+prod.fees.name+')' : '';
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -3861,6 +3871,17 @@ class AppRegistrationForm extends Component {
                     }
                 </div>
                 }
+
+                <div style={{display: 'flex'}}>
+                    <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
+                        <InputWithHead heading={AppConstants.totalCasualFees + prodName}/>
+                        <div className="applicable-to-text">${(prod.fees!= null ? prod.fees.totalCasualFees : 0) +  AppConstants.includeGST}</div>
+                    </div>
+                    <div className="col-sm-6"> 
+                        <InputWithHead heading={AppConstants.totalSeasonalFees + prodName}/>
+                        <div className="applicable-to-text">${(prod.fees!= null ? prod.fees.totalSeasonalFees : 0)  + AppConstants.includeGST}</div>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -3998,6 +4019,8 @@ class AppRegistrationForm extends Component {
     teamMembershipProductView = (item, index, getFieldDecorator) => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
+        let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
+
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -4050,7 +4073,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <Select
                         style={{ width: "100%", paddingRight: 1 }}
-                        onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductTypeId", index, "participant"  )}
+                        onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductTypeId", index, "participant", null, item  )}
                         setFieldsValue={item.competitionMembershipProductTypeId}
                         >
                     {(item.competitionInfo!= null && 
@@ -4091,6 +4114,13 @@ class AppRegistrationForm extends Component {
                 </div> 
                 {item.organisationUniqueKey != null ? 
                 <div>
+                    <div style={{display: 'flex'}}>
+                        <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
+                            <InputWithHead heading={AppConstants.totalTeamFees + prodName}/>
+                            <div className="applicable-to-text">${(item.fees!= null ? item.fees.totalTeamFees : 0)  + AppConstants.includeGST}</div>
+                        </div>
+                       
+                    </div>
                     <div style={{display: 'flex'}}>
                         <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
                             <InputWithHead heading={AppConstants.startDate}/>
@@ -4516,17 +4546,17 @@ class AppRegistrationForm extends Component {
                                     </div>
                                     {prod.isPlayer && (
                                         <div>
-                                            {item.regSetting.nominate_positions === 1 && (
+                                            {prod.regSetting.nominate_positions === 1 && (
                                                 <div style={{marginBottom: "20px"}}>
                                                     {this.playerPosition(prod, index, "product", prodIndex, getFieldDecorator)}
                                                 </div>
                                             )}
-                                            {item.regSetting.play_friend === 1 && (
+                                            {prod.regSetting.play_friend === 1 && (
                                                 <div style={{marginBottom: "20px"}}>
                                                     {this.playWithFriendView(prod, index, "product", prodIndex, getFieldDecorator)}
                                                 </div>
                                             )}
-                                            {item.regSetting.refer_friend === 1 && (
+                                            {prod.regSetting.refer_friend === 1 && (
                                                 <div style={{marginBottom: "40px"}}>
                                                     {this.referAFriendView(prod, index, "product", prodIndex, getFieldDecorator)}
                                                 </div>
@@ -4767,7 +4797,8 @@ function mapDispatchToProps(dispatch)
         updateTeamAction,
         personRegisteringRoleReferenceAction,
         updateYourInfoAction,
-        getTermsAndConditionsAction
+        getTermsAndConditionsAction,
+        getRegistrationProductFeesAction
     }, dispatch);
 
 }

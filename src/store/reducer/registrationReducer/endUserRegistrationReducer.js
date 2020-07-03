@@ -24,6 +24,7 @@ const initialState = {
     onMembershipLoad: false,
     userInfoOnLoad: false,
     onInvLoad:false,
+    onPFLoad: false,
     error: null,
     result: null,
     status: 0,
@@ -156,12 +157,15 @@ function endUserRegistrationReducer(state = initialState, action) {
                // console.log("&&&&&&&" + JSON.stringify(settings));
                 if(settings!= null){
                     let ind = index;
+                    let flag = 0;
                     if(state.prodIndex != undefined && state.prodIndex != null){
                         ind = state.prodIndex + 1;
+                        flag = 1;
+                        existingParticipant["products"][state.prodIndex]["regSetting"] = registrationSettings;
                     }
                     settings.settingArr[ind] = registrationSettings;
-                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
-                   // console.log("*******))))))))))" + JSON.stringify(setting));
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting, flag);
+                    console.log("*******))))))))))" + JSON.stringify(setting));
                     existingParticipant["regSetting"] = setting;
                 }
                 else{
@@ -207,6 +211,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status,
                 userInfo: userInfoData
             };
+       
         case ApiConstants.UPDATE_YOUR_INFO_ACTION:
             let partUser = state.registrationDetail.userRegistrations[action.index];
             partUser[action.subKey][action.key] = action.data;
@@ -236,6 +241,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.contactDetails = null;
                     participant.divisionName = null;
                     participant.venue = [];
+                    participant["fees"] = null;
                     state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
                         state.registrationDetail.userRegistrations, state);
              
@@ -254,6 +260,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
                     participant.products = [];
                     participant.divisionName = null;
+                    participant["fees"] = null;
                 }
                 else if(action.key == "competitionMembershipProductTypeId"){
                     let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
@@ -473,6 +480,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onLoad: false,
                 status: action.status
             };   
+       
         case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
             return { ...state, onTCLoad: true };
 
@@ -495,7 +503,35 @@ function endUserRegistrationReducer(state = initialState, action) {
                 ...state,
                 onTCLoad: false,
                 status: action.status
-            };   
+            }; 
+            
+        case ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD:
+            state["participantIndex"] = action.payload.participantIndex;
+            state["prodIndex"] = action.payload.prodIndex;
+            return { ...state, onPFLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_SUCCESS:
+
+            if(state.participantIndex != null){
+                let index = state.participantIndex;
+                let existingParticipant = state.registrationDetail.userRegistrations[index];
+
+                if(state.prodIndex!= null && state.prodIndex!= undefined){
+                    existingParticipant[index]["products"]["fees"] = action.result;
+                }
+                else{
+                    existingParticipant["fees"] = action.result;
+                }
+            }
+
+            state["participantIndex"] = null;
+            state["prodIndex"] = null;
+           
+            return {
+                ...state,
+                onPFLoad: false,
+                status: action.status
+            };
 
         default:
             return state;
@@ -593,7 +629,7 @@ function updatePlayerData(participant, action){
     }
 }
 
-function mergeRegistrationSettings1(settings, commonRegSetting){
+function mergeRegistrationSettings1(settings, commonRegSetting, flag){
     try{
       //  console.log("existingSetting11::" + JSON.stringify(settings));
         let obj =  {"updates":0,"daily":0,"weekly":0,"monthly":0,"played_before":0,
@@ -611,7 +647,13 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
             for(let i in keys){
                // console.log("***" + keys[i] + "**" + i);
                 if(setting[keys[i]] == 1){
-                    obj[keys[i]] = 1;
+                    if(flag == 1 && (keys[i] == "nominate_positions" || 
+                        keys[i] == "play_friend" ||  keys[i] == "refer_friend")){
+                            obj[keys[i]] = 0;
+                    }
+                    else{
+                        obj[keys[i]] = 1;
+                    }
                 }
                // console.log("***" + JSON.stringify(obj))
                 if(keys[i] === "club_volunteer" || keys[i] === "shop" || keys[i] === "voucher"){

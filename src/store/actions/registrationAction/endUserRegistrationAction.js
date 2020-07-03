@@ -137,6 +137,15 @@ function getTermsAndConditionsAction(payload){
     return action;
 }
 
+function getRegistrationProductFeesAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -151,5 +160,6 @@ export {
     updateTeamParentInfoAction,
     updateTeamRegSettingAction,
     updateTeamRegistrationInvite,
-    getTermsAndConditionsAction
+    getTermsAndConditionsAction,
+    getRegistrationProductFeesAction
 }

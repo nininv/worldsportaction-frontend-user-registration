@@ -124,6 +124,10 @@ let AxiosApi = {
         var url = `/api/registration/termsandconditions?organisationId=${payload.organisationUniqueKey}`;
         return Method.dataGet(url, token);
     },
+    getRegistrationProductFees(payload) {
+        var url = `/api/registration/productfees`;
+        return Method.dataPost(url, token, payload);
+    },
     
     
 };

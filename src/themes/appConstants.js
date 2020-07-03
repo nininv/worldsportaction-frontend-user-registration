@@ -892,7 +892,11 @@ const AppConstants = {
   registrationDivisions:"Registration Divisions",
   downloadTemplate: 'Download Template',
   playerImpMsg: "Import will remove existing Team Members from the list and populate the new Team Members based on the data available in the Template.",
-  termsAndConditionsHeading: "Terms & Conditions"
+  termsAndConditionsHeading: "Terms & Conditions",
+  totalCasualFees: "Total Casual Fees",
+  totalSeasonalFees: "Total Seasonal Fees",
+  totalTeamFees: "Total Team Fees",
+  includeGST: " (incl. GST)"
 };
 
 export default AppConstants;
