@@ -1182,6 +1182,10 @@ class AppRegistrationForm extends Component {
                     divisions[0].competitionMembershipProductDivisionId;
                     userRegistration["divisionName"] =  divisions[0].divisionName;
                     userRegistration["divisions"] = [];
+
+                    userRegistration[key] = value;
+                    this.callRegistrationProductFees(userRegistration,
+                        divisions[0].competitionMembershipProductDivisionId, index, null )
                 }
                 else{
                     userRegistration.competitionMembershipProductDivisionId = null;
@@ -1190,6 +1194,7 @@ class AppRegistrationForm extends Component {
                     });
 					userRegistration["divisions"] = divisions;
                 }
+               
             }
             else{
                 userRegistration["divisionName"] =  null;
@@ -1200,7 +1205,10 @@ class AppRegistrationForm extends Component {
             }
 
            
-            this.callRegistrationProductFees(userRegistration,value, index, null )
+        }
+        else if(key == "competitionMembershipProductDivisionId"){
+            this.callRegistrationProductFees(userRegistration,
+                value, index, null ) 
         }
         else if(key === "whatTypeOfRegistration")
         {
@@ -1609,6 +1617,7 @@ class AppRegistrationForm extends Component {
 
             product["competitionMembershipProductDivisionId"] = value;
             //product["divisionName"] = divisionName;
+            this.callRegistrationProductFees(product,value, index, prodIndex )
         }
         else if(key == "organisationUniqueKey"){
             product["organisationUniqueKey"] = value;
@@ -1704,7 +1713,10 @@ class AppRegistrationForm extends Component {
                     product["positionId1"] = null;
                     product["positionId2"] = null;
                 }
-
+                if(divisions.length == 1){
+                    this.callRegistrationProductFees(product, 
+                        divisions[0].competitionMembershipProductDivisionId, index, prodIndex )
+                }
             }
             else{
                 product["competitionMembershipProductDivisionId"] = null;
@@ -1714,7 +1726,7 @@ class AppRegistrationForm extends Component {
                 console.log("^^^^^^^" + value);
             }
 
-            this.callRegistrationProductFees(product,value, index, prodIndex )
+          
         }
 
         this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations", key );
@@ -2155,6 +2167,14 @@ class AppRegistrationForm extends Component {
                     [`competitionMembershipProductDivisionId${index}`]:  null,
                 });
 
+                let divisions = item.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
+                    value).divisions;
+                if(divisions!= null && divisions.length == 1){
+                    this.callRegistrationProductFees(item,
+                        divisions[0].competitionMembershipProductDivisionId, index, null )
+                }
+            }
+            else if(key == "competitionMembershipProductDivisionId"){
                 this.callRegistrationProductFees(item,value, index, null )
             }
         }
@@ -2230,12 +2250,13 @@ class AppRegistrationForm extends Component {
         e.value = null;
     }
 
-    callRegistrationProductFees = (item, competitionMembershipProductTypeId, participantIndex,
+    callRegistrationProductFees = (item, competitionMembershipProductDivisionId, participantIndex,
                                 prodIndex) =>{
         let payload = {
             competitionId: item.competitionUniqueKey,
             organisationId: item.organisationUniqueKey,
-            competitionMembershipProductTypeId: competitionMembershipProductTypeId,
+            competitionMembershipProductTypeId: item.competitionMembershipProductTypeId,
+            competitionMembershipProductDivisionId: competitionMembershipProductDivisionId,
             participantIndex: participantIndex,
             prodIndex: prodIndex
         }
@@ -4001,9 +4022,9 @@ class AppRegistrationForm extends Component {
         let {termsAndConditionsFinal}  = this.props.endUserRegistrationState;  
 
         return(
-            <div className="formView content-view pt-5">
-            <span className="form-heading"> {AppConstants.termsAndConditionsHeading} </span>
-            <div className="pt-2">
+            <div className="formView content-view pt-5 pb-5">
+                <span className="form-heading"> {AppConstants.termsAndConditionsHeading} </span>
+                <div className="pt-2">
                    { (termsAndConditionsFinal || []).map((item, index) =>(
                       <div className="pb-4">
                       <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
@@ -4012,6 +4033,26 @@ class AppRegistrationForm extends Component {
                       </div>
                     ))
                    }
+                </div>
+                <div>
+                    <Form.Item>
+                        {getFieldDecorator(`termsAndCondition`, {
+                            rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
+                        })(  
+                        <div >
+                            <Checkbox
+                                className="single-checkbox mt-0"
+                                checked={this.state.agreeTerm}
+                                onChange={e => this.setState({ agreeTerm: e.target.checked })}>
+                                {AppConstants.agreeTerm}
+                                {/* <span className="app-reg-terms">
+                                    {AppConstants.termsAndConditions}{" "}
+                                </span> */}
+                                <span className="required-field"></span>
+                            </Checkbox>
+                        </div>
+                        )}
+                    </Form.Item> 
                 </div>
             </div>
         )
@@ -4098,7 +4139,7 @@ class AppRegistrationForm extends Component {
                                 })(
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
-                                    onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductDivisionId", index , "participant" )}
+                                    onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductDivisionId", index , "participant", null, item )}
                                     setFieldsValue={item.competitionMembershipProductDivisionId}
                                     >
                                     {(item.divisions!= null && item.divisions!= undefined && item.divisions || []).map((division, index) => (
@@ -4686,7 +4727,7 @@ class AppRegistrationForm extends Component {
                         {this.termsAndConditionsOrgView(getFieldDecorator)}
                         </div>
                     }
-                    {this.termsAndConditionView(getFieldDecorator)}
+                    {/* {this.termsAndConditionView(getFieldDecorator)} */}
                 </div>) : null }
                 {this.removeModalView()}
             </div>
