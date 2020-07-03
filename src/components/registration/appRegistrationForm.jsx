@@ -1664,7 +1664,7 @@ class AppRegistrationForm extends Component {
                             find(x=>x.competitionUniqueKey == value);
                             console.log("competitionInfo" + JSON.stringify(competitionInfo));
             product["competitionInfo"] = deepCopyFunction(competitionInfo);
-            console.log("product" + JSON.stringify(product));
+          //  console.log("product" + JSON.stringify(product));
             this.getRegistrationSettings(competitionInfo.competitionUniqueKey, product.organisationUniqueKey, index,prodIndex);
         }
         else{
