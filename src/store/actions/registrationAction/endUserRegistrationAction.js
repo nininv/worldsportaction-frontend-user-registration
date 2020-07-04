@@ -11,11 +11,12 @@ function saveEndUserRegistrationAction(payload) {
 }
 
 // Update End user registration
-function updateEndUserRegisrationAction(data, key) {
+function updateEndUserRegisrationAction(data, key, subKey) {
     const action = {
       type: ApiConstants.UPDATE_END_USER_REGISTRATION,
       updatedData: data,
-      key: key
+      key: key,
+      subKey: subKey
     };
     return action;
   }
@@ -126,6 +127,25 @@ function updateTeamRegistrationInvite(payload) {
     return action;
 }
 
+// Get Terms and Condition
+function getTermsAndConditionsAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function getRegistrationProductFeesAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -139,5 +159,7 @@ export {
     getInvitedTeamRegInfoAction,
     updateTeamParentInfoAction,
     updateTeamRegSettingAction,
-    updateTeamRegistrationInvite
+    updateTeamRegistrationInvite,
+    getTermsAndConditionsAction,
+    getRegistrationProductFeesAction
 }

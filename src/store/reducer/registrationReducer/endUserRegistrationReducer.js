@@ -24,6 +24,7 @@ const initialState = {
     onMembershipLoad: false,
     userInfoOnLoad: false,
     onInvLoad:false,
+    onPFLoad: false,
     error: null,
     result: null,
     status: 0,
@@ -42,7 +43,9 @@ const initialState = {
     invCompetitionDetails: null,
     invUserInfo: null,
     invUserRegDetails: null,
-    registrationSetting: {}
+    registrationSetting: {},
+    termsAndConditions: [],
+    termsAndConditionsFinal: []
 }
 
 
@@ -79,6 +82,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             let oldData = state.registrationDetail;
             let updatedValue = action.updatedData;
             let getKey = action.key;
+            let getSubkey = action.subKey;
+  
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
                 getKey == "participantIndex" || getKey == "populateYourInfo") {
@@ -86,6 +91,12 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else {
                 oldData[getKey] = updatedValue;
+            }
+
+            if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
+                getSubkey == "removeParticipant"){
+                state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                    state.registrationDetail.userRegistrations, state);
             }
 
             return { ...state, error: null };
@@ -96,25 +107,30 @@ function endUserRegistrationReducer(state = initialState, action) {
             let existingParticipant = state.registrationDetail.userRegistrations[participantIndex];
             let settings = state.regSettings.find(x=>x.index == participantIndex);
            // console.log("participantIndex ::" + participantIndex + "prodIndex::" + prodIndex);
-           // console.log("state.regSettings" + JSON.stringify(state.regSettings));
+            // console.log("state.regSettings" + JSON.stringify(state.regSettings));
             if(action.key == "nonPlayer"){
-                existingParticipant["regSetting"]["nominate_positions"] = 0;
-                existingParticipant["regSetting"]["play_friend"] = 0;
-                existingParticipant["regSetting"]["refer_friend"] = 0;
+                existingParticipant["products"][prodIndex]["regSetting"] = null;
+                // existingParticipant["products"][prodIndex]["regSetting"]["nominate_positions"] = 0;
+                // existingParticipant["products"][prodIndex]["regSetting"]["play_friend"] = 0;
+                // existingParticipant["products"][prodIndex]["regSetting"]["refer_friend"] = 0;
             }
             else if(action.key == "player") {
                 if(settings!= null && settings!= undefined){
-                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                  //  console.log("@@@@@" + JSON.stringify(settings.settingArr));
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting,prodIndex + 1);
                     existingParticipant["regSetting"] = setting;
+                    existingParticipant["products"][prodIndex]["regSetting"] = settings.settingArr[prodIndex + 1];
                 }
             }
             else{
                 if(settings!= null && settings!= undefined){
                     settings.settingArr.splice(prodIndex + 1, 1);
-                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting,-1);
                     existingParticipant["regSetting"] = setting;
                 }
             }
+
+          //  console.log("state.regSettingsEND" + JSON.stringify(state.regSettings));
             
             return { ...state, error: null };
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
@@ -143,14 +159,19 @@ function endUserRegistrationReducer(state = initialState, action) {
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
                 let settings = state.regSettings.find(x=>x.index == index);
-               // console.log("&&&&&&&" + JSON.stringify(settings));
+            //    console.log("&&&&&&&" + JSON.stringify(settings));
+            //    console.log("registrationSettings######"+JSON.stringify(registrationSettings));
                 if(settings!= null){
                     let ind = index;
+                    let flag = -1;
                     if(state.prodIndex != undefined && state.prodIndex != null){
                         ind = state.prodIndex + 1;
+                        flag = ind;
+                        existingParticipant["products"][state.prodIndex]["regSetting"] = registrationSettings;
                     }
                     settings.settingArr[ind] = registrationSettings;
-                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting);
+                   // console.log("&&&&&&1111&" + JSON.stringify(settings));
+                    let setting = mergeRegistrationSettings1(settings.settingArr, state.commonRegSetting, flag);
                    // console.log("*******))))))))))" + JSON.stringify(setting));
                     existingParticipant["regSetting"] = setting;
                 }
@@ -173,7 +194,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         state.commonRegSetting.voucher = 1
                     }
                 }
-
+               // console.log("existingParticipant11111",existingParticipant);
                 state["participantIndex"] = null;
                 state["prodIndex"] = null;
             }
@@ -197,6 +218,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status,
                 userInfo: userInfoData
             };
+       
         case ApiConstants.UPDATE_YOUR_INFO_ACTION:
             let partUser = state.registrationDetail.userRegistrations[action.index];
             partUser[action.subKey][action.key] = action.data;
@@ -226,6 +248,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.contactDetails = null;
                     participant.divisionName = null;
                     participant.venue = [];
+                    participant["fees"] = null;
+                    state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                        state.registrationDetail.userRegistrations, state);
              
                 }
                 else if(action.key == "competitionUniqueKey"){
@@ -242,6 +267,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.venue = competitionInfo.venues!= null ? competitionInfo.venues : [];
                     participant.products = [];
                     participant.divisionName = null;
+                    participant["fees"] = null;
                 }
                 else if(action.key == "competitionMembershipProductTypeId"){
                     let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
@@ -306,6 +332,48 @@ function endUserRegistrationReducer(state = initialState, action) {
                    // console.log("Player::" + JSON.stringify(participant));
                     
                 }
+                else if(action.key == "addPlayersCSV"){
+                    console.log("DATA::::", action.data);
+
+                    let playerData = action.data;
+                    if (isArrayNotEmpty(playerData)) {
+                        if(isArrayNotEmpty(participant["team"][action.subKey])){
+                            let prevData = participant["team"][action.subKey].filter(x=>x.isDisabled == true);
+                            participant["team"][action.subKey] = prevData!= null ? prevData : [];
+                        }
+
+                        if(!participant["team"][action.subKey]){
+                            participant["team"][action.subKey] = [];
+                        }
+
+                        for (let i in playerData) {
+                            let obj = {
+                                competitionMembershipProductTypeId: null,
+                                firstName: playerData[i].first_name, 
+                                lastName: playerData[i].last_name,
+                                email: playerData[i].email, 
+                                mobileNumber: playerData[i].mobile, 
+                                payingFor: null, 
+                                index: action.index,
+                                isDisabled: false, isPlayer: null
+                            }
+
+
+                            let memProd = participant.competitionInfo.membershipProducts.
+                                    find(x=>x.shortName == playerData[i].type && x.allowTeamRegistrationTypeRefId!= null);
+                    
+                           if(memProd!= null && memProd!= undefined){
+                                obj.competitionMembershipProductTypeId = memProd.competitionMembershipProductTypeId;
+                                obj.isPlayer =  memProd.isPlayer;
+                                participant["team"][action.subKey].push(obj);
+                           }
+                        }
+
+                        state.refFlag = "players";
+                    }
+
+                 //   console.log("participant", participant);
+                }
                 else if(action.key == "removePlayer"){
                     participant["team"][action.subKey].splice(action.subIndex, 1);
                     state.refFlag = "players";
@@ -359,6 +427,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             state.invUserInfo = null;
             state.invUserRegDetails =  null;
             state.registrationSetting = {}
+            state.termsAndConditions = []
 
            // console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {
@@ -418,6 +487,58 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onLoad: false,
                 status: action.status
             };   
+       
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
+            return { ...state, onTCLoad: true };
+
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
+            let tcData = action.result;
+          //  console.log("TC Input :::", tcData)
+            if(tcData!= null && tcData.termsAndConditions.length > 0){
+                let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
+              //  console.log("isExistsTC", isExistsTC);
+                if(isExistsTC == null || isExistsTC == undefined){
+                    state.termsAndConditions.push(tcData);
+                }
+            }
+           // console.log("TC:::TC Final1111", state.termsAndConditions)
+            state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                                            state.registrationDetail.userRegistrations, state);
+           
+           // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
+            return {
+                ...state,
+                onTCLoad: false,
+                status: action.status
+            }; 
+            
+        case ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD:
+            state["participantIndex"] = action.payload.participantIndex;
+            state["prodIndex"] = action.payload.prodIndex;
+            return { ...state, onPFLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_SUCCESS:
+
+            if(state.participantIndex != null){
+                let index = state.participantIndex;
+                let existingParticipant = state.registrationDetail.userRegistrations[index];
+               // console.log("index:::", index, state.prodIndex);
+                if(state.prodIndex!= null && state.prodIndex!= undefined){
+                    existingParticipant["products"][state.prodIndex]["fees"] = action.result;
+                }
+                else{
+                    existingParticipant["fees"] = action.result;
+                }
+            }
+
+            state["participantIndex"] = null;
+            state["prodIndex"] = null;
+           
+            return {
+                ...state,
+                onPFLoad: false,
+                status: action.status
+            };
 
         default:
             return state;
@@ -446,21 +567,6 @@ function addReadOnlyPlayer(participant, action){
 function removeExistingPlayer(participant){
     if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
         let players = participant["team"]["players"].filter(x=>x.isDisabled == false);
-        //console.log("players" + JSON.stringify(players));
-        // if(players!= null && players.length > 0){
-        //     let indexArr = [];
-        //     console.log("players" + JSON.stringify(players));
-        //     players.map((item,index) => {
-        //         indexArr.push(index);
-        //     })
-        //     console.log("indexArr" + JSON.stringify(indexArr));
-        //     indexArr.map((item, index) => {
-        //         players.splice(item,1);
-        //     })
-        //     console.log("players After" + JSON.stringify(players));
-
-        // }
-
         participant["team"]["players"] = (players!= null && players!= undefined) ? players : [];
     }
 }
@@ -530,7 +636,7 @@ function updatePlayerData(participant, action){
     }
 }
 
-function mergeRegistrationSettings1(settings, commonRegSetting){
+function mergeRegistrationSettings1(settings, commonRegSetting, flag){
     try{
       //  console.log("existingSetting11::" + JSON.stringify(settings));
         let obj =  {"updates":0,"daily":0,"weekly":0,"monthly":0,"played_before":0,
@@ -548,7 +654,13 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
             for(let i in keys){
                // console.log("***" + keys[i] + "**" + i);
                 if(setting[keys[i]] == 1){
-                    obj[keys[i]] = 1;
+                    if(j!=0 && (keys[i] == "nominate_positions" || 
+                        keys[i] == "play_friend" ||  keys[i] == "refer_friend")){
+                           // obj[keys[i]] = 0;
+                    }
+                    else{
+                        obj[keys[i]] = 1;
+                    }
                 }
                // console.log("***" + JSON.stringify(obj))
                 if(keys[i] === "club_volunteer" || keys[i] === "shop" || keys[i] === "voucher"){
@@ -569,5 +681,50 @@ function mergeRegistrationSettings1(settings, commonRegSetting){
         console.log("Error" + error);
     }
 } 
+
+function updateTermsAndConditions(data, userRegistrations, state){
+    //console.log("^^^^^^^^^^^^^^ termsAndConditionsFinal");
+    let arr = [];
+    let finalArr = [];
+    let tcMap = new Map();
+    let tcFinalMap = new Map();
+    userRegistrations.map((item, index) => {
+        let finalVal = data.find(x=>x.organisationId == item.organisationUniqueKey);
+        if(finalVal!= null && finalVal!= undefined){
+            if(tcMap.get(item.organisationUniqueKey) == undefined){
+                arr.push(finalVal);
+                tcMap.set(item.organisationUniqueKey, finalVal);
+
+                finalVal.termsAndConditions.map((i) =>{
+                    if(tcFinalMap.get(i.organisationUniqueKey) == undefined){
+                        finalArr.push(i);
+                        tcFinalMap.set(i.organisationUniqueKey, i);
+                    }
+                })
+
+            }
+        }
+
+        (item.products).map((p,pIndex) => {
+            let finalVal = data.find(x=>x.organisationId == p.organisationUniqueKey);
+            if(finalVal!= null && finalVal!= undefined){
+                if(tcMap.get(p.organisationUniqueKey) == undefined){
+                    arr.push(finalVal);
+                    tcMap.set(p.organisationUniqueKey, finalVal);
+                    finalVal.termsAndConditions.map((i) =>{
+                        if(tcFinalMap.get(i.organisationUniqueKey) == undefined){
+                            finalArr.push(i);
+                            tcFinalMap.set(i.organisationUniqueKey, i);
+                        }
+                    })
+                }
+            }
+        });
+    })
+
+    state.termsAndConditionsFinal = finalArr;
+    
+    return arr;
+}
 
 export default endUserRegistrationReducer;

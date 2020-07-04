@@ -676,3 +676,8 @@ img.bg {
   padding-left: 15px;
   padding-right: 15px;
 }
+
+
+.userRegLink{
+  color: var(--app-color);
+}

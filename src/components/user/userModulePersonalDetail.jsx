@@ -87,6 +87,11 @@ const columns = [
         key: 'shopPurchases'
     },
     {
+        title: 'Status',
+        dataIndex: 'paymentStatus',
+        key: 'paymentStatus'
+    },
+    {
         title: "Reg.Form",
         dataIndex: "regForm",
         key: "regForm",
@@ -837,7 +842,7 @@ class UserModulePersonalDetail extends Component {
         }
         if (tabKey == "1") {
             this.hanleActivityTableList(1, userId, competition, "player", yearRefId);
-            this.hanleActivityTableList(1, userId, competition, "parent", yearRefId);
+           // this.hanleActivityTableList(1, userId, competition, "parent", yearRefId);
             this.hanleActivityTableList(1, userId, competition, "scorer", yearRefId);
             this.hanleActivityTableList(1, userId, competition, "manager", yearRefId);
         }
@@ -928,15 +933,17 @@ class UserModulePersonalDetail extends Component {
         return (
             <div className="fluid-width mt-2" >
 
-                <div className='profile-image-view mr-5' >
+                <div className='profile-image-view mr-5' style={{marginTop: 20}}>
                     {/* <span className="user-contact-heading">{AppConstants.playerProfile}</span> */}
+                    <div className="circular--landscape">
                     {
                         personal.photoUrl ?
-                            <img className="live-score-user-image" src={personal.photoUrl} alt="" height="80" width="80" />
+                            <img src={personal.photoUrl} alt=""/>
                             :
                             <span className="user-contact-heading">{AppConstants.noImage}</span>
 
                     }
+                    </div>
                     <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
                     <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                 </div>
@@ -1484,9 +1491,9 @@ class UserModulePersonalDetail extends Component {
                                                 {activityPlayerList!= null && activityPlayerList.length > 0 && this.playerActivityView()}
                                                 {activityManagerList!= null && activityManagerList.length > 0 && this.managerActivityView()}
                                                 {activityScorerList!= null && activityScorerList.length > 0 && this.scorerActivityView()}
-                                                {activityParentList!= null && activityParentList.length > 0 && this.parentActivityView()}
+                                                {/* {activityParentList!= null && activityParentList.length > 0 && this.parentActivityView()} */}
                                                 {activityPlayerList.length == 0 && activityManagerList.length == 0
-                                                 &&  activityScorerList.length == 0 && activityParentList.length == 0
+                                                 &&  activityScorerList.length == 0 //&& activityParentList.length == 0
                                                          && this.noDataAvailable()}
                                             </TabPane>
                                             <TabPane tab={AppConstants.statistics} key="2">

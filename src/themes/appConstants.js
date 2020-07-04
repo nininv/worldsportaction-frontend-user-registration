@@ -108,7 +108,8 @@ const AppConstants = {
   vouchers: "Vouchers",
   addvoucher: "Add voucher",
 
-  agreeTerm: "I have read and agree to (Affiliates name)  ",
+  //agreeTerm: "I have read and agree to (Affiliates name)  ",
+  agreeTerm: "I have read and agree to all of the above Terms and Conditions  ",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
@@ -888,7 +889,14 @@ const AppConstants = {
   emailValidationInfo : "Updating the email address will update the login information(User Name) while submitting this form. Please ensure that the information provided is correct.",
   stateHeading: 'State',
   childDetails: "Child Details",
-  registrationDivisions:"Registration Divisions"
+  registrationDivisions:"Registration Divisions",
+  downloadTemplate: 'Download Template',
+  playerImpMsg: "Import will remove existing Team Members from the list and populate the new Team Members based on the data available in the Template.",
+  termsAndConditionsHeading: "Terms & Conditions",
+  totalCasualFees: "Total Casual Fees",
+  totalSeasonalFees: "Total Seasonal Fees",
+  totalTeamFees: "Total Team Fees",
+  includeGST: " (incl. GST)"
 };
 
 export default AppConstants;

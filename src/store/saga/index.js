@@ -131,4 +131,12 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_USER_PROFILE_UPDATE_LOAD, userSaga.updateUserProfileSaga)
 
+  //Terms and Conditions
+  yield takeEvery(ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD, endUserRegSaga.getTermsAndConditionsSaga)
+
+  //Terms and Conditions
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD, endUserRegSaga.getRegistrationProductFeesSaga)
+
+
+
 }
