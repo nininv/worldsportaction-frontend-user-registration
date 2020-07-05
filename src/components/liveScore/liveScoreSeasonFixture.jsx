@@ -27,11 +27,12 @@ function tableSort(a, b, key) {
 
 
 function matchResultImag(result) {
-    if (result == "Final") {
+    console.log(result, "resultresult")
+    if (result == "FINAL") {
         return AppImages.greenDot
-    } else if (result == "Draft") {
+    } else if (result == "UNCONFIRMED") {
         return AppImages.purpleDot
-    } else if (result == "In Dispute") {
+    } else if (result == "DISPUTE") {
         return AppImages.redDot
     } else {
         return AppImages.greenDot
@@ -158,7 +159,7 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <span >{venueCourt ? venueCourt.name : ""}</span>
+                            <span >{venueCourt ?venueCourt.venue.name +"-"+venueCourt.name : ""}</span>
                         </div>
                     </div >
 
@@ -166,7 +167,7 @@ const columns2 = [
             } else {
 
                 return (
-                    <span>{venueCourt ? venueCourt.name : ""}</span>
+                    <span >{venueCourt ?venueCourt.venue.name +"-"+venueCourt.name : ""}</span>
                 )
             }
         }
@@ -201,9 +202,9 @@ const columns2 = [
     },
     {
         title: 'Match Status',
-        dataIndex: 'matchStatus',
-        key: 'matchStatus',
-        sorter: (a, b) => tableSort(a, b, "matchStatus"),
+        dataIndex: 'resultStatus',
+        key: 'resultStatus',
+        sorter: (a, b) => tableSort(a, b, "resultStatus"),
         render: (resultStatus, record) => {
             if (record.isRoundChnage) {
                 return (
@@ -261,7 +262,7 @@ class LiveScoreSeasonFixture extends Component {
         setAuthToken(token);
 
 
-        let orgParam = this.props.location.search.split("?organisationId=")
+        let orgParam = this.props.location.search.split("?organisationKey=")
         let orgId = orgParam[1]
         setliveScoreOrgID(orgId)
         let organisationId = await getliveScoreOrgID()
@@ -278,9 +279,11 @@ class LiveScoreSeasonFixture extends Component {
     componentDidUpdate(nextProps) {
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
-                let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
-                this.props.getLiveScoreDivisionList(firstComp)
-                this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true })
+                if( isArrayNotEmpty(this.props.liveScoreFixturCompState.comptitionList )){
+                    let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
+                    this.props.getLiveScoreDivisionList(firstComp)
+                    this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true })
+                }
             }
         }
 
@@ -288,7 +291,6 @@ class LiveScoreSeasonFixture extends Component {
 
         if (this.props.liveScoreLadderState !== nextProps.liveScoreLadderState) {
             if (this.props.liveScoreLadderState.onLoad == false && this.state.onDivisionLoad == true) {
-
                 if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0) {
                     let division = this.props.liveScoreLadderState.liveScoreLadderDivisionData[0].id
                     this.setState({ onDivisionLoad: false, division })

@@ -1,40 +1,42 @@
 import React, { Component } from "react";
 import { Layout, Radio, message } from 'antd';
-import InputWithHead from "../customComponents/InputWithHead";
-import AppImages from "../themes/appImages";
-import history from "../util/history";
-import AppConstants from "../themes/appConstants";
-import "../pages/layout.css";
-import { setAuthToken, setUserId, setOrganistaionId, 
-    setCompetitionID, getAuthToken, getUserId,
-    setIsUserRegistration } from '../util/sessionStorage'
-import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
+import InputWithHead from "../../customComponents/InputWithHead";
+import AppImages from "../../themes/appImages";
+import history from "../../util/history";
+import AppConstants from "../../themes/appConstants";
+import "../../pages/layout.css";
+import { setAuthToken, setUserId, setUserRegId, getAuthToken, getUserId, setExistingUserRefId, setRegisteringYourselfRefId } from '../../util/sessionStorage'
+import { clearRegistrationDataAction } from '../../store/actions/registrationAction/endUserRegistrationAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 const { Content, Header } = Layout;
 
-const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9510c51d401fe5d10f9767759bbce7833692b87ccb78bc79cfff4edadaa661befa2039bc8fb88298d311d214306eea43776af229593a760ac82fff319046758e375b271a1756924aa4624b3435f458cef2e115e5ac93a4871d3b1daaf56c1a510218f2c680ba127512a358c990c3201c494b23833f9812beaf69f52213212a90d222e997040179e955f153593d9532905d';
+const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c95d69a0e179191e4422d8df456c7dc7268069d560e9e677eb64ca0d506751ea12c34b087a73bc319ba9b17a67ffc69fde351109f091cb2e64e6a60042bcbb11bf6d73e2be792c9658cc5604e115967a82eb0f2f944a1e2950e0116df2065b0ba2fb5dcf34f9341f6b7b6f2e64839339d24123ea015526f05fe22cec9cf96aa86ff990588beafbc3675f550605d72d25247';
 const userId = 0;
-class UserRegistration extends Component {
+class TeamRegistration extends Component {
     constructor(props) {
         super(props);
-        this.props.clearRegistrationDataAction();
-        this.state = {}
+        //this.props.clearRegistrationDataAction();
+        this.state = {
+            existingUserRefId: null,
+            registeringYourselfRefId: null
+        }
+    }
+
+    async componentWillMount(){
+        await localStorage.clear();
     }
 
     async componentDidMount() {
-       // alert("componentDidMount");
-
+       // console.log("componentDidMount");
         const query = this.queryfie(this.props.location.search);
-        let competitionUniqueKey = query.competitionId;
-        let organisationUniqueKey = query.organisationId;
+        let userRegUniqueKey = query.userRegId;
         let userId = query.userId;
         let token = query.token;
-        
-        if(competitionUniqueKey!= undefined && organisationUniqueKey!= undefined)
+        console.log("userRegUniqueKey::" + userRegUniqueKey);
+        if(userRegUniqueKey!= undefined)
         {
-            await setOrganistaionId(organisationUniqueKey);
-            await setCompetitionID(competitionUniqueKey);
+            await setUserRegId(userRegUniqueKey);
         }
 
         if(userId!= undefined && token!= undefined){
@@ -54,15 +56,15 @@ class UserRegistration extends Component {
                 }
         }
 
-        if(userId!= undefined && token!= undefined && 
-            userId!= null && token!= null && 
-            userId!= "" && token!= "" &&
-            userId!= 0)
-            {
-                await setIsUserRegistration(1);
-                history.push("/appRegistrationForm")
-            }
+        // if(userId!= undefined && token!= undefined && 
+        //     userId!= null && token!= null && 
+        //     userId!= "" && token!= "" &&
+        //     userId!= 0)
+        //     {
+        //         history.push("/teamRegistrationForm")
+        //     }
     }
+
 
     parseHttpHeaders(httpHeaders) {
         return httpHeaders.split("\n")
@@ -83,18 +85,21 @@ class UserRegistration extends Component {
 
 
     onChange = async(value) => {
-        console.log("value" + value)
-        await setIsUserRegistration(1);
-        if(value === 1)
-        {
+        this.setState({existingUserRefId: value});
+    }
+
+    onChangeRegYourself = async(value) => {
+        setRegisteringYourselfRefId(value);
+        setExistingUserRefId(this.state.existingUserRefId);
+        if(this.state.existingUserRefId == 1){
             await localStorage.removeItem("userId");
             await localStorage.removeItem("token");
             history.push("/login")
         }
-        else if(value === 2){
-            setUserId(userId);
-            setAuthToken(token);
-            history.push("/appRegistrationForm")
+        else if(this.state.existingUserRefId == 2){
+            await setUserId(userId);
+            await setAuthToken(token);
+            history.push("/teamRegistrationForm")
         }
     }
 
@@ -119,6 +124,22 @@ class UserRegistration extends Component {
         )
     }
 
+    registeringYourselfView = () => {
+        return (
+            <div className="content-view">
+                <InputWithHead heading={AppConstants.teamRegisteringYourself} required={"required-field"}></InputWithHead>
+                <Radio.Group
+                    className="reg-competition-radio"
+                    onChange={(e) => this.onChangeRegYourself(e.target.value)}>
+                    <Radio value={1}>{AppConstants.yes}</Radio>
+                    <Radio value={2}>{AppConstants.no}</Radio>
+                </Radio.Group>
+            </div>
+        )
+    }
+
+
+
     contentView = () => {
         return (
             <div className="content-view">
@@ -139,9 +160,16 @@ class UserRegistration extends Component {
                  {this.headerView()}
                 <Layout >
                     <Content className="container">
-                        <div className="formView">
-                            {this.contentView()}
-                        </div>
+                        {this.state.existingUserRefId == null &&
+                            <div className="formView">
+                                {this.contentView()}
+                            </div>
+                        }
+                        { this.state.existingUserRefId != null &&
+                            <div className="formView">
+                                {this.registeringYourselfView()}
+                            </div>
+                        }
                     </Content>
                 </Layout>
             </div>
@@ -164,4 +192,4 @@ function mapStatetoProps(state){
     }
 }
 
-export default connect(mapStatetoProps,mapDispatchToProps)(UserRegistration);
+export default connect(mapStatetoProps,mapDispatchToProps)(TeamRegistration);

@@ -150,7 +150,8 @@ class LiveScorePublicLadder extends Component {
    async componentDidMount() {
         setUserId(userId);
         setAuthToken(token);
-        let orgParam =  this.props.location.search.split("?organisationId=")
+        // let orgParam =  this.props.location.search.split("?organisationId=")
+        let orgParam =  this.props.location.search.split("?organisationKey=")
         let orgId  =  orgParam[1]
 
         setliveScoreOrgID(orgId)
@@ -176,10 +177,13 @@ class LiveScorePublicLadder extends Component {
     componentDidUpdate(nextProps) {
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
-                let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
-                let compKey  = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].competitionUniqueKey
-                this.props.getLiveScoreDivisionList(firstComp)
-                this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true,competitionUniqueKey:compKey })
+                if(this.props.liveScoreFixturCompState.comptitionList.length >0){
+                    let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
+                    let compKey  = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].competitionUniqueKey
+                    this.props.getLiveScoreDivisionList(firstComp)
+                    this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true,competitionUniqueKey:compKey })
+                }
+              
             }
         }
 

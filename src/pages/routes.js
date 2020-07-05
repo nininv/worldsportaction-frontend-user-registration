@@ -11,9 +11,15 @@ import Stripe from "../components/stripe/stripe";
 import RegistrationInvoice from "../components/stripe/registrationInvoice"
 
 // Live Score Screesn 
-
 import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder"
 import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
+
+import TeamRegistration from "../components/registration/teamRegistration";
+import TeamRegistrationForm from "../components/registration/teamRegistrationForm";
+
+import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
+import UserProfileEdit from "../components/user/userProfileEdit"		
+
 const lazyLoad = Component => {
   const lazy = props => {
     return (
@@ -29,7 +35,7 @@ class Routes extends React.Component {
   render() {
     return (
       <Switch>
-        <Route exact path="/" render={() => <Redirect to="/userRegistration" />} />
+        <Route exact path="/" render={() => <Redirect to="/userPersonal" />} />
         <PrivateRoute
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationForm)}
@@ -64,6 +70,25 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/invoice"
           component={lazyLoad(RegistrationInvoice)}
+        />
+
+        <PrivateRoute
+          path="/teamRegistration"
+          component={lazyLoad(TeamRegistration)}
+        />
+
+        <PrivateRoute
+          path="/teamRegistrationForm"
+          component={lazyLoad(TeamRegistrationForm)}
+        />
+          
+          <PrivateRoute
+          path="/userPersonal"
+          component={lazyLoad(UserModulePersonalDetail)}
+        />
+          <PrivateRoute
+            path="/userProfileEdit"
+            component={lazyLoad(UserProfileEdit)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />

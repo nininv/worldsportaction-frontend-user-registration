@@ -46,7 +46,45 @@ let userHttpApi = {
       var url = `api/userorganisation?userId=${userId}`;
       return Method.dataGet(url, token)
     }
-  }
+  },
+  getUserModulePersonalData(payload) {
+    var url = `api/user/personaldetails?userId=${payload.userId}&organisationId=${payload.organisationId!= null ? payload.organisationId: '' }`;
+    return Method.dataGet(url, token);
+  },
+  getUserModulePersonalByCompData(payload) {
+    var url = `api/user/personaldetails/competition`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleMedicalInfo(payload) {
+    var url = `api/user/medical`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleRegistrationData(payload) {
+    var url = `api/user/registration`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleActivityPlayer(payload) {
+    var url = `api/user/activity/player`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleActivityParent(payload) {
+    var url = `api/user/activity/parent`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleActivityScorer(payload) {
+    var url = `api/user/activity/scorer`;
+    return Method.dataPost(url, token, payload);
+  },
+  getUserModuleActivityManager(payload) {
+    var url = `api/user/activity/manager`;
+    return Method.dataPost(url, token, payload);
+  },
+
+
+  updateUserProfile(payload) {
+    var url = `api/userprofile/update?section=${payload.section}`;
+    return Method.dataPost(url, token, payload);
+  },
 }
 
 let Method = {

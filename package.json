@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@progress/kendo-drawing": "^1.7.0",
+    "@progress/kendo-react-pdf": "^3.14.0",
     "@stripe/react-stripe-js": "^1.1.2",
     "@stripe/stripe-js": "^1.5.0",
     "antd": "^3.25.1",
@@ -20,7 +22,7 @@
     "moment": "^2.24.0",
     "react": "^16.11.0",
     "react-beautiful-dnd": "^13.0.0",
-    "react-csv-reader": "^2.0.2",
+    "react-csv-reader": "^2.2.1",
     "react-dom": "^16.11.0",
     "react-draft-wysiwyg": "^1.14.4",
     "react-player": "^1.14.2",

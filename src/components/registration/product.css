@@ -657,3 +657,27 @@ img.bg {
   text-align: center;
   padding-top: 10px;
 }
+
+
+.division-err{
+  color: var(--app-f5222d);
+  padding-top: 20px;
+}
+
+.team-mem_prod_type .ant-select-selection{
+  min-height: 45px !important;
+}
+
+.team-reg-player-dob .ant-input{
+  height: 44px;
+}
+
+.reg-player-pad{
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+
+.userRegLink{
+  color: var(--app-color);
+}

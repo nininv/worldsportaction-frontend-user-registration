@@ -201,6 +201,10 @@
 .form-header-view.ant-layout-header {
   padding: 0 4.5%;
 }
+.user-img-wrap img{
+  height: 100%;
+  width: 100%;
+}
 
 @media (max-width: 767px) {
   .form-header-view.ant-layout-header {

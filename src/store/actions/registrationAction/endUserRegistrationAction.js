@@ -11,10 +11,21 @@ function saveEndUserRegistrationAction(payload) {
 }
 
 // Update End user registration
-function updateEndUserRegisrationAction(data, key) {
+function updateEndUserRegisrationAction(data, key, subKey) {
     const action = {
       type: ApiConstants.UPDATE_END_USER_REGISTRATION,
       updatedData: data,
+      key: key,
+      subKey: subKey
+    };
+    return action;
+  }
+
+  function updateRegistrationSettingsAction(participantIndex, prodIndex, key) {
+    const action = {
+      type: ApiConstants.UPDATE_REGISTRATION_SETTINGS,
+      participantIndex: participantIndex,
+      prodIndex: prodIndex,
       key: key
     };
     return action;
@@ -57,11 +68,98 @@ function clearRegistrationDataAction()
     return action;
 }
 
+function updateTeamAction(data, index,key, subKey,subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_ACTION,
+        data: data,
+        index: index,
+        subIndex: subIndex,
+        key: key,
+        subKey:subKey
+    }
+    return action;
+}
+
+function updateYourInfoAction(data, index, key, subKey){
+    const action = {
+        type: ApiConstants.UPDATE_YOUR_INFO_ACTION,
+        data: data,
+        index: index,
+        key: key,
+        subKey: subKey
+    }
+    return action;
+}
+
+// 
+function getInvitedTeamRegInfoAction(payload) {
+    const action = {
+        type: ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
+function updateTeamParentInfoAction(data,key){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_PARENT_INFO,
+        data: data,
+        key: key
+    }
+    return action;
+}
+
+function updateTeamRegSettingAction(data,key){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_REG_SETTINGS,
+        data: data,
+        key: key
+    }
+    return action;
+}
+
+/////Update Team Registration Invite
+function updateTeamRegistrationInvite(payload) {
+    const action = {
+        type: ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
+// Get Terms and Condition
+function getTermsAndConditionsAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function getRegistrationProductFeesAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
     orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction,
     getUserRegistrationUserInfoAction,
-    clearRegistrationDataAction
+    clearRegistrationDataAction,
+    updateRegistrationSettingsAction,
+    updateTeamAction,
+    updateYourInfoAction,
+    getInvitedTeamRegInfoAction,
+    updateTeamParentInfoAction,
+    updateTeamRegSettingAction,
+    updateTeamRegistrationInvite,
+    getTermsAndConditionsAction,
+    getRegistrationProductFeesAction
 }

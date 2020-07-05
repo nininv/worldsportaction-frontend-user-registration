@@ -52,7 +52,7 @@ let LiveScoreAxiosApi = {
 
     //Get Fixture Competition List
     getFixtureCompList(orgId){
-        let url = `/competitions/list?organisationId=${orgId}`
+        let url = `/competitions/list?organisationUniqueKey=${orgId}`
         return Method.dataGet(url, localStorage.token);
     }
 };

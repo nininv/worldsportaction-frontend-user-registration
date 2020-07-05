@@ -12,10 +12,17 @@ import {
   HashRouter
 } from "react-router-dom";
 import history from "./util/history";
-import Login from "./components/login";
 import { Skeleton } from "antd";
 import PrivateRoute from "./util/protectedRoute";
-import UserRegistration from "./components/userRegistration";
+import Login from "./components/login";
+import TeamRegistrationForm from "./components/registration/teamRegistrationForm";
+import UserModulePersonalDetail from "./components/user/userModulePersonalDetail";
+import AppRegistrationForm from "./components/registration/appRegistrationForm";
+
+import { getUserId, getAuthToken, getExistingUserRefId, 
+        getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration } 
+from "./util/sessionStorage";
+
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -39,11 +46,18 @@ function App() {
            <Route
             exact
             path="/"
-            render={() =>
-              <Redirect to="/userRegistration" />
+           render={() =>
+              ( 
+                    ( getUserId()!= 0  && getUserId()!= null && getUserId()!= undefined && 
+                      getAuthToken() != null  && getAuthToken() != undefined)? (
+                      <Redirect to="/userPersonal" />
+                    ) : 
+                    (<Redirect to="/login" />))
             }
           /> 
-          <Route path="/userRegistration" component={lazyLoad(UserRegistration)} />
+          <Route path="/login" component={lazyLoad(Login)} />
+          <Route path="/userPersonal" component={lazyLoad(UserModulePersonalDetail)} />
+          {/* <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} /> */}
           <PrivateRoute path="/" component={lazyLoad(Routes)} />
         </Switch>
       </Router>

@@ -164,15 +164,16 @@ const Stripe = (props) => {
 // POST the token ID to your backend.
 async function stripeTokenHandler(token, props) {
     let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
-    // let organisationUniqueKey = screenProps.location.state ? screenProps.location.state.organisationUniqueKey : null;
+    let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
     let stripeToken = token.id
     let body = {
         registrationId: registrationId,
+        invoiceId: invoiceId,
         token: {
             id: stripeToken
         }
     }
-    const response = await fetch(`https://registration-api-dev.worldsportaction.com/api/payments/createPayments`, {
+    const response = await fetch(`${StripeKeys.apiURL}/api/payments/createPayments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -184,7 +185,14 @@ async function stripeTokenHandler(token, props) {
         props.onLoad(false)
         if (response.status === 200) {
             message.success(res.message);
-            history.push('/appRegistrationSuccess');
+            // history.push('/appRegistrationSuccess');
+            history.push("/invoice", {
+                registrationId: registrationId,
+                paymentSuccess: true
+            })
+        }
+        else if (response.status === 212) {
+            message.error(res.message);
         }
         else if (response.status === 400) {
             message.error(res.message);

@@ -123,3 +123,148 @@
 .pointer {
   cursor: pointer;
 }
+
+.user-module-row-heading{
+  font-family: inter-medium;
+  font-size: 17px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  color: var(--app-1b1b34);
+  margin-bottom: 10px;
+}
+
+.user-module-personal-row{
+  padding-left: 0px;
+  color: var(--app-1b1b34);
+  font-size: 14px;
+  font-family: inter-medium;
+}
+
+.same-user-validation{
+  margin-top:5px;
+  color:red;
+}
+
+.other-info-row{
+  display: flex;
+  padding-left: 20px;
+}
+
+.other-info-label{
+  padding-top: 10px;
+  padding-right: 20px;
+  width: 225px;
+}
+
+.other-info-font{
+  font-family: inter !important;
+}
+
+.user-filter-col-cont{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.user-filter-select .ant-select-selection{
+  border: 1px solid var(--app-d9d9d9) !important;
+  width: 160px !important;
+  min-height: 40px !important;
+  margin-right: 30px;
+  box-shadow: 0px 8px 16px 0 rgba(27, 27, 52, 0.06);
+  background-color: var(--app-white);
+}
+
+.user-filter-select1 .ant-select-selection{
+  border: 1px solid var(--app-d9d9d9) !important;
+  width: 300px !important;
+  min-height: 40px !important;
+  margin-right: 25px;
+  box-shadow: 0px 8px 16px 0 rgba(27, 27, 52, 0.06);
+  background-color: var(--app-white);
+}
+
+.user-filter-select .ant-calendar-picker-input{
+  height: 40px;
+  width: 160px !important;
+}
+
+.user-filter-row .user-col{
+  margin-bottom: 15px;
+}
+
+.user-filter-row .user-col1{
+  margin-bottom: 15px;
+}
+
+.user-filter-row .year-select-heading{
+  width: 95px;
+}
+.user-filter-row{
+  margin-left: 8px;
+}
+
+.user-filter-select .ant-select-selection-selected-value{
+  width: 123px;
+}
+
+.user-filter-select1 .ant-select-selection-selected-value{
+  width: 260px;
+}
+
+.user-filter-col-cont input{
+    width: 300px !important;
+    height: 40px !important;
+}
+
+.affiliate-dir-srch{
+  margin-left: auto;
+  margin-right: 1.6%;
+  padding-top: 4px;
+}
+
+.affiliate-dir-srch .ant-input{
+  box-shadow: 0px 8px 16px 0 rgba(27, 27, 52, 0.06);
+  background-color: var(--app-white);
+}
+
+.user-prof-filter-select .ant-select-selection{
+  min-height: 40px !important;
+}
+
+.table-responsive-other-info {
+  width: 100%;
+  overflow-x: hidden;
+  /* overflow: visible; */
+  -webkit-overflow-scrolling: touch;
+}
+
+.other-info-edit-btn
+{
+    background-color: var(--app-color);
+    border-color: var(--app-color);
+    font-weight: 300;
+    font-stretch: normal;
+    margin-top: 15px;
+    font-style: normal;
+    font-family: inter-semi-bold;
+    font-size: 14px;
+    width: 65px;
+    height: 30px;
+    border-radius: 5px;
+    background-image: var(--app-gradient-right);
+}	
+.circular--landscape {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.circular--landscape img {
+  width: 100%;
+}		  
