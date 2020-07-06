@@ -1806,7 +1806,7 @@ class AppRegistrationForm extends Component {
         }
         
 
-    console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
+    //console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
      let flag = false;
     if(userRegistrations[index][key]!= 0 && userRegistrations[index][key] != value ){
         let userId = userRegistrations[index].userId;
@@ -1847,23 +1847,36 @@ class AppRegistrationForm extends Component {
             userRegistrations[index]["team"]["index"] = index;
         } 
       }
-    //  console.log("userRegistration::" + JSON.stringify(userRegistrations[index]));
+      
 
     if(value == 4){
         if(userRegistrations.length == 1){
            let userReg =  userRegistrations[0];
-           let compInfo = userReg.organisationInfo!= null && 
-                            userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
-               && x.competitionUniqueKey == this.state.competitionUniqueKey);
-           let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
-               && x.organisationUniqueKey == this.state.organisationUniqueKey);
-           if(orgInfo == null ||  orgInfo == undefined){
-               userReg.organisationUniqueKey = null
+         //  console.log("userReg", userReg);
+           let compInfo = null;
+           if(userReg.organisationInfo!= null){
+                compInfo =   userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
+                    && x.competitionUniqueKey == this.state.competitionUniqueKey);
            }
+                           
+        //    let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
+        //        && x.organisationUniqueKey == this.state.organisationUniqueKey);
+
+         //   console.log("compInfo",compInfo);
+        //    if(orgInfo == null ||  orgInfo == undefined){
+        //        userReg.organisationUniqueKey = null
+        //    }
            if(compInfo == null  || compInfo == undefined){
                userReg.competitionUniqueKey = null;
+               userReg.organisationUniqueKey = null
+               this.props.form.setFieldsValue({
+                [`organisationUniqueKey${index}`]:  null,
+                [`competitionUniqueKey${index}`]:  null,
+                [`competitionMembershipProductTypeId${index}`]:  null,
+                [`competitionMembershipProductDivisionId${index}`]:  null,
+            });
            }
-           flag = true;
+         //  flag = true;
         }
     }
     this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
@@ -1873,8 +1886,8 @@ class AppRegistrationForm extends Component {
         this.existingUserPopulate();
       }
 
-      console.log("Flag ::" + flag)
-      console.log("userRegistrations ::",userRegistrations)
+     // console.log("Flag ::" + flag)
+     // console.log("userRegistrations ::",userRegistrations)
       if(flag){
         this.props.updateEndUserRegisrationAction(true, "setCompOrgKey");
       }
