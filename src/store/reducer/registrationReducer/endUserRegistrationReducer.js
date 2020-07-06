@@ -238,6 +238,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.organisationInfo = deepCopyFunction(organisationInfo);
                     participant.competitionInfo = [];
                     participant.competitionUniqueKey = null;
+                    participant.competitionMembershipProductId = null;
                     participant.competitionMembershipProductTypeId = null;
                     participant.competitionMembershipProductDivisionId = null;
                     participant.products = [];
@@ -257,6 +258,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     let competitionInfo = participant.organisationInfo.competitions.
                                     find(x=>x.competitionUniqueKey == action.data);
                     participant.competitionInfo = deepCopyFunction(competitionInfo);
+                    participant.competitionMembershipProductId = null;
                     participant.competitionMembershipProductTypeId = null;
                     participant.competitionMembershipProductDivisionId = null;
                     participant.specialNote = competitionInfo.specialNote;
@@ -300,6 +302,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                             participant["divisions"] = [];
                             participant[action.key] = null;		
                         }
+
+                        participant["competitionMembershipProductId"] = memProd.competitionMembershipProductId;
                 }
                 participant[action.key] = action.data;
             }
@@ -360,7 +364,8 @@ function endUserRegistrationReducer(state = initialState, action) {
 
 
                             let memProd = participant.competitionInfo.membershipProducts.
-                                    find(x=>x.shortName == playerData[i].type && x.allowTeamRegistrationTypeRefId!= null);
+                                    find(x=>x.shortName == playerData[i].type && x.allowTeamRegistrationTypeRefId!= null &&
+                                        x.competitionMembershipProductId == participant.competitionMembershipProductId);
                     
                            if(memProd!= null && memProd!= undefined){
                                 obj.competitionMembershipProductTypeId = memProd.competitionMembershipProductTypeId;

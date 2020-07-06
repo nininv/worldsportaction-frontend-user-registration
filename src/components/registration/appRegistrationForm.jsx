@@ -80,7 +80,9 @@ const teamColumns = [
             let userRegistration = userRegistrations[record.index]; 
             let memProds = userRegistration!= null && userRegistration.competitionInfo!= null && 
                             userRegistration.competitionInfo.membershipProducts!= null &&  
-                            userRegistration.competitionInfo.membershipProducts.filter(x=>x.allowTeamRegistrationTypeRefId!= null);
+                            userRegistration.competitionInfo.membershipProducts.
+                            filter(x=>x.allowTeamRegistrationTypeRefId!= null && 
+                                x.competitionMembershipProductId == userRegistration.competitionMembershipProductId);
            
 
             return (
@@ -243,6 +245,7 @@ const teamColumns = [
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[record.index]; 
             let registrationTypeId = 1;
+            let membershipProductInfo = registrationState.membershipProductInfo;
             if(userRegistration!= null){
                 let team = userRegistration.team;
                 if(team!= null && team.registrationTypeId!= null && team.registrationTypeId!= undefined){
@@ -816,7 +819,7 @@ class AppRegistrationForm extends Component {
            // tempParticipantId: userRegistrations.length + 1,
             tempParticipantId: tempParticipantId,competitionUniqueKey: null,organisationUniqueKey: null, 
             registeringYourself: 0,isSameParentContact: false,isLinkExistingParent: false,
-            isVoucherAdded: false,whoAreYouRegistering: 0, whatTypeOfRegistration: 0,userId: null,
+            isVoucherAdded: false,whoAreYouRegistering: 0, whatTypeOfRegistration: 0,userId: null, competitionMembershipProductId: null,
             competitionMembershipProductTypeId:null, competitionMembershipProductDivisionId: 0,divisionName:"",
             genderRefId: 1,dateOfBirth:"",firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
             reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
