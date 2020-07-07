@@ -2569,6 +2569,12 @@ class AppRegistrationForm extends Component {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
+        let compMembProducts = [];
+        if(item.competitionInfo!= null && item.competitionInfo.membershipProducts!= null){
+            compMembProducts = item.competitionInfo.membershipProducts.
+            filter(x=>x.isIndividualRegistration == 1 || x.isIndividualRegistration == null);
+        }
+        
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -2622,7 +2628,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductTypeId", index )}
                         setFieldsValue={item.competitionMembershipProductTypeId}
                         >
-                    {(item.competitionInfo!= null && item.competitionInfo.membershipProducts || []).map((mem, index) => (
+                    {(compMembProducts || []).map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
                         ))}
@@ -3821,6 +3827,11 @@ class AppRegistrationForm extends Component {
     membershipProductProductView = (item, prod, prodIndex, index, getFieldDecorator) => {
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (prod.fees!= null && prod.fees!= undefined) ? ' ('+prod.fees.name+')' : '';
+        let compMembProducts = [];
+        if(prod.competitionInfo!= undefined && prod.competitionInfo!= null && prod.competitionInfo.membershipProducts!= null){
+            compMembProducts = prod.competitionInfo.membershipProducts.
+            filter(x=>x.isIndividualRegistration == 1 || x.isIndividualRegistration == null);
+        }
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -3875,7 +3886,7 @@ class AppRegistrationForm extends Component {
                         style={{ width: "100%", paddingRight: 1 }}
                         onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex, "competitionMembershipProductTypeId")}
                         setFieldsValue={prod.competitionMembershipProductTypeId}>
-                        {(prod.competitionInfo!= undefined && prod.competitionInfo!= null && prod.competitionInfo.membershipProducts || []).map((mem, index) => (
+                        {(compMembProducts || []).map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
                         ))}
@@ -4078,7 +4089,11 @@ class AppRegistrationForm extends Component {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
-
+        let compMembProducts = [];
+        if(item.competitionInfo!= undefined && item.competitionInfo!= null && item.competitionInfo.membershipProducts!= null){
+            compMembProducts = item.competitionInfo.membershipProducts.
+            filter(x=>x.isPlayer == 1 && ( x.isTeamRegistration == 1 || x.isTeamRegistration == null));
+        }
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -4134,9 +4149,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductTypeId", index, "participant", null, item  )}
                         setFieldsValue={item.competitionMembershipProductTypeId}
                         >
-                    {(item.competitionInfo!= null && 
-                            (item.competitionInfo.membershipProducts!= null && 
-                                item.competitionInfo.membershipProducts.filter(x=>x.isPlayer == 1)) || [])
+                    {(compMembProducts || [])
                             .map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
