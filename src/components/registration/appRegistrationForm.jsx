@@ -80,7 +80,9 @@ const teamColumns = [
             let userRegistration = userRegistrations[record.index]; 
             let memProds = userRegistration!= null && userRegistration.competitionInfo!= null && 
                             userRegistration.competitionInfo.membershipProducts!= null &&  
-                            userRegistration.competitionInfo.membershipProducts.filter(x=>x.allowTeamRegistrationTypeRefId!= null);
+                            userRegistration.competitionInfo.membershipProducts.
+                            filter(x=>x.allowTeamRegistrationTypeRefId!= null && 
+                                x.competitionMembershipProductId == userRegistration.competitionMembershipProductId);
            
 
             return (
@@ -243,6 +245,7 @@ const teamColumns = [
             let userRegistrations = registrationDetail.userRegistrations;
             let userRegistration = userRegistrations[record.index]; 
             let registrationTypeId = 1;
+            let membershipProductInfo = registrationState.membershipProductInfo;
             if(userRegistration!= null){
                 let team = userRegistration.team;
                 if(team!= null && team.registrationTypeId!= null && team.registrationTypeId!= undefined){
@@ -816,7 +819,7 @@ class AppRegistrationForm extends Component {
            // tempParticipantId: userRegistrations.length + 1,
             tempParticipantId: tempParticipantId,competitionUniqueKey: null,organisationUniqueKey: null, 
             registeringYourself: 0,isSameParentContact: false,isLinkExistingParent: false,
-            isVoucherAdded: false,whoAreYouRegistering: 0, whatTypeOfRegistration: 0,userId: null,
+            isVoucherAdded: false,whoAreYouRegistering: 0, whatTypeOfRegistration: 0,userId: null, competitionMembershipProductId: null,
             competitionMembershipProductTypeId:null, competitionMembershipProductDivisionId: 0,divisionName:"",
             genderRefId: 1,dateOfBirth:"",firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
             reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
@@ -1806,7 +1809,7 @@ class AppRegistrationForm extends Component {
         }
         
 
-    console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
+    //console.log("!!!!" + userRegistrations[index][key] + "@@@@" + value);
      let flag = false;
     if(userRegistrations[index][key]!= 0 && userRegistrations[index][key] != value ){
         let userId = userRegistrations[index].userId;
@@ -1847,23 +1850,36 @@ class AppRegistrationForm extends Component {
             userRegistrations[index]["team"]["index"] = index;
         } 
       }
-    //  console.log("userRegistration::" + JSON.stringify(userRegistrations[index]));
+      
 
     if(value == 4){
         if(userRegistrations.length == 1){
            let userReg =  userRegistrations[0];
-           let compInfo = userReg.organisationInfo!= null && 
-                            userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
-               && x.competitionUniqueKey == this.state.competitionUniqueKey);
-           let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
-               && x.organisationUniqueKey == this.state.organisationUniqueKey);
-           if(orgInfo == null ||  orgInfo == undefined){
-               userReg.organisationUniqueKey = null
+         //  console.log("userReg", userReg);
+           let compInfo = null;
+           if(userReg.organisationInfo!= null){
+                compInfo =   userReg.organisationInfo.competitions.find(x=>x.hasTeamRegistration == 1 
+                    && x.competitionUniqueKey == this.state.competitionUniqueKey);
            }
+                           
+        //    let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
+        //        && x.organisationUniqueKey == this.state.organisationUniqueKey);
+
+         //   console.log("compInfo",compInfo);
+        //    if(orgInfo == null ||  orgInfo == undefined){
+        //        userReg.organisationUniqueKey = null
+        //    }
            if(compInfo == null  || compInfo == undefined){
                userReg.competitionUniqueKey = null;
+               userReg.organisationUniqueKey = null
+               this.props.form.setFieldsValue({
+                [`organisationUniqueKey${index}`]:  null,
+                [`competitionUniqueKey${index}`]:  null,
+                [`competitionMembershipProductTypeId${index}`]:  null,
+                [`competitionMembershipProductDivisionId${index}`]:  null,
+            });
            }
-           flag = true;
+         //  flag = true;
         }
     }
     this.props.updateEndUserRegisrationAction(userRegistrations, "userRegistrations");
@@ -1873,8 +1889,8 @@ class AppRegistrationForm extends Component {
         this.existingUserPopulate();
       }
 
-      console.log("Flag ::" + flag)
-      console.log("userRegistrations ::",userRegistrations)
+     // console.log("Flag ::" + flag)
+     // console.log("userRegistrations ::",userRegistrations)
       if(flag){
         this.props.updateEndUserRegisrationAction(true, "setCompOrgKey");
       }
@@ -2553,6 +2569,12 @@ class AppRegistrationForm extends Component {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
+        let compMembProducts = [];
+        if(item.competitionInfo!= null && item.competitionInfo.membershipProducts!= null){
+            compMembProducts = item.competitionInfo.membershipProducts.
+            filter(x=>x.isIndividualRegistration == 1 || x.isIndividualRegistration == null);
+        }
+        
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -2606,7 +2628,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetParticipantValue(e, "competitionMembershipProductTypeId", index )}
                         setFieldsValue={item.competitionMembershipProductTypeId}
                         >
-                    {(item.competitionInfo!= null && item.competitionInfo.membershipProducts || []).map((mem, index) => (
+                    {(compMembProducts || []).map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
                         ))}
@@ -3805,6 +3827,11 @@ class AppRegistrationForm extends Component {
     membershipProductProductView = (item, prod, prodIndex, index, getFieldDecorator) => {
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (prod.fees!= null && prod.fees!= undefined) ? ' ('+prod.fees.name+')' : '';
+        let compMembProducts = [];
+        if(prod.competitionInfo!= undefined && prod.competitionInfo!= null && prod.competitionInfo.membershipProducts!= null){
+            compMembProducts = prod.competitionInfo.membershipProducts.
+            filter(x=>x.isIndividualRegistration == 1 || x.isIndividualRegistration == null);
+        }
         return (
             <div className="formView content-view pt-5">
               <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -3859,7 +3886,7 @@ class AppRegistrationForm extends Component {
                         style={{ width: "100%", paddingRight: 1 }}
                         onChange={(e) => this.onChangeSetProdMemberTypeValue(e, index, prodIndex, "competitionMembershipProductTypeId")}
                         setFieldsValue={prod.competitionMembershipProductTypeId}>
-                        {(prod.competitionInfo!= undefined && prod.competitionInfo!= null && prod.competitionInfo.membershipProducts || []).map((mem, index) => (
+                        {(compMembProducts || []).map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>
                         ))}
@@ -4062,7 +4089,11 @@ class AppRegistrationForm extends Component {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let membershipProdecutInfo = this.props.endUserRegistrationState.membershipProductInfo;
         let prodName = (item.fees!= null && item.fees!= undefined) ? ' ('+item.fees.name+')' : '';
-
+        let compMembProducts = [];
+        if(item.competitionInfo!= undefined && item.competitionInfo!= null && item.competitionInfo.membershipProducts!= null){
+            compMembProducts = item.competitionInfo.membershipProducts.
+            filter(x=>x.isPlayer == 1 && ( x.isTeamRegistration == 1 || x.isTeamRegistration == null));
+        }
         return (
             <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
              <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
@@ -4118,9 +4149,7 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetTeam(e, "competitionMembershipProductTypeId", index, "participant", null, item  )}
                         setFieldsValue={item.competitionMembershipProductTypeId}
                         >
-                    {(item.competitionInfo!= null && 
-                            (item.competitionInfo.membershipProducts!= null && 
-                                item.competitionInfo.membershipProducts.filter(x=>x.isPlayer == 1)) || [])
+                    {(compMembProducts || [])
                             .map((mem, index) => (
                             <Option key={mem.competitionMembershipProductTypeId} 
                             value={mem.competitionMembershipProductTypeId} disabled={mem.isDisabled}>{mem.name}</Option>

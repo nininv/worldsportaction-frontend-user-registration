@@ -640,24 +640,6 @@ class UserProfileEdit extends Component {
        
         return (
             <div className="content-view pt-0">
-                <div className='row'>
-                    <div className="col-sm" >
-                        <div style={{paddingTop: "11px", paddingBottom: "10px"}}>
-                            <InputWithHead heading={AppConstants.childCountry}/>
-                        </div>
-                        <Select
-                            style={{ width: "100%" }}
-                            placeholder={AppConstants.childCountry}
-                            onChange={(e) => this.onChangeSetValue(e, "countryRefId")}
-                            value={userData.countryRefId}
-                            name={'countryRefId'}>
-                            {countryList.length > 0 && countryList.map((country, index) => (
-                                < Option key={country.id} value={country.id}> {country.description}</Option>
-                            ))
-                            }
-                        </Select>
-                    </div>
-                </div>
                 <div className="row">
                     <div className="col-sm" >
                         <div style={{paddingTop: "11px", paddingBottom: "10px"}}>
@@ -679,34 +661,55 @@ class UserProfileEdit extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="row" >
-                    <div className="col-sm" >
-                        <div style={{paddingTop: "11px", paddingBottom: "10px"}}>
-                            <InputWithHead heading={AppConstants.nationalityReference} />
+                {userData.userRegistrationId!= null &&
+                <div>
+                    <div className='row'>
+                        <div className="col-sm" >
+                            <div style={{paddingTop: "11px", paddingBottom: "10px"}}>
+                                <InputWithHead heading={AppConstants.childCountry}/>
+                            </div>
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder={AppConstants.childCountry}
+                                onChange={(e) => this.onChangeSetValue(e, "countryRefId")}
+                                value={userData.countryRefId}
+                                name={'countryRefId'}>
+                                {countryList.length > 0 && countryList.map((country, index) => (
+                                    < Option key={country.id} value={country.id}> {country.description}</Option>
+                                ))
+                                }
+                            </Select>
                         </div>
-                        <Select
-                            style={{ width: "100%" }}
-                            placeholder={AppConstants.nationalityReference}
-                            onChange={(e) => {this.onChangeSetValue(e, "nationalityRefId")}}
-                            value={userData.nationalityRefId}
-                            name={"nationalityRefId"}>
-                            {nationalityList.length > 0 && nationalityList.map((nation, index) => (
-                                < Option key={nation.id} value={nation.id}> {nation.description}</Option>
-                            ))}
-                        </Select>
                     </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm" >
-                        <InputWithHead
-                            heading={AppConstants.childLangSpoken}
-                            placeholder={AppConstants.childLangSpoken}
-                            onChange={(e) => this.onChangeSetValue(e.target.value, "languages")}
-                            value={userData.languages}
-                            name={'languages'}
-                        />
+                    <div className="row" >
+                        <div className="col-sm" >
+                            <div style={{paddingTop: "11px", paddingBottom: "10px"}}>
+                                <InputWithHead heading={AppConstants.nationalityReference} />
+                            </div>
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder={AppConstants.nationalityReference}
+                                onChange={(e) => {this.onChangeSetValue(e, "nationalityRefId")}}
+                                value={userData.nationalityRefId}
+                                name={"nationalityRefId"}>
+                                {nationalityList.length > 0 && nationalityList.map((nation, index) => (
+                                    < Option key={nation.id} value={nation.id}> {nation.description}</Option>
+                                ))}
+                            </Select>
+                        </div>
                     </div>
-                </div>
+                    <div className="row">
+                        <div className="col-sm" >
+                            <InputWithHead
+                                heading={AppConstants.childLangSpoken}
+                                placeholder={AppConstants.childLangSpoken}
+                                onChange={(e) => this.onChangeSetValue(e.target.value, "languages")}
+                                value={userData.languages}
+                                name={'languages'}
+                            />
+                        </div>
+                    </div>
+                </div>}
             </div>
         );
     };
