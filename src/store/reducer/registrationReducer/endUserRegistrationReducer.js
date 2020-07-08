@@ -600,7 +600,8 @@ function addPlayer(participant, action){
 function addCoach(participant, action){
     let memProds = participant.competitionInfo.membershipProducts;
     if(memProds!= null && memProds.length > 0){
-        let memProd = memProds.find(x=>x.shortName == "Coach" && x.allowTeamRegistrationTypeRefId!= null);
+        let memProd = memProds.find(x=>x.shortName == "Coach" && x.allowTeamRegistrationTypeRefId!= null &&
+        x.competitionMembershipProductId == participant.competitionMembershipProductId);
         if(memProd!= null && memProd!= undefined){
             let obj = {
                 competitionMembershipProductTypeId:memProd["competitionMembershipProductTypeId"],
