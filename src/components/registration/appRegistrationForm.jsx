@@ -1418,6 +1418,12 @@ class AppRegistrationForm extends Component {
                         this.setState({participantIndex: index});
                         this.setYourInfo(user, userRegistration);
                     }
+                    else{
+                        userRegistration["yourInfo"] = null;
+                    }
+                }
+                else{
+                    userRegistration["yourInfo"] = null;
                 }
             }
         }
@@ -2395,8 +2401,8 @@ class AppRegistrationForm extends Component {
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
-                         this.props.saveEndUserRegistrationAction(formData);
-                         this.setState({ loading: true });
+                        //  this.props.saveEndUserRegistrationAction(formData);
+                        //  this.setState({ loading: true });
                     }
                     else{
                         message.error(ValidationConstants.userPhotoIsRequired);
