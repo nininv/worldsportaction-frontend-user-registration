@@ -301,11 +301,13 @@ const teamColumnsOnBehalf = [
             let registrationState = this_Obj.props.endUserRegistrationState;
             let registrationDetail = registrationState.registrationDetail;
             let userRegistrations = registrationDetail.userRegistrations;
+            
             let userRegistration = userRegistrations[record.index]; 
             let memProds = userRegistration!= null && userRegistration.competitionInfo!= null && 
                             userRegistration.competitionInfo.membershipProducts!= null &&  
-                            userRegistration.competitionInfo.membershipProducts.filter(x=>x.allowTeamRegistrationTypeRefId!= null);
-           
+                            userRegistration.competitionInfo.membershipProducts.
+                            filter(x=>x.allowTeamRegistrationTypeRefId!= null && 
+                                x.competitionMembershipProductId == userRegistration.competitionMembershipProductId);
 
             return (
                 <Form.Item >
@@ -680,20 +682,22 @@ class AppRegistrationForm extends Component {
     setPlayersFormField = () => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
-        let userRegistrations = registrationDetail.userRegistrations.filter(x=>x.registeringYourself == 4);
+       // let userRegistrations = registrationDetail.userRegistrations.filter(x=>x.registeringYourself == 4);
+        let userRegistrations = registrationDetail.userRegistrations;
        
         (userRegistrations || []).map((item, index) => {
-
-            (item.team.players || []).map((it, pIndex) => {
-                this.props.form.setFieldsValue({
-                    [`tCompetitionMembershipProductTypeId${index}${pIndex}`]:  it.competitionMembershipProductTypeId,
-                    [`playerFirstName${index}${pIndex}`]:  it.firstName,
-                    [`playerLastName${index}${pIndex}`]: it.lastName,
-                    [`playerEmail${index}${pIndex}`]: it.email,
-                    [`playerMobileNumber${index}${pIndex}`]: it.mobileNumber,
-                    [`playerDateOfBirth${index}${pIndex}`]: it.dateOfBirth
-                });
-            })
+            if(item.registeringYourself == 4){
+                (item.team.players || []).map((it, pIndex) => {
+                    this.props.form.setFieldsValue({
+                        [`tCompetitionMembershipProductTypeId${index}${pIndex}`]:  it.competitionMembershipProductTypeId,
+                        [`playerFirstName${index}${pIndex}`]:  it.firstName,
+                        [`playerLastName${index}${pIndex}`]: it.lastName,
+                        [`playerEmail${index}${pIndex}`]: it.email,
+                        [`playerMobileNumber${index}${pIndex}`]: it.mobileNumber,
+                        [`playerDateOfBirth${index}${pIndex}`]: it.dateOfBirth
+                    });
+                })
+            }
         })
     }
 
@@ -4482,7 +4486,7 @@ class AppRegistrationForm extends Component {
                     />
                     )}
                 </Form.Item>
-                {(item.team.allowTeamRegistrationTypeRefId == 1 && item.team.personRoleRefId!= 4) && 
+                {(item.team.allowTeamRegistrationTypeRefId == 1 && item.team.personRoleRefId!= 4) ? 
                 <div>
                     <InputWithHead heading={AppConstants.areYouRegisteringAsPlayer} required={"required-field"}></InputWithHead>
                     <Radio.Group
@@ -4492,7 +4496,7 @@ class AppRegistrationForm extends Component {
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={2}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                </div> }
+                </div> : null}
             </div>
         )
     }

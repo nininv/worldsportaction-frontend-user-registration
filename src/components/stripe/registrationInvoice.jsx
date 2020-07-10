@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("1094")
+        // this.props.getInvoiceStatusAction(1186)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("1094", invoiceId)
+            // this.props.getInvoice(1186, invoiceId)
         }
     }
 
@@ -191,11 +191,13 @@ class RegistrationInvoice extends Component {
 
 
     membershipProductView = (membershipDetail) => {
+        let mOrganisationName = membershipDetail!= null ? membershipDetail.mOrganisationName : '';
+        let membershipProductName = membershipDetail!= null ? membershipDetail.membershipProductName : '';
         return (
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
                     <InputWithHead
-                        heading={membershipDetail.mOrganisationName + "-" + membershipDetail.membershipProductName + " Membership Fees"}
+                        heading={mOrganisationName + "-" + membershipProductName + " Membership Fees"}
                     />
                 </div>
 
@@ -400,6 +402,7 @@ class RegistrationInvoice extends Component {
                     let membershipDetail = participantItem && participantItem.membershipDetail
                     let affiliateDetail = participantItem && participantItem.affiliateDetail
                     let totalAmount = participantItem && participantItem.totalAmount
+                    let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '' 
                     return (
                         <div>
                             < div className="invoice-row-view" >
@@ -409,10 +412,10 @@ class RegistrationInvoice extends Component {
                                             <InputWithHead
                                                 heading=
                                                 {competitionDetails.competitionDivisionName ?
-                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    "Registration - " + mTypeName  + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName
                                                     :
-                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    "Registration - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName
                                                 }
                                             />
@@ -425,7 +428,9 @@ class RegistrationInvoice extends Component {
                                 this.competitionAffiliateView(affiliateDetail)
                             }
                             {this.competitionOrganiserView(competitionDetails)}
-                            {this.membershipProductView(membershipDetail)}
+                            {membershipDetail!= null &&
+                                this.membershipProductView(membershipDetail) 
+                            }
 
 
                             <div className="d-flex row d-flex justify-content-end" >
@@ -539,7 +544,6 @@ class RegistrationInvoice extends Component {
         let charitySelected = this.props.stripeState.charitySelected
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         let showCharity = isArrayNotEmpty(charityRoundUpData) && isArrayNotEmpty(charityRoundUpData[0].charityDetail)
-        console.log("charitySelected", charitySelected)
         let invoiceDisabled = this.state.invoiceDisabled
         return (
             <div className="content-view">
