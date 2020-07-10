@@ -47,8 +47,8 @@ class RegistrationInvoice extends Component {
     }
 
     getInvoiceStatusAPI = () => {
-        this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction(1186)
+       // this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
+         this.props.getInvoiceStatusAction(1186)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -66,8 +66,8 @@ class RegistrationInvoice extends Component {
         if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
-            this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice(1186, invoiceId)
+            //this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
+             this.props.getInvoice(1186, invoiceId)
         }
     }
 
@@ -82,8 +82,15 @@ class RegistrationInvoice extends Component {
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
         }
-        this.props.saveInvoiceAction(payload)
-        this.setState({ loading: true });
+
+        history.push("/checkoutPayment", {
+           // registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
+            registrationId: 1186,
+            invoiceId: this.props.stripeState.invoiceId,
+        })
+
+        // this.props.saveInvoiceAction(payload)
+        // this.setState({ loading: true });
     }
 
     ///////view for breadcrumb
@@ -149,7 +156,7 @@ class RegistrationInvoice extends Component {
                         {userDetail &&
                             < Descriptions >
                                 <Descriptions.Item >
-                                    {userDetail.suburb}{" "}{userDetail.state}{" "}{userDetail.postalCode}
+                                    {userDetail.suburb}{", "}{userDetail.state}{", "}{userDetail.postalCode}
                                 </Descriptions.Item>
                             </Descriptions>
                         }
@@ -248,7 +255,7 @@ class RegistrationInvoice extends Component {
                 <div className="invoice-col-View pr-0 pl-0" >
                     {competitionDetails && competitionDetails.cOrganisationName &&
                         <InputWithHead
-                            heading={competitionDetails.cOrganisationName + " Competition Fees"}
+                            heading={competitionDetails.cOrganisationName + " - Competition Fees"}
                         />
                     }
                 </div>
@@ -299,7 +306,7 @@ class RegistrationInvoice extends Component {
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
                     {affiliateDetail && affiliateDetail.aOrganisationName &&
                         <InputWithHead
-                            heading={affiliateDetail.aOrganisationName + " Competition Fees"}
+                            heading={affiliateDetail.aOrganisationName + " - Competition Fees"}
                         />
                     }
                 </div>
@@ -403,6 +410,7 @@ class RegistrationInvoice extends Component {
                     let affiliateDetail = participantItem && participantItem.affiliateDetail
                     let totalAmount = participantItem && participantItem.totalAmount
                     let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '' 
+                    let regName = membershipDetail == null ? 'Team Registration' : 'Registration';
                     return (
                         <div>
                             < div className="invoice-row-view" >
@@ -412,10 +420,10 @@ class RegistrationInvoice extends Component {
                                             <InputWithHead
                                                 heading=
                                                 {competitionDetails.competitionDivisionName ?
-                                                    "Registration - " + mTypeName  + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName + " - " + mTypeName  + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName
                                                     :
-                                                    "Registration - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName+ " - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName
                                                 }
                                             />
