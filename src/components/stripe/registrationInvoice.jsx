@@ -47,8 +47,8 @@ class RegistrationInvoice extends Component {
     }
 
     getInvoiceStatusAPI = () => {
-       // this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-         this.props.getInvoiceStatusAction(1186)
+        this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
+        //this.props.getInvoiceStatusAction(1193)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -66,8 +66,8 @@ class RegistrationInvoice extends Component {
         if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
-            //this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-             this.props.getInvoice(1186, invoiceId)
+            this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
+            //this.props.getInvoice(1193, invoiceId)
         }
     }
 
@@ -83,14 +83,8 @@ class RegistrationInvoice extends Component {
             charity: finalCharityPost,
         }
 
-        history.push("/checkoutPayment", {
-           // registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            registrationId: 1186,
-            invoiceId: this.props.stripeState.invoiceId,
-        })
-
-        // this.props.saveInvoiceAction(payload)
-        // this.setState({ loading: true });
+        this.props.saveInvoiceAction(payload)
+        this.setState({ loading: true });
     }
 
     ///////view for breadcrumb
