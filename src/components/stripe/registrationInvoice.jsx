@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        //this.props.getInvoiceStatusAction(1193)
+        //this.props.getInvoiceStatusAction(1212)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            //this.props.getInvoice(1193, invoiceId)
+            //this.props.getInvoice(1212, invoiceId)
         }
     }
 
@@ -77,7 +77,7 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 841,
+            //registrationId: 1212,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
