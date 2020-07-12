@@ -896,7 +896,8 @@ const AppConstants = {
   totalCasualFees: "Total Casual Fees",
   totalSeasonalFees: "Total Seasonal Fees",
   totalTeamFees: "Total Team Fees",
-  includeGST: " (incl. GST)"
+  includeGST: " (incl. GST)",
+  history: "History"
 };
 
 export default AppConstants;

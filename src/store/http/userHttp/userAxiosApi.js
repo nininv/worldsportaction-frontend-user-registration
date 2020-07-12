@@ -85,6 +85,10 @@ let userHttpApi = {
     var url = `api/userprofile/update?section=${payload.section}`;
     return Method.dataPost(url, token, payload);
   },
+  getUserHistory(payload) {
+    const url = `api/user/history`;
+    return Method.dataPost(url, token, payload);
+  },
 }
 
 let Method = {

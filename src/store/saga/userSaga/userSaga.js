@@ -246,3 +246,22 @@ export function* updateUserProfileSaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+
+/* Get the User History */
+export function* getUserHistorySaga(action) {
+    try {
+        const result = yield call(userHttpApi.getUserHistory, action.payload);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_USER_MODULE_HISTORY_SUCCESS,
+                result: result.result.data,
+                status: result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
