@@ -103,6 +103,14 @@ function userProfileUpdateAction(data) {
   return action;
 }
 
+function getUserHistoryAction(userId){
+  const action = {
+    type: ApiConstants.API_USER_MODULE_HISTORY_LOAD,
+    payload: userId
+  };
+  return action;
+}
+
 
 export {
   getRoleAction,
@@ -116,5 +124,6 @@ export {
   getUserModuleActivityParentAction, 
   getUserModuleActivityScorerAction,
   getUserModuleActivityManagerAction,
-  userProfileUpdateAction
+  userProfileUpdateAction,
+  getUserHistoryAction
 }

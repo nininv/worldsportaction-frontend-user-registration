@@ -228,7 +228,6 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
 
 		case ApiConstants.UPDATE_TEAM_ACTION:
-           // console.log("action.index::" + action.index);
             let participant = state.registrationDetail.userRegistrations[action.index];
            
             if(action.subKey == "participant"){
@@ -632,7 +631,7 @@ function updatePlayerData(participant, action){
         //console.log("updatePlayerData !!!!!!!::" + JSON.stringify(participant["team"]["players"]));
         if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
             let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
-            //console.log("players:::" + JSON.stringify(players));
+           // console.log("players:::" + JSON.stringify(players));
             if(players!= null && players.length > 0){
                 players.map((item,index) => {
                     item[action.key] = action.data;

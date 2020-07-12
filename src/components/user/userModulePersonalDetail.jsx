@@ -13,7 +13,7 @@ import {
     getUserModulePersonalByCompetitionAction, getUserModuleRegistrationAction,
     getUserModuleMedicalInfoAction, getUserModuleActivityPlayerAction,
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
-    getUserModuleActivityManagerAction
+    getUserModuleActivityManagerAction,getUserHistoryAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -623,6 +623,29 @@ const columnsMedical = [
     }
 ];
 
+const columnsHistory = [
+    {
+        title: 'Competition Name',
+        dataIndex: 'competitionName',
+        key: 'competitionName'
+    },
+    {
+        title: 'Team Name',
+        dataIndex: 'teamName',
+        key: 'teamName'
+    },
+    {
+        title: 'Division Grade',
+        dataIndex: 'divisionGrade',
+        key: 'divisionGrade'
+    },
+    {
+        title: 'Ladder Position',
+        dataIndex: 'ladderResult',
+        key: 'ladderResult'
+    }
+];
+
 const menu = (
     <Menu>
         <Menu.Item>
@@ -855,6 +878,9 @@ class UserModulePersonalDetail extends Component {
         }
         else if (tabKey === "5") {
             this.handleRegistrationTableList(1, userId, competition, yearRefId);
+        }
+        else if (tabKey === "6") {
+            this.handleHistoryTableList(1, userId);
 
         }
     }
@@ -910,6 +936,18 @@ class UserModulePersonalDetail extends Component {
 
     viewRegForm = async (item) => {
         await this.setState({ isRegistrationForm: true, registrationForm: item.registrationForm });
+    }
+
+    handleHistoryTableList = (page, userId) =>{
+        let filter =
+        {
+            userId: userId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0)
+            }
+        }
+        this.props.getUserHistoryAction(filter)
     }
 
     headerView = () => {
@@ -1482,6 +1520,31 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
+    historyView = () => {
+        let {userHistoryList, userHistoryPage, userHistoryTotalCount, userHistoryLoad} = this.props.userState;
+
+        return (
+            <div className="comp-dash-table-view mt-2" >
+                <div className="table-responsive home-dash-table-view">
+                    <Table className="home-dashboard-table"
+                        columns={columnsHistory}
+                        dataSource={userHistoryList}
+                        pagination={false}
+                        loading={userHistoryLoad == true && true}
+                    />
+                </div>
+                <div className="d-flex justify-content-end">
+                    <Pagination
+                        className="antd-pagination"
+                        current={userHistoryPage}
+                        total={userHistoryTotalCount}
+                        onChange={(page) => this.handleHistoryTableList(page, this.state.userId)}
+                    />
+                </div>
+            </div>
+        )
+    }
+
     render() {
         let {activityPlayerList, activityManagerList, activityScorerList, activityParentList, personalByCompData} = this.props.userState;
         let personalDetails = personalByCompData != null ? personalByCompData : [];
@@ -1531,6 +1594,9 @@ class UserModulePersonalDetail extends Component {
                                                     this.registrationFormView()
                                                 }
                                             </TabPane>
+                                            <TabPane tab={AppConstants.history} key="6">
+                                                {this.historyView()}
+                                            </TabPane>
                                         </Tabs>
                                     </div>
                                 </div>
@@ -1557,8 +1623,8 @@ function mapDispatchToProps(dispatch) {
         getUserModuleActivityScorerAction,
         getUserModuleActivityManagerAction,
         getOnlyYearListAction,
-        clearRegistrationDataAction
-
+        clearRegistrationDataAction,
+        getUserHistoryAction
     }, dispatch);
 
 }
