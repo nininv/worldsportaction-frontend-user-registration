@@ -624,16 +624,16 @@ const columnsMedical = [
 ];
 
 const columnsHistory = [
-    {
-        title: 'Competition Name',
-        dataIndex: 'competitionName',
-        key: 'competitionName'
-    },
-    {
-        title: 'Team Name',
-        dataIndex: 'teamName',
-        key: 'teamName'
-    },
+    // {
+    //     title: 'Competition Name',
+    //     dataIndex: 'competitionName',
+    //     key: 'competitionName'
+    // },
+    // {
+    //     title: 'Team Name',
+    //     dataIndex: 'teamName',
+    //     key: 'teamName'
+    // },
     {
         title: 'Division Grade',
         dataIndex: 'divisionGrade',
