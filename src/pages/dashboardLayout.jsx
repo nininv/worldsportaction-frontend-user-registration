@@ -158,7 +158,7 @@ class DashboardLayout extends React.Component {
               </div>
               <div className="media-body">
                 {
-                  <span className="user-name pointer" onClick={() => this.navigateTo() }>
+                  <span className="user-name">
                     {getName()}
                   </span>
                  }
@@ -185,14 +185,14 @@ class DashboardLayout extends React.Component {
               })}
             </div>
             : null} */}
-          {/* <div className="acc-help-support-list-view">
+           <div className="acc-help-support-list-view">
             <li>
-              <a href="#">{"Account Settings"}</a>
+              <a onClick={() => this.navigateTo()}>{"Profile"}</a>
             </li>
-            <li>
+            {/* <li>
               <a href="#"> {"Help & Support"}</a>
-            </li>
-          </div> */}
+            </li> */}
+          </div> 
           <li className="log-out">
             <a onClick={() => this.logout()}>{"Log Out"}</a>
           </li>

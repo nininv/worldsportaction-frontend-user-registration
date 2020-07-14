@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        // this.props.getInvoiceStatusAction("1094")
+        //this.props.getInvoiceStatusAction(1230)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            // this.props.getInvoice("1094", invoiceId)
+            //this.props.getInvoice(1230, invoiceId)
         }
     }
 
@@ -77,11 +77,12 @@ class RegistrationInvoice extends Component {
         let finalCharityPost = charitySelected.competitionId == 0 ? null : charitySelected
         let payload = {
             registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            // registrationId: 841,
+            //registrationId: 1212,
             invoiceId: this.props.stripeState.invoiceId,
             transactionId: this.props.stripeState.transactionId,
             charity: finalCharityPost,
         }
+
         this.props.saveInvoiceAction(payload)
         this.setState({ loading: true });
     }
@@ -149,7 +150,7 @@ class RegistrationInvoice extends Component {
                         {userDetail &&
                             < Descriptions >
                                 <Descriptions.Item >
-                                    {userDetail.suburb}{" "}{userDetail.state}{" "}{userDetail.postalCode}
+                                    {userDetail.suburb}{", "}{userDetail.state}{", "}{userDetail.postalCode}
                                 </Descriptions.Item>
                             </Descriptions>
                         }
@@ -191,11 +192,13 @@ class RegistrationInvoice extends Component {
 
 
     membershipProductView = (membershipDetail) => {
+        let mOrganisationName = membershipDetail!= null ? membershipDetail.mOrganisationName : '';
+        let membershipProductName = membershipDetail!= null ? membershipDetail.membershipProductName : '';
         return (
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
                     <InputWithHead
-                        heading={membershipDetail.mOrganisationName + "-" + membershipDetail.membershipProductName + " Membership Fees"}
+                        heading={mOrganisationName + "-" + membershipProductName + " Membership Fees"}
                     />
                 </div>
 
@@ -246,7 +249,7 @@ class RegistrationInvoice extends Component {
                 <div className="invoice-col-View pr-0 pl-0" >
                     {competitionDetails && competitionDetails.cOrganisationName &&
                         <InputWithHead
-                            heading={competitionDetails.cOrganisationName + " Competition Fees"}
+                            heading={competitionDetails.cOrganisationName + " - Competition Fees"}
                         />
                     }
                 </div>
@@ -297,7 +300,7 @@ class RegistrationInvoice extends Component {
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
                     {affiliateDetail && affiliateDetail.aOrganisationName &&
                         <InputWithHead
-                            heading={affiliateDetail.aOrganisationName + " Competition Fees"}
+                            heading={affiliateDetail.aOrganisationName + " - Competition Fees"}
                         />
                     }
                 </div>
@@ -400,6 +403,9 @@ class RegistrationInvoice extends Component {
                     let membershipDetail = participantItem && participantItem.membershipDetail
                     let affiliateDetail = participantItem && participantItem.affiliateDetail
                     let totalAmount = participantItem && participantItem.totalAmount
+                    let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '';
+                    let isTeamReg = (participantItem.isTeamReg!= undefined ? participantItem.isTeamReg : false);
+                    let regName = isTeamReg == true ? 'Team Registration' : 'Registration';
                     return (
                         <div>
                             < div className="invoice-row-view" >
@@ -409,10 +415,10 @@ class RegistrationInvoice extends Component {
                                             <InputWithHead
                                                 heading=
                                                 {competitionDetails.competitionDivisionName ?
-                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName + " - " + mTypeName  + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName
                                                     :
-                                                    "Registration - " + membershipDetail.mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName+ " - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName
                                                 }
                                             />
@@ -425,7 +431,9 @@ class RegistrationInvoice extends Component {
                                 this.competitionAffiliateView(affiliateDetail)
                             }
                             {this.competitionOrganiserView(competitionDetails)}
-                            {this.membershipProductView(membershipDetail)}
+                            {membershipDetail!= null &&
+                                this.membershipProductView(membershipDetail) 
+                            }
 
 
                             <div className="d-flex row d-flex justify-content-end" >
@@ -539,7 +547,6 @@ class RegistrationInvoice extends Component {
         let charitySelected = this.props.stripeState.charitySelected
         let charityRoundUpData = this.props.stripeState.charityRoundUpFilter
         let showCharity = isArrayNotEmpty(charityRoundUpData) && isArrayNotEmpty(charityRoundUpData[0].charityDetail)
-        console.log("charitySelected", charitySelected)
         let invoiceDisabled = this.state.invoiceDisabled
         return (
             <div className="content-view">

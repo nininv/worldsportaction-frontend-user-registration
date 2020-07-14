@@ -136,6 +136,9 @@ export default function* root_saga() {
 
   //Terms and Conditions
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD, endUserRegSaga.getRegistrationProductFeesSaga)
+  
+  // user history
+  yield takeEvery(ApiConstants.API_USER_MODULE_HISTORY_LOAD, userSaga.getUserHistorySaga)
 
 
 

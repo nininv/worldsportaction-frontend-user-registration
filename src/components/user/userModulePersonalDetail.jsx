@@ -13,7 +13,7 @@ import {
     getUserModulePersonalByCompetitionAction, getUserModuleRegistrationAction,
     getUserModuleMedicalInfoAction, getUserModuleActivityPlayerAction,
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
-    getUserModuleActivityManagerAction
+    getUserModuleActivityManagerAction,getUserHistoryAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -623,6 +623,29 @@ const columnsMedical = [
     }
 ];
 
+const columnsHistory = [
+    // {
+    //     title: 'Competition Name',
+    //     dataIndex: 'competitionName',
+    //     key: 'competitionName'
+    // },
+    // {
+    //     title: 'Team Name',
+    //     dataIndex: 'teamName',
+    //     key: 'teamName'
+    // },
+    {
+        title: 'Division Grade',
+        dataIndex: 'divisionGrade',
+        key: 'divisionGrade'
+    },
+    {
+        title: 'Ladder Position',
+        dataIndex: 'ladderResult',
+        key: 'ladderResult'
+    }
+];
+
 const menu = (
     <Menu>
         <Menu.Item>
@@ -719,6 +742,7 @@ class UserModulePersonalDetail extends Component {
             organisationId: null
         }
         this.props.getUserModulePersonalDetailsAction(payload);
+        this.props.getUserModulePersonalByCompetitionAction(payload)
     };
 
     onChangeYear = (value) => {
@@ -854,6 +878,9 @@ class UserModulePersonalDetail extends Component {
         }
         else if (tabKey === "5") {
             this.handleRegistrationTableList(1, userId, competition, yearRefId);
+        }
+        else if (tabKey === "6") {
+            this.handleHistoryTableList(1, userId);
 
         }
     }
@@ -909,6 +936,18 @@ class UserModulePersonalDetail extends Component {
 
     viewRegForm = async (item) => {
         await this.setState({ isRegistrationForm: true, registrationForm: item.registrationForm });
+    }
+
+    handleHistoryTableList = (page, userId) =>{
+        let filter =
+        {
+            userId: userId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0)
+            }
+        }
+        this.props.getUserHistoryAction(filter)
     }
 
     headerView = () => {
@@ -1153,7 +1192,17 @@ class UserModulePersonalDetail extends Component {
         let personalByCompData = userState.personalByCompData != null ? userState.personalByCompData : [];
         let primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
         let childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
-       
+        let countryName = "";
+        let nationalityName = "";
+        let languages = "";
+        let userRegId = null;
+  
+        if(personalByCompData != null && personalByCompData.length > 0){
+            countryName = personalByCompData[0].countryName;
+            nationalityName = personalByCompData[0].nationalityName;
+            languages = personalByCompData[0].languages;
+            userRegId = personalByCompData[0].userRegistrationId
+        }
         return (
             <div className="comp-dash-table-view mt-2">
                 <div className="user-module-row-heading">{AppConstants.address}</div>
@@ -1215,23 +1264,26 @@ class UserModulePersonalDetail extends Component {
                     </div>
                 </div>
                 <div className="table-responsive home-dash-table-view" >
-					<div style={{ marginTop: '7px' , marginRight: '15px'}}>
+					<div style={{ marginTop: '7px' , marginRight: '15px',marginBottom: '15px'}}>
 						<div className="other-info-row" style={{ paddingTop: '10px' }}>
 							<div className="year-select-heading other-info-label" >{AppConstants.gender}</div>
 							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].gender : null}</div>	  
 						</div>
-                        <div className="other-info-row">														   
-							<div className="year-select-heading other-info-label" >{AppConstants.countryOfBirth}</div>
-							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].countryName : null}</div>
-						</div>
-						<div className="other-info-row">
-							<div className="year-select-heading other-info-label">{AppConstants.nationalityReference}</div>
-							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].nationalityName : null}</div>	  			  
-						</div>
-						<div className="other-info-row">
-							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.childLangSpoken}</div>
-							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].languages : null}</div>
-						</div>
+                        {userRegId != null &&
+                        <div>
+                            <div className="other-info-row">
+                                <div className="year-select-heading other-info-label" >{AppConstants.countryOfBirth}</div>
+                                <div className="desc-text-style side-bar-profile-data other-info-font">{countryName}</div>
+                            </div>
+                            <div className="other-info-row">
+                                <div className="year-select-heading other-info-label">{AppConstants.nationalityReference}</div>
+                                <div className="desc-text-style side-bar-profile-data other-info-font">{nationalityName}</div>
+                            </div>
+                            <div className="other-info-row">
+                                <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.childLangSpoken}</div>
+                                <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
+                            </div>
+                        </div> }
 						{/* <div className="other-info-row">
 							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.disability}</div>
 							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
@@ -1468,9 +1520,39 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
+    historyView = () => {
+        let {userHistoryList, userHistoryPage, userHistoryTotalCount, userHistoryLoad} = this.props.userState;
+
+        return (
+            <div className="comp-dash-table-view mt-2" >
+                <div className="table-responsive home-dash-table-view">
+                    <Table className="home-dashboard-table"
+                        columns={columnsHistory}
+                        dataSource={userHistoryList}
+                        pagination={false}
+                        loading={userHistoryLoad == true && true}
+                    />
+                </div>
+                <div className="d-flex justify-content-end">
+                    <Pagination
+                        className="antd-pagination"
+                        current={userHistoryPage}
+                        total={userHistoryTotalCount}
+                        onChange={(page) => this.handleHistoryTableList(page, this.state.userId)}
+                    />
+                </div>
+            </div>
+        )
+    }
+
     render() {
-        let {activityPlayerList, activityManagerList, activityScorerList, activityParentList} = this.props.userState;
-        let userState = this.props.userState;
+        let {activityPlayerList, activityManagerList, activityScorerList, activityParentList, personalByCompData} = this.props.userState;
+        let personalDetails = personalByCompData != null ? personalByCompData : [];
+        let userRegistrationId = null;
+        if(personalDetails != null && personalDetails.length > 0){
+            userRegistrationId = personalByCompData[0].userRegistrationId
+        }
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
@@ -1502,14 +1584,18 @@ class UserModulePersonalDetail extends Component {
                                             <TabPane tab={AppConstants.personalDetails} key="3">
                                                 {this.personalView()}
                                             </TabPane>
+                                            {userRegistrationId!= null &&
                                             <TabPane tab={AppConstants.medical} key="4">
                                                 {this.medicalView()}
-                                            </TabPane>
+                                            </TabPane>}
                                             <TabPane tab={AppConstants.registration} key="5">
                                                 {!this.state.isRegistrationForm ?
                                                     this.registrationView() :
                                                     this.registrationFormView()
                                                 }
+                                            </TabPane>
+                                            <TabPane tab={AppConstants.history} key="6">
+                                                {this.historyView()}
                                             </TabPane>
                                         </Tabs>
                                     </div>
@@ -1537,8 +1623,8 @@ function mapDispatchToProps(dispatch) {
         getUserModuleActivityScorerAction,
         getUserModuleActivityManagerAction,
         getOnlyYearListAction,
-        clearRegistrationDataAction
-
+        clearRegistrationDataAction,
+        getUserHistoryAction
     }, dispatch);
 
 }
