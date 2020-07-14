@@ -218,31 +218,19 @@ function stripe(state = initialState, action) {
 
         case ApiConstants.API_GET_INVOICE_SUCCESS:
             let invoicedata = isArrayNotEmpty(action.result) ? action.result : []
-            console.log("**************0");
             let charityRoundUpData = getCharityRoundUpArray(invoicedata)
-            console.log("**************1");
             let getAffiliteDetailData = getAffiliteDetailArray(invoicedata)
-            console.log("**************2");
             let calculateSubTotalData = calculateSubTotal(invoicedata)
-            console.log("**************3");
             state.subTotalFees = calculateSubTotalData.invoiceSubtotal
-            console.log("**************4");
             state.subTotalGst = calculateSubTotalData.invoiceGstTotal
-            console.log("**************5");
             state.charityRoundUpFilter = charityRoundUpData
-            console.log("**************6");
             state.getAffiliteDetailData = getAffiliteDetailData
-            console.log("**************7");
             state.getInvoicedata = action.result
             let charity_Selected = set_Charity_Selected(invoicedata)
-            console.log("**************8");
             state.charitySelected = charity_Selected
             state.amountTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal) + Number(charity_Selected.charityValue)
-            console.log("**************9");
             state.fixedTotal = Number(calculateSubTotalData.invoiceSubtotal) + Number(calculateSubTotalData.invoiceGstTotal)
-            console.log("**************10");
             let showCharitySuccessData = makeCharitySuccessData(charity_Selected, charityRoundUpData)
-            console.log("**************11");
             state.showCharitySuccessData = showCharitySuccessData
             return {
                 ...state,

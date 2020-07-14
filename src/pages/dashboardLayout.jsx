@@ -158,7 +158,7 @@ class DashboardLayout extends React.Component {
               </div>
               <div className="media-body">
                 {
-                  <span className="user-name pointer" onClick={() => this.navigateTo() }>
+                  <span className="user-name">
                     {getName()}
                   </span>
                  }
