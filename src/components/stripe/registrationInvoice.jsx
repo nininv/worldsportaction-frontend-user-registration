@@ -48,7 +48,7 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
-        //this.props.getInvoiceStatusAction(1212)
+        //this.props.getInvoiceStatusAction(1230)
         this.setState({ checkStatusLoad: true });
     }
 
@@ -67,7 +67,7 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
             let invoiceId = this.props.stripeState.invoiceId
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
-            //this.props.getInvoice(1212, invoiceId)
+            //this.props.getInvoice(1230, invoiceId)
         }
     }
 
@@ -403,8 +403,9 @@ class RegistrationInvoice extends Component {
                     let membershipDetail = participantItem && participantItem.membershipDetail
                     let affiliateDetail = participantItem && participantItem.affiliateDetail
                     let totalAmount = participantItem && participantItem.totalAmount
-                    let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '' 
-                    let regName = membershipDetail == null ? 'Team Registration' : 'Registration';
+                    let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '';
+                    let isTeamReg = (participantItem.isTeamReg!= undefined ? participantItem.isTeamReg : false);
+                    let regName = isTeamReg == true ? 'Team Registration' : 'Registration';
                     return (
                         <div>
                             < div className="invoice-row-view" >
