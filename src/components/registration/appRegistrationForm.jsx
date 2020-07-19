@@ -39,7 +39,7 @@ import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegist
     updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction,
     getRegistrationProductFeesAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
-import { getAge,deepCopyFunction} from '../../util/helpers';
+import { getAge,deepCopyFunction, isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -2342,22 +2342,6 @@ class AppRegistrationForm extends Component {
                             }
                         }
                     }
-
-                    // for(let x = 0; x< userRegistrations.length; x++)
-                    // {
-                    //     let userRegistration = userRegistrations[x];
-                    //     if(userRegistration.whoAreYouRegistering == 2 && x == 0){
-                    //         if(userRegistration.yourInfo!= null){
-                    //             if(userRegistration.yourInfo.profileUrl == null){
-                    //                 isError = true;
-                    //                 break;
-                    //             }
-                    //             else{
-                    //                 formData.append("yourInfoPhoto", userRegistration.yourInfo.participantPhoto);
-                    //             }
-                    //         }
-                    //     }
-                    // }
                     
                     if(!isError)
                     {
@@ -2384,13 +2368,43 @@ class AppRegistrationForm extends Component {
                                         }
                                         memArr.push(obj);
                                     }
-                                })
-
+                                });
                                 if(item.team!= null && item.team.players!= null && item.team.players.length > 0){
                                     let players = item.team.players.filter(x=> (x.isDisabled == false || x.isDisabled == null));
                                     item.team.players = (players!= null && players!= undefined) ? players : [];
                                 }
                             }
+                            else{
+                                (item.competitionInfo.membershipProducts).map((i, ind) => {
+                                    if(i.competitionMembershipProductTypeId == item.competitionMembershipProductTypeId){
+                                        let obj = {
+                                            competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
+                                            name: i.shortName
+                                        }
+                                        memArr.push(obj);
+                                    }
+                                });
+    
+                                if(isArrayNotEmpty(item.products)){
+                                    item.products.map((x, prodIndex) => {
+                                        x.competitionInfo.membershipProducts.map((y,mIndex) =>{
+                                            if(x.competitionMembershipProductTypeId == y.competitionMembershipProductTypeId){
+                                                let obj = {
+                                                    competitionMembershipProductTypeId: y.competitionMembershipProductTypeId,
+                                                    name: y.shortName
+                                                }
+                                                memArr.push(obj);
+                                            }
+                                        })
+
+                                        delete x.competitionInfo;
+                                        delete x.organisationInfo;
+                                       // delete x.divisions;
+                                        delete x.fees;
+                                    })
+                                }
+                            }
+                            
                             item["membershipProducts"] = memArr;
 
                             if(item.whoAreYouRegistering != 2 || index > 0){
@@ -2400,6 +2414,7 @@ class AppRegistrationForm extends Component {
                             delete item.organisationInfo;
                             delete item.competitionInfo;
                             delete item.divisions;
+                            delete item.fees;
                         });
 
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
