@@ -874,7 +874,7 @@ const AppConstants = {
   personRegisteringRole: "Person Registering Role",
   personRegRoleRef: "PersonRegisteringRole",
   addAnotherRegitration: "ADD ANOTHER REGISTRATION"	,
-  yourInfo: "YourInfo",
+  yourInfo: "Your Info",
   teamRegisteringYourself: 	"Are you registering yourself",
   registeringPerson: "Registering Person",
   invitedTeamMember: "Invited Team Member",

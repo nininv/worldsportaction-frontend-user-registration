@@ -80,11 +80,10 @@ function updateTeamAction(data, index,key, subKey,subIndex){
     return action;
 }
 
-function updateYourInfoAction(data, index, key, subKey){
+function updateYourInfoAction(data, key, subKey){
     const action = {
         type: ApiConstants.UPDATE_YOUR_INFO_ACTION,
         data: data,
-        index: index,
         key: key,
         subKey: subKey
     }
