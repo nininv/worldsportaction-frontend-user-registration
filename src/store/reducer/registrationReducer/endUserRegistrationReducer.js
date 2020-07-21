@@ -10,7 +10,10 @@ let registrationObj = {
     competitionUniqueKey: "",
     childrenCheckNumber: "",
     userRegistrations: [],
-    vouchers: []
+    vouchers: [],
+    yourInfo: {firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
+                reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,
+                postalCode: "", userId: 0}
 }
 
 let commonRegSetting = {
@@ -45,7 +48,8 @@ const initialState = {
     invUserRegDetails: null,
     registrationSetting: {},
     termsAndConditions: [],
-    termsAndConditionsFinal: []
+    termsAndConditionsFinal: [],
+    isYourInfoSet: false
 }
 
 
@@ -86,11 +90,17 @@ function endUserRegistrationReducer(state = initialState, action) {
   
             if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
                 || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
-                getKey == "participantIndex" || getKey == "populateYourInfo") {
+                getKey == "participantIndex" || getKey == "populateYourInfo" ||
+                getKey == "populateTeamRegisteringPerson") {
                 state[getKey] = updatedValue;
             }
             else {
                 oldData[getKey] = updatedValue;
+            }
+
+            if(getKey == "yourInfo"){
+                state.isYourInfoSet = true;
+                state["populateYourInfo"] = 1;
             }
 
             if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
@@ -220,15 +230,15 @@ function endUserRegistrationReducer(state = initialState, action) {
             };
        
         case ApiConstants.UPDATE_YOUR_INFO_ACTION:
-            let partUser = state.registrationDetail.userRegistrations[action.index];
-            partUser[action.subKey][action.key] = action.data;
+            state.registrationDetail[action.subKey][action.key] = action.data;
             return {
                 ...state,
                 error: null
             }
 
 		case ApiConstants.UPDATE_TEAM_ACTION:
-            let participant = state.registrationDetail.userRegistrations[action.index];
+            let userRegistrations = state.registrationDetail.userRegistrations;
+            let participant = userRegistrations[action.index];
            
             if(action.subKey == "participant"){
                 if(action.key == "organisationUniqueKey"){
@@ -312,9 +322,23 @@ function endUserRegistrationReducer(state = initialState, action) {
                 if(action.key == "personRoleRefId" || action.key == "registeringAsAPlayer")
                 {
                     addReadOnlyPlayer(participant, action)
+                    let registeringYourself = userRegistrations.find(x=>x.registeringYourself == 1);
+                    console.log("registeringYourself", registeringYourself)
+                    if(registeringYourself!= null){
+                        let filteredRegistrations = userRegistrations.filter(x=>x.registeringYourself == 4);
+                        console.log("filteredRegistrations", filteredRegistrations);
+                        (filteredRegistrations || []).map((item, index) =>{
+                            console.log("item", item);
+                            updatePlayerData(item,"firstName", registeringYourself.firstName);
+                            updatePlayerData(item,"lastName", registeringYourself.lastName);
+                            updatePlayerData(item,"email", registeringYourself.email);
+                            updatePlayerData(item,"mobileNumber", registeringYourself.mobileNumber);
+                        })
+                    }
                 }
-            
-                updatePlayerData(participant, action);
+                else{
+                    updatePlayerData(participant, action.key, action.data);
+                }
                 state.refFlag = "players";
             }
             else if(action.subKey == "players"){
@@ -392,6 +416,15 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant["team"][action.subKey][action.subIndex][action.key] = action.data;
                 }
             }
+            else if(action.subKey == "updatePlayer"){
+                let filteredRegistrations = userRegistrations.filter(x=>x.registeringYourself == 4);
+                (filteredRegistrations || []).map((item, index) =>{
+                    updatePlayerData(item,action.key, action.data);
+                })
+
+                state.refFlag = "players";
+            }
+
 
             return {
                 ...state,
@@ -406,7 +439,10 @@ function endUserRegistrationReducer(state = initialState, action) {
                 competitionUniqueKey: "",
                 childrenCheckNumber: "",
                 userRegistrations: [],
-                vouchers: []
+                vouchers: [],
+                yourInfo: {firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
+                reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,
+                postalCode: "", userId: 0}
             }
             let commonRegSetting1 = {
                 club_volunteer: 0,
@@ -431,7 +467,8 @@ function endUserRegistrationReducer(state = initialState, action) {
             state.invUserInfo = null;
             state.invUserRegDetails =  null;
             state.registrationSetting = {}
-            state.termsAndConditions = []
+            state.termsAndConditions = [];
+            state.isYourInfoSet =  false
 
            // console.log("$$$$$$$$$$$44" + JSON.stringify(state.registrationDetail));
             return {
@@ -624,17 +661,17 @@ function addCoach(participant, action){
     }
 }
 
-function updatePlayerData(participant, action){
-    //console.log("updatePlayerData !!!!!!!::" +  action.key);
-    if(action.key == "firstName" || action.key == "lastName" || action.key == "email"
-    || action.key == "mobileNumber"){
+function updatePlayerData(participant, key, data){
+   //console.log("updatePlayerData !!!!!!!::" +  key, data, participant);
+    if(key == "firstName" || key == "lastName" || key == "email"
+    || key == "mobileNumber"){
         //console.log("updatePlayerData !!!!!!!::" + JSON.stringify(participant["team"]["players"]));
         if(participant["team"]["players"]!= null && participant["team"]["players"].length > 0){
             let players = participant["team"]["players"].filter(x=>x.isDisabled == true);
            // console.log("players:::" + JSON.stringify(players));
             if(players!= null && players.length > 0){
                 players.map((item,index) => {
-                    item[action.key] = action.data;
+                    item[key] = data;
                 })
             }
         }
