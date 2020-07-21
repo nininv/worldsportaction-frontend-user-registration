@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: "https://registration-api-dev.worldsportaction.com"
-    // baseURL: "http://ec2-54-79-5-68.ap-southeast-2.compute.amazonaws.com:8089"
+    baseURL: process.env.REACT_APP_STRIPE_API_URL,
 });
 
 http.interceptors.request.use(function (config) {
