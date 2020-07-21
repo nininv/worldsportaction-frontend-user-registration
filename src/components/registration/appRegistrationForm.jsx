@@ -592,14 +592,12 @@ class AppRegistrationForm extends Component {
 
        if(registrationState.populateParticipantDetails  == 1)
        {
-           console.log('*****************1')
            let user = registrationState.user;
            this.setFormFields(user, this.state.participantIndex);
            this.props.updateEndUserRegisrationAction(0, "populateParticipantDetails");
        }
 
        if(registrationState.populateTeamRegisteringPerson == 1){
-        console.log('*****************2')
             this.props.updateEndUserRegisrationAction(0, "populateTeamRegisteringPerson");
             let user = registrationState.user;
             this.setTeamRegisteringUserFormFields(user, this.state.participantIndex)
@@ -607,7 +605,6 @@ class AppRegistrationForm extends Component {
 
        if(registrationState.populateYourInfo  == 1)
        {
-        console.log('*****************3')
            this.props.updateEndUserRegisrationAction(0, "populateYourInfo");
            let userInfo = registrationState.userInfo;
            if(userInfo!= null && userInfo.length > 0){
@@ -620,21 +617,18 @@ class AppRegistrationForm extends Component {
        
        if(registrationState.refFlag === "parent")
        {
-        console.log('*****************4')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.setParentFormFields(this.state.participantIndex);
        }
 
        if(registrationState.refFlag === "product")
        {
-        console.log('*****************5')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.setProductFormFields(this.state.participantIndex);
        }
 
        if(registrationState.refFlag === "participant")
        {
-        console.log('*****************6')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
             let userRegistrations = registrationDetail.userRegistrations;
@@ -644,7 +638,6 @@ class AppRegistrationForm extends Component {
        }
 
        if(registrationState.setCompOrgKey == true){
-        console.log('*****************7')
            if(registrationState.registrationDetail!= null && 
             registrationState.registrationDetail.userRegistrations!= null && 
             registrationState.registrationDetail.userRegistrations.length > 0){
@@ -661,7 +654,6 @@ class AppRegistrationForm extends Component {
         }
 
         if(registrationState.refFlag == "userInfo"){
-            console.log('*****************8')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             let userInfoList = registrationState.userInfo;
            // let userFilteredList = userInfoList.filter(x=>x.isDisabled == 0);
@@ -673,7 +665,6 @@ class AppRegistrationForm extends Component {
             
         }
         if(registrationState.refFlag == "divisionParticipant"){
-            console.log('*****************9')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.props.form.setFieldsValue({
                 [`competitionMembershipProductTypeId${this.state.participantIndex}`]:  null,
@@ -681,7 +672,6 @@ class AppRegistrationForm extends Component {
             });
         }
         if(registrationState.refFlag == "divisionProduct"){
-            console.log('*****************10')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.props.form.setFieldsValue({
                 [`participantMembershipProductTypeId${this.state.participantIndex}${this.state.productIndex}`]:  null,
@@ -690,7 +680,6 @@ class AppRegistrationForm extends Component {
         }
 
         if(registrationState.refFlag == "players"){
-            console.log('*****************11')
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.setPlayersFormField();
         }
@@ -2258,7 +2247,7 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetTeam = (value, key, index, subKey, subIndex, item) => {
-        console.log("onChangeSetTeam::",value, key, index, subKey, subIndex, item )
+        //console.log("onChangeSetTeam::",value, key, index, subKey, subIndex, item )
         this.props.updateTeamAction(value, index, key, subKey, subIndex);
         if(subKey == "participant"){
             if(key == "competitionUniqueKey"){

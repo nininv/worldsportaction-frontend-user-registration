@@ -662,7 +662,7 @@ function addCoach(participant, action){
 }
 
 function updatePlayerData(participant, key, data){
-   console.log("updatePlayerData !!!!!!!::" +  key, data, participant);
+   //console.log("updatePlayerData !!!!!!!::" +  key, data, participant);
     if(key == "firstName" || key == "lastName" || key == "email"
     || key == "mobileNumber"){
         //console.log("updatePlayerData !!!!!!!::" + JSON.stringify(participant["team"]["players"]));

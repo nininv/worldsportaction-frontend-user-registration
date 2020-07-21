@@ -170,6 +170,7 @@ async function stripeTokenHandler(token, props) {
     let body = {
         registrationId: registrationId,
         invoiceId: invoiceId,
+        paymentType:"card",
         token: {
             id: stripeToken
         }
