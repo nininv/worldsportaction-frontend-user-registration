@@ -540,7 +540,7 @@ class AppRegistrationForm extends Component {
 
     }
     componentDidUpdate(nextProps){
-        console.log("Component componentDidUpdate", this.props.endUserRegistrationState);
+        //console.log("Component componentDidUpdate", this.props.endUserRegistrationState);
         let commonReducerState = this.props.commonReducerState;
         let registrationState = this.props.endUserRegistrationState;
         if (nextProps.commonReducerState !== commonReducerState) {
@@ -4481,7 +4481,7 @@ class AppRegistrationForm extends Component {
         return (
             <div className="formView content-view pt-5">
                 <div style={{display:'flex'}}>
-                    <div className="form-heading"> {AppConstants.registrationType}</div>
+                    <div className="form-heading required-field"> {AppConstants.registrationType}</div>
                 </div>
                 
                 <Radio.Group
