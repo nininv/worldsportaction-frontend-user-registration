@@ -2608,7 +2608,7 @@ class AppRegistrationForm extends Component {
         registrationDetail.yourInfo.suburb = item.suburb;
         registrationDetail.yourInfo.stateRefId = item.stateRefId;
         registrationDetail.yourInfo.postalCode = item.postalCode;
-        registrationDetail.yourInfo.userId = item.userId;
+        registrationDetail.yourInfo.userId = item.userId ? item.userId : 0;
     }
 
     clearLocalStorage = () => {
