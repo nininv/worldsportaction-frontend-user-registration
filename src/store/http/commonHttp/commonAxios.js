@@ -156,7 +156,7 @@ let AxiosApi = {
         let url = `/common/reference/${referenceName}`;
         return Method.dataGet(url, token)
     },
-     
+
     /// All Venues Listing 
     getVenuesList(payload) {
         let url = `/api/venue/list?userId=${userId}`;

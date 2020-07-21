@@ -166,12 +166,12 @@ class RegistrationInvoice extends Component {
                                             <span className="roundUpDescription-text">{item.organisationName}</span>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="E">
-                                                    {item.organiationEmailId?item.organiationEmailId:"N/A"}
+                                                    {item.organiationEmailId ? item.organiationEmailId : "N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                             <Descriptions >
                                                 <Descriptions.Item className="pb-0" label="Ph">
-                                                    {item.organiationPhoneNo?item.organiationPhoneNo:"N/A"}
+                                                    {item.organiationPhoneNo ? item.organiationPhoneNo : "N/A"}
                                                 </Descriptions.Item>
                                             </Descriptions>
                                         </div>
@@ -403,8 +403,8 @@ class RegistrationInvoice extends Component {
                     let membershipDetail = participantItem && participantItem.membershipDetail
                     let affiliateDetail = participantItem && participantItem.affiliateDetail
                     let totalAmount = participantItem && participantItem.totalAmount
-                    let mTypeName =  membershipDetail!= null ? membershipDetail.mTypeName : '';
-                    let isTeamReg = (participantItem.isTeamReg!= undefined ? participantItem.isTeamReg : false);
+                    let mTypeName = membershipDetail != null ? membershipDetail.mTypeName : '';
+                    let isTeamReg = (participantItem.isTeamReg != undefined ? participantItem.isTeamReg : false);
                     let regName = isTeamReg == true ? 'Team Registration' : 'Registration';
                     return (
                         <div>
@@ -415,10 +415,10 @@ class RegistrationInvoice extends Component {
                                             <InputWithHead
                                                 heading=
                                                 {competitionDetails.competitionDivisionName ?
-                                                    regName + " - " + mTypeName  + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName + " - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName + ", " + competitionDetails.competitionDivisionName
                                                     :
-                                                    regName+ " - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
+                                                    regName + " - " + mTypeName + " " + userDetail.firstName + " " + userDetail.lastName
                                                     + ", " + competitionDetails.competitionName
                                                 }
                                             />
@@ -431,8 +431,8 @@ class RegistrationInvoice extends Component {
                                 this.competitionAffiliateView(affiliateDetail)
                             }
                             {this.competitionOrganiserView(competitionDetails)}
-                            {membershipDetail!= null &&
-                                this.membershipProductView(membershipDetail) 
+                            {membershipDetail != null &&
+                                this.membershipProductView(membershipDetail)
                             }
 
 

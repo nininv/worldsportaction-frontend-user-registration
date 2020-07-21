@@ -873,9 +873,9 @@ const AppConstants = {
   noRegisteringATeam: "No, registering a team",
   personRegisteringRole: "Person Registering Role",
   personRegRoleRef: "PersonRegisteringRole",
-  addAnotherRegitration: "ADD ANOTHER REGISTRATION"	,
+  addAnotherRegitration: "ADD ANOTHER REGISTRATION",
   yourInfo: "YourInfo",
-  teamRegisteringYourself: 	"Are you registering yourself",
+  teamRegisteringYourself: "Are you registering yourself",
   registeringPerson: "Registering Person",
   invitedTeamMember: "Invited Team Member",
   parentOrGuardianDetail: 'Parent/Guardian Details',
@@ -886,10 +886,10 @@ const AppConstants = {
   noDataAvailable: 'No Data Available',
   transfer: "Transfer",
   deRegistration: "De-registration",
-  emailValidationInfo : "Updating the email address will update the login information(User Name) while submitting this form. Please ensure that the information provided is correct.",
+  emailValidationInfo: "Updating the email address will update the login information(User Name) while submitting this form. Please ensure that the information provided is correct.",
   stateHeading: 'State',
   childDetails: "Child Details",
-  registrationDivisions:"Registration Divisions",
+  registrationDivisions: "Registration Divisions",
   downloadTemplate: 'Download Template',
   playerImpMsg: "Import will remove existing Team Members from the list and populate the new Team Members based on the data available in the Template.",
   termsAndConditionsHeading: "Terms & Conditions",
@@ -897,7 +897,22 @@ const AppConstants = {
   totalSeasonalFees: "Total Seasonal Fees",
   totalTeamFees: "Total Team Fees",
   includeGST: " (incl. GST)",
-  history: "History"
+  history: "History",
+  registrationChange: "Registration Change",
+  mobileNumber: "Mobile Number",
+  whatRegistrationChange: "what registration change do you",
+  takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
+  reasonRegisterTitle: "Why would you like to de-register?",
+  reasonForTransfer: "Reasons(s) for wanting to transfer.",
+  directDebit: "Direct Debit",
+  creditCard: "Credit/Debit Card",
+  cash: "Cash",
+  selectedPaymentOption: "Please select payment option Credit Card or Direct Debit",
+  stripeMandate1: `By providing your bank account details and confirming this payment,
+  you agree to this Direct Debit Request and the`,
+  stripeMandate2: `, and authorise Stripe Payments Australia Pty Ltd ACN 160 180 343 Direct Debit User ID number 507156(“Stripe”) to debit your account through the Bulk Electronic Clearing System(BECS) on behalf of Stripe Press(the "Merchant") for any amounts separately communicated to you by the Merchant.You certify that you are either
+  an account holder or an authorised signatory on the account listed
+  above.`
 };
 
 export default AppConstants;

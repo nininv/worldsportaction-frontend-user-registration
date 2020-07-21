@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
     CardElement,
     Elements,
     useElements,
-    useStripe
+    useStripe, AuBankAccountElement
 } from '@stripe/react-stripe-js';
 import './stripe.css';
 import {
     Button,
     Layout,
-    Breadcrumb
+    Breadcrumb, Radio
 } from "antd";
 import AppConstants from "../../themes/appConstants";
 import DashboardLayout from "../../pages/dashboardLayout";
@@ -19,6 +19,14 @@ import { getOrganisationData } from "../../util/sessionStorage";
 import Loader from '../../customComponents/loader';
 import { message } from "antd";
 import history from "../../util/history";
+
+const paymentOption = [{
+    id: 1, value: "Credit/Debit Card"
+}, {
+    id: 2, value: "Direct Debit"
+}]
+
+
 
 const { Header, Content } = Layout;
 var screenProps = null
@@ -39,6 +47,31 @@ const CARD_ELEMENT_OPTIONS = {
             iconColor: '#fa755a'
         }
     }
+};
+const AU_BANK_ACCOUNT_STYLE = {
+    base: {
+        color: '#32325d',
+        fontSize: '16px',
+        '::placeholder': {
+            color: '#aab7c4'
+        },
+        ':-webkit-autofill': {
+            color: '#32325d',
+        },
+    },
+    invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+        ':-webkit-autofill': {
+            color: '#fa755a',
+        },
+    }
+};
+const AU_BANK_ACCOUNT_ELEMENT_OPTIONS = {
+    style: AU_BANK_ACCOUNT_STYLE,
+    disabled: false,
+    hideIcon: false,
+    iconStyle: "default", // or "solid"
 };
 
 ///////view for breadcrumb
@@ -84,8 +117,21 @@ const footerView = () => {
 
 const CheckoutForm = (props) => {
     const [error, setError] = useState(null);
+    const [bankError, setBankError] = useState(null)
+    const [name, setName] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [bankResult, setBankResult] = useState(false);
+    const [clientSecretKey, setClientKey] = useState("")
+    const [regId, setRegId] = useState("")
+    const [selectedPaymentOption, setUser] = useState({
+        cash: false,
+        direct: false,
+        credit: false,
+        selectedOption: 0
+    });
     const stripe = useStripe();
     const elements = useElements();
+    console.log(selectedPaymentOption)
     // Handle real-time validation errors from the card Element.
     const handleChange = (event) => {
         if (event.error) {
@@ -94,41 +140,213 @@ const CheckoutForm = (props) => {
             setError(null);
         }
     }
+    const changePaymentOption = (e, key) => {
+        if (key === 'direct') {
+            props.onLoad(true)
+            setUser({
+                ...selectedPaymentOption,
+                "direct": true,
+                "cash": false,
+                "credit": false,
+                "selectedOption": "direct_debit"
+            });
+            stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId);
+        } else if (key === 'cash') {
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": true,
+                "credit": false,
+                "selectedOption": ""
+            });
+        } else {
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": false,
+                "credit": true,
+                "selectedOption": "card"
+            });
+        }
+    }
 
     // Handle form submission.
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const card = elements.getElement(CardElement);
-        const result = await stripe.createToken(card)
-        props.onLoad(true)
-        if (result.error) {
-            // Inform the user if there was an error.
-            setError(result.error.message);
-            props.onLoad(false)
-        } else {
-            setError(null);
-            // Send the token to your server.
-            stripeTokenHandler(result.token, props);
+        console.log(event)
+        if (!stripe || !elements) {
+            // Stripe.js has not yet loaded.
+            // Make sure to disable form submission until Stripe.js has loaded.
+            return;
         }
-    };
+        console.log(event.target)
+        const auBankAccount = elements.getElement(AuBankAccountElement);
+        const card = elements.getElement(CardElement);
+        console.log(auBankAccount, card)
+        if (auBankAccount || card) {
+            if (card) {
+                const result = await stripe.createToken(card)
+                props.onLoad(true)
+                if (result.error) {
+                    let message = result.error.message
+                    // Inform the user if there was an error.
+                    setError(message);
+                    props.onLoad(false)
+                } else {
+                    setError(null);
+                    // Send the token to your server.
 
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption);
+                }
+
+            }
+            else {
+                props.onLoad(true)
+                console.log(clientSecretKey)
+
+                // var form = document.getElementById('setup-form');
+                // props.onLoad(true)
+                // console.log(form)
+                const accountholderName = event.target['name'];
+                const email = event.target.email;
+
+                const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
+                    payment_method: {
+                        au_becs_debit: auBankAccount,
+                        billing_details: {
+                            name: accountholderName.value,
+                            email: email.value,
+                        },
+                    }
+                });
+
+                if (result.error) {
+                    let message = result.error.message
+                    setBankError(message)
+                    props.onLoad(false)
+                } else {
+                    setBankError(null)
+                    setClientKey("")
+                    props.onLoad(false)
+                    message.success("payment status is " + result.paymentIntent.status)
+                    history.push("/invoice", {
+                        registrationId: regId,
+                        paymentSuccess: true
+                    })
+                }
+            }
+        }
+        else {
+            message.config({
+                maxCount: 1, duration: 0.9
+            })
+            message.error(AppConstants.selectedPaymentOption)
+        }
+    }
     return (
         <div className="content-view">
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                <label className='home-dash-left-text' for="card-element">
-                    Credit or debit card
-                 </label>
-                <div className="pt-5">
-                    <CardElement
-                        id="card-element"
-                        options={CARD_ELEMENT_OPTIONS}
-                        onChange={handleChange}
-                        className='StripeElement'
-                    />
-                    <div className="card-errors" role="alert">{error}</div>
+                <div className="row">
+                    <div className='col-sm'>
+                        <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                            checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                        {selectedPaymentOption.credit == true &&
+                            <div className="pt-5">
+                                <CardElement
+                                    id="card-element"
+                                    options={CARD_ELEMENT_OPTIONS}
+                                    onChange={handleChange}
+                                    className='StripeElement'
+                                />
+                                <div className="card-errors" role="alert">{error}</div>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </form>
-        </div>
+                <div className="row">
+                    <div className='col-sm'>
+                        <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                        {selectedPaymentOption.direct == true &&
+                            <div class="sr-root">
+                                <div class="sr-main">
+                                    <div class="sr-combo-inputs-row">
+                                        <div class="col">
+                                            <label htmlFor="name">
+                                                Name
+                                             </label>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                name="name"
+                                                placeholder="John Smith"
+                                                onChange={e => setName(e.target.value)}
+                                                value={name}
+                                                required
+                                            />
+                                        </div>
+                                        <div class="col">
+                                            <label htmlFor="email">
+                                                Email Address
+                                              </label>
+                                            <input
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                onChange={e => setEmail(e.target.value)}
+                                                value={email}
+                                                placeholder="john.smith@example.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="sr-combo-inputs-row">
+                                        <div class="col">
+                                            <label htmlFor="au-bank-account-element">
+                                                Bank Account
+                                          </label>
+                                            <div id="au-bank-account-element">
+                                                <AuBankAccountElement
+                                                    id="au-bank-account-element"
+                                                    options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
+                                                    className='StripeElement'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="bank-name"></div>
+                                    <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
+                                    <div class="col pt-3" id="mandate-acceptance">
+                                        {AppConstants.stripeMandate1} <a> </a>
+                                        <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Direct Debit Request service agreement
+                                        </a>
+                                        {AppConstants.stripeMandate2}
+                                    </div>
+                                    {/* </form> */}
+                                    {/* <div class="sr-result hidden">
+                                        <p>Response<br /></p>
+                                        <pre>
+                                            <code></code>
+                                        </pre>
+                                    </div> */}
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div className="row">
+                    <div className='col-sm'>
+                        <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                    </div>
+                </div>
+            </form >
+
+        </div >
     );
 }
 
@@ -162,48 +380,76 @@ const Stripe = (props) => {
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props) {
-     let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
-    //let registrationId = 1212;
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId) {
+    console.log(token, props, screenProps)
+    let paymentType = selectedOption;
+    let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
     let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
     let stripeToken = token.id
-    let body = {
-        registrationId: registrationId,
-        invoiceId: invoiceId,
-        token: {
-            id: stripeToken
+    let body
+    if (paymentType === "card") {
+        body = {
+            registrationId: registrationId,
+            invoiceId: invoiceId,
+            paymentType: paymentType,
+            token: {
+                id: stripeToken
+            }
         }
     }
-    const response = await fetch(`${StripeKeys.apiURL}/api/payments/createPayments`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            "Authorization": localStorage.token,
-        },
-        body: JSON.stringify(body)
-    });
-    return response.json().then(res => {
-        props.onLoad(false)
-        if (response.status === 200) {
-            message.success(res.message);
-            // history.push('/appRegistrationSuccess');
-            history.push("/invoice", {
-                registrationId: registrationId,
-                paymentSuccess: true
-            })
+    else {
+        body = {
+            registrationId: registrationId,
+            invoiceId: invoiceId,
+            paymentType: paymentType,
         }
-        else if (response.status === 212) {
-            message.error(res.message);
-        }
-        else if (response.status === 400) {
-            message.error(res.message);
-        }
-        else {
-            message.error("Something went wrong.")
-        }
-    })
-        .catch(err => {
-            message.error("Something went wrong.")
+    }
+    console.log(body)
+    return await new Promise((resolve, reject) => {
+        fetch(`${StripeKeys.apiURL}/api/payments/createPayments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": localStorage.token,
+            },
+            body: JSON.stringify(body)
         })
+            .then((response) => {
+                props.onLoad(false)
+                let resp = response.json()
+                console.log(response.status, "status")
+                resp.then((Response) => {
+                    if (response.status === 200) {
+                        if (paymentType == "card") {
+                            message.success(Response.message);
+                            history.push("/invoice", {
+                                registrationId: registrationId,
+                                paymentSuccess: true
+                            })
+                        }
+                        else {
+                            setClientKey(Response.clientSecret)
+                            setRegId(registrationId)
+                            message.success(Response.message);
+                        }
+                    }
+                    else if (response.status === 212) {
+                        message.error(Response.message);
+                    }
+                    else if (response.status === 400) {
+                        message.error(Response.message);
+                    }
+                    else {
+                        message.error("Something went wrong.")
+                    }
+
+                })
+
+            })
+            .catch((error) => {
+                props.onLoad(false)
+                console.error(error);
+            });
+    })
 }
 export default Stripe

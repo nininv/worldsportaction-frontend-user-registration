@@ -13,6 +13,7 @@ import LiveScoreFixturCompState from './liveScoreReducer/liveScoreFixtureCompeti
 import LiveScoreLadderState from './liveScoreReducer/liveScoreLadderReducer'
 import LiveScoreRoundState from './liveScoreReducer/liveScoreRound';
 import StripeState from "./stripeReducer/stripeReducer";
+import DeRegistrationState from "./registrationReducer/deRegisterReducer"
 
 const rootReducer = combineReducers({
   LoginState,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   LiveScoreLadderState,
   LiveScoreRoundState,
   StripeState,
+  DeRegistrationState
 });
 
 export default rootReducer;
