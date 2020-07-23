@@ -912,7 +912,26 @@ const AppConstants = {
   you agree to this Direct Debit Request and the`,
   stripeMandate2: `, and authorise Stripe Payments Australia Pty Ltd ACN 160 180 343 Direct Debit User ID number 507156(“Stripe”) to debit your account through the Bulk Electronic Clearing System(BECS) on behalf of Stripe Press(the "Merchant") for any amounts separately communicated to you by the Merchant.You certify that you are either
   an account holder or an authorised signatory on the account listed
-  above.`
+  above.`,
+
+  // RegistrationReviewForm 
+
+  individualRegistration:"IndividualRegistration",
+  participantName:"Participant Name",
+  competitionName:"Competition Name",
+  hyphen:" - ",
+  less:"Less",
+  governmentSportVouchers:"Government Sports Vouchers (Name of the Voucher)",
+  hardshipPlayer:"Hardship Player Discount",
+  payAsYou:"Pay as you go",
+  gameVoucher:"Game Voucher",
+  payfullAmount:"pay Full Amount",
+  weeklyInstalment:"Weekly Instalment",
+  instalmentDates:"Instalment dates",
+  schoolRegistration:"School Registration",
+  governmentSportsVoucher:"Government Sports Voucher",
+  support:"Support",
+  confidentGirlsFoundation:"Confident Girls Foundation"
 };
 
 export default AppConstants;

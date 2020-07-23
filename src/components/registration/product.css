@@ -748,3 +748,72 @@ img.bg {
 .userRegLink{
   color: var(--app-color);
 }
+
+.individual-reg-view{
+  background: var(--app-white); 
+  padding: 27px;
+  border-radius: 11px;
+}
+.individual-header-view{
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 22px;
+  text-align: left;
+  color: var(--app-1b1b34);
+  font-family: inter-medium, sans-serif;  
+}
+.membership-text
+{
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 15px;
+  text-align: left;
+  color: var(--app-1b1b34);
+  margin-top: 32px;   
+  font-weight: 500;
+  font-family: inter-medium, sans-serif;
+}
+
+.number-text-style{  
+  color: var(--app-red);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inter-medium, sans-serif;
+}
+.radio-style{
+  padding: 3px 0px;
+}
+.heading-instalmentdate{
+  background-color: var(--app-f7fafc);
+  padding: 24px;
+  border-radius: 10px;
+  border: 1px solid var(--app-d9d9d9);
+  margin:24px 0px 20px 32px ; 
+}
+.text-instalmentdate{
+  font-size: 15px;
+  text-align: left;
+  color: var(--app-1b1b34);  
+  font-weight: 500;
+  font-family: inter-medium, sans-serif;
+  margin-bottom: 10px;
+}
+.inputfield-style{
+  margin-top: 12px;
+}
+.form-review{
+  width: 70%;
+  margin: auto;
+  border-radius: 10px;
+}
+.text-codelink
+{
+  font-size: 15px;
+  text-align: left;
+  color: var(--app-1b1b34);  
+  font-weight: 500;
+  font-family: inter-medium, sans-serif;
+  text-decoration: underline;
+}
