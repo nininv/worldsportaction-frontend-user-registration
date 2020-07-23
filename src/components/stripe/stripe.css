@@ -51,7 +51,7 @@
     text-decoration: none;
     -webkit-transition: all 150ms ease;
     transition: all 150ms ease;
-    float: left;
+    /* float: left; */
     margin-left: 12px;
     margin-top: 28px;
 }
@@ -63,10 +63,7 @@
     margin-bottom: 8px;
     color: #333;
 }
-.form {
-    /* padding: 30px;
-    height: 120px; */
-}
+
 
 .form-row {
     width: 70%;
@@ -192,7 +189,102 @@ display: flex;
    border-top-width: 1px;
    border-top-color: var(--app-4c4c6d);
 }
+.sr-root {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 980px;
+  /* padding: 48px; */
+  align-content: center;
+  justify-content: center;
+  height: auto;
+  /* min-height: 100vh; */
+  margin: 0 auto;
+}
+.sr-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: var(--form-width);
+  min-width: 450px;
+  align-self: center;
+  padding: 50px 50px; 
+  background: var(--body-color);
+  border-radius: var(--radius);
+  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
+    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+}
 
+/* Inputs */
+input,
+.StripeElement {
+  height: 40px;
+  padding: 10px 12px;
+  color: #32325d;
+  background-color: white;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  width: 100%;
+  outline: none;
+}
+
+input:focus,
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: var(--error-color);
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+input::placeholder {
+  color: #aab7c4;
+}
+
+.sr-result {
+  height: 44px;
+  -webkit-transition: height 1s ease;
+  -moz-transition: height 1s ease;
+  -o-transition: height 1s ease;
+  transition: height 1s ease;
+  color: var(--font-color);
+  overflow: auto;
+}
+.sr-result code {
+  overflow: scroll;
+}
+.sr-result.expand {
+  height: 350px;
+}
+
+.sr-combo-inputs-row {
+  display: -ms-flexbox;
+  display: flex;
+}
+.sr-combo-inputs-row {
+  width: 100%;
+  margin-top: 20px;
+}
+.sr-combo-inputs-row:first-child {
+  margin-top: 0;
+}
+.sr-combo-inputs-row {
+  margin-top: 20px;
+}
+.sr-combo-inputs-row .col:not(:last-child) {
+  margin-right: 20px;
+}
+.sr-combo-inputs-row .col {
+  width: 100%;
+}
 @media (max-width: 767px) {
   .invoiceImage{
     display: flex;

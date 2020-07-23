@@ -18,7 +18,8 @@ import TeamRegistration from "../components/registration/teamRegistration";
 import TeamRegistrationForm from "../components/registration/teamRegistrationForm";
 
 import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
-import UserProfileEdit from "../components/user/userProfileEdit"		
+import UserProfileEdit from "../components/user/userProfileEdit"
+import DeRegistration from "../components/registration/deRegistration";
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -81,14 +82,18 @@ class Routes extends React.Component {
           path="/teamRegistrationForm"
           component={lazyLoad(TeamRegistrationForm)}
         />
-          
-          <PrivateRoute
+
+        <PrivateRoute
           path="/userPersonal"
           component={lazyLoad(UserModulePersonalDetail)}
         />
-          <PrivateRoute
-            path="/userProfileEdit"
-            component={lazyLoad(UserProfileEdit)}
+        <PrivateRoute
+          path="/userProfileEdit"
+          component={lazyLoad(UserProfileEdit)}
+        />
+        <PrivateRoute
+          path="/deRegistration"
+          component={lazyLoad(DeRegistration)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />
