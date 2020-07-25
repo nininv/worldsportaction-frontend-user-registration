@@ -2418,8 +2418,8 @@ class AppRegistrationForm extends Component {
                     }
                 });
                 registrationDetail.volunteers = volunteers;
-                registrationDetail.organisationUniqueKey = this.state.organisationUniqueKey;
-                registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
+                // registrationDetail.organisationUniqueKey = this.state.organisationUniqueKey;
+                // registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
 
                 let err = false;
                 userRegistrations.map((item, index) =>{
@@ -2526,7 +2526,7 @@ class AppRegistrationForm extends Component {
                                         delete x.competitionInfo;
                                         delete x.organisationInfo;
                                        // delete x.divisions;
-                                        delete x.fees;
+                                        //delete x.fees;
                                     })
                                 }
                             }
@@ -2539,8 +2539,8 @@ class AppRegistrationForm extends Component {
     
                             delete item.organisationInfo;
                             delete item.competitionInfo;
-                            delete item.divisions;
-                            delete item.fees;
+                            //delete item.divisions;
+                            //delete item.fees;
                         });
 
                         let isShowYourInfo = this.yourInfoDisplay();
@@ -2570,10 +2570,10 @@ class AppRegistrationForm extends Component {
                         }
 
                         console.log("FINAL DATA" + JSON.stringify(registrationDetail));
-                        formData.append("registrationDetail", JSON.stringify(registrationDetail));
+                        // formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
-                         this.props.saveEndUserRegistrationAction(formData);
-                         this.setState({ loading: true });
+                        //  this.props.saveEndUserRegistrationAction(formData);
+                        //  this.setState({ loading: true });
                     }
                     else{
                         message.error(ValidationConstants.userPhotoIsRequired);

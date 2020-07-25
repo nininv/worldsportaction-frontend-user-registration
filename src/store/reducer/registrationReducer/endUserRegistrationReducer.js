@@ -432,7 +432,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let registrationObj1 = {
                 organisationUniqueKey: "",
                 registrationId: 0,
-                orgRegistrationId: 0,
+                registrationUniqueKey: "",
                 volunteers: [],
                 competitionUniqueKey: "",
                 childrenCheckNumber: "",
