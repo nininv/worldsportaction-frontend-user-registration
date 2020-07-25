@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: "https://shop-api-dev.worldsportaction.com"
+    baseURL: process.env.REACT_APP_SHOP_API_URL
 });
 
 http.interceptors.request.use(function (config) {
