@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const competitionHttp = axios.create({
-
-    // baseURL: "http://192.168.3.98:3005",
-    baseURL: "https://competition-api-dev.worldsportaction.com"
+    baseURL: process.env.REACT_APP_COMPETITION_API_URL,
 });
 
 competitionHttp.interceptors.request.use(function (config) {
