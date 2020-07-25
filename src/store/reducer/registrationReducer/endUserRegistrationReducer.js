@@ -3,11 +3,9 @@ import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
 
 let registrationObj = {
-    organisationUniqueKey: "",
+    registrationUniqueKey: "",
     registrationId: 0,
-    orgRegistrationId: 0,
     volunteers: [],
-    competitionUniqueKey: "",
     childrenCheckNumber: "",
     userRegistrations: [],
     vouchers: [],
