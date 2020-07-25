@@ -23,6 +23,7 @@ import { getUserId, getAuthToken, getExistingUserRefId,
         getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration } 
 from "./util/sessionStorage";
 import RegistrationReviewForm from "./components/registration/registrationReviewForm";
+import ReviewProducts from './components/registration/reviewProducts';
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
           <Route path="/login" component={lazyLoad(Login)} />
           <Route path="/userPersonal" component={lazyLoad(UserModulePersonalDetail)} />
           <Route path="/registrationReviewForm" component={lazyLoad(RegistrationReviewForm)} />
+          <Route path="/reviewProducts" component={lazyLoad(ReviewProducts)} />
 
           {/* <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} /> */}
           <PrivateRoute path="/" component={lazyLoad(Routes)} />

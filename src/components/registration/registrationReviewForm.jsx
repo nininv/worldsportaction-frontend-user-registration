@@ -304,6 +304,7 @@ class RegistrationReviewForm extends Component {
         )
     }
 
+
     footerView = (isSubmitting) => {
         return (
             <div className="fluid-width">

@@ -923,7 +923,7 @@ const AppConstants = {
   less:"Less",
   governmentSportVouchers:"Government Sports Vouchers (Name of the Voucher)",
   hardshipPlayer:"Hardship Player Discount",
-  payAsYou:"Pay as you go",
+  payAsYou:"Pay as You Go",
   gameVoucher:"Game Voucher",
   payfullAmount:"pay Full Amount",
   weeklyInstalment:"Weekly Instalment",
@@ -931,7 +931,19 @@ const AppConstants = {
   schoolRegistration:"School Registration",
   governmentSportsVoucher:"Government Sports Voucher",
   support:"Support",
-  confidentGirlsFoundation:"Confident Girls Foundation"
+  confidentGirlsFoundation:"Confident Girls Foundation",
+  // review products 
+  reviewProducts:"Review Products",
+  subTotal:"Sub-total",
+  shipping:"Shipping",
+  charityRoundUp:"Charity Round-Up",
+  totalPaymentDue:"Total Payment Due",
+  securePaymentOptions:"Secure Payment Options",
+  credit:"Credit",
+  debitCard:"Debit Card",
+  previous:"Previous",
+
+
 };
 
 export default AppConstants;

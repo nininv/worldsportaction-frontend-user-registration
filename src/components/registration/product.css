@@ -817,3 +817,59 @@ img.bg {
   font-family: inter-medium, sans-serif;
   text-decoration: underline;
 }
+.product-text{
+  display: flex;
+  text-align: center;
+  font-size: 15px;
+  text-align: left;
+  color: var(--app-1b1b34);
+  margin-top: 32px;   
+  font-weight: 600;
+  font-family: inter-medium, sans-serif;
+}
+.dolar-text
+{
+  display: flex;
+  justify-content: space-between;
+  width: 90px;
+}
+.text-editsection{
+  color:var(--app-bdbdbd);
+  font-weight: 500;
+  font-family: inter-medium, sans-serif;
+  margin-right: 6px;
+  
+}
+.edit-header-main{
+  display: flex;
+    border-bottom: 1px solid var(--app-1b1b34);
+    padding-bottom: 20px;
+    margin-top: 3px;
+}
+.text-common-spacing{
+  padding:20px 0px;
+  border-bottom: 1px solid;
+}
+.review-product-membership-text
+{
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 15px;
+  text-align: left;
+  color: var(--app-1b1b34);
+  margin-top: 32px;   
+  font-weight: 500;
+  font-family: inter-medium, sans-serif;
+  width: 97%;
+}
+.card-outer-element{
+  width: 50%;
+  margin-left: 30px;
+  margin-top: 16px;
+}
+.form-element{
+  border:1px solid var( --app-ebf0f3);
+  border-radius: 10px;
+
+}
