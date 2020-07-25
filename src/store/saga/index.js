@@ -23,6 +23,7 @@ import { liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
 import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
 import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
 import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
+import * as shopProductSaga from "../saga/shopSaga/productSaga";
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
@@ -139,7 +140,13 @@ export default function* root_saga() {
   
   // user history
   yield takeEvery(ApiConstants.API_USER_MODULE_HISTORY_LOAD, userSaga.getUserHistorySaga)
+  
+  //////shop product listing
+  yield takeEvery(ApiConstants.API_GET_SHOP_PRODUCT_LISTING_LOAD, shopProductSaga.getProductListingSaga)
 
+  ////////////get reference type in the add product screen
+  yield takeEvery(ApiConstants.API_GET_TYPES_LIST_IN_ADD_PROUCT_LOAD, shopProductSaga.getTypesOfProductSaga)
 
-
+   ///////////////////product details on id API
+   yield takeEvery(ApiConstants.API_SHOP_GET_PRODUCT_DETAILS_BY_ID_LOAD, shopProductSaga.getProductDetailsByIdSaga)
 }

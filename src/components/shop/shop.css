@@ -1,0 +1,114 @@
+@import "../../themes/colorVariables.css";
+
+.shop-product-content-div{
+    /* background-color: turquoise; */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    
+}
+.width-95{
+    display: flex;
+    width: 95%
+}
+
+.width-5{
+    display: flex;
+    width: 5%;
+    align-items: center;
+    justify-content: center
+}
+.shop-filter-select .ant-select-selection{
+    border: 1px solid var(--app-d9d9d9) !important;
+    width: 160px !important;
+    min-height: 40px !important;
+    box-shadow: 0px 8px 16px 0 rgba(27, 27, 52, 0.06);
+    background-color: var(--app-white);
+  }
+
+.remove-cross-img-div{
+    display: flex;
+    justify-content: center;
+    padding-top: 21px;
+}
+
+.red-remove-cross-img-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 42px;
+}
+
+.dragDropCenter {
+    margin-top: 10px;
+    min-height: 100px;
+    color: #ddd;
+    border: 1px dashed lightgray;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.dragDropLeft {
+    margin-top: 10px;
+    min-height: 100px;
+    padding: 10px;
+    color: #ddd;
+    border: 1px dashed lightgray;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.dragging {
+    background-color: lightgray;
+    color: lightsteelblue;
+}
+
+.flexWrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.header-transaparent{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+}
+
+.shop-type-select{
+    width: 100%;
+    padding-right: 1px;
+    min-width: 182px;
+}
+
+.shop-decription-editor-main-div{
+    border: 1px solid rgb(212, 212, 212);
+}
+
+
+.reg-filter-select1 .ant-select-selection {
+      border: 1px solid var(--app-d9d9d9) !important;
+      min-height: 40px !important;
+      box-shadow: 0 8px 16px 0 rgba(27, 27, 52, 0.06);
+      background-color: var(--app-white);
+}
+
+.cart-img{
+    height: 35px;
+    width:  35px;
+}
+  
+@media (max-width: 767px) {
+    .shop-product-content-div{
+        justify-content: center;
+    }
+    .shop-add-product-btn-div{
+        margin-right: 25px;
+    }
+    .remove-cross-img-div{
+        padding-bottom: 21px;
+    }
+}

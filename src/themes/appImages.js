@@ -40,6 +40,7 @@ const AppImages = {
   netballImages: require("../images/imagesNetball.png"),
   netballLogoMain: require("../images/netball.png"),
   printImage: require("../images/print.png"),
+  shoppingCart:require("../images/shopping-cart.png"),
 };
 
 export default AppImages;

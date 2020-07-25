@@ -4980,13 +4980,12 @@ class AppRegistrationForm extends Component {
         )
     }
 
-    //////navigate to stripe payment screen
-    // navigatePaymentScreen = () => {
-    //     history.push("/checkoutPayment", {
-    //         competitionId: this.state.competitionUniqueKey,
-    //         organisationUniqueKey: this.state.organisationUniqueKey
-    //     })
-    // }
+    ////navigate to shop product screen
+    navigateShopScreen = () => {
+        history.push("/listProducts", {
+            organisationUniqueKey: this.state.organisationUniqueKey
+       })
+    }
 
     //////footer view containing all the buttons like submit and cancel
     footerView = (isSubmitting) => {
@@ -5001,10 +5000,10 @@ class AppRegistrationForm extends Component {
                         <div className="row">
                             <div className="col-sm">
                                 <div className="reg-add-save-button">
-                                    {/* <Button className="save-draft-text" type="save-draft-text"
-                                        onClick={() => this.navigatePaymentScreen()}>
-                                        {AppConstants.pay}
-                                    </Button> */}
+                                    <Button className="open-reg-button"  type="primary"
+                                        onClick={() => this.navigateShopScreen()}>
+                                        {AppConstants.shopIncomplete}
+                                    </Button>
                                 </div>
                             </div>
                             <div className="col-sm">
