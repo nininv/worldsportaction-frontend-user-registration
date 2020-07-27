@@ -97,7 +97,8 @@ let AxiosApi = {
 
    async saveEndUserRegistration(payload) {
         let userId = await getUserId();
-        var url = `/api/registration/save?userId=${userId == undefined ? 0 : userId}`;
+       // var url = `/api/registration/save?userId=${userId == undefined ? 0 : userId}`;
+        var url = `/api/registrationdraft/save?userId=${userId == undefined ? 0 : userId}`;
         return Method.dataPost(url, token, payload);
     },
     getOrgRegistrationRegistrationSettings(payload) {
