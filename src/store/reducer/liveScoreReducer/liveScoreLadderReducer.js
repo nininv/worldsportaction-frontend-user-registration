@@ -1,4 +1,5 @@
 import ApiConstants from '../../../themes/apiConstants'
+import { isArrayNotEmpty } from '../../../util/helpers';
 
 const initialState = {
     onLoad: false,
@@ -7,6 +8,7 @@ const initialState = {
     status: 0,
     liveScoreLadderDivisionData: [],
     liveScoreLadderListData: [],
+    liveScoreLadderAdjData: [],
 };
 
 function createLadderRank(array){
@@ -15,6 +17,19 @@ function createLadderRank(array){
     }
     return array
 }
+
+
+function createLadderAdjustments(array){
+    let adjArr = [];
+    array.map((x, index)=>{
+        if(isArrayNotEmpty(x.adjustments)){
+            adjArr = [...adjArr, ...x.adjustments];
+        }
+    })
+
+    return adjArr;
+}
+
 
 
 function liveScoreLaddersReducer(state = initialState, action) {
@@ -28,12 +43,14 @@ function liveScoreLaddersReducer(state = initialState, action) {
         case ApiConstants.API_LIVE_SCORE_DIVISION_SUCCESS:
             let divisionDatafromAction = action.divisionList
             let ladderList = action.ladderList ? action.ladderList : []
+            let ladderAdjList = createLadderAdjustments(ladderList);
           
             return {
                 ...state,
                 onLoad: false,
                 liveScoreLadderDivisionData: divisionDatafromAction,
                 liveScoreLadderListData: ladderList,
+                liveScoreLadderAdjData: ladderAdjList
                 // status: action.status
             };
 
@@ -63,10 +80,12 @@ function liveScoreLaddersReducer(state = initialState, action) {
         case ApiConstants.API_LIVE_SCORE_LADDERS_LIST_SUCCESS:
            
             let ladder_List = createLadderRank(action.result)
+            let ladderAdjustmentList = createLadderAdjustments(action.result);
             return {
                 ...state,
                 onLoad: false,
-                liveScoreLadderListData:ladder_List
+                liveScoreLadderListData:ladder_List,
+                liveScoreLadderAdjData: ladderAdjustmentList
             };
 
         case ApiConstants.API_LIVE_SCORE_LADDERS_LIST_FAIL:
