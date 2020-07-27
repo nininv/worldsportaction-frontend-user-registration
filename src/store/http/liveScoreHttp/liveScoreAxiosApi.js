@@ -34,7 +34,7 @@ let LiveScoreAxiosApi = {
   
 
     liveScoreLadderList(divisionId, competitionID, compKey) {
-        var url = null
+        var url = `/teams/ladder\web`
         let postBody = {
             divisionIds: divisionId
         }
