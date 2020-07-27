@@ -34,20 +34,15 @@ let LiveScoreAxiosApi = {
   
 
     liveScoreLadderList(divisionId, competitionID, compKey) {
-        var url = `/teams/ladder/web`
-        let postBody = {
-            divisionIds: divisionId
-        }
+        var url = null;
         if(compKey){
-            postBody["competitionKey"] = compKey;
-            // url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
+             url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
         }else{
-            postBody["competitionIds"] = competitionID;
-            // url = `/teams/ladder?divisionIds=${divisionId}&competitionIds=${competitionID}`;
+             url = `/teams/ladder?divisionIds=${divisionId}&competitionIds=${competitionID}`;
         }
        
-        //return Method.dataGet(url, localStorage.token)
-        return Method.dataPost(url, localStorage.token, postBody)
+        return Method.dataGet(url, localStorage.token)
+       // return Method.dataPost(url, localStorage.token, postBody)
     },
 
 
