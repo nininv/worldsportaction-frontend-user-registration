@@ -914,7 +914,9 @@ const AppConstants = {
   an account holder or an authorised signatory on the account listed
   above.`,
   shopIncomplete:"Shop - Incomplete",
-
+  addToCart: "Add to cart",
+  size: "Size",
+  quantity: "Quantity",
 };
 
 export default AppConstants;

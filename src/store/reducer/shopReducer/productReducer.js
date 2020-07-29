@@ -133,6 +133,45 @@ function shopProductState(state = initialState, action) {
                 error: null
             };
 
+        ///clearing particular reducer data
+        case ApiConstants.SHOP_PRODUCT_CLEARING_REDUCER_DATA:
+            if (action.dataName === "productDetailData") {
+                // dummy object of product detail
+                const defaultProductObject = {
+                    productName: "",
+                    description: "",
+                    price: 0,
+                    cost: 0,
+                    tax: 0,
+                    quantity: 0,
+                    deliveryType: "",
+                    variants: [{
+                        name: "",
+                        options: [
+                            {
+                                optionName: "",
+                                properties: {
+                                    price: 0,
+                                    cost: 0,
+                                    skuCode: "",
+                                    barcode: "",
+                                    quantity: 0,
+                                    id: 0,
+                                }
+                            }
+                        ]
+                    }],
+                    images: [],
+                    organisationUniqueKey: 0,
+                }
+                state.productDetailData = defaultProductObject
+            }
+            return {
+                ...state, error: null
+            };
+
+
+
         default:
             return state;
     }

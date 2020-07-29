@@ -26,8 +26,18 @@ function getProductDetailsByIdAction(productId) {
     return action;
 }
 
+//////clearing particular reducer data
+function clearProductReducer(dataName) {
+    const action = {
+        type: ApiConstants.SHOP_PRODUCT_CLEARING_REDUCER_DATA,
+        dataName
+    };
+    return action;
+}
+
 export {
     getProductListingAction,
     getTypesOfProductAction,
     getProductDetailsByIdAction,
+    clearProductReducer,
 }
