@@ -129,9 +129,8 @@ class ProductDetails extends Component {
                                     </div>
                                     <div className="w-75">
                                         <CounterInput
-                                            value={2}
+                                            value={1}
                                             min={1}
-                                            max={50}
                                             onChange={(value) => { console.log(value) }}
                                         />
                                     </div>
