@@ -5,6 +5,7 @@ import history from "../../../util/history";
 import { message } from "antd";
 import ValidationConstants from "../../../themes/validationConstant";
 import { isArrayNotEmpty } from "../../../util/helpers";
+import { post } from "jquery";
 
 
 async function logout() {
@@ -33,7 +34,7 @@ let LiveScoreAxiosApi = {
   
 
     liveScoreLadderList(divisionId, competitionID, compKey) {
-        var url = null
+        var url = null;
         if(compKey){
              url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
         }else{
@@ -41,6 +42,7 @@ let LiveScoreAxiosApi = {
         }
        
         return Method.dataGet(url, localStorage.token)
+       // return Method.dataPost(url, localStorage.token, postBody)
     },
 
 
@@ -61,6 +63,93 @@ let LiveScoreAxiosApi = {
 
 
 const Method = {
+
+    async dataPost(newurl, authorization, body) {
+        const url = newurl;
+        return await new Promise((resolve, reject) => {
+            http
+                .post(url, body, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                        Authorization: "BWSA " + authorization,
+                        "SourceSystem": "WebAdmin"
+                    }
+                })
+
+                .then(result => {
+
+                    if (result.status === 200) {
+                        return resolve({
+                            status: 1,
+                            result: result
+                        });
+                    }
+                    else if (result.status == 212) {
+                        return resolve({
+                            status: 4,
+                            result: result
+                        });
+                    }
+                    else {
+                        if (result) {
+                            return reject({
+                                status: 3,
+                                error: result.data.message,
+                            });
+                        } else {
+
+                            return reject({
+                                status: 4,
+                                error: "Something went wrong."
+                            });
+                        }
+                    }
+                })
+                .catch(err => {
+
+                    if (err.response) {
+
+                        if (err.response.status !== null || err.response.status !== undefined) {
+                            if (err.response.status == 401) {
+                                let unauthorizedStatus = err.response.status
+                                if (unauthorizedStatus == 401) {
+                                    logout()
+                                    message.error(ValidationConstants.messageStatus401)
+                                }
+                            }
+                            else if (err.response.status == 400) {
+
+                                message.config({
+                                    duration: 1.5,
+                                    maxCount: 1,
+                                });
+                                message.error(err.response.data.message)
+                                return reject({
+                                    status: 5,
+                                    error: err.response.data.message
+                                });
+                            }
+                            else {
+                                return reject({
+
+                                    status: 5,
+                                    error: err.response && err.response.data.message
+                                });
+                            }
+                        }
+                    }
+                    else {
+
+                        return reject({
+                            status: 5,
+                            error: err.response && err.response.data.message
+                        });
+
+                    }
+                });
+        });
+    },
    
     // Method to GET response
 

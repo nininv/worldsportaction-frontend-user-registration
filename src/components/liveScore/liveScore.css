@@ -267,6 +267,13 @@
     box-shadow: 0 8px 16px 0 rgba(27, 27, 52, 0.06);
     background-color: var(--app-white);
 }
+  .ladder-list-adjustment{
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--app-f5222d);
+  }
+
+
 
 @media(min-width: 768px) and (max-width: 1024px) {
     .live-score-edit-match-buttons {
