@@ -140,6 +140,14 @@ export default function* root_saga() {
   // user history
   yield takeEvery(ApiConstants.API_USER_MODULE_HISTORY_LOAD, userSaga.getUserHistorySaga)
 
+   //Get Registration Review
+   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
+
+   //Save Registration Revie
+   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
+
+
+  
 
 
 }

@@ -9,7 +9,7 @@ import {
     useStripe, AuBankAccountElement,
 } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
-
+import history from "../../util/history";
 
 import AppConstants from "../../themes/appConstants";
 import "../../pages/layout.css";
@@ -29,12 +29,15 @@ class ReviewProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-           
+            registrationUniqueKey: null
         }
         this.getReferenceData();
     }
 
     componentDidMount() {
+        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        //let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
+        this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo();
     }
 
@@ -47,6 +50,13 @@ class ReviewProducts extends Component {
     }
   
     getReferenceData = () => {
+    }
+
+    previousCall = () =>{
+        this.setState({ buttonPressed: "previous" });
+        history.push("/registrationReview", {
+            registrationId: this.state.registrationUniqueKey
+        })
     }
 
     saveReviewForm = (e) =>{
@@ -297,7 +307,7 @@ class ReviewProducts extends Component {
                 <div className="footer-view" style={{padding:0}}>
                     <div style={{display:"flex" , justifyContent:"space-between"}}>
                         <Button className="save-draft-text" type="save-draft-text"
-                            onClick={() => this.setState({ buttonPressed: "save" })}>
+                            onClick={() => this.previousCall()}>
                             {AppConstants.previous}
                         </Button>
                         <Button

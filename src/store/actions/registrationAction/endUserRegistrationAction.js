@@ -145,6 +145,35 @@ function getRegistrationProductFeesAction(payload){
     return action;
 }
 
+function getRegistrationReviewAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function saveRegistrationReview(payload){
+    const action = {
+        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function updateReviewInfoAction(value, key, index, subkey){
+    const action = {
+        type: ApiConstants.UPDATE_REVIEW_INFO,
+        value: value,
+        key: key,
+        index: index,
+        subkey: subkey
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -160,5 +189,8 @@ export {
     updateTeamRegSettingAction,
     updateTeamRegistrationInvite,
     getTermsAndConditionsAction,
-    getRegistrationProductFeesAction
+    getRegistrationProductFeesAction,
+    getRegistrationReviewAction,
+    saveRegistrationReview,
+    updateReviewInfoAction
 }

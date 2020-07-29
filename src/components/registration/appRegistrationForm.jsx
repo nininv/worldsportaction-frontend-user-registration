@@ -579,7 +579,7 @@ class AppRegistrationForm extends Component {
                 if (this.state.buttonPressed == "save" ) {
                     let registrationId=registrationState.registrationId
                     console.log("registrationId",registrationId)
-                    history.push("/invoice", {
+                    history.push("/registrationReview", {
                         registrationId: registrationId,
 						paymentSuccess: false					 
                     })

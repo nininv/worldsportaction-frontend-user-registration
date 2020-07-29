@@ -47,7 +47,8 @@ const initialState = {
     registrationSetting: {},
     termsAndConditions: [],
     termsAndConditionsFinal: [],
-    isYourInfoSet: false
+    isYourInfoSet: false,
+    registrationReviewList: null
 }
 
 
@@ -579,6 +580,73 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS:
+           let regReviewData = action.result;
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status,
+                registrationReviewList: regReviewData
+            };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status
+            };
+    
+        case ApiConstants.UPDATE_REVIEW_INFO:
+            let reviewData = state.registrationReviewList;
+            if(action.subkey == "charity"){
+                reviewData[action.key] = action.value;
+            }
+            else if(action.subkey == "selectedOptions"){
+                if(action.key =="isSelected"){
+                    let discountCode = reviewData["compParticipants"][action.index][action.subkey]["discountCode"];
+                    console.log("discountCode" + discountCode);
+                    let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
+                    if(isArrayNotEmpty(memProds)){
+                        memProds.map((x) => {
+                           x.discounts.map((y) => {
+                               y.isSelected = 0;
+                           })
+                        });
+
+                        memProds.map((x) => {
+                            let discount = x.discounts.find(x=>x.code == discountCode);
+                            if(discount!= undefined){
+                                discount.isSelected = 1;
+                            }
+                         });
+                    }
+                }
+                else{
+                    //console.log("******", action.index, action.subkey, action.key, action.value);
+                    if(action.key == "paymentOptionRefId"){
+                        if(action.value != 2){
+                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = null;
+                        }
+                    }
+                    if(action.key == "gameVoucherValue"){
+                        reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
+                    }
+                    reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                }
+            }
+
+            console.log("ReviewData", reviewData);
+            
+            return {
+                ...state,
+                error: null
+            }
         default:
             return state;
     }

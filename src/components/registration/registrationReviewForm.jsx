@@ -11,7 +11,11 @@ import Loader from '../../customComponents/loader';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import InputWithHead from '../../customComponents/InputWithHead';
+import moment from 'moment';
+import history from "../../util/history";
 
+import { getRegistrationReviewAction,saveRegistrationReview, updateReviewInfoAction} from 
+            '../../store/actions/registrationAction/endUserRegistrationAction';
 
 
 const { Header, Footer, Content } = Layout;
@@ -25,23 +29,58 @@ class RegistrationReviewForm extends Component {
             onInvLoad: false,
             buttonPressed: "",
             loading: false,
+            registrationUniqueKey: ""
         }
         this.getReferenceData();
     }
 
     componentDidMount() {
-        this.getApiInfo();
+        //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
+        this.setState({registrationUniqueKey: registrationUniqueKey});
+        this.getApiInfo(registrationUniqueKey);
     }
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.endUserRegistrationState;
+
+        if(registrationState.onRegReviewLoad == false && this.state.loading === true)
+       {
+            this.setState({ loading: false });
+            if(!registrationState.error)
+            {
+                if (this.state.buttonPressed == "save" ) {
+                    let registrationId=registrationState.registrationId
+                    console.log("registrationId",registrationId)
+                    history.push("/reviewProducts", {
+                        registrationId: this.state.registrationUniqueKey
+                    })
+                }
+            }
+       }
        
     }
 
-    getApiInfo = () => {
+    getApiInfo = (registrationUniqueKey) => {
+        let payload = {
+            registrationId: registrationUniqueKey
+        }
+
+        this.props.getRegistrationReviewAction(payload);
     }
   
     getReferenceData = () => {
+    }
+
+    setReviewInfo = (value, key, index, subkey) => {
+        this.props.updateReviewInfoAction(value,key, index, subkey);
+    }
+
+    previousCall = () =>{
+        this.setState({ buttonPressed: "previous" });
+        history.push("/appRegistrationForm", {
+            registrationId: this.state.registrationUniqueKey
+        })
     }
 
     saveReviewForm = (e) =>{
@@ -50,6 +89,46 @@ class RegistrationReviewForm extends Component {
             console.log("Error: " + err);
             if(!err)
             {
+                let registrationReview = this.props.endUserRegistrationState.registrationReviewList;
+
+                let payload = {
+                    "registrationId": this.state.registrationUniqueKey,
+                    "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
+                    "compParticipants":[]
+                }
+
+                console.log("registrationReview", registrationReview);
+
+                registrationReview.compParticipants.map((x, index) => {
+                    let discountCode = null;
+                    x.membershipProducts.map((y) => {
+                        let discount = y.discounts.find(y=>y.code == x.selectedOptions.discountCode);
+                        if(discount!= undefined && discount.isSelected == 1){
+                            discountCode = discount.code;
+                        }
+                     });
+                    let obj = {
+                        "firstName":x.firstName,
+                        "lastName": x.lastName,
+                        "mobileNumber": x.mobileNumber,
+                        "email":x.email,
+                        "userId":x.userId,
+                        "competitionUniqueKey": x.competitionUniqueKey,
+                        "organisationUniqueKey":x.organisationUniqueKey,
+                        "paymentOptionRefId": x.selectedOptions.paymentOptionRefId,
+                        "gameVoucherValue":x.selectedOptions.gameVoucherValue,
+                        "discountCode": discountCode,
+                        "governmentVoucherRefId": x.selectedOptions.governmentVoucherRefId,
+                        "governmentVoucherCode": x.selectedOptions.governmentVoucherCode
+                    }
+
+                    payload.compParticipants.push(obj);
+                });
+
+                console.log("payload" + JSON.stringify(payload));
+                this.props.saveRegistrationReview(payload);
+                this.setState({loading: true});
+
             }
         });
     }
@@ -85,15 +164,24 @@ class RegistrationReviewForm extends Component {
     };
 
     contentView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+        let {registrationReviewList} = this.props.endUserRegistrationState;
+        let participantList = registrationReviewList!= null ? registrationReviewList.compParticipants: [];
         return (
             <div>
-               <div style={{backgroundColor: "#f7fafc", marginBottom: 40}}>
-                    {this.individualView(getFieldDecorator)}
-               </div>
-               <div style={{ marginBottom: 40}}>
-                    {this.teamView(getFieldDecorator)}
-               </div>
+                {(participantList || []).map((item, index) => (
+                <div  key={"part" + index}>
+                    {item.isTeamRegistration == 0 &&
+                        <div style={{backgroundColor: "#f7fafc", marginBottom: 40}}>
+                            {this.individualView(getFieldDecorator, item, index)}
+                        </div>
+                    }
+                     {item.isTeamRegistration == 1 &&
+                        <div style={{ marginBottom: 40}}>
+                                {this.teamView(getFieldDecorator, item, index)}
+                        </div>
+                    }
+                </div>
+                ))}
                <div style={{ marginBottom: 40}}>
                     {this.charityView(getFieldDecorator)}
                </div>
@@ -101,59 +189,62 @@ class RegistrationReviewForm extends Component {
         )
     }
 
-    individualView = (getFieldDecorator) => {
+    individualView = (getFieldDecorator, item, index) => {
         let registrationState = this.props.endUserRegistrationState;
+       
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
                     <div>
                         {AppConstants.individualRegistration}
                         {AppConstants.hyphen}
-                        {AppConstants.participantName}
+                        {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
-                        {AppConstants.competitionName}     
+                        {item.organisationName}    
+                        {AppConstants.hyphen}
+                        {item.competitionName}     
                     </div>
                     <div>
                         $120
                     </div>
                 </div>
-                <div className='membership-text'>
-                    <div>
-                        {AppConstants.membershipProduct} 1
+                {(item.membershipProducts || []).map((mem, memIndex) =>(
+                <div key = {memIndex}>
+                    <div className='membership-text'>
+                        <div>
+                            {mem.name} 
+                        </div>
+                        <div>
+                           ${mem.totalFees}
+                        </div>
                     </div>
-                    <div>
-                        $120
+                    { (mem.discounts.filter(x=>x.isSelected == 1) || []).map((d, dIndex) =>(
+                    <div className='membership-text' style={{marginTop:0}}>
+                        <div>
+                            <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
+                            <span>{AppConstants.discount}</span>
+                        </div>
+                        <div className="number-text-style">
+                            (${d.amount})
+                        </div>
                     </div>
+                    )) }
                 </div>
-                <div className='membership-text' style={{marginTop:0}}>
-                    <div>
-                        <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
-                        <span>{":"+" "}</span>
-                        <span>{AppConstants.discount}</span>
-                    </div>
-                    <div className="number-text-style">
-                        ($20)
-                    </div>
-                </div>
-                <div className='membership-text'>
-                    <div style={{marginBottom:32}}>
-                        {AppConstants.membershipProduct} 2
-                    </div>
-                    <div>
-                        $120
-                    </div>
-                </div>
+                ))}
+                {item.selectedOptions.governmentVoucherRefId!= null && 
                 <div className='membership-text' style={{marginTop:0}}>
                     <div>
                         <span className="number-text-style">{AppConstants.less}</span>
                         <span>{":"+" "}</span>
-                        <span>{AppConstants.governmentSportVouchers}</span>
+                        <span>{AppConstants.governmentSportVouchers + item.selectedOptions.governmentVoucherCode}</span>
                     </div>
                     <div className="number-text-style">
-                        ($20)
+                        (${item.selectedOptions.governmentVoucherValue!= null ? item.selectedOptions.governmentVoucherValue : 0})
                     </div>
-                </div> 
-                <div className='membership-text' style={{marginTop:4 , marginBottom:31}}>
+                </div>  
+                }
+                {/* <div className='membership-text' style={{marginTop:4 , marginBottom:31}}>
                     <div>
                     <span className="number-text-style">{AppConstants.less}</span>                    
                     <span>{":"+" "}</span>                       
@@ -162,83 +253,131 @@ class RegistrationReviewForm extends Component {
                     <div className="number-text-style">
                         ($20)
                     </div>
-                </div>               
-                <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                    <Radio value={"1"}>{AppConstants.payAsYou}</Radio>                    
-                </Radio.Group> 
-                <Radio.Group className="reg-competition-radio">
-                    <Radio value={"1"}>{AppConstants.gameVoucher}</Radio>
-                    <Radio.Group className="reg-competition-radio" style={{marginLeft:30}}>
-                        <Radio value={"2"}>3</Radio>  
-                        <Radio value={"3"}>5</Radio>
-                        <Radio value={"4"}>10</Radio>
-                    </Radio.Group>  
-                </Radio.Group>                
-                <div style={{marginTop:15}}>
-                    <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                        <Radio value={"1"}>{AppConstants.payfullAmount}</Radio>
-                    </Radio.Group>  
-                    <Radio.Group className="reg-competition-radio"> 
-                        <Radio value={"2"}>{AppConstants.weeklyInstalment}</Radio>
-                    </Radio.Group>   
-                </div>               
-                <div className="heading-instalmentdate">
-                    <div className="text-instalmentdate">{AppConstants.instalmentDates}</div>
-                    <div>17/8/2020</div>
-                </div>   
-                <div style={{marginTop:5}}>
-                    <Radio.Group className="reg-competition-radio">
-                        <Radio value={"1"}>{AppConstants.schoolRegistration}</Radio>
-                    </Radio.Group>   
+                </div>                */}
+                <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}
+                value={item.selectedOptions.paymentOptionRefId}
+                onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}
+                >
+                {(item.paymentOptions || []).map((p, pIndex) =>(
+                <div>
+                    {p.paymentOptionRefId == 1 && 
+                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                    }
+                    {p.paymentOptionRefId == 2 && 
+                        <div>
+                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.gameVoucher}</Radio>
+                            <Radio.Group className="reg-competition-radio" 
+                                value={item.selectedOptions.gameVoucherValue}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "gameVoucherValue", index,"selectedOptions")}
+                            style={{marginLeft:30}}>
+                                {(item.gameVouchers || []).map((g, gIndex) => (
+                                <Radio key={g} value={g}>{g}</Radio>  
+                                ))}
+                            </Radio.Group>  
+                        </div>
+                    }   
+                    <div style={{marginTop:15}}>
+                        {p.paymentOptionRefId == 3 &&          
+                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
+                        }
+                        { p.paymentOptionRefId == 4 &&          
+                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
+                        } 
+                    </div>   
+                    { p.paymentOptionRefId == 4 &&  item.instalmentDates.length > 0 &&                   
+                    <div className="heading-instalmentdate">
+                        <div className="text-instalmentdate">{AppConstants.instalmentDates}</div>
+                        {(item.instalmentDates || []).map((i, iIndex) => (
+                            <span>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "") +
+                                     (item.instalmentDates.length != (iIndex + 1) ?   ', ' : '')}</span>
+                        )) }
+                    </div>   
+                    }
+                    {p.paymentOptionRefId == 5 &&
+                    <div style={{marginTop:5}}>
+                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                    </div>
+                    }
                 </div>
-                <div style={{marginLeft: 7,marginTop: 10}}>
-                  <Checkbox className="single-checkbox mt-3" style={{color: "inherit"}}>
-                    Discount Code
-                  </Checkbox>
+                ))}
+                </Radio.Group>
+                { item.discounts.length > 0 && 
+                <div>
+                    <div style={{marginLeft: 7,marginTop: 10}}>
+                        <Checkbox className="single-checkbox mt-3" style={{color: "inherit"}}
+                            checked={item.selectedOptions.isDiscountChecked}
+                            onChange={(e) => this.setReviewInfo(e.target.checked, "isDiscountChecked", index,"selectedOptions")}>
+                            Discount Code
+                        </Checkbox>
+                    </div>
+                    {item.selectedOptions.isDiscountChecked == 1 && 
+                    <div className="inputfield-style">                    
+                        <div className="row" style={{marginLeft: 26 , marginTop: 12}}>
+                            <div className="col-sm">
+                                <Select
+                                    required={"required-field pt-0 pb-0"}
+                                    className="input-inside-table-venue-court team-mem_prod_type"
+                                    onChange={(e) => this.setReviewInfo(e, "discountCode", index,"selectedOptions")}
+                                    value={item.selectedOptions.discountCode}
+                                    placeholder={'Code'}>
+                                    {(item.discounts || []).map((d, dIndex) => (
+                                            <Option key={d.code} 
+                                            value={d.code} >{d.code}</Option>
+                                        ))
+                                    }
+                                
+                                </Select>
+                            </div>
+                            <div className="col-sm" style={{alignSelf:"center"}}>
+                            <span  className='text-codelink' 
+                            onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions")}
+                            >Apply Code</span>
+                            </div>    
+                        </div>                   
+                    </div>
+                    }
                 </div>
-                <div className="inputfield-style">                    
+                }
+                {item.governmentVouchers.length > 0 && 
+                <div>
+                    <div style={{marginLeft: 7,marginTop: 10}}>
+                        <Checkbox className="single-checkbox mt-3" style={{color: "inherit"}}
+                            checked={item.selectedOptions.isGovernmentVoucherChecked}
+                            onChange={(e) => this.setReviewInfo(e.target.checked, "isGovernmentVoucherChecked", index,"selectedOptions")}>
+                        {AppConstants.governmentSportsVoucher}
+                        </Checkbox>
+                    </div>
+                    {item.selectedOptions.isGovernmentVoucherChecked == 1 && 
                     <div className="row" style={{marginLeft: 26 , marginTop: 12}}>
                         <div className="col-sm">
-                            <InputWithHead placeholder={AppConstants.code}/>
+                            <InputWithHead required="pt-0" heading={'Type'} />
+                            <Select
+                                    required={"required-field pt-0 pb-0"}
+                                    className="input-inside-table-venue-court team-mem_prod_type"
+                                    onChange={(e) => this.setReviewInfo(e, "governmentVoucherRefId", index,"selectedOptions")}
+                                    value={item.selectedOptions.governmentVoucherRefId}
+                                    placeholder={'Code'}>
+                                    {(item.governmentVouchers || []).map((gv, gvIndex) => (
+                                            <Option key={gv.governmentVoucherRefId} 
+                                            value={gv.governmentVoucherRefId} >{gv.description}</Option>
+                                        ))
+                                    }
+                                
+                                </Select>
                         </div>
-                        <div className="col-sm" style={{alignSelf:"center"}}>
-                        <a href="#" className='text-codelink'>Apply Code</a>
+                        <div className="col-sm">
+                            <InputWithHead placeholder={"Code"} required="pt-0" heading={'Code'}
+                            value ={item.selectedOptions.governmentVoucherCode} 
+                            onChange={(e) => this.setReviewInfo(e.target.value, "governmentVoucherCode", index,"selectedOptions")}/>
                         </div>    
-                    </div>                   
+                    </div> }
                 </div>
-                <div style={{marginLeft: 7,marginTop: 10}}>
-                  <Checkbox className="single-checkbox mt-3" style={{color: "inherit"}}>
-                   {AppConstants.governmentSportsVoucher}
-                  </Checkbox>
-                </div>
-                <div className="row" style={{marginLeft: 26 , marginTop: 12}}>
-                    <div className="col-sm">
-                        <InputWithHead required="pt-0" heading={'Type'} />
-                        <Select
-                            style={{
-                                width: '100%',
-                                paddingRight: 1,
-                                minWidth: 182,
-                            }}
-                            placeholder="Select"                       
-                            >                       
-                            <Option  key={'disType'}  value={1}>
-                                General
-                            </Option>
-                            <Option  key={'discode'}  value={2}>
-                                Discount code
-                            </Option>
-                        </Select>
-                    </div>
-                    <div className="col-sm">
-                        <InputWithHead placeholder={"code"} required="pt-0" heading={'code'} />
-                    </div>    
-                </div>
+                }
             </div>
         )
     }
 
-    teamView = (getFieldDecorator) => {
+    teamView = (getFieldDecorator, item, index) => {
         let registrationState = this.props.endUserRegistrationState;
         return (
             <div className = "individual-reg-view">
@@ -261,7 +400,8 @@ class RegistrationReviewForm extends Component {
                     <div>
                         $120
                     </div>
-                </div>   
+                </div>  
+
                 <Radio.Group className="reg-competition-radio" style={{marginBottom:12}}>
                     <Radio value={"1"}>{AppConstants.payAsYou}</Radio>
                 </Radio.Group> 
@@ -278,28 +418,35 @@ class RegistrationReviewForm extends Component {
     }
 
     charityView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+        let {registrationReviewList} = this.props.endUserRegistrationState;
+        let charity = registrationReviewList!= null ? registrationReviewList.charity : null;
+        let charityRoundUp = registrationReviewList!= null ? registrationReviewList.charityRoundUp : [];
         return (
             <div className = "individual-reg-view">
+                 {charity!= null &&
                 <div className = "individual-header-view">
                     <div>
-                        {AppConstants.support}
-                        {AppConstants.hyphen}
-                        {AppConstants.confidentGirlsFoundation}  
-                    </div>                    
+                        {charity.title}
+                    </div>     
                 </div>
+                }
+                {charity!= null && 
                 <div style={{marginTop:12}}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo aliquam vero veritatis consequuntur odit, 
-                    alias, perferendis temporibus 
-                    libero possimus ad fuga recusandae ipsam debitis hic quis sequi, eveniet esse doloribus?
+                   {charity.description}
                 </div>
+                }
+                {charityRoundUp.length > 0 && 
                 <div style={{marginTop:10}}>
-                    <Radio.Group className="reg-competition-radio">
-                        <Radio value={"1"}>RoundUp atleast 2$</Radio>  
-                        <Radio value={"2"}>RoundUp atleast 3$</Radio>
-                        <Radio value={"3"}>RoundUp atleast 10$</Radio>
+                    <Radio.Group className="reg-competition-radio" 
+                        value={registrationReviewList.charityRoundUpRefId}
+                        onChange={(e) => this.setReviewInfo(e.target.value, "charityRoundUpRefId", null,"charity")}>
+                        {(charityRoundUp || []).map((x, cIndex) => (
+                        <Radio key ={x.charityRoundUpRefId} value={x.charityRoundUpRefId}>{x.description}</Radio>  
+                        ))}
+                  
                     </Radio.Group>  
-                </div>                           
+                </div>  
+                }                         
             </div>
         )
     }
@@ -309,10 +456,10 @@ class RegistrationReviewForm extends Component {
         return (
             <div className="fluid-width">
                 <div className="footer-view" style={{padding:0}}>
-                    <div className="comp-buttons-view">
+                    <div style={{display:"flex" , justifyContent:"space-between"}}>
                         <Button className="save-draft-text" type="save-draft-text"
-                            onClick={() => this.setState({ buttonPressed: "save" })}>
-                            {AppConstants.saveAsDraft}
+                            onClick={() => this.previousCall()}>
+                            {AppConstants.previous}
                         </Button>
                         <Button
                             className="open-reg-button"
@@ -349,7 +496,7 @@ class RegistrationReviewForm extends Component {
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
-                         <Loader visible={this.props.endUserRegistrationState.onLoad } />
+                         <Loader visible={this.props.endUserRegistrationState.onRegReviewLoad } />
                         </Content>
                         <Footer style={{paddingRight:2}}>{this.footerView()}</Footer>
                     </Form>
@@ -364,6 +511,9 @@ class RegistrationReviewForm extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
+        getRegistrationReviewAction,
+        saveRegistrationReview,
+        updateReviewInfoAction
     }, dispatch);
 
 }
