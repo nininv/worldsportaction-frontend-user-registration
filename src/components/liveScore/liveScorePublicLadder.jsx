@@ -4,10 +4,10 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { liveScoreLaddersListAction,clearLadderList } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
+import { liveScoreLaddersListAction, clearLadderList } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
 import history from "../../util/history";
 // import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
-import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID,getLiveScoreCompetiton } from '../../util/sessionStorage'
+import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID, getLiveScoreCompetiton } from '../../util/sessionStorage'
 import { isArrayNotEmpty } from '../../util/helpers'
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
 
@@ -129,7 +129,7 @@ class LiveScorePublicLadder extends Component {
             division: "",
             loadding: false,
             competitionId: null,
-            competitionUniqueKey : null,
+            competitionUniqueKey: null,
             gameTimeTracking: false,
             onCompLoad: false,
             onDivisionLoad: false,
@@ -152,21 +152,21 @@ class LiveScorePublicLadder extends Component {
         )
     }
 
-   async componentDidMount() {
+    async componentDidMount() {
         setUserId(userId);
         setAuthToken(token);
         // let orgParam =  this.props.location.search.split("?organisationId=")
-        let orgParam =  this.props.location.search.split("?organisationKey=")
-        let orgId  =  orgParam[1]
+        let orgParam = this.props.location.search.split("?organisationKey=")
+        let orgId = orgParam[1]
 
         setliveScoreOrgID(orgId)
         let organisationId = await getliveScoreOrgID()
 
-        if(organisationId != undefined){
+        if (organisationId != undefined) {
             this.setState({ onCompLoad: true })
             this.props.fixtureCompetitionListAction(organisationId)
-        }else{
-           
+        } else {
+
             history.push('/liveScorePublicLadder')
         }
 
@@ -182,13 +182,13 @@ class LiveScorePublicLadder extends Component {
     componentDidUpdate(nextProps) {
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
-                if(this.props.liveScoreFixturCompState.comptitionList.length >0){
+                if (this.props.liveScoreFixturCompState.comptitionList.length > 0) {
                     let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
-                    let compKey  = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].competitionUniqueKey
+                    let compKey = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].competitionUniqueKey
                     this.props.getLiveScoreDivisionList(firstComp)
-                    this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true,competitionUniqueKey:compKey })
+                    this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true, competitionUniqueKey: compKey })
                 }
-              
+
             }
         }
 
@@ -209,7 +209,7 @@ class LiveScorePublicLadder extends Component {
         let compKey = compID.competitionUniqueKey
         this.props.clearLadderList()
         this.props.getLiveScoreDivisionList(selectedComp)
-        this.setState({ selectedComp, onDivisionLoad: true, division: null, competitionUniqueKey:compKey  })
+        this.setState({ selectedComp, onDivisionLoad: true, division: null, competitionUniqueKey: compKey })
 
     }
 
@@ -222,23 +222,22 @@ class LiveScorePublicLadder extends Component {
     }
 
     divisionChange = (value) => {
-       
-    }
- 
 
- ///dropdown view containing all the dropdown of header
- dropdownView = () => {
-    const { liveScoreLadderState } = this.props;
-    let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
-    let division =isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
-    return (
-        <div className="comp-player-grades-header-drop-down-view">
-            <div className="row" >
-                <div className="col-sm-4" >
-                    <div className="com-year-select-heading-view" >
+    }
+
+
+    ///dropdown view containing all the dropdown of header
+    dropdownView = () => {
+        const { liveScoreLadderState } = this.props;
+        let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
+        let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
+        return (
+            <div className="comp-player-grades-header-drop-down-view">
+                <div className="row" >
+                    <div className="col-sm mt-2" style={{ width: "fit-content" }} >
                         <span className='year-select-heading'>{AppConstants.competition}:</span>
                         <Select
-                            className="year-select"
+                            className="year-select reg-filter-select-competition ml-2"
                             style={{ minWidth: 160 }}
                             onChange={(comp) => this.onChangeComp({ comp })}
                             value={this.state.selectedComp}
@@ -247,20 +246,12 @@ class LiveScorePublicLadder extends Component {
                                     return <Option value={item.id}>{item.longName}</Option>
                                 })
                             }
-
                         </Select>
                     </div>
-                </div>
-                <div className="col-sm-2" >
-                    <div style={{
-                        width: "100%", display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center", marginRight: 50
-                    }} >
+                    <div className="col-sm mt-2" style={{ width: "fit-content" }}>
                         <span className='year-select-heading'>{AppConstants.division}:</span>
                         <Select
-                            className="year-select"
-                            style={{ minWidth: 100 }}
+                            className="year-select reg-filter-select-competition ml-2"
                             onChange={(division) => this.changeDivision({ division })}
                             value={this.state.division}
                         >{
@@ -268,14 +259,12 @@ class LiveScorePublicLadder extends Component {
                                     return <Option value={item.id}>{item.name}</Option>
                                 })
                             }
-
                         </Select>
                     </div>
                 </div>
             </div>
-        </div>
-    )
-}
+        )
+    }
 
 
 
@@ -311,11 +300,11 @@ class LiveScorePublicLadder extends Component {
 
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
-                <DashboardLayout 
-                    menuHeading={AppConstants.liveScores} 
-                    isManuNotVisible = {true}
+                <DashboardLayout
+                    menuHeading={AppConstants.liveScores}
+                    isManuNotVisible={true}
                 // menuName={AppConstants.liveScores}
-                 />
+                />
                 <Layout>
                     {this.headerView()}
                     <Content>
@@ -329,7 +318,7 @@ class LiveScorePublicLadder extends Component {
     }
 }
 function mapDispatchtoprops(dispatch) {
-    return bindActionCreators({clearLadderList, liveScoreLaddersListAction, getLiveScoreDivisionList,fixtureCompetitionListAction }, dispatch)
+    return bindActionCreators({ clearLadderList, liveScoreLaddersListAction, getLiveScoreDivisionList, fixtureCompetitionListAction }, dispatch)
 
 }
 
