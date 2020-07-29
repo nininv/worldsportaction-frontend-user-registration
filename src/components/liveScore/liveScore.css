@@ -250,7 +250,23 @@
           margin: 0 0px;
   }
 
+  .reg-filter-select-year .ant-select-selection {
+    border: 1px solid var(--app-d9d9d9) !important;
+    width: 90px !important;				
+    min-height: 40px !important;
+                         
+    box-shadow: 0 8px 16px 0 rgba(27, 27, 52, 0.06);
+    background-color: var(--app-white);
+ }
 
+ .reg-filter-select-competition .ant-select-selection {
+    border: 1px solid var(--app-d9d9d9) !important;
+    min-width: 200px !important;				
+    min-height: 40px !important;
+               
+    box-shadow: 0 8px 16px 0 rgba(27, 27, 52, 0.06);
+    background-color: var(--app-white);
+}
 
 @media(min-width: 768px) and (max-width: 1024px) {
     .live-score-edit-match-buttons {
