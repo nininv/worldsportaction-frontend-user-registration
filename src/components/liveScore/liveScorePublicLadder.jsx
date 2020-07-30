@@ -42,9 +42,9 @@ const columns = [
         key: 'name',
         sorter: (a, b) => tableSort(a, b, "name"),
         render: (data, record) => (
-            record.hasAdjustments ? 
-            <span className="required-field">{data}</span>
-            :  <span>{data}</span>
+            record.hasAdjustments ?
+                <span className="required-field">{data}</span>
+                : <span>{data}</span>
         )
 
     },
@@ -234,7 +234,7 @@ class LiveScorePublicLadder extends Component {
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
-                    <div className="col-sm mt-2" style={{ width: "fit-content" }} >
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <span className='year-select-heading'>{AppConstants.competition}:</span>
                         <Select
                             className="year-select reg-filter-select-competition ml-2"
@@ -248,7 +248,7 @@ class LiveScorePublicLadder extends Component {
                             }
                         </Select>
                     </div>
-                    <div className="col-sm mt-2" style={{ width: "fit-content" }}>
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
                         <span className='year-select-heading'>{AppConstants.division}:</span>
                         <Select
                             className="year-select reg-filter-select-competition ml-2"
@@ -260,6 +260,8 @@ class LiveScorePublicLadder extends Component {
                                 })
                             }
                         </Select>
+                    </div>
+                    <div className="col-sm-6">
                     </div>
                 </div>
             </div>
@@ -281,12 +283,12 @@ class LiveScorePublicLadder extends Component {
                     />
                 </div>
 
-                <div  className="comp-dash-table-view mt-4 ml-1">
+                <div className="comp-dash-table-view mt-4 ml-1">
                     <div className="ladder-list-adjustment">
                         {
-                            (adjData || []).map((x,index) =>(
-                                <div key ={index} style={{marginBottom: '10px'}}>
-                                    <li className="required-field">{x.teamName + ' deducted ' + x.points + ' points for ' + x.adjustmentReason   }</li>
+                            (adjData || []).map((x, index) => (
+                                <div key={index} style={{ marginBottom: '10px' }}>
+                                    <li className="required-field">{x.teamName + ' deducted ' + x.points + ' points for ' + x.adjustmentReason}</li>
                                 </div>
                             ))
                         }
