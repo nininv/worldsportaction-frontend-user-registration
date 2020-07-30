@@ -838,6 +838,7 @@ img.bg {
   font-weight: 500;
   font-family: inter-medium, sans-serif;
   margin-right: 6px;
+  align-self: center;
   
 }
 .edit-header-main{

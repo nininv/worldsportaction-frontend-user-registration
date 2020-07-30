@@ -920,7 +920,7 @@ const AppConstants = {
   participantName:"Participant Name",
   competitionName:"Competition Name",
   hyphen:" - ",
-  less:"Less",
+  less:"LESS",
   governmentSportVouchers:"Government Sports Vouchers - ",
   hardshipPlayer:"Hardship Player Discount",
   payAsYou:"Pay as You Go",
