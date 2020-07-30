@@ -831,7 +831,7 @@ img.bg {
 {
   display: flex;
   justify-content: space-between;
-  width: 90px;
+  /* width: 100px; */
 }
 .text-editsection{
   color:var(--app-bdbdbd);
@@ -841,14 +841,13 @@ img.bg {
   
 }
 .edit-header-main{
-  display: flex;
-    border-bottom: 1px solid var(--app-1b1b34);
+    display: flex;
+    border-bottom: 1.5px solid var(--app-4b4c6d);
     padding-bottom: 20px;
-    margin-top: 3px;
+    margin-top: 18px;
 }
 .text-common-spacing{
   padding:20px 0px;
-  border-bottom: 1px solid;
 }
 .review-product-membership-text
 {

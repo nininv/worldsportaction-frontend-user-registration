@@ -18,6 +18,7 @@ import { bindActionCreators } from "redux";
 import Loader from '../../customComponents/loader';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
+import AppImages from "../../themes/appImages";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -107,8 +108,11 @@ class ReviewProducts extends Component {
                     {this.reviewProducts(getFieldDecorator)}
                </div>
                <div style={{ marginBottom: 40}}>
-                    {this.securePaymentOption(getFieldDecorator)}
+                    {this.totalPaymentDue(getFieldDecorator)}
                </div>
+               <div style={{ marginBottom: 40}}>
+                    {this.securePaymentOption(getFieldDecorator)}
+               </div>               
             </div>
         )
     }
@@ -120,32 +124,37 @@ class ReviewProducts extends Component {
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
-                    <div>
+                    <div style = {{fontWeight:600}}>
                         {AppConstants.reviewProducts}  
                     </div>                    
                 </div>
+                <div className='individual-header-view' style={{marginTop:40}}>
+                    <div>
+                        {AppConstants.individualRegistration}
+                        {AppConstants.hyphen}
+                        {AppConstants.participantName}
+                        {AppConstants.hyphen}
+                        {AppConstants.competitionName}
+                    </div>
+                </div>  
                 <div className='product-text'>
                     <div style={{marginRight:"auto"}}>
                         {AppConstants.membershipProduct} 1
                     </div>
                     <div className='dolar-text'>
-                        <div style={{fontWeight: 600 , fontFamily:"inter-medium"}}>
-                            $120.00
+                        <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
+                            $120
                         </div>
                         <div>
-                            <i className="fa fa-trash-o" aria-hidden="true"></i>
+                            <img
+                                src={AppImages.removeIcon}
+                                height="18"
+                                width="14"
+                                name={'image'}                              
+                            />
                         </div> 
                     </div>  
                 </div>   
-                <div className='membership-text' style={{marginTop:5,color: "inherit"}}>
-                    <div>
-                        {AppConstants.participantName}
-                        {AppConstants.hyphen}
-                        {AppConstants.competitionName}
-                        {AppConstants.hyphen}
-                        {AppConstants.divisionName}
-                    </div>
-                </div>  
                 <div className='membership-text' style={{marginTop:2}}>
                     <div>
                         <span className="number-text-style">{AppConstants.less}</span>
@@ -153,44 +162,39 @@ class ReviewProducts extends Component {
                         <span>{AppConstants.discount}</span>
                     </div>                   
                     <div className='dolar-text'>
-                        <div className="number-text-style">
-                            $20.00
+                        <div className="number-text-style" style={{marginRight:34}}>
+                        ($20)
                         </div>
                     </div>  
                 </div>    
-                <div className='edit-header-main'>
-                    <div className="text-editsection">
-                        {AppConstants.payAsYou}
-                    </div>
-                    <div style={{ cursor: 'pointer' , textDecoration:"underline"}} className="user-remove-text mr-0 mb-1">
-                        {AppConstants.edit}
-                    </div>
-                </div> 
                 <div className='product-text'>
                     <div style={{marginRight:"auto"}}>
                         {AppConstants.membershipProduct} 2
                     </div>
                     <div className='dolar-text'>
-                        <div style={{fontWeight: 600 , fontFamily:"inter-medium"}}>
-                            $120.00
+                        <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
+                            $40
                         </div>
                         <div>
-                            <i className="fa fa-trash-o" aria-hidden="true"></i>
+                            <img
+                                src={AppImages.removeIcon}
+                                // onClick={createPdf}
+                                // style={{marginTop:12,cursor:"pointer"}}
+                                height="18"
+                                width="14"
+                                name={'image'}
+                                // onError={ev => {
+                                //      ev.target.src = AppImages.printImage;
+                                // }}    
+                            />
                         </div> 
                     </div>  
                 </div>   
                 <div className='membership-text' style={{marginTop:5,color: "inherit"}}>
-                    <div>
-                        {AppConstants.participantName}
-                        {AppConstants.hyphen}
-                        {AppConstants.competitionName}
-                        {AppConstants.hyphen}
-                        {AppConstants.divisionName}
-                    </div>
                 </div>  
                 <div className='edit-header-main'>
                     <div className="text-editsection">
-                        {AppConstants.gameVoucher}X3
+                        {AppConstants.payAsYou}
                     </div>
                     <div style={{ cursor: 'pointer' , textDecoration:"underline"}} className="user-remove-text mr-0 mb-1">
                         {AppConstants.edit}
@@ -217,8 +221,21 @@ class ReviewProducts extends Component {
                             $20
                         </div>
                     </div> 
-                </div>
-                <div className='text-common-spacing'>
+                </div>                      
+            </div>
+        )
+    }
+    
+    totalPaymentDue = (getFieldDecorator) => {
+        let registrationState = this.props.endUserRegistrationState;
+        return (
+            <div className = "individual-reg-view"> 
+             <div className = "individual-header-view">
+                    <div>
+                        {AppConstants.total}  
+                    </div>                    
+                </div>            
+                <div className='text-common-spacing' style={{borderBottom: "1.5px solid var(--app-4b4c6d)"}}>
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
                             <span>{AppConstants.subTotal}</span>
@@ -252,7 +269,7 @@ class ReviewProducts extends Component {
                         </div>
                     </div>
                 </div> 
-                <div className='product-text' style={{width: "97%"}}>
+                <div className='product-text' style={{width: "97%",marginTop: 22,marginBottom:22}}>
                     <div style={{marginRight:"auto"}}>
                         {AppConstants.totalPaymentDue} 
                     </div>
@@ -265,6 +282,8 @@ class ReviewProducts extends Component {
             </div>
         )
     }
+
+
     securePaymentOption = (getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         return (
@@ -274,7 +293,7 @@ class ReviewProducts extends Component {
                         {AppConstants.securePaymentOptions}  
                     </div>                    
                 </div> 
-                <div style={{marginTop:30}}>
+                <div style={{marginTop:40}}>
                     <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
                         <Radio value={"1"}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
                             <div className="card-outer-element">
@@ -301,6 +320,7 @@ class ReviewProducts extends Component {
         )
     }
 
+    
     footerView = (isSubmitting) => {
         return (
             <div className="fluid-width">
