@@ -608,10 +608,11 @@ function endUserRegistrationReducer(state = initialState, action) {
                 reviewData[action.key] = action.value;
             }
             else if(action.subkey == "selectedOptions"){
+                let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
+                let discountCode = reviewData["compParticipants"][action.index][action.subkey]["discountCode"];
+                let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
+                console.log("discountCode" + discountCode);
                 if(action.key =="isSelected"){
-                    let discountCode = reviewData["compParticipants"][action.index][action.subkey]["discountCode"];
-                    console.log("discountCode" + discountCode);
-                    let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
                     if(isArrayNotEmpty(memProds)){
                         memProds.map((x) => {
                            x.discounts.map((y) => {
@@ -633,9 +634,67 @@ function endUserRegistrationReducer(state = initialState, action) {
                         if(action.value != 2){
                             reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = null;
                         }
+                        else{
+                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = "3";
+                        }
+                        memProds.map((x, mIndex) =>{
+                            let discount = x.discounts.find(x=>x.code == discountCode);
+                           
+                            if(action.value <= 2){
+                                if(action.value == 1){
+                                    x.feesToPay = x.casualFee + x.casualGST;
+                                }
+                                else{
+                                    x.feesToPay = (x.casualFee + x.casualGST ) * Number(gameVoucherVal);
+                                }
+                            }
+                            else{
+                                x.feesToPay = x.seasonalFee + x.seasonalGST;
+                            }
+
+                            x.feesToPay = x.feesToPay.toFixed(2);
+
+                            if(discount!= undefined){
+                                if(discount.discountTypeId == 1){
+                                    discount.discountsToDeduct = Number(discount.amount);
+                                }
+                                else {
+                                    if(action.value <= 2){
+                                        if(action.value == 1){
+                                            discount.discountsToDeduct = (x.casualFee * (discount.amount / (100)));
+                                        }
+                                        else{
+                                            discount.discountsToDeduct = (x.casualFee * Number(gameVoucherVal)) * (discount.amount / (100));
+                                        }
+                                    }
+                                    else{
+                                        discount.discountsToDeduct = (x.seasonalFee * (discount.amount / (100)));
+                                    }
+                                   
+                                }
+                                discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                            }
+                        })
                     }
                     if(action.key == "gameVoucherValue"){
                         reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
+
+                        memProds.map((x, mIndex) =>{
+                            let discount = x.discounts.find(y=>y.code == discountCode);
+                             x.feesToPay = (x.casualFee + x.casualGST ) * Number(action.value);
+                             x.feesToPay =  x.feesToPay.toFixed(2);
+                             if(discount!= undefined){
+                                 if(discount.discountTypeId == 1){
+                                    discount.discountsToDeduct = (discount.amount);
+                                    discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                                 }
+                                 else{
+                                    discount.discountsToDeduct = ((x.casualFee * Number(action.value)) * (discount.amount / (100)));
+                                    discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                                 }
+                               
+                             }
+                        })
                     }
                     reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
                 }

@@ -90,12 +90,12 @@ class RegistrationReviewForm extends Component {
             if(!err)
             {
                 let registrationReview = this.props.endUserRegistrationState.registrationReviewList;
-
-                let payload = {
-                    "registrationId": this.state.registrationUniqueKey,
-                    "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
-                    "compParticipants":[]
-                }
+                registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                // let payload = {
+                //     "registrationId": this.state.registrationUniqueKey,
+                //     "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
+                //     "compParticipants":[]
+                // }
 
                 console.log("registrationReview", registrationReview);
 
@@ -107,26 +107,27 @@ class RegistrationReviewForm extends Component {
                             discountCode = discount.code;
                         }
                      });
-                    let obj = {
-                        "firstName":x.firstName,
-                        "lastName": x.lastName,
-                        "mobileNumber": x.mobileNumber,
-                        "email":x.email,
-                        "userId":x.userId,
-                        "competitionUniqueKey": x.competitionUniqueKey,
-                        "organisationUniqueKey":x.organisationUniqueKey,
-                        "paymentOptionRefId": x.selectedOptions.paymentOptionRefId,
-                        "gameVoucherValue":x.selectedOptions.gameVoucherValue,
-                        "discountCode": discountCode,
-                        "governmentVoucherRefId": x.selectedOptions.governmentVoucherRefId,
-                        "governmentVoucherCode": x.selectedOptions.governmentVoucherCode
-                    }
+                     x.selectedOptions.discountCode = discountCode
+                    // let obj = {
+                    //     "firstName":x.firstName,
+                    //     "lastName": x.lastName,
+                    //     "mobileNumber": x.mobileNumber,
+                    //     "email":x.email,
+                    //     "userId":x.userId,
+                    //     "competitionUniqueKey": x.competitionUniqueKey,
+                    //     "organisationUniqueKey":x.organisationUniqueKey,
+                    //     "paymentOptionRefId": x.selectedOptions.paymentOptionRefId,
+                    //     "gameVoucherValue":x.selectedOptions.gameVoucherValue,
+                    //     "discountCode": discountCode,
+                    //     "governmentVoucherRefId": x.selectedOptions.governmentVoucherRefId,
+                    //     "governmentVoucherCode": x.selectedOptions.governmentVoucherCode
+                    // }
 
-                    payload.compParticipants.push(obj);
+                    // payload.compParticipants.push(obj);
                 });
 
-                console.log("payload" + JSON.stringify(payload));
-                this.props.saveRegistrationReview(payload);
+                console.log("payload" + JSON.stringify(registrationReview));
+                this.props.saveRegistrationReview(registrationReview);
                 this.setState({loading: true});
 
             }
@@ -215,7 +216,7 @@ class RegistrationReviewForm extends Component {
                             {mem.name} 
                         </div>
                         <div>
-                           ${mem.totalFees}
+                           ${mem.feesToPay}
                         </div>
                     </div>
                     { (mem.discounts.filter(x=>x.isSelected == 1) || []).map((d, dIndex) =>(
@@ -226,7 +227,7 @@ class RegistrationReviewForm extends Component {
                             <span>{AppConstants.discount}</span>
                         </div>
                         <div className="number-text-style">
-                            (${d.amount})
+                            (${d.discountsToDeduct})
                         </div>
                     </div>
                     )) }
@@ -426,7 +427,7 @@ class RegistrationReviewForm extends Component {
                  {charity!= null &&
                 <div className = "individual-header-view">
                     <div>
-                        {charity.title}
+                        {charity.name}
                     </div>     
                 </div>
                 }
