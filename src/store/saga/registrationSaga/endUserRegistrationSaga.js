@@ -219,3 +219,41 @@ export function* saveRegistrationReviewSaga(action) {
     yield call(errorSaga, error)
   }
 }
+
+
+////// Get Registration Review Products
+export function* getRegistrationReviewProductsSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getRegistrationReviewProducts, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+
+////// Save Registration Review
+export function* saveRegistrationReviewProductsSaga(action) {
+  try {
+    const result = yield call(AxiosApi.saveRegistrationReviewProducts, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

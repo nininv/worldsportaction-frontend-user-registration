@@ -10,7 +10,6 @@ import {
 } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 import history from "../../util/history";
-
 import AppConstants from "../../themes/appConstants";
 import "../../pages/layout.css";
 import { connect } from 'react-redux';
@@ -19,6 +18,8 @@ import Loader from '../../customComponents/loader';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppImages from "../../themes/appImages";
+import {getRegistrationReviewProductAction,saveRegistrationReviewProduct} from 
+            '../../store/actions/registrationAction/endUserRegistrationAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -30,6 +31,8 @@ class ReviewProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            buttonPressed: "",
+            loading: false,
             registrationUniqueKey: null
         }
         this.getReferenceData();
@@ -39,7 +42,7 @@ class ReviewProducts extends Component {
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         //let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
         this.setState({registrationUniqueKey: registrationUniqueKey});
-        this.getApiInfo();
+        this.getApiInfo(registrationUniqueKey);
     }
 
     componentDidUpdate(nextProps){
@@ -47,7 +50,11 @@ class ReviewProducts extends Component {
        
     }
 
-    getApiInfo = () => {
+    getApiInfo = (registrationUniqueKey) => {
+        let payload = {
+            registrationId: registrationUniqueKey
+        }
+        this.props.getRegistrationReviewProductAction(payload);
     }
   
     getReferenceData = () => {
@@ -101,12 +108,15 @@ class ReviewProducts extends Component {
     };
 
     contentView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+        let {regReviewPrdData} = this.props.endUserRegistrationState;
+        let participantList = regReviewPrdData!= null ? regReviewPrdData.compParticipants: [];
         return (
             <div>
-               <div style={{ marginBottom: 40}}>
-                    {this.reviewProducts(getFieldDecorator)}
-               </div>
+                {(participantList || []).map((item,index) =>(
+                <div style={{ marginBottom: 40}}>
+                        {this.reviewProducts(getFieldDecorator, item, index)}
+                </div>
+               ))}
                <div style={{ marginBottom: 40}}>
                     {this.totalPaymentDue(getFieldDecorator)}
                </div>
@@ -117,10 +127,7 @@ class ReviewProducts extends Component {
         )
     }
 
-
-
-    reviewProducts = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+    reviewProducts = (getFieldDecorator, item, index) => {
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
@@ -132,9 +139,11 @@ class ReviewProducts extends Component {
                     <div>
                         {AppConstants.individualRegistration}
                         {AppConstants.hyphen}
-                        {AppConstants.participantName}
+                        {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
-                        {AppConstants.competitionName}
+                        {item.organisationName}    
+                        {AppConstants.hyphen}
+                        {item.competitionName}  
                     </div>
                 </div>  
                 <div className='product-text'>
@@ -227,7 +236,8 @@ class ReviewProducts extends Component {
     }
     
     totalPaymentDue = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+        let {regReviewPrdData} = this.props.endUserRegistrationState;
+        let total = regReviewPrdData!= null ? regReviewPrdData.total: null;
         return (
             <div className = "individual-reg-view"> 
              <div className = "individual-header-view">
@@ -241,7 +251,7 @@ class ReviewProducts extends Component {
                             <span>{AppConstants.subTotal}</span>
                         </div>
                         <div>
-                            $183.00
+                            ${total!= null ? total.subTotal: 0}
                         </div>
                     </div>
                     <div className='review-product-membership-text' style={{marginTop:0 , paddingTop:5}}>
@@ -249,7 +259,7 @@ class ReviewProducts extends Component {
                             <span>{AppConstants.shipping}</span>
                         </div>
                         <div>
-                            $0.00
+                            ${total!= null ? total.shipping: 0}
                         </div>
                     </div>  
                     <div className='review-product-membership-text' style={{marginTop:4,paddingTop:5}}>
@@ -257,7 +267,7 @@ class ReviewProducts extends Component {
                             <span>{AppConstants.gst}</span>
                         </div>
                         <div>
-                            $18.00
+                            ${total!= null ? total.gst: 0}
                         </div>
                     </div> 
                     <div className='review-product-membership-text' style={{marginTop:4 , paddingTop:5}}>
@@ -265,7 +275,7 @@ class ReviewProducts extends Component {
                             <span>{AppConstants.charityRoundUp}</span>
                         </div>
                         <div>
-                            $185.00
+                            ${total!= null ? total.charityValue: 0}
                         </div>
                     </div>
                 </div> 
@@ -275,14 +285,13 @@ class ReviewProducts extends Component {
                     </div>
                     <div>
                         <div style={{fontWeight: 600 , fontFamily:"inter-medium"}}>
-                            $120.00
+                            ${total!= null ? total.targetValue: 0}
                         </div>
                     </div>  
                 </div>                                  
             </div>
         )
     }
-
 
     securePaymentOption = (getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
@@ -365,7 +374,7 @@ class ReviewProducts extends Component {
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
-                         <Loader visible={this.props.endUserRegistrationState.onLoad } />
+                         <Loader visible={this.props.endUserRegistrationState.onRegReviewPrdLoad } />
                         </Content>
                         <Footer style={{padding:0}}>{this.footerView()}</Footer>
                     </Form>
@@ -380,6 +389,8 @@ class ReviewProducts extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
+        getRegistrationReviewProductAction,
+        saveRegistrationReviewProduct
     }, dispatch);
 
 }

@@ -13,11 +13,8 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import InputWithHead from '../../customComponents/InputWithHead';
 import moment from 'moment';
 import history from "../../util/history";
-
 import { getRegistrationReviewAction,saveRegistrationReview, updateReviewInfoAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
-
-
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
 const { TextArea } = Input;

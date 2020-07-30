@@ -48,7 +48,9 @@ const initialState = {
     termsAndConditions: [],
     termsAndConditionsFinal: [],
     isYourInfoSet: false,
-    registrationReviewList: null
+    registrationReviewList: null,
+    regReviewPrdData: null,
+
 }
 
 
@@ -706,6 +708,28 @@ function endUserRegistrationReducer(state = initialState, action) {
                 ...state,
                 error: null
             }
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD:
+            return { ...state, onRegReviewPrdLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+            let regReviewPrdData = action.result;
+            return {
+                ...state,
+                onRegReviewPrdLoad: false,
+                status: action.status,
+                regReviewPrdData: regReviewPrdData
+            };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD:
+            return { ...state, onRegReviewPrdLoad: true };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+            return {
+                ...state,
+                onRegReviewPrdLoad: false,
+                status: action.status
+            };
         default:
             return state;
     }

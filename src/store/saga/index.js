@@ -145,9 +145,11 @@ export default function* root_saga() {
 
    //Save Registration Revie
    yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
-
-
   
+   //Get Registration Review Products
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getRegistrationReviewProductsSaga)
 
+  //Save Registration Review Products
+  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.saveRegistrationReviewProductsSaga)
 
 }

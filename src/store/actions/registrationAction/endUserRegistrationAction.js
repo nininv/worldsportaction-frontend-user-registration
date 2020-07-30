@@ -174,6 +174,24 @@ function updateReviewInfoAction(value, key, index, subkey){
 
     return action;
 }
+
+function getRegistrationReviewProductAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function saveRegistrationReviewProduct(payload){
+    const action = {
+        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -192,5 +210,7 @@ export {
     getRegistrationProductFeesAction,
     getRegistrationReviewAction,
     saveRegistrationReview,
-    updateReviewInfoAction
+    updateReviewInfoAction,
+    getRegistrationReviewProductAction,
+    saveRegistrationReviewProduct
 }

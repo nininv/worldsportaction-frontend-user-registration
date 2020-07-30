@@ -137,6 +137,14 @@ let AxiosApi = {
         var url = `/api/registration/review?registrationId=${payload.registrationId}`;
         return Method.dataPost(url, token, payload);
     },
+    getRegistrationReviewProducts(payload) {
+        var url = `/api/registration/review/products?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
+    saveRegistrationReviewProducts(payload) {
+        var url = `/api/registration/review/products?registrationId=${payload.registrationId}`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {
