@@ -344,21 +344,21 @@ class LiveScoreSeasonFixture extends Component {
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
-                        <div className="col-sm mt-2" style={{ width: "fit-content" }} >
-                            <span className='year-select-heading'>{AppConstants.competition}:</span>
-                            <Select
-                                className="year-select reg-filter-select-competition ml-2"
-                                style={{ minWidth: 160 }}
-                                onChange={(comp) => this.onChangeComp({ comp })}
-                                value={this.state.selectedComp}
-                            >{
-                                    competition.map((item) => {
-                                        return <Option value={item.id}>{item.longName}</Option>
-                                    })
-                                }
-                            </Select>
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading'>{AppConstants.competition}:</span>
+                        <Select
+                            className="year-select reg-filter-select-competition ml-2"
+                            style={{ minWidth: 160 }}
+                            onChange={(comp) => this.onChangeComp({ comp })}
+                            value={this.state.selectedComp}
+                        >{
+                                competition.map((item) => {
+                                    return <Option value={item.id}>{item.longName}</Option>
+                                })
+                            }
+                        </Select>
                     </div>
-                    <div className="col-sm mt-2" style={{ width: "fit-content" }}>
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
                         <span className='year-select-heading'>{AppConstants.division}:</span>
                         <Select
                             className="year-select reg-filter-select-competition ml-2"
@@ -371,6 +371,8 @@ class LiveScoreSeasonFixture extends Component {
                                 })
                             }
                         </Select>
+                    </div>
+                    <div className="col-sm-6">
                     </div>
                 </div>
             </div>
