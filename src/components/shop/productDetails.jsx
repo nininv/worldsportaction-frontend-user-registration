@@ -73,7 +73,7 @@ class ProductDetails extends Component {
                     />
                 </div>
                 <div className="row mt-5">
-                    <div className="col-sm ">
+                    <div className="col-sm pt-4">
                         <div >
                             <Carousel
                                 showStatus={false}
@@ -94,7 +94,7 @@ class ProductDetails extends Component {
                             </Carousel>
                         </div>
                     </div>
-                    <div className="col-sm">
+                    <div className="col-sm pt-4">
                         <div className="product-text-view pl-0 pt-0">
                             <span className="product-name">{productDetailData.productName}</span>
                             <span className="product-price-text-style">
@@ -107,7 +107,7 @@ class ProductDetails extends Component {
                                     <div className="w-25">
                                         <span className="product-grey-detail-text">{productDetailData.variants[0].name}</span>
                                     </div>
-                                    <div className="w-75">
+                                    <div className="w-75 ml-2">
                                         <Select
                                             className="shop-type-select"
                                             style={{ minWidth: 180 }}
@@ -127,7 +127,7 @@ class ProductDetails extends Component {
                                     <div className="w-25">
                                         <span className="product-grey-detail-text">{AppConstants.quantity}</span>
                                     </div>
-                                    <div className="w-75">
+                                    <div className="w-75 ml-2">
                                         <CounterInput
                                             value={1}
                                             min={1}
@@ -153,19 +153,15 @@ class ProductDetails extends Component {
 
     footerView = () => {
         return (
-            <div className="row">
-                <div className="col-sm-4 mt-2">
-                    <div className="reg-add-save-button">
-                        <Button
-                            type="cancel-button"
-                            onClick={() => history.push("/listProducts")}>{AppConstants.cancel}</Button>
-                    </div>
+            <div className="shop-details-button-view" >
+                <div>
+                    <Button
+                        type="cancel-button"
+                        onClick={() => history.push("/listProducts")}>{AppConstants.cancel}</Button>
                 </div>
-                <div className="col-sm-8 mt-2">
-                    <Button className="open-reg-button" style={{ width: "100%" }} type="primary">
-                        {AppConstants.addToCart}
-                    </Button>
-                </div>
+                <Button className="open-reg-button add-to-cart-button" type="primary">
+                    {AppConstants.addToCart}
+                </Button>
             </div>
         )
     }
