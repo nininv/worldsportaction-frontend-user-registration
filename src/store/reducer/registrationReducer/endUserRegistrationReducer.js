@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
+import { isArrayNotEmpty, isNullOrEmptyString, formatValue } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
 
 let registrationObj = {
@@ -730,9 +730,88 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onRegReviewPrdLoad: false,
                 status: action.status
             };
+        case ApiConstants.UPDATE_REVIEW_PRODUCT:
+            let reviewPrdData = state.regReviewPrdData;
+            if(action.key == "removeProduct"){
+                console.log("*******" + action.index + "***" + action.subkey + "****" + action.subIndex);
+                let partData = reviewPrdData["compParticipants"][action.index];
+                let paymentOptionRefId = partData.selectedOptions.paymentOptionRefId;
+                let memData = reviewPrdData["compParticipants"][action.index][action.subkey][action.subIndex];
+                let fee = 0;
+                let gst = 0;
+                let discount = 0;
+
+                if(paymentOptionRefId <= 2){
+                    fee = memData.casualFee;
+                    gst = memData.casualGST;
+                }
+                else{
+                    fee = memData.seasonalFee;
+                    gst = memData.seasonalGST;
+                }
+
+                memData.discounts.map((x) =>{
+                    if(x.isSelected == 1){
+                        discount += x.discountsToDeduct;
+                    }
+                });
+
+                reviewPrdData.total.subTotal = (Number(reviewPrdData.total.subTotal) - fee) + discount;
+                reviewPrdData.total.gst = Number(reviewPrdData.total.gst) - gst;
+                let tempTargetVal = reviewPrdData.total.subTotal + reviewPrdData.total.gst;
+                let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
+                reviewPrdData.total.targetValue = charityData.targetValue;
+                reviewPrdData.total.charityValue = charityData.charityValue;
+
+                reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);
+
+                console.log("reviewPrdData", reviewPrdData);
+            }
+            
+            return {
+                ...state,
+                error: null
+            }
         default:
             return state;
     }
+}
+
+ function getCharityValue(targetValue, charityRoundUpRefId){
+    console.log("targetValue ::" + targetValue + ":::" + charityRoundUpRefId );
+    try {
+        let chartityValue = 0;
+        let finalTargetValue = 0;
+        let val = Math.ceil(targetValue);
+        
+        let remainder = val % 10;
+        let quotient = ((val - remainder) / 10) * 10;
+        console.log("val::" + val + "remainder::" + remainder + "quotient::" + quotient);
+        if(charityRoundUpRefId == 1){
+            finalTargetValue =  quotient + remainder +  ((remainder % 2) == 0 ? 2 : 1);
+            console.log("finalTargetValue::" + finalTargetValue);
+        }
+        else if(charityRoundUpRefId == 2){
+            if(remainder < 5){
+                finalTargetValue = quotient + 5
+            }
+            else{
+                finalTargetValue = quotient + 10
+            }
+        }
+        else if(charityRoundUpRefId == 3){
+            finalTargetValue = quotient + 10;
+        }
+
+        chartityValue = finalTargetValue - targetValue;
+
+        return {
+            charityValue: formatValue(chartityValue),
+            targetValue: formatValue(finalTargetValue)
+        }
+    } catch (error) {
+        throw error;
+    } 
 }
 
 function addReadOnlyPlayer(participant, action){

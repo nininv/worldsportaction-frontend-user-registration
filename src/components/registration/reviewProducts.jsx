@@ -18,7 +18,8 @@ import Loader from '../../customComponents/loader';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppImages from "../../themes/appImages";
-import {getRegistrationReviewProductAction,saveRegistrationReviewProduct} from 
+import {getRegistrationReviewProductAction,saveRegistrationReviewProduct,
+    updateReviewProductAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import moment from 'moment';
 
@@ -34,7 +35,10 @@ class ReviewProducts extends Component {
         this.state = {
             buttonPressed: "",
             loading: false,
-            registrationUniqueKey: null
+            registrationUniqueKey: null,
+            modalVisible: false,
+            index: 0,
+            subIndex: 0
         }
         this.getReferenceData();
     }
@@ -66,6 +70,22 @@ class ReviewProducts extends Component {
         history.push("/registrationReview", {
             registrationId: this.state.registrationUniqueKey
         })
+    }
+    editNavigation = () => {
+        history.push("/registrationReview", {
+            registrationId: this.state.registrationUniqueKey
+        })
+    }
+
+    deleteMemProd = (index, subIndex) =>{
+        this.setState({index: index, subIndex: subIndex, modalVisible: true});
+    }
+
+    handleRegReviewModal = (key) =>{
+        if(key == "ok"){
+            this.props.updateReviewProductAction(null,"removeProduct", this.state.index, this.state.subIndex, "membershipProducts")
+        }
+        this.setState({modalVisible: false})
     }
 
     saveReviewForm = (e) =>{
@@ -113,8 +133,10 @@ class ReviewProducts extends Component {
         let participantList = regReviewPrdData!= null ? regReviewPrdData.compParticipants: [];
         return (
             <div>
+                
                 {(participantList || []).map((item,index) =>(
                 <div style={{ marginBottom: 40}}>
+                   
                         {this.reviewProducts(getFieldDecorator, item, index)}
                 </div>
                ))}
@@ -137,11 +159,13 @@ class ReviewProducts extends Component {
                                 (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
         return (
             <div className = "individual-reg-view">
-                <div className = "individual-header-view">
+                {index == 0 &&
+                 <div className = "individual-header-view">
                     <div style = {{fontWeight:600}}>
                         {AppConstants.reviewProducts}  
                     </div>                    
                 </div>
+                }
                 <div className='individual-header-view' style={{marginTop:40}}>
                     <div>
                         {AppConstants.individualRegistration}
@@ -165,10 +189,12 @@ class ReviewProducts extends Component {
                             </div>
                             <div>
                                 <img
+                                    className="pointer"
                                     src={AppImages.removeIcon}
                                     height="18"
                                     width="14"
-                                    name={'image'}                              
+                                    name={'image'}     
+                                    onClick={(e) => this.deleteMemProd(index,memIndex)}                         
                                 />
                             </div> 
                         </div>  
@@ -201,7 +227,8 @@ class ReviewProducts extends Component {
                             )) }
                         </div>   
                         }
-                        <div style={{ cursor: 'pointer' , textDecoration:"underline"}} className="user-remove-text mr-0 mb-1">
+                        <div style={{ cursor: 'pointer' , textDecoration:"underline"}} 
+                        className="user-remove-text mr-0 mb-1" onClick={() => this.editNavigation()}>
                             {AppConstants.edit}
                         </div>
                     </div>
@@ -213,10 +240,10 @@ class ReviewProducts extends Component {
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
                             <span>{":"+" "}</span>
-                            <span>{AppConstants.governmentSportVouchers}</span>
+                            <span>{AppConstants.governmentSportVouchers + item.selectedOptions.governmentVoucherCode}</span>
                         </div>
                         <div className="number-text-style">
-                            $20
+                            ${0}
                         </div>
                     </div> 
                     }
@@ -294,7 +321,8 @@ class ReviewProducts extends Component {
     }
 
     securePaymentOption = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
+        let {regReviewPrdData} = this.props.endUserRegistrationState;
+        let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
@@ -304,26 +332,35 @@ class ReviewProducts extends Component {
                 </div> 
                 <div style={{marginTop:40}}>
                     <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                        <Radio value={"1"}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
-                            <div className="card-outer-element">
-                                <Elements stripe={stripePromise}>
-                                    <form className='form-element'>
-                                        <CardElement
-                                            id="card-element"
-                                            // options={CARD_ELEMENT_OPTIONS}
-                                            // onChange={handleChange}
-                                            className='StripeElement'
-                                        />
-                                    </form>       
-                                </Elements>             
+                        {(securePaymentOptions || []) .map((x, sIndex) => (
+                        <div>
+                            {x.securePaymentOptionRefId == 2 && 
+                            <div>
+                                <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
+                                <div className="card-outer-element">
+                                    <Elements stripe={stripePromise}>
+                                        <form className='form-element'>
+                                            <CardElement
+                                                id="card-element"
+                                                // options={CARD_ELEMENT_OPTIONS}
+                                                // onChange={handleChange}
+                                                className='StripeElement'
+                                            />
+                                        </form>       
+                                    </Elements>             
+                                </div>
                             </div>
+                            }
+                            {x.securePaymentOptionRefId == 1 && 
+                                <Radio value={"1"}>{AppConstants.debitCard}</Radio> 
+                            }
+                            { x.securePaymentOptionRefId == 3 && 
+                            <Radio value={3}>{AppConstants.cash}</Radio>  
+                            }
+                        </div>
+                        ))}
+                        
                     </Radio.Group>  
-                    <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                        <Radio value={"1"}>{AppConstants.debitCard}</Radio>                    
-                    </Radio.Group> 
-                    <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                        <Radio value={"1"}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>                    
-                    </Radio.Group>   
                 </div>                                                  
             </div>
         )
@@ -349,6 +386,14 @@ class ReviewProducts extends Component {
                         </Button>
                     </div>
                 </div>
+                <Modal
+                     className="add-membership-type-modal"
+                    title="Registration Review"
+                    visible={this.state.modalVisible}
+                    onOk={() => this.handleRegReviewModal("ok")}
+                    onCancel={() => this.handleRegReviewModal("cancel")}>
+                    <p>Do you want to delete the product? </p>
+                </Modal>
             </div>
         );
     };
@@ -390,7 +435,8 @@ function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         getRegistrationReviewProductAction,
-        saveRegistrationReviewProduct
+        saveRegistrationReviewProduct,
+        updateReviewProductAction
     }, dispatch);
 
 }
