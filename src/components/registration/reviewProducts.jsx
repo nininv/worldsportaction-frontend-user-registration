@@ -20,6 +20,7 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppImages from "../../themes/appImages";
 import {getRegistrationReviewProductAction,saveRegistrationReviewProduct} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
+import moment from 'moment';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -128,6 +129,12 @@ class ReviewProducts extends Component {
     }
 
     reviewProducts = (getFieldDecorator, item, index) => {
+        let paymentOptionRefId = item.selectedOptions.paymentOptionRefId;
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+                                (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
+                                (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+                                (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+                                (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
@@ -146,70 +153,62 @@ class ReviewProducts extends Component {
                         {item.competitionName}  
                     </div>
                 </div>  
-                <div className='product-text'>
-                    <div style={{marginRight:"auto"}}>
-                        {AppConstants.membershipProduct} 1
-                    </div>
-                    <div className='dolar-text'>
-                        <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
-                            $120
+                {(item.membershipProducts || []).map((mem, memIndex) =>(
+                <div>
+                    <div className='product-text'>
+                        <div style={{marginRight:"auto"}}>
+                            {mem.name} 
                         </div>
+                        <div className='dolar-text'>
+                            <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
+                                ${mem.feesToPay}
+                            </div>
+                            <div>
+                                <img
+                                    src={AppImages.removeIcon}
+                                    height="18"
+                                    width="14"
+                                    name={'image'}                              
+                                />
+                            </div> 
+                        </div>  
+                    </div>  
+                    {(mem.discounts.filter(x=>x.isSelected == 1) || []).map((dis, disIndex) => ( 
+                    <div className='membership-text' style={{marginTop:2}}>
                         <div>
-                            <img
-                                src={AppImages.removeIcon}
-                                height="18"
-                                width="14"
-                                name={'image'}                              
-                            />
-                        </div> 
+                            <span className="number-text-style">{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
+                            <span>{AppConstants.discount}</span>
+                        </div>                   
+                        <div className='dolar-text'>
+                            <div className="number-text-style" style={{marginRight:34}}>
+                            (${dis.discountsToDeduct})
+                            </div>
+                        </div>  
                     </div>  
-                </div>   
-                <div className='membership-text' style={{marginTop:2}}>
-                    <div>
-                        <span className="number-text-style">{AppConstants.less}</span>
-                        <span>{":"+" "}</span>
-                        <span>{AppConstants.discount}</span>
-                    </div>                   
-                    <div className='dolar-text'>
-                        <div className="number-text-style" style={{marginRight:34}}>
-                        ($20)
+                    ))}  
+                    <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
+                    <div className='edit-header-main'>
+                        <div className="text-editsection">
+                            {paymentOptionTxt + (paymentOptionRefId == 2 ? " x " + item.selectedOptions.gameVoucherValue : "") }
                         </div>
-                    </div>  
-                </div>    
-                <div className='product-text'>
-                    <div style={{marginRight:"auto"}}>
-                        {AppConstants.membershipProduct} 2
-                    </div>
-                    <div className='dolar-text'>
-                        <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
-                            $40
+                        { paymentOptionRefId == 4 &&  item.instalmentDates.length > 0 &&                   
+                        <div className="heading-instalmentdate">
+                            <div className="text-instalmentdate">{AppConstants.instalmentDates}</div>
+                            {(item.instalmentDates || []).map((i, iIndex) => (
+                                <span>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "") +
+                                        (item.instalmentDates.length != (iIndex + 1) ?   ', ' : '')}</span>
+                            )) }
+                        </div>   
+                        }
+                        <div style={{ cursor: 'pointer' , textDecoration:"underline"}} className="user-remove-text mr-0 mb-1">
+                            {AppConstants.edit}
                         </div>
-                        <div>
-                            <img
-                                src={AppImages.removeIcon}
-                                // onClick={createPdf}
-                                // style={{marginTop:12,cursor:"pointer"}}
-                                height="18"
-                                width="14"
-                                name={'image'}
-                                // onError={ev => {
-                                //      ev.target.src = AppImages.printImage;
-                                // }}    
-                            />
-                        </div> 
-                    </div>  
-                </div>   
-                <div className='membership-text' style={{marginTop:5,color: "inherit"}}>
-                </div>  
-                <div className='edit-header-main'>
-                    <div className="text-editsection">
-                        {AppConstants.payAsYou}
                     </div>
-                    <div style={{ cursor: 'pointer' , textDecoration:"underline"}} className="user-remove-text mr-0 mb-1">
-                        {AppConstants.edit}
-                    </div>
-                </div>  
+                </div> 
+                ))} 
                 <div className='text-common-spacing'>
+                    {item.selectedOptions.governmentVoucherRefId!= null && 
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
@@ -220,7 +219,8 @@ class ReviewProducts extends Component {
                             $20
                         </div>
                     </div> 
-                    <div className='review-product-membership-text' style={{marginTop:4}}>
+                    }
+                    {/* <div className='review-product-membership-text' style={{marginTop:4}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>                    
                             <span>{":"+" "}</span>                       
@@ -229,7 +229,7 @@ class ReviewProducts extends Component {
                         <div className="number-text-style">
                             $20
                         </div>
-                    </div> 
+                    </div>  */}
                 </div>                      
             </div>
         )
