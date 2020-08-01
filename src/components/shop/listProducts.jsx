@@ -30,7 +30,9 @@ class ListProducts extends Component {
 
 
     componentDidMount() {
-        let organisationUniqueKeys = ["dcdbaae5-e48b-4411-b7be-5803920a9a3d", "b6eb9c7b-6c74-4657-bc6d-e2222b23c965"]
+        let organisationUniqueKeys = ["dcdbaae5-e48b-4411-b7be-5803920a9a3d",
+            "b6eb9c7b-6c74-4657-bc6d-e2222b23c965", "0b3ae01e-885d-40ef-9a07-a94c870133e1",
+            "9971815e-d9cb-4d44-bba2-f5be2e12c120"]
         this.props.getTypesOfProductAction()
         window.scrollTo(0, 0)
         const widthWindow = window.innerWidth;
@@ -118,8 +120,8 @@ class ListProducts extends Component {
         let { productListingData, productListingTotalCount, productListingCurrentPage } = this.props.shopProductState
         return (
             <div className="comp-dash-table-view mt-4">
-                <div className="shop-product-content-div">
-                    {productListingData.length > 0 && productListingData.map((item, index) => {
+                <div className="shop-product-content-div" style={{ display: productListingData.length < 3 ? "flex" : "grid" }}>
+                    {isArrayNotEmpty(productListingData) && productListingData.map((item, index) => {
                         return (
                             <div key={"productListingData" + index}>
                                 <ShopSingleProductComponent

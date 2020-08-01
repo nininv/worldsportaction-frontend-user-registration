@@ -100,7 +100,96 @@
     height: 35px;
     width:  35px;
 }
+
+.carousel .control-dots .dot.selected, .carousel .control-dots .dot:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    background-color: var(--app-color);
+}
   
+.carousel .control-dots {
+    position: absolute;
+    bottom: 0;
+    margin: 10px 0;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.carousel .slide {
+    min-width: 100%;
+    margin: 0;
+    position: relative;
+    text-align: center;
+    background: transparent !important;
+    background-color: transparent!important; 
+}
+
+.product-description-text {
+    font-size: 13px;
+    color: var(--app-1b1b34);
+    font-weight: 500;
+    font-family: "inter-medium";
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.54;
+    letter-spacing: normal;
+    text-align: left;
+}
+
+.shop-label-text-view{
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+}
+
+/* to style input use */
+.counter-input .form-control {
+   height: 56px;
+   color: var(--app-1b1b34);
+   font-size: 15px;
+   font-family: "inter";
+   text-align: center;
+}
+/* to style buttons use */
+.counter-input .input-group-addon {
+    height: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--app-white);
+    cursor: pointer;
+}
+.counter-input .form-control:hover {
+    border-color: var(--app-color);
+  }
+  
+.counter-input .form-control:focus {
+    border-color: var(--app-color);
+    -webkit-box-shadow: 0 0 0 1px var(--app-color);
+    box-shadow: 0 0 0 .5px var(--app-color);
+}
+
+
+.carousel-img{
+    height: 370px;
+    object-fit: contain;
+}
+
+.shop-details-button-view{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-to-cart-button{
+    width: 100%;
+    margin-left: 24px;
+    
+}
+
 @media (max-width: 767px) {
     .shop-product-content-div{
         justify-content: center;
@@ -110,5 +199,12 @@
     }
     .remove-cross-img-div{
         padding-bottom: 21px;
+    }
+    .shop-details-button-view{
+        flex-direction: column;
+    }
+    .add-to-cart-button{
+        margin-left: 0px;
+        margin-top: 12px;
     }
 }
