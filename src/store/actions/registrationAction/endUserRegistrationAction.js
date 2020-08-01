@@ -206,6 +206,15 @@ function updateReviewProductAction(value, key, index, subIndex, subkey){
 
     return action;
 }
+
+function getRegistrationByIdAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -227,5 +236,6 @@ export {
     updateReviewInfoAction,
     getRegistrationReviewProductAction,
     saveRegistrationReviewProduct,
-    updateReviewProductAction
+    updateReviewProductAction,
+    getRegistrationByIdAction
 }

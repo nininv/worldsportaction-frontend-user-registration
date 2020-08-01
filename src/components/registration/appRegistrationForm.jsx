@@ -37,7 +37,7 @@ import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegist
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
     clearRegistrationDataAction, updateRegistrationSettingsAction, 
     updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction,
-    getRegistrationProductFeesAction} from 
+    getRegistrationProductFeesAction, getRegistrationByIdAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -485,8 +485,6 @@ class AppRegistrationForm extends Component {
             agreeTerm: false,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
-            // locUserId: getUserId(),
-            // locToken: getAuthToken(),
             showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
@@ -503,7 +501,8 @@ class AppRegistrationForm extends Component {
             getUserLoad:false,
             csvData: null,
             uploadPlayerModalVisible: false,
-            isRegYourselfDisable: false
+            isRegYourselfDisable: false,
+            registrationUniqueKey: null
         };
         this_Obj = this;
      
@@ -524,19 +523,17 @@ class AppRegistrationForm extends Component {
     }
 
     componentDidMount(){
-       // console.log("Component Did mount");
         this.getUserInfo();
         let payload = {
             competitionUniqueKey: this.state.competitionUniqueKey,
             organisationUniqueKey: this.state.organisationUniqueKey
         }
-
-        // alert("UserId::" + this.state.locUserId);
-        // alert("Token::" + this.state.locToken);
-
-      //  this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
+                
+        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        this.setState({registrationUniqueKey: registrationUniqueKey});
+        console.log("registrationUniqueKey", registrationUniqueKey);
         this.props.membershipProductEndUserRegistrationAction(payload);
-		 this.setState({getMembershipLoad: true})
+        this.setState({getMembershipLoad: true})
 
     }
     componentDidUpdate(nextProps){
@@ -560,12 +557,21 @@ class AppRegistrationForm extends Component {
                     if(getUserId() != 0 ){
                         if(registrationState.userInfoOnLoad == false && this.state.getUserLoad == true){
                             this.setState({getMembershipLoad: false, getUserLoad: false})
-                            this.addParticipant(0, 1);
+
+                            if(this.state.registrationUniqueKey!= null){
+                                this.getRegistrationById();
+                            }else{
+                                this.addParticipant(0, 1);
+                            }
                         }
                     }
                     else{
+                        if(this.state.registrationUniqueKey!= null){
+                            this.getRegistrationById();
+                        }else{
+                            this.addParticipant(0, 1);
+                        }
                         this.setState({getMembershipLoad: false})
-                        this.addParticipant(0, 1);
                     }
                    
                 }
@@ -627,14 +633,41 @@ class AppRegistrationForm extends Component {
             this.setProductFormFields(this.state.participantIndex);
        }
 
-       if(registrationState.refFlag === "participant")
+       if(registrationState.refFlag == "participant")
        {
-            this.props.updateEndUserRegisrationAction("", "refFlag");
-            let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
-            let userRegistrations = registrationDetail.userRegistrations;
-            (userRegistrations || []).map((item, index) => {
-                this.setFormFields(item, index);
-            });
+           this.props.updateEndUserRegisrationAction("", "refFlag");
+           setTimeout(() =>{
+               let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+               let userRegistrations = registrationDetail.userRegistrations;
+               (userRegistrations || []).map((item, index) => {
+                   this.setFormFields(item, index);
+                   if(this.state.registrationUniqueKey!= null){
+                       this.setProductFormFields(index);
+                   }
+               });
+           }, 1000)
+           
+       }
+      
+
+       if(registrationState.populateVolunteerInfo === 1){
+        if (commonReducerState.registrationOtherInfoOnLoad === false){
+            this.props.updateEndUserRegisrationAction(0, "populateVolunteerInfo");
+            setTimeout(()  =>{
+                let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+                (this.state.volunteerList || []).map((info, index) => {
+                    let volun = (registrationDetail.volunteers.find(x=>x.registrationOtherInfoRefId == info.id));
+                    if(volun!= null){
+                        info.isActive = true;
+                    }
+                })
+                if(registrationDetail.childrenCheckNumber!= null){
+                    this.setState({showChildrenCheckNumber: true})
+                }
+            }, 1000)
+           
+           
+        }
        }
 
        if(registrationState.setCompOrgKey == true){
@@ -682,6 +715,13 @@ class AppRegistrationForm extends Component {
         if(registrationState.refFlag == "players"){
             this.props.updateEndUserRegisrationAction("", "refFlag");
             this.setPlayersFormField();
+        }
+    }
+
+    getRegistrationById = () =>{
+        if(this.state.registrationUniqueKey!= null){
+            let payload = {registrationId: this.state.registrationUniqueKey}
+            this.props.getRegistrationByIdAction(payload);
         }
     }
 
@@ -1010,6 +1050,8 @@ class AppRegistrationForm extends Component {
         let userRegistration = userRegistrations[index]; 
 
         this.props.form.setFieldsValue({
+            [`whoAreYouRegistering${index}`]: userInfo!= null ? userInfo.whoAreYouRegistering : null,
+            [`whatTypeOfRegistration${index}`]: userInfo!= null ? userInfo.whatTypeOfRegistration : null,
             [`organisationUniqueKey${index}`]: userInfo!= null ? userInfo.organisationUniqueKey : null,
             [`competitionUniqueKey${index}`]: userInfo!= null ? userInfo.competitionUniqueKey : null,
             [`competitionMembershipProductTypeId${index}`]: userInfo!= null ? userInfo.competitionMembershipProductTypeId : null,
@@ -1836,13 +1878,13 @@ class AppRegistrationForm extends Component {
     }
 
     onChangeSetValue = (e, index, participantOrProduct, productIndex, key, subIndex, subKey ) => {
-        console.log("onChangeSetValue:" + e + "!!!" + index+ "!!!" + participantOrProduct + "!!!"+productIndex + "!!!" + key + "!!!" + subIndex + "!!!"+subKey);
+        //console.log("onChangeSetValue:" + e + "!!!" + index+ "!!!" + participantOrProduct + "!!!"+productIndex + "!!!" + key + "!!!" + subIndex + "!!!"+subKey);
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
         if(participantOrProduct =="participant")
         {
-            console.log("key::" + key);
+           // console.log("key::" + key);
             if(key === "positions")
             {
                 userRegistration[subKey] = e;
@@ -2418,6 +2460,8 @@ class AppRegistrationForm extends Component {
                     }
                 });
                 registrationDetail.volunteers = volunteers;
+                registrationDetail["termsAndConditions"] = registrationState.termsAndConditions;
+
                 // registrationDetail.organisationUniqueKey = this.state.organisationUniqueKey;
                 // registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
 
@@ -5009,17 +5053,17 @@ class AppRegistrationForm extends Component {
                             </div>
                             <div className="col-sm">
                                 <div className="comp-buttons-view">
-                                    <Button className="save-draft-text" type="save-draft-text"
+                                    {/* <Button className="save-draft-text" type="save-draft-text"
                                         onClick={() => this.setState({ buttonPressed: "save" })}>
-                                        {AppConstants.reviewOrder}
-                                    </Button>
+                                        {AppConstants.checkOptions}
+                                    </Button> */}
                                     <Button
                                         className="open-reg-button"
                                         htmlType="submit"
                                     type="primary"
                                     disabled={isSubmitting}
                                     onClick={() => this.setState({ buttonPressed: "save" })}>
-                                    {AppConstants.checkOptions}
+                                    {AppConstants.reviewOrder}
                                 </Button>
                             </div>
                         </div>
@@ -5086,7 +5130,8 @@ function mapDispatchToProps(dispatch)
         personRegisteringRoleReferenceAction,
         updateYourInfoAction,
         getTermsAndConditionsAction,
-        getRegistrationProductFeesAction
+        getRegistrationProductFeesAction,
+        getRegistrationByIdAction
     }, dispatch);
 
 }

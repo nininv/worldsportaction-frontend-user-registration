@@ -1,6 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString, formatValue } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
+import { get } from "jquery";
 
 let registrationObj = {
     registrationUniqueKey: "",
@@ -22,6 +23,7 @@ let commonRegSetting = {
 
 const initialState = {
     onLoad: false,
+    onRegLoad: false,
     onMembershipLoad: false,
     userInfoOnLoad: false,
     onInvLoad:false,
@@ -32,6 +34,7 @@ const initialState = {
     registrationDetail: registrationObj,
     registrationSettings: [],
     populateParticipantDetails: 0,
+    populateVolunteerInfo: 0,
     membershipProductInfo: [],
     refFlag: "",
     user: null,
@@ -83,33 +86,44 @@ function endUserRegistrationReducer(state = initialState, action) {
             };
 
         case ApiConstants.UPDATE_END_USER_REGISTRATION:
+            try{
+                let oldData = state.registrationDetail;
+                let updatedValue = action.updatedData;
+                let getKey = action.key;
+                let getSubkey = action.subKey;
+                if(getKey === "refFlag"){
+                    state[getKey] = updatedValue;
+                }
+                if(getKey === "populateVolunteerInfo"){
+                    state[getKey] = updatedValue;
+                }
 
-            let oldData = state.registrationDetail;
-            let updatedValue = action.updatedData;
-            let getKey = action.key;
-            let getSubkey = action.subKey;
-  
-            if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
-                || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
-                getKey == "participantIndex" || getKey == "populateYourInfo" ||
-                getKey == "populateTeamRegisteringPerson") {
-                state[getKey] = updatedValue;
+                if (getKey == "userInfo" || getKey == "user"
+                    || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
+                    getKey == "participantIndex" || getKey == "populateYourInfo" ||
+                    getKey == "populateTeamRegisteringPerson") {
+                    state[getKey] = updatedValue;
+                   
+                }
+                else {
+                    oldData[getKey] = updatedValue;
+                }
+    
+                if(getKey == "yourInfo"){
+                    state.isYourInfoSet = true;
+                    state["populateYourInfo"] = 1;
+                }
+    
+                if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
+                    getSubkey == "removeParticipant"){
+                    state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                        state.registrationDetail.userRegistrations, state);
+                }
             }
-            else {
-                oldData[getKey] = updatedValue;
+            catch(error)
+            {
+                console.log("Error:" + error);
             }
-
-            if(getKey == "yourInfo"){
-                state.isYourInfoSet = true;
-                state["populateYourInfo"] = 1;
-            }
-
-            if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
-                getSubkey == "removeParticipant"){
-                state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
-                    state.registrationDetail.userRegistrations, state);
-            }
-
             return { ...state, error: null };
 
         case ApiConstants.UPDATE_REGISTRATION_SETTINGS:
@@ -159,7 +173,7 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-            //console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
@@ -170,9 +184,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
                 let settings = state.regSettings.find(x=>x.index == index);
-            //    console.log("&&&&&&&" + JSON.stringify(settings));
+                console.log("&&&&&&&" + JSON.stringify(settings));
             //    console.log("registrationSettings######"+JSON.stringify(registrationSettings));
-                if(settings!= null){
+                if(settings!= undefined){
                     let ind = index;
                     let flag = -1;
                     if(state.prodIndex != undefined && state.prodIndex != null){
@@ -763,15 +777,98 @@ function endUserRegistrationReducer(state = initialState, action) {
                 reviewPrdData.total.targetValue = charityData.targetValue;
                 reviewPrdData.total.charityValue = charityData.charityValue;
 
+                reviewPrdData.deletedProducts.push(memData.orgRegParticipantId);
                 reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);
 
                 console.log("reviewPrdData", reviewPrdData);
             }
+
+        case ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD:
+            return { ...state, onRegLoad: true };
+    
+        case ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS:
+            let registrationData = action.result;
+            
+            (action.result.userRegistrations || []).map((item, index) =>{
+
+                let orgInfo =  state.membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                    item.organisationUniqueKey);
+                item["organisationInfo"] = deepCopyFunction(orgInfo);
+                let competitionInfo = item.organisationInfo.competitions.
+                                find(x=>x.competitionUniqueKey == item.competitionUniqueKey);
+                if(competitionInfo!= undefined){
+                    item["competitionInfo"] = deepCopyFunction(competitionInfo);
+                    setSettings(index,null,item.regSetting, state.regSettings, action.result, 
+                        state.commonRegSetting);
+                   
+                }
+                else{
+                    item["organisationInfo"] = null;
+                    item.organisationUniqueKey = null;
+                    item.competitionUniqueKey = null;
+                    item.competitionMembershipProductTypeId = null;
+                    item.competitionMembershipProductDivisionId = null;
+                    item.products = [];
+                    item.specialNote = null;
+                    item.training = null;
+                    item.registrationOpenDate = null;
+                    item.registrationCloseDate = null;
+                    item.contactDetails = null;
+                    item.divisionName = null;
+                    item["hasDivisionError"] = false;
+                    item.venue = [];
+                    item["fees"] = null;
+                }
+                
+                (item.products || []).map((prod, prodIndex) =>{
+                    let orgInfo =  state.membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                        prod.organisationUniqueKey);
+                        prod["organisationInfo"] = deepCopyFunction(orgInfo);
+                    let competitionInfo = prod.organisationInfo.competitions.
+                                    find(x=>x.competitionUniqueKey == prod.competitionUniqueKey);
+                    if(competitionInfo != undefined){
+                        prod["competitionInfo"] = deepCopyFunction(competitionInfo);
+                        setSettings(index,prodIndex,item.regSetting, state.regSettings, action.result, 
+                            state.commonRegSetting);
+                    }
+                    else{
+                        prod["organisationInfo"] = null
+                        prod["competitionInfo"] = null;
+                        prod["organisationUniqueKey"] = null;
+                        prod["competitionUniqueKey"] = null;
+                        prod["competitionMembershipProductTypeId"] = null;
+                        prod["competitionMembershipProductDivisionId"] = null;
+                        prod["divisionName"] = null;
+                        prod["friends"] = [];
+                        prod["referFriends"] = [];
+                        prod["positionId1"] = null;
+                        prod["positionId1"] = null;
+                        prod["fees"] = null;
+                    }
+                })
+            });
+
+            if(isArrayNotEmpty(action.result.termsAndConditions)){
+                updateTermsAndConditions(action.result.termsAndConditions, action.result.userRegistrations,state);
+            }
+
+
+            state.registrationDetail = action.result;
+            state.refFlag = "participant";
+             state.populateVolunteerInfo = 1;
+            console.log("state.registrationDetail", state.registrationDetail, state.regSettings, state.commonRegSetting);
             
             return {
                 ...state,
-                error: null
-            }
+                onRegLoad: false,
+                status: action.status,
+                registrationDetail: registrationData
+            };
+        
+        return {
+            ...state,
+            error: null
+        }
         default:
             return state;
     }
@@ -995,6 +1092,54 @@ function updateTermsAndConditions(data, userRegistrations, state){
     state.termsAndConditionsFinal = finalArr;
     
     return arr;
+}
+
+function setSettings(participantIndex, prodIndex, registrationSettings, regSettings, registrationDetail,
+    commonRegSetting)
+{
+    try{
+        let index = participantIndex;
+        let existingParticipant = registrationDetail.userRegistrations[index];
+        let settings = regSettings.find(x=>x.index == index);
+      //  console.log("&&&&&&&" + existingParticipant);
+    //    console.log("registrationSettings######"+JSON.stringify(registrationSettings));
+        if(settings!= undefined){
+            let ind = index;
+            let flag = -1;
+            if(prodIndex != undefined && prodIndex != null){
+                ind = prodIndex + 1;
+                flag = ind;
+                existingParticipant["products"][prodIndex]["regSetting"] = registrationSettings;
+            }
+            settings.settingArr[ind] = registrationSettings;
+           // console.log("&&&&&&1111&" + JSON.stringify(settings));
+            let setting = mergeRegistrationSettings1(settings.settingArr, commonRegSetting, flag);
+           // console.log("*******))))))))))" + JSON.stringify(setting));
+            existingParticipant["regSetting"] = setting;
+        }
+        else{
+           // console.log("**** else");
+            let regSetObj = {
+                index: index,
+                settingArr: []
+            }
+            regSetObj.settingArr.push(registrationSettings);
+            regSettings.push(regSetObj);
+            existingParticipant["regSetting"] = registrationSettings;
+            if(registrationSettings.club_volunteer == 1){
+                commonRegSetting.club_volunteer = 1
+            }
+            if(registrationSettings.shop == 1){
+                commonRegSetting.shop = 1
+            }
+            if(registrationSettings.voucher == 1){
+                commonRegSetting.voucher = 1
+            }
+        }
+    }
+    catch(error){
+        console.log("Error", error);
+    }
 }
 
 export default endUserRegistrationReducer;
