@@ -32,8 +32,8 @@ class RegistrationReviewForm extends Component {
     }
 
     componentDidMount() {
-        //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
+        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        //let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -202,9 +202,9 @@ class RegistrationReviewForm extends Component {
                         {AppConstants.hyphen}
                         {item.competitionName}     
                     </div>
-                    <div>
+                    {/* <div>
                         $120
-                    </div>
+                    </div> */}
                 </div>
                 {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div key = {memIndex}>
@@ -327,7 +327,7 @@ class RegistrationReviewForm extends Component {
                                 </Select>
                             </div>
                             <div className="col-sm" style={{alignSelf:"center"}}>
-                            <span  className='text-codelink' 
+                            <span  className='text-codelink pointer' 
                             onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions")}
                             >Apply Code</span>
                             </div>    

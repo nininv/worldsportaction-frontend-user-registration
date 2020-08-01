@@ -371,6 +371,8 @@ class ReviewProducts extends Component {
 
     
     footerView = (isSubmitting) => {
+        let {regReviewPrdData} = this.props.endUserRegistrationState;
+        let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
         return (
             <div className="fluid-width">
                 <div className="footer-view" style={{padding:0}}>
@@ -379,14 +381,16 @@ class ReviewProducts extends Component {
                             onClick={() => this.previousCall()}>
                             {AppConstants.previous}
                         </Button>
-                        <Button
-                            className="open-reg-button"
-                            htmlType="submit"
-                            type="primary"
-                            disabled={isSubmitting}
-                            onClick={() => this.setState({ buttonPressed: "save" })}>
-                            {AppConstants.next}
-                        </Button>
+                        {securePaymentOptions.length > 0 ?
+                            <Button
+                                className="open-reg-button"
+                                htmlType="submit"
+                                type="primary"
+                                disabled={isSubmitting}
+                                onClick={() => this.setState({ buttonPressed: "save" })}>
+                                {AppConstants.next}
+                            </Button>
+                        : null}
                     </div>
                 </div>
                 <Modal

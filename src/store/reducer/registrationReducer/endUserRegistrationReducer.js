@@ -640,6 +640,24 @@ function endUserRegistrationReducer(state = initialState, action) {
                             let discount = x.discounts.find(x=>x.code == discountCode);
                             if(discount!= undefined){
                                 discount.isSelected = 1;
+                                if(discount.discountTypeId == 1){
+                                    discount.discountsToDeduct = Number(discount.amount);
+                                }
+                                else {
+                                    if(action.value <= 2){
+                                        if(action.value == 1){
+                                            discount.discountsToDeduct = (x.casualFee * (discount.amount / (100)));
+                                        }
+                                        else{
+                                            discount.discountsToDeduct = (x.casualFee * Number(gameVoucherVal)) * (discount.amount / (100));
+                                        }
+                                    }
+                                    else{
+                                        discount.discountsToDeduct = (x.seasonalFee * (discount.amount / (100)));
+                                    }
+                                   
+                                }
+                                discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
                             }
                          });
                     }
@@ -653,6 +671,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                         else{
                             reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = "3";
                         }
+
+                        let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
                         memProds.map((x, mIndex) =>{
                             let discount = x.discounts.find(x=>x.code == discountCode);
                            
@@ -668,7 +688,13 @@ function endUserRegistrationReducer(state = initialState, action) {
                                 x.feesToPay = x.seasonalFee + x.seasonalGST;
                             }
 
-                            x.feesToPay = x.feesToPay.toFixed(2);
+                            if(action.value == 5){
+                                x.feesToPay = 0;
+                            }
+                            else{
+                                x.feesToPay = x.feesToPay.toFixed(2);
+                            }
+                            
 
                             if(discount!= undefined){
                                 if(discount.discountTypeId == 1){
@@ -744,6 +770,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onRegReviewPrdLoad: false,
                 status: action.status
             };
+        
         case ApiConstants.UPDATE_REVIEW_PRODUCT:
             let reviewPrdData = state.regReviewPrdData;
             if(action.key == "removeProduct"){
