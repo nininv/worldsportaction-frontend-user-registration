@@ -159,7 +159,7 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <span >{venueCourt ?venueCourt.venue.name +"-"+venueCourt.name : ""}</span>
+                            <span >{venueCourt ? venueCourt.venue.name + "-" + venueCourt.name : ""}</span>
                         </div>
                     </div >
 
@@ -167,7 +167,7 @@ const columns2 = [
             } else {
 
                 return (
-                    <span >{venueCourt ?venueCourt.venue.name +"-"+venueCourt.name : ""}</span>
+                    <span >{venueCourt ? venueCourt.venue.name + "-" + venueCourt.name : ""}</span>
                 )
             }
         }
@@ -279,7 +279,7 @@ class LiveScoreSeasonFixture extends Component {
     componentDidUpdate(nextProps) {
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
-                if( isArrayNotEmpty(this.props.liveScoreFixturCompState.comptitionList )){
+                if (isArrayNotEmpty(this.props.liveScoreFixturCompState.comptitionList)) {
                     let firstComp = this.props.liveScoreFixturCompState.comptitionList && this.props.liveScoreFixturCompState.comptitionList[0].id
                     this.props.getLiveScoreDivisionList(firstComp)
                     this.setState({ selectedComp: firstComp, onCompLoad: false, onDivisionLoad: true })
@@ -344,43 +344,35 @@ class LiveScoreSeasonFixture extends Component {
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
-                    <div className="col-sm-4" >
-                        <div className="com-year-select-heading-view" >
-                            <span className='year-select-heading'>{AppConstants.competition}:</span>
-                            <Select
-                                className="year-select"
-                                style={{ minWidth: 160 }}
-                                onChange={(comp) => this.onChangeComp({ comp })}
-                                value={this.state.selectedComp}
-                            >{
-                                    competition.map((item) => {
-                                        return <Option value={item.id}>{item.longName}</Option>
-                                    })
-                                }
-
-                            </Select>
-                        </div>
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading'>{AppConstants.competition}:</span>
+                        <Select
+                            className="year-select reg-filter-select-competition ml-2"
+                            style={{ minWidth: 160 }}
+                            onChange={(comp) => this.onChangeComp({ comp })}
+                            value={this.state.selectedComp}
+                        >{
+                                competition.map((item) => {
+                                    return <Option value={item.id}>{item.longName}</Option>
+                                })
+                            }
+                        </Select>
                     </div>
-                    <div className="col-sm-2" >
-                        <div style={{
-                            width: "100%", display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center", marginRight: 50
-                        }} >
-                            <span className='year-select-heading'>{AppConstants.division}:</span>
-                            <Select
-                                className="year-select"
-                                style={{ minWidth: 100 }}
-                                onChange={(division) => this.changeDivision({ division })}
-                                value={this.state.division}
-                            >{
-                                    division.map((item) => {
-                                        return <Option value={item.id}>{item.name}</Option>
-                                    })
-                                }
-
-                            </Select>
-                        </div>
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
+                        <span className='year-select-heading'>{AppConstants.division}:</span>
+                        <Select
+                            className="year-select reg-filter-select-competition ml-2"
+                            style={{ minWidth: 100 }}
+                            onChange={(division) => this.changeDivision({ division })}
+                            value={this.state.division}
+                        >{
+                                division.map((item) => {
+                                    return <Option value={item.id}>{item.name}</Option>
+                                })
+                            }
+                        </Select>
+                    </div>
+                    <div className="col-sm-6">
                     </div>
                 </div>
             </div>

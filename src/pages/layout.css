@@ -146,8 +146,15 @@
   }
 }
 
+.comp-product-search-inp-width {
+  width: 352px;
+}
+
 @media screen and (max-width: 991px) {
   .reg-product-search-inp-width {
+    width: 100%;
+  }
+  .comp-product-search-inp-width {
     width: 100%;
   }
 }
@@ -193,5 +200,18 @@
   }
   .org-select .ant-select-selection-selected-value {
     font-size: 12px;
+  }
+
+  .comp-product-search-inp-width {
+    width: 180px !important;
+    margin-left: 15px
+  }
+  .product-reg-search-input .ant-input {
+    height: 36px;
+    border-radius: 18px;
+    padding-top: 1px;
+    margin-left: 3px;
+    color: rgba(27, 27, 52, 0.4);
+    background-color: var(--app-f7fafc);
   }
 }
