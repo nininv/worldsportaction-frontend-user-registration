@@ -160,13 +160,13 @@ class ReviewProducts extends Component {
         return (
             <div className = "individual-reg-view">
                 {index == 0 &&
-                 <div className = "individual-header-view">
-                    <div style = {{fontWeight:600}}>
+                 <div className = "individual-header-view" style={{marginBottom:20}}>
+                    <div>
                         {AppConstants.reviewProducts}  
                     </div>                    
                 </div>
                 }
-                <div className='individual-header-view' style={{marginTop:40}}>
+                <div className='individual-header-view' style={{fontSize:20}}>
                     <div>
                         {AppConstants.individualRegistration}
                         {AppConstants.hyphen}
@@ -184,7 +184,7 @@ class ReviewProducts extends Component {
                             {mem.name} 
                         </div>
                         <div className='dolar-text'>
-                            <div style={{fontWeight: 600 , fontFamily:"inter-medium",marginRight:20}}>
+                            <div style={{fontFamily:"inter-medium",marginRight:20}}>
                                 ${mem.feesToPay}
                             </div>
                             <div>
@@ -231,10 +231,13 @@ class ReviewProducts extends Component {
                         className="user-remove-text mr-0 mb-1" onClick={() => this.editNavigation()}>
                             {AppConstants.edit}
                         </div>
-                    </div>
+                    </div >
+                    { memIndex != item.membershipProducts.length-1 ?
+                        <div style={{borderBottom: "1.5px solid #7474",marginTop:18}}></div>
+                    :null}
                 </div> 
                 ))} 
-                <div className='text-common-spacing'>
+                <div className=''>
                     {item.selectedOptions.governmentVoucherRefId!= null && 
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
@@ -272,7 +275,7 @@ class ReviewProducts extends Component {
                         {AppConstants.total}  
                     </div>                    
                 </div>            
-                <div className='text-common-spacing' style={{borderBottom: "1.5px solid var(--app-4b4c6d)"}}>
+                <div className='text-common-spacing' style={{borderBottom: "1.5px solid #7474"}}>
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
                             <span>{AppConstants.subTotal}</span>
@@ -306,12 +309,12 @@ class ReviewProducts extends Component {
                         </div>
                     </div>
                 </div> 
-                <div className='product-text' style={{width: "97%",marginTop: 22,marginBottom:22}}>
+                <div className='product-text' style={{width: "97%",marginTop: 22,fontWeight:600}}>
                     <div style={{marginRight:"auto"}}>
                         {AppConstants.totalPaymentDue} 
                     </div>
                     <div>
-                        <div style={{fontWeight: 600 , fontFamily:"inter-medium"}}>
+                        <div style={{fontFamily:"inter-medium"}}>
                             ${total!= null ? total.targetValue: 0}
                         </div>
                     </div>  
