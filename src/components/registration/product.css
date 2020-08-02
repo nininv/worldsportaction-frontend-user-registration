@@ -748,3 +748,10 @@ img.bg {
 .userRegLink{
   color: var(--app-color);
 }
+
+.comp-warning-info {
+  font-family: inter-medium;
+  font-size: 18px;
+  text-align: center;
+  padding-top: 40px;
+}

@@ -122,13 +122,14 @@ class UserRegistration extends Component {
     contentView = () => {
         return (
             <div className="content-view">
-                <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
+                {/* <InputWithHead heading={AppConstants.areYouAnExistingUser} required={"required-field"}></InputWithHead>
                 <Radio.Group
                     className="reg-competition-radio"
                     onChange={(e) => this.onChange(e.target.value)}>
                     <Radio value={1}>{AppConstants.yes}</Radio>
                     <Radio value={2}>{AppConstants.no}</Radio>
-                </Radio.Group>
+                </Radio.Group> */}
+                <div className="comp-warning-info">This feature is not enabled yet</div>
             </div>
         )
     }
