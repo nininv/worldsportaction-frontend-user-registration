@@ -123,7 +123,7 @@ class RegistrationReviewForm extends Component {
                     // payload.compParticipants.push(obj);
                 });
 
-                console.log("payload" + JSON.stringify(registrationReview));
+              //  console.log("payload" + JSON.stringify(registrationReview));
                 this.props.saveRegistrationReview(registrationReview);
                 this.setState({loading: true});
 

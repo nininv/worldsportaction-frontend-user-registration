@@ -19,8 +19,8 @@ let AxiosApi = {
     ///get invoice
     getInvoice(registrationId, invoiceId) {
         let body = {
-            registrationId: JSON.parse(registrationId),
-            invoiceId: JSON.parse(invoiceId)
+            registrationId: registrationId,
+            invoiceId: invoiceId
         }
         let url = `/api/invoice`
         return Method.dataPost(url, token, body)
@@ -35,8 +35,9 @@ let AxiosApi = {
     //////get invoice status
     getInvoiceStatus(registrationId) {
         let body = {
-            registrationId: JSON.parse(registrationId),
+            registrationId: registrationId,
         }
+        //console.log("body"+ JSON.stringify(body));
         let url = `/api/payments/getInvoiceStatus`
         return Method.dataPost(url, token, body)
     },
