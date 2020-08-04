@@ -625,41 +625,48 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else if(action.subkey == "selectedOptions"){
                 let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
-                let discountCode = reviewData["compParticipants"][action.index][action.subkey]["discountCode"];
                 let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
-                console.log("discountCode" + discountCode);
+              
                 if(action.key =="isSelected"){
-                    if(isArrayNotEmpty(memProds)){
-                        memProds.map((x) => {
-                           x.discounts.map((y) => {
-                               y.isSelected = 0;
-                           })
+                    let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
+                    let discountCode = memProd["selectedCode"];
+                    let paymentOptionRefId = reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"]
+                    console.log("discountCode" + discountCode);
+                    
+
+                    if(memProd!= null){
+                        
+                        (memProd.discounts || []).map((y) =>{
+                            y.isSelected = 0;
                         });
 
-                        memProds.map((x) => {
-                            let discount = x.discounts.find(x=>x.code == discountCode);
-                            if(discount!= undefined){
-                                discount.isSelected = 1;
-                                if(discount.discountTypeId == 1){
-                                    discount.discountsToDeduct = Number(discount.amount);
-                                }
-                                else {
-                                    if(action.value <= 2){
-                                        if(action.value == 1){
-                                            discount.discountsToDeduct = (x.casualFee * (discount.amount / (100)));
-                                        }
-                                        else{
-                                            discount.discountsToDeduct = (x.casualFee * Number(gameVoucherVal)) * (discount.amount / (100));
-                                        }
+                        let discount = memProd.discounts.find(x=>x.code == discountCode);
+                        if(discount!= undefined && paymentOptionRefId != 5){
+                            discount.isSelected = 1;
+                            if(discount.discountTypeId == 1){
+                                discount.discountsToDeduct = Number(discount.amount);
+                            }
+                            else {
+                                if(paymentOptionRefId <= 2){
+                                    if(paymentOptionRefId == 1){
+                                        discount.discountsToDeduct = (memProd.casualFee * (discount.amount / (100)));
                                     }
                                     else{
-                                        discount.discountsToDeduct = (x.seasonalFee * (discount.amount / (100)));
+                                        discount.discountsToDeduct = (memProd.casualFee * Number(gameVoucherVal)) * (discount.amount / (100));
                                     }
-                                   
                                 }
-                                discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                                else{
+                                    discount.discountsToDeduct = (memProd.seasonalFee * (discount.amount / (100)));
+                                }
+                               
                             }
-                         });
+                            discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                        }
+                        else{
+                            (memProd.discounts || []).map((m) => {
+                                m.isSelected = 0;
+                            })
+                        }
                     }
                 }
                 else{
@@ -674,7 +681,7 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                         let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
                         memProds.map((x, mIndex) =>{
-                            let discount = x.discounts.find(x=>x.code == discountCode);
+                            let discount = x.discounts.find(y=>y.code == x.selectedCode);
                            
                             if(action.value <= 2){
                                 if(action.value == 1){
@@ -690,9 +697,12 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                             if(action.value == 5){
                                 x.feesToPay = 0;
+                                discount.isSelected = 0;
+                                discount.discountsToDeduct = 0;
+                                x.selectedCode = null;
                             }
                             else{
-                                x.feesToPay = x.feesToPay.toFixed(2);
+                                x.feesToPay = formatValue(x.feesToPay);
                             }
                             
 
@@ -714,15 +724,16 @@ function endUserRegistrationReducer(state = initialState, action) {
                                     }
                                    
                                 }
-                                discount.discountsToDeduct = discount.discountsToDeduct.toFixed(2);
+                                discount.discountsToDeduct = formatValue(discount.discountsToDeduct);
                             }
                         })
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
                     }
-                    if(action.key == "gameVoucherValue"){
+                    else if(action.key == "gameVoucherValue"){
                         reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
 
                         memProds.map((x, mIndex) =>{
-                            let discount = x.discounts.find(y=>y.code == discountCode);
+                            let discount = x.discounts.find(y=>y.code == x.selectedCode);
                              x.feesToPay = (x.casualFee + x.casualGST ) * Number(action.value);
                              x.feesToPay =  x.feesToPay.toFixed(2);
                              if(discount!= undefined){
@@ -737,8 +748,14 @@ function endUserRegistrationReducer(state = initialState, action) {
                                
                              }
                         })
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
                     }
-                    reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                    else if(action.key == "selectedCode"){
+                        reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex][action.key] = action.value;
+                    }
+                    else{
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                    }
                 }
             }
 
@@ -799,10 +816,17 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                 reviewPrdData.total.subTotal = (Number(reviewPrdData.total.subTotal) - fee) + discount;
                 reviewPrdData.total.gst = Number(reviewPrdData.total.gst) - gst;
-                let tempTargetVal = reviewPrdData.total.subTotal + reviewPrdData.total.gst;
-                let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
-                reviewPrdData.total.targetValue = charityData.targetValue;
-                reviewPrdData.total.charityValue = charityData.charityValue;
+                let tempTargetVal = formatValue(reviewPrdData.total.subTotal) + formatValue(reviewPrdData.total.gst);
+                if(reviewPrdData.charityRoundUpRefId > 0){
+                    let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
+                    reviewPrdData.total.targetValue = charityData.targetValue;
+                    reviewPrdData.total.charityValue = charityData.charityValue;
+                }
+                else{
+                    reviewPrdData.total.targetValue = tempTargetVal;
+                    reviewPrdData.total.charityValue = 0;
+                }
+               
 
                 reviewPrdData.deletedProducts.push(memData.orgRegParticipantId);
                 reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);

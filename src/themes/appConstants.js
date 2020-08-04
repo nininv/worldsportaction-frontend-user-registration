@@ -942,7 +942,7 @@ const AppConstants = {
   credit:"Credit",
   debitCard:"Debit Card",
   previous:"Previous",
-
+  applyCode: "Apply Code"
 
 };
 

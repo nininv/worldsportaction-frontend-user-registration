@@ -69,8 +69,8 @@ class RegistrationReviewForm extends Component {
     getReferenceData = () => {
     }
 
-    setReviewInfo = (value, key, index, subkey) => {
-        this.props.updateReviewInfoAction(value,key, index, subkey);
+    setReviewInfo = (value, key, index, subkey, subIndex) => {
+        this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
     }
 
     previousCall = () =>{
@@ -97,30 +97,19 @@ class RegistrationReviewForm extends Component {
                 console.log("registrationReview", registrationReview);
 
                 registrationReview.compParticipants.map((x, index) => {
-                    let discountCode = null;
+                    let arr = [];
                     x.membershipProducts.map((y) => {
-                        let discount = y.discounts.find(y=>y.code == x.selectedOptions.discountCode);
-                        if(discount!= undefined && discount.isSelected == 1){
-                            discountCode = discount.code;
-                        }
+                        (y.discounts || []).map((z) =>{
+                            if(z.isSelected == 1){
+                                let obj ={
+                                    competitionMembershipProductTypeId: y.competitionMembershipProductTypeId,
+                                    discountCode: z.code
+                                }
+                                arr.push(obj);
+                            }
+                        })
                      });
-                     x.selectedOptions.discountCode = discountCode
-                    // let obj = {
-                    //     "firstName":x.firstName,
-                    //     "lastName": x.lastName,
-                    //     "mobileNumber": x.mobileNumber,
-                    //     "email":x.email,
-                    //     "userId":x.userId,
-                    //     "competitionUniqueKey": x.competitionUniqueKey,
-                    //     "organisationUniqueKey":x.organisationUniqueKey,
-                    //     "paymentOptionRefId": x.selectedOptions.paymentOptionRefId,
-                    //     "gameVoucherValue":x.selectedOptions.gameVoucherValue,
-                    //     "discountCode": discountCode,
-                    //     "governmentVoucherRefId": x.selectedOptions.governmentVoucherRefId,
-                    //     "governmentVoucherCode": x.selectedOptions.governmentVoucherCode
-                    // }
-
-                    // payload.compParticipants.push(obj);
+                     x.selectedOptions.selectedDiscounts = arr;
                 });
 
               //  console.log("payload" + JSON.stringify(registrationReview));
@@ -257,7 +246,7 @@ class RegistrationReviewForm extends Component {
                 onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}
                 >
                 {(item.paymentOptions || []).map((p, pIndex) =>(
-                <div>
+                <div style={{marginTop: '15px'}}>
                     {p.paymentOptionRefId == 1 && 
                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
                     }
@@ -274,7 +263,7 @@ class RegistrationReviewForm extends Component {
                             </Radio.Group>  
                         </div>
                     }   
-                    <div style={{marginTop:15}}>
+                    <div>
                         {p.paymentOptionRefId == 3 &&          
                             <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
                         }
@@ -299,43 +288,34 @@ class RegistrationReviewForm extends Component {
                 </div>
                 ))}
                 </Radio.Group>
-                { item.discounts.length > 0 && 
+
+                <InputWithHead heading={AppConstants.discounts}/>
+                            
+                {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div>
-                    <div style={{marginLeft: 7,marginTop: 10}}>
-                        <Checkbox className="single-checkbox mt-3" style={{color: "inherit"}}
-                            checked={item.selectedOptions.isDiscountChecked}
-                            onChange={(e) => this.setReviewInfo(e.target.checked, "isDiscountChecked", index,"selectedOptions")}>
-                            Discount Code
-                        </Checkbox>
-                    </div>
-                    {item.selectedOptions.isDiscountChecked == 1 && 
+                    {mem.discounts.length > 0  &&
                     <div className="inputfield-style">                    
                         <div className="row" style={{marginLeft: 26 , marginTop: 12}}>
+                            <div  className="col-sm" style={{marginLeft: 7,marginTop: 10}}>
+                                {mem.name} 
+                            </div>
                             <div className="col-sm">
-                                <Select
-                                    required={"required-field pt-0 pb-0"}
-                                    className="input-inside-table-venue-court team-mem_prod_type"
-                                    onChange={(e) => this.setReviewInfo(e, "discountCode", index,"selectedOptions")}
-                                    value={item.selectedOptions.discountCode}
-                                    placeholder={'Code'}>
-                                    {(item.discounts || []).map((d, dIndex) => (
-                                            <Option key={d.code} 
-                                            value={d.code} >{d.code}</Option>
-                                        ))
-                                    }
-                                
-                                </Select>
+                                <InputWithHead 
+                                    placeholder={AppConstants.code} 
+                                    onChange={(e) => this.setReviewInfo(e.target.value, "selectedCode", index,"selectedOptions", memIndex)}
+                                    value={mem.selectedCode}/>
                             </div>
                             <div className="col-sm" style={{alignSelf:"center"}}>
-                            <span  className='text-codelink pointer' 
-                            onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions")}
-                            >Apply Code</span>
+                                <Button className="open-reg-button"
+                                    onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions", memIndex)}
+                                    type="primary">
+                                    {AppConstants.applyCode}
+                                </Button>
                             </div>    
                         </div>                   
-                    </div>
-                    }
+                    </div>}
                 </div>
-                }
+                ))}
                 {item.governmentVouchers.length > 0 && 
                 <div>
                     <div style={{marginLeft: 7,marginTop: 10}}>
@@ -496,7 +476,7 @@ class RegistrationReviewForm extends Component {
                             </div>
                          <Loader visible={this.props.endUserRegistrationState.onRegReviewLoad } />
                         </Content>
-                        <Footer style={{paddingRight:2}}>{this.footerView()}</Footer>
+                        <Footer style={{paddingRight:'2px', paddingLeft: '2px'}}>{this.footerView()}</Footer>
                     </Form>
                 </Layout>
             </div>

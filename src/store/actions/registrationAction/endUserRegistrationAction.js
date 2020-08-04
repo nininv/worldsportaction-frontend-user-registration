@@ -163,13 +163,14 @@ function saveRegistrationReview(payload){
     return action;
 }
 
-function updateReviewInfoAction(value, key, index, subkey){
+function updateReviewInfoAction(value, key, index, subkey, subIndex){
     const action = {
         type: ApiConstants.UPDATE_REVIEW_INFO,
         value: value,
         key: key,
         index: index,
-        subkey: subkey
+        subkey: subkey,
+        subIndex: subIndex
     }
 
     return action;
