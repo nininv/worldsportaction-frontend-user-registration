@@ -942,8 +942,7 @@ const AppConstants = {
   credit:"Credit",
   debitCard:"Debit Card",
   previous:"Previous",
-
-
+  expiryDate:"Expiry Date",
 };
 
 export default AppConstants;
