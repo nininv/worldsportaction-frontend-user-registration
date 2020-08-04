@@ -904,7 +904,8 @@ class AppRegistrationForm extends Component {
             competitionInfo: null, specialNote:null, training: null, contactDetails: null,
             postalCode: "", alternativeLocation: "", registrationOpenDate: null,
             registrationCloseDate: null, venue: [], regSetting: this.getOrgSettingsObj(),
-            divisions: [], team:{}			 
+            divisions: [], team:{}, isChildrenCheckNumber: 0, childrenCheckNumber: null,
+            childrenCheckExpiryDate: null			 
         }
 
         return participantObj;
@@ -1272,7 +1273,10 @@ class AppRegistrationForm extends Component {
             if(divisions!= null && divisions!= undefined && divisions.length > 0)
             {
 				userRegistration[key] = value;
-                userRegistration["isPlayer"] = memProd.isPlayer;												
+                userRegistration["isPlayer"] = memProd.isPlayer;
+                if(memProd.isPlayer == 0)
+                    userRegistration["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 :  memProd.isChildrenCheckNumber;	
+
                 if(divisions.length == 1)
                 {
                     userRegistration["competitionMembershipProductDivisionId"] = 
@@ -1818,6 +1822,9 @@ class AppRegistrationForm extends Component {
                     product["divisions"] = divisions;
                 }
                 product["isPlayer"] =  memProd.isPlayer;
+                if(memProd.isPlayer == 0){
+                    product["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 : memProd.isChildrenCheckNumber
+                }
                 product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
 
                 if(!memProd.isPlayer){
@@ -3792,6 +3799,12 @@ class AppRegistrationForm extends Component {
     additionalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+        let isChildrenCheckNumber = item.isChildrenCheckNumber;
+        (item.products || []).map((x) =>{
+            if(x.isChildrenCheckNumber == 1){
+                isChildrenCheckNumber = 1;
+            }
+        })
 
         const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
         return (
@@ -3920,23 +3933,27 @@ class AppRegistrationForm extends Component {
 
                     </div>
                 )}
+                {(isChildrenCheckNumber == 1 || item.childrenCheckNumber!= null)  && 
                 <div>
-                    <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
-                        onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
-                        value={registrationDetail.childrenCheckNumber}
-                    />                    
+                    <div>
+                        <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
+                            onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
+                            value={item.childrenCheckNumber}
+                        />                    
+                    </div>
+                    <div style={{marginTop:16}}>
+                        <DatePicker
+                            size="large"
+                            style={{ width: "100%" }}
+                            onChange={e => this.onChangeSetParticipantValue(e, "childrenCheckExpiryDate", index) }
+                            format={"DD-MM-YYYY"}
+                            placeholder={AppConstants.expiryDate}
+                            showTime={false}
+                            // name={'Dob'}
+                        />
+                    </div> 
                 </div>
-                <div style={{marginTop:16}}>
-                    <DatePicker
-                        size="large"
-                        style={{ width: "100%" }}
-                        onChange={e => this.onChangeSetParticipantValue(e, "childrenCheckExpiryDate", index) }
-                        format={"DD-MM-YYYY"}
-                        placeholder={AppConstants.expiryDate}
-                        showTime={false}
-                        // name={'Dob'}
-                    />
-                </div> 
+                }
             </div>
         )
     }
