@@ -979,6 +979,8 @@ class AppRegistrationForm extends Component {
             participantObj.regularMedication = addInfo.regularMedication
             participantObj.positionId1 = addInfo.positionId1
             participantObj.positionId2 = addInfo.positionId2
+            participantObj.childrenCheckNumber = addInfo.childrenCheckNumber
+            participantObj.childrenCheckExpiryDate = addInfo.childrenCheckExpiryDate
            // participantObj.voucherLink = addInfo.voucherLink
             if(addInfo.voucherLink!= null)
                 this.addVoucher(participantObj, addInfo);
@@ -3789,6 +3791,8 @@ class AppRegistrationForm extends Component {
 
     additionalInfoView = (item, index, getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
+        let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+
         const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
         return (
             <div className="formView content-view pt-5">
@@ -3916,6 +3920,23 @@ class AppRegistrationForm extends Component {
 
                     </div>
                 )}
+                <div>
+                    <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
+                        onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
+                        value={registrationDetail.childrenCheckNumber}
+                    />                    
+                </div>
+                <div style={{marginTop:16}}>
+                    <DatePicker
+                        size="large"
+                        style={{ width: "100%" }}
+                        onChange={e => this.onChangeSetParticipantValue(e, "childrenCheckExpiryDate", index) }
+                        format={"DD-MM-YYYY"}
+                        placeholder={AppConstants.expiryDate}
+                        showTime={false}
+                        // name={'Dob'}
+                    />
+                </div> 
             </div>
         )
     }
@@ -3996,11 +4017,11 @@ class AppRegistrationForm extends Component {
                         </div>
                     </div>
                 )}
-                {this.state.showChildrenCheckNumber && (
+                {/* {this.state.showChildrenCheckNumber && (
                     <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
                     onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
                     value={registrationDetail.childrenCheckNumber}/>
-                )}
+                )} */}
 
                 
             </div>
