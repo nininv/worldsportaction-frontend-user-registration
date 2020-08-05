@@ -33,7 +33,8 @@ class RegistrationReviewForm extends Component {
 
     componentDidMount() {
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        //let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
+        console.log("registrationUniqueKey"+registrationUniqueKey);
+        //let registrationUniqueKey = "registrationUniqueKeyab30a5cf-285b-48fa-8f38-6cc4d90a594";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -288,24 +289,24 @@ class RegistrationReviewForm extends Component {
                 </div>
                 ))}
                 </Radio.Group>
-
-                <InputWithHead heading={AppConstants.discounts}/>
-                            
+                <div style={{marginLeft:8}}>
+                    <InputWithHead heading={AppConstants.discounts}/>
+                </div>
                 {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div>
                     {mem.discounts.length > 0  &&
                     <div className="inputfield-style">                    
-                        <div className="row" style={{marginLeft: 26 , marginTop: 12}}>
-                            <div  className="col-sm" style={{marginLeft: 7,marginTop: 10}}>
+                        <div className="row" style={{marginLeft:0 , marginTop: 12}}>
+                            <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
                                 {mem.name} 
                             </div>
-                            <div className="col-sm">
+                            <div style={{ marginRight: 30}}>
                                 <InputWithHead 
                                     placeholder={AppConstants.code} 
                                     onChange={(e) => this.setReviewInfo(e.target.value, "selectedCode", index,"selectedOptions", memIndex)}
                                     value={mem.selectedCode}/>
                             </div>
-                            <div className="col-sm" style={{alignSelf:"center"}}>
+                            <div className="" style={{alignSelf:"center"}}>
                                 <Button className="open-reg-button"
                                     onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions", memIndex)}
                                     type="primary">
