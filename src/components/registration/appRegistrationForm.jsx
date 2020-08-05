@@ -485,7 +485,7 @@ class AppRegistrationForm extends Component {
             agreeTerm: false,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
-            showChildrenCheckNumber: false,
+           // showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
             modalKey: "",
@@ -661,9 +661,9 @@ class AppRegistrationForm extends Component {
                         info.isActive = true;
                     }
                 })
-                if(registrationDetail.childrenCheckNumber!= null){
-                    this.setState({showChildrenCheckNumber: true})
-                }
+                // if(registrationDetail.childrenCheckNumber!= null){
+                //     this.setState({showChildrenCheckNumber: true})
+                // }
             }, 1000)
            
            
@@ -1274,8 +1274,7 @@ class AppRegistrationForm extends Component {
             {
 				userRegistration[key] = value;
                 userRegistration["isPlayer"] = memProd.isPlayer;
-                if(memProd.isPlayer == 0)
-                    userRegistration["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 :  memProd.isChildrenCheckNumber;	
+                userRegistration["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 :  memProd.isChildrenCheckNumber;	
 
                 if(divisions.length == 1)
                 {
@@ -1822,9 +1821,9 @@ class AppRegistrationForm extends Component {
                     product["divisions"] = divisions;
                 }
                 product["isPlayer"] =  memProd.isPlayer;
-                if(memProd.isPlayer == 0){
+               // if(memProd.isPlayer == 0){
                     product["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 : memProd.isChildrenCheckNumber
-                }
+                //}
                 product["competitionMembershipProductTypeId"] = memProd.competitionMembershipProductTypeId;
 
                 if(!memProd.isPlayer){
@@ -3937,7 +3936,7 @@ class AppRegistrationForm extends Component {
                 <div>
                     <div>
                         <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
-                            onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
+                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "childrenCheckNumber", index )} 
                             value={item.childrenCheckNumber}
                         />                    
                     </div>
@@ -3949,7 +3948,7 @@ class AppRegistrationForm extends Component {
                             format={"DD-MM-YYYY"}
                             placeholder={AppConstants.expiryDate}
                             showTime={false}
-                            // name={'Dob'}
+                            value ={item.childrenCheckExpiryDate !== null && moment(item.childrenCheckExpiryDate)}
                         />
                     </div> 
                 </div>
