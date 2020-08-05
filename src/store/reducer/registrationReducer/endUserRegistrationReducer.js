@@ -697,8 +697,10 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                             if(action.value == 5){
                                 x.feesToPay = 0;
-                                discount.isSelected = 0;
-                                discount.discountsToDeduct = 0;
+                                if(discount!= undefined){
+                                    discount.isSelected = 0;
+                                    discount.discountsToDeduct = 0;
+                                }
                                 x.selectedCode = null;
                             }
                             else{
