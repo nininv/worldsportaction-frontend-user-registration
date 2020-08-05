@@ -15,8 +15,8 @@ import { isArrayNotEmpty } from "../../util/helpers";
 import { currencyFormat } from "../../util/currencyFormat";
 import styles from "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-// import CounterInput from "react-counter-input";
 import CounterInput from '../../customComponents/reactBootstrapCounter';
+
 const { Content } = Layout;
 const { Option } = Select;
 
@@ -62,7 +62,7 @@ class ProductDetails extends Component {
         let { productDetailData } = this.props.shopProductState
         console.log("productDetailData", productDetailData)
         return (
-            <div className="content-view pt-4 mt-5">
+            <div className="product-details-view">
                 <div className="d-flex justify-content-end">
                     <img
                         src={AppImages.shoppingCart}
@@ -96,18 +96,18 @@ class ProductDetails extends Component {
                     </div>
                     <div className="col-sm pt-4">
                         <div className="product-text-view pl-0 pt-0">
-                            <span className="product-name">{productDetailData.productName}</span>
+                            <span className="product-name" style={{ fontSize: 16 }}>{productDetailData.productName}</span>
                             <span className="product-price-text-style">
                                 {isArrayNotEmpty(productDetailData.variants) ? " From " + this.productItemPriceCheck(productDetailData) : this.productItemPriceCheck(productDetailData)}
                             </span>
-                            <span className="product-description-text mt-4">{productDetailData.description}</span>
-
+                            {/* <span className="product-description-text mt-4">{htmlToDraft(productDetailData.description)}</span> */}
+                            <div className="product-description-text mt-4" dangerouslySetInnerHTML={{__html: productDetailData.description}} />
                             <div >
                                 {isArrayNotEmpty(productDetailData.variants) && <div className="shop-label-text-view mt-5">
-                                    <div className="w-25">
+                                    <div className="w-25 mr-small-width-mobile">
                                         <span className="product-grey-detail-text">{productDetailData.variants[0].name}</span>
                                     </div>
-                                    <div className="w-75 ml-2">
+                                    <div className="w-75">
                                         <Select
                                             className="shop-type-select"
                                             style={{ minWidth: 180 }}
@@ -124,10 +124,10 @@ class ProductDetails extends Component {
                                     </div>
                                 </div>}
                                 <div className="shop-label-text-view mt-5">
-                                    <div className="w-25">
+                                    <div className="w-25 mr-small-width-mobile">
                                         <span className="product-grey-detail-text">{AppConstants.quantity}</span>
                                     </div>
-                                    <div className="w-75 ml-2">
+                                    <div className="w-75">
                                         <CounterInput
                                             value={1}
                                             min={1}
