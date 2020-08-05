@@ -35,6 +35,7 @@ const initialState = {
     registrationSettings: [],
     populateParticipantDetails: 0,
     populateVolunteerInfo: 0,
+    populateExistingInfo: 0,
     membershipProductInfo: [],
     refFlag: "",
     user: null,
@@ -95,6 +96,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                     state[getKey] = updatedValue;
                 }
                 if(getKey === "populateVolunteerInfo"){
+                    state[getKey] = updatedValue;
+                }
+                if(getKey === "populateExistingInfo"){
                     state[getKey] = updatedValue;
                 }
 
@@ -627,8 +631,13 @@ function endUserRegistrationReducer(state = initialState, action) {
                 let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
                 let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
               
-                if(action.key =="isSelected"){
+                if(action.key =="isSelected" || action.key == "removeCode"){
+                   
                     let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
+                    memProd["invalidCode"] = 0;
+                    if(action.key == "removeCode"){
+                        memProd["selectedCode"] = null;
+                    }
                     let discountCode = memProd["selectedCode"];
                     let paymentOptionRefId = reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"]
                     console.log("discountCode" + discountCode);
@@ -666,6 +675,11 @@ function endUserRegistrationReducer(state = initialState, action) {
                             (memProd.discounts || []).map((m) => {
                                 m.isSelected = 0;
                             })
+
+                            if(action.key =="isSelected" ){
+                                console.log("*****************");
+                                memProd["invalidCode"] = 1; 
+                            }
                         }
                     }
                 }
@@ -899,6 +913,12 @@ function endUserRegistrationReducer(state = initialState, action) {
                         prod["fees"] = null;
                     }
                 })
+
+                if(item.registeringYourself == 4){
+                    (item.team.players).map((p, pIndex) =>{
+                        p.index = index;
+                    })
+                }
             });
 
             if(isArrayNotEmpty(action.result.termsAndConditions)){
@@ -907,7 +927,7 @@ function endUserRegistrationReducer(state = initialState, action) {
 
 
             state.registrationDetail = action.result;
-            state.refFlag = "participant";
+            state.populateExistingInfo = 1;
              state.populateVolunteerInfo = 1;
             console.log("state.registrationDetail", state.registrationDetail, state.regSettings, state.commonRegSetting);
             

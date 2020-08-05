@@ -872,3 +872,7 @@ img.bg {
   border-radius: 10px;
 
 }
+
+.discount-validation {
+  color:var(--app-red-bg);
+}

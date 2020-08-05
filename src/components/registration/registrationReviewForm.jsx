@@ -158,16 +158,16 @@ class RegistrationReviewForm extends Component {
             <div>
                 {(participantList || []).map((item, index) => (
                 <div  key={"part" + index}>
-                    {item.isTeamRegistration == 0 &&
+                    {(item.isTeamRegistration == 0 || item.isTeamRegistration == 1) &&
                         <div style={{backgroundColor: "#f7fafc", marginBottom: 40}}>
-                            {this.individualView(getFieldDecorator, item, index)}
+                            {this.productsView(getFieldDecorator, item, index)}
                         </div>
                     }
-                     {item.isTeamRegistration == 1 &&
+                     {/* {item.isTeamRegistration == 1 &&
                         <div style={{ marginBottom: 40}}>
                                 {this.teamView(getFieldDecorator, item, index)}
                         </div>
-                    }
+                    } */}
                 </div>
                 ))}
                <div style={{ marginBottom: 40}}>
@@ -177,14 +177,15 @@ class RegistrationReviewForm extends Component {
         )
     }
 
-    individualView = (getFieldDecorator, item, index) => {
+    productsView = (getFieldDecorator, item, index) => {
         let registrationState = this.props.endUserRegistrationState;
        
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
                     <div>
-                        {AppConstants.individualRegistration}
+                        {item.isTeamRegistration == 0 ? AppConstants.individualRegistration :
+                            AppConstants.teamRegistration}
                         {AppConstants.hyphen}
                         {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
@@ -192,9 +193,6 @@ class RegistrationReviewForm extends Component {
                         {AppConstants.hyphen}
                         {item.competitionName}     
                     </div>
-                    {/* <div>
-                        $120
-                    </div> */}
                 </div>
                 {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div key = {memIndex}>
@@ -289,34 +287,48 @@ class RegistrationReviewForm extends Component {
                 </div>
                 ))}
                 </Radio.Group>
-                <div style={{marginLeft:8}}>
-                    <InputWithHead heading={AppConstants.discounts}/>
-                </div>
-                {(item.membershipProducts || []).map((mem, memIndex) =>(
+                {item.selectedOptions.paymentOptionRefId != 5 &&
                 <div>
-                    {mem.discounts.length > 0  &&
-                    <div className="inputfield-style">                    
-                        <div className="row" style={{marginLeft:0 , marginTop: 12}}>
-                            <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
-                                {mem.name} 
-                            </div>
-                            <div style={{ marginRight: 30}}>
-                                <InputWithHead 
-                                    placeholder={AppConstants.code} 
-                                    onChange={(e) => this.setReviewInfo(e.target.value, "selectedCode", index,"selectedOptions", memIndex)}
-                                    value={mem.selectedCode}/>
-                            </div>
-                            <div className="" style={{alignSelf:"center"}}>
-                                <Button className="open-reg-button"
+                    <div style={{marginLeft:8}}>
+                        <InputWithHead heading={AppConstants.discounts}/>
+                    </div>
+                    {(item.membershipProducts || []).map((mem, memIndex) =>(
+                    <div>
+                        {mem.discounts.length > 0  &&
+                        <div className="inputfield-style">                    
+                            <div className="row" style={{marginLeft:0 , marginTop: 12}}>
+                                <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
+                                    {mem.name} 
+                                </div>
+                                <div style={{ marginRight: 30}}>
+                                    <InputWithHead 
+                                        placeholder={AppConstants.code} 
+                                        onChange={(e) => this.setReviewInfo(e.target.value, "selectedCode", index,"selectedOptions", memIndex)}
+                                        value={mem.selectedCode}/>
+                                </div>
+                                <div className="" style={{alignSelf:"center"}}>
+                                    {mem.discounts.find(x=>x.isSelected == 1) ?
+                                    <Button className="open-reg-button"
+                                        onClick={(e) =>  this.setReviewInfo(e, "removeCode", index,"selectedOptions", memIndex)}
+                                        type="primary">
+                                        {AppConstants.removeCode}
+                                    </Button> : 
+                                    <Button className="open-reg-button"
                                     onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions", memIndex)}
                                     type="primary">
                                     {AppConstants.applyCode}
-                                </Button>
-                            </div>    
-                        </div>                   
-                    </div>}
-                </div>
-                ))}
+                                </Button>}
+                                </div>   
+                                {mem.invalidCode == 1 && 
+                                <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                                    Invalid code
+                                </div>
+                                }
+                            </div>                   
+                        </div>}
+                    </div>
+                    ))}
+                </div> }
                 {item.governmentVouchers.length > 0 && 
                 <div>
                     <div style={{marginLeft: 7,marginTop: 10}}>
@@ -352,46 +364,6 @@ class RegistrationReviewForm extends Component {
                     </div> }
                 </div>
                 }
-            </div>
-        )
-    }
-
-    teamView = (getFieldDecorator, item, index) => {
-        let registrationState = this.props.endUserRegistrationState;
-        return (
-            <div className = "individual-reg-view">
-                <div className = "individual-header-view">
-                    <div>
-                        {AppConstants.individualRegistration}
-                        {AppConstants.hyphen}
-                        {AppConstants.participantName} 2
-                        {AppConstants.hyphen}
-                        {AppConstants.competitionName} 2    
-                    </div>
-                    <div>
-                        $120
-                    </div>
-                </div>
-                <div className='membership-text' style={{marginBottom:20}}>
-                    <div>
-                        {AppConstants.membershipProduct} 1
-                    </div>
-                    <div>
-                        $120
-                    </div>
-                </div>  
-
-                <Radio.Group className="reg-competition-radio" style={{marginBottom:12}}>
-                    <Radio value={"1"}>{AppConstants.payAsYou}</Radio>
-                </Radio.Group> 
-                <Radio.Group className="reg-competition-radio">
-                    <Radio value={"1"}>{AppConstants.gameVoucher}</Radio>
-                    <Radio.Group className="reg-competition-radio" style={{marginLeft:30}}>
-                        <Radio value={"2"}>3</Radio>  
-                        <Radio value={"3"}>5</Radio>
-                        <Radio value={"4"}>10</Radio>
-                    </Radio.Group>  
-                </Radio.Group>          
             </div>
         )
     }

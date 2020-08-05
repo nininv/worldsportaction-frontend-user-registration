@@ -648,6 +648,27 @@ class AppRegistrationForm extends Component {
            }, 1000)
            
        }
+
+       if(registrationState.populateExistingInfo === 1){
+            this.props.updateEndUserRegisrationAction(0, "populateExistingInfo");
+            setTimeout(() =>{
+                let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
+                let userRegistrations = registrationDetail.userRegistrations;
+                (userRegistrations || []).map((item, index) => {
+                    if(item.registeringYourself == 4){
+                        this.setTeamRegisteringUserFormFields(item.team, index, item)
+                        this.setMainFormFields(item, index)
+                        this.setPlayerField(item.team.players,index);
+                    }else{
+                        this.setFormFields(item, index);
+                        if(this.state.registrationUniqueKey!= null){
+                            this.setProductFormFields(index);
+                          
+                        }
+                    }
+                });
+            }, 1000)
+       }
       
 
        if(registrationState.populateVolunteerInfo === 1){
@@ -736,8 +757,20 @@ class AppRegistrationForm extends Component {
             [`tSuburb${index}`]:  userInfo!= null ? userInfo.suburb : "",
             [`tStateRefId${index}`]:  userInfo!= null ? userInfo.stateRefId : null,
             [`tPostalCode${index}`]:  userInfo!= null ? userInfo.postalCode : "",
-            [`dateOfBirth${index}`]:  userInfo!= null ? ((userInfo.dateOfBirth!= null && userInfo.dateOfBirth!= '') ? 
+            [`tDateOfBirth${index}`]:  userInfo!= null ? ((userInfo.dateOfBirth!= null && userInfo.dateOfBirth!= '') ? 
             moment(userInfo.dateOfBirth, "YYYY-MM-DD") : null) : null,
+
+            [`teamName${index}`]: userInfo!= null ? userInfo.teamName : "",
+            [`teamPersonRole${index}`]:  userInfo!= null ? userInfo.personRoleRefId : "",
+        });
+    }
+
+    setMainFormFields = (item, index) =>{
+        this.props.form.setFieldsValue({
+            [`organisationUniqueKey${index}`]: item!= null ? item.organisationUniqueKey : null,
+            [`competitionUniqueKey${index}`]: item!= null ? item.competitionUniqueKey : null,
+            [`competitionMembershipProductTypeId${index}`]: item!= null ? item.competitionMembershipProductTypeId : null,
+            [`competitionMembershipProductDivisionId${index}`]: item!= null ? item.competitionMembershipProductDivisionId : null,
         });
     }
 
@@ -749,17 +782,22 @@ class AppRegistrationForm extends Component {
        
         (userRegistrations || []).map((item, index) => {
             if(item.registeringYourself == 4){
-                (item.team.players || []).map((it, pIndex) => {
-                    this.props.form.setFieldsValue({
-                        [`tCompetitionMembershipProductTypeId${index}${pIndex}`]:  it.competitionMembershipProductTypeId,
-                        [`playerFirstName${index}${pIndex}`]:  it.firstName,
-                        [`playerLastName${index}${pIndex}`]: it.lastName,
-                        [`playerEmail${index}${pIndex}`]: it.email,
-                        [`playerMobileNumber${index}${pIndex}`]: it.mobileNumber,
-                        [`playerDateOfBirth${index}${pIndex}`]: it.dateOfBirth
-                    });
-                })
+                this.setPlayerField(item.team.players, index);
             }
+        })
+    }
+
+    setPlayerField = (players, index) =>{
+        (players || []).map((it, pIndex) => {
+           // it.index = index;
+            this.props.form.setFieldsValue({
+                [`tCompetitionMembershipProductTypeId${index}${pIndex}`]:  it.competitionMembershipProductTypeId,
+                [`playerFirstName${index}${pIndex}`]:  it.firstName,
+                [`playerLastName${index}${pIndex}`]: it.lastName,
+                [`playerEmail${index}${pIndex}`]: it.email,
+                [`playerMobileNumber${index}${pIndex}`]: it.mobileNumber,
+                [`playerDateOfBirth${index}${pIndex}`]: it.dateOfBirth
+            });
         })
     }
 
@@ -1011,6 +1049,7 @@ class AppRegistrationForm extends Component {
         participantObj["team"]["profileUrl"] =  userInfo!= null ? userInfo.photoUrl : "";
         participantObj["team"]["genderRefId"] =  userInfo!= null ? userInfo.genderRefId : 0;
         participantObj["team"]["userId"] =  userInfo!= null ? userInfo.id: 0;
+        participantObj["team"]["dateOfBirth"] =  userInfo!= null ? new Date(userInfo.dateOfBirth) : null;
 
         this.prePopulateAdditionalInfo(participantObj, userInfo);
     }
@@ -2548,8 +2587,8 @@ class AppRegistrationForm extends Component {
                                     }
                                 });
                                 if(item.team!= null && item.team.players!= null && item.team.players.length > 0){
-                                    let players = item.team.players.filter(x=> (x.isDisabled == false || x.isDisabled == null));
-                                    item.team.players = (players!= null && players!= undefined) ? players : [];
+                                    // let players = item.team.players.filter(x=> (x.isDisabled == false || x.isDisabled == null));
+                                    // item.team.players = (players!= null && players!= undefined) ? players : [];
                                 }
                             }
                             else{

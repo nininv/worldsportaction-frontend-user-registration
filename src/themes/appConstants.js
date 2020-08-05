@@ -916,7 +916,7 @@ const AppConstants = {
 
   // RegistrationReviewForm 
 
-  individualRegistration:"IndividualRegistration",
+  individualRegistration:"Individual Registration",
   participantName:"Participant Name",
   competitionName:"Competition Name",
   hyphen:" - ",
@@ -943,8 +943,9 @@ const AppConstants = {
   debitCard:"Debit Card",
   previous:"Previous",
   applyCode: "Apply Code",
-
+  removeCode: "Remove Code",
   expiryDate:"Expiry Date",
+  teamRegistration: "Team Registration"
 };
 
 export default AppConstants;
