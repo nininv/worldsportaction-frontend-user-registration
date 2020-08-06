@@ -89,3 +89,22 @@ export function* getProductDetailsByIdSaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+/////////////////////add to cart post api
+export function* addToCartSaga(action) {
+    try {
+        const result = yield call(AxiosApi.addToCart, action.payload);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_SHOP_POST_ADD_TO_CART_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+            message.success(AppConstants.addedToCart);
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}

@@ -147,6 +147,10 @@ export default function* root_saga() {
   ////////////get reference type in the add product screen
   yield takeEvery(ApiConstants.API_GET_TYPES_LIST_IN_ADD_PROUCT_LOAD, shopProductSaga.getTypesOfProductSaga)
 
-   ///////////////////product details on id API
-   yield takeEvery(ApiConstants.API_SHOP_GET_PRODUCT_DETAILS_BY_ID_LOAD, shopProductSaga.getProductDetailsByIdSaga)
+  ///////////////////product details on id API
+  yield takeEvery(ApiConstants.API_SHOP_GET_PRODUCT_DETAILS_BY_ID_LOAD, shopProductSaga.getProductDetailsByIdSaga)
+
+  ////////////////////add to cart post api
+  yield takeEvery(ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD, shopProductSaga.addToCartSaga)
+   
 }

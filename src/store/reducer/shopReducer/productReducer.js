@@ -116,7 +116,17 @@ function shopProductState(state = initialState, action) {
                 ...state, error: null
             };
 
+        /////////////add to cart post api
+        case ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD:
+            return { ...state, onLoad: true, error: null };
 
+        case ApiConstants.API_SHOP_POST_ADD_TO_CART_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                error: null
+            };
 
         default:
             return state;

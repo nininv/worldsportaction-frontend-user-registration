@@ -4,13 +4,24 @@ export default class CounterInput extends React.Component {
 
 	constructor(props) {
 		super(props);
-		
 		this.state = {
 			value: (this.props.value < this.props.min) ? this.props.min : (this.props.value || 0),
 			min: this.props.min || 0,
-			max: this.props.max || -1
+			max: this.props.max || -1,
+			counterState: true,
 		}
 
+	}
+
+	componentDidUpdate() {
+		if (this.props.visible === true && this.state.counterState === true) {
+			let value = this.props.value
+			this.setState({ counterState: false, value })
+		}
+		if (this.props.visible === false && this.state.counterState === false) {
+			let value = this.props.value
+			this.setState({ counterState: true, value })
+		}
 	}
 
 	set = (value) => {
@@ -24,15 +35,15 @@ export default class CounterInput extends React.Component {
 		let new_value = e.target.value;
 
 		// check for empty string or invalid values
-		if( new_value === '' ) {
+		if (new_value === '') {
 			this.set(this.state.min) // fallback to min value
-		} else if ( (new_value > this.state.max && this.state.max !== -1) || new_value < this.state.min) {
-			return ; // don't update the value
+		} else if ((new_value > this.state.max && this.state.max !== -1) || new_value < this.state.min) {
+			return; // don't update the value
 		} else if (typeof new_value != 'number') {
 			var parsed = parseInt(new_value, 10); // try to parse the number
 
 			// if parsed is not a number
-			if(isNaN(parsed)) {
+			if (isNaN(parsed)) {
 				this.set(this.state.min) // fallback to min value
 			} else {
 				// if parsed succesfully update the value
@@ -42,7 +53,7 @@ export default class CounterInput extends React.Component {
 	}
 
 	_increase = (value) => {
-		if( value === '' ) {
+		if (value === '') {
 			this.set(this.state.min) // fallback to min value
 		} else {
 			let parsed = parseInt(value, 10);
@@ -51,7 +62,7 @@ export default class CounterInput extends React.Component {
 			if (isNaN(parsed)) {
 				this.set(this.state.min) // fallback to min value
 			} else {
-				if(value < this.state.max || this.state.max == -1) {
+				if (value < this.state.max || this.state.max == -1) {
 					this.set(parsed + 1) // increment value
 				}
 			}
@@ -59,7 +70,7 @@ export default class CounterInput extends React.Component {
 	}
 
 	_decrease = (value) => {
-		if( value === '' ) {
+		if (value === '') {
 			this.set(this.state.min) // fallback to min value
 		} else {
 			let parsed = parseInt(value, 10);
@@ -68,24 +79,22 @@ export default class CounterInput extends React.Component {
 			if (isNaN(parsed)) {
 				this.set(this.state.min) // fallback to min value
 			} else {
-				if(value > this.state.min) {
+				if (value > this.state.min) {
 					this.set(parsed - 1) // increment value
 				}
 			}
 		}
 	}
 
-	render () {
-
+	render() {
 		const { value } = this.state;
-
 		return (
 			<div className="input-group counter-input">
-				<span className="input-group-addon" onClick={() => {this._decrease(value)}}>
-					<i className="fa fa-minus"/>
+				<span className="input-group-addon" onClick={() => { this._decrease(value) }}>
+					<i className="fa fa-minus" />
 				</span>
 				<input className="form-control" type="text" onChange={this._onChange} value={value} />
-				<span className="input-group-addon" onClick={() => {this._increase(value)}}>
+				<span className="input-group-addon" onClick={() => { this._increase(value) }}>
 					<i className="fa fa-plus" />
 				</span>
 			</div>

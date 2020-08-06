@@ -918,6 +918,7 @@ const AppConstants = {
   size: "Size",
   quantity: "Quantity",
   expiryDate:"Expiry Date",
+  addedToCart:"Product added to cart",
 };
 
 export default AppConstants;
