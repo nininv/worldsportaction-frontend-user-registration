@@ -919,6 +919,39 @@ const AppConstants = {
   quantity: "Quantity",
   expiryDate:"Expiry Date",
   addedToCart:"Product added to cart",
+
+  // RegistrationReviewForm 
+
+  individualRegistration:"Individual Registration",
+  participantName:"Participant Name",
+  competitionName:"Competition Name",
+  hyphen:" - ",
+  less:"LESS",
+  governmentSportVouchers:"Government Sports Vouchers - ",
+  hardshipPlayer:"Hardship Player Discount",
+  payAsYou:"Pay as You Go",
+  gameVoucher:"Game Voucher",
+  payfullAmount:"Pay Full Amount",
+  weeklyInstalment:"Weekly Instalment",
+  instalmentDates:"Instalment dates",
+  schoolRegistration:"School Registration",
+  governmentSportsVoucher:"Government Sports Voucher",
+  support:"Support",
+  confidentGirlsFoundation:"Confident Girls Foundation",
+  // review products 
+  reviewProducts:"Review Products",
+  subTotal:"Sub-total",
+  shipping:"Shipping",
+  charityRoundUp:"Charity Round-Up",
+  totalPaymentDue:"Total Payment Due",
+  securePaymentOptions:"Secure Payment Options",
+  credit:"Credit",
+  debitCard:"Debit Card",
+  previous:"Previous",
+  applyCode: "Apply Code",
+  removeCode: "Remove Code",
+  expiryDate:"Expiry Date",
+  teamRegistration: "Team Registration"
 };
 
 export default AppConstants;

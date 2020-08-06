@@ -41,6 +41,7 @@ const AppImages = {
   netballLogoMain: require("../images/netball.png"),
   printImage: require("../images/print.png"),
   shoppingCart:require("../images/shopping-cart.png"),
+  removeIcon: require("../images/remove-icon.jpg"),
 };
 
 export default AppImages;

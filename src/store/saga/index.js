@@ -153,4 +153,19 @@ export default function* root_saga() {
   ////////////////////add to cart post api
   yield takeEvery(ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD, shopProductSaga.addToCartSaga)
    
+   //Get Registration Review
+   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
+
+   //Save Registration Revie
+   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
+  
+   //Get Registration Review Products
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getRegistrationReviewProductsSaga)
+
+  //Save Registration Review Products
+  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.saveRegistrationReviewProductsSaga)
+   
+  //Get Registration By Id
+   yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
+
 }

@@ -145,6 +145,77 @@ function getRegistrationProductFeesAction(payload){
     return action;
 }
 
+function getRegistrationReviewAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function saveRegistrationReview(payload){
+    const action = {
+        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function updateReviewInfoAction(value, key, index, subkey, subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_REVIEW_INFO,
+        value: value,
+        key: key,
+        index: index,
+        subkey: subkey,
+        subIndex: subIndex
+    }
+
+    return action;
+}
+
+function getRegistrationReviewProductAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function saveRegistrationReviewProduct(payload){
+    const action = {
+        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+
+function updateReviewProductAction(value, key, index, subIndex, subkey){
+    const action = {
+        type: ApiConstants.UPDATE_REVIEW_PRODUCT,
+        value: value,
+        key: key,
+        index: index,
+        subIndex: subIndex,
+        subkey: subkey
+    }
+
+    return action;
+}
+
+function getRegistrationByIdAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -160,5 +231,12 @@ export {
     updateTeamRegSettingAction,
     updateTeamRegistrationInvite,
     getTermsAndConditionsAction,
-    getRegistrationProductFeesAction
+    getRegistrationProductFeesAction,
+    getRegistrationReviewAction,
+    saveRegistrationReview,
+    updateReviewInfoAction,
+    getRegistrationReviewProductAction,
+    saveRegistrationReviewProduct,
+    updateReviewProductAction,
+    getRegistrationByIdAction
 }
