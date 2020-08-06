@@ -531,7 +531,7 @@ class ReviewProducts extends Component {
                 </div>  
                 {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div>
-                    <div className='product-text'>
+                    <div className='product-text' style={{fontFamily: "inter-medium"}}>
                         <div style={{marginRight:"auto"}}>
                             {mem.name} 
                         </div>
@@ -567,7 +567,7 @@ class ReviewProducts extends Component {
                     ))}  
                     <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
                     <div className='edit-header-main'>
-                        <div className="text-editsection">
+                        <div className="text-editsection" style={{fontSize:15}}>
                             {paymentOptionTxt + (paymentOptionRefId == 2 ? " x " + item.selectedOptions.gameVoucherValue : "") }
                         </div>
                         { paymentOptionRefId == 4 &&  item.instalmentDates.length > 0 &&                   
