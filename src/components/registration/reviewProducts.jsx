@@ -539,7 +539,7 @@ class ReviewProducts extends Component {
                             <div style={{fontFamily:"inter-medium",marginRight:20}}>
                                 ${mem.feesToPay}
                             </div>
-                            <div>
+                            {/* <div>
                                 <img
                                     className="pointer"
                                     src={AppImages.removeIcon}
@@ -548,7 +548,7 @@ class ReviewProducts extends Component {
                                     name={'image'}     
                                     onClick={(e) => this.deleteMemProd(index,memIndex)}                         
                                 />
-                            </div> 
+                            </div>  */}
                         </div>  
                     </div>  
                     {(mem.discounts.filter(x=>x.isSelected == 1) || []).map((dis, disIndex) => ( 
