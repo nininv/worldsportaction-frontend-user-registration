@@ -1094,8 +1094,8 @@ class AppRegistrationForm extends Component {
         let userRegistration = userRegistrations[index]; 
 
         this.props.form.setFieldsValue({
-            [`whoAreYouRegistering${index}`]: userInfo!= null ? userInfo.whoAreYouRegistering : null,
-            [`whatTypeOfRegistration${index}`]: userInfo!= null ? userInfo.whatTypeOfRegistration : null,
+            [`whoAreYouRegistering${index}`]:  userRegistration.whoAreYouRegistering,
+            [`whatTypeOfRegistration${index}`]: userRegistration.whatTypeOfRegistration,
             [`organisationUniqueKey${index}`]: userInfo!= null ? userInfo.organisationUniqueKey : null,
             [`competitionUniqueKey${index}`]: userInfo!= null ? userInfo.competitionUniqueKey : null,
             [`competitionMembershipProductTypeId${index}`]: userInfo!= null ? userInfo.competitionMembershipProductTypeId : null,

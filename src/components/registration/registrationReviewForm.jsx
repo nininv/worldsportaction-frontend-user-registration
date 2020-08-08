@@ -293,11 +293,13 @@ class RegistrationReviewForm extends Component {
                 </Radio.Group>
                 {item.selectedOptions.paymentOptionRefId != 5 &&
                 <div>
-                    <div style={{marginLeft:8}}>
-                        <InputWithHead heading={AppConstants.discounts}/>
-                    </div>
                     {(item.membershipProducts || []).map((mem, memIndex) =>(
                     <div>
+                        {(mem.discounts.length > 0 && memIndex == 0) &&
+                         <div style={{marginLeft:8}}>
+                            <InputWithHead heading={AppConstants.discounts}/>
+                        </div>
+                        }
                         { mem.discounts.length > 0 && 
                         <div className="inputfield-style">                    
                             <div className="row" style={{marginLeft:0 , marginTop: 12}}>
