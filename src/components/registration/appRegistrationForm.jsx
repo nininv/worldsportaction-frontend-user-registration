@@ -645,7 +645,7 @@ class AppRegistrationForm extends Component {
                        this.setProductFormFields(index);
                    }
                });
-           }, 1000)
+           }, 500)
            
        }
 
@@ -667,7 +667,7 @@ class AppRegistrationForm extends Component {
                         }
                     }
                 });
-            }, 1000)
+            }, 700)
        }
       
 
