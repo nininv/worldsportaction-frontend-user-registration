@@ -1,13 +1,12 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
+import { isArrayNotEmpty, isNullOrEmptyString, formatValue, isNullOrUndefined, feeIsNull } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
+import { get } from "jquery";
 
 let registrationObj = {
-    organisationUniqueKey: "",
+    registrationUniqueKey: "",
     registrationId: 0,
-    orgRegistrationId: 0,
     volunteers: [],
-    competitionUniqueKey: "",
     childrenCheckNumber: "",
     userRegistrations: [],
     vouchers: [],
@@ -24,8 +23,10 @@ let commonRegSetting = {
 
 const initialState = {
     onLoad: false,
+    onRegLoad: false,
     onMembershipLoad: false,
     userInfoOnLoad: false,
+    onDiscountCodeValidLoad: false,
     onInvLoad:false,
     onPFLoad: false,
     error: null,
@@ -34,6 +35,8 @@ const initialState = {
     registrationDetail: registrationObj,
     registrationSettings: [],
     populateParticipantDetails: 0,
+    populateVolunteerInfo: 0,
+    populateExistingInfo: 0,
     membershipProductInfo: [],
     refFlag: "",
     user: null,
@@ -49,7 +52,10 @@ const initialState = {
     registrationSetting: {},
     termsAndConditions: [],
     termsAndConditionsFinal: [],
-    isYourInfoSet: false
+    isYourInfoSet: false,
+    registrationReviewList: null,
+    regReviewPrdData: null,
+
 }
 
 
@@ -82,33 +88,47 @@ function endUserRegistrationReducer(state = initialState, action) {
             };
 
         case ApiConstants.UPDATE_END_USER_REGISTRATION:
+            try{
+                let oldData = state.registrationDetail;
+                let updatedValue = action.updatedData;
+                let getKey = action.key;
+                let getSubkey = action.subKey;
+                if(getKey === "refFlag"){
+                    state[getKey] = updatedValue;
+                }
+                if(getKey === "populateVolunteerInfo"){
+                    state[getKey] = updatedValue;
+                }
+                if(getKey === "populateExistingInfo"){
+                    state[getKey] = updatedValue;
+                }
 
-            let oldData = state.registrationDetail;
-            let updatedValue = action.updatedData;
-            let getKey = action.key;
-            let getSubkey = action.subKey;
-  
-            if (getKey == "userInfo" || getKey == "refFlag" || getKey == "user"
-                || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
-                getKey == "participantIndex" || getKey == "populateYourInfo" ||
-                getKey == "populateTeamRegisteringPerson") {
-                state[getKey] = updatedValue;
+                if (getKey == "userInfo" || getKey == "user"
+                    || getKey == "populateParticipantDetails" || getKey == "setCompOrgKey" ||
+                    getKey == "participantIndex" || getKey == "populateYourInfo" ||
+                    getKey == "populateTeamRegisteringPerson") {
+                    state[getKey] = updatedValue;
+                   
+                }
+                else {
+                    oldData[getKey] = updatedValue;
+                }
+    
+                if(getKey == "yourInfo"){
+                    state.isYourInfoSet = true;
+                    state["populateYourInfo"] = 1;
+                }
+    
+                if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
+                    getSubkey == "removeParticipant"){
+                    state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+                        state.registrationDetail.userRegistrations, state);
+                }
             }
-            else {
-                oldData[getKey] = updatedValue;
+            catch(error)
+            {
+                console.log("Error:" + error);
             }
-
-            if(getKey == "yourInfo"){
-                state.isYourInfoSet = true;
-                state["populateYourInfo"] = 1;
-            }
-
-            if(getSubkey == "organisationUniqueKey" || getSubkey == "removeProduct" ||
-                getSubkey == "removeParticipant"){
-                state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
-                    state.registrationDetail.userRegistrations, state);
-            }
-
             return { ...state, error: null };
 
         case ApiConstants.UPDATE_REGISTRATION_SETTINGS:
@@ -158,7 +178,7 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-            //console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
@@ -169,9 +189,9 @@ function endUserRegistrationReducer(state = initialState, action) {
                 let index = state.participantIndex;
                 let existingParticipant = state.registrationDetail.userRegistrations[index];
                 let settings = state.regSettings.find(x=>x.index == index);
-            //    console.log("&&&&&&&" + JSON.stringify(settings));
+                console.log("&&&&&&&" + JSON.stringify(settings));
             //    console.log("registrationSettings######"+JSON.stringify(registrationSettings));
-                if(settings!= null){
+                if(settings!= undefined){
                     let ind = index;
                     let flag = -1;
                     if(state.prodIndex != undefined && state.prodIndex != null){
@@ -300,7 +320,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                                 participant.competitionMembershipProductDivisionId = null;
                                 participant["divisions"] = divisions;
                             }
-
+                            participant["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 : memProd.isChildrenCheckNumber;
                             participant["team"]["registeringAsAPlayer"] = 2;
                             participant["team"]["allowTeamRegistrationTypeRefId"] = memProd.allowTeamRegistrationTypeRefId;
                             participant["team"]["registrationTypeId"] = 1;
@@ -434,7 +454,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let registrationObj1 = {
                 organisationUniqueKey: "",
                 registrationId: 0,
-                orgRegistrationId: 0,
+                registrationUniqueKey: "",
                 volunteers: [],
                 competitionUniqueKey: "",
                 childrenCheckNumber: "",
@@ -581,9 +601,344 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS:
+           let regReviewData = action.result;
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status,
+                registrationReviewList: regReviewData
+            };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status
+            };
+    
+        case ApiConstants.UPDATE_REVIEW_INFO:
+            let reviewData = state.registrationReviewList;
+            if(action.subkey == "charity"){
+                reviewData[action.key] = action.value;
+            }
+            else if(action.subkey == "selectedOptions"){
+                let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
+                let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
+              
+                if(action.key == "removeCode"){
+                   
+                    let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
+                    memProd["invalidCode"] = 0;
+                    if(action.key == "removeCode"){
+                        let disIndex = memProd.selectedDiscounts.findIndex(x=>x.discountCode === memProd.selectedCode);
+                        memProd.selectedDiscounts.splice(disIndex,1);
+                        memProd["selectedCode"] = null;
+                        memProd.isDiscountApplied = 0;
+                        memProd.discountsToDeduct = 0;
+                        memProd.fees.competitionOrganisorFee.discountsToDeduct = 0;
+                        if(isNullOrUndefined(memProd.fees.affiliateFee)){
+                            memProd.fees.affiliateFee.discountsToDeduct = 0;
+                        }
+                        memProd.fees.membershipFee.discountsToDeduct = 0;
+                       
+                    
+                    }
+                }
+                else{
+                    //console.log("******", action.index, action.subkey, action.key, action.value);
+                    if(action.key == "paymentOptionRefId"){
+                        if(action.value != 2){
+                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = null;
+                        }
+                        else{
+                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = "3";
+                        }
+
+                        let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
+                        memProds.map((x, mIndex) =>{
+                            calculateFee(action.value, x, gameVoucherVal);
+                            calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal);
+
+                            x.feesToPay = formatValue(x.feesToPay);
+                            x.discountsToDeduct = formatValue(x.discountsToDeduct)
+                        })
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                    }
+                    else if(action.key == "gameVoucherValue"){
+                        reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
+
+                        memProds.map((x, mIndex) =>{
+                            calculateFee(2, x, action.value);
+                            calculateDiscount(x.selectedDiscounts, x, 2,  action.value);
+                            x.feesToPay = formatValue(x.feesToPay);
+                            x.discountsToDeduct = formatValue(x.discountsToDeduct)
+                        })
+                        
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                    }
+                    else if(action.key == "selectedCode"){
+                        reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex]["invalidCode"] = 0;
+                        reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex][action.key] = action.value;
+                    }
+                    else{
+                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                    }
+                }
+            }
+
+            console.log("ReviewData", reviewData);
+            
+            return {
+                ...state,
+                error: null
+            }
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD:
+            return { ...state, onRegReviewPrdLoad: true };
+
+        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+            let regReviewPrdData = action.result;
+            return {
+                ...state,
+                onRegReviewPrdLoad: false,
+                status: action.status,
+                regReviewPrdData: regReviewPrdData
+            };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD:
+            return { ...state, onRegReviewPrdLoad: true };
+
+        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+            return {
+                ...state,
+                onRegReviewPrdLoad: false,
+                status: action.status
+            };
+        
+        case ApiConstants.UPDATE_REVIEW_PRODUCT:
+            let reviewPrdData = state.regReviewPrdData;
+            if(action.key == "removeProduct"){
+                console.log("*******" + action.index + "***" + action.subkey + "****" + action.subIndex);
+                let partData = reviewPrdData["compParticipants"][action.index];
+                let paymentOptionRefId = partData.selectedOptions.paymentOptionRefId;
+                let memData = reviewPrdData["compParticipants"][action.index][action.subkey][action.subIndex];
+                let fee = 0;
+                let gst = 0;
+                let discount = 0;
+
+                if(paymentOptionRefId <= 2){
+                    fee = memData.casualFee;
+                    gst = memData.casualGST;
+                }
+                else{
+                    fee = memData.seasonalFee;
+                    gst = memData.seasonalGST;
+                }
+
+                memData.discounts.map((x) =>{
+                    if(x.isSelected == 1){
+                        discount += x.discountsToDeduct;
+                    }
+                });
+
+                reviewPrdData.total.subTotal = (Number(reviewPrdData.total.subTotal) - fee) + discount;
+                reviewPrdData.total.gst = Number(reviewPrdData.total.gst) - gst;
+                let tempTargetVal = formatValue(reviewPrdData.total.subTotal) + formatValue(reviewPrdData.total.gst);
+                if(reviewPrdData.charityRoundUpRefId > 0){
+                    let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
+                    reviewPrdData.total.targetValue = charityData.targetValue;
+                    reviewPrdData.total.charityValue = charityData.charityValue;
+                }
+                else{
+                    reviewPrdData.total.targetValue = tempTargetVal;
+                    reviewPrdData.total.charityValue = 0;
+                }
+               
+
+                reviewPrdData.deletedProducts.push(memData.orgRegParticipantId);
+                reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);
+
+                console.log("reviewPrdData", reviewPrdData);
+            }
+
+        case ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD:
+            return { ...state, onRegLoad: true };
+    
+        case ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS:
+            let registrationData = action.result;
+            
+            (action.result.userRegistrations || []).map((item, index) =>{
+
+                let orgInfo =  state.membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                    item.organisationUniqueKey);
+                item["organisationInfo"] = deepCopyFunction(orgInfo);
+                let competitionInfo = item.organisationInfo.competitions.
+                                find(x=>x.competitionUniqueKey == item.competitionUniqueKey);
+                if(competitionInfo!= undefined){
+                    item["competitionInfo"] = deepCopyFunction(competitionInfo);
+                    setSettings(index,null,item.regSetting, state.regSettings, action.result, 
+                        state.commonRegSetting);
+                   
+                }
+                else{
+                    item["organisationInfo"] = null;
+                    item.organisationUniqueKey = null;
+                    item.competitionUniqueKey = null;
+                    item.competitionMembershipProductTypeId = null;
+                    item.competitionMembershipProductDivisionId = null;
+                    item.products = [];
+                    item.specialNote = null;
+                    item.training = null;
+                    item.registrationOpenDate = null;
+                    item.registrationCloseDate = null;
+                    item.contactDetails = null;
+                    item.divisionName = null;
+                    item["hasDivisionError"] = false;
+                    item.venue = [];
+                    item["fees"] = null;
+                }
+                
+                (item.products || []).map((prod, prodIndex) =>{
+                    let orgInfo =  state.membershipProductInfo.find(x=>x.organisationUniqueKey == 
+                        prod.organisationUniqueKey);
+                        prod["organisationInfo"] = deepCopyFunction(orgInfo);
+                    let competitionInfo = prod.organisationInfo.competitions.
+                                    find(x=>x.competitionUniqueKey == prod.competitionUniqueKey);
+                    if(competitionInfo != undefined){
+                        prod["competitionInfo"] = deepCopyFunction(competitionInfo);
+                        setSettings(index,prodIndex,item.regSetting, state.regSettings, action.result, 
+                            state.commonRegSetting);
+                    }
+                    else{
+                        prod["organisationInfo"] = null
+                        prod["competitionInfo"] = null;
+                        prod["organisationUniqueKey"] = null;
+                        prod["competitionUniqueKey"] = null;
+                        prod["competitionMembershipProductTypeId"] = null;
+                        prod["competitionMembershipProductDivisionId"] = null;
+                        prod["divisionName"] = null;
+                        prod["friends"] = [];
+                        prod["referFriends"] = [];
+                        prod["positionId1"] = null;
+                        prod["positionId1"] = null;
+                        prod["fees"] = null;
+                    }
+                })
+
+                if(item.registeringYourself == 4){
+                    (item.team.players).map((p, pIndex) =>{
+                        p.index = index;
+                    })
+                }
+            });
+
+            if(isArrayNotEmpty(action.result.termsAndConditions)){
+                updateTermsAndConditions(action.result.termsAndConditions, action.result.userRegistrations,state);
+            }
+
+
+            state.registrationDetail = action.result;
+            state.populateExistingInfo = 1;
+             state.populateVolunteerInfo = 1;
+            console.log("state.registrationDetail", state.registrationDetail, state.regSettings, state.commonRegSetting);
+            
+            return {
+                ...state,
+                onRegLoad: false,
+                status: action.status,
+                registrationDetail: registrationData
+            };
+        
+        return {
+            ...state,
+            error: null
+        }
+
+        case ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD:
+            return { ...state, onDiscountCodeValidLoad: true };
+
+        case ApiConstants.API_VALIDATE_DISCOUNT_CODE_SUCCESS:
+            let discountData = action.result;
+            try {
+                let reviewData = state.registrationReviewList;
+                let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
+                let paymentOptionRefId = reviewData["compParticipants"][action.index]["selectedOptions"]["paymentOptionRefId"];
+                let gameVoucherValue = reviewData["compParticipants"][action.index]["selectedOptions"]["gameVoucherValue"];
+                memProd.discountsToDeduct = 0;
+                memProd.fees.competitionOrganisorFee.discountsToDeduct = 0;
+                if(isNullOrUndefined(memProd.fees.affiliateFee)){
+                    memProd.fees.affiliateFee.discountsToDeduct = 0;
+                }
+                memProd.fees.membershipFee.discountsToDeduct = 0;
+                memProd.isDiscountApplied = 0;
+                memProd["invalidCode"] = 0;
+                memProd.selectedDiscounts = [];
+                memProd.selectedDiscounts.push(...discountData);
+                if(isArrayNotEmpty(discountData)){
+                    calculateDiscount(discountData, memProd, paymentOptionRefId,  gameVoucherValue);
+                }
+                else{
+                    memProd["invalidCode"] = 1;
+                }
+            } catch (error) {
+                console.log("API_VALIDATE_DISCOUNT_CODE_SUCCESS Error ", error);
+            }
+            
+
+            console.log("discountData",discountData, action.index, action.subIndex);
+            return {
+                ...state,
+                onDiscountCodeValidLoad: false,
+                status: action.status
+            };
+
         default:
             return state;
     }
+}
+
+ function getCharityValue(targetValue, charityRoundUpRefId){
+    console.log("targetValue ::" + targetValue + ":::" + charityRoundUpRefId );
+    try {
+        let chartityValue = 0;
+        let finalTargetValue = 0;
+        let val = Math.ceil(targetValue);
+        
+        let remainder = val % 10;
+        let quotient = ((val - remainder) / 10) * 10;
+        console.log("val::" + val + "remainder::" + remainder + "quotient::" + quotient);
+        if(charityRoundUpRefId == 1){
+            finalTargetValue =  quotient + remainder +  ((remainder % 2) == 0 ? 2 : 1);
+            console.log("finalTargetValue::" + finalTargetValue);
+        }
+        else if(charityRoundUpRefId == 2){
+            if(remainder < 5){
+                finalTargetValue = quotient + 5
+            }
+            else{
+                finalTargetValue = quotient + 10
+            }
+        }
+        else if(charityRoundUpRefId == 3){
+            finalTargetValue = quotient + 10;
+        }
+
+        chartityValue = finalTargetValue - targetValue;
+
+        return {
+            charityValue: formatValue(chartityValue),
+            targetValue: formatValue(finalTargetValue)
+        }
+    } catch (error) {
+        throw error;
+    } 
 }
 
 function addReadOnlyPlayer(participant, action){
@@ -769,4 +1124,220 @@ function updateTermsAndConditions(data, userRegistrations, state){
     return arr;
 }
 
+function setSettings(participantIndex, prodIndex, registrationSettings, regSettings, registrationDetail,
+    commonRegSetting)
+{
+    try{
+        let index = participantIndex;
+        let existingParticipant = registrationDetail.userRegistrations[index];
+        let settings = regSettings.find(x=>x.index == index);
+      //  console.log("&&&&&&&" + existingParticipant);
+    //    console.log("registrationSettings######"+JSON.stringify(registrationSettings));
+        if(settings!= undefined){
+            let ind = index;
+            let flag = -1;
+            if(prodIndex != undefined && prodIndex != null){
+                ind = prodIndex + 1;
+                flag = ind;
+                existingParticipant["products"][prodIndex]["regSetting"] = registrationSettings;
+            }
+            settings.settingArr[ind] = registrationSettings;
+           // console.log("&&&&&&1111&" + JSON.stringify(settings));
+            let setting = mergeRegistrationSettings1(settings.settingArr, commonRegSetting, flag);
+           // console.log("*******))))))))))" + JSON.stringify(setting));
+            existingParticipant["regSetting"] = setting;
+        }
+        else{
+           // console.log("**** else");
+            let regSetObj = {
+                index: index,
+                settingArr: []
+            }
+            regSetObj.settingArr.push(registrationSettings);
+            regSettings.push(regSetObj);
+            existingParticipant["regSetting"] = registrationSettings;
+            if(registrationSettings.club_volunteer == 1){
+                commonRegSetting.club_volunteer = 1
+            }
+            if(registrationSettings.shop == 1){
+                commonRegSetting.shop = 1
+            }
+            if(registrationSettings.voucher == 1){
+                commonRegSetting.voucher = 1
+            }
+        }
+    }
+    catch(error){
+        console.log("Error", error);
+    }
+}
+
+function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
+    console.log("getDiscountValue", discount, paymentOptionRefId, fee)
+    let discountsToDeduct = 0;
+    if(paymentOptionRefId == 5){
+        discountsToDeduct = 0
+    }
+    else if(discount.discountTypeId == 1){
+        discountsToDeduct = Number(discount.amount)
+    }
+    else{
+        if(paymentOptionRefId!= null){
+            if(paymentOptionRefId > 2){
+                discountsToDeduct = feeIsNull(fee.seasonalFee) * (feeIsNull(discount.amount)/100);
+            }
+            else{
+                if(paymentOptionRefId == 2){
+                    discountsToDeduct = (feeIsNull(fee.casualFee) * feeIsNull(gameVoucherValue)) * (feeIsNull(discount.amount)/100);
+                }
+                else{
+                    discountsToDeduct = feeIsNull(fee.casualFee) * (feeIsNull(discount.amount)/100);
+                }
+            }
+        }
+    }
+    console.log("discountsToDeduct", discountsToDeduct);
+    return discountsToDeduct;
+}
+
+function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
+    console.log("calculateFee::", paymentOptionRefId, memObj, gameVoucherValue)
+    try {
+        if(paymentOptionRefId!= null){
+            if(paymentOptionRefId <=2){
+                let aCasualFee = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                                feeIsNull(memObj.fees.affiliateFee.casualFee) + 
+                                feeIsNull(memObj.fees.affiliateFee.casualGST) : 0;
+                let cCasualFee =   feeIsNull(memObj.fees.competitionOrganisorFee.casualFee) + 
+                                feeIsNull(memObj.fees.competitionOrganisorFee.casualGST);
+                let mCasualFee =   feeIsNull(memObj.fees.membershipFee.casualFee) + 
+                                feeIsNull(memObj.fees.membershipFee.casualGST)
+                if(paymentOptionRefId == 1){
+                    memObj.feesToPay = aCasualFee + cCasualFee + mCasualFee;
+                    memObj.fees.membershipFee.feesToPay = mCasualFee;  
+                    memObj.fees.competitionOrganisorFee.feesToPay = cCasualFee; 
+                    if(isNullOrUndefined(memObj.fees.affiliateFee)){
+                        memObj.fees.affiliateFee.feesToPay = aCasualFee;  
+                    }
+                     
+                }
+                else if(paymentOptionRefId == 2){
+                    memObj.feesToPay = (aCasualFee + cCasualFee + mCasualFee) * 
+                            Number(gameVoucherValue);
+                    memObj.fees.membershipFee.feesToPay = mCasualFee *  Number(gameVoucherValue);  
+                    memObj.fees.competitionOrganisorFee.feesToPay = cCasualFee *  Number(gameVoucherValue);  
+                    if(isNullOrUndefined(memObj.fees.affiliateFee)){
+                        memObj.fees.affiliateFee.feesToPay = aCasualFee *  Number(gameVoucherValue); 
+                    }
+                }
+            }
+            else{
+                if(paymentOptionRefId == 5){
+                    memObj.feesToPay = 0;
+                    memObj.fees.membershipFee.feesToPay = 0;  
+                    memObj.fees.competitionOrganisorFee.feesToPay = 0; 
+                    if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                        memObj.fees.affiliateFee.feesToPay = 0;    
+                    }
+                }
+                else{
+                    let aSeasonalFee = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                                        feeIsNull(memObj.fees.affiliateFee.seasonalFee) + 
+                                        feeIsNull(memObj.fees.affiliateFee.seasonalGST) : 0;
+                    let cSeasonalFee =   feeIsNull(memObj.fees.competitionOrganisorFee.seasonalFee) + 
+                                    feeIsNull(memObj.fees.competitionOrganisorFee.seasonalGST);
+                    let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee) + 
+                                    feeIsNull(memObj.fees.membershipFee.seasonalGST);
+                    memObj.feesToPay = aSeasonalFee + cSeasonalFee + mSeasonalFee;
+                    memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
+                    memObj.fees.competitionOrganisorFee.feesToPay = cSeasonalFee; 
+                    if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                        memObj.fees.affiliateFee.feesToPay = aSeasonalFee;  
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.log("calculateFee Error", error);
+    }
+    
+
+    console.log("memObj::", memObj);
+
+}
+
+function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVoucherValue)
+{
+    console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  gameVoucherValue)
+    try {
+        memProd.discountsToDeduct = 0;
+        discountData.map((x) =>{
+            if(x.competitionTypeDiscountId!= null)
+            {
+                let discount = memProd.discounts.find(y=>y.competitionTypeDiscountId == 
+                    x.competitionTypeDiscountId);
+                    console.log("discount", discount);
+                if(isNullOrUndefined(discount)){
+                    if(memProd.fees.competitionOrganisorFee.organisationId == discount.organisationId)
+                    {
+                        let feeObj = memProd.fees.competitionOrganisorFee;
+                        let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                        memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) +  discountVal;
+                        memProd.fees.competitionOrganisorFee.discountsToDeduct = discountVal;
+                        if(paymentOptionRefId!= 5){
+                            memProd.isDiscountApplied = 1;
+                        }
+                        else{
+                            memProd.isDiscountApplied = 0;
+                            memProd.selectedDiscounts = [];
+                            memProd.selectedCode = null;
+                        }
+                  
+                       
+                    }
+                    else if(memProd.fees.affiliateFee!= null && 
+                            memProd.fees.affiliateFee.organisationId == discount.organisationId)
+                    {
+                        let feeObj = memProd.fees.affiliateFee;
+                        let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                        memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
+                        memProd.fees.affiliateFee.discountsToDeduct = discountVal;
+                        if(paymentOptionRefId!= 5){
+                            memProd.isDiscountApplied = 1;
+                        }
+                        else{
+                            memProd.isDiscountApplied = 0;
+                            memProd.selectedDiscounts = [];
+                            memProd.selectedCode = null;
+                        }
+                    }
+                }
+            }
+            else if(x.membershipProductTypeDiscountId != null){
+                let discount = memProd.discounts.find(y=>y.membershipProductTypeDiscountId == 
+                    x.membershipProductTypeDiscountId);
+                if(isNullOrUndefined(discount)){
+                    if(memProd.fees.membershipFee.organisationId == discount.organisationId)
+                    {
+                        let feeObj = memProd.fees.membershipFee;
+                        let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                        memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
+                        memProd.fees.membershipFee.discountsToDeduct = discountVal;
+                        if(paymentOptionRefId!= 5){
+                            memProd.isDiscountApplied = 1;
+                        }
+                        else{
+                            memProd.isDiscountApplied = 0;
+                            memProd.selectedDiscounts = [];
+                            memProd.selectedCode = null;
+                        }
+                    }
+                }
+            }
+        })
+    } catch (error) {
+        console.log("Error", error);
+    }
+    
+}
 export default endUserRegistrationReducer;

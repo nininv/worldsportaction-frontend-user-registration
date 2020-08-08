@@ -40,6 +40,7 @@ class RegistrationInvoice extends Component {
 
     componentDidMount() {
         let paymentSuccess = this.props.location.state ? this.props.location.state.paymentSuccess : false
+       // console.log("paymentSuccess" + paymentSuccess)
         this.setState({ invoiceDisabled: paymentSuccess })
         this.getInvoiceStatusAPI()
 
@@ -47,6 +48,7 @@ class RegistrationInvoice extends Component {
     }
 
     getInvoiceStatusAPI = () => {
+       // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
         this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
        // this.props.getInvoiceStatusAction(1269)
         this.setState({ checkStatusLoad: true });
@@ -65,7 +67,8 @@ class RegistrationInvoice extends Component {
         }
         if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
             this.setState({ checkStatusLoad: false });
-            let invoiceId = this.props.stripeState.invoiceId
+           // let invoiceId = this.props.stripeState.invoiceId
+            let invoiceId = 0
             this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
             //this.props.getInvoice(1269, invoiceId)
         }
