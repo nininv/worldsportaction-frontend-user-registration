@@ -5170,7 +5170,8 @@ class AppRegistrationForm extends Component {
                         <div>
                             {this.contentView(getFieldDecorator)}
                         </div>
-                         <Loader visible={this.props.endUserRegistrationState.onLoad} />
+                         <Loader visible={this.props.endUserRegistrationState.onLoad || 
+                                this.props.endUserRegistrationState.onRegLoad} />
                         </Content>
                         <Footer>{this.footerView()}</Footer>
                     </Form>
