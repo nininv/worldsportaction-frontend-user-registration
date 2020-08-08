@@ -202,7 +202,7 @@ class RegistrationReviewForm extends Component {
                 <div key = {memIndex}>
                     <div className='membership-text'>
                         <div>
-                            {mem.name} 
+                            {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
                         </div>
                         <div>
                            ${mem.feesToPay}
@@ -304,7 +304,7 @@ class RegistrationReviewForm extends Component {
                         <div className="inputfield-style">                    
                             <div className="row" style={{marginLeft:0 , marginTop: 12}}>
                                 <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
-                                    {mem.name} 
+                                {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
                                 </div>
                                 <div style={{ marginRight: 30}}>
                                     <InputWithHead 

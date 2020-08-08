@@ -883,6 +883,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 memProd.selectedDiscounts.push(...discountData);
                 if(isArrayNotEmpty(discountData)){
                     calculateDiscount(discountData, memProd, paymentOptionRefId,  gameVoucherValue);
+                    memProd.discountsToDeduct = formatValue(memProd.discountsToDeduct)
                 }
                 else{
                     memProd["invalidCode"] = 1;
@@ -1206,28 +1207,36 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
         if(paymentOptionRefId!= null){
             if(paymentOptionRefId <=2){
                 let aCasualFee = isNullOrUndefined(memObj.fees.affiliateFee) ? 
-                                feeIsNull(memObj.fees.affiliateFee.casualFee) + 
-                                feeIsNull(memObj.fees.affiliateFee.casualGST) : 0;
-                let cCasualFee =   feeIsNull(memObj.fees.competitionOrganisorFee.casualFee) + 
-                                feeIsNull(memObj.fees.competitionOrganisorFee.casualGST);
-                let mCasualFee =   feeIsNull(memObj.fees.membershipFee.casualFee) + 
-                                feeIsNull(memObj.fees.membershipFee.casualGST)
+                                         feeIsNull(memObj.fees.affiliateFee.casualFee)  : 0;
+                        let aCasualGST = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                                         feeIsNull(memObj.fees.affiliateFee.casualGST) : 0;
+                        let cCasualFee = feeIsNull(memObj.fees.competitionOrganisorFee.casualFee);
+                        let cCasualGST = feeIsNull(memObj.fees.competitionOrganisorFee.casualGST);
+                        let mCasualFee = feeIsNull(memObj.fees.membershipFee.casualFee);
+                        let mCasualGST = feeIsNull(memObj.fees.membershipFee.casualGST);
                 if(paymentOptionRefId == 1){
-                    memObj.feesToPay = aCasualFee + cCasualFee + mCasualFee;
+                    memObj.feesToPay = aCasualFee + cCasualFee + mCasualFee + aCasualGST
+                                                + cCasualGST + mCasualGST;
                     memObj.fees.membershipFee.feesToPay = mCasualFee;  
+                    memObj.fees.membershipFee.feesToPayGST = mCasualGST;  
                     memObj.fees.competitionOrganisorFee.feesToPay = cCasualFee; 
+                    memObj.fees.competitionOrganisorFee.feesToPayGST = cCasualGST; 
                     if(isNullOrUndefined(memObj.fees.affiliateFee)){
                         memObj.fees.affiliateFee.feesToPay = aCasualFee;  
+                        memObj.fees.affiliateFee.feesToPayGST = aCasualGST;  
                     }
                      
                 }
                 else if(paymentOptionRefId == 2){
-                    memObj.feesToPay = (aCasualFee + cCasualFee + mCasualFee) * 
-                            Number(gameVoucherValue);
-                    memObj.fees.membershipFee.feesToPay = mCasualFee *  Number(gameVoucherValue);  
-                    memObj.fees.competitionOrganisorFee.feesToPay = cCasualFee *  Number(gameVoucherValue);  
+                    memObj.feesToPay = (aCasualFee + cCasualFee + mCasualFee + aCasualGST+ cCasualGST + mCasualGST) * 
+                    feeIsNull(gameVoucherValue);
+                    memObj.fees.membershipFee.feesToPay = (mCasualFee) *  feeIsNull(gameVoucherValue);  
+                    memObj.fees.membershipFee.feesToPayGST = (mCasualGST) *  feeIsNull(gameVoucherValue);  
+                    memObj.fees.competitionOrganisorFee.feesToPay = (cCasualFee) *  feeIsNull(gameVoucherValue); 
+                    memObj.fees.competitionOrganisorFee.feesToPayGST = (cCasualGST) *  feeIsNull(gameVoucherValue);  
                     if(isNullOrUndefined(memObj.fees.affiliateFee)){
-                        memObj.fees.affiliateFee.feesToPay = aCasualFee *  Number(gameVoucherValue); 
+                        memObj.fees.affiliateFee.feesToPay = (aCasualFee) *  feeIsNull(gameVoucherValue); 
+                        memObj.fees.affiliateFee.feesToPayGST = (aCasualGST) *  feeIsNull(gameVoucherValue); 
                     }
                 }
             }
@@ -1235,24 +1244,33 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
                 if(paymentOptionRefId == 5){
                     memObj.feesToPay = 0;
                     memObj.fees.membershipFee.feesToPay = 0;  
+                    memObj.fees.membershipFee.feesToPayGST = 0;  
                     memObj.fees.competitionOrganisorFee.feesToPay = 0; 
+                    memObj.fees.competitionOrganisorFee.feesToPayGST = 0; 
                     if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
                         memObj.fees.affiliateFee.feesToPay = 0;    
+                        memObj.fees.affiliateFee.feesToPayGST = 0;    
                     }
                 }
                 else{
                     let aSeasonalFee = isNullOrUndefined(memObj.fees.affiliateFee) ? 
-                                        feeIsNull(memObj.fees.affiliateFee.seasonalFee) + 
+                                                feeIsNull(memObj.fees.affiliateFee.seasonalFee) : 0;
+                    let aSeasonalGST = isNullOrUndefined(memObj.fees.affiliateFee) ? 
                                         feeIsNull(memObj.fees.affiliateFee.seasonalGST) : 0;
-                    let cSeasonalFee =   feeIsNull(memObj.fees.competitionOrganisorFee.seasonalFee) + 
-                                    feeIsNull(memObj.fees.competitionOrganisorFee.seasonalGST);
-                    let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee) + 
-                                    feeIsNull(memObj.fees.membershipFee.seasonalGST);
-                    memObj.feesToPay = aSeasonalFee + cSeasonalFee + mSeasonalFee;
+                    let cSeasonalFee =   feeIsNull(memObj.fees.competitionOrganisorFee.seasonalFee);
+                    let cSeasonalGST =  feeIsNull(memObj.fees.competitionOrganisorFee.seasonalGST);
+                    let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee);
+                    let mSeasonalGST =   feeIsNull(memObj.fees.membershipFee.seasonalGST);
+
+                    memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
+                                        +  mSeasonalGST);
                     memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
+                    memObj.fees.membershipFee.feesToPayGST = mSeasonalGST;  
                     memObj.fees.competitionOrganisorFee.feesToPay = cSeasonalFee; 
+                    memObj.fees.competitionOrganisorFee.feesToPayGST = cSeasonalGST; 
                     if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
                         memObj.fees.affiliateFee.feesToPay = aSeasonalFee;  
+                        memObj.fees.affiliateFee.feesToPayGST = aSeasonalGST;
                     }
                 }
             }

@@ -533,7 +533,7 @@ class ReviewProducts extends Component {
                 <div>
                     <div className='product-text' style={{fontFamily: "inter-medium"}}>
                         <div style={{marginRight:"auto"}}>
-                            {mem.name} 
+                        {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
                         </div>
                         <div className='dolar-text'>
                             <div style={{fontFamily:"inter-medium",marginRight:20}}>
@@ -834,9 +834,9 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             paymentType: paymentType,
         }
     }
-    console.log(body)
+    console.log("payload" + JSON.stringify(payload));
     return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createpaymentsnew`, {
+        fetch(`${StripeKeys.apiURL}/api/payments/createpaymentsfinal`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
