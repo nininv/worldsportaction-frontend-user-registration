@@ -14,6 +14,14 @@ const isNullOrEmptyString = word => {
     }
 }
 
+const  isNullOrUndefined = (e) => {
+  return (e === null || e === undefined) ? false : e;
+}
+
+const feeIsNull = (fee) => {
+  return ((fee === null||fee===undefined) ? 0 : (stringTOFloatNumber(fee)));
+}
+
 const getAge = (birthDate) => {
     return  (Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10))
 }
@@ -40,11 +48,12 @@ const deepCopyFunction = inObject =>
   }
 
   const formatValue = (val) => {
-    return stringTOFloatNumber(val.toFixed(2));
+    return  val === null ? "0.00" : stringTOFloatNumber(val).toFixed(2)
   }
 
   const stringTOFloatNumber = (checkString) => {
     return typeof checkString === 'string' ? parseFloat(checkString) : checkString;
   }
 
-module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue }
+module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
+  isNullOrUndefined, feeIsNull }

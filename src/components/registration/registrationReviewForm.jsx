@@ -13,7 +13,8 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import InputWithHead from '../../customComponents/InputWithHead';
 import moment from 'moment';
 import history from "../../util/history";
-import { getRegistrationReviewAction,saveRegistrationReview, updateReviewInfoAction} from 
+import { getRegistrationReviewAction,saveRegistrationReview, updateReviewInfoAction,
+    validateDiscountCode} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -26,15 +27,16 @@ class RegistrationReviewForm extends Component {
             onInvLoad: false,
             buttonPressed: "",
             loading: false,
-            registrationUniqueKey: ""
+            registrationUniqueKey: "",
+            membershipData: null
         }
         this.getReferenceData();
     }
 
     componentDidMount() {
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "registrationUniqueKeyab30a5cf-285b-48fa-8f38-6cc4d90a594";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "419c80a7-bd25-4825-a115-145697d591fb";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -56,7 +58,6 @@ class RegistrationReviewForm extends Component {
                 }
             }
        }
-       
     }
 
     getApiInfo = (registrationUniqueKey) => {
@@ -71,7 +72,18 @@ class RegistrationReviewForm extends Component {
     }
 
     setReviewInfo = (value, key, index, subkey, subIndex) => {
-        this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
+        if(key == "isSelected"){
+            let payload = {
+                "competitionMembershipProductTypeId":value.competitionMembershipProductTypeId,
+                "membershipMappingId": value.membershipMappingId,
+                "code":value.selectedCode
+            }
+
+            this.props.validateDiscountCode(payload, index, subIndex);
+        }
+        else{
+            this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
+        }
     }
 
     previousCall = () =>{
@@ -100,15 +112,7 @@ class RegistrationReviewForm extends Component {
                 registrationReview.compParticipants.map((x, index) => {
                     let arr = [];
                     x.membershipProducts.map((y) => {
-                        (y.discounts || []).map((z) =>{
-                            if(z.isSelected == 1){
-                                let obj ={
-                                    competitionMembershipProductTypeId: y.competitionMembershipProductTypeId,
-                                    discountCode: z.code
-                                }
-                                arr.push(obj);
-                            }
-                        })
+                        arr.push(...y.selectedDiscounts);
                      });
                      x.selectedOptions.selectedDiscounts = arr;
                 });
@@ -204,7 +208,7 @@ class RegistrationReviewForm extends Component {
                            ${mem.feesToPay}
                         </div>
                     </div>
-                    { (mem.discounts.filter(x=>x.isSelected == 1) || []).map((d, dIndex) =>(
+                    { mem.isDiscountApplied == 1 && 
                     <div className='membership-text' style={{marginTop:0}}>
                         <div>
                             <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
@@ -212,10 +216,10 @@ class RegistrationReviewForm extends Component {
                             <span>{AppConstants.discount}</span>
                         </div>
                         <div className="number-text-style">
-                            (${d.discountsToDeduct})
+                            (${mem.discountsToDeduct})
                         </div>
                     </div>
-                    )) }
+                     }
                 </div>
                 ))}
                 {item.selectedOptions.governmentVoucherRefId!= null && 
@@ -294,7 +298,7 @@ class RegistrationReviewForm extends Component {
                     </div>
                     {(item.membershipProducts || []).map((mem, memIndex) =>(
                     <div>
-                        {mem.discounts.length > 0  &&
+                        { mem.discounts.length > 0 && 
                         <div className="inputfield-style">                    
                             <div className="row" style={{marginLeft:0 , marginTop: 12}}>
                                 <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
@@ -307,14 +311,14 @@ class RegistrationReviewForm extends Component {
                                         value={mem.selectedCode}/>
                                 </div>
                                 <div className="" style={{alignSelf:"center"}}>
-                                    {mem.discounts.find(x=>x.isSelected == 1) ?
+                                    {mem.isDiscountApplied == 1 ?
                                     <Button className="open-reg-button"
                                         onClick={(e) =>  this.setReviewInfo(e, "removeCode", index,"selectedOptions", memIndex)}
                                         type="primary">
                                         {AppConstants.removeCode}
                                     </Button> : 
                                     <Button className="open-reg-button"
-                                    onClick={(e) =>  this.setReviewInfo(e, "isSelected", index,"selectedOptions", memIndex)}
+                                    onClick={(e) =>  this.setReviewInfo(mem, "isSelected", index,"selectedOptions", memIndex)}
                                     type="primary">
                                     {AppConstants.applyCode}
                                 </Button>}
@@ -447,7 +451,8 @@ class RegistrationReviewForm extends Component {
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
-                         <Loader visible={this.props.endUserRegistrationState.onRegReviewLoad } />
+                         <Loader visible={this.props.endUserRegistrationState.onRegReviewLoad || 
+                                this.props.endUserRegistrationState.onDiscountCodeValidLoad } />
                         </Content>
                         <Footer style={{paddingRight:'2px', paddingLeft: '2px'}}>{this.footerView()}</Footer>
                     </Form>
@@ -464,7 +469,8 @@ function mapDispatchToProps(dispatch)
     return bindActionCreators({
         getRegistrationReviewAction,
         saveRegistrationReview,
-        updateReviewInfoAction
+        updateReviewInfoAction,
+        validateDiscountCode
     }, dispatch);
 
 }

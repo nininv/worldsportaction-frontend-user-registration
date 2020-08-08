@@ -149,6 +149,10 @@ let AxiosApi = {
         var url = `/api/registration?registrationId=${payload.registrationId}`;
         return Method.dataGet(url, token);
     },
+    validateDiscountCode(payload) {
+        var url = `/api/registration/discountcode/validate`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {

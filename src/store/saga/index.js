@@ -168,4 +168,8 @@ export default function* root_saga() {
   //Get Registration By Id
    yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
 
+  //Validate Discount Code
+  yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)
+
+
 }

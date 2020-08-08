@@ -551,7 +551,7 @@ class ReviewProducts extends Component {
                             </div>  */}
                         </div>  
                     </div>  
-                    {(mem.discounts.filter(x=>x.isSelected == 1) || []).map((dis, disIndex) => ( 
+                    {mem.isDiscountApplied == 1 && 
                     <div className='membership-text' style={{marginTop:2}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
@@ -559,12 +559,12 @@ class ReviewProducts extends Component {
                             <span>{AppConstants.discount}</span>
                         </div>                   
                         <div className='dolar-text'>
-                            <div className="number-text-style" style={{marginRight:34}}>
-                            (${dis.discountsToDeduct})
+                            <div className="number-text-style" style={{marginRight:17}}>
+                            (${mem.discountsToDeduct})
                             </div>
                         </div>  
                     </div>  
-                    ))}  
+                    }  
                     <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
                     <div className='edit-header-main'>
                         <div className="text-editsection" style={{fontSize:15}}>

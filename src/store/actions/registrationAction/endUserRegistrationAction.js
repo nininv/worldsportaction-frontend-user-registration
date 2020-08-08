@@ -216,6 +216,18 @@ function getRegistrationByIdAction(payload){
 
     return action;
 }
+
+
+function validateDiscountCode(payload, index, subIndex){
+    const action = {
+        type: ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD,
+        payload: payload,
+        index: index,
+        subIndex: subIndex
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -238,5 +250,6 @@ export {
     getRegistrationReviewProductAction,
     saveRegistrationReviewProduct,
     updateReviewProductAction,
-    getRegistrationByIdAction
+    getRegistrationByIdAction,
+    validateDiscountCode
 }

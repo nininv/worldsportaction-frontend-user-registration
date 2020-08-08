@@ -276,3 +276,23 @@ export function* getRegistrationByIdSaga(action) {
     yield call(errorSaga, error)
   }
 }
+
+////// Validate Discount Code
+export function* validateDiscountCodeSaga(action) {
+  try {
+    const result = yield call(AxiosApi.validateDiscountCode, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_VALIDATE_DISCOUNT_CODE_SUCCESS,
+        result: result.result.data,
+        index: action.index,
+        subIndex: action.subIndex,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
