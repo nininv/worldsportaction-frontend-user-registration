@@ -12,10 +12,6 @@ async function logout() {
 
 let token = getAuthToken();
 let AxiosApi = {
-
-
-
-
     ///get invoice
     getInvoice(registrationId, invoiceId) {
         let body = {

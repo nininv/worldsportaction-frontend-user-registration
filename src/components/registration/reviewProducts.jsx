@@ -836,7 +836,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     }
     console.log("payload" + JSON.stringify(payload));
     return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createpaymentsfinal`, {
+        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
