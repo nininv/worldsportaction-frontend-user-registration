@@ -10,22 +10,7 @@ const defaultProductObject = {
     tax: 0,
     quantity: 0,
     deliveryType: "",
-    variants: [{
-        name: "",
-        options: [
-            {
-                optionName: "",
-                properties: {
-                    price: 0,
-                    cost: 0,
-                    skuCode: "",
-                    barcode: "",
-                    quantity: 0,
-                    id: 0,
-                }
-            }
-        ]
-    }],
+    variants: [],
     images: [],
     organisationUniqueKey: 0,
 }
@@ -41,30 +26,6 @@ const initialState = {
     productDetailData: defaultProductObject,
 };
 
-////adding extra parameters in the productDetailData
-function makeDetailDataObject(data) {
-    let productData = data
-    let defaultVariant = [
-        {
-            name: "",
-            options: [
-                {
-                    optionName: "",
-                    properties: {
-                        price: 0,
-                        cost: 0,
-                        skuCode: "",
-                        barcode: "",
-                        quantity: 0,
-                        id: 0,
-                    }
-                }
-            ]
-        }
-    ]
-    productData["variants"] = isArrayNotEmpty(productData.variants) ? productData.variants : defaultVariant
-    return productData
-}
 
 function shopProductState(state = initialState, action) {
     switch (action.type) {
@@ -125,7 +86,7 @@ function shopProductState(state = initialState, action) {
             return { ...state, onLoad: true, getDetailsLoad: true, error: null };
 
         case ApiConstants.API_SHOP_GET_PRODUCT_DETAILS_BY_ID_SUCCESS:
-            state.productDetailData = makeDetailDataObject(action.result)
+            state.productDetailData = action.result
             return {
                 ...state,
                 onLoad: false,
@@ -145,22 +106,7 @@ function shopProductState(state = initialState, action) {
                     tax: 0,
                     quantity: 0,
                     deliveryType: "",
-                    variants: [{
-                        name: "",
-                        options: [
-                            {
-                                optionName: "",
-                                properties: {
-                                    price: 0,
-                                    cost: 0,
-                                    skuCode: "",
-                                    barcode: "",
-                                    quantity: 0,
-                                    id: 0,
-                                }
-                            }
-                        ]
-                    }],
+                    variants: [],
                     images: [],
                     organisationUniqueKey: 0,
                 }
@@ -170,7 +116,17 @@ function shopProductState(state = initialState, action) {
                 ...state, error: null
             };
 
+        /////////////add to cart post api
+        case ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD:
+            return { ...state, onLoad: true, error: null };
 
+        case ApiConstants.API_SHOP_POST_ADD_TO_CART_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                error: null
+            };
 
         default:
             return state;

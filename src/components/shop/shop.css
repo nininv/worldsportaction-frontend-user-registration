@@ -160,6 +160,7 @@
     align-items: center;
     background-color: var(--app-white);
     cursor: pointer;
+    width: 25%;
 }
 .counter-input .form-control:hover {
     border-color: var(--app-color);
@@ -190,6 +191,15 @@
     
 }
 
+.product-details-view{
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 40px;
+    margin-top: 34px;
+}
+
+
 @media (max-width: 767px) {
     .shop-product-content-div{
         justify-content: center;
@@ -206,5 +216,11 @@
     .add-to-cart-button{
         margin-left: 0px;
         margin-top: 12px;
+    }
+}
+
+@media (max-width:300px){
+    .mr-small-width-mobile{
+        margin-right: 15px;
     }
 }

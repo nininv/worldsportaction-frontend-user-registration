@@ -32,6 +32,12 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
+    ///////////////add to cart post api
+    addToCart(payload){
+        var url = `/cart/add`;
+        return Method.dataPost(url, token, payload);
+    }
+
 };
 
 const Method = {

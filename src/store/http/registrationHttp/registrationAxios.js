@@ -98,6 +98,7 @@ let AxiosApi = {
    async saveEndUserRegistration(payload) {
         let userId = await getUserId();
         var url = `/api/registration/save?userId=${userId == undefined ? 0 : userId}`;
+       // var url = `/api/registrationdraft/save?userId=${userId == undefined ? 0 : userId}`;
         return Method.dataPost(url, token, payload);
     },
     getOrgRegistrationRegistrationSettings(payload) {
@@ -128,8 +129,30 @@ let AxiosApi = {
         var url = `/api/registration/productfees`;
         return Method.dataPost(url, token, payload);
     },
-    
-    
+    getRegistrationReview(payload) {
+        var url = `/api/registration/review?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
+    saveRegistrationReview(payload) {
+        var url = `/api/registration/review?registrationId=${payload.registrationId}`;
+        return Method.dataPost(url, token, payload);
+    },
+    getRegistrationReviewProducts(payload) {
+        var url = `/api/registration/review/products?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
+    saveRegistrationReviewProducts(payload) {
+        var url = `/api/registration/review/products?registrationId=${payload.registrationId}`;
+        return Method.dataPost(url, token, payload);
+    },
+    getRegistrationById(payload) {
+        var url = `/api/registration?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
+    validateDiscountCode(payload) {
+        var url = `/api/registration/discountcode/validate`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {
