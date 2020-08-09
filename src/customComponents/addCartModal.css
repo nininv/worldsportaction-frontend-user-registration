@@ -1,0 +1,30 @@
+
+.add-to-cart-modal .ant-btn-primary {
+    background-color: var(--app-color);
+    border-color: var(--app-color);
+  }
+
+  .add-to-cart-modal .ant-modal-footer {
+    display: none
+  }
+
+  .add-to-cart-modal .ant-modal-header {
+    display: none
+  }
+
+  .add-to-cart-modal .ant-modal-content {
+    border-radius: 35px;
+  }
+  
+   .product-cart-img{
+    height: 55px;
+    width:  55px;
+    object-fit: contain;
+   }
+
+   .add-cart-name-price-div {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+  

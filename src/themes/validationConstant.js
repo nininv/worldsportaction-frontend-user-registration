@@ -85,6 +85,7 @@ const ValidationConstants = {
     personRegRoleRequired: "Please select person registering role",
     pleaseEnterMobileNumber: "Please enter mobile number",
     pleaseEnterUserName: "Please enter user name",
+    variantIsRequired: 'Variant is required.',
 };
 
 export default ValidationConstants;

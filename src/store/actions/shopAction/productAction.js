@@ -35,9 +35,19 @@ function clearProductReducer(dataName) {
     return action;
 }
 
+//////add to cart post api
+function addToCartAction(payload) {
+    const action = {
+        type: ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD,
+        payload
+    };
+    return action;
+}
+
 export {
     getProductListingAction,
     getTypesOfProductAction,
     getProductDetailsByIdAction,
     clearProductReducer,
+    addToCartAction,
 }
