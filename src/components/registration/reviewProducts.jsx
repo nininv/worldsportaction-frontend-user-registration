@@ -520,7 +520,8 @@ class ReviewProducts extends Component {
                 }
                 <div className='individual-header-view' style={{fontSize:20}}>
                     <div>
-                        {AppConstants.individualRegistration}
+                    {item.isTeamRegistration == 0 ? AppConstants.individualRegistration :
+                            AppConstants.teamRegistration}
                         {AppConstants.hyphen}
                         {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
