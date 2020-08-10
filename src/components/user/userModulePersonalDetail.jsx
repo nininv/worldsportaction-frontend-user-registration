@@ -77,8 +77,15 @@ const columns = [
     },
     {
         title: 'Payment Method',
-        dataIndex: 'vouchers',
-        key: 'vouchers'
+        dataIndex: 'paymentType',
+        key: 'paymentType',
+        render:(paymentType, record, index) =>{
+            return(
+                <span style={{textTransform:'capitalize'}}>
+                    {paymentType}
+                </span>
+            )
+        }
     },
     {
         title: 'Shop Purchases',
@@ -88,7 +95,15 @@ const columns = [
     {
         title: 'Status',
         dataIndex: 'paymentStatus',
-        key: 'paymentStatus'
+        key: 'paymentStatus',
+        render:(paymentStatus, record, index) =>{
+            return(
+                <span style={{textTransform:'capitalize'}}>
+                    {paymentStatus}
+                </span>
+            )
+        }
+        
     },
     {
         title: "Reg.Form",
