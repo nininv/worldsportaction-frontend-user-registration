@@ -37,7 +37,7 @@ import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegist
     membershipProductEndUserRegistrationAction, getUserRegistrationUserInfoAction,
     clearRegistrationDataAction, updateRegistrationSettingsAction, 
     updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction,
-    getRegistrationProductFeesAction, getRegistrationByIdAction} from 
+    getRegistrationProductFeesAction, getRegistrationByIdAction, teamNameValidationAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -2336,6 +2336,16 @@ class AppRegistrationForm extends Component {
 
         return divisionsArr;
     }
+    showTeamNameValidation= (value,item,index) =>{
+        this.setState({validationKey:true,participantIndex:index,onBlurLoad:true});
+        let obj = {     
+            competitionId:  item.competitionUniqueKey,
+            organisationId: item.organisationUniqueKey,  
+            competitionMembershipProductDivisionId:item.competitionMembershipProductDivisionId,
+            teamName: value,           
+        }
+        this.props.teamNameValidationAction(obj,index);
+    }	 
 
     onChangeSetTeam = (value, key, index, subKey, subIndex, item) => {
         //console.log("onChangeSetTeam::",value, key, index, subKey, subIndex, item )
@@ -2515,6 +2525,7 @@ class AppRegistrationForm extends Component {
                 // registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
 
                 let err = false;
+                let teamErr = false;
                 userRegistrations.map((item, index) =>{
                     let membershipProductId = item.competitionMembershipProductTypeId;
 
@@ -2523,9 +2534,14 @@ class AppRegistrationForm extends Component {
                             err = true;
                         }
                     })
+                    if(item.registeringYourself == 4){
+                        if(item.team.resultCode == 2){
+                            teamErr = true;
+                        }
+                    }
                 });
 
-                if(!err){
+                if(!err && !teamErr){
                     let formData = new FormData();
                     let isError = false;
                     for(let x = 0; x< userRegistrations.length; x++)
@@ -2673,7 +2689,9 @@ class AppRegistrationForm extends Component {
                     }
                 }
                 else{
-                    message.error(ValidationConstants.membershipProductValidation); 
+                    if(err){
+                        message.error(ValidationConstants.membershipProductValidation); 
+                    }
                 }
             }
         });
@@ -4627,9 +4645,15 @@ class AppRegistrationForm extends Component {
                         onChange={(e) => this.onChangeSetTeam(e.target.value, "teamName",index, "team" )} 
                        // value={item.firstName}
                         setFieldsValue={item.team.teamName}
+						onBlur = {(e) => this.showTeamNameValidation(e.target.value,item,index)}																		
                     />
                     )}
                 </Form.Item>
+				{ item.team.resultCode == 2 &&                
+                    <div style={{color:"var(--app-red)"}}>
+                        Team already exist
+                    </div>                         
+                }
 
                 <InputWithHead heading={AppConstants.personRegisteringRole}   required={"required-field"}/>
                 <Form.Item >
@@ -5208,7 +5232,8 @@ function mapDispatchToProps(dispatch)
         updateYourInfoAction,
         getTermsAndConditionsAction,
         getRegistrationProductFeesAction,
-        getRegistrationByIdAction
+        getRegistrationByIdAction,
+		teamNameValidationAction						 
     }, dispatch);
 
 }

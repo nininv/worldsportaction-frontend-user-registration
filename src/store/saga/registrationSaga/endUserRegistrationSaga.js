@@ -296,3 +296,21 @@ export function* validateDiscountCodeSaga(action) {
     yield call(errorSaga, error)
   }
 }
+
+export function* teamNameCheckExisting(action) {
+  try {
+    const result = yield call(AxiosApi.teamNameCheck, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS,
+        result: result.result.data,
+        status: result.status,
+        payload:action.payload
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

@@ -153,6 +153,10 @@ let AxiosApi = {
         var url = `/api/registration/discountcode/validate`;
         return Method.dataPost(url, token, payload);
     },
+     teamNameCheck(payload) {
+        var url = `/api/registration/team/validate`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {
