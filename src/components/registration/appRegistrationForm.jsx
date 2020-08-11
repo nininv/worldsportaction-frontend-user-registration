@@ -282,6 +282,7 @@ const teamColumns = [
                     width="16"
                     height="16"
                     disabled = {record.isDisabled}
+					style={{padding:0}}				   
                     onClick={() => this_Obj.onChangeSetTeam(null, "removePlayer", record.index,  "players", index  )} 
                 />
             </span>
