@@ -339,6 +339,10 @@ function endUserRegistrationReducer(state = initialState, action) {
             else if(action.subKey == "team"){
                 participant[action.subKey][action.key] = action.data;
 
+                if(action.key =="teamName"){
+                    participant[action.subKey]["resultCode"] = null;
+                }
+
                 if(action.key == "personRoleRefId" || action.key == "registeringAsAPlayer")
                 {
                     addReadOnlyPlayer(participant, action)

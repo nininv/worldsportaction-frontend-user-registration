@@ -2338,14 +2338,16 @@ class AppRegistrationForm extends Component {
         return divisionsArr;
     }
     showTeamNameValidation= (value,item,index) =>{
-        this.setState({validationKey:true,participantIndex:index,onBlurLoad:true});
-        let obj = {     
-            competitionId:  item.competitionUniqueKey,
-            organisationId: item.organisationUniqueKey,  
-            competitionMembershipProductDivisionId:item.competitionMembershipProductDivisionId,
-            teamName: value,           
+        this.setState({participantIndex:index});
+        if(value!= null && value.length > 0){
+            let obj = {     
+                competitionId:  item.competitionUniqueKey,
+                organisationId: item.organisationUniqueKey,  
+                competitionMembershipProductDivisionId:item.competitionMembershipProductDivisionId,
+                teamName: value,           
+            }
+            this.props.teamNameValidationAction(obj,index);
         }
-        this.props.teamNameValidationAction(obj,index);
     }	 
 
     onChangeSetTeam = (value, key, index, subKey, subIndex, item) => {
