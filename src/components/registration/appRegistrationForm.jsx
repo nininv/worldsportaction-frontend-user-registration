@@ -2358,6 +2358,7 @@ class AppRegistrationForm extends Component {
                 this.props.form.setFieldsValue({
                     [`competitionMembershipProductTypeId${index}`]:  null,
                     [`competitionMembershipProductDivisionId${index}`]:  null,
+                    [`teamName${index}`]: null
                     
                 });
                 this.getRegistrationSettings(value, item.organisationUniqueKey, index);
@@ -2367,6 +2368,7 @@ class AppRegistrationForm extends Component {
                     [`competitionUniqueKey${index}`]:  null,
                     [`competitionMembershipProductTypeId${index}`]:  null,
                     [`competitionMembershipProductDivisionId${index}`]:  null,
+                    [`teamName${index}`]: null
                     
                 });
                 this.callTermsAndConditions(value);
@@ -2374,6 +2376,7 @@ class AppRegistrationForm extends Component {
             else if(key == "competitionMembershipProductTypeId"){
                 this.props.form.setFieldsValue({
                     [`competitionMembershipProductDivisionId${index}`]:  null,
+                    [`teamName${index}`]: null
                 });
 
                 let divisions = item.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
@@ -2386,6 +2389,9 @@ class AppRegistrationForm extends Component {
                 }
             }
             else if(key == "competitionMembershipProductDivisionId"){
+                this.props.form.setFieldsValue({
+                    [`teamName${index}`]: null
+                });
                 this.callRegistrationProductFees(item,value, index, null )
                 this.setState({participantIndex: index});
                 this.existingUserPopulate();

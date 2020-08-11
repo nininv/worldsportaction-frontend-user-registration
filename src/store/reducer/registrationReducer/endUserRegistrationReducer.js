@@ -281,6 +281,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant["fees"] = null;
                     state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
                         state.registrationDetail.userRegistrations, state);
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
              
                 }
                 else if(action.key == "competitionUniqueKey"){
@@ -299,6 +301,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.products = [];
                     participant.divisionName = null;
                     participant["fees"] = null;
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
                 }
                 else if(action.key == "competitionMembershipProductTypeId"){
                     let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
@@ -333,6 +337,13 @@ function endUserRegistrationReducer(state = initialState, action) {
                         }
 
                         participant["competitionMembershipProductId"] = memProd.competitionMembershipProductId;
+                        participant["team"]["teamName"] = null;
+                        participant["team"]["resultCode"] = null;
+                        
+                }
+                else if(action.key == "competitionMembershipProductDivisionId"){
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
                 }
                 participant[action.key] = action.data;
             }
