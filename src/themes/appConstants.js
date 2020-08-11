@@ -95,6 +95,7 @@ const AppConstants = {
     "Your Support is important for the continued success of our Club. Can you help?",
   childrenCheckNumber: "Working with Children Check Number",
   childrenNumber: "Children Check Number",
+  checkExpiryDate:"Check Expiry Date",									  
   childrenCheckNumberInfo:
     "Working with Children Check Number (You are required to have a working with Children Number. If you don’t have one you will need to apply.)",
   childCountry: "Which country were you born",
