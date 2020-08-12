@@ -378,6 +378,11 @@ class RegistrationReviewForm extends Component {
         let {registrationReviewList} = this.props.endUserRegistrationState;
         let charity = registrationReviewList!= null ? registrationReviewList.charity : null;
         let charityRoundUp = registrationReviewList!= null ? registrationReviewList.charityRoundUp : [];
+        let selectedOptionSchool = null;
+        let selectedOptionOther = null;
+        if(registrationReviewList!= null){
+            
+        }
         return (
             <div className = "individual-reg-view">
                  {charity!= null &&

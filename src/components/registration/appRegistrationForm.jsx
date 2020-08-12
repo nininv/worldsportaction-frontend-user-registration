@@ -665,10 +665,11 @@ class AppRegistrationForm extends Component {
                         this.setFormFields(item, index);
                         if(this.state.registrationUniqueKey!= null){
                             this.setProductFormFields(index);
-                          
+                            
                         }
                     }
                 });
+                this.setUserInfoFormFields(registrationDetail.yourInfo);
             }, 700)
        }
       
@@ -2614,7 +2615,8 @@ class AppRegistrationForm extends Component {
                                 }
 
                                 (item.competitionInfo.membershipProducts).map((i, ind) => {
-                                    if(i.allowTeamRegistrationTypeRefId!= null){
+                                    if(i.allowTeamRegistrationTypeRefId!= null && item.competitionMembershipProductId == 
+                                        i.competitionMembershipProductId){
                                         let obj = {
                                             competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
                                             name: i.shortName
@@ -2629,7 +2631,8 @@ class AppRegistrationForm extends Component {
                             }
                             else{
                                 (item.competitionInfo.membershipProducts).map((i, ind) => {
-                                    if(i.competitionMembershipProductTypeId == item.competitionMembershipProductTypeId){
+                                    if(i.competitionMembershipProductTypeId == item.competitionMembershipProductTypeId && 
+                                        item.competitionMembershipProductId == i.competitionMembershipProductId){
                                         let obj = {
                                             competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
                                             name: i.shortName
