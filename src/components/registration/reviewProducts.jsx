@@ -182,13 +182,17 @@ const CheckoutForm = (props) => {
             }
             else {
                 props.onLoad(true)
-                console.log(clientSecretKey)
+                console.log("clientSecretKey", clientSecretKey);
 
                 // var form = document.getElementById('setup-form');
                 // props.onLoad(true)
                 // console.log(form)
                 const accountholderName = event.target['name'];
                 const email = event.target.email;
+
+                console.log("accountholderName", accountholderName.value);
+                console.log("email", email.value);
+                console.log("auBankAccount", auBankAccount);
 
                 const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
                     payment_method: {
@@ -199,6 +203,8 @@ const CheckoutForm = (props) => {
                         },
                     }
                 });
+
+                console.log("Result",result);
 
                 if (result.error) {
                     let message = result.error.message

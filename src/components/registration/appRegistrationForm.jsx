@@ -1353,7 +1353,7 @@ class AppRegistrationForm extends Component {
                 value = null;
                 //console.log("^^^^^^^" + value);
             }
-
+            userRegistration["competitionMembershipProductId"] = memProd.competitionMembershipProductId;
            
         }
         else if(key == "competitionMembershipProductDivisionId"){
@@ -1910,6 +1910,7 @@ class AppRegistrationForm extends Component {
                 console.log("^^^^^^^" + value);
             }
 
+            product["competitionMembershipProductId"] = memProd.competitionMembershipProductId;
           
         }
 
@@ -2347,6 +2348,7 @@ class AppRegistrationForm extends Component {
 
         return divisionsArr;
     }
+
     showTeamNameValidation= (value,item,index) =>{
         this.setState({participantIndex:index});
         if(value!= null && value.length > 0){
@@ -2644,7 +2646,8 @@ class AppRegistrationForm extends Component {
                                 if(isArrayNotEmpty(item.products)){
                                     item.products.map((x, prodIndex) => {
                                         x.competitionInfo.membershipProducts.map((y,mIndex) =>{
-                                            if(x.competitionMembershipProductTypeId == y.competitionMembershipProductTypeId){
+                                            if(x.competitionMembershipProductTypeId == y.competitionMembershipProductTypeId &&
+                                                x.competitionMembershipProductId == y.competitionMembershipProductId){
                                                 let obj = {
                                                     competitionMembershipProductTypeId: y.competitionMembershipProductTypeId,
                                                     name: y.shortName
