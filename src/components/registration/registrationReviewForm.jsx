@@ -78,8 +78,9 @@ class RegistrationReviewForm extends Component {
                 "membershipMappingId": value.membershipMappingId,
                 "code":value.selectedCode
             }
-
-            this.props.validateDiscountCode(payload, index, subIndex);
+            if(value.selectedCode!= null && value.selectedCode!= ""){
+                this.props.validateDiscountCode(payload, index, subIndex);
+            }
         }
         else{
             this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
@@ -381,7 +382,7 @@ class RegistrationReviewForm extends Component {
         let selectedOptionSchool = null;
         let selectedOptionOther = null;
         if(registrationReviewList!= null){
-            
+
         }
         return (
             <div className = "individual-reg-view">
