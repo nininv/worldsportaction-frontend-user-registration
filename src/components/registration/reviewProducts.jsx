@@ -187,19 +187,19 @@ const CheckoutForm = (props) => {
                 // var form = document.getElementById('setup-form');
                 // props.onLoad(true)
                 // console.log(form)
-                const accountholderName = event.target['name'];
-                const email = event.target.email;
+                // const accountholderName = event.target['name'];
+                // const email = event.target.email;
 
-                console.log("accountholderName", accountholderName.value);
-                console.log("email", email.value);
+                // console.log("accountholderName", accountholderName.value);
+                // console.log("email", email.value);
                 console.log("auBankAccount", auBankAccount);
 
                 const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
                     payment_method: {
                         au_becs_debit: auBankAccount,
                         billing_details: {
-                            name: accountholderName.value,
-                            email: email.value,
+                            name:  "Club Test 1", // accountholderName.value,
+                            email: "testclub@wsa.com"  // email.value,
                         },
                     }
                 });
@@ -267,7 +267,7 @@ const CheckoutForm = (props) => {
                                 {selectedPaymentOption.direct == true &&
                                     <div class="sr-root">
                                         <div class="sr-main">
-                                            <div class="sr-combo-inputs-row">
+                                            {/* <div class="sr-combo-inputs-row">
                                                 <div class="col">
                                                     <label htmlFor="name">
                                                         Name
@@ -296,7 +296,7 @@ const CheckoutForm = (props) => {
                                                         required
                                                     />
                                                 </div>
-                                            </div>
+                                            </div> */}
                                             <div class="sr-combo-inputs-row">
                                                 <div class="col">
                                                     <label htmlFor="au-bank-account-element">
