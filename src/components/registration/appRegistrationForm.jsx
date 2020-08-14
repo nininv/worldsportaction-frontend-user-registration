@@ -3254,6 +3254,7 @@ class AppRegistrationForm extends Component {
                         required={"required-field pt-0 pb-0"}
                         heading={AppConstants.postcode}
                         placeholder={AppConstants.postcode}
+                        maxLength={4}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "postalCode" )} 
                         setFieldsValue={yourInfo.postalCode}
                     />
@@ -3453,6 +3454,7 @@ class AppRegistrationForm extends Component {
                         required={"required-field pt-0 pb-0"}
                         heading={AppConstants.postcode}
                         placeholder={AppConstants.postcode}
+                        maxLength={4}
                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "postalCode", index )} 
                         setFieldsValue={item.postalCode}
                     />
@@ -4850,6 +4852,7 @@ class AppRegistrationForm extends Component {
                             required={"required-field pb-0"}
                             heading={AppConstants.postcode}
                             placeholder={AppConstants.postcode}
+                            maxLength={4}
                             onChange={(e) => this.onChangeSetTeam(e.target.value, "postalCode", index, "team" )} 
                             setFieldsValue={item.team.postalCode}
                         />

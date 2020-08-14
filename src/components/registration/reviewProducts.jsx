@@ -869,7 +869,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         else {
                             setClientKey(Response.clientSecret)
                             setRegId(registrationUniqueKey)
-                            message.success(Response.message);
+                           // message.success(Response.message);
                         }
                     }
                     else if (response.status === 212) {
