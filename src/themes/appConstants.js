@@ -952,7 +952,8 @@ const AppConstants = {
   applyCode: "Apply Code",
   removeCode: "Remove Code",
   expiryDate:"Expiry Date",
-  teamRegistration: "Team Registration"
+  teamRegistration: "Team Registration",
+  personRegistering: "Person Registering"
 };
 
 export default AppConstants;

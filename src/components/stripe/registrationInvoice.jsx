@@ -389,7 +389,7 @@ class RegistrationInvoice extends Component {
 
                 {data && data.length > 0 && data.map((item, participantIndex) => {
                      let isTeamReg = (item.isTeamRegistration != undefined ? item.isTeamRegistration : 0);
-                     let regName = isTeamReg == 1 ? 'Team Registration' : 'Registration';
+                     let regName = isTeamReg == 1 ? AppConstants.teamRegistration : AppConstants.registration;
                     return(
                         <div>
                             {(item.membershipProducts || []).map((mem, memIndex) =>{
@@ -397,7 +397,8 @@ class RegistrationInvoice extends Component {
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct));
-                                 let mTypeName = mem && mem.membershipTypeName!= null ? mem.membershipTypeName : '';
+                                 let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
+                                 let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
                                  return (
                                     <div>
@@ -408,10 +409,10 @@ class RegistrationInvoice extends Component {
                                                         <InputWithHead
                                                             heading=
                                                             {item.firstName ?
-                                                                regName + " - " + mTypeName + " " + item.firstName + " " + item.lastName
+                                                                regName + " - " + typeName + " " + item.firstName + " " + item.lastName
                                                                 + ", " + item.competitionName 
                                                                 :
-                                                                regName + " - " + mTypeName + " " + item.firstName + " " + item.lastName
+                                                                regName + " - " + typeName + " " + item.firstName + " " + item.lastName
                                                                 + ", " + item.competitionName
                                                             }
                                                         />
