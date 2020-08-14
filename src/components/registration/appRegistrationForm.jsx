@@ -2732,7 +2732,7 @@ class AppRegistrationForm extends Component {
         registrationDetail.yourInfo.suburb = item.suburb;
         registrationDetail.yourInfo.stateRefId = item.stateRefId;
         registrationDetail.yourInfo.postalCode = item.postalCode;
-        registrationDetail.yourInfo["dateOfBirth"] = item.dateOfBirth;
+        registrationDetail.yourInfo["dateOfBirth"] = item.dateOfBirth ? item.dateOfBirth : null;
         registrationDetail.yourInfo.userId = item.userId ? item.userId : 0;
     }
 
