@@ -43,7 +43,7 @@ import { getAge,deepCopyFunction, isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken } from "../../util/sessionStorage";
+import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 
 const { Header, Footer, Content } = Layout;
@@ -486,6 +486,7 @@ class AppRegistrationForm extends Component {
             agreeTerm: false,
             competitionUniqueKey: getCompetitonId(),
             organisationUniqueKey: getOrganisationId(),
+			sourceSystemFlag: getSourceSystemFlag(),										
            // showChildrenCheckNumber: false,
             volunteerList: [],
             modalVisible: false,
@@ -2518,6 +2519,13 @@ class AppRegistrationForm extends Component {
         return isShowYourInfo;
     }
 
+     ////navigate to shop product screen
+     navigateShopScreen = () => {
+        history.push("/listProducts", {
+            organisationUniqueKey: this.state.organisationUniqueKey
+       })
+    }
+
     saveRegistrationForm = (e) => {
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
@@ -2741,6 +2749,7 @@ class AppRegistrationForm extends Component {
         localStorage.removeItem("registeringYourselfRefId");
         localStorage.removeItem("existingUserRefId");
         localStorage.removeItem("userRegId");
+        localStorage.removeItem("sourceSystem")
     }
 
    
@@ -5154,13 +5163,6 @@ class AppRegistrationForm extends Component {
         )
     }
 
-    ////navigate to shop product screen
-    navigateShopScreen = () => {
-        history.push("/listProducts", {
-            organisationUniqueKey: this.state.organisationUniqueKey
-       })
-    }
-
     //////footer view containing all the buttons like submit and cancel
     footerView = (isSubmitting) => {
         let registrationState = this.props.endUserRegistrationState;
@@ -5171,6 +5173,7 @@ class AppRegistrationForm extends Component {
                 {userRegistrations.length > 0 && (userRegistrations[0].isPlayer != -1 || 
                     (userRegistrations[0].registeringYourself == 4 && userRegistrations[0].competitionMembershipProductTypeId != null)) ? (
                     <div className="footer-view">
+					{this.state.sourceSystemFlag!= AppConstants.webAdmin ?									 
                         <div className="row">
                             <div className="col-sm">
                                 <div className="reg-add-save-button">
@@ -5197,6 +5200,7 @@ class AppRegistrationForm extends Component {
                             </div>
                         </div>
                     </div>
+					 :null}
                 </div>
                 ): null}
             </div>

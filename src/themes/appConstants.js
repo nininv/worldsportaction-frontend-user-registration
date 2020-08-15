@@ -315,6 +315,7 @@ const AppConstants = {
   typeOfCompetition: "Type of Competition",
   numberOfRounds: "Number of Rounds",
   registration_close: "Registrations Close",
+  close:"Close",			
   registration_type: "Registration Type",
   nonPlayingDates: "Non-Playing Dates",
   addAnotherNonPlayingDate: "Add Another Non Playing Date",
@@ -953,7 +954,8 @@ const AppConstants = {
   removeCode: "Remove Code",
   expiryDate:"Expiry Date",
   teamRegistration: "Team Registration",
-  personRegistering: "Person Registering"
+  personRegistering: "Person Registering",
+  webAdmin:"WebAdmin"
 };
 
 export default AppConstants;

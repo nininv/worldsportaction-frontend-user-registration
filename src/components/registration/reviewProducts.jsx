@@ -214,7 +214,7 @@ const CheckoutForm = (props) => {
                     setBankError(null)
                     setClientKey("")
                     props.onLoad(false)
-                    message.success("payment status is " + result.paymentIntent.status)
+                    message.success("Payment status is " + result.paymentIntent.status)
                     history.push("/invoice", {
                         registrationId: regId,
                         paymentSuccess: true

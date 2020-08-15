@@ -34,6 +34,7 @@ class Login extends Component {
             localStorage.removeItem("userRegId");
             localStorage.removeItem("registeringYourselfRefId");
             localStorage.removeItem("existingUserRefId");
+            localStorage.removeItem("sourceSystem")
         }
     }
 
