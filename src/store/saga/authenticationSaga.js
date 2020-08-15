@@ -22,7 +22,12 @@ export function* loginApiSaga(action) {
     } else {
       yield put({ type: ApiConstants.API_LOGIN_FAIL });
       setTimeout(() => {
-        alert(result.data.message);
+        message.config({
+          duration: 1.5,
+          maxCount: 1
+        })
+        message.error(result.data.message);
+        //alert(result.data.message);
       }, 800);
     }
   } catch (error) {
@@ -32,6 +37,10 @@ export function* loginApiSaga(action) {
       error: error,
       status: error.status
     });
+    message.config({
+      duration: 1.5,
+      maxCount: 1
+    })
     message.error(AppConstants.usernamePasswordIncorrect, 0.8);
     // alert(error.result);
   }
