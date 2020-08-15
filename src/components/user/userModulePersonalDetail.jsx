@@ -1303,6 +1303,7 @@ class UserModulePersonalDetail extends Component {
                                     <div className="year-select-heading other-info-label">{AppConstants.childLangSpoken}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
                                 </div>
+                            </div>}
                                <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckNumber}</div>
@@ -1311,7 +1312,7 @@ class UserModulePersonalDetail extends Component {
                                     <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
                                 </div>  
-                            </div>}
+                           
                         {/* <div className="other-info-row">
 							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.disability}</div>
 							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
