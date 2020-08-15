@@ -159,6 +159,8 @@ class RegistrationReviewForm extends Component {
     contentView = (getFieldDecorator) => {
         let {registrationReviewList} = this.props.endUserRegistrationState;
         let participantList = registrationReviewList!= null ? registrationReviewList.compParticipants: [];
+        let charityRoundUp = registrationReviewList!= null ? registrationReviewList.charityRoundUp : [];
+        
         return (
             <div>
                 {(participantList || []).map((item, index) => (
@@ -175,9 +177,12 @@ class RegistrationReviewForm extends Component {
                     } */}
                 </div>
                 ))}
-               <div style={{ marginBottom: 40}}>
-                    {this.charityView(getFieldDecorator)}
-               </div>
+                
+                {charityRoundUp.length > 0 && 
+                    <div style={{ marginBottom: 40}}>
+                        {this.charityView(getFieldDecorator)}
+                    </div>
+                }
             </div>
         )
     }
@@ -379,11 +384,7 @@ class RegistrationReviewForm extends Component {
         let {registrationReviewList} = this.props.endUserRegistrationState;
         let charity = registrationReviewList!= null ? registrationReviewList.charity : null;
         let charityRoundUp = registrationReviewList!= null ? registrationReviewList.charityRoundUp : [];
-        let selectedOptionSchool = null;
-        let selectedOptionOther = null;
-        if(registrationReviewList!= null){
-
-        }
+        
         return (
             <div className = "individual-reg-view">
                  {charity!= null &&
