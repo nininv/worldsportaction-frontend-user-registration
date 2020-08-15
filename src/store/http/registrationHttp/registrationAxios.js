@@ -153,6 +153,10 @@ let AxiosApi = {
         var url = `/api/registration/discountcode/validate`;
         return Method.dataPost(url, token, payload);
     },
+     teamNameCheck(payload) {
+        var url = `/api/registration/team/validate`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {
@@ -203,7 +207,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -278,7 +282,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -349,7 +353,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {

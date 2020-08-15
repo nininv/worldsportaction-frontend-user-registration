@@ -171,5 +171,8 @@ export default function* root_saga() {
   //Validate Discount Code
   yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)
 
+  //validation result code
+  yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
+
 
 }

@@ -182,23 +182,29 @@ const CheckoutForm = (props) => {
             }
             else {
                 props.onLoad(true)
-                console.log(clientSecretKey)
+                console.log("clientSecretKey", clientSecretKey);
 
                 // var form = document.getElementById('setup-form');
                 // props.onLoad(true)
                 // console.log(form)
-                const accountholderName = event.target['name'];
-                const email = event.target.email;
+                // const accountholderName = event.target['name'];
+                // const email = event.target.email;
+
+                // console.log("accountholderName", accountholderName.value);
+                // console.log("email", email.value);
+                console.log("auBankAccount", auBankAccount);
 
                 const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
                     payment_method: {
                         au_becs_debit: auBankAccount,
                         billing_details: {
-                            name: accountholderName.value,
-                            email: email.value,
+                            name:  "Club Test 1", // accountholderName.value,
+                            email: "testclub@wsa.com"  // email.value,
                         },
                     }
                 });
+
+                console.log("Result",result);
 
                 if (result.error) {
                     let message = result.error.message
@@ -208,7 +214,7 @@ const CheckoutForm = (props) => {
                     setBankError(null)
                     setClientKey("")
                     props.onLoad(false)
-                    message.success("payment status is " + result.paymentIntent.status)
+                    message.success("Payment status is " + result.paymentIntent.status)
                     history.push("/invoice", {
                         registrationId: regId,
                         paymentSuccess: true
@@ -261,7 +267,7 @@ const CheckoutForm = (props) => {
                                 {selectedPaymentOption.direct == true &&
                                     <div class="sr-root">
                                         <div class="sr-main">
-                                            <div class="sr-combo-inputs-row">
+                                            {/* <div class="sr-combo-inputs-row">
                                                 <div class="col">
                                                     <label htmlFor="name">
                                                         Name
@@ -290,7 +296,7 @@ const CheckoutForm = (props) => {
                                                         required
                                                     />
                                                 </div>
-                                            </div>
+                                            </div> */}
                                             <div class="sr-combo-inputs-row">
                                                 <div class="col">
                                                     <label htmlFor="au-bank-account-element">
@@ -520,7 +526,8 @@ class ReviewProducts extends Component {
                 }
                 <div className='individual-header-view' style={{fontSize:20}}>
                     <div>
-                        {AppConstants.individualRegistration}
+                    {item.isTeamRegistration == 0 ? AppConstants.individualRegistration :
+                            AppConstants.teamRegistration}
                         {AppConstants.hyphen}
                         {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
@@ -862,7 +869,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         else {
                             setClientKey(Response.clientSecret)
                             setRegId(registrationUniqueKey)
-                            message.success(Response.message);
+                           // message.success(Response.message);
                         }
                     }
                     else if (response.status === 212) {

@@ -228,6 +228,16 @@ function validateDiscountCode(payload, index, subIndex){
 
     return action;
 }
+
+function teamNameValidationAction(payload,index){
+    const action = {
+        type: ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD,
+        payload: payload,
+        participantIndex:index
+    }
+
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -251,5 +261,6 @@ export {
     saveRegistrationReviewProduct,
     updateReviewProductAction,
     getRegistrationByIdAction,
-    validateDiscountCode
+    validateDiscountCode,
+    teamNameValidationAction
 }

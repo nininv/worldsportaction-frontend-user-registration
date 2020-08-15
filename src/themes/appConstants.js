@@ -95,6 +95,7 @@ const AppConstants = {
     "Your Support is important for the continued success of our Club. Can you help?",
   childrenCheckNumber: "Working with Children Check Number",
   childrenNumber: "Children Check Number",
+  checkExpiryDate:"Check Expiry Date",									  
   childrenCheckNumberInfo:
     "Working with Children Check Number (You are required to have a working with Children Number. If you don’t have one you will need to apply.)",
   childCountry: "Which country were you born",
@@ -314,6 +315,7 @@ const AppConstants = {
   typeOfCompetition: "Type of Competition",
   numberOfRounds: "Number of Rounds",
   registration_close: "Registrations Close",
+  close:"Close",			
   registration_type: "Registration Type",
   nonPlayingDates: "Non-Playing Dates",
   addAnotherNonPlayingDate: "Add Another Non Playing Date",
@@ -951,7 +953,9 @@ const AppConstants = {
   applyCode: "Apply Code",
   removeCode: "Remove Code",
   expiryDate:"Expiry Date",
-  teamRegistration: "Team Registration"
+  teamRegistration: "Team Registration",
+  personRegistering: "Person Registering",
+  webAdmin:"WebAdmin"
 };
 
 export default AppConstants;

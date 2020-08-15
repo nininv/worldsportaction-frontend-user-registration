@@ -7,7 +7,7 @@ import AppConstants from "../themes/appConstants";
 import "../pages/layout.css";
 import { setAuthToken, setUserId, setOrganistaionId, 
     setCompetitionID, getAuthToken, getUserId,
-    setIsUserRegistration } from '../util/sessionStorage'
+    setIsUserRegistration, setSourceSystemFlag } from '../util/sessionStorage'
 import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
@@ -28,6 +28,8 @@ class UserRegistration extends Component {
         const query = this.queryfie(this.props.location.search);
         let competitionUniqueKey = query.competitionId;
         let organisationUniqueKey = query.organisationId;
+        let sourceSystem = query.sourceSystem;		
+        console.log("sourceSystem" + sourceSystem);							  
         let userId = query.userId;
         let token = query.token;
         
@@ -35,6 +37,12 @@ class UserRegistration extends Component {
         {
             await setOrganistaionId(organisationUniqueKey);
             await setCompetitionID(competitionUniqueKey);
+        }
+		if(sourceSystem!= undefined){
+			await setSourceSystemFlag(sourceSystem);
+        }
+        else{
+            await localStorage.removeItem("sourceSystem");
         }
 
         if(userId!= undefined && token!= undefined){

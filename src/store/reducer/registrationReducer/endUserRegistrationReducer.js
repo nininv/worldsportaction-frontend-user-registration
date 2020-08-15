@@ -281,6 +281,10 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant["fees"] = null;
                     state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
                         state.registrationDetail.userRegistrations, state);
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
+                    participant["team"]["personRoleRefId"] = null;
+                    participant["team"]["players"] = []
              
                 }
                 else if(action.key == "competitionUniqueKey"){
@@ -299,6 +303,10 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.products = [];
                     participant.divisionName = null;
                     participant["fees"] = null;
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
+                    participant["team"]["personRoleRefId"] = null;
+                    participant["team"]["players"] = []
                 }
                 else if(action.key == "competitionMembershipProductTypeId"){
                     let memProd = participant.competitionInfo.membershipProducts.find(x=>x.competitionMembershipProductTypeId == 
@@ -333,11 +341,24 @@ function endUserRegistrationReducer(state = initialState, action) {
                         }
 
                         participant["competitionMembershipProductId"] = memProd.competitionMembershipProductId;
+                        participant["team"]["teamName"] = null;
+                        participant["team"]["resultCode"] = null;
+                        participant["team"]["personRoleRefId"] = null;
+                        participant["team"]["players"] = []
+                        
+                }
+                else if(action.key == "competitionMembershipProductDivisionId"){
+                    participant["team"]["teamName"] = null;
+                    participant["team"]["resultCode"] = null;
                 }
                 participant[action.key] = action.data;
             }
             else if(action.subKey == "team"){
                 participant[action.subKey][action.key] = action.data;
+
+                if(action.key =="teamName"){
+                    participant[action.subKey]["resultCode"] = null;
+                }
 
                 if(action.key == "personRoleRefId" || action.key == "registeringAsAPlayer")
                 {
@@ -900,6 +921,19 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
+        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
+            state["participantIndex"] = action.participantIndex;
+            return { ...state};
+
+        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
+            let  userReg = state.registrationDetail.userRegistrations;
+            userReg[state.participantIndex].team["resultCode"] = action.result.resultCode; 
+            state["participantIndex"] = null;       
+
+            return {
+                ...state,
+                onLoad: false,                
+            };
         default:
             return state;
     }

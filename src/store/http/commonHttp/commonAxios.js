@@ -212,7 +212,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -287,7 +287,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -358,7 +358,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
