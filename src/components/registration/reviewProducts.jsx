@@ -97,6 +97,7 @@ const CheckoutForm = (props) => {
     const stripe = useStripe();
     const elements = useElements();
     let paymentOptions = props.paymentOptions;
+    let isSchoolRegistration = props.isSchoolRegistration;
     let payload = props.payload;
     let registrationUniqueKey = props.registrationUniqueKey;
     
@@ -163,7 +164,7 @@ const CheckoutForm = (props) => {
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
         console.log(auBankAccount, card)
-        if (auBankAccount || card) {
+        if (auBankAccount || card || isSchoolRegistration == 1) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -180,7 +181,7 @@ const CheckoutForm = (props) => {
                 }
 
             }
-            else {
+            else if(auBankAccount){
                 props.onLoad(true)
                 console.log("clientSecretKey", clientSecretKey);
 
@@ -221,12 +222,18 @@ const CheckoutForm = (props) => {
                     })
                 }
             }
+            else if(isSchoolRegistration){
+                props.onLoad(true)
+                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
+            }
         }
         else {
-            message.config({
-                maxCount: 1, duration: 0.9
-            })
-            message.error(AppConstants.selectedPaymentOption)
+            if(!isSchoolRegistration){
+                message.config({
+                    maxCount: 1, duration: 0.9
+                })
+                message.error(AppConstants.selectedPaymentOption)
+            }
         }
     }
 
@@ -234,6 +241,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
+                {paymentOptions.length > 0 && 
                 <div className="formView content-view pt-5">
                     <div className = "individual-header-view">
                         <div>
@@ -344,6 +352,7 @@ const CheckoutForm = (props) => {
                     </div>
                     ))}
                 </div>
+                }
                 <div className="formView mt-5" style={{backgroundColor: "#f7fafc"}}>
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"space-between"}}>
@@ -351,7 +360,7 @@ const CheckoutForm = (props) => {
                                 onClick={() => previousCall()}>
                                 {AppConstants.previous}
                             </Button>
-                            {paymentOptions.length > 0 ?
+                            {(paymentOptions.length > 0 || isSchoolRegistration == 1) ?
                                 <Button
                                     className="open-reg-button"
                                     htmlType="submit"
@@ -432,16 +441,6 @@ class ReviewProducts extends Component {
         this.setState({modalVisible: false})
     }
 
-    saveReviewForm = (e) =>{
-        e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("Error: " + err);
-            if(!err)
-            {
-            }
-        });
-    }
-
      headerView = () => {
         return (
             <div className="header-view form-review" style = {{paddingLeft:0,marginBottom : 40}}>
@@ -476,6 +475,7 @@ class ReviewProducts extends Component {
         let {regReviewPrdData} = this.props.endUserRegistrationState;
         let participantList = regReviewPrdData!= null ? regReviewPrdData.compParticipants: [];
         let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
+        let isSchoolRegistration = regReviewPrdData!= null ? regReviewPrdData.isSchoolRegistration : 0;
         return (
             <div>
                 
@@ -491,7 +491,8 @@ class ReviewProducts extends Component {
                <div style={{ marginBottom: 40}}>
                     <Elements stripe={stripePromise} >
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
-                        payload={regReviewPrdData} registrationUniqueKey = {this.state.registrationUniqueKey}/>
+                        payload={regReviewPrdData} registrationUniqueKey = {this.state.registrationUniqueKey}
+                        isSchoolRegistration={isSchoolRegistration}/>
                     </Elements>
                </div> 
 
@@ -682,86 +683,86 @@ class ReviewProducts extends Component {
         )
     }
 
-    securePaymentOption = () => {
-        let {regReviewPrdData} = this.props.endUserRegistrationState;
-        let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
-        return (
-            <div className = "individual-reg-view">
-                <div className = "individual-header-view">
-                    <div>
-                        {AppConstants.securePaymentOptions}  
-                    </div>                    
-                </div> 
-                <div style={{marginTop:40}}>
-                    <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-                        {(securePaymentOptions || []) .map((x, sIndex) => (
-                        <div>
-                            {x.securePaymentOptionRefId == 2 && 
-                            <div>
-                                <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
-                                <div className="card-outer-element">
-                                    <Elements stripe={stripePromise}>
-                                        <form className='form-element'>
-                                            <CardElement
-                                                id="card-element"
-                                                // options={CARD_ELEMENT_OPTIONS}
-                                                // onChange={handleChange}
-                                                className='StripeElement'
-                                            />
-                                        </form>       
-                                    </Elements>             
-                                </div>
-                            </div>
-                            }
-                            {x.securePaymentOptionRefId == 1 && 
-                                <Radio value={"1"}>{AppConstants.debitCard}</Radio> 
-                            }
-                            { x.securePaymentOptionRefId == 3 && 
-                            <Radio value={3}>{AppConstants.cash}</Radio>  
-                            }
-                        </div>
-                        ))}
+    // securePaymentOption = () => {
+    //     let {regReviewPrdData} = this.props.endUserRegistrationState;
+    //     let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
+    //     return (
+    //         <div className = "individual-reg-view">
+    //             <div className = "individual-header-view">
+    //                 <div>
+    //                     {AppConstants.securePaymentOptions}  
+    //                 </div>                    
+    //             </div> 
+    //             <div style={{marginTop:40}}>
+    //                 <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
+    //                     {(securePaymentOptions || []) .map((x, sIndex) => (
+    //                     <div>
+    //                         {x.securePaymentOptionRefId == 2 && 
+    //                         <div>
+    //                             <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
+    //                             <div className="card-outer-element">
+    //                                 <Elements stripe={stripePromise}>
+    //                                     <form className='form-element'>
+    //                                         <CardElement
+    //                                             id="card-element"
+    //                                             // options={CARD_ELEMENT_OPTIONS}
+    //                                             // onChange={handleChange}
+    //                                             className='StripeElement'
+    //                                         />
+    //                                     </form>       
+    //                                 </Elements>             
+    //                             </div>
+    //                         </div>
+    //                         }
+    //                         {x.securePaymentOptionRefId == 1 && 
+    //                             <Radio value={"1"}>{AppConstants.debitCard}</Radio> 
+    //                         }
+    //                         { x.securePaymentOptionRefId == 3 && 
+    //                         <Radio value={3}>{AppConstants.cash}</Radio>  
+    //                         }
+    //                     </div>
+    //                     ))}
                         
-                    </Radio.Group>  
-                </div>                                                  
-            </div>
-        )
-    }
+    //                 </Radio.Group>  
+    //             </div>                                                  
+    //         </div>
+    //     )
+    // }
 
-    footerView = (isSubmitting) => {
-        let {regReviewPrdData} = this.props.endUserRegistrationState;
-        let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
-        return (
-            <div className="fluid-width">
-                <div className="footer-view" style={{padding:0}}>
-                    <div style={{display:"flex" , justifyContent:"space-between"}}>
-                        <Button className="save-draft-text" type="save-draft-text"
-                            onClick={() => this.previousCall()}>
-                            {AppConstants.previous}
-                        </Button>
-                        {securePaymentOptions.length > 0 ?
-                            <Button
-                                className="open-reg-button"
-                                htmlType="submit"
-                                type="primary"
-                                disabled={isSubmitting}
-                                onClick={() => this.setState({ buttonPressed: "save" })}>
-                                {AppConstants.next}
-                            </Button>
-                        : null}
-                    </div>
-                </div>
-                <Modal
-                     className="add-membership-type-modal"
-                    title="Registration Review"
-                    visible={this.state.modalVisible}
-                    onOk={() => this.handleRegReviewModal("ok")}
-                    onCancel={() => this.handleRegReviewModal("cancel")}>
-                    <p>Do you want to delete the product? </p>
-                </Modal>
-            </div>
-        );
-    };
+    // footerView = (isSubmitting) => {
+    //     let {regReviewPrdData} = this.props.endUserRegistrationState;
+    //     let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
+    //     return (
+    //         <div className="fluid-width">
+    //             <div className="footer-view" style={{padding:0}}>
+    //                 <div style={{display:"flex" , justifyContent:"space-between"}}>
+    //                     <Button className="save-draft-text" type="save-draft-text"
+    //                         onClick={() => this.previousCall()}>
+    //                         {AppConstants.previous}
+    //                     </Button>
+    //                     {securePaymentOptions.length > 0 ?
+    //                         <Button
+    //                             className="open-reg-button"
+    //                             htmlType="submit"
+    //                             type="primary"
+    //                             disabled={isSubmitting}
+    //                             onClick={() => this.setState({ buttonPressed: "save" })}>
+    //                             {AppConstants.next}
+    //                         </Button>
+    //                     : null}
+    //                 </div>
+    //             </div>
+    //             <Modal
+    //                  className="add-membership-type-modal"
+    //                 title="Registration Review"
+    //                 visible={this.state.modalVisible}
+    //                 onOk={() => this.handleRegReviewModal("ok")}
+    //                 onCancel={() => this.handleRegReviewModal("cancel")}>
+    //                 <p>Do you want to delete the product? </p>
+    //             </Modal>
+    //         </div>
+    //     );
+    // };
 
     render() {
         // const { getFieldDecorator } = this.props.form;
@@ -820,9 +821,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
    //console.log("Payload::" + JSON.stringify(payload));
-   let stripeToken = token.id
-    let body
+  
+    let body;
     if (paymentType === "card") {
+        let stripeToken = token.id
         body = {
             registrationId: registrationUniqueKey,
            // invoiceId: invoiceId,
@@ -833,12 +835,21 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
         }
     }
-    else {
+    else if(paymentType === "direct_debit"){
         body = {
             registrationId: registrationUniqueKey,
             //invoiceId: invoiceId,
             payload: payload,
             paymentType: paymentType,
+        }
+    }
+    else if(props.isSchoolRegistration){
+        body = {
+            registrationId: registrationUniqueKey,
+            //invoiceId: invoiceId,
+            payload: payload,
+            paymentType: null,
+            isSchoolRegistration: 1
         }
     }
     console.log("payload" + JSON.stringify(payload));
@@ -866,10 +877,16 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 paymentSuccess: true
                             })
                         }
-                        else {
+                        else if(paymentType =="direct_debit") {
                             setClientKey(Response.clientSecret)
                             setRegId(registrationUniqueKey)
                            // message.success(Response.message);
+                        }
+                        else{
+                            history.push("/invoice", {
+                                registrationId: registrationUniqueKey,
+                                paymentSuccess: true
+                            })
                         }
                     }
                     else if (response.status === 212) {

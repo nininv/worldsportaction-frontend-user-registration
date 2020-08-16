@@ -691,6 +691,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                             x.discountsToDeduct = formatValue(x.discountsToDeduct)
                         })
                         reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+
+                        setIsSchoolRegistration(reviewData);
                     }
                     else if(action.key == "gameVoucherValue"){
                         reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
@@ -714,7 +716,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 }
             }
 
-            console.log("ReviewData", reviewData);
+            //console.log("ReviewData", reviewData);
             
             return {
                 ...state,
@@ -1236,7 +1238,7 @@ function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
 }
 
 function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
-    console.log("calculateFee::", paymentOptionRefId, memObj, gameVoucherValue)
+    //console.log("calculateFee::", paymentOptionRefId, memObj, gameVoucherValue)
     try {
         if(paymentOptionRefId!= null){
             if(paymentOptionRefId <=2){
@@ -1314,13 +1316,13 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
     }
     
 
-    console.log("memObj::", memObj);
+    //console.log("memObj::", memObj);
 
 }
 
 function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVoucherValue)
 {
-    console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  gameVoucherValue)
+    //console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  gameVoucherValue)
     try {
         memProd.discountsToDeduct = 0;
         discountData.map((x) =>{
@@ -1391,5 +1393,30 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
         console.log("Error", error);
     }
     
+}
+
+function setIsSchoolRegistration(reviewData){
+   // console.log("reviewData", reviewData);
+    let otherOption = 0;
+    let isSchoolRegistration = 0;
+    reviewData.compParticipants.map((item) =>{
+        if(item.selectedOptions.paymentOptionRefId != 5){
+            otherOption = 1;
+        }
+        if(item.selectedOptions.paymentOptionRefId == 5){
+            isSchoolRegistration = 1;
+        }
+    })
+
+    if(otherOption == 0 && isSchoolRegistration == 1){
+        isSchoolRegistration = 1;
+    }
+    else{
+        isSchoolRegistration = 0; 
+    }
+
+   // console.log("isSchoolRegistration" + isSchoolRegistration);
+
+    reviewData.isSchoolRegistration = isSchoolRegistration;
 }
 export default endUserRegistrationReducer;
