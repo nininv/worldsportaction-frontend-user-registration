@@ -1,7 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString, formatValue, isNullOrUndefined, feeIsNull } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
-import { get } from "jquery";
+import moment from 'moment';
 
 let registrationObj = {
     registrationUniqueKey: "",
@@ -651,6 +651,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
             else if(action.subkey == "selectedOptions"){
                 let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
+                let compParticipant = reviewData["compParticipants"][action.index];
                 let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
               
                 if(action.key == "removeCode"){
@@ -684,7 +685,7 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                         let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
                         memProds.map((x, mIndex) =>{
-                            calculateFee(action.value, x, gameVoucherVal);
+                            calculateFee(action.value, x, gameVoucherVal, compParticipant);
                             calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal);
 
                             x.feesToPay = formatValue(x.feesToPay);
@@ -698,7 +699,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
 
                         memProds.map((x, mIndex) =>{
-                            calculateFee(2, x, action.value);
+                            calculateFee(2, x, action.value, compParticipant);
                             calculateDiscount(x.selectedDiscounts, x, 2,  action.value);
                             x.feesToPay = formatValue(x.feesToPay);
                             x.discountsToDeduct = formatValue(x.discountsToDeduct)
@@ -1221,7 +1222,7 @@ function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
     else{
         if(paymentOptionRefId!= null){
             if(paymentOptionRefId > 2){
-                discountsToDeduct = feeIsNull(fee.seasonalFee) * (feeIsNull(discount.amount)/100);
+                discountsToDeduct = feeIsNull(fee.feesToPay) * (feeIsNull(discount.amount)/100);
             }
             else{
                 if(paymentOptionRefId == 2){
@@ -1237,7 +1238,7 @@ function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
     return discountsToDeduct;
 }
 
-function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
+function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticipant){
     //console.log("calculateFee::", paymentOptionRefId, memObj, gameVoucherValue)
     try {
         if(paymentOptionRefId!= null){
@@ -1298,16 +1299,39 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue){
                     let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee);
                     let mSeasonalGST =   feeIsNull(memObj.fees.membershipFee.seasonalGST);
 
-                    memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
-                                        +  mSeasonalGST);
-                    memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
-                    memObj.fees.membershipFee.feesToPayGST = mSeasonalGST;  
-                    memObj.fees.competitionOrganisorFee.feesToPay = cSeasonalFee; 
-                    memObj.fees.competitionOrganisorFee.feesToPayGST = cSeasonalGST; 
-                    if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
-                        memObj.fees.affiliateFee.feesToPay = aSeasonalFee;  
-                        memObj.fees.affiliateFee.feesToPayGST = aSeasonalGST;
+                    if(paymentOptionRefId == 3){
+                        memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
+                            +  mSeasonalGST);
+                        memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
+                        memObj.fees.membershipFee.feesToPayGST = mSeasonalGST;  
+                        memObj.fees.competitionOrganisorFee.feesToPay = cSeasonalFee; 
+                        memObj.fees.competitionOrganisorFee.feesToPayGST = cSeasonalGST; 
+                        if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                            memObj.fees.affiliateFee.feesToPay = aSeasonalFee;  
+                            memObj.fees.affiliateFee.feesToPayGST = aSeasonalGST;
+                        }
                     }
+                    else if(paymentOptionRefId == 4){
+                        let totalDates = 0;
+                        let paidDates = 0;
+                        let dates = getInstalmentDatesToPay(compParticipant);
+                        console.log("dates" + JSON.stringify(dates));
+                        totalDates = dates.totalDates;
+                        paidDates = dates.paidDates;
+
+                        memObj.feesToPay = totalDates == 0 ? 0 :
+                            ((aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
+                            +  mSeasonalGST) / totalDates) * paidDates;
+                        memObj.fees.membershipFee.feesToPay = totalDates == 0 ? 0 : (mSeasonalFee / totalDates) * paidDates;  
+                        memObj.fees.membershipFee.feesToPayGST = totalDates == 0 ? 0 : (mSeasonalGST / totalDates) * paidDates;  
+                        memObj.fees.competitionOrganisorFee.feesToPay = totalDates == 0 ? 0 : (cSeasonalFee / totalDates) * paidDates; 
+                        memObj.fees.competitionOrganisorFee.feesToPayGST = totalDates == 0 ? 0 : (cSeasonalGST / totalDates) * paidDates; 
+                        if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                            memObj.fees.affiliateFee.feesToPay = totalDates == 0 ? 0 : (aSeasonalFee / totalDates) * paidDates;  
+                            memObj.fees.affiliateFee.feesToPayGST = totalDates == 0 ? 0 : (aSeasonalGST / totalDates) * paidDates;
+                        }
+                    }
+                    
                 }
             }
         }
@@ -1418,5 +1442,32 @@ function setIsSchoolRegistration(reviewData){
    // console.log("isSchoolRegistration" + isSchoolRegistration);
 
     reviewData.isSchoolRegistration = isSchoolRegistration;
+}
+
+function getInstalmentDatesToPay(item){
+    try {
+        let totalDates = 0;
+        let paidDates = 0;
+        if(item.isTeamSeasonalUponReg == 1 || item.isSeasonalUponReg == 1){
+            totalDates += 1;
+            paidDates += 1;
+        }
+
+        if(isArrayNotEmpty(item.instalmentDates)){
+            totalDates += item.instalmentDates.length;
+            item.instalmentDates.map((x) =>{
+                if(moment(x.instalmentDate).isBefore(moment())){
+                    paidDates += 1;
+                }
+            })
+        }
+
+        return {
+            totalDates,
+            paidDates
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 export default endUserRegistrationReducer;
