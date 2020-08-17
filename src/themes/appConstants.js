@@ -955,7 +955,8 @@ const AppConstants = {
   expiryDate:"Expiry Date",
   teamRegistration: "Team Registration",
   personRegistering: "Person Registering",
-  webAdmin:"WebAdmin"
+  webAdmin:"WebAdmin",
+  teamAlreadyExists: "This team name is already in use. Please choose an alternative name."
 };
 
 export default AppConstants;

@@ -4688,7 +4688,7 @@ class AppRegistrationForm extends Component {
                 </Form.Item>
 				{ item.team.resultCode == 2 &&                
                     <div style={{color:"var(--app-red)"}}>
-                        Team already exist
+                        {AppConstants.teamAlreadyExists}
                     </div>                         
                 }
 
