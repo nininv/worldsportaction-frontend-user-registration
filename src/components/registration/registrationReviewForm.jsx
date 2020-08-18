@@ -226,6 +226,18 @@ class RegistrationReviewForm extends Component {
                         </div>
                     </div>
                      }
+                     { (mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  )  && 
+                    <div className='membership-text' style={{marginTop:0}}>
+                        <div>
+                            <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
+                            <span>{AppConstants.familyDiscount}</span>
+                        </div>
+                        <div className="number-text-style">
+                            (${mem.childDiscountsToDeduct})
+                        </div>
+                    </div>
+                     }
                 </div>
                 ))}
                 {item.selectedOptions.governmentVoucherRefId!= null && 
