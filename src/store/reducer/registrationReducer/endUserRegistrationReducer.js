@@ -688,7 +688,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
                         memProds.map((x, mIndex) =>{
                             calculateFee(action.value, x, gameVoucherVal, compParticipant);
-                            calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal, null);
+                            calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal, null, compParticipant);
 
                             x.feesToPay = formatValue(x.feesToPay);
                             x.discountsToDeduct = formatValue(x.discountsToDeduct);
@@ -703,7 +703,7 @@ function endUserRegistrationReducer(state = initialState, action) {
 
                         memProds.map((x, mIndex) =>{
                             calculateFee(2, x, action.value, compParticipant);
-                            calculateDiscount(x.selectedDiscounts, x, 2,  action.value, null);
+                            calculateDiscount(x.selectedDiscounts, x, 2,  action.value, null, compParticipant);
                             x.feesToPay = formatValue(x.feesToPay);
                             x.discountsToDeduct = formatValue(x.discountsToDeduct);
                             x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct)
@@ -897,8 +897,9 @@ function endUserRegistrationReducer(state = initialState, action) {
             try {
                 let reviewData = state.registrationReviewList;
                 let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
-                let paymentOptionRefId = reviewData["compParticipants"][action.index]["selectedOptions"]["paymentOptionRefId"];
-                let gameVoucherValue = reviewData["compParticipants"][action.index]["selectedOptions"]["gameVoucherValue"];
+                let compParticipant = reviewData["compParticipants"][action.index];
+                let paymentOptionRefId = compParticipant["selectedOptions"]["paymentOptionRefId"];
+                let gameVoucherValue = compParticipant["selectedOptions"]["gameVoucherValue"];
                 memProd.discountsToDeduct = 0;
                 memProd.fees.competitionOrganisorFee.discountsToDeduct = 0;
                 if(isNullOrUndefined(memProd.fees.affiliateFee)){
@@ -910,7 +911,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                 memProd.selectedDiscounts = [];
                 memProd.selectedDiscounts.push(...discountData);
                 if(isArrayNotEmpty(discountData)){
-                    calculateDiscount(discountData, memProd, paymentOptionRefId,  gameVoucherValue, "fromValidateDiscountCode");
+                    calculateDiscount(discountData, memProd, paymentOptionRefId,  gameVoucherValue, "fromValidateDiscountCode", compParticipant);
                     memProd.discountsToDeduct = formatValue(memProd.discountsToDeduct)
                     memProd.childDiscountsToDeduct = formatValue(memProd.childDiscountsToDeduct)
                 }
@@ -1215,10 +1216,10 @@ function setSettings(participantIndex, prodIndex, registrationSettings, regSetti
     }
 }
 
-function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
+function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, compParticipant){
     console.log("getDiscountValue", discount, paymentOptionRefId, fee)
     let discountsToDeduct = 0;
-    if(paymentOptionRefId == 5){
+    if(paymentOptionRefId == 5 && compParticipant.schoolRegCode == 1){
         discountsToDeduct = 0
     }
     else if(discount.discountTypeId == 1){
@@ -1243,7 +1244,7 @@ function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue){
     return discountsToDeduct;
 }
 
-function getChildDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, selectedDiscount, key){
+function getChildDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, selectedDiscount, key, compParticipant){
     console.log("getChildDiscountValue", discount, paymentOptionRefId, fee, selectedDiscount)
     let childDiscountsToDeduct = 0;
     let amount = 0;
@@ -1258,7 +1259,7 @@ function getChildDiscountValue(discount, paymentOptionRefId, fee, gameVoucherVal
     if(isNullOrUndefined(childDiscount)){
         amount = childDiscount.amount;
     }
-    if(paymentOptionRefId == 5){
+    if(paymentOptionRefId == 5 && compParticipant.schoolRegCode == 1){
         childDiscountsToDeduct = 0
     }
     else if(paymentOptionRefId == 2){
@@ -1312,7 +1313,7 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticip
                 }
             }
             else{
-                if(paymentOptionRefId == 5){
+                if(paymentOptionRefId == 5 && compParticipant.schoolRegCode == 1){
                     memObj.feesToPay = 0;
                     memObj.fees.membershipFee.feesToPay = 0;  
                     memObj.fees.membershipFee.feesToPayGST = 0;  
@@ -1333,7 +1334,7 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticip
                     let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee);
                     let mSeasonalGST =   feeIsNull(memObj.fees.membershipFee.seasonalGST);
 
-                    if(paymentOptionRefId == 3){
+                    if(paymentOptionRefId == 3 || paymentOptionRefId == 5){
                         memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
                             +  mSeasonalGST);
                         memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
@@ -1378,7 +1379,7 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticip
 
 }
 
-function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVoucherValue, key)
+function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVoucherValue, key, compParticipant)
 {
     console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  gameVoucherValue)
     try {
@@ -1399,16 +1400,16 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                     {
                         let feeObj = memProd.fees.competitionOrganisorFee;
                         if(x.typeId == 3){
-                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x, "Comp");
+                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x, "Comp", compParticipant);
                             console.log("childDiscountVal" + childDiscountVal);
                             memProd.childDiscountsToDeduct = feeIsNull(memProd.childDiscountsToDeduct) +  childDiscountVal;
                             memProd.fees.competitionOrganisorFee.childDiscountsToDeduct = childDiscountVal;
                         }
                         else if(x.typeId == 2){
-                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, compParticipant);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) +  discountVal;
                             memProd.fees.competitionOrganisorFee.discountsToDeduct = discountVal;
-                            if(paymentOptionRefId!= 5){
+                            if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && compParticipant.schoolRegCode == 0)){
                                 memProd.isDiscountApplied = 1;
                             }
                             else{
@@ -1423,15 +1424,15 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                     {
                         let feeObj = memProd.fees.affiliateFee;
                         if(x.typeId == 3){
-                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x,  "Comp");
+                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x,  "Comp", compParticipant);
                             memProd.childDiscountsToDeduct = feeIsNull(memProd.childDiscountsToDeduct) +  childDiscountVal;
                             memProd.fees.affiliateFee.childDiscountsToDeduct = childDiscountVal;
                         }
                         else if(x.typeId == 2){
-                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, compParticipant);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
                             memProd.fees.affiliateFee.discountsToDeduct = discountVal;
-                            if(paymentOptionRefId!= 5){
+                            if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && compParticipant.schoolRegCode == 0)){
                                 memProd.isDiscountApplied = 1;
                             }
                             else{
@@ -1451,15 +1452,15 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                     {
                         let feeObj = memProd.fees.membershipFee;
                         if(x.typeId == 3){
-                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x,  "Mem");
+                            let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x,  "Mem", compParticipant);
                             memProd.childDiscountsToDeduct = feeIsNull(memProd.childDiscountsToDeduct) +  childDiscountVal;
                             memProd.fees.membershipFee.childDiscountsToDeduct = childDiscountVal;
                         }
                         else if(x.typeId == 2){
-                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue);
+                            let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, compParticipant);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
                             memProd.fees.membershipFee.discountsToDeduct = discountVal;
-                            if(paymentOptionRefId!= 5){
+                            if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && compParticipant.schoolRegCode == 0)){
                                 memProd.isDiscountApplied = 1;
                             }
                             else{
@@ -1483,10 +1484,11 @@ function setIsSchoolRegistration(reviewData){
     let otherOption = 0;
     let isSchoolRegistration = 0;
     reviewData.compParticipants.map((item) =>{
-        if(item.selectedOptions.paymentOptionRefId != 5){
+        if(item.selectedOptions.paymentOptionRefId != 5 || 
+                (item.selectedOptions.paymentOptionRefId == 5 && item.schoolRegCode == 0)){
             otherOption = 1;
         }
-        if(item.selectedOptions.paymentOptionRefId == 5){
+        if(item.selectedOptions.paymentOptionRefId == 5 && item.schoolRegCode == 1){
             isSchoolRegistration = 1;
         }
     })
