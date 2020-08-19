@@ -585,12 +585,17 @@ class AppRegistrationForm extends Component {
             if(!registrationState.error)
             {
                 if (this.state.buttonPressed == "save" ) {
-                    let registrationId=registrationState.registrationId
+                    let registrationId = registrationState.registrationId;
                     console.log("registrationId",registrationId)
-                    history.push("/registrationReview", {
-                        registrationId: registrationId,
-						paymentSuccess: false					 
-                    })
+                    if(registrationId!= null){
+                        history.push("/registrationReview", {
+                            registrationId: registrationId,
+                            paymentSuccess: false					 
+                        })
+                    }
+                    else if(registrationState.errorMsg!= null && registrationState.errorMsg.length > 0){
+                        message.error("Single Competition Error");
+                    }
 
                     this.clearLocalStorage();
                     // history.push('/appRegistrationSuccess');
