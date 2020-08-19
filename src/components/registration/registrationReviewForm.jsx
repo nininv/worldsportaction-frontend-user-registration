@@ -313,12 +313,12 @@ class RegistrationReviewForm extends Component {
                 <div>
                     {(item.membershipProducts || []).map((mem, memIndex) =>(
                     <div>
-                        {(mem.discounts.length > 0 && memIndex == 0) &&
+                        {(mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2).length > 0 && memIndex == 0) &&
                          <div style={{marginLeft:8}}>
                             <InputWithHead heading={AppConstants.discounts}/>
                         </div>
                         }
-                        { mem.discounts.length > 0 && 
+                        { mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2).length > 0 && 
                         <div className="inputfield-style">                    
                             <div className="row" style={{marginLeft:0 , marginTop: 12}}>
                                 <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
