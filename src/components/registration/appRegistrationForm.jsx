@@ -2642,7 +2642,8 @@ class AppRegistrationForm extends Component {
                                         i.competitionMembershipProductId){
                                         let obj = {
                                             competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
-                                            name: i.shortName
+                                            name: i.shortName,
+                                            isPlayer: i.isPlayer
                                         }
                                         memArr.push(obj);
                                     }
@@ -2658,7 +2659,8 @@ class AppRegistrationForm extends Component {
                                         item.competitionMembershipProductId == i.competitionMembershipProductId){
                                         let obj = {
                                             competitionMembershipProductTypeId: i.competitionMembershipProductTypeId,
-                                            name: i.shortName
+                                            name: i.shortName,
+                                            isPlayer: i.isPlayer
                                         }
                                         memArr.push(obj);
                                     }
@@ -2673,7 +2675,8 @@ class AppRegistrationForm extends Component {
                                                 x.competitionMembershipProductId == y.competitionMembershipProductId){
                                                 let obj = {
                                                     competitionMembershipProductTypeId: y.competitionMembershipProductTypeId,
-                                                    name: y.shortName
+                                                    name: y.shortName,
+                                                    isPlayer: y.isPlayer
                                                 }
                                                 memArr.push(obj);
                                             }
