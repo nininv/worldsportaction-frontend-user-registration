@@ -4986,7 +4986,8 @@ class AppRegistrationForm extends Component {
                 className="add-membership-type-modal"
                 title={AppConstants.singleCompetition}
                 visible={this.state.singleCompModalVisible}
-                onOk={() => this.setState({singleCompModalVisible: false})}>
+                onOk={() => this.setState({singleCompModalVisible: false})}
+                onCancel={() => this.setState({singleCompModalVisible: false})}>
                     {(errorMsg || []).map((item, index) =>(
                         <p key= {index}> {item}</p>
                     ))
