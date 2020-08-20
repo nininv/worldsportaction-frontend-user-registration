@@ -39,7 +39,7 @@ import { saveEndUserRegistrationAction,updateEndUserRegisrationAction, orgRegist
     updateTeamAction, updateYourInfoAction, getTermsAndConditionsAction,
     getRegistrationProductFeesAction, getRegistrationByIdAction, teamNameValidationAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
-import { getAge,deepCopyFunction, isArrayNotEmpty} from '../../util/helpers';
+import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -2544,7 +2544,9 @@ class AppRegistrationForm extends Component {
             if(!err)
             {
                 let registrationState = this.props.endUserRegistrationState;
-                let registrationDetail = deepCopyFunction(registrationState.registrationDetail);
+                //console.log("registrationState.registrationDetail" + JSON.stringify(registrationState.registrationDetail));
+                //let registrationDetail = deepCopyFunction(registrationState.registrationDetail);
+                let registrationDetail = registrationState.registrationDetail;
                 console.log("registrationDetail",registrationDetail);
                 let userRegistrations = registrationDetail.userRegistrations;
                 let volunteers = [];
@@ -2561,24 +2563,24 @@ class AppRegistrationForm extends Component {
                 registrationDetail.volunteers = volunteers;
                 registrationDetail["termsAndConditions"] = registrationState.termsAndConditions;
 
-                // registrationDetail.organisationUniqueKey = this.state.organisationUniqueKey;
+                // registrationDetail.organisationUniqueKey = this .state.organisationUniqueKey;
                 // registrationDetail.competitionUniqueKey = this.state.competitionUniqueKey;
                 let err = false;
                 let teamErr = false;
-                userRegistrations.map((item, index) =>{
-                    let membershipProductId = item.competitionMembershipProductTypeId;
+                // userRegistrations.map((item, index) =>{
+                //     let membershipProductId = item.competitionMembershipProductTypeId;
 
-                    (item.products || []).map((it, itIndex) => {
-                        if(it.competitionMembershipProductTypeId == membershipProductId){
-                            err = true;
-                        }
-                    })
-                    if(item.registeringYourself == 4){
-                        if(item.team.resultCode == 2){
-                            teamErr = true;
-                        }
-                    }
-                });
+                //     (item.products || []).map((it, itIndex) => {
+                //         if(it.competitionMembershipProductTypeId == membershipProductId){
+                //             err = true;
+                //         }
+                //     })
+                //     if(item.registeringYourself == 4){
+                //         if(item.team.resultCode == 2){
+                //             teamErr = true;
+                //         }
+                //     }
+                // });
 
 
                 if(!err && !teamErr){
@@ -2607,7 +2609,7 @@ class AppRegistrationForm extends Component {
                             if(getAge(item.dateOfBirth) > 18){
                                 item.parentOrGuardian = [];
                             }
-    
+                           // item.dateOfBirth = isNullOrEmptyString(item.dateOfBirth) ?  moment(item.dateOfBirth, 'YYYY-MM-DD'): null;
                             if(item.regSetting.play_friend == 0)
                             {
                                 item.friends = [];
@@ -2623,7 +2625,7 @@ class AppRegistrationForm extends Component {
                                     item["team"]["firstName"] = registeringYourself.firstName;
                                     item["team"]["middleName"] = registeringYourself.middleName;
                                     item["team"]["lastName"] = registeringYourself.lastName;
-                                    item["team"]["dateOfBirth"] = registeringYourself.dateOfBirth;
+                                    item["team"]["dateOfBirth"] =  registeringYourself.dateOfBirth;
                                     item["team"]["mobileNumber"] = registeringYourself.mobileNumber;
                                     item["team"]["email"] = registeringYourself.email;
                                     item["team"]["reEnterEmail"] = registeringYourself.reEnterEmail;
@@ -2677,10 +2679,10 @@ class AppRegistrationForm extends Component {
                                             }
                                         })
 
-                                        delete x.competitionInfo;
-                                        delete x.organisationInfo;
-                                       // delete x.divisions;
-                                        //delete x.fees;
+                                        // delete x.competitionInfo;
+                                        // delete x.organisationInfo;
+                                       //// delete x.divisions;
+                                       // //delete x.fees;
                                     })
                                 }
                             }
@@ -2691,10 +2693,10 @@ class AppRegistrationForm extends Component {
                             //     item.yourInfo = null;
                             // }
     
-                            delete item.organisationInfo;
-                            delete item.competitionInfo;
-                            //delete item.divisions;
-                            //delete item.fees;
+                            // delete item.organisationInfo;
+                            // delete item.competitionInfo;
+                            ////delete item.divisions;
+                            ////delete item.fees;
                         });
                         let isShowYourInfo = this.yourInfoDisplay();
                         if(isShowYourInfo == 0){
@@ -2721,10 +2723,14 @@ class AppRegistrationForm extends Component {
                                 }
                             }
                         }
-                        console.log("FINAL DATA",registrationDetail );
-                        //console.log("FINAL DATA" + JSON.stringify(registrationDetail));
-                         formData.append("registrationDetail", JSON.stringify(registrationDetail));
-    
+                        //console.log("FINAL DATA",registrationDetail );
+                        console.log("FINAL DATA" + JSON.stringify(registrationDetail));
+                        try {
+                            formData.append("registrationDetail", JSON.stringify(registrationDetail));
+                        } catch (error) {
+                            console.log("(((((((((((((("+error);
+                        }
+                         
                          this.props.saveEndUserRegistrationAction(formData);
                          this.setState({ loading: true });
                     }
@@ -2732,11 +2738,11 @@ class AppRegistrationForm extends Component {
                         message.error(ValidationConstants.userPhotoIsRequired);
                     }
                 }
-                else{
-                    if(err){
-                        message.error(ValidationConstants.membershipProductValidation); 
-                    }
-                }
+                // else{
+                //     if(err){
+                //         message.error(ValidationConstants.membershipProductValidation); 
+                //     }
+                // }
             }
         });
        } catch (error) {
@@ -2756,7 +2762,8 @@ class AppRegistrationForm extends Component {
             registrationDetail.yourInfo.suburb = item.suburb;
             registrationDetail.yourInfo.stateRefId = item.stateRefId;
             registrationDetail.yourInfo.postalCode = item.postalCode;
-            registrationDetail.yourInfo["dateOfBirth"] = item.dateOfBirth ? item.dateOfBirth : null;
+            //console.log("$$$$$$$$$$$" + item.dateOfBirth + "###" + new Date(item.dateOfBirth) + "Moment" + moment(item.dateOfBirth, "YYYY-MM-DD"));
+            registrationDetail.yourInfo["dateOfBirth"] = item.dateOfBirth;
             registrationDetail.yourInfo.userId = item.userId ? item.userId : 0;
         } catch (error) {
             console.log("Exception in setFinalYourInfo" + error)
