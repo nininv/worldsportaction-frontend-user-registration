@@ -504,7 +504,8 @@ class AppRegistrationForm extends Component {
             csvData: null,
             uploadPlayerModalVisible: false,
             isRegYourselfDisable: false,
-            registrationUniqueKey: null
+            registrationUniqueKey: null,
+            singleCompModalVisible: false
         };
         this_Obj = this;
      
@@ -593,8 +594,8 @@ class AppRegistrationForm extends Component {
                             paymentSuccess: false					 
                         })
                     }
-                    else if(registrationState.errorMsg!= null && registrationState.errorMsg.length > 0){
-                        message.error("Single Competition Error");
+                    else if(registrationState.singleCompErrorMsg!= null && registrationState.singleCompErrorMsg.length > 0){
+                        this.setState({singleCompModalVisible: true});
                     }
 
                     this.clearLocalStorage();
@@ -2537,14 +2538,14 @@ class AppRegistrationForm extends Component {
 
     saveRegistrationForm = (e) => {
        try {
-        let userRegistrations1 = this.props.endUserRegistrationState.registrationDetail.userRegistrations;
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: ", err);
             if(!err)
             {
                 let registrationState = this.props.endUserRegistrationState;
-                let registrationDetail = registrationState.registrationDetail;
+                let registrationDetail = deepCopyFunction(registrationState.registrationDetail);
+                console.log("registrationDetail",registrationDetail);
                 let userRegistrations = registrationDetail.userRegistrations;
                 let volunteers = [];
                 (this.state.volunteerList || []).map((item, index) => {
@@ -2720,8 +2721,8 @@ class AppRegistrationForm extends Component {
                                 }
                             }
                         }
-
-                        console.log("FINAL DATA" + JSON.stringify(registrationDetail));
+                        console.log("FINAL DATA",registrationDetail );
+                        //console.log("FINAL DATA" + JSON.stringify(registrationDetail));
                          formData.append("registrationDetail", JSON.stringify(registrationDetail));
     
                          this.props.saveEndUserRegistrationAction(formData);
@@ -4964,6 +4965,25 @@ class AppRegistrationForm extends Component {
         );
     };
 
+    singleCompModalView = () =>{
+        let {singleCompErrorMsg} = this.props.endUserRegistrationState;
+        let errorMsg = singleCompErrorMsg!=  null ? singleCompErrorMsg : [];
+        return (
+            <div>
+              <Modal
+                className="add-membership-type-modal"
+                title={AppConstants.singleCompetition}
+                visible={this.state.singleCompModalVisible}
+                onOk={() => this.setState({singleCompModalVisible: false})}>
+                    {(errorMsg || []).map((item, index) =>(
+                        <p key= {index}> {item}</p>
+                    ))
+                    }
+              </Modal>
+            </div>
+          );
+    }
+
     contentView = (getFieldDecorator) => {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
@@ -5177,6 +5197,7 @@ class AppRegistrationForm extends Component {
                     {/* {this.termsAndConditionView(getFieldDecorator)} */}
                 </div>) : null }
                 {this.removeModalView()}
+                {this.singleCompModalView()};
             </div>
         )
     }
