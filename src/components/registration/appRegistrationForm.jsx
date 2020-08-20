@@ -2545,8 +2545,8 @@ class AppRegistrationForm extends Component {
             {
                 let registrationState = this.props.endUserRegistrationState;
                 //console.log("registrationState.registrationDetail" + JSON.stringify(registrationState.registrationDetail));
-                //let registrationDetail = deepCopyFunction(registrationState.registrationDetail);
-                let registrationDetail = registrationState.registrationDetail;
+                let registrationDetail = JSON.parse(JSON.stringify(registrationState.registrationDetail));
+                //let registrationDetail = registrationState.registrationDetail;
                 console.log("registrationDetail",registrationDetail);
                 let userRegistrations = registrationDetail.userRegistrations;
                 let volunteers = [];
@@ -2682,8 +2682,8 @@ class AppRegistrationForm extends Component {
                                             }
                                         })
 
-                                        // delete x.competitionInfo;
-                                        // delete x.organisationInfo;
+                                         delete x.competitionInfo;
+                                         delete x.organisationInfo;
                                        //// delete x.divisions;
                                        // //delete x.fees;
                                     })
@@ -2696,8 +2696,8 @@ class AppRegistrationForm extends Component {
                             //     item.yourInfo = null;
                             // }
     
-                            // delete item.organisationInfo;
-                            // delete item.competitionInfo;
+                             delete item.organisationInfo;
+                             delete item.competitionInfo;
                             ////delete item.divisions;
                             ////delete item.fees;
                         });
@@ -2733,6 +2733,8 @@ class AppRegistrationForm extends Component {
                         } catch (error) {
                             console.log("(((((((((((((("+error);
                         }
+
+                        //console.log("registrationState.registrationDetail", registrationState.registrationDetail)
                          
                          this.props.saveEndUserRegistrationAction(formData);
                          this.setState({ loading: true });
