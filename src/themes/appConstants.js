@@ -936,7 +936,7 @@ const AppConstants = {
   payfullAmount:"Pay Full Amount",
   weeklyInstalment:"Weekly Instalment",
   instalmentDates:"Instalment dates",
-  schoolRegistration:"School Registration",
+  schoolRegistration:"School Invoice",
   governmentSportsVoucher:"Government Sports Voucher",
   support:"Support",
   confidentGirlsFoundation:"Confident Girls Foundation",
@@ -957,7 +957,8 @@ const AppConstants = {
   personRegistering: "Person Registering",
   webAdmin:"WebAdmin",
   teamAlreadyExists: "This team name is already in use. Please choose an alternative name.",
-  singleCompetition: "Single Competition"
+  singleCompetition: "Single Competition",
+  registrationCode: "Registration Code"
 };
 
 export default AppConstants;

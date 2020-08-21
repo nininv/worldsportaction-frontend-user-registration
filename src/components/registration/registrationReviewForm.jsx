@@ -76,9 +76,21 @@ class RegistrationReviewForm extends Component {
             let payload = {
                 "competitionMembershipProductTypeId":value.competitionMembershipProductTypeId,
                 "membershipMappingId": value.membershipMappingId,
-                "code":value.selectedCode
+                "code":value.selectedCode,
+                "key": "discount"
             }
             if(value.selectedCode!= null && value.selectedCode!= ""){
+                this.props.validateDiscountCode(payload, index, subIndex);
+            }
+        }
+        else if (key == "isSchoolRegCodeApplied"){
+            let payload = {
+                "isTeamRegistration":value.isTeamRegistration,
+                "competitionUniqueKey": value.competitionUniqueKey,
+                "code":value.selectedOptions.selectedSchoolRegCode,
+                "key": "school"
+            }
+            if(payload.code!= null && payload.code!= ""){
                 this.props.validateDiscountCode(payload, index, subIndex);
             }
         }
@@ -309,16 +321,16 @@ class RegistrationReviewForm extends Component {
                 </div>
                 ))}
                 </Radio.Group>
-                {item.selectedOptions.paymentOptionRefId != 5 &&
+                {item.selectedOptions.paymentOptionRefId != 5 ?
                 <div>
                     {(item.membershipProducts || []).map((mem, memIndex) =>(
                     <div>
-                        {(mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2).length > 0 && memIndex == 0) &&
+                        {(mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2 || x.competitionTypediscountTypeId == 2).length > 0 && memIndex == 0) &&
                          <div style={{marginLeft:8}}>
                             <InputWithHead heading={AppConstants.discounts}/>
                         </div>
                         }
-                        { mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2).length > 0 && 
+                        { mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2 || x.competitionTypediscountTypeId == 2).length > 0 && 
                         <div className="inputfield-style">                    
                             <div className="row" style={{marginLeft:0 , marginTop: 12}}>
                                 <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
@@ -352,7 +364,46 @@ class RegistrationReviewForm extends Component {
                         </div>}
                     </div>
                     ))}
-                </div> }
+                </div>  : 
+                <div>
+                    <div>
+                        {/* <div style={{marginLeft:8}}>
+                            <InputWithHead heading={AppConstants.registrationCode}/>
+                        </div> */}
+                        <div className="inputfield-style">                    
+                            <div className="row" style={{marginLeft:0 , marginTop: 12}}>
+                                <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
+                                {AppConstants.registrationCode} 
+                                </div>
+                                <div style={{ marginRight: 30}}>
+                                    <InputWithHead 
+                                        placeholder={AppConstants.code} 
+                                        onChange={(e) => this.setReviewInfo(e.target.value, "selectedSchoolRegCode", index,"selectedOptions", null)}
+                                        value={item.selectedOptions.selectedSchoolRegCode}/>
+                                </div>
+                                <div className="" style={{alignSelf:"center"}}>
+                                    {item.selectedOptions.isSchoolRegCodeApplied == 1 ?
+                                    <Button className="open-reg-button"
+                                        onClick={(e) =>  this.setReviewInfo(e, "removeSchoolRegCode", index,"selectedOptions")}
+                                        type="primary">
+                                        {AppConstants.removeCode}
+                                    </Button> : 
+                                    <Button className="open-reg-button"
+                                    onClick={(e) =>  this.setReviewInfo(item, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                                    type="primary">
+                                    {AppConstants.applyCode}
+                                </Button>}
+                                </div>   
+                                {item.selectedOptions.invalidSchoolRegCode == 1 && 
+                                <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                                    Invalid code
+                                </div>
+                                }
+                            </div>                   
+                        </div>
+                    </div>
+                </div>
+                }
                 {item.governmentVouchers.length > 0 && 
                 <div>
                     <div style={{marginLeft: 7,marginTop: 10}}>
