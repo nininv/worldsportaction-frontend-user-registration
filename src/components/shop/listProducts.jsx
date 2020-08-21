@@ -92,15 +92,18 @@ class ListProducts extends Component {
                             </Select>
 
                         </div>
-                        <div>
-                            <img
-                                src={AppImages.shoppingCart}
-                                className="cart-img"
-                                onError={ev => {
-                                    ev.target.src = AppImages.shoppingCart;
-                                }}
-                            />
-                        </div>
+                        <div className="d-flex justify-content-end cart-main-view">
+                        <img
+                            src={AppImages.shoppingCart}
+                            className="cart-img"
+                            onError={ev => {
+                                ev.target.src = AppImages.shoppingCart;
+                            }}
+                        />
+                    <div className="cart-number-div">
+                        <span className="cart-number-text">15</span>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
