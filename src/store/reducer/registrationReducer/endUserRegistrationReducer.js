@@ -1267,26 +1267,28 @@ function setSettings(participantIndex, prodIndex, registrationSettings, regSetti
     }
 }
 
-function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, compParticipant, isSchoolRegCodeApplied){
+function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, compParticipant, isSchoolRegCodeApplied
+    , noOfPlayers, payingForCount){
     console.log("getDiscountValue", discount, paymentOptionRefId, fee)
     let discountsToDeduct = 0;
+    let amount = Number(discount.amount);
     if(paymentOptionRefId == 5 && isSchoolRegCodeApplied == 1){
         discountsToDeduct = 0
     }
     else if(discount.discountTypeId == 1){
-        discountsToDeduct = Number(discount.amount)
+        discountsToDeduct = (Number(amount)/noOfPlayers) * payingForCount;
     }
     else{
         if(paymentOptionRefId!= null){
             if(paymentOptionRefId > 2){
-                discountsToDeduct = (feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * (feeIsNull(discount.amount)/100);
+                discountsToDeduct = (feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * (feeIsNull(amount)/100);
             }
             else{
                 if(paymentOptionRefId == 2){
-                    discountsToDeduct = ((feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * feeIsNull(gameVoucherValue)) * (feeIsNull(discount.amount)/100);
+                    discountsToDeduct = ((feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * feeIsNull(gameVoucherValue)) * (feeIsNull(amount)/100);
                 }
                 else{
-                    discountsToDeduct = (feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * (feeIsNull(discount.amount)/100);
+                    discountsToDeduct = (feeIsNull(fee.feesToPay) - feeIsNull(fee.childDiscountsToDeduct)) * (feeIsNull(amount)/100);
                 }
             }
         }
@@ -1434,8 +1436,15 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticip
 function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVoucherValue, key, compParticipant,
     isSchoolRegCodeApplied)
 {
-    console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  gameVoucherValue)
+    console.log("calculateDiscount", discountData, memProd,paymentOptionRefId,  compParticipant)
     try {
+        let noOfPlayers = 1;
+            let payingForCount = 1;
+            if(compParticipant.isTeamRegistration == 1){
+                noOfPlayers = compParticipant.noOfPlayers;
+                payingForCount = compParticipant.payingForCount;
+            }
+
         memProd.discountsToDeduct = 0;
         if(key != "fromValidateDiscountCode"){
             memProd.childDiscountsToDeduct = 0;
@@ -1461,7 +1470,7 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                         }
                         else if(x.typeId == 2){
                             let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue,
-                                         compParticipant, isSchoolRegCodeApplied);
+                                         compParticipant, isSchoolRegCodeApplied, noOfPlayers, payingForCount);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) +  discountVal;
                             memProd.fees.competitionOrganisorFee.discountsToDeduct = discountVal;
                             if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && isSchoolRegCodeApplied == 0)){
@@ -1486,7 +1495,7 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                         }
                         else if(x.typeId == 2){
                             let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, compParticipant, 
-                                isSchoolRegCodeApplied);
+                                isSchoolRegCodeApplied, noOfPlayers, payingForCount);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
                             memProd.fees.affiliateFee.discountsToDeduct = discountVal;
                             if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && isSchoolRegCodeApplied == 0)){
@@ -1516,7 +1525,7 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                         }
                         else if(x.typeId == 2){
                             let discountVal =  getDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, compParticipant,
-                                                isSchoolRegCodeApplied);
+                                                isSchoolRegCodeApplied, 1, 1);
                             memProd.discountsToDeduct = feeIsNull(memProd.discountsToDeduct) + discountVal;
                             memProd.fees.membershipFee.discountsToDeduct = discountVal;
                             if(paymentOptionRefId!= 5 || (paymentOptionRefId == 5 && isSchoolRegCodeApplied == 0)){
