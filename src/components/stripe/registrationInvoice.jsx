@@ -49,7 +49,11 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
-        this.props.getInvoiceStatusAction(this.props.location.state ? this.props.location.state.registrationId : null)
+       let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+       let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
+    //    let registrationId = null;
+    //    let userRegId = '791e305e-9f1d-49a6-b9c3-6a2ca79b9364';
+       this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
     }
@@ -69,7 +73,11 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let invoiceId = 0
-            this.props.getInvoice(this.props.location.state ? this.props.location.state.registrationId : null, invoiceId)
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            // let registrationId = null;
+            // let userRegId = '791e305e-9f1d-49a6-b9c3-6a2ca79b9364';
+            this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
     }
@@ -153,7 +161,7 @@ class RegistrationInvoice extends Component {
                         {userDetail &&
                             < Descriptions >
                                 <Descriptions.Item >
-                                    {userDetail.suburb}{", "}{userDetail.state}{", "}{userDetail.postalCode}
+                                    {userDetail.suburb}{userDetail.suburb ? ", " : ""}{userDetail.state}{userDetail.state ? ", " : ""}{userDetail.postalCode}
                                 </Descriptions.Item>
                             </Descriptions>
                         }
@@ -424,7 +432,10 @@ class RegistrationInvoice extends Component {
                                         {affiliateDetail &&
                                             this.competitionAffiliateView(affiliateDetail)
                                         }
-                                        {this.competitionOrganiserView(competitionDetails)}
+
+                                        {competitionDetails && 
+                                            this.competitionOrganiserView(competitionDetails)
+                                        }
                                         {membershipDetail != null &&
                                             this.membershipProductView(membershipDetail, mProductName)
                                         }        

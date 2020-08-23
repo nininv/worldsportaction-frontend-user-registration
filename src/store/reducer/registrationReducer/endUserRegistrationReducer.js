@@ -55,7 +55,9 @@ const initialState = {
     isYourInfoSet: false,
     registrationReviewList: null,
     regReviewPrdData: null,
-    singleCompErrorMsg: null
+    singleCompErrorMsg: null,
+    regTeamReviewData: null,
+    regTeamReviewPrdData: null
 
 }
 
@@ -994,6 +996,72 @@ function endUserRegistrationReducer(state = initialState, action) {
                 ...state,
                 onLoad: false,                
             };
+        
+        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS:
+            let regTeamReviewData = action.result;
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status,
+                regTeamReviewData: regTeamReviewData
+            };
+
+        case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_SUCCESS:
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status
+            };
+        case ApiConstants.UPDATE_TEAM_REVIEW_INFO:
+            let reviewTeamData = state.regTeamReviewData;
+            if(action.subkey == "charity"){
+                reviewTeamData[action.key] = action.value;
+            }
+            else if(action.subkey == "selectedOptions"){
+                let memProds = reviewTeamData["compParticipants"][action.index]["membershipProducts"];
+                let compParticipant = reviewTeamData["compParticipants"][action.index];
+                
+                if(action.key == "paymentOptionRefId"){
+                    memProds.map((x, mIndex) =>{
+                        calculateTeamFee(action.value, x, compParticipant);
+                        // Calculate Discount
+                        x.feesToPay = formatValue(x.feesToPay);
+                        x.discountsToDeduct = formatValue(x.discountsToDeduct);
+                    })
+                    reviewTeamData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+
+                }
+                else{
+                    reviewTeamData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+                }
+                
+            }
+
+            //console.log("ReviewData", reviewData);
+            
+            return {
+                ...state,
+                error: null
+            }
+        
+        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD:
+            return { ...state, onRegReviewPrdLoad: true };
+
+        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+            let regTeamReviewPrdData = action.result;
+            return {
+                ...state,
+                onRegReviewPrdLoad: false,
+                status: action.status,
+                regTeamReviewPrdData: regTeamReviewPrdData
+            };
+        
         default:
             return state;
     }
@@ -1597,6 +1665,86 @@ function getInstalmentDatesToPay(item){
         }
     } catch (error) {
         throw error;
+    }
+}
+
+function calculateTeamFee(paymentOptionRefId, memObj, compParticipant,){
+    if(paymentOptionRefId!= null){
+        let aSeasonalFee = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                                            feeIsNull(memObj.fees.affiliateFee.seasonalFee) : 0;
+        let aSeasonalGST = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                            feeIsNull(memObj.fees.affiliateFee.seasonalGST) : 0;
+        let cSeasonalFee =  isNullOrUndefined(memObj.fees.competitionOrganisorFee) ?
+                                feeIsNull(memObj.fees.competitionOrganisorFee.seasonalFee) : 0;
+        let cSeasonalGST =  isNullOrUndefined(memObj.fees.competitionOrganisorFee) ?
+                                 feeIsNull(memObj.fees.competitionOrganisorFee.seasonalGST) : 0;
+        let mSeasonalFee =   isNullOrUndefined(memObj.fees.membershipFee) ? 
+                                    feeIsNull(memObj.fees.membershipFee.seasonalFee) : 0;
+        let mSeasonalGST =   isNullOrUndefined(memObj.fees.membershipFee) ? 
+                                feeIsNull(memObj.fees.membershipFee.seasonalGST) : 0;
+        let aDiscountVal = isNullOrUndefined(memObj.fees.affiliateFee) ? 
+                                    feeIsNull(memObj.fees.affiliateFee.orgDiscountAmt) : 0;
+        let cDiscountVal =  isNullOrUndefined(memObj.fees.competitionOrganisorFee) ?
+                                    feeIsNull(memObj.fees.competitionOrganisorFee.orgDiscountAmt) : 0;
+        let mDiscountVal =  isNullOrUndefined(memObj.fees.membershipFee) ?
+                                    feeIsNull(memObj.fees.membershipFee.orgDiscountAmt) : 0;
+
+        if(paymentOptionRefId == 3){
+            memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
+                +  mSeasonalGST);
+            memObj.discountsToDeduct = aDiscountVal + cDiscountVal + mDiscountVal;
+
+            if(isNullOrUndefined(memObj.fees.membershipFee)){
+                memObj.fees.membershipFee.feesToPay = mSeasonalFee;  
+                memObj.fees.membershipFee.feesToPayGST = mSeasonalGST;  
+                memObj.fees.membershipFee.discountsToDeduct = mDiscountVal;
+            }
+
+            if(isNullOrUndefined(memObj.fees.competitionOrganisorFee)){
+                memObj.fees.competitionOrganisorFee.feesToPay = cSeasonalFee; 
+                memObj.fees.competitionOrganisorFee.feesToPayGST = cSeasonalGST; 
+                memObj.fees.competitionOrganisorFee.discountsToDeduct = cDiscountVal;
+            }
+           
+            if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                memObj.fees.affiliateFee.feesToPay = aSeasonalFee;  
+                memObj.fees.affiliateFee.feesToPayGST = aSeasonalGST;
+                memObj.fees.affiliateFee.discountsToDeduct = aDiscountVal;
+            }
+        }
+        else if(paymentOptionRefId == 4){
+            let totalDates = 0;
+            let paidDates = 0;
+            let dates = getInstalmentDatesToPay(compParticipant);
+            console.log("dates" + JSON.stringify(dates));
+            totalDates = dates.totalDates;
+            paidDates = dates.paidDates;
+
+            memObj.feesToPay = totalDates == 0 ? 0 :
+                ((aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
+                +  mSeasonalGST) / totalDates) * paidDates;
+            memObj.discountsToDeduct = totalDates == 0 ? 0 :
+                        ((aDiscountVal + cDiscountVal + mDiscountVal) / totalDates) * paidDates;
+            
+            if(isNullOrUndefined(memObj.fees.membershipFee)){
+                memObj.fees.membershipFee.feesToPay = totalDates == 0 ? 0 : (mSeasonalFee / totalDates) * paidDates;  
+                memObj.fees.membershipFee.feesToPayGST = totalDates == 0 ? 0 : (mSeasonalGST / totalDates) * paidDates; 
+                memObj.fees.membershipFee.discountsToDeduct = totalDates == 0 ? 0 : (mDiscountVal / totalDates) * paidDates;  
+            }
+
+            if(isNullOrUndefined(memObj.fees.competitionOrganisorFee)){
+                memObj.fees.competitionOrganisorFee.feesToPay = totalDates == 0 ? 0 : (cSeasonalFee / totalDates) * paidDates; 
+                memObj.fees.competitionOrganisorFee.feesToPayGST = totalDates == 0 ? 0 : (cSeasonalGST / totalDates) * paidDates; 
+                memObj.fees.competitionOrganisorFee.discountsToDeduct = totalDates == 0 ? 0 : (cDiscountVal / totalDates) * paidDates; 
+            }
+            
+            if(isNullOrUndefined(memObj.fees.affiliateFee)){ 
+                memObj.fees.affiliateFee.feesToPay = totalDates == 0 ? 0 : (aSeasonalFee / totalDates) * paidDates;  
+                memObj.fees.affiliateFee.feesToPayGST = totalDates == 0 ? 0 : (aSeasonalGST / totalDates) * paidDates;
+                memObj.fees.affiliateFee.aDiscountVal = totalDates == 0 ? 0 : (aDiscountVal / totalDates) * paidDates;
+            }
+        }
+        
     }
 }
 export default endUserRegistrationReducer;

@@ -238,6 +238,47 @@ function teamNameValidationAction(payload,index){
 
     return action;
 }
+
+function getTeamRegistrationReviewAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function saveTeamRegistrationReview(payload){
+    const action = {
+        type: ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function updateTeamReviewInfoAction(value, key, index, subkey, subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_TEAM_REVIEW_INFO,
+        value: value,
+        key: key,
+        index: index,
+        subkey: subkey,
+        subIndex: subIndex
+    }
+
+    return action;
+}
+
+function getTeamRegistrationReviewProductAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -262,5 +303,9 @@ export {
     updateReviewProductAction,
     getRegistrationByIdAction,
     validateDiscountCode,
-    teamNameValidationAction
+    teamNameValidationAction,
+    getTeamRegistrationReviewAction,
+    saveTeamRegistrationReview,
+    getTeamRegistrationReviewProductAction,
+    updateTeamReviewInfoAction
 }

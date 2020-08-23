@@ -174,5 +174,14 @@ export default function* root_saga() {
   //validation result code
   yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
 
+  //Get Team Registration Review
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getTeamRegistrationReviewSaga)
+
+  //Save Team Registration Revie
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveTeamRegistrationReviewSaga)
+ 
+  //Get Team Registration Review Products
+ yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
+
 
 }

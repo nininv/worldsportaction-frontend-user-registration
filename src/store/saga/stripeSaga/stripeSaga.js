@@ -37,7 +37,7 @@ function* errorSaga(error) {
 //get invoice saga
 export function* getInvoiceSaga(action) {
     try {
-        const result = yield call(AxiosApi.getInvoice, action.registrationid, action.invoiceId);
+        const result = yield call(AxiosApi.getInvoice, action.registrationid, action.userRegId);
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_INVOICE_SUCCESS,
@@ -75,7 +75,7 @@ export function* saveInvoiceSaga(action) {
 export function* getInvoiceStatusSaga(action) {
     try {
         console.log("*****" + action.registrationid)
-        const result = yield call(AxiosApi.getInvoiceStatus, action.registrationid);
+        const result = yield call(AxiosApi.getInvoiceStatus, action.registrationid, action.userRegId);
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_INVOICE_STATUS_SUCCESS,

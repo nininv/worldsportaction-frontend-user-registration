@@ -34,13 +34,19 @@ class TeamRegistrationForm extends Component {
             onInvLoad: false,
             buttonPressed: "",
             loading: false,
+            userRegId: getUserRegId()
         }
         console.log("*****************************************");
         this.getReferenceData();
     }
 
     componentDidMount() {
-        this.getApiInfo();
+        let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+        if(userRegId == null){
+            userRegId =  getUserRegId();
+        }
+        this.setState({userRegId: userRegId});
+        this.getApiInfo(userRegId);
     }
 
     componentDidUpdate(nextProps){
@@ -54,8 +60,9 @@ class TeamRegistrationForm extends Component {
                     if (this.state.buttonPressed == "save" ) {
                         let registrationId=registrationState.registrationId
                         console.log("registrationId",registrationId)
-                        history.push("/invoice", {
-                            registrationId: registrationId,
+                        history.push("/teamRegistrationReview", {
+                            registrationId: null,
+                            userRegId: this.state.userRegId,
                             paymentSuccess: false					 
                         })
                         // history.push('/appRegistrationSuccess');
@@ -81,12 +88,12 @@ class TeamRegistrationForm extends Component {
         }
     }
 
-    getApiInfo = () => {
+    getApiInfo = (userRegId) => {
         let existingUserRefId = getExistingUserRefId();
         let registeringYourselfRefId = getRegisteringYourselfRefId();
 
         let payload = {
-            userRegId : getUserRegId(),
+            userRegId : userRegId,
             userId: existingUserRefId == 1 ? getUserId() : 0
         }
 
@@ -839,17 +846,17 @@ class TeamRegistrationForm extends Component {
                         </div>
                         <div className="col-sm">
                             <div className="comp-buttons-view">
-                                <Button className="save-draft-text" type="save-draft-text"
+                                {/* <Button className="save-draft-text" type="save-draft-text"
                                     onClick={() => this.setState({ buttonPressed: "save" })}>
                                     {AppConstants.reviewOrder}
-                                </Button>
+                                </Button> */}
                                 <Button
                                     className="open-reg-button"
                                     htmlType="submit"
                                     type="primary"
                                     disabled={isSubmitting}
                                     onClick={() => this.setState({ buttonPressed: "save" })}>
-                                    {AppConstants.checkOptions}
+                                    {AppConstants.reviewOrder}
                                 </Button>
                             </div>
                         </div>
