@@ -659,6 +659,7 @@ class AppRegistrationForm extends Component {
        }
 
        if(registrationState.populateExistingInfo === 1){
+			this.setState({isRegYourselfDisable:true});										  
             this.props.updateEndUserRegisrationAction(0, "populateExistingInfo");
             setTimeout(() =>{
                 let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
@@ -677,7 +678,7 @@ class AppRegistrationForm extends Component {
                     }
                 });
                 this.setUserInfoFormFields(registrationDetail.yourInfo);
-            }, 700)
+            }, 300)
        }
       
 
@@ -695,7 +696,7 @@ class AppRegistrationForm extends Component {
                 // if(registrationDetail.childrenCheckNumber!= null){
                 //     this.setState({showChildrenCheckNumber: true})
                 // }
-            }, 1000)
+            }, 300)
            
            
         }
