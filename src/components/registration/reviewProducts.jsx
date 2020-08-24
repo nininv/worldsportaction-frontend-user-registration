@@ -543,6 +543,7 @@ class ReviewProducts extends Component {
                     <div className='product-text' style={{fontFamily: "inter-medium"}}>
                         <div style={{marginRight:"auto"}}>
                         {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
+                        {mem.divisionName!= null ?  ' - ' + mem.divisionName : ''}
                         </div>
                         <div className='dolar-text'>
                             <div style={{fontFamily:"inter-medium",marginRight:20}}>

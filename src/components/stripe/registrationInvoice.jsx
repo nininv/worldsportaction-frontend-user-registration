@@ -75,7 +75,7 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            // let registrationId = null;
+             //let registrationId = "d3e6b4bf-9b3e-444a-9c38-7fe4f713cc94";
             // let userRegId = '791e305e-9f1d-49a6-b9c3-6a2ca79b9364';
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
@@ -416,9 +416,9 @@ class RegistrationInvoice extends Component {
                                                     {item && item.firstName &&
                                                         <InputWithHead
                                                             heading=
-                                                            {item.firstName ?
+                                                            {mem.divisionName ?
                                                                 regName + " - " + typeName + " " + item.firstName + " " + item.lastName
-                                                                + ", " + item.competitionName 
+                                                                + ", " + item.competitionName + " - "+ mem.divisionName
                                                                 :
                                                                 regName + " - " + typeName + " " + item.firstName + " " + item.lastName
                                                                 + ", " + item.competitionName

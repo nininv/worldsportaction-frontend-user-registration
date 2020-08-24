@@ -201,7 +201,8 @@ class RegistrationReviewForm extends Component {
 
     productsView = (getFieldDecorator, item, index) => {
         let registrationState = this.props.endUserRegistrationState;
-       
+        const uniqueMemProd = [...new Map(item.membershipProducts.map(i => [i["competitionMembershipProductTypeId"], i])).values()];
+        console.log("uniqueMemProd", uniqueMemProd);
         return (
             <div className = "individual-reg-view">
                 <div className = "individual-header-view">
@@ -221,6 +222,7 @@ class RegistrationReviewForm extends Component {
                     <div className='membership-text'>
                         <div>
                             {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
+                            {mem.divisionName!= null ?  ' - ' + mem.divisionName : ''}
                         </div>
                         <div>
                            ${mem.feesToPay}
@@ -323,7 +325,8 @@ class RegistrationReviewForm extends Component {
                 </Radio.Group>
                 {item.selectedOptions.paymentOptionRefId != 5 ?
                 <div>
-                    {(item.membershipProducts || []).map((mem, memIndex) =>(
+                    {   
+                    (uniqueMemProd || []).map((mem, memIndex) =>(
                     <div>
                         {(mem.discounts.filter(x=>x.membershipProductTypediscountTypeId == 2 || x.competitionTypediscountTypeId == 2).length > 0 && memIndex == 0) &&
                          <div style={{marginLeft:8}}>
