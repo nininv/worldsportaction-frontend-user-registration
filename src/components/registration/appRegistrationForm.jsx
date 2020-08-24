@@ -4987,8 +4987,12 @@ class AppRegistrationForm extends Component {
                 className="add-membership-type-modal"
                 title={AppConstants.singleCompetition}
                 visible={this.state.singleCompModalVisible}
-                onOk={() => this.setState({singleCompModalVisible: false})}
-                onCancel={() => this.setState({singleCompModalVisible: false})}>
+                 footer={[
+                        <Button onClick={() => this.setState({singleCompModalVisible: false})}>
+                            {AppConstants.ok}                          
+                        </Button>
+                    ]}
+				>
                     {(errorMsg || []).map((item, index) =>(
                         <p key= {index}> {item}</p>
                     ))
