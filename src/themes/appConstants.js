@@ -958,7 +958,8 @@ const AppConstants = {
   webAdmin:"WebAdmin",
   teamAlreadyExists: "This team name is already in use. Please choose an alternative name.",
   singleCompetition: "Single Competition",
-  registrationCode: "Registration Code"
+  registrationCode: "Registration Code",
+  ok:"Ok"	 
 };
 
 export default AppConstants;
