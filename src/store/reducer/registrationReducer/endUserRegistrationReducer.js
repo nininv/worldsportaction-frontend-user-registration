@@ -1645,9 +1645,17 @@ function getInstalmentDatesToPay(item){
     try {
         let totalDates = 0;
         let paidDates = 0;
-        if(item.isTeamSeasonalUponReg == 1 || item.isSeasonalUponReg == 1){
-            totalDates += 1;
-            paidDates += 1;
+        if(item.isTeamRegistration == 1){
+            if(item.isTeamSeasonalUponReg == 1){
+                totalDates += 1;
+                paidDates += 1;
+            }
+        }
+        else{
+            if(item.isSeasonalUponReg == 1){
+                totalDates += 1;
+                paidDates += 1;
+            }
         }
 
         if(isArrayNotEmpty(item.instalmentDates)){
