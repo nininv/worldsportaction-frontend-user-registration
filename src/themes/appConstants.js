@@ -959,7 +959,10 @@ const AppConstants = {
   teamAlreadyExists: "This team name is already in use. Please choose an alternative name.",
   singleCompetition: "Single Competition",
   registrationCode: "Registration Code",
-  ok:"Ok"	 
+  ok:"Ok"	,
+  useSameEmailAsParent: "Use same email as parent",
+  stateMismatchTitleMessage: "Warning",
+  stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you one to proceed?" 
 };
 
 export default AppConstants;

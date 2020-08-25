@@ -1163,7 +1163,7 @@ class AppRegistrationForm extends Component {
         let userRegistrations = registrationDetail.userRegistrations;
         let userRegistration = userRegistrations[index]; 
       
-        console.log("userRegistration.parentOrGuardian" + JSON.stringify(userRegistration.parentOrGuardian));
+        //console.log("userRegistration.parentOrGuardian" + JSON.stringify(userRegistration.parentOrGuardian));
         (userRegistration.parentOrGuardian || []).map((item, parentIndex) => {
             this.setParentformFieldsValue(index, parentIndex, item);
         })
@@ -1471,6 +1471,21 @@ class AppRegistrationForm extends Component {
             if(getAge(value) <= 18 && !isParentAvailable)
             {
                 this.addParent(index, userRegistrations);
+                //empty email and reEnterEmail if age is below 18
+                userRegistration['referParentEmail'] = true;
+                userRegistration['email'] = null;
+                userRegistration['reEnterEmail'] = null;
+            }else{
+                if(getAge(value) <= 18){
+                    //empty email and reEnterEmail if age is below 18
+                    userRegistration['referParentEmail'] = true;
+                    userRegistration['email'] = null;
+                    userRegistration['reEnterEmail'] = null;
+                }else{
+                    //add flag is false when age is above 18
+                    userRegistration['referParentEmail'] = false;
+                    userRegistration.parentOrGuardian = [];
+                } 
             }
 
             userRegistration[key] = value;
@@ -1574,6 +1589,11 @@ class AppRegistrationForm extends Component {
             //         }
             //     }
             // }
+		}else if(key == "referParentEmail"){
+            if(!value){
+                userRegistration['email'] = null;
+                userRegistration['reEnterEmail'] = null;
+            }
         }
 
         userRegistration[key] = value;
@@ -2758,6 +2778,12 @@ class AppRegistrationForm extends Component {
 
     setFinalYourInfo = (registrationDetail, item) =>{
         try {
+            let email = item.email;
+            if(item.registeringYourself == 1){
+                if(item.referParentEmail){
+                    email = item.parentOrGuardian[0]['email'];
+                }
+            }
             registrationDetail.yourInfo.firstName = item.firstName;
             registrationDetail.yourInfo.middleName = item.middleName;
             registrationDetail.yourInfo.lastName = item.lastName;
@@ -3360,33 +3386,46 @@ class AppRegistrationForm extends Component {
                     />
                     )}
                 </Form.Item>
-                <Form.Item >
-                    {getFieldDecorator(`participantEmail${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                    })(
-                    <InputWithHead
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.contactEmail}
-                        placeholder={AppConstants.contactEmail}
-                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email", index )} 
-                        onBlur = {(e) => this.showEmailValidationMsg(item, index, "participant", e.target.value)}
-                        setFieldsValue={item.email}
-                    />
-                    )}
-                </Form.Item>
-                <Form.Item >
-                    {getFieldDecorator(`participantReEnterEmail${index}`, {
-                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                    })(
-                    <InputWithHead
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.reenterEmail}
-                        placeholder={AppConstants.reenterEmail}
-                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "reEnterEmail", index )} 
-                        setFieldsValue={item.reEnterEmail}
-                    />
-                    )}
-                </Form.Item>
+                {(getAge(item.dateOfBirth) <= 18) ?
+                   <Checkbox
+                        className="single-checkbox"
+                        onChange={(e) => this.onChangeSetParticipantValue(e.target.checked,"referParentEmail",index)} 
+                        checked={item.referParentEmail} >
+                        {AppConstants.useSameEmailAsParent}
+                    </Checkbox>
+                : null}
+                {!item.referParentEmail ? 
+                    <div>
+                        <Form.Item >
+                            {getFieldDecorator(`participantEmail${index}`, {
+                                rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                            })(
+                            <InputWithHead
+                                required={"required-field pt-0 pb-0"}
+                                heading={AppConstants.contactEmail}
+                                placeholder={AppConstants.contactEmail}
+                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email", index )} 
+                                onBlur = {(e) => this.showEmailValidationMsg(item, index, "participant", e.target.value)}
+                                setFieldsValue={item.email}
+                            />
+                            )}
+                        </Form.Item>
+                        <Form.Item >
+                            {getFieldDecorator(`participantReEnterEmail${index}`, {
+                                rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                            })(
+                            <InputWithHead
+                                required={"required-field pt-0 pb-0"}
+                                heading={AppConstants.reenterEmail}
+                                placeholder={AppConstants.reenterEmail}
+                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "reEnterEmail", index )} 
+                                setFieldsValue={item.reEnterEmail}
+                            />
+                            )}
+                        </Form.Item>
+                    </div>
+                : null}
+                				
                 <InputWithHead heading={AppConstants.photo} />
                 <div className="fluid-width">
                     <div className="row">
