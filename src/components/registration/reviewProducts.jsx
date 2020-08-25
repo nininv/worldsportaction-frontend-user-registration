@@ -895,8 +895,17 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             })
                         }
                         else if(paymentType =="direct_debit") {
-                            setClientKey(Response.clientSecret)
-                            setRegId(registrationUniqueKey)
+                            if(Response.clientSecret == null && Response.totalFee == 0){
+                                history.push("/invoice", {
+                                    registrationId: registrationUniqueKey,
+                                    userRegId: null,
+                                    paymentSuccess: true
+                                })
+                            }
+                            else{
+                                setClientKey(Response.clientSecret)
+                                setRegId(registrationUniqueKey)
+                            }
                            // message.success(Response.message);
                         }
                         else{

@@ -2781,14 +2781,14 @@ class AppRegistrationForm extends Component {
             let email = item.email;
             if(item.registeringYourself == 1){
                 if(item.referParentEmail){
-                    email = item.parentOrGuardian[0]['email'];
+                    email = item.parentOrGuardian[0]['email'] + "." + item.firstName;
                 }
             }
             registrationDetail.yourInfo.firstName = item.firstName;
             registrationDetail.yourInfo.middleName = item.middleName;
             registrationDetail.yourInfo.lastName = item.lastName;
             registrationDetail.yourInfo.mobileNumber = item.mobileNumber;
-            registrationDetail.yourInfo.email = item.email;
+            registrationDetail.yourInfo.email = email;
             registrationDetail.yourInfo.street1 = item.street1;
             registrationDetail.yourInfo.street2 = item.street2;
             registrationDetail.yourInfo.suburb = item.suburb;
