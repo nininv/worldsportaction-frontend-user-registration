@@ -73,10 +73,10 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let invoiceId = 0
-            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-             //let registrationId = "d3e6b4bf-9b3e-444a-9c38-7fe4f713cc94";
-            // let userRegId = '791e305e-9f1d-49a6-b9c3-6a2ca79b9364';
+            // let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            // let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+             let registrationId = "85a54b19-9d32-4953-8e49-570b2e134875";
+            let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -238,7 +238,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm " >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(Number(membershipDetail.feesToPay) + Number(membershipDetail.feesToPayGST) - Number(membershipDetail.discountsToDeduct)).toFixed(2)}
+                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2) ))}
                                 />
                             </div>
                         </ div>
@@ -285,7 +285,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(  Number(competitionDetails.feesToPay) + Number(competitionDetails.feesToPayGST) - Number(competitionDetails.discountsToDeduct)).toFixed(2)}
+                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2) ) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2) ))}
                                 />
                             </div>
                         </div>
@@ -339,7 +339,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={(Number(affiliateDetail.feesToPay) + Number(affiliateDetail.feesToPayGST) - Number(affiliateDetail.discountsToDeduct)).toFixed(2)}
+                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2) ))}
                                     />}
                             </div>
 
