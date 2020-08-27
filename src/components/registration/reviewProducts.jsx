@@ -561,6 +561,20 @@ class ReviewProducts extends Component {
                             </div>  */}
                         </div>  
                     </div>  
+                    {(mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  ) && 
+                    <div className='membership-text' style={{marginTop:2}}>
+                        <div>
+                            <span className="number-text-style">{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
+                            <span>{AppConstants.familyDiscount}</span>
+                        </div>                   
+                        <div className='dolar-text'>
+                            <div className="number-text-style" style={{marginRight:17}}>
+                            (${mem.childDiscountsToDeduct})
+                            </div>
+                        </div>  
+                    </div>  
+                    }
                     {mem.isDiscountApplied == 1 && 
                     <div className='membership-text' style={{marginTop:2}}>
                         <div>
@@ -575,20 +589,7 @@ class ReviewProducts extends Component {
                         </div>  
                     </div>  
                     } 
-                    {(mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  ) && 
-                    <div className='membership-text' style={{marginTop:2}}>
-                        <div>
-                            <span className="number-text-style">{AppConstants.less}</span>
-                            <span>{":"+" "}</span>
-                            <span>{AppConstants.familyDiscount}</span>
-                        </div>                   
-                        <div className='dolar-text'>
-                            <div className="number-text-style" style={{marginRight:17}}>
-                            (${mem.childDiscountsToDeduct})
-                            </div>
-                        </div>  
-                    </div>  
-                    }  
+                     
                     <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
                     <div className='edit-header-main'>
                         <div className="text-editsection" style={{fontSize:15}}>

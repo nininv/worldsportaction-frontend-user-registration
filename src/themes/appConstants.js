@@ -196,7 +196,7 @@ const AppConstants = {
   reg_2_comp: "Discount 2nd Competition Registration",
   reg_3_comp: "Discount Seasonal Registration by Casual Fees paid",
   fees: "Fees",
-  discount: "Discount",
+  discount: "Discount Code",
   discounts: "Discounts",
   gernalDiscount: "General Discount",
   fixedAmount: "Fixed $ amount",

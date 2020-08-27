@@ -228,6 +228,18 @@ class RegistrationReviewForm extends Component {
                            ${mem.feesToPay}
                         </div>
                     </div>
+                    { (mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  )  && 
+                    <div className='membership-text' style={{marginTop:0}}>
+                        <div>
+                            <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
+                            <span>{AppConstants.familyDiscount}</span>
+                        </div>
+                        <div className="number-text-style">
+                            (${mem.childDiscountsToDeduct})
+                        </div>
+                    </div>
+                     }
                     { mem.isDiscountApplied == 1 && 
                     <div className='membership-text' style={{marginTop:0}}>
                         <div>
@@ -237,18 +249,6 @@ class RegistrationReviewForm extends Component {
                         </div>
                         <div className="number-text-style">
                             (${mem.discountsToDeduct})
-                        </div>
-                    </div>
-                     }
-                     { (mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  )  && 
-                    <div className='membership-text' style={{marginTop:0}}>
-                        <div>
-                            <span className="number-text-style" style={{fontWeight:500}}>{AppConstants.less}</span>
-                            <span>{":"+" "}</span>
-                            <span>{AppConstants.familyDiscount}</span>
-                        </div>
-                        <div className="number-text-style">
-                            (${mem.childDiscountsToDeduct})
                         </div>
                     </div>
                      }
