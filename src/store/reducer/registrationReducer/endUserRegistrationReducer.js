@@ -1344,7 +1344,7 @@ function getDiscountValue(discount, paymentOptionRefId, fee, gameVoucherValue, c
         discountsToDeduct = 0
     }
     else if(discount.discountTypeId == 1){
-        discountsToDeduct = (Number(amount)/noOfPlayers) * payingForCount;
+        discountsToDeduct = feeIsNull(fee.feesToPay) > 0 ? (Number(amount)/noOfPlayers) * payingForCount : 0;
     }
     else{
         if(paymentOptionRefId!= null){
