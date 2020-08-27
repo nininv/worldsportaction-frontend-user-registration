@@ -73,10 +73,10 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let invoiceId = 0
-            // let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            // let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-             let registrationId = "85a54b19-9d32-4953-8e49-570b2e134875";
-            let userRegId = null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            //  let registrationId = "85a54b19-9d32-4953-8e49-570b2e134875";
+            // let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
