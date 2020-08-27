@@ -937,8 +937,17 @@ function endUserRegistrationReducer(state = initialState, action) {
                     memProd.fees.membershipFee.discountsToDeduct = 0;
                     memProd.isDiscountApplied = 0;
                     memProd["invalidCode"] = 0;
-                    memProd.selectedDiscounts = [];
-                    memProd.selectedDiscounts.push(...discountData);
+                    let selectedDiscounts = [];
+                    // console.log("selectedDiscounts" + JSON.stringify(memProd.selectedDiscounts));
+                    // console.log("discountData" + JSON.stringify(discountData));
+                    let familyDiscounts = memProd.selectedDiscounts.filter(x=>x.typeId == 3);
+                    if(isArrayNotEmpty(familyDiscounts)){
+                        selectedDiscounts.push(...familyDiscounts);
+                    }
+                    selectedDiscounts.push(...discountData)
+                    //memProd.selectedDiscounts = [];
+                    console.log("selectedDiscounts",selectedDiscounts)
+                    memProd.selectedDiscounts = selectedDiscounts;
                     if(isArrayNotEmpty(discountData)){
                         calculateDiscount(discountData, memProd, paymentOptionRefId,  gameVoucherValue, "fromValidateDiscountCode", compParticipant,
                                             isSchoolRegCodeApplied);
@@ -1524,7 +1533,7 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
             {
                 let discount = memProd.discounts.find(y=>y.competitionTypeDiscountId == 
                     x.competitionTypeDiscountId);
-                   // console.log("discount", discount);
+                    console.log("discount", discount);
                 if(isNullOrUndefined(discount)){
                     if(memProd.fees.competitionOrganisorFee.organisationId == discount.organisationId)
                     {
@@ -1532,7 +1541,7 @@ function calculateDiscount(discountData, memProd, paymentOptionRefId, gameVouche
                         if(x.typeId == 3){
                             let childDiscountVal =  getChildDiscountValue(discount, paymentOptionRefId, feeObj, gameVoucherValue, x, "Comp", 
                                             compParticipant, isSchoolRegCodeApplied);
-                            //console.log("childDiscountVal" + childDiscountVal);
+                            console.log("childDiscountVal" + childDiscountVal);
                             memProd.childDiscountsToDeduct = feeIsNull(memProd.childDiscountsToDeduct) +  childDiscountVal;
                             memProd.fees.competitionOrganisorFee.childDiscountsToDeduct = childDiscountVal;
                         }
