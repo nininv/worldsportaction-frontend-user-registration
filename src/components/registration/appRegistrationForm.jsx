@@ -5059,6 +5059,7 @@ stateMismatchModelView = () =>{
         let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == this.state.recentParticipantOrgUniqueKey);
         this.props.updateEndUserRegisrationAction(organisationInfo.stateOrgId, "stateOrgId");
         this.props.clearUserRegistrationAction();
+        this.state.firstParticipantOrgUniqueKey = this.state.recentParticipantOrgUniqueKey;
         this.clearOrganizationDependentData(this.state.recentParticipantOrgUniqueKey,0,organisationInfo); 
         this.setState({stateMismatchModelVisible: false});
     }
