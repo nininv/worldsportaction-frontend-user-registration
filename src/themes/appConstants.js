@@ -962,7 +962,9 @@ const AppConstants = {
   ok:"Ok"	,
   useSameEmailAsParent: "Use same email as parent",
   stateMismatchTitleMessage: "Warning",
- stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you one to proceed?"
+ stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you one to proceed?",
+
+ emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
 };
 
 export default AppConstants;
