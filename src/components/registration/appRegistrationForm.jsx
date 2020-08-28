@@ -918,12 +918,13 @@ class AppRegistrationForm extends Component {
                         participantObj.venue = participantObj.competitionInfo.venues!= null ? 
                                         participantObj.competitionInfo.venues: [];
                         this.getRegistrationSettings(this.state.competitionUniqueKey, this.state.organisationUniqueKey, 0);
-                        let mismatch = this.checkSameStateOrNot(orgInfo,userRegistrations,0,this.state.organisationUniqueKey);
                     }
                     else{
                         participantObj.competitionUniqueKey = null;
                         this.setState({competitionUniqueKey: null});
                     }
+
+                    this.checkSameStateOrNot(orgInfo,userRegistrations,0,this.state.organisationUniqueKey);
 
                     this.callTermsAndConditions(this.state.organisationUniqueKey);
                    flag = true;
