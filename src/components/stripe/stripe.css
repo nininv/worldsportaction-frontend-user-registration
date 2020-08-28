@@ -285,6 +285,21 @@ input::placeholder {
 .sr-combo-inputs-row .col {
   width: 100%;
 }
+
+.invoice-receipt{
+  display: flex;
+  margin-bottom: 10px;
+}
+.schoolInvoiceTxt{
+  font-size: 15px;
+  color: var(--app-red);
+  font-weight: 500;
+  font-family: inter-medium;
+  margin-left: 10px;
+}
+.invoice-receipt-num{
+  font-size: 14px;
+}
 @media (max-width: 767px) {
   .invoiceImage{
     display: flex;

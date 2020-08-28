@@ -966,6 +966,7 @@ const AppConstants = {
  CASUAL_FEE: 1,
  SEASONAL_FEE: 2,
  emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
+ toBeInvoicedViaSchool: "To be invoiced via school"
 };
 
 export default AppConstants;

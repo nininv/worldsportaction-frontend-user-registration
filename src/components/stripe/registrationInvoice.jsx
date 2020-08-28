@@ -75,8 +75,8 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = null;
-            //  let userRegId = "f59baf97-c9ed-4935-91a7-be330fb68c0b";
+            //   let registrationId = "369e804f-199e-4f0d-92da-a5bb66637e7a";
+            //   let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -116,6 +116,8 @@ class RegistrationInvoice extends Component {
         let userDetail = invoiceData!= null ? invoiceData.billTo: null;
         let organisationLogo = invoiceData!= null ? invoiceData.organisationLogo : null;
         let invoiceDisabled = this.state.invoiceDisabled;
+        let isSchoolRegistrationApplied = invoiceData!= null ? invoiceData.isSchoolRegistrationApplied: 0;
+        let msg = isSchoolRegistrationApplied == 1? AppConstants.toBeInvoicedViaSchool : ""
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
@@ -134,9 +136,15 @@ class RegistrationInvoice extends Component {
                                 }}
                             />
                         </label>
-                        <InputWithHead
-                            heading={"Receipt No.1234497"}
-                        />
+                        <div className="invoice-receipt">
+                            <div className="invoice-receipt-num">
+                                    Receipt No.1234497
+                            </div>
+                            <div className="schoolInvoiceTxt">{"(" + AppConstants.toBeInvoicedViaSchool + ")"}</div>
+                        </div>
+                        {/* <InputWithHead
+                            heading={"Receipt No.1234497"} 
+                        /> */}
                         {userDetail && userDetail.firstName &&
                             <Descriptions >
                                 <Descriptions.Item className="pb-0" label="Bill To">
