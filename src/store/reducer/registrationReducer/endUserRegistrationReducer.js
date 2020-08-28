@@ -2,6 +2,7 @@ import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString, formatValue, isNullOrUndefined, feeIsNull } from "../../../util/helpers";
 import { getAge,deepCopyFunction} from '../../../util/helpers';
 import moment from 'moment';
+import AppConstants from "../../../themes/appConstants";
 
 let registrationObj = {
     registrationUniqueKey: "",
@@ -653,6 +654,7 @@ function endUserRegistrationReducer(state = initialState, action) {
     
         case ApiConstants.UPDATE_REVIEW_INFO:
             let reviewData = state.registrationReviewList;
+            let participantList = reviewData["existingTransactionList"];
             if(action.subkey == "charity"){
                 reviewData[action.key] = action.value;
             }
@@ -683,7 +685,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
                     reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"] = 0;
                     memProds.map((x, mIndex) =>{
-                        calculateFee(5, x, gameVoucherVal, compParticipant, 0);
+                        calculateFee(5, x, gameVoucherVal, compParticipant, 0, participantList);
                         calculateDiscount(x.selectedDiscounts, x, 5,  gameVoucherVal, null, compParticipant, 0);
 
                         x.feesToPay = formatValue(x.feesToPay);
@@ -712,7 +714,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
                         
                         memProds.map((x, mIndex) =>{
-                            calculateFee(action.value, x, gameVoucherVal, compParticipant, isSchoolRegCodeApplied);
+                            calculateFee(action.value, x, gameVoucherVal, compParticipant, isSchoolRegCodeApplied, participantList);
                             calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal, null, compParticipant, isSchoolRegCodeApplied);
 
                             x.feesToPay = formatValue(x.feesToPay);
@@ -727,7 +729,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
 
                         memProds.map((x, mIndex) =>{
-                            calculateFee(2, x, action.value, compParticipant, isSchoolRegCodeApplied);
+                            calculateFee(2, x, action.value, compParticipant, isSchoolRegCodeApplied,participantList);
                             calculateDiscount(x.selectedDiscounts, x, 2,  action.value, null, compParticipant, isSchoolRegCodeApplied);
                             x.feesToPay = formatValue(x.feesToPay);
                             x.discountsToDeduct = formatValue(x.discountsToDeduct);
@@ -925,6 +927,7 @@ function endUserRegistrationReducer(state = initialState, action) {
             let codeValidationData = action.result;
             try {
                 let reviewData = state.registrationReviewList;
+                let participantList = reviewData["existingTransactionList"];
                 let compParticipant = reviewData["compParticipants"][action.index];
                 let paymentOptionRefId = compParticipant["selectedOptions"]["paymentOptionRefId"];
                 let gameVoucherValue = compParticipant["selectedOptions"]["gameVoucherValue"];
@@ -967,7 +970,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                         reviewData["compParticipants"][action.index]["selectedOptions"]["isSchoolRegCodeApplied"] = 1;
                         let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
                         memProds.map((x, mIndex) =>{
-                            calculateFee(5, x, gameVoucherValue, compParticipant, 1);
+                            calculateFee(5, x, gameVoucherValue, compParticipant, 1, participantList);
                             calculateDiscount(x.selectedDiscounts, x, 5,  gameVoucherValue, null, compParticipant, 1);
 
                             x.feesToPay = formatValue(x.feesToPay);
@@ -1415,7 +1418,7 @@ function getChildDiscountValue(discount, paymentOptionRefId, fee, gameVoucherVal
     return childDiscountsToDeduct;
 }
 
-function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticipant, isSchoolRegCodeApplied){
+function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticipant, isSchoolRegCodeApplied, participants){
     //console.log("calculateFee::", paymentOptionRefId, memObj, gameVoucherValue)
     try {
         if(paymentOptionRefId!= null){
@@ -1475,6 +1478,14 @@ function calculateFee(paymentOptionRefId, memObj, gameVoucherValue, compParticip
                     let cSeasonalGST =  feeIsNull(memObj.fees.competitionOrganisorFee.seasonalGST);
                     let mSeasonalFee =   feeIsNull(memObj.fees.membershipFee.seasonalFee);
                     let mSeasonalGST =   feeIsNull(memObj.fees.membershipFee.seasonalGST);
+                    let checkFee = checkMemProductFeesType(memObj.fees.membershipFee.membershipMappingId,compParticipant,
+                                    participants, paymentOptionRefId);
+                    if(checkFee.isExists){
+                        if(checkFee.paymentFeeTypeRefId == 2){
+                            mSeasonalFee = 0;
+                            mSeasonalGST = 0;
+                        }
+                    }
 
                     if(paymentOptionRefId == 3 || paymentOptionRefId == 5){
                         memObj.feesToPay = (aSeasonalFee + cSeasonalFee + mSeasonalFee + aSeasonalGST + cSeasonalGST
@@ -1773,6 +1784,52 @@ function calculateTeamFee(paymentOptionRefId, memObj, compParticipant,){
             }
         }
         
+    }
+}
+
+function checkMemProductFeesType(membershipMappingId, item, participants, paymentOptionRefId){
+    try {
+        let isExists = false;
+        let paymentFeeTypeRefId = getPaymentFeeTypeRefId(paymentOptionRefId);
+        console.log("paymentFeeTypeRefId, membershipMappingId, item,paymentOptionRefId ", paymentFeeTypeRefId, membershipMappingId, item, paymentOptionRefId);
+        if(isArrayNotEmpty(participants)){
+            let obj = participants.find(x=>x.firstName == item.firstName && 
+                        x.lastName == item.lastName && x.email == item.email && 
+                        x.mobileNumber == item.mobileNumber && 
+                        x.membershipProductTypeMappingId == membershipMappingId &&
+                        x.paymentFeeTypeRefId == paymentFeeTypeRefId);
+            console.log("obj" + JSON.stringify(obj));
+            if(isNullOrUndefined(obj)){
+                isExists = true;
+            }
+        }
+        // if(!isExists){
+        //     if(isArrayEmpty(memFeesRestrictList)){
+        //         let obj = memFeesRestrictList.find(x=>x.firstName == item.firstName && 
+        //             x.lastName == item.lastName && x.email == item.email && 
+        //             x.mobileNumber == item.mobileNumber && 
+        //             x.membershipMappingId == membershipMappingId &&
+        //             x.paymentFeeTypeRefId == paymentFeeTypeRefId);
+        // //console.log("obj11" + JSON.stringify(obj));
+        //         if(isNotNullAndUndefined(obj)){
+        //             isExists = true;
+        //         }
+        //     }
+        // }
+        //console.log("isExists" + isExists);
+        return {isExists, paymentFeeTypeRefId};
+    } catch (error) {
+       
+        console.log("Exception" + error);
+    }
+}
+
+function getPaymentFeeTypeRefId(paymentOptionRefId){
+    if(paymentOptionRefId <=2){
+        return AppConstants.CASUAL_FEE;
+    }
+    else{
+        return AppConstants.SEASONAL_FEE;
     }
 }
 export default endUserRegistrationReducer;
