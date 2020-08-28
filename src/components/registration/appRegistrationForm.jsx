@@ -5110,9 +5110,9 @@ stateMismatchModelView = () =>{
             this.props.updateEndUserRegisrationAction(organisationInfo.stateOrgId, "stateOrgId");
         }else{
             if(stateOrgId != organisationInfo.stateOrgId){
-                if(userRegistrations.length > 1 || 
-                    (userRegistration.products.length >= 1 && 
-                        userRegistration.products[0].organisationUniqueKey != null)){
+                if((userRegistrations.length > 1 && userRegistrations[1].organisationUniqueKey != null) || 
+                    (userRegistration.products.length >= 1 && userRegistration.products[0].organisationUniqueKey != null))
+                {
                     this.setState({stateMismatchModelVisible: true});
                     stateMismatchModelVisibleSample = true;
                 }else{
