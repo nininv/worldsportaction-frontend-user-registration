@@ -204,6 +204,8 @@ class RegistrationInvoice extends Component {
     membershipProductView = (membershipDetail, membershipProductName) => {
         let mOrganisationName = membershipDetail!= null ? membershipDetail.name : '';
         membershipProductName = membershipProductName!= null ? membershipProductName : '';
+        let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ? 
+                                        membershipDetail.childDiscountsToDeduct : 0;
         return (
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -227,7 +229,8 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(membershipDetail.discountsToDeduct)).toFixed(2)}
+                                    heading={(parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) 
+                                        + parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -238,7 +241,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm " >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) -
+                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -250,6 +254,8 @@ class RegistrationInvoice extends Component {
     }
 
     competitionOrganiserView = (competitionDetails) => {
+        let childDiscountsToDeduct = competitionDetails.childDiscountsToDeduct!= null ? 
+                                competitionDetails.childDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pr-0 pl-0" >
@@ -274,7 +280,7 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(competitionDetails.discountsToDeduct)).toFixed(2)}
+                                    heading={(parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -285,7 +291,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2) ) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -297,6 +304,8 @@ class RegistrationInvoice extends Component {
     }
 
     competitionAffiliateView = (affiliateDetail) => {
+        let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ? 
+                        affiliateDetail.childDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -325,7 +334,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                        heading={(Number(affiliateDetail.discountsToDeduct)).toFixed(2)}
+                                        heading={(parseFloat((affiliateDetail.discountsToDeduct).toFixed(2))  + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                     />
                                 }
                             </div>
@@ -339,7 +348,8 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
+                                            parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                     />}
                             </div>
 
@@ -404,7 +414,7 @@ class RegistrationInvoice extends Component {
                                  let competitionDetails = mem && mem.fees.competitionOrganisorFee;
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
-                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct));
+                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - Number(mem.childDiscountsToDeduct));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
