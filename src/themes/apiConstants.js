@@ -987,6 +987,8 @@ const ApiConstants = {
   
   UPDATE_TEAM_REVIEW_INFO: "UPDATE_TEAM_REVIEW_INFO",
 
+ ////Clear User Registration Without Root Participant
+  USER_REGISTRATION_CLEAR_DATA: "USER_REGISTRATION_CLEAR_DATA"																						
 };
 
 

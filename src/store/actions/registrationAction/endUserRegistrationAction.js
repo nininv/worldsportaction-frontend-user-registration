@@ -279,6 +279,12 @@ function getTeamRegistrationReviewProductAction(payload){
     return action;
 }
 
+function clearUserRegistrationAction(){
+    const action = {
+        type: ApiConstants.USER_REGISTRATION_CLEAR_DATA
+    }
+    return action;
+}
 export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
@@ -307,5 +313,6 @@ export {
     getTeamRegistrationReviewAction,
     saveTeamRegistrationReview,
     getTeamRegistrationReviewProductAction,
-    updateTeamReviewInfoAction
+    updateTeamReviewInfoAction,
+	clearUserRegistrationAction												  
 }

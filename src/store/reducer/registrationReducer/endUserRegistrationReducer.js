@@ -12,7 +12,8 @@ let registrationObj = {
     vouchers: [],
     yourInfo: {firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
                 reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,
-                postalCode: "", userId: 0}
+                postalCode: "", userId: 0},
+    stateOrgId: null
 }
 
 let commonRegSetting = {
@@ -487,7 +488,8 @@ function endUserRegistrationReducer(state = initialState, action) {
                 vouchers: [],
                 yourInfo: {firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
                 reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,
-                postalCode: "", userId: 0}
+                postalCode: "", userId: 0},
+                stateOrgId: null
             }
             let commonRegSetting1 = {
                 club_volunteer: 0,
@@ -1071,6 +1073,14 @@ function endUserRegistrationReducer(state = initialState, action) {
                 regTeamReviewPrdData: regTeamReviewPrdData
             };
         
+       case ApiConstants.USER_REGISTRATION_CLEAR_DATA:
+            let userRegistrationsTemp = state.registrationDetail.userRegistrations.map(e => ({ ... e }));
+            userRegistrationsTemp[0].products = [];
+            state.registrationDetail.userRegistrations = [];
+            state.registrationDetail.userRegistrations.push(userRegistrationsTemp[0]);
+            return{
+                ...state
+            }
         default:
             return state;
     }

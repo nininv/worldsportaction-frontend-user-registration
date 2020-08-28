@@ -962,7 +962,7 @@ const AppConstants = {
   ok:"Ok"	,
   useSameEmailAsParent: "Use same email as parent",
   stateMismatchTitleMessage: "Warning",
-  stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you one to proceed?" 
+ stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you one to proceed?"
 };
 
 export default AppConstants;
