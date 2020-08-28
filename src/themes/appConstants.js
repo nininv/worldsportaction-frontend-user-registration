@@ -965,6 +965,7 @@ const AppConstants = {
  stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you want to proceed?",
  CASUAL_FEE: 1,
  SEASONAL_FEE: 2,
+ emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
 };
 
 export default AppConstants;
