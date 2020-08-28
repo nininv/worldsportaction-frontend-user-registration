@@ -75,8 +75,8 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = "85a54b19-9d32-4953-8e49-570b2e134875";
-            // let userRegId = null;
+            //  let registrationId = null;
+            //  let userRegId = "f59baf97-c9ed-4935-91a7-be330fb68c0b";
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -238,7 +238,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm " >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2) ))}
+                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -285,7 +285,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2) ) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2) ))}
+                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2) ) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2) )).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -339,7 +339,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2) ))}
+                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
                                     />}
                             </div>
 
