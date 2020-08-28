@@ -284,6 +284,7 @@ function endUserRegistrationReducer(state = initialState, action) {
                     participant.divisionName = null;
                     participant.venue = [];
                     participant["fees"] = null;
+                    participant.divisions = [];
                     state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
                         state.registrationDetail.userRegistrations, state);
                     participant["team"]["teamName"] = null;

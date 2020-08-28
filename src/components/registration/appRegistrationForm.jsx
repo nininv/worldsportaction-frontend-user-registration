@@ -1513,39 +1513,9 @@ class AppRegistrationForm extends Component {
             let mismatch = this.checkSameStateOrNot(organisationInfo,userRegistrations,index,value);
            // console.log("organisationInfo::" + JSON.stringify(organisationInfo));
             if(mismatch){
-                return;
-			 
-																					 
-																													  
-																				  
-				 
-												  
-				 
+                return;	 
             }
-            this.clearOrganizationDependentData(value,index,organisationInfo);  
-																				   
-												  
-														 
-																	   
-																		   
-										   
-												
-											 
-														 
-														  
-												   
-												 
-														 
-										
-											
-											
-														
-																	  
-																		  
-				
-			   
-
-											   
+            this.clearOrganizationDependentData(value,index,organisationInfo);  																		   
         }
         else if(key == "competitionUniqueKey"){
             if(userRegistration.competitionInfo!= undefined && 
@@ -5086,7 +5056,7 @@ stateMismatchModelView = () =>{
         let membershipProdecutInfo = registrationState.membershipProductInfo;
         let organisationInfo = membershipProdecutInfo.find(x=>x.organisationUniqueKey == this.state.recentParticipantOrgUniqueKey);
         this.props.updateEndUserRegisrationAction(organisationInfo.stateOrgId, "stateOrgId");
-        this.props.clearUserRegistrationsWithoutRootParticipantAction();
+        this.props.clearUserRegistrationAction();
         this.clearOrganizationDependentData(this.state.recentParticipantOrgUniqueKey,0,organisationInfo); 
         this.setState({stateMismatchModelVisible: false});
     }
