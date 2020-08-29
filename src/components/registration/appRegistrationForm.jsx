@@ -511,7 +511,6 @@ class AppRegistrationForm extends Component {
             firstParticipantOrgUniqueKey: null,
             recentParticipantOrgUniqueKey: null,
 			searchAddressError: '',
-            addressSearch: null,
         };
         this_Obj = this;
      
@@ -2244,64 +2243,79 @@ class AppRegistrationForm extends Component {
          this.props.updateEndUserRegisrationAction("product", "refFlag");
         
     }
-	 handlePlacesAutocomplete = (data,index,ParentGuardianIndex,key) => {
+
+	 handlePlacesAutocomplete = (data,index,parentGuardianIndex,key) => {
         const { stateList } = this.props.commonReducerState;
         const address = data;
         if (!address.addressOne) {
             this.setState({
                 searchAddressError: ValidationConstants.addressDetailsError,
-            })
-        }
-        else {
+            });
+        }else {
             this.setState({searchAddressError: ''})
         }
         this.setState({addressSearch: address});
+        //console.log("address::"+JSON.stringify(address));
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-        this.props.form.setFieldsValue({
-            stateRefId,
-            addressOne: address.addressOne || null,
-            suburb: address.suburb || null,
-            postcode: address.postcode || null,
-        });
-
-        if(ParentGuardianIndex != -1 && index != -1 && key == null ){
-            if (address.addressOne) {
-                this.onChangeSetParentValue(stateRefId, "stateRefId", index, ParentGuardianIndex);
-                this.onChangeSetParentValue(address.addressOne, "addressOne", index, ParentGuardianIndex)
-                this.onChangeSetParentValue(address.suburb, "suburb", index, ParentGuardianIndex)
-                this.onChangeSetParentValue(address.postcode, "postcode", index, ParentGuardianIndex)
-                this.onChangeSetParentValue(address.lat, "lat", index, ParentGuardianIndex)
-                this.onChangeSetParentValue(address.lng, "lng", index, ParentGuardianIndex)
+        //console.log("stateRefId::"+stateRefId);
+        if(address){
+            if(key == "parent"){
+                this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.addressOne, "addressOne", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.suburb, "suburb", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.postcode, "postcode", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.lat, "lat", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.lng, "lng", index, parentGuardianIndex);
+                this.props.form.setFieldsValue({
+                    [`parentStreet1${index}${parentGuardianIndex}`]: address.addressOne,
+                    [`parentSuburb${index}${parentGuardianIndex}`]: address.suburb,
+                    [`parentStateRefId${index}${parentGuardianIndex}`]: stateRefId,
+                    [`parentPostalCode${index}${parentGuardianIndex}`]: address.postcode,
+                });
             }
-        }
-        if (ParentGuardianIndex == -1  && index != -1 && key == null){
-            if (address.addressOne) {
-                this.onChangeSetParticipantValue(stateRefId, "stateRefId", index)
-                this.onChangeSetParticipantValue(address.addressOne, "street1", index)
-                this.onChangeSetParticipantValue(address.suburb, "suburb", index)
-                this.onChangeSetParticipantValue(address.postcode, "postcode", index)
-                this.onChangeSetParticipantValue(address.lat, "lat", index)
-                this.onChangeSetParticipantValue(address.lng, "lng", index)               
+            if (key == "participant"){
+                this.onChangeSetParticipantValue(stateRefId, "stateRefId", index);
+                this.onChangeSetParticipantValue(address.addressOne, "street1", index);
+                this.onChangeSetParticipantValue(address.suburb, "suburb", index);
+                this.onChangeSetParticipantValue(address.postcode, "postcode", index);
+                this.onChangeSetParticipantValue(address.lat, "lat", index);
+                this.onChangeSetParticipantValue(address.lng, "lng", index);
+                this.props.form.setFieldsValue({
+                    [`participantStreet1${index}`]:  address.addressOne,
+                    [`participantSuburb${index}`]:  address.suburb,
+                    [`participantStateRefId${index}`]:  stateRefId,
+                    [`participantPostalCode${index}`]:  address.postcode,
+                });              
             }
-        }
-        if(ParentGuardianIndex == -1  && index == -1 && key == null){
-            this.onChangeSetYourInfo(stateRefId, "stateRefId")
-            this.onChangeSetYourInfo(address.addressOne, "street1")
-            this.onChangeSetYourInfo(address.suburb, "suburb")
-            this.onChangeSetYourInfo(address.postcode, "postalCode")
-            this.onChangeSetYourInfo(address.lat, "lat")
-            this.onChangeSetYourInfo(address.lng, "lng")
+            if(key == "yourInfo"){
+                this.onChangeSetYourInfo(stateRefId, "stateRefId")
+                this.onChangeSetYourInfo(address.addressOne, "street1");
+                this.onChangeSetYourInfo(address.suburb, "suburb");
+                this.onChangeSetYourInfo(address.postcode, "postalCode");
+                this.onChangeSetYourInfo(address.lat, "lat");
+                this.onChangeSetYourInfo(address.lng, "lng");
+                this.props.form.setFieldsValue({
+                    [`yStreet1`]:  address.addressOne,
+                    [`ySuburb`]:  address.suburb,
+                    [`yStateRefId`]:  stateRefId,
+                    [`yPostalCode`]:  address.postcode,
+                });
+            }  
+            if(key == "team"){
+                this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
+                this.onChangeSetTeam(address.addressOne, "street1", index, "team")
+                this.onChangeSetTeam(address.suburb, "suburb", index, "team")
+                this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
+                this.onChangeSetTeam(address.lat, "lat", index, "team")
+                this.onChangeSetTeam(address.lng, "lng", index, "team");
+                this.props.form.setFieldsValue({
+                    [`tStreet1${index}`]:  address.addressOne,
+                    [`tSuburb${index}`]:  address.suburb,
+                    [`tStateRefId${index}`]:  stateRefId,
+                    [`tPostalCode${index}`]:  address.postcode,
+                });
+            }  
         }  
-
-        if(ParentGuardianIndex == -1  && index != -1 && key == "team"){
-            this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
-            this.onChangeSetTeam(address.addressOne, "street1", index, "team")
-            this.onChangeSetTeam(address.suburb, "suburb", index, "team")
-            this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
-            this.onChangeSetTeam(address.lat, "lat", index, "team")
-            this.onChangeSetTeam(address.lng, "lng", index, "team")
-        }  
-        
     };
 	
     removeFriend = () => {
@@ -2611,18 +2625,18 @@ class AppRegistrationForm extends Component {
 		let addressError = false;
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
-		if (!this.state.venueAddress) {							   
-            this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
-            message.error(AppConstants.addressError);
-            addressError = true;
-        }
+		// if (!this.state.addressSearch) {							   
+        //     this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
+        //     message.error(AppConstants.addressError);
+        //     addressError = true;
+        // }
 		
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: ", err);
-			if (addressError) {
-                message.error(AppConstants.addressError);
-                return;
-            }
+			// if (addressError) {
+            //     message.error(AppConstants.addressError);
+            //     return;
+            // }
 			
             if(!err)
             {
@@ -3348,7 +3362,7 @@ class AppRegistrationForm extends Component {
                                 searchAddressError: ''
                             })
                         }}
-                        onSetData={(e)=>this.handlePlacesAutocomplete(e,-1,-1,null)}
+                        onSetData={(e)=>this.handlePlacesAutocomplete(e,-1,-1,"yourInfo")}
                     />
                 </Form.Item>									
                 <Form.Item >
@@ -3435,6 +3449,7 @@ class AppRegistrationForm extends Component {
             } ${
             state ? `${state},` : ''
             } Australia`;
+
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.participantDetails}</span>
@@ -3586,7 +3601,7 @@ class AppRegistrationForm extends Component {
                                 searchAddressError: ''
                             })
                         }}
-                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,-1,null)}
+                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,-1,"participant")}
                     />
                 </Form.Item>										  
                 <Form.Item >
@@ -3680,6 +3695,7 @@ class AppRegistrationForm extends Component {
             } ${
             state ? `${state},` : ''
             } Australia`;
+
        (filteredRegistrations ||[]).map((item, index) => {
             if(item.parentOrGuardian.length > 0){
                 isParentAvailable = true;
@@ -3808,7 +3824,7 @@ class AppRegistrationForm extends Component {
                                                 searchAddressError: ''
                                             })
                                         }}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,parentIndex,null)}
+                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,parentIndex,"parent")}
                                     />
                                 </Form.Item>																
                                 <Form.Item>
@@ -5356,7 +5372,6 @@ stateMismatchModelView = () =>{
         let termsAndConditionsFinal  = registrationState.termsAndConditionsFinal; 
         let isShowYourInfo = this.yourInfoDisplay();
 
-        //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
         return (
