@@ -117,7 +117,7 @@ class RegistrationInvoice extends Component {
         let organisationLogo = invoiceData!= null ? invoiceData.organisationLogo : null;
         let invoiceDisabled = this.state.invoiceDisabled;
         let isSchoolRegistrationApplied = invoiceData!= null ? invoiceData.isSchoolRegistrationApplied: 0;
-        let msg = isSchoolRegistrationApplied == 1? AppConstants.toBeInvoicedViaSchool : ""
+        let msg = isSchoolRegistrationApplied == 1? "(" + AppConstants.toBeInvoicedViaSchool + ")" : ""
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
@@ -140,7 +140,7 @@ class RegistrationInvoice extends Component {
                             <div className="invoice-receipt-num">
                                     Receipt No.1234497
                             </div>
-                            <div className="schoolInvoiceTxt">{"(" + msg + ")"}</div>
+                            <div className="schoolInvoiceTxt">{msg}</div>
                         </div>
                         {/* <InputWithHead
                             heading={"Receipt No.1234497"} 
