@@ -3694,7 +3694,7 @@ class AppRegistrationForm extends Component {
 		const state = stateList.length > 0 && item.stateRefId
             ? stateList.find((state) => state.id === item.stateRefId).name
             : null;
-
+        console.log("state::"+JSON.stringify(state)+" street1::"+item.street1+" suburb::"+item.suburb);
             let defaultAddress = '';
             if(item.street1 && item.suburb && state){
                 defaultAddress = `${
