@@ -3691,21 +3691,6 @@ class AppRegistrationForm extends Component {
         let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != item.tempParticipantId);
         let isParentAvailable = false;
        //console.log("@@@@@@@@@" + JSON.stringify(filteredRegistrations));
-		const state = stateList.length > 0 && item.stateRefId
-            ? stateList.find((state) => state.id === item.stateRefId).name
-            : null;
-        console.log("state::"+JSON.stringify(state)+" street1::"+item.street1+" suburb::"+item.suburb);
-            let defaultAddress = '';
-            if(item.street1 && item.suburb && state){
-                defaultAddress = `${
-                    item.street1 ? `${item.street1},` : ''
-                    } ${
-                        item.suburb ? `${item.suburb},` : ''
-                    } ${
-                    state ? `${state},` : ''
-                    } Australia`;
-            }
-       
 
        (filteredRegistrations ||[]).map((item, index) => {
             if(item.parentOrGuardian.length > 0){
@@ -3748,166 +3733,183 @@ class AppRegistrationForm extends Component {
                 </div>
                 ) : null}
                
-                {(item.parentOrGuardian || []).map((parent, parentIndex) => (
-                <div key={"parent"+parentIndex}>
-                   {this.dividerTextView("PARENT " + (parentIndex + 1), styles, "parent", index, parentIndex, item.parentOrGuardian)}
-                    <Form.Item>
-                        {getFieldDecorator(`parentFirstName${index}${parentIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.nameField[0] }],
-                        })(
-                        <InputWithHead 
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.firstName} 
-                        placeholder={AppConstants.firstName} 
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "firstName", index, parentIndex )} 
-                        setFieldsValue={parent.firstName}/>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item>
-                        {getFieldDecorator(`parentLastName${index}${parentIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.nameField[1] }],
-                        })(
-                        <InputWithHead 
-                            required={"required-field pt-0 pb-0"}
-                            heading={AppConstants.lastName} 
-                            placeholder={AppConstants.lastName} 
-                            onChange={(e) => this.onChangeSetParentValue(e.target.value, "lastName", index, parentIndex )} 
-                            setFieldsValue={parent.lastName}/>
-                            )}
-                    </Form.Item>
-                    <Form.Item>
-                        {getFieldDecorator(`parentContactField${index}${parentIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.contactField }],
-                        })(
-                        <InputWithHead 
-                            required={"required-field pt-0 pb-0"}
-                            heading={AppConstants.mobile} 
-                            placeholder={AppConstants.mobile} 
-                            onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber", index, parentIndex  )} 
-                            setFieldsValue={parent.mobileNumber}
-                        />
-                        )}
-                    </Form.Item>
-                    <Form.Item>
-                        {getFieldDecorator(`parentEmail${index}${parentIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                        })(
-                        <InputWithHead 
-                            required={"required-field pt-0 pb-0"}
-                            heading={AppConstants.email} 
-                            placeholder={AppConstants.email} 
-                            onChange={(e) => this.onChangeSetParentValue(e.target.value, "email", index, parentIndex  )} 
-                            setFieldsValue={parent.email}
-                        />
-                        )}
-                    </Form.Item>
-                    <Form.Item>
-                        {getFieldDecorator(`parentReEnterEmail${index}${parentIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                        })(
-                        <InputWithHead 
-                            required={"required-field pt-0 pb-0"}
-                            heading={AppConstants.reenterEmail}
-                            placeholder={AppConstants.reenterEmail} 
-                            onChange={(e) => this.onChangeSetParentValue(e.target.value, "reEnterEmail", index, parentIndex  )} 
-                            setFieldsValue={parent.reEnterEmail}/>
-                            )}
-                    </Form.Item>
-                    <Checkbox
-                        className="single-checkbox"
-                        checked={parent.isSameAddress}
-                        onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", index, parentIndex  )} >
-                        {AppConstants.sameAddress}
-                    </Checkbox>
-                    {
-                        parent.isSameAddress != true && (
-                            <div>
-                                <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
-							<Form.Item name="addressSearch">
-                                    <PlacesAutocomplete
-                                        defaultValue={defaultAddress}
-                                        heading={AppConstants.addressSearch}
-                                        required
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => {
-                                            this.setState({
-                                                searchAddressError: ''
-                                            })
-                                        }}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,parentIndex,"parent")}
-                                    />
-                                </Form.Item>																
-                                <Form.Item>
-                                    {getFieldDecorator(`parentStreet1${index}${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.addressField[0] }],
-                                    })(
-                                    <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.addressOne}
-                                        placeholder={AppConstants.addressOne}
-                                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "street1", index, parentIndex  )} 
-                                        setFieldsValue={parent.street1}
-                                    />
-                                    )}
-                                </Form.Item>
-                                <InputWithHead
-                                    heading={AppConstants.addressTwo}
-                                    placeholder={AppConstants.addressTwo}
-                                    onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", index, parentIndex  )} 
-                                    value={parent.street2}
-                                />
-                                <Form.Item>
-                                    {getFieldDecorator(`parentSuburb${index}${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
-                                    })(
-                                    <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.suburb}
-                                        placeholder={AppConstants.suburb}
-                                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "suburb", index, parentIndex  )} 
-                                        setFieldsValue={parent.suburb}
-                                    />
-                                    )}
-                                </Form.Item> 
-                            
-                                <InputWithHead heading={AppConstants.state}  required={"required-field"}/>
-                                <Form.Item>
-                                    {getFieldDecorator(`parentStateRefId${index}${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.stateField[0] }],
-                                    })(
-                                    <Select
-                                        style={{ width: "100%" }}
-                                        placeholder={AppConstants.select}
-                                        onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", index, parentIndex  )}
-                                        setFieldsValue={parent.stateRefId}>
-                                        {stateList.length > 0 && stateList.map((item) => (
-                                            < Option key={item.id} value={item.id}> {item.name}</Option>
-                                        ))
-                                        }
-                                    </Select>
-                                    )}
-                                </Form.Item>
-
-                                <Form.Item>
-                                    {getFieldDecorator(`parentPostalCode${index}${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
-                                    })(
-                                    <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.postcode}
-                                        placeholder={AppConstants.postcode}
-                                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "postalCode", index, parentIndex  )} 
-                                        setFieldsValue={parent.postalCode}
-                                        maxLength={4}
-                                    />
-                                )}
-                                </Form.Item>
-                            </div>
-                        )
+                {(item.parentOrGuardian || []).map((parent, parentIndex) => {
+                    const state = stateList.length > 0 && item.stateRefId
+                    ? stateList.find((state) => state.id === parent.stateRefId).name
+                    : null;
+                    
+                    let defaultAddress = '';
+                    if(parent.street1 && parent.suburb && state){
+                        defaultAddress = `${
+                            parent.street1 ? `${parent.street1},` : ''
+                            } ${
+                                parent.suburb ? `${parent.suburb},` : ''
+                            } ${
+                            state ? `${state},` : ''
+                            } Australia`;
                     }
-                </div>
-                ))}
+
+                    return(
+                        <div key={"parent"+parentIndex}>
+                        {this.dividerTextView("PARENT " + (parentIndex + 1), styles, "parent", index, parentIndex, item.parentOrGuardian)}
+                         <Form.Item>
+                             {getFieldDecorator(`parentFirstName${index}${parentIndex}`, {
+                                 rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                             })(
+                             <InputWithHead 
+                             required={"required-field pt-0 pb-0"}
+                             heading={AppConstants.firstName} 
+                             placeholder={AppConstants.firstName} 
+                             onChange={(e) => this.onChangeSetParentValue(e.target.value, "firstName", index, parentIndex )} 
+                             setFieldsValue={parent.firstName}/>
+                             )}
+                         </Form.Item>
+     
+                         <Form.Item>
+                             {getFieldDecorator(`parentLastName${index}${parentIndex}`, {
+                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                             })(
+                             <InputWithHead 
+                                 required={"required-field pt-0 pb-0"}
+                                 heading={AppConstants.lastName} 
+                                 placeholder={AppConstants.lastName} 
+                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "lastName", index, parentIndex )} 
+                                 setFieldsValue={parent.lastName}/>
+                                 )}
+                         </Form.Item>
+                         <Form.Item>
+                             {getFieldDecorator(`parentContactField${index}${parentIndex}`, {
+                                 rules: [{ required: true, message: ValidationConstants.contactField }],
+                             })(
+                             <InputWithHead 
+                                 required={"required-field pt-0 pb-0"}
+                                 heading={AppConstants.mobile} 
+                                 placeholder={AppConstants.mobile} 
+                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber", index, parentIndex  )} 
+                                 setFieldsValue={parent.mobileNumber}
+                             />
+                             )}
+                         </Form.Item>
+                         <Form.Item>
+                             {getFieldDecorator(`parentEmail${index}${parentIndex}`, {
+                                 rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                             })(
+                             <InputWithHead 
+                                 required={"required-field pt-0 pb-0"}
+                                 heading={AppConstants.email} 
+                                 placeholder={AppConstants.email} 
+                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "email", index, parentIndex  )} 
+                                 setFieldsValue={parent.email}
+                             />
+                             )}
+                         </Form.Item>
+                         <Form.Item>
+                             {getFieldDecorator(`parentReEnterEmail${index}${parentIndex}`, {
+                                 rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                             })(
+                             <InputWithHead 
+                                 required={"required-field pt-0 pb-0"}
+                                 heading={AppConstants.reenterEmail}
+                                 placeholder={AppConstants.reenterEmail} 
+                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "reEnterEmail", index, parentIndex  )} 
+                                 setFieldsValue={parent.reEnterEmail}/>
+                                 )}
+                         </Form.Item>
+                         <Checkbox
+                             className="single-checkbox"
+                             checked={parent.isSameAddress}
+                             onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", index, parentIndex  )} >
+                             {AppConstants.sameAddress}
+                         </Checkbox>
+                         {
+                             parent.isSameAddress != true && (
+                                 <div>
+                                     <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
+                                 <Form.Item name="addressSearch">
+                                         <PlacesAutocomplete
+                                             defaultValue={defaultAddress}
+                                             heading={AppConstants.addressSearch}
+                                             required
+                                             error={this.state.searchAddressError}
+                                             onBlur={() => {
+                                                 this.setState({
+                                                     searchAddressError: ''
+                                                 })
+                                             }}
+                                             onSetData={(e)=>this.handlePlacesAutocomplete(e,index,parentIndex,"parent")}
+                                         />
+                                     </Form.Item>																
+                                     <Form.Item>
+                                         {getFieldDecorator(`parentStreet1${index}${parentIndex}`, {
+                                             rules: [{ required: true, message: ValidationConstants.addressField[0] }],
+                                         })(
+                                         <InputWithHead
+                                             required={"required-field pt-0 pb-0"}
+                                             heading={AppConstants.addressOne}
+                                             placeholder={AppConstants.addressOne}
+                                             onChange={(e) => this.onChangeSetParentValue(e.target.value, "street1", index, parentIndex  )} 
+                                             setFieldsValue={parent.street1}
+                                         />
+                                         )}
+                                     </Form.Item>
+                                     <InputWithHead
+                                         heading={AppConstants.addressTwo}
+                                         placeholder={AppConstants.addressTwo}
+                                         onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", index, parentIndex  )} 
+                                         value={parent.street2}
+                                     />
+                                     <Form.Item>
+                                         {getFieldDecorator(`parentSuburb${index}${parentIndex}`, {
+                                             rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                                         })(
+                                         <InputWithHead
+                                             required={"required-field pt-0 pb-0"}
+                                             heading={AppConstants.suburb}
+                                             placeholder={AppConstants.suburb}
+                                             onChange={(e) => this.onChangeSetParentValue(e.target.value, "suburb", index, parentIndex  )} 
+                                             setFieldsValue={parent.suburb}
+                                         />
+                                         )}
+                                     </Form.Item> 
+                                 
+                                     <InputWithHead heading={AppConstants.state}  required={"required-field"}/>
+                                     <Form.Item>
+                                         {getFieldDecorator(`parentStateRefId${index}${parentIndex}`, {
+                                             rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                         })(
+                                         <Select
+                                             style={{ width: "100%" }}
+                                             placeholder={AppConstants.select}
+                                             onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", index, parentIndex  )}
+                                             setFieldsValue={parent.stateRefId}>
+                                             {stateList.length > 0 && stateList.map((item) => (
+                                                 < Option key={item.id} value={item.id}> {item.name}</Option>
+                                             ))
+                                             }
+                                         </Select>
+                                         )}
+                                     </Form.Item>
+     
+                                     <Form.Item>
+                                         {getFieldDecorator(`parentPostalCode${index}${parentIndex}`, {
+                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                         })(
+                                         <InputWithHead
+                                             required={"required-field pt-0 pb-0"}
+                                             heading={AppConstants.postcode}
+                                             placeholder={AppConstants.postcode}
+                                             onChange={(e) => this.onChangeSetParentValue(e.target.value, "postalCode", index, parentIndex  )} 
+                                             setFieldsValue={parent.postalCode}
+                                             maxLength={4}
+                                         />
+                                     )}
+                                     </Form.Item>
+                                 </div>
+                             )
+                         }
+                     </div>
+                    );
+                })}
                 <span className="input-heading-add-another pointer" onClick={()=> this.addParent(index, null)}>
                     + {AppConstants.addParent_guardian}
                 </span>
