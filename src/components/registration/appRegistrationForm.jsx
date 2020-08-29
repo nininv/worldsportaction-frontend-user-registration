@@ -2256,9 +2256,9 @@ class AppRegistrationForm extends Component {
             this.setState({searchAddressError: ''})
         }
         this.setState({addressSearch: address});
-        console.log("address::"+JSON.stringify(address));
+        //console.log("address::"+JSON.stringify(address));
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-        console.log("stateRefId::"+stateRefId);
+        //console.log("stateRefId::"+stateRefId);
         if(address){
             if(key == "parent"){
                 this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
@@ -2626,7 +2626,7 @@ class AppRegistrationForm extends Component {
 		let addressError = false;
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
-		if (!this.state.venueAddress) {							   
+		if (!this.state.addressSearch) {							   
             this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
             message.error(AppConstants.addressError);
             addressError = true;
