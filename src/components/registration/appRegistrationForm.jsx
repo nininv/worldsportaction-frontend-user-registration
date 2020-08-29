@@ -1478,7 +1478,7 @@ class AppRegistrationForm extends Component {
             });
             if(getAge(value) <= 18 && !isParentAvailable)
             {
-                this.addParent(index, userRegistrations,value);
+                this.addParent(index, userRegistrations);
                 //empty email and reEnterEmail if age is below 18
                 userRegistration['referParentEmail'] = true;
                 userRegistration['email'] = null;

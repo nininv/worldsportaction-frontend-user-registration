@@ -75,8 +75,8 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = null;
-            //  let userRegId = "f59baf97-c9ed-4935-91a7-be330fb68c0b";
+            //   let registrationId = "369e804f-199e-4f0d-92da-a5bb66637e7a";
+            //   let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -116,6 +116,8 @@ class RegistrationInvoice extends Component {
         let userDetail = invoiceData!= null ? invoiceData.billTo: null;
         let organisationLogo = invoiceData!= null ? invoiceData.organisationLogo : null;
         let invoiceDisabled = this.state.invoiceDisabled;
+        let isSchoolRegistrationApplied = invoiceData!= null ? invoiceData.isSchoolRegistrationApplied: 0;
+        let msg = isSchoolRegistrationApplied == 1? AppConstants.toBeInvoicedViaSchool : ""
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
@@ -134,9 +136,15 @@ class RegistrationInvoice extends Component {
                                 }}
                             />
                         </label>
-                        <InputWithHead
-                            heading={"Receipt No.1234497"}
-                        />
+                        <div className="invoice-receipt">
+                            <div className="invoice-receipt-num">
+                                    Receipt No.1234497
+                            </div>
+                            <div className="schoolInvoiceTxt">{"(" + AppConstants.toBeInvoicedViaSchool + ")"}</div>
+                        </div>
+                        {/* <InputWithHead
+                            heading={"Receipt No.1234497"} 
+                        /> */}
                         {userDetail && userDetail.firstName &&
                             <Descriptions >
                                 <Descriptions.Item className="pb-0" label="Bill To">
@@ -204,6 +212,8 @@ class RegistrationInvoice extends Component {
     membershipProductView = (membershipDetail, membershipProductName) => {
         let mOrganisationName = membershipDetail!= null ? membershipDetail.name : '';
         membershipProductName = membershipProductName!= null ? membershipProductName : '';
+        let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ? 
+                                        membershipDetail.childDiscountsToDeduct : 0;
         return (
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -227,7 +237,8 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(membershipDetail.discountsToDeduct)).toFixed(2)}
+                                    heading={(parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) 
+                                        + parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -238,7 +249,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm " >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                    heading={(parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) -
+                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -250,6 +262,8 @@ class RegistrationInvoice extends Component {
     }
 
     competitionOrganiserView = (competitionDetails) => {
+        let childDiscountsToDeduct = competitionDetails.childDiscountsToDeduct!= null ? 
+                                competitionDetails.childDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pr-0 pl-0" >
@@ -274,7 +288,7 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(Number(competitionDetails.discountsToDeduct)).toFixed(2)}
+                                    heading={(parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -285,7 +299,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2) ) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                    heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -297,6 +312,8 @@ class RegistrationInvoice extends Component {
     }
 
     competitionAffiliateView = (affiliateDetail) => {
+        let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ? 
+                        affiliateDetail.childDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -325,7 +342,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                        heading={(Number(affiliateDetail.discountsToDeduct)).toFixed(2)}
+                                        heading={(parseFloat((affiliateDetail.discountsToDeduct).toFixed(2))  + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                     />
                                 }
                             </div>
@@ -339,7 +356,8 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2) )).toFixed(2)}
+                                        heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
+                                            parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
                                     />}
                             </div>
 
@@ -404,7 +422,7 @@ class RegistrationInvoice extends Component {
                                  let competitionDetails = mem && mem.fees.competitionOrganisorFee;
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
-                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct));
+                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - Number(mem.childDiscountsToDeduct));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';

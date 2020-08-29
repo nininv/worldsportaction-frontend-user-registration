@@ -968,6 +968,7 @@ const AppConstants = {
  emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
  addressSearch:"Address Search",
   addressError: "Please select a address from the address search",
+ toBeInvoicedViaSchool: "To be invoiced via school"
 };
 
 export default AppConstants;
