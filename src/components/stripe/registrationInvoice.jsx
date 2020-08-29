@@ -51,8 +51,8 @@ class RegistrationInvoice extends Component {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let registrationId = null;
-    //    let userRegId = '791e305e-9f1d-49a6-b9c3-6a2ca79b9364';
+    //    let registrationId = "5dcd7ca9-1b1d-4fce-bbdc-f3c633b7469b";
+    //    let userRegId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
@@ -75,8 +75,8 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //   let registrationId = "369e804f-199e-4f0d-92da-a5bb66637e7a";
-            //   let userRegId = null;
+            // let registrationId = null;
+            // let userRegId = "5dcd7ca9-1b1d-4fce-bbdc-f3c633b7469b";
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -140,7 +140,7 @@ class RegistrationInvoice extends Component {
                             <div className="invoice-receipt-num">
                                     Receipt No.1234497
                             </div>
-                            <div className="schoolInvoiceTxt">{"(" + AppConstants.toBeInvoicedViaSchool + ")"}</div>
+                            <div className="schoolInvoiceTxt">{"(" + msg + ")"}</div>
                         </div>
                         {/* <InputWithHead
                             heading={"Receipt No.1234497"} 
@@ -422,7 +422,8 @@ class RegistrationInvoice extends Component {
                                  let competitionDetails = mem && mem.fees.competitionOrganisorFee;
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
-                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - Number(mem.childDiscountsToDeduct));
+                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
+                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
