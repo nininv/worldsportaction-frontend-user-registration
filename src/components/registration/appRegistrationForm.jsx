@@ -3233,13 +3233,16 @@ class AppRegistrationForm extends Component {
             ? stateList.find((state) => state.id === yourInfo.stateRefId).name
             : null;
 
-        let defaultAddress = `${
-            yourInfo.street1 ? `${yourInfo.street1},` : ''
-            } ${
-                yourInfo.suburb ? `${yourInfo.suburb},` : ''
-            } ${
-            state ? `${state},` : ''
-            } Australia`;
+        let defaultAddress = '';
+        if(yourInfo.street1 && yourInfo.suburb && state){
+            defaultAddress = `${
+                yourInfo.street1 ? `${yourInfo.street1},` : ''
+                } ${
+                    yourInfo.suburb ? `${yourInfo.suburb},` : ''
+                } ${
+                state ? `${state},` : ''
+                } Australia`;
+        }
 			
         return (
             <div className="formView content-view pt-5">
@@ -3442,13 +3445,17 @@ class AppRegistrationForm extends Component {
             ? stateList.find((state) => state.id === item.stateRefId).name
             : null;
 
-        let defaultAddress = `${
-            item.street1 ? `${item.street1},` : ''
-            } ${
-                item.suburb ? `${item.suburb},` : ''
-            } ${
-            state ? `${state},` : ''
-            } Australia`;
+            let defaultAddress = '';
+            if(item.street1 && item.suburb && state){
+                defaultAddress = `${
+                    item.street1 ? `${item.street1},` : ''
+                    } ${
+                        item.suburb ? `${item.suburb},` : ''
+                    } ${
+                    state ? `${state},` : ''
+                    } Australia`;
+            }
+        
 
         return (
             <div className="formView content-view pt-5">
@@ -3688,13 +3695,17 @@ class AppRegistrationForm extends Component {
             ? stateList.find((state) => state.id === item.stateRefId).name
             : null;
 
-        let defaultAddress = `${
-            item.street1 ? `${item.street1},` : ''
-            } ${
-                item.suburb ? `${item.suburb},` : ''
-            } ${
-            state ? `${state},` : ''
-            } Australia`;
+            let defaultAddress = '';
+            if(item.street1 && item.suburb && state){
+                defaultAddress = `${
+                    item.street1 ? `${item.street1},` : ''
+                    } ${
+                        item.suburb ? `${item.suburb},` : ''
+                    } ${
+                    state ? `${state},` : ''
+                    } Australia`;
+            }
+       
 
        (filteredRegistrations ||[]).map((item, index) => {
             if(item.parentOrGuardian.length > 0){
@@ -4900,13 +4911,17 @@ class AppRegistrationForm extends Component {
             ? stateList.find((state) => state.id === item.team.stateRefId).name
             : null;
 
-        let defaultAddress = `${
-            item.team.street1 ? `${item.team.street1},` : ''
-            } ${
-                item.team.suburb ? `${item.team.suburb},` : ''
-            } ${
-            state ? `${state},` : ''
-            } Australia`;
+            let defaultAddress = '';
+            if(item.street1 && item.suburb && state){
+                defaultAddress = `${
+                    item.team.street1 ? `${item.team.street1},` : ''
+                    } ${
+                        item.team.suburb ? `${item.team.suburb},` : ''
+                    } ${
+                    state ? `${state},` : ''
+                    } Australia`;
+            }   
+        
        
         let isShowTeamInfoDetails = registeringYourself!= null ? 0 : 1;
         return (
