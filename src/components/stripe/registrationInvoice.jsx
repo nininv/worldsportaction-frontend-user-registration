@@ -140,7 +140,7 @@ class RegistrationInvoice extends Component {
                             <div className="invoice-receipt-num">
                                     Receipt No.1234497
                             </div>
-                            <div className="schoolInvoiceTxt">{"(" + AppConstants.toBeInvoicedViaSchool + ")"}</div>
+                            <div className="schoolInvoiceTxt">{"(" + msg + ")"}</div>
                         </div>
                         {/* <InputWithHead
                             heading={"Receipt No.1234497"} 
