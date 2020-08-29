@@ -45,6 +45,7 @@ import history from "../../util/history";
 import Loader from '../../customComponents/loader';
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
+import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";			
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -508,7 +509,9 @@ class AppRegistrationForm extends Component {
             singleCompModalVisible: false,
             stateMismatchModelVisible: false,
             firstParticipantOrgUniqueKey: null,
-            recentParticipantOrgUniqueKey: null
+            recentParticipantOrgUniqueKey: null,
+			searchAddressError: '',
+            addressSearch: null,
         };
         this_Obj = this;
      
@@ -2241,7 +2244,66 @@ class AppRegistrationForm extends Component {
          this.props.updateEndUserRegisrationAction("product", "refFlag");
         
     }
+	 handlePlacesAutocomplete = (data,index,ParentGuardianIndex,key) => {
+        const { stateList } = this.props.commonReducerState;
+        const address = data;
+        if (!address.addressOne) {
+            this.setState({
+                searchAddressError: ValidationConstants.addressDetailsError,
+            })
+        }
+        else {
+            this.setState({searchAddressError: ''})
+        }
+        this.setState({addressSearch: address});
+        const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
+        this.props.form.setFieldsValue({
+            stateRefId,
+            addressOne: address.addressOne || null,
+            suburb: address.suburb || null,
+            postcode: address.postcode || null,
+        });
 
+        if(ParentGuardianIndex != -1 && index != -1 && key == null ){
+            if (address.addressOne) {
+                this.onChangeSetParentValue(stateRefId, "stateRefId", index, ParentGuardianIndex);
+                this.onChangeSetParentValue(address.addressOne, "addressOne", index, ParentGuardianIndex)
+                this.onChangeSetParentValue(address.suburb, "suburb", index, ParentGuardianIndex)
+                this.onChangeSetParentValue(address.postcode, "postcode", index, ParentGuardianIndex)
+                this.onChangeSetParentValue(address.lat, "lat", index, ParentGuardianIndex)
+                this.onChangeSetParentValue(address.lng, "lng", index, ParentGuardianIndex)
+            }
+        }
+        if (ParentGuardianIndex == -1  && index != -1 && key == null){
+            if (address.addressOne) {
+                this.onChangeSetParticipantValue(stateRefId, "stateRefId", index)
+                this.onChangeSetParticipantValue(address.addressOne, "street1", index)
+                this.onChangeSetParticipantValue(address.suburb, "suburb", index)
+                this.onChangeSetParticipantValue(address.postcode, "postcode", index)
+                this.onChangeSetParticipantValue(address.lat, "lat", index)
+                this.onChangeSetParticipantValue(address.lng, "lng", index)               
+            }
+        }
+        if(ParentGuardianIndex == -1  && index == -1 && key == null){
+            this.onChangeSetYourInfo(stateRefId, "stateRefId")
+            this.onChangeSetYourInfo(address.addressOne, "street1")
+            this.onChangeSetYourInfo(address.suburb, "suburb")
+            this.onChangeSetYourInfo(address.postcode, "postalCode")
+            this.onChangeSetYourInfo(address.lat, "lat")
+            this.onChangeSetYourInfo(address.lng, "lng")
+        }  
+
+        if(ParentGuardianIndex == -1  && index != -1 && key == "team"){
+            this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
+            this.onChangeSetTeam(address.addressOne, "street1", index, "team")
+            this.onChangeSetTeam(address.suburb, "suburb", index, "team")
+            this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
+            this.onChangeSetTeam(address.lat, "lat", index, "team")
+            this.onChangeSetTeam(address.lng, "lng", index, "team")
+        }  
+        
+    };
+	
     removeFriend = () => {
         let registrationDetail = this.props.endUserRegistrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
@@ -2546,9 +2608,22 @@ class AppRegistrationForm extends Component {
 
     saveRegistrationForm = (e) => {
        try {
+		let addressError = false;
+        console.log("saveRegistrationForm" + e);
         e.preventDefault();
+		if (!this.state.venueAddress) {							   
+            this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
+            message.error(AppConstants.addressError);
+            addressError = true;
+        }
+		
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: ", err);
+			if (addressError) {
+                message.error(AppConstants.addressError);
+                return;
+            }
+			
             if(!err)
             {
                 let registrationState = this.props.endUserRegistrationState;
@@ -3140,6 +3215,18 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let yourInfo = registrationDetail.yourInfo!= null ? registrationDetail.yourInfo : {}
+		const state = stateList.length > 0 && yourInfo.stateRefId
+            ? stateList.find((state) => state.id === yourInfo.stateRefId).name
+            : null;
+
+        let defaultAddress = `${
+            yourInfo.street1 ? `${yourInfo.street1},` : ''
+            } ${
+                yourInfo.suburb ? `${yourInfo.suburb},` : ''
+            } ${
+            state ? `${state},` : ''
+            } Australia`;
+			
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.yourInfo}</span>
@@ -3249,6 +3336,21 @@ class AppRegistrationForm extends Component {
                 </div> */}
 
                 <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
+				
+				<Form.Item name="addressSearch">
+                    <PlacesAutocomplete
+                        defaultValue={defaultAddress}
+                        heading={AppConstants.addressSearch}
+                        required
+                        error={this.state.searchAddressError}
+                        onBlur={() => {
+                            this.setState({
+                                searchAddressError: ''
+                            })
+                        }}
+                        onSetData={(e)=>this.handlePlacesAutocomplete(e,-1,-1,null)}
+                    />
+                </Form.Item>									
                 <Form.Item >
                     {getFieldDecorator(`yStreet1`, {
                         rules: [{ required: true, message: ValidationConstants.addressField}],
@@ -3322,6 +3424,17 @@ class AppRegistrationForm extends Component {
 
     participantDetailView = (item, index, getFieldDecorator) => {
         const { stateList } = this.props.commonReducerState;
+		const state = stateList.length > 0 && item.stateRefId
+            ? stateList.find((state) => state.id === item.stateRefId).name
+            : null;
+
+        let defaultAddress = `${
+            item.street1 ? `${item.street1},` : ''
+            } ${
+                item.suburb ? `${item.suburb},` : ''
+            } ${
+            state ? `${state},` : ''
+            } Australia`;
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.participantDetails}</span>
@@ -3462,6 +3575,20 @@ class AppRegistrationForm extends Component {
                 </div>
 
                 <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
+				 <Form.Item name="addressSearch">
+                    <PlacesAutocomplete
+                        defaultValue={defaultAddress}
+                        heading={AppConstants.addressSearch}
+                        required
+                        error={this.state.searchAddressError}
+                        onBlur={() => {
+                            this.setState({
+                                searchAddressError: ''
+                            })
+                        }}
+                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,-1,null)}
+                    />
+                </Form.Item>										  
                 <Form.Item >
                     {getFieldDecorator(`participantStreet1${index}`, {
                         rules: [{ required: true, message: ValidationConstants.addressField}],
@@ -3542,6 +3669,17 @@ class AppRegistrationForm extends Component {
         let filteredRegistrations =  userRegistrations.filter(x=>x.tempParticipantId != item.tempParticipantId);
         let isParentAvailable = false;
        //console.log("@@@@@@@@@" + JSON.stringify(filteredRegistrations));
+		const state = stateList.length > 0 && item.stateRefId
+            ? stateList.find((state) => state.id === item.stateRefId).name
+            : null;
+
+        let defaultAddress = `${
+            item.street1 ? `${item.street1},` : ''
+            } ${
+                item.suburb ? `${item.suburb},` : ''
+            } ${
+            state ? `${state},` : ''
+            } Australia`;
        (filteredRegistrations ||[]).map((item, index) => {
             if(item.parentOrGuardian.length > 0){
                 isParentAvailable = true;
@@ -3659,6 +3797,20 @@ class AppRegistrationForm extends Component {
                         parent.isSameAddress != true && (
                             <div>
                                 <span className="applicable-to-heading" style={{fontSize:'18px'}}>{AppConstants.address}</span>
+							<Form.Item name="addressSearch">
+                                    <PlacesAutocomplete
+                                        defaultValue={defaultAddress}
+                                        heading={AppConstants.addressSearch}
+                                        required
+                                        error={this.state.searchAddressError}
+                                        onBlur={() => {
+                                            this.setState({
+                                                searchAddressError: ''
+                                            })
+                                        }}
+                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,index,parentIndex,null)}
+                                    />
+                                </Form.Item>																
                                 <Form.Item>
                                     {getFieldDecorator(`parentStreet1${index}${parentIndex}`, {
                                         rules: [{ required: true, message: ValidationConstants.addressField[0] }],
@@ -4728,6 +4880,17 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let registeringYourself = userRegistrations.find(x=>x.registeringYourself == 1);
+        const state = stateList.length > 0 && item.team.stateRefId
+            ? stateList.find((state) => state.id === item.team.stateRefId).name
+            : null;
+
+        let defaultAddress = `${
+            item.team.street1 ? `${item.team.street1},` : ''
+            } ${
+                item.team.suburb ? `${item.team.suburb},` : ''
+            } ${
+            state ? `${state},` : ''
+            } Australia`;
        
         let isShowTeamInfoDetails = registeringYourself!= null ? 0 : 1;
         return (
@@ -4863,6 +5026,20 @@ class AppRegistrationForm extends Component {
                         />
                         )}
                     </Form.Item>
+					<Form.Item name="addressSearch">
+                        <PlacesAutocomplete
+                            defaultValue={defaultAddress}
+                            heading={AppConstants.addressSearch}
+                            required
+                            error={this.state.searchAddressError}
+                            onBlur={() => {
+                                this.setState({
+                                    searchAddressError: ''
+                                })
+                            }}
+                            onSetData={(e)=>this.handlePlacesAutocomplete(e,index,-1,"team")}
+                        />
+                    </Form.Item>									 
                     <Form.Item >
                         {getFieldDecorator(`tStreet1${index}`, {
                             rules: [{ required: true, message: ValidationConstants.addressField}],
@@ -5117,6 +5294,7 @@ stateMismatchModelView = () =>{
                     stateMismatchModelVisibleSample = true;
                 }else{
                     this.props.updateEndUserRegisrationAction(organisationInfo.stateOrgId, "stateOrgId");
+                    this.state.firstParticipantOrgUniqueKey = organisationUniqueKey;
                 }
             }
         }

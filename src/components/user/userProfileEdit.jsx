@@ -198,7 +198,6 @@ class UserProfileEdit extends Component {
 
     onChangeSetValue = (value, key) =>{
         let data = this.state.userData;
-        console.log("userdata::"+JSON.stringify(data));
         if(key == "isDisability"){
             if(value == 0){
                 data["disabilityCareNumber"] = null;
@@ -208,8 +207,7 @@ class UserProfileEdit extends Component {
         else if (key == "dateOfBirth"){
             value = (moment(value).format("YYYY-MM-DD"))
         }
-        else if (key == "email") {
-            console.log("userid"+data.userId+" "+getUserId());
+        else if (key == "email" && this.state.section == "address") {
             if(data.userId == getUserId()){
                 this.setState({isSameUserEmailChanged: true});
             }else{

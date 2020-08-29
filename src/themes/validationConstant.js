@@ -88,6 +88,9 @@ const ValidationConstants = {
     variantIsRequired: 'Variant is required.',
 
     email_validation: "Please enter valid email address!",
+	
+	addressRequiredError: "Address is required",
+    addressDetailsError: "Please input Address in details",
 };
 
 export default ValidationConstants;

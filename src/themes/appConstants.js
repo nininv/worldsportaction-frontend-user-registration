@@ -966,6 +966,8 @@ const AppConstants = {
  CASUAL_FEE: 1,
  SEASONAL_FEE: 2,
  emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
+ addressSearch:"Address Search",
+  addressError: "Please select a address from the address search",
 };
 
 export default AppConstants;
