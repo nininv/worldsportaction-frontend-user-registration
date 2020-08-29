@@ -2263,7 +2263,7 @@ class AppRegistrationForm extends Component {
                 this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.addressOne, "addressOne", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", index, parentGuardianIndex);
-                this.onChangeSetParentValue(address.postcode, "postcode", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.postcode, "postalCode", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.lat, "lat", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.lng, "lng", index, parentGuardianIndex);
                 this.props.form.setFieldsValue({
@@ -2277,7 +2277,7 @@ class AppRegistrationForm extends Component {
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId", index);
                 this.onChangeSetParticipantValue(address.addressOne, "street1", index);
                 this.onChangeSetParticipantValue(address.suburb, "suburb", index);
-                this.onChangeSetParticipantValue(address.postcode, "postcode", index);
+                this.onChangeSetParticipantValue(address.postcode, "postalCode", index);
                 this.onChangeSetParticipantValue(address.lat, "lat", index);
                 this.onChangeSetParticipantValue(address.lng, "lng", index);
                 this.props.form.setFieldsValue({
