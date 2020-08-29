@@ -511,7 +511,6 @@ class AppRegistrationForm extends Component {
             firstParticipantOrgUniqueKey: null,
             recentParticipantOrgUniqueKey: null,
 			searchAddressError: '',
-            addressSearch: null,
         };
         this_Obj = this;
      
@@ -2626,18 +2625,18 @@ class AppRegistrationForm extends Component {
 		let addressError = false;
         console.log("saveRegistrationForm" + e);
         e.preventDefault();
-		if (!this.state.addressSearch) {							   
-            this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
-            message.error(AppConstants.addressError);
-            addressError = true;
-        }
+		// if (!this.state.addressSearch) {							   
+        //     this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
+        //     message.error(AppConstants.addressError);
+        //     addressError = true;
+        // }
 		
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: ", err);
-			if (addressError) {
-                message.error(AppConstants.addressError);
-                return;
-            }
+			// if (addressError) {
+            //     message.error(AppConstants.addressError);
+            //     return;
+            // }
 			
             if(!err)
             {
@@ -3450,6 +3449,7 @@ class AppRegistrationForm extends Component {
             } ${
             state ? `${state},` : ''
             } Australia`;
+
         return (
             <div className="formView content-view pt-5">
                  <span className="form-heading"> {AppConstants.participantDetails}</span>
@@ -3695,6 +3695,7 @@ class AppRegistrationForm extends Component {
             } ${
             state ? `${state},` : ''
             } Australia`;
+
        (filteredRegistrations ||[]).map((item, index) => {
             if(item.parentOrGuardian.length > 0){
                 isParentAvailable = true;
@@ -5371,7 +5372,6 @@ stateMismatchModelView = () =>{
         let termsAndConditionsFinal  = registrationState.termsAndConditionsFinal; 
         let isShowYourInfo = this.yourInfoDisplay();
 
-        //console.log("userRegistrations::" + JSON.stringify(userRegistrations));
         const styles = {paddingTop: '10px', marginBottom: '15px'};
         const stylesProd = {paddingTop: '20px', marginBottom: '20px'};
         return (
