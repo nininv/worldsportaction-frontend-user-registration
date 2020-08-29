@@ -953,7 +953,7 @@ class AppRegistrationForm extends Component {
             isVoucherAdded: false,whoAreYouRegistering: 0, whatTypeOfRegistration: 0,userId: null, competitionMembershipProductId: null,
             competitionMembershipProductTypeId:null, competitionMembershipProductDivisionId: 0,divisionName:"",
             genderRefId: 1,dateOfBirth:"",firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
-            reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
+            reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 0,postalCode: "",statusRefId: 0,
             emergencyContactName: "",emergencyContactNumber: "",isPlayer: -1,userRegistrationId:0,
             playedBefore: 0,playedYear: null,playedClub: "",playedGrade: "",lastCaptainName: "",
             existingMedicalCondition: "",regularMedication: "",heardByRefId: 0,heardByOther: "",
