@@ -4914,7 +4914,7 @@ class AppRegistrationForm extends Component {
             : null;
 
             let defaultAddress = '';
-            if(item.street1 && item.suburb && state){
+            if(item.team.street1 && item.team.suburb && state){
                 defaultAddress = `${
                     item.team.street1 ? `${item.team.street1},` : ''
                     } ${
