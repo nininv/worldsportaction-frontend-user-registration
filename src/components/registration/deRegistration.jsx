@@ -43,6 +43,11 @@ class DeRegistration extends Component {
             this.setState({loading:false});
             this.setFormFields();
         }
+        if(deRegisterState.reloadFormData == 1){
+          //  console.log("$$$$$$$$$$$$$4");
+            this.props.updateDeregistrationData(0,'reloadFormData');
+            this.setFormFields();
+        }
 
         if(this.state.saveLoad == true && deRegisterState.onSaveLoad == false){
             history.push({pathname:'/userPersonal', state: {tabKey: "5", userId: this.state.userId}});
@@ -62,6 +67,7 @@ class DeRegistration extends Component {
             [`email`]:  saveData.email,
             [`mobileNumber`]:  saveData.mobileNumber,
             [`competitionId`]:  saveData.competitionId,
+            [`membershipMappingId`]: saveData.membershipMappingId
         });
     }
 

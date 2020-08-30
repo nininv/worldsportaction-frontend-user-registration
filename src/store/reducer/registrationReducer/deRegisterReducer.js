@@ -31,6 +31,7 @@ const initialState = {
         { id: 3, value: "Other" },
 
     ],
+    reloadFormData:0,
     deRegisterData: [],
     competitions: [],
     membershipTypes: [],
@@ -66,18 +67,23 @@ function deRegistrationReducer(state = initialState, action) {
                     let competitions = setCompetitions(action.value, state.deRegisterData);
                     state.competitions = competitions;
                     state.saveData.membershipTypes = [];
+                    state.saveData.membershipMappingId = null;
                     state.saveData.teams = [];
+                    state.saveData.teamId = null;
                     state.saveData.email = userData!= undefined ? userData.email : null;
                     state.saveData.mobileNumber = userData!= undefined ? userData.mobileNumber : null;
-
+                    state.reloadFormData = 1;
                 }
                 else if(action.key == "competitionId"){
-                    console.log("************" + action.value);
+                    //console.log("************" + action.value);
+                    state.saveData.teamId = null;
+                    state.saveData.membershipMappingId = null;
                     let membershipTypes = setMembershipTypes(action.value, state.competitions);
                     state.membershipTypes = membershipTypes;
                     let teams = setTeams(action.value, state.competitions);
                     state.teams = teams;
                     state.saveData[action.key] = action.value;
+                    state.reloadFormData = 1;
                 }
                 else if(action.key == "regChangeTypeRefId"){
                     state.saveData[action.key] = action.value;
@@ -118,6 +124,9 @@ function deRegistrationReducer(state = initialState, action) {
             }
             else if(action.subKey == "transfer"){
                 state.saveData.transfer[action.key] = action.value;
+            }
+            else{
+                state.reloadFormData = 0;
             }
             
             return {
