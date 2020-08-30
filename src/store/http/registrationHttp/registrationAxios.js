@@ -169,6 +169,14 @@ let AxiosApi = {
         var url = `/api/teamregistration/review/products?userRegId=${payload.userRegId}`;
         return Method.dataGet(url, token);
     },
+    getDeRegisterData(userId) {
+        var url = `/api/deregister?userId=${userId}`;
+        return Method.dataGet(url, token);
+    },
+    saveDeRegister(payload){
+        var url = `/api/deregister`;
+        return Method.dataPost(url, token, payload);
+    }
 };
 
 const Method = {
