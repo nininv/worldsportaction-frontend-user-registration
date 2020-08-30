@@ -18,8 +18,7 @@ import Loader from '../../customComponents/loader';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppImages from "../../themes/appImages";
-import {getRegistrationReviewProductAction,saveRegistrationReviewProduct,
-    updateReviewProductAction} from 
+import {getTeamRegistrationReviewProductAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import moment from 'moment';
 import StripeKeys from "../stripe/stripeKeys";
@@ -99,7 +98,7 @@ const CheckoutForm = (props) => {
     let paymentOptions = props.paymentOptions;
     let isSchoolRegistration = props.isSchoolRegistration;
     let payload = props.payload;
-    let registrationUniqueKey = props.registrationUniqueKey;
+    let userRegId = props.userRegId;
     
     console.log("PaymentOptions" ,props.paymentOptions);
     console.log(selectedPaymentOption)
@@ -122,7 +121,7 @@ const CheckoutForm = (props) => {
                 "credit": false,
                 "selectedOption": "direct_debit"
             });
-            stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey);
+            stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
         } else if (key === 'cash') {
             setClientKey("")
             setUser({
@@ -145,8 +144,8 @@ const CheckoutForm = (props) => {
     }
 
     const previousCall = () =>{
-        history.push("/registrationReview", {
-            registrationId: registrationUniqueKey
+        history.push("/teamRegistrationReview", {
+            userRegId: userRegId
         })
     }
 
@@ -164,7 +163,7 @@ const CheckoutForm = (props) => {
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
         console.log(auBankAccount, card)
-        if (auBankAccount || card || isSchoolRegistration == 1) {
+        if (auBankAccount || card) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -177,7 +176,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
 
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, userRegId);
                 }
 
             }
@@ -217,24 +216,18 @@ const CheckoutForm = (props) => {
                     props.onLoad(false)
                     message.success("Payment status is " + result.paymentIntent.status)
                     history.push("/invoice", {
-                        registrationId: regId,
-                        userRegId: null,
+                        registrationId: null,
+                        userRegId: userRegId,
                         paymentSuccess: true
                     })
                 }
             }
-            else if(isSchoolRegistration){
-                props.onLoad(true)
-                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
-            }
         }
         else {
-            if(!isSchoolRegistration){
-                message.config({
-                    maxCount: 1, duration: 0.9
-                })
-                message.error(AppConstants.selectedPaymentOption)
-            }
+            message.config({
+                maxCount: 1, duration: 0.9
+            })
+            message.error(AppConstants.selectedPaymentOption)
         }
     }
 
@@ -242,7 +235,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {paymentOptions.length > 0 && 
+                {paymentOptions!= null && paymentOptions.length > 0 && 
                 <div className="formView content-view pt-5">
                     <div className = "individual-header-view">
                         <div>
@@ -381,13 +374,13 @@ const CheckoutForm = (props) => {
 const stripePromise = loadStripe(StripeKeys.publicKey);
 
 
-class ReviewProducts extends Component {
+class TeamReviewProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
             buttonPressed: "",
             loading: false,
-            registrationUniqueKey: null,
+            userRegId: null,
             modalVisible: false,
             index: 0,
             subIndex: 0,
@@ -397,10 +390,10 @@ class ReviewProducts extends Component {
     }
 
     componentDidMount() {
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
         //let registrationUniqueKey = "1f8a3975-9b3f-498c-bd0b-b9414d8c68e3";
-        this.setState({registrationUniqueKey: registrationUniqueKey});
-        this.getApiInfo(registrationUniqueKey);
+        this.setState({userRegId: userRegId});
+        this.getApiInfo(userRegId);
     }
 
     componentDidUpdate(nextProps){
@@ -408,11 +401,11 @@ class ReviewProducts extends Component {
        
     }
 
-    getApiInfo = (registrationUniqueKey) => {
+    getApiInfo = (userRegId) => {
         let payload = {
-            registrationId: registrationUniqueKey
+            userRegId: userRegId
         }
-        this.props.getRegistrationReviewProductAction(payload);
+        this.props.getTeamRegistrationReviewProductAction(payload);
     }
   
     getReferenceData = () => {
@@ -420,14 +413,14 @@ class ReviewProducts extends Component {
 
     previousCall = () =>{
         this.setState({ buttonPressed: "previous" });
-        history.push("/registrationReview", {
-            registrationId: this.state.registrationUniqueKey
+        history.push("/teamRegistrationReview", {
+            userRegId: this.state.userRegId
         })
     }
     
     editNavigation = () => {
-        history.push("/registrationReview", {
-            registrationId: this.state.registrationUniqueKey
+        history.push("/teamRegistrationReview", {
+            userRegId: this.state.userRegId
         })
     }
 
@@ -473,10 +466,9 @@ class ReviewProducts extends Component {
     };
 
     contentView = (getFieldDecorator) => {
-        let {regReviewPrdData} = this.props.endUserRegistrationState;
-        let participantList = regReviewPrdData!= null ? regReviewPrdData.compParticipants: [];
-        let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
-        let isSchoolRegistration = regReviewPrdData!= null ? regReviewPrdData.isSchoolRegistration : 0;
+        let {regTeamReviewPrdData} = this.props.endUserRegistrationState;
+        let participantList = regTeamReviewPrdData!= null ? regTeamReviewPrdData.compParticipants: [];
+        let securePaymentOptions = regTeamReviewPrdData!= null ? regTeamReviewPrdData.securePaymentOptions : [];
         return (
             <div>
                 
@@ -492,8 +484,7 @@ class ReviewProducts extends Component {
                <div style={{ marginBottom: 40}}>
                     <Elements stripe={stripePromise} >
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
-                        payload={regReviewPrdData} registrationUniqueKey = {this.state.registrationUniqueKey}
-                        isSchoolRegistration={isSchoolRegistration}/>
+                        payload={regTeamReviewPrdData} userRegId = {this.state.userRegId}/>
                     </Elements>
                </div> 
 
@@ -528,8 +519,7 @@ class ReviewProducts extends Component {
                 }
                 <div className='individual-header-view' style={{fontSize:20}}>
                     <div>
-                    {item.isTeamRegistration == 0 ? AppConstants.individualRegistration :
-                            AppConstants.teamRegistration}
+                    {AppConstants.teamRegistration}
                         {AppConstants.hyphen}
                         {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
@@ -543,7 +533,6 @@ class ReviewProducts extends Component {
                     <div className='product-text' style={{fontFamily: "inter-medium"}}>
                         <div style={{marginRight:"auto"}}>
                         {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
-                        {mem.divisionName!= null ?  ' - ' + mem.divisionName : ''}
                         </div>
                         <div className='dolar-text'>
                             <div style={{fontFamily:"inter-medium",marginRight:20}}>
@@ -561,21 +550,7 @@ class ReviewProducts extends Component {
                             </div>  */}
                         </div>  
                     </div>  
-                    {(mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  ) && 
-                    <div className='membership-text' style={{marginTop:2}}>
-                        <div>
-                            <span className="number-text-style">{AppConstants.less}</span>
-                            <span>{":"+" "}</span>
-                            <span>{AppConstants.familyDiscount}</span>
-                        </div>                   
-                        <div className='dolar-text'>
-                            <div className="number-text-style" style={{marginRight:17}}>
-                            (${mem.childDiscountsToDeduct})
-                            </div>
-                        </div>  
-                    </div>  
-                    }
-                    {mem.isDiscountApplied == 1 && 
+                    {(mem.discountsToDeduct!= "0.00" && mem.discountsToDeduct != "" )  && 
                     <div className='membership-text' style={{marginTop:2}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
@@ -589,7 +564,6 @@ class ReviewProducts extends Component {
                         </div>  
                     </div>  
                     } 
-                     
                     <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
                     <div className='edit-header-main'>
                         <div className="text-editsection" style={{fontSize:15}}>
@@ -643,8 +617,8 @@ class ReviewProducts extends Component {
     }
     
     totalPaymentDue = (getFieldDecorator) => {
-        let {regReviewPrdData} = this.props.endUserRegistrationState;
-        let total = regReviewPrdData!= null ? regReviewPrdData.total: null;
+        let {regTeamReviewPrdData} = this.props.endUserRegistrationState;
+        let total = regTeamReviewPrdData!= null ? regTeamReviewPrdData.total: null;
         return (
             <div className = "formView content-view pt-5 pb-5"> 
              <div className = "individual-header-view">
@@ -700,87 +674,6 @@ class ReviewProducts extends Component {
         )
     }
 
-    // securePaymentOption = () => {
-    //     let {regReviewPrdData} = this.props.endUserRegistrationState;
-    //     let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
-    //     return (
-    //         <div className = "individual-reg-view">
-    //             <div className = "individual-header-view">
-    //                 <div>
-    //                     {AppConstants.securePaymentOptions}  
-    //                 </div>                    
-    //             </div> 
-    //             <div style={{marginTop:40}}>
-    //                 <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
-    //                     {(securePaymentOptions || []) .map((x, sIndex) => (
-    //                     <div>
-    //                         {x.securePaymentOptionRefId == 2 && 
-    //                         <div>
-    //                             <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
-    //                             <div className="card-outer-element">
-    //                                 <Elements stripe={stripePromise}>
-    //                                     <form className='form-element'>
-    //                                         <CardElement
-    //                                             id="card-element"
-    //                                             // options={CARD_ELEMENT_OPTIONS}
-    //                                             // onChange={handleChange}
-    //                                             className='StripeElement'
-    //                                         />
-    //                                     </form>       
-    //                                 </Elements>             
-    //                             </div>
-    //                         </div>
-    //                         }
-    //                         {x.securePaymentOptionRefId == 1 && 
-    //                             <Radio value={"1"}>{AppConstants.debitCard}</Radio> 
-    //                         }
-    //                         { x.securePaymentOptionRefId == 3 && 
-    //                         <Radio value={3}>{AppConstants.cash}</Radio>  
-    //                         }
-    //                     </div>
-    //                     ))}
-                        
-    //                 </Radio.Group>  
-    //             </div>                                                  
-    //         </div>
-    //     )
-    // }
-
-    // footerView = (isSubmitting) => {
-    //     let {regReviewPrdData} = this.props.endUserRegistrationState;
-    //     let securePaymentOptions = regReviewPrdData!= null ? regReviewPrdData.securePaymentOptions : [];
-    //     return (
-    //         <div className="fluid-width">
-    //             <div className="footer-view" style={{padding:0}}>
-    //                 <div style={{display:"flex" , justifyContent:"space-between"}}>
-    //                     <Button className="save-draft-text" type="save-draft-text"
-    //                         onClick={() => this.previousCall()}>
-    //                         {AppConstants.previous}
-    //                     </Button>
-    //                     {securePaymentOptions.length > 0 ?
-    //                         <Button
-    //                             className="open-reg-button"
-    //                             htmlType="submit"
-    //                             type="primary"
-    //                             disabled={isSubmitting}
-    //                             onClick={() => this.setState({ buttonPressed: "save" })}>
-    //                             {AppConstants.next}
-    //                         </Button>
-    //                     : null}
-    //                 </div>
-    //             </div>
-    //             <Modal
-    //                  className="add-membership-type-modal"
-    //                 title="Registration Review"
-    //                 visible={this.state.modalVisible}
-    //                 onOk={() => this.handleRegReviewModal("ok")}
-    //                 onCancel={() => this.handleRegReviewModal("cancel")}>
-    //                 <p>Do you want to delete the product? </p>
-    //             </Modal>
-    //         </div>
-    //     );
-    // };
-
     render() {
         // const { getFieldDecorator } = this.props.form;
         return (
@@ -818,9 +711,7 @@ class ReviewProducts extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getRegistrationReviewProductAction,
-        saveRegistrationReviewProduct,
-        updateReviewProductAction
+        getTeamRegistrationReviewProductAction
     }, dispatch);
 
 }
@@ -832,7 +723,7 @@ function mapStatetoProps(state){
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, userRegId) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
@@ -843,7 +734,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     if (paymentType === "card") {
         let stripeToken = token.id
         body = {
-            registrationId: registrationUniqueKey,
+            userRegId: userRegId,
            // invoiceId: invoiceId,
             paymentType: paymentType,
             payload: payload,
@@ -854,24 +745,15 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     }
     else if(paymentType === "direct_debit"){
         body = {
-            registrationId: registrationUniqueKey,
+            userRegId: userRegId,
             //invoiceId: invoiceId,
             payload: payload,
             paymentType: paymentType,
         }
     }
-    else if(props.isSchoolRegistration){
-        body = {
-            registrationId: registrationUniqueKey,
-            //invoiceId: invoiceId,
-            payload: payload,
-            paymentType: null,
-            isSchoolRegistration: 1
-        }
-    }
     console.log("payload" + JSON.stringify(payload));
     return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
+        fetch(`${StripeKeys.apiURL}/api/payments/createteampayments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -888,31 +770,22 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         if (paymentType == "card") {
                             message.success(Response.message);
                             
-                            console.log("registrationUniqueKey"+ registrationUniqueKey);
+                            console.log("userRegId"+ userRegId);
                             history.push("/invoice", {
-                                registrationId: registrationUniqueKey,
-                                userRegId: null,
+                                registrationId: null,
+                                userRegId: userRegId,
                                 paymentSuccess: true
                             })
                         }
                         else if(paymentType =="direct_debit") {
-                            if(Response.clientSecret == null && Response.totalFee == 0){
-                                history.push("/invoice", {
-                                    registrationId: registrationUniqueKey,
-                                    userRegId: null,
-                                    paymentSuccess: true
-                                })
-                            }
-                            else{
-                                setClientKey(Response.clientSecret)
-                                setRegId(registrationUniqueKey)
-                            }
+                            setClientKey(Response.clientSecret)
+                            setRegId(userRegId)
                            // message.success(Response.message);
                         }
                         else{
                             history.push("/invoice", {
-                                registrationId: registrationUniqueKey,
-                                userRegId: null,
+                                registrationId: null,
+                                userRegId: userRegId,
                                 paymentSuccess: true
                             })
                         }
@@ -937,4 +810,4 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     })
 }
 
-export default connect(mapStatetoProps,mapDispatchToProps)(ReviewProducts);
+export default connect(mapStatetoProps,mapDispatchToProps)(TeamReviewProducts);

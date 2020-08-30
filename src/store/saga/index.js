@@ -25,6 +25,8 @@ import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/live
 import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
 import * as shopProductSaga from "../saga/shopSaga/productSaga";
 
+import * as deRegisterSaga from '../saga/registrationSaga/deRegisterSaga';
+
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
@@ -174,5 +176,20 @@ export default function* root_saga() {
   //validation result code
   yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
 
+  //Get Team Registration Review
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getTeamRegistrationReviewSaga)
+
+  //Save Team Registration Revie
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveTeamRegistrationReviewSaga)
+ 
+  //Get Team Registration Review Products
+ yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
+
+   //Save DeRegister
+   yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
+ 
+   //Get DeRegister
+  yield takeEvery(ApiConstants.API_GET_DE_REGISTRATION_LOAD, deRegisterSaga.getDeRegisterSaga)
+ 
 
 }

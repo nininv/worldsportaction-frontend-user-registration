@@ -43,6 +43,7 @@ class ProductDetails extends Component {
         let { onLoad } = this.props.shopProductState
         if (onLoad == false && this.state.addToCartLoad == true) {
             this.setState({ addToCartLoad: false, cartModalVisible: false })
+            history.push("/listProducts")
         }
     }
 
@@ -76,7 +77,7 @@ class ProductDetails extends Component {
             }
         })
     }
-   
+
     ///////////product price display logic
     productItemPriceCheck = (productDetailData) => {
         let price = 0
@@ -101,14 +102,17 @@ class ProductDetails extends Component {
         console.log("productDetailData", productDetailData)
         return (
             <div className="product-details-view">
-                <div className="d-flex justify-content-end">
-                    <img
-                        src={AppImages.shoppingCart}
-                        className="cart-img"
-                        onError={ev => {
-                            ev.target.src = AppImages.shoppingCart;
-                        }}
-                    />
+                <div className="d-flex justify-content-end cart-main-view">
+                        <img
+                            src={AppImages.shoppingCart}
+                            className="cart-img"
+                            onError={ev => {
+                                ev.target.src = AppImages.shoppingCart;
+                            }}
+                        />
+                    <div className="cart-number-div">
+                        <span className="cart-number-text">15</span>
+                    </div>
                 </div>
                 <div className="row mt-5">
                     <div className="col-sm pt-4">

@@ -314,3 +314,60 @@ export function* teamNameCheckExisting(action) {
     yield call(errorSaga, error)
   }
 }
+
+
+////// Get Team Registration Review
+export function* getTeamRegistrationReviewSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getTeamRegistrationReview, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+
+////// Save Team Registration Review
+export function* saveTeamRegistrationReviewSaga(action) {
+  try {
+    const result = yield call(AxiosApi.saveTeamRegistrationReview, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+
+////// Get Team Registration Review Products
+export function* getTeamRegistrationReviewProductsSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getTeamRegistrationReviewProducts, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

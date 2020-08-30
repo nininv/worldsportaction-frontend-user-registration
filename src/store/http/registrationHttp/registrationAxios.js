@@ -157,6 +157,26 @@ let AxiosApi = {
         var url = `/api/registration/team/validate`;
         return Method.dataPost(url, token, payload);
     },
+    getTeamRegistrationReview(payload) {
+        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+        return Method.dataGet(url, token);
+    },
+    saveTeamRegistrationReview(payload) {
+        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+        return Method.dataPost(url, token, payload);
+    },
+    getTeamRegistrationReviewProducts(payload) {
+        var url = `/api/teamregistration/review/products?userRegId=${payload.userRegId}`;
+        return Method.dataGet(url, token);
+    },
+    getDeRegisterData(userId) {
+        var url = `/api/deregister?userId=${userId}`;
+        return Method.dataGet(url, token);
+    },
+    saveDeRegister(payload){
+        var url = `/api/deregister`;
+        return Method.dataPost(url, token, payload);
+    }
 };
 
 const Method = {

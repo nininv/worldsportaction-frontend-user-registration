@@ -1552,10 +1552,10 @@ class UserModulePersonalDetail extends Component {
                                                 </Button>
                                             }
                                         >
-                                            <Menu.Item onClick={() => history.push("/deRegistration")} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration", {userId: this.state.userId})} >
                                                 <span>{AppConstants.deRegistration}</span>
                                             </Menu.Item>
-                                            <Menu.Item onClick={() => history.push("/deRegistration")} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration",{userId: this.state.userId})} >
                                                 <span>{AppConstants.transfer}</span>
                                             </Menu.Item>
                                         </SubMenu>

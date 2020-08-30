@@ -196,7 +196,7 @@ const AppConstants = {
   reg_2_comp: "Discount 2nd Competition Registration",
   reg_3_comp: "Discount Seasonal Registration by Casual Fees paid",
   fees: "Fees",
-  discount: "Discount",
+  discount: "Discount Code",
   discounts: "Discounts",
   gernalDiscount: "General Discount",
   fixedAmount: "Fixed $ amount",
@@ -936,7 +936,7 @@ const AppConstants = {
   payfullAmount:"Pay Full Amount",
   weeklyInstalment:"Weekly Instalment",
   instalmentDates:"Instalment dates",
-  schoolRegistration:"School Registration",
+  schoolRegistration:"School Invoice",
   governmentSportsVoucher:"Government Sports Voucher",
   support:"Support",
   confidentGirlsFoundation:"Confident Girls Foundation",
@@ -955,7 +955,20 @@ const AppConstants = {
   expiryDate:"Expiry Date",
   teamRegistration: "Team Registration",
   personRegistering: "Person Registering",
-  webAdmin:"WebAdmin"
+  webAdmin:"WebAdmin",
+  teamAlreadyExists: "This team name is already in use. Please choose an alternative name.",
+  singleCompetition: "Single Competition",
+  registrationCode: "Registration Code",
+  ok:"Ok"	,
+  useSameEmailAsParent: "Use same email as parent",
+  stateMismatchTitleMessage: "Warning",
+ stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you want to proceed?",
+ CASUAL_FEE: 1,
+ SEASONAL_FEE: 2,
+ emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
+ addressSearch:"Address Search",
+  addressError: "Please select a address from the address search",
+ toBeInvoicedViaSchool: "To be invoiced via school"
 };
 
 export default AppConstants;
