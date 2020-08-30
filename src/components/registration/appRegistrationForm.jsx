@@ -2261,7 +2261,7 @@ class AppRegistrationForm extends Component {
         if(address){
             if(key == "parent"){
                 this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
-                this.onChangeSetParentValue(address.addressOne, "addressOne", index, parentGuardianIndex);
+                this.onChangeSetParentValue(address.addressOne, "street1", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", index, parentGuardianIndex);
                 this.onChangeSetParentValue(address.lat, "lat", index, parentGuardianIndex);
@@ -4914,7 +4914,7 @@ class AppRegistrationForm extends Component {
             : null;
 
             let defaultAddress = '';
-            if(item.street1 && item.suburb && state){
+            if(item.team.street1 && item.team.suburb && state){
                 defaultAddress = `${
                     item.team.street1 ? `${item.team.street1},` : ''
                     } ${
