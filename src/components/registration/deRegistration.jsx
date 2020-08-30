@@ -108,8 +108,8 @@ class DeRegistration extends Component {
                     <InputWithHead
                         required={"pt-0"}
                         placeholder={AppConstants.other}
-                        value={saveData.deRegistionOther}
-                        onChange={(e) => this.props.updateDeregistrationData(e.target.value, "deRegistionOther", 'deRegister')}
+                        value={saveData.deRegisterOther}
+                        onChange={(e) => this.props.updateDeregistrationData(e.target.value, "deRegisterOther", 'deRegister')}
                     />
                 </div>
             )
