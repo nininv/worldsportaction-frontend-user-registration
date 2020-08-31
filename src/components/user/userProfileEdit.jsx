@@ -8,7 +8,8 @@ import {
     DatePicker,
     Input,
     Radio,
-    Form
+    Form,
+    message
 } from "antd";
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
@@ -25,7 +26,7 @@ import { getCommonRefData , countryReferenceAction ,nationalityReferenceAction ,
 import { bindActionCreators } from 'redux';
 import history from '../../util/history'
 import Loader from '../../customComponents/loader';
-import { setTempUserId } from "../../util/sessionStorage";
+import { setTempUserId,getUserId } from "../../util/sessionStorage";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -49,7 +50,8 @@ class UserProfileEdit extends Component {
                 disabilityTypeRefId: 0,  countryRefId: null, nationalityRefId: null,languages: ""
             },
             titleLabel:"",
-            section: ""
+            section: "",
+            isSameUserEmailChanged: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -124,9 +126,29 @@ class UserProfileEdit extends Component {
         let userState  = this.props.userState;
         if(userState.onUpUpdateLoad == false && this.state.saveLoad == true){
             this.setState({saveLoad: false})
-            history.push({pathname:'/userPersonal', state: {tabKey: this.state.tabKey, userId: this.state.userData.userId}});
+            if(userState.status == 1){
+                if (this.state.isSameUserEmailChanged) {
+                    this.logout();
+                }else{
+                    history.push({pathname:'/userPersonal', state: {tabKey: this.state.tabKey, userId: this.state.userData.userId}});
+                }
+            } 
+            else if(userState.status == 4){
+                message.config({duration: 1.5,maxCount: 1,});
+                message.error(userState.userProfileUpdate);
+            }
         }
     }
+
+    logout = () => {
+        try {
+            localStorage.clear();
+            history.push("/login");
+        } catch (error) {
+           console.log("Error" + error); 
+        }
+       
+    };
 
     setAddressFormFields = () => {
         let userData  = this.state.userData;
@@ -184,6 +206,13 @@ class UserProfileEdit extends Component {
         }
         else if (key == "dateOfBirth"){
             value = (moment(value).format("YYYY-MM-DD"))
+        }
+        else if (key == "email" && this.state.section == "address") {
+            if(data.userId == getUserId()){
+                this.setState({isSameUserEmailChanged: true});
+            }else{
+                this.setState({isSameUserEmailChanged: false});
+            }
         }
         data[key] = value;
       
@@ -304,7 +333,16 @@ class UserProfileEdit extends Component {
                      <div className="col-sm" >
                         <Form.Item >
                         {getFieldDecorator('email', {
-                            rules: [{ required: true, message: ValidationConstants.emailField[0]}],
+                            rules: [
+                                { 
+                                    required: true, message: ValidationConstants.emailField[0]
+                                },
+                                {
+                                    type: "email",
+                                    pattern: new RegExp(AppConstants.emailExp),
+                                    message: ValidationConstants.email_validation
+                                }
+                            ],
                         })(
                             <InputWithHead
                                 required={"required-field"}
@@ -316,6 +354,11 @@ class UserProfileEdit extends Component {
                             />
                         )}
                         </Form.Item>
+                        {(userData.userId == getUserId() && this.state.isSameUserEmailChanged) ?
+                            <div className="same-user-validation">
+                                {ValidationConstants.emailField[2]}
+                            </div>
+                        : null}
                     </div>
                 </div>
                 <div className='row'>

@@ -153,6 +153,30 @@ let AxiosApi = {
         var url = `/api/registration/discountcode/validate`;
         return Method.dataPost(url, token, payload);
     },
+     teamNameCheck(payload) {
+        var url = `/api/registration/team/validate`;
+        return Method.dataPost(url, token, payload);
+    },
+    getTeamRegistrationReview(payload) {
+        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+        return Method.dataGet(url, token);
+    },
+    saveTeamRegistrationReview(payload) {
+        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+        return Method.dataPost(url, token, payload);
+    },
+    getTeamRegistrationReviewProducts(payload) {
+        var url = `/api/teamregistration/review/products?userRegId=${payload.userRegId}`;
+        return Method.dataGet(url, token);
+    },
+    getDeRegisterData(userId) {
+        var url = `/api/deregister?userId=${userId}`;
+        return Method.dataGet(url, token);
+    },
+    saveDeRegister(payload){
+        var url = `/api/deregister`;
+        return Method.dataPost(url, token, payload);
+    }
 };
 
 const Method = {
@@ -203,7 +227,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -278,7 +302,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -349,7 +373,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {

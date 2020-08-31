@@ -1,11 +1,11 @@
 import ApiConstants from "../../../themes/apiConstants";
 
 /////get invoice 
-function getInvoice(registrationid, invoiceId) {
+function getInvoice(registrationid, userRegId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_LOAD,
         registrationid,
-        invoiceId
+        userRegId
     }
     return action
 }
@@ -30,10 +30,11 @@ function saveInvoiceAction(payload) {
 }
 
 ///////get invoice status
-function getInvoiceStatusAction(registrationid) {
+function getInvoiceStatusAction(registrationid, userRegId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_STATUS_LOAD,
-        registrationid
+        registrationid,
+        userRegId
     }
     return action
 }

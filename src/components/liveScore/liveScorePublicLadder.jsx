@@ -75,8 +75,12 @@ const columns = [
         dataIndex: 'D',
         key: 'D',
         sorter: (a, b) => tableSort(a, b, "D"),
-
-
+    },
+    {
+        title: 'B',
+        dataIndex: 'B',
+        key: 'B',
+        sorter: (a, b) => tableSort(a, b, "B"),
     },
     {
         title: 'FW',

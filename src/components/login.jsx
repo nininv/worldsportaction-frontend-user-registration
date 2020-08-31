@@ -34,23 +34,23 @@ class Login extends Component {
             localStorage.removeItem("userRegId");
             localStorage.removeItem("registeringYourselfRefId");
             localStorage.removeItem("existingUserRefId");
+            localStorage.removeItem("sourceSystem")
         }
     }
 
     componentDidUpdate(nextProps) {
-
         let loginstate = this.props.loginstate;
-       
-
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
-                history.push("/teamRegistrationForm");
-            }
-            else if(getIsUserRegistration() == 1){
-                history.push('/appRegistrationForm');
-            }
-            else{
-                history.push('/userPersonal');
+            if(loginstate.status == 1){
+                if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
+                    history.push("/teamRegistrationForm");
+                }
+                else if(getIsUserRegistration() == 1){
+                    history.push('/appRegistrationForm');
+                }
+                else {
+                    history.push('/userPersonal');
+                }
             }
         }
     }

@@ -77,8 +77,15 @@ const columns = [
     },
     {
         title: 'Payment Method',
-        dataIndex: 'vouchers',
-        key: 'vouchers'
+        dataIndex: 'paymentType',
+        key: 'paymentType',
+        render:(paymentType, record, index) =>{
+            return(
+                <span style={{textTransform:'capitalize'}}>
+                    {paymentType}
+                </span>
+            )
+        }
     },
     {
         title: 'Shop Purchases',
@@ -88,7 +95,15 @@ const columns = [
     {
         title: 'Status',
         dataIndex: 'paymentStatus',
-        key: 'paymentStatus'
+        key: 'paymentStatus',
+        render:(paymentStatus, record, index) =>{
+            return(
+                <span style={{textTransform:'capitalize'}}>
+                    {paymentStatus}
+                </span>
+            )
+        }
+        
     },
     {
         title: "Reg.Form",
@@ -1197,12 +1212,16 @@ class UserModulePersonalDetail extends Component {
         let nationalityName = "";
         let languages = "";
         let userRegId = null;
+		let childrenCheckNumber = "";
+        let childrenCheckExpiryDate = "";						 
 
         if (personalByCompData != null && personalByCompData.length > 0) {
             countryName = personalByCompData[0].countryName;
             nationalityName = personalByCompData[0].nationalityName;
             languages = personalByCompData[0].languages;
-            userRegId = personalByCompData[0].userRegistrationId
+            userRegId = personalByCompData[0].userRegistrationId;
+            childrenCheckNumber = personalByCompData[0].childrenCheckNumber;
+            childrenCheckExpiryDate = personalByCompData[0].childrenCheckExpiryDate;																					
         }
         return (
             <div className="comp-dash-table-view mt-2">
@@ -1281,10 +1300,19 @@ class UserModulePersonalDetail extends Component {
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{nationalityName}</div>
                                 </div>
                                 <div className="other-info-row">
-                                    <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.childLangSpoken}</div>
+                                    <div className="year-select-heading other-info-label">{AppConstants.childLangSpoken}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
                                 </div>
                             </div>}
+                               <div className="other-info-row">
+                                    <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
+                                    <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckNumber}</div>
+                                </div>
+                                <div className="other-info-row">
+                                    <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
+                                    <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
+                                </div>  
+                           
                         {/* <div className="other-info-row">
 							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.disability}</div>
 							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
@@ -1524,10 +1552,10 @@ class UserModulePersonalDetail extends Component {
                                                 </Button>
                                             }
                                         >
-                                            <Menu.Item onClick={() => history.push("/deRegistration")} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration", {userId: this.state.userId})} >
                                                 <span>{AppConstants.deRegistration}</span>
                                             </Menu.Item>
-                                            <Menu.Item onClick={() => history.push("/deRegistration")} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration",{userId: this.state.userId})} >
                                                 <span>{AppConstants.transfer}</span>
                                             </Menu.Item>
                                         </SubMenu>

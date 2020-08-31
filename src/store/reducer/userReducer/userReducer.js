@@ -226,6 +226,8 @@ function userReducer(state = initialState, action) {
             return {
                 ...state,
                 onUpUpdateLoad: false,
+                userProfileUpdate: action.result,
+                status: action.status
             };
         case ApiConstants.API_USER_MODULE_HISTORY_LOAD:
             return { ...state, userHistoryLoad: true };

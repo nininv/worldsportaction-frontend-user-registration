@@ -13,10 +13,10 @@ async function logout() {
 let token = getAuthToken();
 let AxiosApi = {
     ///get invoice
-    getInvoice(registrationId, invoiceId) {
+    getInvoice(registrationId, userRegId) {
         let body = {
             registrationId: registrationId,
-            invoiceId: invoiceId
+            userRegId: userRegId
         }
         let url = `/api/invoice`
         return Method.dataPost(url, token, body)
@@ -29,9 +29,10 @@ let AxiosApi = {
     },
 
     //////get invoice status
-    getInvoiceStatus(registrationId) {
+    getInvoiceStatus(registrationId, userRegId) {
         let body = {
             registrationId: registrationId,
+            userRegId: userRegId
         }
         //console.log("body"+ JSON.stringify(body));
         let url = `/api/payments/getInvoiceStatus`
@@ -89,7 +90,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -165,7 +166,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {
@@ -237,7 +238,7 @@ const Method = {
                                 let unauthorizedStatus = err.response.status
                                 if (unauthorizedStatus == 401) {
                                     logout()
-                                    message.error(ValidationConstants.messageStatus401)
+                                    //message.error(ValidationConstants.messageStatus401)
                                 }
                             }
                             else {

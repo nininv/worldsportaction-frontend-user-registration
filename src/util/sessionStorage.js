@@ -146,7 +146,14 @@ const getTempUserId = () => {
     return localStorage.tempUserId
 }
 
-
+// set source syatem flag
+const setSourceSystemFlag = sourceSystem => {
+    localStorage.setItem("sourceSystem", sourceSystem)
+}
+// get source system flag
+const getSourceSystemFlag= key => {
+    return localStorage.sourceSystem
+}
 
 module.exports = {
     setCompetitionID, getCompetitonId,
@@ -172,5 +179,6 @@ module.exports = {
     setExistingUserRefId,getExistingUserRefId,
     setRegisteringYourselfRefId,getRegisteringYourselfRefId,
     setIsUserRegistration, getIsUserRegistration,
-    setTempUserId, getTempUserId
+    setTempUserId, getTempUserId,
+	setSourceSystemFlag,getSourceSystemFlag
 }
