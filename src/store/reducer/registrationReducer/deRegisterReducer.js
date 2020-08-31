@@ -33,6 +33,7 @@ const initialState = {
     ],
     reloadFormData:0,
     deRegisterData: [],
+    organisations: [],
     competitions: [],
     membershipTypes: [],
     teams: [],
@@ -41,12 +42,14 @@ const initialState = {
         email: null,
         mobileNumber: null,
         competitionId: null,
+        organisationId: null,
         membershipMappingId: null,
         teamId: null,
         regChangeTypeRefId: 0,         // DeRegister/ Transfer
         deRegistrationOptionId: 0,   /// Yes/No
         reasonTypeRefId: 0,      
         deRegisterOther: null,
+        isAdmin: 0,
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 
@@ -64,14 +67,29 @@ function deRegistrationReducer(state = initialState, action) {
             if(action.subKey == "deRegister"){
                 if(action.key == "userId"){
                     let userData = state.deRegisterData.find(x=>x.userId == action.value);
-                    let competitions = setCompetitions(action.value, state.deRegisterData);
-                    state.competitions = competitions;
-                    state.saveData.membershipTypes = [];
+                    state.saveData.organisationId = null;
+                    let organisations = setOrganisations(action.value, state.deRegisterData);
+                    state.organisations = organisations;
+                    state.competitions = [];
+                    state.saveData.competitionId = null;
+                    state.membershipTypes = [];
                     state.saveData.membershipMappingId = null;
-                    state.saveData.teams = [];
+                    state.teams = [];
                     state.saveData.teamId = null;
                     state.saveData.email = userData!= undefined ? userData.email : null;
                     state.saveData.mobileNumber = userData!= undefined ? userData.mobileNumber : null;
+                    state.saveData[action.key] = action.value;
+                    state.reloadFormData = 1;
+                }
+                else if(action.key == "organisationId"){
+                    state.saveData.competitionId = null;
+                    let competitions = setCompetitions(action.value, state.organisations);
+                    state.competitions = competitions;
+                    state.membershipTypes = [];
+                    state.saveData.membershipMappingId = null;
+                    state.teams = [];
+                    state.saveData.teamId = null;
+                    state.saveData[action.key] = action.value;
                     state.reloadFormData = 1;
                 }
                 else if(action.key == "competitionId"){
@@ -126,8 +144,8 @@ function deRegistrationReducer(state = initialState, action) {
                     state.saveData.email = userData.email;
                     state.saveData.mobileNumber = userData.mobileNumber;
                     state.saveData.userId = userData.userId;
-                    let competitions = setCompetitions(userData.userId, deRegisterData);
-                    state.competitions = competitions;
+                    let organisations = setOrganisations(userData.userId, deRegisterData);
+                    state.organisations = organisations;
                 } catch (error) {
                     console.log("Error", error);
                 }
@@ -156,11 +174,28 @@ function deRegistrationReducer(state = initialState, action) {
     }
 }
 
-function setCompetitions(userId, deRegisterData){
+function setOrganisations(userId, deRegisterData){
     try {
         let arr = [];
         if(isArrayNotEmpty(deRegisterData)){
             let userData = deRegisterData.find(x=>x.userId == userId);
+            if(userData!= undefined){
+                if(isArrayNotEmpty(userData.organisations)){
+                    arr.push(...userData.organisations);
+                }
+            }
+        }
+        return arr;
+    } catch (error) {
+        console.log("Error", error);
+    }
+}
+
+function setCompetitions(organisationId, organisations){
+    try {
+        let arr = [];
+        if(isArrayNotEmpty(organisations)){
+            let userData = organisations.find(x=>x.organisationId == organisationId);
             if(userData!= undefined){
                 if(isArrayNotEmpty(userData.competitions)){
                     arr.push(...userData.competitions);
@@ -222,12 +257,14 @@ function clearSaveData(){
         email: null,
         mobileNumber: null,
         competitionId: null,
+        organisationId: null,
         membershipMappingId: null,
         teamId: null,
         regChangeTypeRefId: 0,         // DeRegister/ Transfer
         deRegistrationOptionId: 0,   /// Yes/No
         reasonTypeRefId: 0,      
         deRegisterOther: null,
+        isAdmin:0,
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 

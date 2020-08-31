@@ -822,7 +822,6 @@ const AppConstants = {
   playWithFriendSubtitle: "We may be able to accommodate friends playing with each other. Please note, this is normally only available for lower graded teams. You can choose up to three friends.",
   addAnotherProduct: "ADD ANOTHER MEMBERSHIP PRODUCT",
   addAnotherParticipant: "ADD ANOTHER PARTICIPANT",
-  organisation: "Organisation",
   favouriteTeamReference: "FavouriteTeam",
   firebirdPlayer: "FirebirdPlayer",
   registrationOtherInfo: "RegistrationOtherInfo",
