@@ -1289,7 +1289,7 @@ class AppRegistrationForm extends Component {
             street1: parent!= null ? parent.street1 : "",
             street2: parent!= null ? parent.street2 : "",
             suburb: parent!= null ? parent.suburb: "",
-            stateRefId: parent!= null ? parent.stateRefId: 1,
+            stateRefId: parent!= null ? parent.stateRefId: 0,
             postalCode: parent!= null ? parent.postalCode: "",
             isSameAddress: 0,
             reEnterEmail: parent!= null ? parent.email : ""
@@ -3229,7 +3229,7 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let yourInfo = registrationDetail.yourInfo!= null ? registrationDetail.yourInfo : {}
-		const state = stateList.length > 0 && yourInfo.stateRefId
+		const state = stateList.length > 0 && yourInfo.stateRefId > 0
             ? stateList.find((state) => state.id === yourInfo.stateRefId).name
             : null;
 
@@ -3441,7 +3441,7 @@ class AppRegistrationForm extends Component {
 
     participantDetailView = (item, index, getFieldDecorator) => {
         const { stateList } = this.props.commonReducerState;
-		const state = stateList.length > 0 && item.stateRefId
+		const state = stateList.length > 0 && item.stateRefId > 0
             ? stateList.find((state) => state.id === item.stateRefId).name
             : null;
 
@@ -3734,7 +3734,7 @@ class AppRegistrationForm extends Component {
                 ) : null}
                
                 {(item.parentOrGuardian || []).map((parent, parentIndex) => {
-                    const state = stateList.length > 0 && item.stateRefId
+                    const state = stateList.length > 0 && parent.stateRefId > 0
                     ? stateList.find((state) => state.id === parent.stateRefId).name
                     : null;
                     
@@ -4909,7 +4909,7 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let registeringYourself = userRegistrations.find(x=>x.registeringYourself == 1);
-        const state = stateList.length > 0 && item.team.stateRefId
+        const state = stateList.length > 0 && item.team.stateRefId > 0
             ? stateList.find((state) => state.id === item.team.stateRefId).name
             : null;
 
