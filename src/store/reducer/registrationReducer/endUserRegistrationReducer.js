@@ -12,7 +12,7 @@ let registrationObj = {
     userRegistrations: [],
     vouchers: [],
     yourInfo: {firstName: "",middleName:"",lastName:"",mobileNumber:"",email: "",
-                reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 1,
+                reEnterEmail: "", street1:"",street2:"",suburb:"",stateRefId: 0,
                 postalCode: "", userId: 0},
     stateOrgId: null
 }
