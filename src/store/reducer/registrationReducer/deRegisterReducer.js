@@ -78,10 +78,18 @@ function deRegistrationReducer(state = initialState, action) {
                     //console.log("************" + action.value);
                     state.saveData.teamId = null;
                     state.saveData.membershipMappingId = null;
+                    state.teams = [];
                     let membershipTypes = setMembershipTypes(action.value, state.competitions);
                     state.membershipTypes = membershipTypes;
-                    let teams = setTeams(action.value, state.competitions);
+                   
+                    state.saveData[action.key] = action.value;
+                    state.reloadFormData = 1;
+                }
+                else if(action.key == "membershipMappingId"){
+                    state.saveData.teamId = null;
+                    let teams = setTeams(action.value, state.membershipTypes);
                     state.teams = teams;
+
                     state.saveData[action.key] = action.value;
                     state.reloadFormData = 1;
                 }
@@ -93,34 +101,6 @@ function deRegistrationReducer(state = initialState, action) {
                 else {
                     state.saveData[action.key] = action.value;
                 }
-    
-                // if (action.key == "registrationOption") {
-                //     state.registrationOption = action.value
-                //     state.selectedDeRegistionMainOption = 1
-                // }
-                // if (action.key == "selectedDeRegistionMainOption") {
-                //     state.selectedDeRegistionMainOption = action.value
-                // }
-                // if (action.key == "selectedDeRegistionOption") {
-                //     state.selectedDeRegistionOption = action.value
-                // }
-                // if (action.key == "deRegistionOther") {
-                //     state.deRegistionOther = action.value
-                // }
-               
-                // if (action.key == "email") {
-                //     state.email = action.value
-                // }
-                // if (action.key == "userName") {
-                //     state.userName = action.value
-                // }
-                // if (action.key == "mobileNumber") {
-                //     state.mobileNumber = action.value
-                // }
-                
-                // if(action.key == "membershipMappingId"){
-                //     state.saveData.membershipMappingId = action.value;
-                // }
             }
             else if(action.subKey == "transfer"){
                 state.saveData.transfer[action.key] = action.value;
@@ -196,18 +176,12 @@ function setCompetitions(userId, deRegisterData){
 function setMembershipTypes(competitionId, competitions){
     try {
         let arr = [];
-        console.log("setMembershipTypes", competitionId, competitions)
+       // console.log("setMembershipTypes", competitionId, competitions)
         if(isArrayNotEmpty(competitions)){
             let competitionData = competitions.find(x=>x.competitionId == competitionId);
             if(competitionData!= undefined){
                 if(isArrayNotEmpty(competitionData.membershipTypes)){
-                    for(let item of competitionData.membershipTypes){
-                        let obj = {
-                            membershipMappingId: item.membershipMappingId,
-                            typeName: item.typeName
-                        }
-                        arr.push(obj);
-                    }
+                    arr.push(...competitionData.membershipTypes);
                 }
             }
         }
@@ -217,14 +191,16 @@ function setMembershipTypes(competitionId, competitions){
     }
 }
 
-function setTeams(competitionId, competitions){
+function setTeams(membershipMappingId, membershipTypes){
     try {
         let arr = [];
-        if(isArrayNotEmpty(competitions)){
-            let competitionData = competitions.find(x=>x.competitionId == competitionId);
-            if(competitionData!= undefined){
-                if(isArrayNotEmpty(competitionData.teams)){
-                    for(let item of competitionData.teams){
+        //console.log("membershipMappingId", membershipMappingId, membershipTypes)
+        if(isArrayNotEmpty(membershipTypes)){
+            let membershipData = membershipTypes.find(x=>x.membershipMappingId == membershipMappingId);
+           // console.log("membershipData", membershipData);
+            if(membershipData!= undefined){
+                if(isArrayNotEmpty(membershipData.teams)){
+                    for(let item of membershipData.teams){
                         let obj = {
                             teamId: item.teamId,
                             teamName: item.teamName

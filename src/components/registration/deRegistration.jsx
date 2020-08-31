@@ -71,6 +71,10 @@ class DeRegistration extends Component {
         });
     }
 
+    goBack = () =>{
+        history.push({pathname:'/userPersonal', state: {tabKey: "5", userId: this.state.userId}});
+    }
+
     saveAPIsActionCall = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -459,7 +463,7 @@ class DeRegistration extends Component {
                         <div className="reg-add-save-button">
                             <Button
                                 type="cancel-button"
-                                onClick={() => console.log("Cancel")}>{AppConstants.cancel}</Button>
+                                onClick={() => this.goBack()}>{AppConstants.cancel}</Button>
                         </div>
                     </div>
                     <div className="col-sm">
