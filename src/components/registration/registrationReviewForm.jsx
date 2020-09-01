@@ -63,30 +63,18 @@ class RegistrationReviewForm extends Component {
             let competitionNames = '';
             let competitionNameMap = new Map();
             regReviewData.compParticipants.map((participant,index) =>{
-                if(participant.paymentOptions.length > 0){
-                    let paymentOptionTemp = participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5);
-                    if(paymentOptionTemp == undefined){
-                        if(competitionNameMap.get(participant.competitionName) == undefined){
-                            competitionNameMap.set(participant.competitionName,index);
-                                if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
-                                    competitionNames = competitionNames.slice(0,-2);
-                                    competitionNames += " and " + participant.competitionName + ', ';
-                                }else{
-                                    competitionNames += participant.competitionName + ', ';
-                                }
-                        }
-                    }
-                }else{
+                let paymentOptionTemp = participant.paymentOptions != null ? participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5) : undefined;
+                if(paymentOptionTemp == undefined){
                     if(competitionNameMap.get(participant.competitionName) == undefined){
                         competitionNameMap.set(participant.competitionName,index);
-                            if(index == regReviewData.compParticipants.length - 1 && competitionNameMap.size != 1){
+                            if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
                                 competitionNames = competitionNames.slice(0,-2);
                                 competitionNames += " and " + participant.competitionName + ', ';
                             }else{
                                 competitionNames += participant.competitionName + ', ';
                             }
                     }
-                } 
+                }
             });
             console.log("comp name::"+competitionNames);
             return competitionNames.slice(0,-2);
