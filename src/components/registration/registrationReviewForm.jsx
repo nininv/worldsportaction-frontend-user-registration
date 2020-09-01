@@ -24,9 +24,9 @@ class RegistrationReviewForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            onInvLoad: false,
             buttonPressed: "",
             loading: false,
+            getLoading: false,
             registrationUniqueKey: "",
             membershipData: null
         }
@@ -43,7 +43,13 @@ class RegistrationReviewForm extends Component {
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.endUserRegistrationState;
-
+        let incompletePaymentMessage = registrationState.incompletePaymentMessage;
+        if(registrationState.onRegReviewLoad == false && this.state.getLoading === true){
+            this.setState({getLoading: false});
+            if(incompletePaymentMessage){
+                message.error(incompletePaymentMessage);
+            }
+        }
         if(registrationState.onRegReviewLoad == false && this.state.loading === true)
        {
             this.setState({ loading: false });
@@ -64,6 +70,7 @@ class RegistrationReviewForm extends Component {
         let payload = {
             registrationId: registrationUniqueKey
         }
+        this.setState({getLoading: true});
 
         this.props.getRegistrationReviewAction(payload);
     }
