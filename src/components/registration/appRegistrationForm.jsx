@@ -2685,7 +2685,7 @@ class AppRegistrationForm extends Component {
                     let isError = false;
                     for(let x = 0; x< registrationState.registrationDetail.userRegistrations.length; x++)
                     {
-                        let userRegistration = userRegistrations[x];
+                        let userRegistration = registrationState.registrationDetail.userRegistrations[x];
                         if(userRegistration.registeringYourself!= 4){
                             if(userRegistration.profileUrl == null){
                                 isError = true;
