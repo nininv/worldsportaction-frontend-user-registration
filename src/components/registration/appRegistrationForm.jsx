@@ -2683,7 +2683,7 @@ class AppRegistrationForm extends Component {
                 if(!err && !teamErr){
                     let formData = new FormData();
                     let isError = false;
-                    for(let x = 0; x < registrationState.registrationDetail.length; x++)
+                    for(let x = 0; x< registrationState.registrationDetail.userRegistrations.length; x++)
                     {
                         let userRegistration = userRegistrations[x];
                         if(userRegistration.registeringYourself!= 4){
