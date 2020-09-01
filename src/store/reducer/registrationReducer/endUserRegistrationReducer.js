@@ -59,8 +59,7 @@ const initialState = {
     regReviewPrdData: null,
     singleCompErrorMsg: null,
     regTeamReviewData: null,
-    regTeamReviewPrdData: null,
-    incompletePaymentMessage: null
+    regTeamReviewPrdData: null
 }
 
 
@@ -635,17 +634,10 @@ function endUserRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS:
            let regReviewData = action.result;
-           let incompletePaymentMessage = checkPayment(regReviewData);
-           if(incompletePaymentMessage != ''){
-               incompletePaymentMessage = "Payment Options are not configured for (" + incompletePaymentMessage + "). Please contact administrator";
-           }else{
-               incompletePaymentMessage = null;
-           }
             return {
                 ...state,
                 onRegReviewLoad: false,
                 status: action.status,
-                incompletePaymentMessage: incompletePaymentMessage,
                 registrationReviewList: regReviewData
             };
 
@@ -1094,25 +1086,6 @@ function endUserRegistrationReducer(state = initialState, action) {
             }
         default:
             return state;
-    }
-}
-
-function checkPayment(regReviewData){
-    try{
-        let competitionNames = '';
-        regReviewData.compParticipants.map((participant) =>{
-            if(participant.paymentOptions.length > 0){
-                let paymentOptionTemp = participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5);
-                if(paymentOptionTemp == undefined){
-                    competitionNames += participant.competitionName + ', ';
-                }
-            }else{
-                competitionNames += participant.competitionName + ', ';
-            } 
-        });
-        return competitionNames.slice(0,-2);
-    }catch(error){
-        throw error;
     }
 }
 

@@ -26,7 +26,6 @@ class RegistrationReviewForm extends Component {
         this.state = {
             buttonPressed: "",
             loading: false,
-            getLoading: false,
             registrationUniqueKey: "",
             membershipData: null
         }
@@ -43,34 +42,59 @@ class RegistrationReviewForm extends Component {
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.endUserRegistrationState;
-        let incompletePaymentMessage = registrationState.incompletePaymentMessage;
-        if(registrationState.onRegReviewLoad == false && this.state.getLoading === true){
-            this.setState({getLoading: false});
-            if(incompletePaymentMessage){
-                message.error(incompletePaymentMessage);
-            }
-        }
+        let registrationReviewList = registrationState.registrationReviewList;
         if(registrationState.onRegReviewLoad == false && this.state.loading === true)
        {
             this.setState({ loading: false });
             if(!registrationState.error)
             {
                 if (this.state.buttonPressed == "save" ) {
-                    let registrationId=registrationState.registrationId
-                    console.log("registrationId",registrationId)
-                    history.push("/reviewProducts", {
-                        registrationId: this.state.registrationUniqueKey
-                    })
+                    let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+                    if(incompletePaymentMessage != ''){
+                        incompletePaymentMessage = "Payment Options are not configured for (" + incompletePaymentMessage + "). Please contact administrator";
+                        message.error(incompletePaymentMessage);
+                    }else{
+                        incompletePaymentMessage = null;
+                    }
+                    if(incompletePaymentMessage == null){
+                        let registrationId=registrationState.registrationId
+                        console.log("registrationId",registrationId)
+                        history.push("/reviewProducts", {
+                            registrationId: this.state.registrationUniqueKey
+                        });
+                    }
                 }
             }
        }
+    }
+
+    checkPayment = (regReviewData) => {
+        try{
+            let competitionNames = '';
+            let competitionNameTemp = new Map();
+            regReviewData.compParticipants.map((participant,index) =>{
+                if(participant.paymentOptions.length > 0){
+                    let paymentOptionTemp = participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5);
+                    if(paymentOptionTemp == undefined){
+                        if(competitionNameTemp.get(participant.competitionName) == undefined){
+                            competitionNameTemp.set(participant.competitionName,index);
+                            competitionNames += participant.competitionName + ', ';
+                        }
+                    }
+                }else{
+                    competitionNames += participant.competitionName + ', ';
+                } 
+            });
+            return competitionNames.slice(0,-2);
+        }catch(error){
+            throw error;
+        }
     }
 
     getApiInfo = (registrationUniqueKey) => {
         let payload = {
             registrationId: registrationUniqueKey
         }
-        this.setState({getLoading: true});
 
         this.props.getRegistrationReviewAction(payload);
     }
