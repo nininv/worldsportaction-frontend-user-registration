@@ -362,21 +362,15 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
                 <div className='row'>
-                    <div className="col-sm" >
-                    <Form.Item >
-                    {getFieldDecorator('street1', {
-                        rules: [{ required: true, message: ValidationConstants.street1}],
-                    })(
+                    <div className="col-sm" style={{paddingTop: "11px"}}>
                         <InputWithHead
-                            required={"required-field"}
+                            style={{marginTop: '9px'}}
                             heading={AppConstants.addressOne}
                             placeholder={AppConstants.addressOne}
                             name={'street1'}
-                            setFieldsValue={userData.street1}
+                            value={userData.street1}
                             onChange={(e) => this.onChangeSetValue(e.target.value, "street1") }
-                            />  
-                    )}
-                    </Form.Item>
+                        />  		
                     </div>
                     <div className="col-sm" style={{paddingTop: "11px"}}>  
                         <InputWithHead
