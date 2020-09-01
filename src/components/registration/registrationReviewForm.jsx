@@ -42,27 +42,17 @@ class RegistrationReviewForm extends Component {
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.endUserRegistrationState;
-        let registrationReviewList = registrationState.registrationReviewList;
         if(registrationState.onRegReviewLoad == false && this.state.loading === true)
        {
             this.setState({ loading: false });
             if(!registrationState.error)
             {
                 if (this.state.buttonPressed == "save" ) {
-                    let incompletePaymentMessage = this.checkPayment(registrationReviewList);
-                    if(incompletePaymentMessage != ''){
-                        incompletePaymentMessage = "Payment Options are not configured for (" + incompletePaymentMessage + "). Please contact administrator";
-                        message.error(incompletePaymentMessage);
-                    }else{
-                        incompletePaymentMessage = null;
-                    }
-                    if(incompletePaymentMessage == null){
-                        let registrationId=registrationState.registrationId
-                        console.log("registrationId",registrationId)
-                        history.push("/reviewProducts", {
-                            registrationId: this.state.registrationUniqueKey
-                        });
-                    }
+                    let registrationId=registrationState.registrationId
+                    console.log("registrationId",registrationId)
+                    history.push("/reviewProducts", {
+                        registrationId: this.state.registrationUniqueKey
+                    });
                 }
             }
        }
@@ -71,23 +61,34 @@ class RegistrationReviewForm extends Component {
     checkPayment = (regReviewData) => {
         try{
             let competitionNames = '';
-            let competitionNameTemp = new Map();
+            let competitionNameMap = new Map();
             regReviewData.compParticipants.map((participant,index) =>{
                 if(participant.paymentOptions.length > 0){
                     let paymentOptionTemp = participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5);
                     if(paymentOptionTemp == undefined){
-                        if(competitionNameTemp.get(participant.competitionName) == undefined){
-                            competitionNameTemp.set(participant.competitionName,index);
-                            competitionNames += participant.competitionName + ', ';
+                        if(competitionNameMap.get(participant.competitionName) == undefined){
+                            competitionNameMap.set(participant.competitionName,index);
+                                if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
+                                    competitionNames = competitionNames.slice(0,-2);
+                                    competitionNames += " and " + participant.competitionName + ', ';
+                                }else{
+                                    competitionNames += participant.competitionName + ', ';
+                                }
                         }
                     }
                 }else{
-                    if(competitionNameTemp.get(participant.competitionName) == undefined){
-                        competitionNameTemp.set(participant.competitionName,index);
-                        competitionNames += participant.competitionName + ', ';
+                    if(competitionNameMap.get(participant.competitionName) == undefined){
+                        competitionNameMap.set(participant.competitionName,index);
+                            if(index == regReviewData.compParticipants.length - 1 && competitionNameMap.size != 1){
+                                competitionNames = competitionNames.slice(0,-2);
+                                competitionNames += " and " + participant.competitionName + ', ';
+                            }else{
+                                competitionNames += participant.competitionName + ', ';
+                            }
                     }
                 } 
             });
+            console.log("comp name::"+competitionNames);
             return competitionNames.slice(0,-2);
         }catch(error){
             throw error;
@@ -142,6 +143,16 @@ class RegistrationReviewForm extends Component {
 
     saveReviewForm = (e) =>{
         e.preventDefault();
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationReviewList = registrationState.registrationReviewList;
+        let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        if(incompletePaymentMessage != ''){
+            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            message.error(incompletePaymentMessage);
+            return;
+        }else{
+            incompletePaymentMessage = null;
+        }
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: " + err);
             if(!err)
