@@ -82,7 +82,10 @@ class RegistrationReviewForm extends Component {
                         }
                     }
                 }else{
-                    competitionNames += participant.competitionName + ', ';
+                    if(competitionNameTemp.get(participant.competitionName) == undefined){
+                        competitionNameTemp.set(participant.competitionName,index);
+                        competitionNames += participant.competitionName + ', ';
+                    }
                 } 
             });
             return competitionNames.slice(0,-2);
