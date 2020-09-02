@@ -1796,10 +1796,16 @@ function checkMemProductFeesType(membershipMappingId, item, participants, paymen
                         x.lastName == item.lastName && x.email == item.email && 
                         x.mobileNumber == item.mobileNumber && 
                         x.membershipProductTypeMappingId == membershipMappingId &&
-                        x.paymentFeeTypeRefId == paymentFeeTypeRefId);
+                        x.paymentFeeTypeRefId == paymentFeeTypeRefId && 
+                        x.feeType == "membership");
             console.log("obj" + JSON.stringify(obj));
             if(isNullOrUndefined(obj)){
-                isExists = true;
+                if(obj.lastTransMonthDiff < 12){
+                    isExists = true;
+                }
+                else{
+                    isExists = false;
+                }
             }
         }
         // if(!isExists){
