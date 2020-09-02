@@ -60,7 +60,6 @@ const initialState = {
     singleCompErrorMsg: null,
     regTeamReviewData: null,
     regTeamReviewPrdData: null
-
 }
 
 

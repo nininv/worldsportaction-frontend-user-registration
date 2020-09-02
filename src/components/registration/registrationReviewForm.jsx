@@ -24,7 +24,6 @@ class RegistrationReviewForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            onInvLoad: false,
             buttonPressed: "",
             loading: false,
             registrationUniqueKey: "",
@@ -43,7 +42,6 @@ class RegistrationReviewForm extends Component {
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.endUserRegistrationState;
-
         if(registrationState.onRegReviewLoad == false && this.state.loading === true)
        {
             this.setState({ loading: false });
@@ -54,10 +52,35 @@ class RegistrationReviewForm extends Component {
                     console.log("registrationId",registrationId)
                     history.push("/reviewProducts", {
                         registrationId: this.state.registrationUniqueKey
-                    })
+                    });
                 }
             }
        }
+    }
+
+    checkPayment = (regReviewData) => {
+        try{
+            let competitionNames = '';
+            let competitionNameMap = new Map();
+            regReviewData.compParticipants.map((participant,index) =>{
+                let paymentOptionTemp = participant.paymentOptions != null ? participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5) : undefined;
+                if(paymentOptionTemp == undefined){
+                    if(competitionNameMap.get(participant.competitionName) == undefined){
+                        competitionNameMap.set(participant.competitionName,index);
+                            if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
+                                competitionNames = competitionNames.slice(0,-2);
+                                competitionNames += " and " + participant.competitionName + ', ';
+                            }else{
+                                competitionNames += participant.competitionName + ', ';
+                            }
+                    }
+                }
+            });
+            console.log("comp name::"+competitionNames);
+            return competitionNames.slice(0,-2);
+        }catch(error){
+            throw error;
+        }
     }
 
     getApiInfo = (registrationUniqueKey) => {
@@ -108,6 +131,16 @@ class RegistrationReviewForm extends Component {
 
     saveReviewForm = (e) =>{
         e.preventDefault();
+        let registrationState = this.props.endUserRegistrationState;
+        let registrationReviewList = registrationState.registrationReviewList;
+        let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        if(incompletePaymentMessage != ''){
+            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            message.error(incompletePaymentMessage);
+            return;
+        }else{
+            incompletePaymentMessage = null;
+        }
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log("Error: " + err);
             if(!err)
