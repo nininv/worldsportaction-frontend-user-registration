@@ -492,21 +492,21 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
                 <div className='row'>
-                    <div className="col-sm" >
-                    <Form.Item >
-                    {getFieldDecorator('street1', {
-                        rules: [{ required: true, message: ValidationConstants.street1}],
-                    })(
+                    <div className="col-sm" style={{paddingTop: "11px"}}>
+								
+												   
+																						 
+					   
                         <InputWithHead
-                            required={"required-field"}
+                            style={{marginTop: "9px"}}
                             heading={AppConstants.addressOne}
                             placeholder={AppConstants.addressOne}
                             name={'street1'}
-                            setFieldsValue={userData.street1}
+                            value={userData.street1}
                             onChange={(e) => this.onChangeSetValue(e.target.value, "street1") }
                             />  
-                    )}
-                    </Form.Item>
+					  
+								
                     </div>
                     <div className="col-sm" style={{paddingTop: "11px"}}> 
                         <InputWithHead
@@ -521,37 +521,37 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
                 <div className="row" >
-                    <div className="col-sm" >
-                    <Form.Item >
-                    {getFieldDecorator('suburb', {
-                        rules: [{ required: true, message: ValidationConstants.suburbField[0]}],
-                    })(
+                    <div className="col-sm" style={{paddingTop: "11px"}}>
+								
+												  
+																								
+					   
                         <InputWithHead
-                            required={"required-field"}
+                            style={{marginTop: "9px"}}
                             heading={AppConstants.suburb}
                             placeholder={AppConstants.suburb}
                             name={'suburb'}
-                            setFieldsValue={userData.suburb}
+                            value={userData.suburb}
                             onChange={(e) =>  this.onChangeSetValue(e.target.value, "suburb")}
 
                         />
-                    )}
-                    </Form.Item>
+					  
+								
                     </div>
                     <div className="col-sm" >
                     
                         <div style={{paddingTop: "10px", paddingBottom: "10px"}}>
-                            <InputWithHead required={"required-field"} heading={AppConstants.stateHeading} />
+                            <InputWithHead heading={AppConstants.stateHeading} />
                         </div>
-                        <Form.Item >
-                            {getFieldDecorator("stateRefId", {
-                                rules: [{ required: true, message: ValidationConstants.stateField[0]}],
-                            })(
+									
+															  
+																									   
+							   
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                     placeholder={AppConstants.select_state}
                                     // onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
-                                    setFieldsValue={userData.stateRefId}
+                                    value={userData.stateRefId}
                                     name={'stateRefId'}
                                     onChange={(e) =>  this.onChangeSetValue(e, "stateRefId")}
                                 >
@@ -559,29 +559,30 @@ class UserProfileEdit extends Component {
                                         < Option value={item.id}> {item.name}</Option>
                                     ))
                                     }
-                                </Select>
-                            )}
-                        </Form.Item> 
+                                </Select> 
+							  
+									 
                     </div>
                 </div>
 
                 {/* PlayerId and Team Selection row */}
                 <div className="row" >
-                    <div className="col-sm" >
-                    <Form.Item >
-                        {getFieldDecorator('postalCode', {
-                            rules: [{ required: true, message: ValidationConstants.postCodeField[0]}],
-                        })(
+                    <div className="col-sm" style={{paddingTop: "11px"}}>
+								
+														  
+																									  
+						   
                         <InputWithHead
+                            style={{marginTop: "9px"}}
                             heading={AppConstants.postCode}
                             placeholder={AppConstants.enterPostCode}
                             name={'postalCode'}
-                            setFieldsValue={userData.postalCode}
+                            value={userData.postalCode}
                             onChange={(e) =>  this.onChangeSetValue(e.target.value, "postalCode")}
 
                         />
-                        )}
-                    </Form.Item>
+						  
+								
                     </div>
                     <div className="col-sm" >
                     <Form.Item >
