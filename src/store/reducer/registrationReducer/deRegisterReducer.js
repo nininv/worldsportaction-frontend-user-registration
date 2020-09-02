@@ -137,6 +137,11 @@ function deRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_GET_DE_REGISTRATION_SUCCESS:
             let deRegisterData = action.result;
+            state.saveData = clearSaveData();
+            state.organisations = [];
+            state.competitions = [];
+            state.membershipTypes = [];
+            state.teams = [];
             state.deRegisterData = deRegisterData;
             if(isArrayNotEmpty(deRegisterData)){
                 try {
