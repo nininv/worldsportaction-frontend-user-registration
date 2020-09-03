@@ -294,11 +294,7 @@ class UserProfileEdit extends Component {
                         />
                     </div>
                     <div className="col-sm" >
-                        <InputWithHead heading={AppConstants.dob}   required={"required-field"}/>
-                        <Form.Item >
-                        {getFieldDecorator(`dateOfBirth`, {
-                            rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
-                        })(
+                        <InputWithHead heading={AppConstants.dob} /> 
                         <DatePicker
                             size="large"
                             placeholder={"dd-mm-yyyy"}
@@ -307,9 +303,8 @@ class UserProfileEdit extends Component {
                             format={"DD-MM-YYYY"}
                             showTime={false}
                             name={'dateOfBirth'}
+                            value={userData.dateOfBirth!= null && moment(userData.dateOfBirth) }
                         />
-                        )}
-                        </Form.Item>
                     </div>
                 </div>
                 <div className="row">
@@ -492,11 +487,7 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
                 <div className='row'>
-                    <div className="col-sm" style={{paddingTop: "11px"}}>
-								
-												   
-																						 
-					   
+                    <div className="col-sm" style={{paddingTop: "11px"}}>			   
                         <InputWithHead
                             style={{marginTop: "9px"}}
                             heading={AppConstants.addressOne}
@@ -504,9 +495,7 @@ class UserProfileEdit extends Component {
                             name={'street1'}
                             value={userData.street1}
                             onChange={(e) => this.onChangeSetValue(e.target.value, "street1") }
-                            />  
-					  
-								
+                            />  					 								
                     </div>
                     <div className="col-sm" style={{paddingTop: "11px"}}> 
                         <InputWithHead
@@ -521,11 +510,7 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
                 <div className="row" >
-                    <div className="col-sm" style={{paddingTop: "11px"}}>
-								
-												  
-																								
-					   
+                    <div className="col-sm" style={{paddingTop: "11px"}}>					   
                         <InputWithHead
                             style={{marginTop: "9px"}}
                             heading={AppConstants.suburb}
@@ -534,19 +519,13 @@ class UserProfileEdit extends Component {
                             value={userData.suburb}
                             onChange={(e) =>  this.onChangeSetValue(e.target.value, "suburb")}
 
-                        />
-					  
-								
+                        />					 								
                     </div>
                     <div className="col-sm" >
                     
                         <div style={{paddingTop: "10px", paddingBottom: "10px"}}>
                             <InputWithHead heading={AppConstants.stateHeading} />
-                        </div>
-									
-															  
-																									   
-							   
+                        </div>							   
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                     placeholder={AppConstants.select_state}
@@ -559,19 +538,13 @@ class UserProfileEdit extends Component {
                                         < Option value={item.id}> {item.name}</Option>
                                     ))
                                     }
-                                </Select> 
-							  
-									 
+                                </Select> 							  									 
                     </div>
                 </div>
 
                 {/* PlayerId and Team Selection row */}
                 <div className="row" >
-                    <div className="col-sm" style={{paddingTop: "11px"}}>
-								
-														  
-																									  
-						   
+                    <div className="col-sm" style={{paddingTop: "11px"}}>						   
                         <InputWithHead
                             style={{marginTop: "9px"}}
                             heading={AppConstants.postCode}
@@ -579,10 +552,7 @@ class UserProfileEdit extends Component {
                             name={'postalCode'}
                             value={userData.postalCode}
                             onChange={(e) =>  this.onChangeSetValue(e.target.value, "postalCode")}
-
-                        />
-						  
-								
+                        />								
                     </div>
                     <div className="col-sm" >
                     <Form.Item >
@@ -595,7 +565,6 @@ class UserProfileEdit extends Component {
                             name={'email'}
                             setFieldsValue={userData.email}
                             onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
-
                         />
                         )}
                     </Form.Item>

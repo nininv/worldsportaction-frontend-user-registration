@@ -136,7 +136,7 @@ const AppConstants = {
   totalUsers: "Total Users",
   edit: "Edit",
   familyDiscount: "Family Discount",
-  appRegoForm: "App Rego Form",
+  netballRegistration:"Netball Registration",
   spring2019: "2019 Spring",
   membershipCategory: "Membership Category",
   netball: "Netball",

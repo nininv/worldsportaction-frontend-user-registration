@@ -50,11 +50,14 @@ export function* saveDeRegisterSaga(action) {
     try {
       const result = yield call(AxiosApi.saveDeRegister, action.payload);
       if (result.status === 1) {
+        message.config({maxCount: 1, duration: 0.9 })
+        message.success(result.result.data.message);
         yield put({
           type: ApiConstants.API_SAVE_DE_REGISTRATION_SUCCESS,
           result: result.result.data,
           status: result.status
         });
+       
       } else {
         yield call(failSaga, result)
       }
