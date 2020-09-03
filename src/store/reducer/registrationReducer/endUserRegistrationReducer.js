@@ -57,7 +57,8 @@ const initialState = {
     isYourInfoSet: false,
     registrationReviewList: null,
     regReviewPrdData: null,
-    singleCompErrorMsg: null,
+    userValidationErrorMsg: null,
+    userValidationErrorCode: null,
     regTeamReviewData: null,
     regTeamReviewPrdData: null
 }
@@ -85,7 +86,8 @@ function endUserRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_SAVE_END_USER_REGISTRATION_SUCCESS:
             state.registrationId = action.result ? action.result.id : null;
-            state.singleCompErrorMsg = action.result ? action.result.errorMsg : null;
+            state.userValidationErrorMsg = action.result ? action.result.errorMsg : null;
+            state.userValidationErrorCode = action.result ? action.result.errorCode : null;
             return {
                 ...state,
                 onLoad: false,
