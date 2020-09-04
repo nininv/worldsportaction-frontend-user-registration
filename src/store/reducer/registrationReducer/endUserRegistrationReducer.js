@@ -339,7 +339,12 @@ function endUserRegistrationReducer(state = initialState, action) {
                             participant["isChildrenCheckNumber"] = memProd.isChildrenCheckNumber == null ? 0 : memProd.isChildrenCheckNumber;
                             participant["team"]["registeringAsAPlayer"] = 2;
                             participant["team"]["allowTeamRegistrationTypeRefId"] = memProd.allowTeamRegistrationTypeRefId;
-                            participant["team"]["registrationTypeId"] = 1;
+                            if(memProd.allowTeamRegistrationTypeRefId == 2){
+                                participant["team"]["registrationTypeId"] = 3;
+                            }
+                            else{
+                                participant["team"]["registrationTypeId"] = 1;
+                            }
                         }
                         else{
                             participant["divisionName"] =  null;

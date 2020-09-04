@@ -3305,7 +3305,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <InputWithHead
                         required={"required-field pt-0 pb-0"}
-                        disabled={yourInfo.userId == getUserId()}
+                        disabled={getUserId()!= 0 && yourInfo.userId == getUserId()}
                         heading={AppConstants.contactEmail}
                         placeholder={AppConstants.contactEmail}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "email" )} 
@@ -3320,7 +3320,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <InputWithHead
                         required={"required-field pt-0 pb-0"}
-                        disabled={yourInfo.userId == getUserId()}
+                        disabled={getUserId()!= 0 && yourInfo.userId == getUserId()}
                         heading={AppConstants.reenterEmail}
                         placeholder={AppConstants.reenterEmail}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "reEnterEmail" )} 

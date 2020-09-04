@@ -38,7 +38,7 @@ const initialState = {
     membershipTypes: [],
     teams: [],
     saveData : {
-        userId: 0,
+        userId: null,
         email: null,
         mobileNumber: null,
         competitionId: null,
