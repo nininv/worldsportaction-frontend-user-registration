@@ -66,9 +66,14 @@ class DeRegistration extends Component {
             [`userId`]:  saveData.userId,
             [`email`]:  saveData.email,
             [`mobileNumber`]:  saveData.mobileNumber,
+            [`organisationId`]: saveData.organisationId,
             [`competitionId`]:  saveData.competitionId,
             [`membershipMappingId`]: saveData.membershipMappingId
         });
+    }
+
+    goBack = () =>{
+        history.push({pathname:'/userPersonal', state: {tabKey: "5", userId: this.state.userId}});
     }
 
     saveAPIsActionCall = (e) => {
@@ -288,7 +293,7 @@ class DeRegistration extends Component {
 
     ////////form content view
     contentView = (getFieldDecorator) => {
-        const { saveData, registrationSelection,deRegisterData, competitions, membershipTypes, teams } = this.props.deRegistrationState
+        const { saveData, registrationSelection,deRegisterData, organisations, competitions, membershipTypes, teams } = this.props.deRegistrationState
         return (
             <div className="content-view pt-5">
                  <InputWithHead heading={AppConstants.username} required={"required-field"} />
@@ -308,6 +313,29 @@ class DeRegistration extends Component {
                         {(deRegisterData || []).map((user, cIndex) => (
                                 <Option key={user.userId} 
                                 value={user.userId} >{user.userName}</Option>
+                            ))
+                            }
+                        
+                        </Select>
+                    )}
+                </Form.Item>
+                <InputWithHead heading={AppConstants.organisationName} required={"required-field"} />
+                <Form.Item >
+                    {getFieldDecorator(`organisationId`, {
+                        rules: [{ required: true, message: ValidationConstants.organisationName }],
+                    })(
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            style={{ width: "100%", paddingRight: 1 }}
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court team-mem_prod_type"
+                            onChange={(e) => this.props.updateDeregistrationData(e, "organisationId", "deRegister")}
+                            setFieldsValue={saveData.organisationId}
+                            placeholder={'Organisation Name'}>
+                            {(organisations || []).map((org, cIndex) => (
+                                <Option key={org.organisationId} 
+                                value={org.organisationId} >{org.organisationName}</Option>
                             ))
                             }
                         
@@ -388,6 +416,7 @@ class DeRegistration extends Component {
                     {getFieldDecorator('mobileNumber', { rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }] })(
                         <InputWithHead
                             required={"pt-0"}
+                            disabled = {true}
                             heading={AppConstants.mobileNumber}
                             placeholder={AppConstants.mobileNumber}
                             setFieldsValue={saveData.mobileNumber}
@@ -399,6 +428,7 @@ class DeRegistration extends Component {
                     {getFieldDecorator('email', { rules: [{ required: true, message: ValidationConstants.emailField[0] }] })(
                         <InputWithHead
                             required={"pt-0"}
+                            disabled = {true}
                             heading={AppConstants.emailAdd}
                             placeholder={AppConstants.emailAdd}
                              setFieldsValue={saveData.email}
@@ -459,7 +489,7 @@ class DeRegistration extends Component {
                         <div className="reg-add-save-button">
                             <Button
                                 type="cancel-button"
-                                onClick={() => console.log("Cancel")}>{AppConstants.cancel}</Button>
+                                onClick={() => this.goBack()}>{AppConstants.cancel}</Button>
                         </div>
                     </div>
                     <div className="col-sm">

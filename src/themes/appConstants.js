@@ -136,7 +136,7 @@ const AppConstants = {
   totalUsers: "Total Users",
   edit: "Edit",
   familyDiscount: "Family Discount",
-  appRegoForm: "App Rego Form",
+  netballRegistration:"Netball Registration",
   spring2019: "2019 Spring",
   membershipCategory: "Membership Category",
   netball: "Netball",
@@ -822,7 +822,6 @@ const AppConstants = {
   playWithFriendSubtitle: "We may be able to accommodate friends playing with each other. Please note, this is normally only available for lower graded teams. You can choose up to three friends.",
   addAnotherProduct: "ADD ANOTHER MEMBERSHIP PRODUCT",
   addAnotherParticipant: "ADD ANOTHER PARTICIPANT",
-  organisation: "Organisation",
   favouriteTeamReference: "FavouriteTeam",
   firebirdPlayer: "FirebirdPlayer",
   registrationOtherInfo: "RegistrationOtherInfo",
@@ -968,7 +967,8 @@ const AppConstants = {
  emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
  addressSearch:"Address Search",
   addressError: "Please select a address from the address search",
- toBeInvoicedViaSchool: "To be invoiced via school"
+ toBeInvoicedViaSchool: "To be invoiced via school",
+ userDetailsInvalid: "User Details Invalid"
 };
 
 export default AppConstants;

@@ -33,20 +33,23 @@ const initialState = {
     ],
     reloadFormData:0,
     deRegisterData: [],
+    organisations: [],
     competitions: [],
     membershipTypes: [],
     teams: [],
     saveData : {
-        userId: 0,
+        userId: null,
         email: null,
         mobileNumber: null,
         competitionId: null,
+        organisationId: null,
         membershipMappingId: null,
         teamId: null,
         regChangeTypeRefId: 0,         // DeRegister/ Transfer
         deRegistrationOptionId: 0,   /// Yes/No
         reasonTypeRefId: 0,      
         deRegisterOther: null,
+        isAdmin: 0,
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 
@@ -64,24 +67,47 @@ function deRegistrationReducer(state = initialState, action) {
             if(action.subKey == "deRegister"){
                 if(action.key == "userId"){
                     let userData = state.deRegisterData.find(x=>x.userId == action.value);
-                    let competitions = setCompetitions(action.value, state.deRegisterData);
-                    state.competitions = competitions;
-                    state.saveData.membershipTypes = [];
+                    state.saveData.organisationId = null;
+                    let organisations = setOrganisations(action.value, state.deRegisterData);
+                    state.organisations = organisations;
+                    state.competitions = [];
+                    state.saveData.competitionId = null;
+                    state.membershipTypes = [];
                     state.saveData.membershipMappingId = null;
-                    state.saveData.teams = [];
+                    state.teams = [];
                     state.saveData.teamId = null;
                     state.saveData.email = userData!= undefined ? userData.email : null;
                     state.saveData.mobileNumber = userData!= undefined ? userData.mobileNumber : null;
+                    state.saveData[action.key] = action.value;
+                    state.reloadFormData = 1;
+                }
+                else if(action.key == "organisationId"){
+                    state.saveData.competitionId = null;
+                    let competitions = setCompetitions(action.value, state.organisations);
+                    state.competitions = competitions;
+                    state.membershipTypes = [];
+                    state.saveData.membershipMappingId = null;
+                    state.teams = [];
+                    state.saveData.teamId = null;
+                    state.saveData[action.key] = action.value;
                     state.reloadFormData = 1;
                 }
                 else if(action.key == "competitionId"){
                     //console.log("************" + action.value);
                     state.saveData.teamId = null;
                     state.saveData.membershipMappingId = null;
+                    state.teams = [];
                     let membershipTypes = setMembershipTypes(action.value, state.competitions);
                     state.membershipTypes = membershipTypes;
-                    let teams = setTeams(action.value, state.competitions);
+                   
+                    state.saveData[action.key] = action.value;
+                    state.reloadFormData = 1;
+                }
+                else if(action.key == "membershipMappingId"){
+                    state.saveData.teamId = null;
+                    let teams = setTeams(action.value, state.membershipTypes);
                     state.teams = teams;
+
                     state.saveData[action.key] = action.value;
                     state.reloadFormData = 1;
                 }
@@ -93,34 +119,6 @@ function deRegistrationReducer(state = initialState, action) {
                 else {
                     state.saveData[action.key] = action.value;
                 }
-    
-                // if (action.key == "registrationOption") {
-                //     state.registrationOption = action.value
-                //     state.selectedDeRegistionMainOption = 1
-                // }
-                // if (action.key == "selectedDeRegistionMainOption") {
-                //     state.selectedDeRegistionMainOption = action.value
-                // }
-                // if (action.key == "selectedDeRegistionOption") {
-                //     state.selectedDeRegistionOption = action.value
-                // }
-                // if (action.key == "deRegistionOther") {
-                //     state.deRegistionOther = action.value
-                // }
-               
-                // if (action.key == "email") {
-                //     state.email = action.value
-                // }
-                // if (action.key == "userName") {
-                //     state.userName = action.value
-                // }
-                // if (action.key == "mobileNumber") {
-                //     state.mobileNumber = action.value
-                // }
-                
-                // if(action.key == "membershipMappingId"){
-                //     state.saveData.membershipMappingId = action.value;
-                // }
             }
             else if(action.subKey == "transfer"){
                 state.saveData.transfer[action.key] = action.value;
@@ -139,6 +137,11 @@ function deRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_GET_DE_REGISTRATION_SUCCESS:
             let deRegisterData = action.result;
+            state.saveData = clearSaveData();
+            state.organisations = [];
+            state.competitions = [];
+            state.membershipTypes = [];
+            state.teams = [];
             state.deRegisterData = deRegisterData;
             if(isArrayNotEmpty(deRegisterData)){
                 try {
@@ -146,8 +149,8 @@ function deRegistrationReducer(state = initialState, action) {
                     state.saveData.email = userData.email;
                     state.saveData.mobileNumber = userData.mobileNumber;
                     state.saveData.userId = userData.userId;
-                    let competitions = setCompetitions(userData.userId, deRegisterData);
-                    state.competitions = competitions;
+                    let organisations = setOrganisations(userData.userId, deRegisterData);
+                    state.organisations = organisations;
                 } catch (error) {
                     console.log("Error", error);
                 }
@@ -176,11 +179,28 @@ function deRegistrationReducer(state = initialState, action) {
     }
 }
 
-function setCompetitions(userId, deRegisterData){
+function setOrganisations(userId, deRegisterData){
     try {
         let arr = [];
         if(isArrayNotEmpty(deRegisterData)){
             let userData = deRegisterData.find(x=>x.userId == userId);
+            if(userData!= undefined){
+                if(isArrayNotEmpty(userData.organisations)){
+                    arr.push(...userData.organisations);
+                }
+            }
+        }
+        return arr;
+    } catch (error) {
+        console.log("Error", error);
+    }
+}
+
+function setCompetitions(organisationId, organisations){
+    try {
+        let arr = [];
+        if(isArrayNotEmpty(organisations)){
+            let userData = organisations.find(x=>x.organisationId == organisationId);
             if(userData!= undefined){
                 if(isArrayNotEmpty(userData.competitions)){
                     arr.push(...userData.competitions);
@@ -196,18 +216,12 @@ function setCompetitions(userId, deRegisterData){
 function setMembershipTypes(competitionId, competitions){
     try {
         let arr = [];
-        console.log("setMembershipTypes", competitionId, competitions)
+       // console.log("setMembershipTypes", competitionId, competitions)
         if(isArrayNotEmpty(competitions)){
             let competitionData = competitions.find(x=>x.competitionId == competitionId);
             if(competitionData!= undefined){
                 if(isArrayNotEmpty(competitionData.membershipTypes)){
-                    for(let item of competitionData.membershipTypes){
-                        let obj = {
-                            membershipMappingId: item.membershipMappingId,
-                            typeName: item.typeName
-                        }
-                        arr.push(obj);
-                    }
+                    arr.push(...competitionData.membershipTypes);
                 }
             }
         }
@@ -217,14 +231,16 @@ function setMembershipTypes(competitionId, competitions){
     }
 }
 
-function setTeams(competitionId, competitions){
+function setTeams(membershipMappingId, membershipTypes){
     try {
         let arr = [];
-        if(isArrayNotEmpty(competitions)){
-            let competitionData = competitions.find(x=>x.competitionId == competitionId);
-            if(competitionData!= undefined){
-                if(isArrayNotEmpty(competitionData.teams)){
-                    for(let item of competitionData.teams){
+        //console.log("membershipMappingId", membershipMappingId, membershipTypes)
+        if(isArrayNotEmpty(membershipTypes)){
+            let membershipData = membershipTypes.find(x=>x.membershipMappingId == membershipMappingId);
+           // console.log("membershipData", membershipData);
+            if(membershipData!= undefined){
+                if(isArrayNotEmpty(membershipData.teams)){
+                    for(let item of membershipData.teams){
                         let obj = {
                             teamId: item.teamId,
                             teamName: item.teamName
@@ -246,12 +262,14 @@ function clearSaveData(){
         email: null,
         mobileNumber: null,
         competitionId: null,
+        organisationId: null,
         membershipMappingId: null,
         teamId: null,
         regChangeTypeRefId: 0,         // DeRegister/ Transfer
         deRegistrationOptionId: 0,   /// Yes/No
         reasonTypeRefId: 0,      
         deRegisterOther: null,
+        isAdmin:0,
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 

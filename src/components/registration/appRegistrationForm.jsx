@@ -599,7 +599,8 @@ class AppRegistrationForm extends Component {
                             paymentSuccess: false					 
                         })
                     }
-                    else if(registrationState.singleCompErrorMsg!= null && registrationState.singleCompErrorMsg.length > 0){
+                    else if(registrationState.userValidationErrorMsg!= null && registrationState.userValidationErrorMsg.length > 0){
+                        console.log("show modal popup");
                         this.setState({singleCompModalVisible: true});
                     }
 
@@ -1289,7 +1290,7 @@ class AppRegistrationForm extends Component {
             street1: parent!= null ? parent.street1 : "",
             street2: parent!= null ? parent.street2 : "",
             suburb: parent!= null ? parent.suburb: "",
-            stateRefId: parent!= null ? parent.stateRefId: 1,
+            stateRefId: parent!= null ? parent.stateRefId: 0,
             postalCode: parent!= null ? parent.postalCode: "",
             isSameAddress: 0,
             reEnterEmail: parent!= null ? parent.email : ""
@@ -1748,6 +1749,7 @@ class AppRegistrationForm extends Component {
         }
         this.setState({participantIndex: index});
         this.props.updateEndUserRegisrationAction(user, "user");
+        this.setYourInfo(user);
         this.props.updateEndUserRegisrationAction(userInfoList, "userInfo");
         if(userRegistration.registeringYourself != 4){
             this.props.updateEndUserRegisrationAction(1, "populateParticipantDetails");
@@ -2683,9 +2685,9 @@ class AppRegistrationForm extends Component {
                 if(!err && !teamErr){
                     let formData = new FormData();
                     let isError = false;
-                    for(let x = 0; x< userRegistrations.length; x++)
+                    for(let x = 0; x< registrationState.registrationDetail.userRegistrations.length; x++)
                     {
-                        let userRegistration = userRegistrations[x];
+                        let userRegistration = registrationState.registrationDetail.userRegistrations[x];
                         if(userRegistration.registeringYourself!= 4){
                             if(userRegistration.profileUrl == null){
                                 isError = true;
@@ -2908,7 +2910,7 @@ class AppRegistrationForm extends Component {
                             <Breadcrumb.Item className="breadcrumb-product">Products</Breadcrumb.Item>
                         </NavLink> */}
                         <Breadcrumb.Item className="breadcrumb-add">
-                            {AppConstants.appRegoForm}
+                            {AppConstants.netballRegistration}
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </Header>
@@ -3229,7 +3231,7 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let yourInfo = registrationDetail.yourInfo!= null ? registrationDetail.yourInfo : {}
-		const state = stateList.length > 0 && yourInfo.stateRefId
+		const state = stateList.length > 0 && yourInfo.stateRefId > 0
             ? stateList.find((state) => state.id === yourInfo.stateRefId).name
             : null;
 
@@ -3243,6 +3245,8 @@ class AppRegistrationForm extends Component {
                 state ? `${state},` : ''
                 } Australia`;
         }
+
+        console.log("your info::",yourInfo);
 			
         return (
             <div className="formView content-view pt-5">
@@ -3301,6 +3305,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <InputWithHead
                         required={"required-field pt-0 pb-0"}
+                        disabled={getUserId()!= 0 && yourInfo.userId == getUserId()}
                         heading={AppConstants.contactEmail}
                         placeholder={AppConstants.contactEmail}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "email" )} 
@@ -3315,6 +3320,7 @@ class AppRegistrationForm extends Component {
                     })(
                     <InputWithHead
                         required={"required-field pt-0 pb-0"}
+                        disabled={getUserId()!= 0 && yourInfo.userId == getUserId()}
                         heading={AppConstants.reenterEmail}
                         placeholder={AppConstants.reenterEmail}
                         onChange={(e) => this.onChangeSetYourInfo(e.target.value, "reEnterEmail" )} 
@@ -3440,8 +3446,9 @@ class AppRegistrationForm extends Component {
     }
 
     participantDetailView = (item, index, getFieldDecorator) => {
+        console.log("itemm::",item);
         const { stateList } = this.props.commonReducerState;
-		const state = stateList.length > 0 && item.stateRefId
+		const state = stateList.length > 0 && item.stateRefId > 0
             ? stateList.find((state) => state.id === item.stateRefId).name
             : null;
 
@@ -3524,6 +3531,7 @@ class AppRegistrationForm extends Component {
                             })(
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
+                                disabled={item.userId == getUserId()}
                                 heading={AppConstants.contactEmail}
                                 placeholder={AppConstants.contactEmail}
                                 onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email", index )} 
@@ -3538,6 +3546,7 @@ class AppRegistrationForm extends Component {
                             })(
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
+                                disabled={item.userId == getUserId()}
                                 heading={AppConstants.reenterEmail}
                                 placeholder={AppConstants.reenterEmail}
                                 onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "reEnterEmail", index )} 
@@ -3734,7 +3743,7 @@ class AppRegistrationForm extends Component {
                 ) : null}
                
                 {(item.parentOrGuardian || []).map((parent, parentIndex) => {
-                    const state = stateList.length > 0 && item.stateRefId
+                    const state = stateList.length > 0 && parent.stateRefId > 0
                     ? stateList.find((state) => state.id === parent.stateRefId).name
                     : null;
                     
@@ -4909,7 +4918,7 @@ class AppRegistrationForm extends Component {
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
         let registeringYourself = userRegistrations.find(x=>x.registeringYourself == 1);
-        const state = stateList.length > 0 && item.team.stateRefId
+        const state = stateList.length > 0 && item.team.stateRefId > 0
             ? stateList.find((state) => state.id === item.team.stateRefId).name
             : null;
 
@@ -5039,6 +5048,7 @@ class AppRegistrationForm extends Component {
                         })(
                         <InputWithHead
                             required={"required-field pb-0"}
+                            disabled={item.team.userId == getUserId()}
                             heading={AppConstants.contactEmail}
                             placeholder={AppConstants.contactEmail}
                             onChange={(e) => this.onChangeSetTeam(e.target.value, "email", index, "team" )} 
@@ -5052,6 +5062,7 @@ class AppRegistrationForm extends Component {
                         })(
                         <InputWithHead
                             required={"required-field pb-0"}
+                            disabled={item.team.userId == getUserId()}
                             heading={AppConstants.reenterEmail}
                             placeholder={AppConstants.reenterEmail}
                             onChange={(e) => this.onChangeSetTeam(e.target.value, "reEnterEmail", index, "team" )} 
@@ -5218,13 +5229,15 @@ class AppRegistrationForm extends Component {
     };
 
     singleCompModalView = () =>{
-        let {singleCompErrorMsg} = this.props.endUserRegistrationState;
-        let errorMsg = singleCompErrorMsg!=  null ? singleCompErrorMsg : [];
+        let {userValidationErrorMsg} = this.props.endUserRegistrationState;
+        let {userValidationErrorCode} = this.props.endUserRegistrationState;
+        let errorMsg = userValidationErrorMsg!=  null ? userValidationErrorMsg : [];
+        let title = userValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
         return (
             <div>
               <Modal
                 className="add-membership-type-modal"
-                title={AppConstants.singleCompetition}
+                title={title}
                 visible={this.state.singleCompModalVisible}
                  footer={[
                         <Button onClick={() => this.setState({singleCompModalVisible: false})}>
