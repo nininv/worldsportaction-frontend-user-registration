@@ -68,7 +68,8 @@ class DeRegistration extends Component {
             [`mobileNumber`]:  saveData.mobileNumber,
             [`organisationId`]: saveData.organisationId,
             [`competitionId`]:  saveData.competitionId,
-            [`membershipMappingId`]: saveData.membershipMappingId
+            [`membershipMappingId`]: saveData.membershipMappingId,
+            [ `divisionId`]: saveData.divisionId
         });
     }
 
@@ -293,7 +294,8 @@ class DeRegistration extends Component {
 
     ////////form content view
     contentView = (getFieldDecorator) => {
-        const { saveData, registrationSelection,deRegisterData, organisations, competitions, membershipTypes, teams } = this.props.deRegistrationState
+        const { saveData, registrationSelection,deRegisterData, organisations, competitions, membershipTypes, teams, divisions } = this.props.deRegistrationState;
+        let divisionList = divisions!= null ? divisions : [];
         return (
             <div className="content-view pt-5">
                  <InputWithHead heading={AppConstants.username} required={"required-field"} />
@@ -365,7 +367,7 @@ class DeRegistration extends Component {
                         </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.membershipTypes} required={"required-field"} />
+                <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"} />
                 <Form.Item >
                     {getFieldDecorator(`membershipMappingId`, {
                         rules: [{ required: true, message: ValidationConstants.pleaseSelectMembershipTypes }],
@@ -382,6 +384,30 @@ class DeRegistration extends Component {
                         {(membershipTypes || []).map((mem, mIndex) => (
                                 <Option key={mem.membershipMappingId} 
                                 value={mem.membershipMappingId} >{mem.typeName}</Option>
+                            ))
+                            }
+                        
+                        </Select>
+                    )}
+                </Form.Item>
+
+                <InputWithHead heading={AppConstants.division} required={(divisionList.length > 0 ? "required-field" : "")} />
+                <Form.Item >
+                    {getFieldDecorator(`divisionId`, {
+                        rules: [{ required: (divisionList.length > 0 ? true : false), message: ValidationConstants.divisionField }],
+                    })(
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            style={{ width: "100%", paddingRight: 1 }}
+                            required={"required-field pt-0 pb-0"}
+                            className="input-inside-table-venue-court team-mem_prod_type"
+                            onChange={(e) => this.props.updateDeregistrationData(e, "divisionId", "deRegister")}
+                            setFieldsValue={saveData.divisionId}
+                            placeholder={AppConstants.divisionName}>
+                        {(divisionList || []).map((div, mIndex) => (
+                                <Option key={div.divisionId} 
+                                value={div.divisionId} >{div.divisionName}</Option>
                             ))
                             }
                         
@@ -411,6 +437,8 @@ class DeRegistration extends Component {
                         </Select>
                 {/* //     )}
                 // </Form.Item> */}
+
+
 
                 <Form.Item  >
                     {getFieldDecorator('mobileNumber', { rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }] })(
