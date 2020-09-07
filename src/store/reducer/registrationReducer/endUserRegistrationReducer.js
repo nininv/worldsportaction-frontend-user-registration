@@ -1842,7 +1842,7 @@ function checkMemProductFeesType(membershipMappingId, item, participants, paymen
                         x.feeType == "membership");
             //console.log("obj" + JSON.stringify(obj));
             if(isNullOrUndefined(obj)){
-                if(isNotNullAndUndefined(obj.expiryDate)){
+                if(isNullOrUndefined(obj.expiryDate)){
                     if(moment(item.competitionEndDate).isBefore(obj.expiryDate)){
                         isExists = true;
                     }
