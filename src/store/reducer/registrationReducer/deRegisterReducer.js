@@ -298,7 +298,8 @@ function setDivisions(membershipMappingId, membershipTypes){
                     for(let item of membershipData.divisions){
                         let obj = {
                             divisionId: item.divisionId,
-                            divisionName: item.divisionName
+                            divisionName: item.divisionName,
+                            registrationId: item.registrationId
                         }
                         arr.push(obj);
                     }
