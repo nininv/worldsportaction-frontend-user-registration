@@ -209,7 +209,7 @@ class RegistrationInvoice extends Component {
         )
     }
 
-    membershipProductView = (membershipDetail, membershipProductName) => {
+    membershipProductView = (membershipDetail, membershipProductName, mTypeName) => {
         let mOrganisationName = membershipDetail!= null ? membershipDetail.name : '';
         membershipProductName = membershipProductName!= null ? membershipProductName : '';
         let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ? 
@@ -218,7 +218,7 @@ class RegistrationInvoice extends Component {
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
                     <InputWithHead
-                        heading={mOrganisationName + "-" + membershipProductName + " Membership Fees"}
+                        heading={mOrganisationName + " - " + membershipProductName + " Membership Fees" + " - " + mTypeName}
                     />
                 </div>
 
@@ -456,7 +456,7 @@ class RegistrationInvoice extends Component {
                                             this.competitionOrganiserView(competitionDetails)
                                         }
                                         {membershipDetail != null &&
-                                            this.membershipProductView(membershipDetail, mProductName)
+                                            this.membershipProductView(membershipDetail, mProductName, mTypeName)
                                         }        
             
                                         <div className="d-flex row d-flex justify-content-end" >

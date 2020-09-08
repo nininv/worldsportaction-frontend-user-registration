@@ -35,7 +35,7 @@ class RegistrationReviewForm extends Component {
     componentDidMount() {
          let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         // console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "ff5cd434-2b82-4bb1-8591-69c13384730a";
+        //let registrationUniqueKey = "59e7344a-4674-44aa-a720-042b2c706258";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
