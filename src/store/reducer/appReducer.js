@@ -32,7 +32,8 @@ const initialState = {
   own_YearArr: [],
   own_CompetitionArr: [],
   participate_CompetitionArr: [],
-  participate_YearArr: []
+  participate_YearArr: [],
+  yearListing: []
 };
 
 function appState(state = initialState, action) {
@@ -270,7 +271,6 @@ function appState(state = initialState, action) {
 
 
     case ApiConstants.API_UPDATE_COMPETITION_LIST:
-      console.log(action.data, 'UpdateList')
       state.selectedCompetition = action.data
       return {
         ...state,
@@ -281,6 +281,18 @@ function appState(state = initialState, action) {
     case ApiConstants.CLEAR_COMPETITION_DATA:
       state.competitionList = []
       return { ...state }
+
+    case ApiConstants.API_GET_YEAR_LISTING_LOAD:
+      state.competitionTypeList = [];
+      return { ...state, onLoad: true };
+
+    case ApiConstants.API_GET_YEAR_LISTING_SUCCESS:
+      return {
+        ...state,
+        onLoad: false,
+        yearListing: action.result,
+        status: action.status
+      };
 
 
     default:

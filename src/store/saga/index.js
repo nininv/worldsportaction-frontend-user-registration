@@ -3,7 +3,7 @@ import { loginApiSaga } from "./authenticationSaga";
 
 import ApiConstants from "../../themes/apiConstants";
 
-import { getOnlyYearListSaga} from "./appSaga";
+import { getOnlyYearListSaga, getYearListingSaga } from "./appSaga";
 
 import {
   getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
@@ -99,7 +99,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_INVOICE_STATUS_LOAD, stripeSaga.getInvoiceStatusSaga)
 
   /// Person Registering Role Reference Saga
-   yield takeEvery(ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD, personRegisteringRoleReferenceSaga)
+  yield takeEvery(ApiConstants.API_PERSON_REGISTERING_ROLE_REFERENCE_LOAD, personRegisteringRoleReferenceSaga)
 
   //EndUserRegistration Membership Products
   yield takeEvery(ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD, endUserRegSaga.getInvitedTeamRegInfoSaga)
@@ -107,7 +107,7 @@ export default function* root_saga() {
   //Update Team Registration Invite
   yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
 
-  
+
   //UserModule Personal Info
   yield takeEvery(ApiConstants.API_USER_MODULE_PERSONAL_DETAIL_LOAD, userSaga.getUserModulePersonalDataSaga)
 
@@ -117,17 +117,17 @@ export default function* root_saga() {
   //UserModule Registration
   yield takeEvery(ApiConstants.API_USER_MODULE_REGISTRATION_LOAD, userSaga.getUserModuleRegistrationDataSaga)
 
- // User Module Activity Player
- yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_PLAYER_LOAD, userSaga.getUserModuleActivityPlayerSaga)
+  // User Module Activity Player
+  yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_PLAYER_LOAD, userSaga.getUserModuleActivityPlayerSaga)
 
- // User Module Activity Parent
- yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_PARENT_LOAD, userSaga.getUserModuleActivityParentSaga)
+  // User Module Activity Parent
+  yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_PARENT_LOAD, userSaga.getUserModuleActivityParentSaga)
 
- // User Module Activity Scorer
- yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_SCORER_LOAD, userSaga.getUserModuleActivityScorerSaga)
+  // User Module Activity Scorer
+  yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_SCORER_LOAD, userSaga.getUserModuleActivityScorerSaga)
 
- // User Module Activity Manager
- yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_MANAGER_LOAD, userSaga.getUserModuleActivityManagerSaga)
+  // User Module Activity Manager
+  yield takeEvery(ApiConstants.API_USER_MODULE_ACTIVITY_MANAGER_LOAD, userSaga.getUserModuleActivityManagerSaga)
 
   // User Module Medical Info
   yield takeEvery(ApiConstants.API_USER_MODULE_MEDICAL_INFO_LOAD, userSaga.getUserModuleMedicalInfoSaga)
@@ -139,10 +139,10 @@ export default function* root_saga() {
 
   //Terms and Conditions
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD, endUserRegSaga.getRegistrationProductFeesSaga)
-  
+
   // user history
   yield takeEvery(ApiConstants.API_USER_MODULE_HISTORY_LOAD, userSaga.getUserHistorySaga)
-  
+
   //////shop product listing
   yield takeEvery(ApiConstants.API_GET_SHOP_PRODUCT_LISTING_LOAD, shopProductSaga.getProductListingSaga)
 
@@ -154,21 +154,21 @@ export default function* root_saga() {
 
   ////////////////////add to cart post api
   yield takeEvery(ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD, shopProductSaga.addToCartSaga)
-   
-   //Get Registration Review
-   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
 
-   //Save Registration Revie
-   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
-  
-   //Get Registration Review Products
+  //Get Registration Review
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
+
+  //Save Registration Revie
+  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
+
+  //Get Registration Review Products
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getRegistrationReviewProductsSaga)
 
   //Save Registration Review Products
   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.saveRegistrationReviewProductsSaga)
-   
+
   //Get Registration By Id
-   yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
 
   //Validate Discount Code
   yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)
@@ -181,15 +181,17 @@ export default function* root_saga() {
 
   //Save Team Registration Revie
   yield takeEvery(ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveTeamRegistrationReviewSaga)
- 
-  //Get Team Registration Review Products
- yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
 
-   //Save DeRegister
-   yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
- 
-   //Get DeRegister
+  //Get Team Registration Review Products
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
+
+  //Save DeRegister
+  yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
+
+  //Get DeRegister
   yield takeEvery(ApiConstants.API_GET_DE_REGISTRATION_LOAD, deRegisterSaga.getDeRegisterSaga)
- 
+
+  yield takeEvery(ApiConstants.API_GET_YEAR_LISTING_LOAD, getYearListingSaga);
+
 
 }

@@ -270,6 +270,12 @@ let AxiosApi = {
     return Method.dataGet(url, token);
   },
 
+  /////get the common year list reference
+  getYearListing() {
+    var url = `/common/public/reference/year`;
+    return Method.dataGet(url, token);
+  },
+
 
 };
 
@@ -467,7 +473,7 @@ const Method = {
                 let unauthorizedStatus = err.response.status
                 if (unauthorizedStatus == 401) {
                   logout()
-                 // message.error(ValidationConstants.messageStatus401)
+                  // message.error(ValidationConstants.messageStatus401)
                 }
               }
               else {
