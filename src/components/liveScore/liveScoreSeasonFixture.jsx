@@ -15,6 +15,8 @@ import { fixtureCompetitionListAction } from "../../store/actions/LiveScoreActio
 import { isArrayNotEmpty } from "../../util/helpers";
 import history from "../../util/history";
 import './liveScore.css'
+import { getYearListing } from "../../store/actions/appAction";
+
 const { Content } = Layout;
 const { Option } = Select;
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c95d69a0e179191e4422d8df456c7dc7268069d560e9e677eb64ca0d506751ea12c34b087a73bc319ba9b17a67ffc69fde351109f091cb2e64e6a60042bcbb11bf6d73e2be792c9658cc5604e115967a82eb0f2f944a1e2950e0116df2065b0ba2fb5dcf34f9341f6b7b6f2e64839339d24123ea015526f05fe22cec9cf96aa86ff990588beafbc3675f550605d72d25247';
@@ -253,11 +255,17 @@ class LiveScoreSeasonFixture extends Component {
             gameTimeTracking: false,
             onCompLoad: false,
             onDivisionLoad: false,
-            selectedComp: null
+            selectedComp: null,
+            yearId: null,
+            yearLoading: false
 
         }
     }
     async  componentDidMount() {
+
+        this.props.getYearListing(this.props.appState)
+        this.setState({ yearLoading: true })
+
         setUserId(userId);
         setAuthToken(token);
 
@@ -265,18 +273,33 @@ class LiveScoreSeasonFixture extends Component {
         let orgParam = this.props.location.search.split("?organisationKey=")
         let orgId = orgParam[1]
         setliveScoreOrgID(orgId)
-        let organisationId = await getliveScoreOrgID()
+        // let organisationId = await getliveScoreOrgID()
 
-        if (organisationId != undefined) {
-            this.setState({ onCompLoad: true })
-            this.props.fixtureCompetitionListAction(organisationId)
-        } else {
-            history.push('/liveScoreSeasonFixture')
-        }
+        // if (organisationId != undefined) {
+        //     this.setState({ onCompLoad: true })
+        //     this.props.fixtureCompetitionListAction(organisationId)
+        // } else {
+        //     history.push('/liveScoreSeasonFixture')
+        // }
 
     }
 
-    componentDidUpdate(nextProps) {
+    async componentDidUpdate(nextProps) {
+
+        if (nextProps.appState !== this.props.appState) {
+            if (this.props.appState.onLoad === false && this.state.yearLoading === true) {
+                let yearId = this.props.appState.yearListing[0].id
+                let organisationId = await getliveScoreOrgID()
+                if (organisationId != undefined) {
+                    this.props.fixtureCompetitionListAction(organisationId, yearId)
+                    this.setState({ onCompLoad: true, yearLoading: false, yearId })
+                } else {
+
+                    history.push('/liveScoreSeasonFixture')
+                }
+            }
+        }
+
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
                 if (isArrayNotEmpty(this.props.liveScoreFixturCompState.comptitionList)) {
@@ -291,6 +314,7 @@ class LiveScoreSeasonFixture extends Component {
 
         if (this.props.liveScoreLadderState !== nextProps.liveScoreLadderState) {
             if (this.props.liveScoreLadderState.onLoad == false && this.state.onDivisionLoad == true) {
+
                 if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0) {
                     let division = this.props.liveScoreLadderState.liveScoreLadderDivisionData[0].id
                     this.setState({ onDivisionLoad: false, division })
@@ -335,15 +359,46 @@ class LiveScoreSeasonFixture extends Component {
         )
     }
 
+    async setYearId(yearId) {
+        this.setState({ yearId, onCompLoad: true, selectedComp: null, division: null })
+        this.props.clearRoundData("all")
+        let organisationId = await getliveScoreOrgID()
+        if (organisationId != undefined) {
+            this.props.fixtureCompetitionListAction(organisationId, yearId)
+            // this.setState({ onCompLoad: true, yearLoading: false, yearId })
+        } else {
+
+            history.push('/liveScorePublicLadder')
+        }
+    }
+
     ///dropdown view containing all the dropdown of header
     dropdownView = () => {
         const { liveScoreLadderState } = this.props;
         let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
         // let division = this.props.liveScoreMatchState.divisionList ? this.props.liveScoreMatchState.divisionList : []
         let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
+        const { yearListing } = this.props.appState
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
+
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className="year-select-heading">
+                            {AppConstants.year}:</span>
+                        <Select
+                            className="year-select reg-filter-select-year ml-2"
+                            style={{ width: 90 }}
+                            onChange={yearId => this.setYearId(yearId)}
+                            value={this.state.yearId}
+                        >
+                            {yearListing.length > 0 && yearListing.map((item, yearIndex) => (
+                                < Option key={"yearlist" + yearIndex} value={item.id} > {item.name}</Option>
+                            ))
+                            }
+                        </Select>
+                    </div>
+
                     <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <span className='year-select-heading'>{AppConstants.competition}:</span>
                         <Select
@@ -472,7 +527,8 @@ function mapDispatchToProps(dispatch) {
         getLiveScoreDivisionList,
         liveScoreRoundListAction,
         clearRoundData,
-        fixtureCompetitionListAction
+        fixtureCompetitionListAction,
+        getYearListing
     }, dispatch)
 }
 
@@ -481,7 +537,8 @@ function mapStatetoProps(state) {
         liveScoreFixturCompState: state.LiveScoreFixturCompState,
         liveScoreLadderState: state.LiveScoreLadderState,
         liveScoreCompetition: state.liveScoreCompetition,
-        liveScoreRoundState: state.LiveScoreRoundState
+        liveScoreRoundState: state.LiveScoreRoundState,
+        appState: state.AppState,
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(LiveScoreSeasonFixture));

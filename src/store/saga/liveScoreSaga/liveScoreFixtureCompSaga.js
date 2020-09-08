@@ -23,7 +23,7 @@ function* errorSaga(error) {
 //// get manager list
 export function* getLiveScoreFixtureCompSaga(action) {
     try {
-        const result = yield call(LiveScoreAxiosApi.getFixtureCompList, action.orgId)
+        const result = yield call(LiveScoreAxiosApi.getFixtureCompList, action.orgId, action.yearId)
         if (result.status == 1) {
             yield put({
                 type: ApiConstants.API_LIVE_SCORE_GET_FIXTURE_COMP_SUCCESS,
