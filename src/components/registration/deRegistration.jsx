@@ -380,10 +380,10 @@ class DeRegistration extends Component {
                             className="input-inside-table-venue-court team-mem_prod_type"
                             onChange={(e) => this.props.updateDeregistrationData(e, "membershipMappingId", "deRegister")}
                             setFieldsValue={saveData.membershipMappingId}
-                            placeholder={AppConstants.membershipTypes}>
+                            placeholder={AppConstants.membershipProduct}>
                         {(membershipTypes || []).map((mem, mIndex) => (
                                 <Option key={mem.membershipMappingId} 
-                                value={mem.membershipMappingId} >{mem.typeName}</Option>
+                                value={mem.membershipMappingId} >{mem.productName + " - " + mem.typeName }</Option>
                             ))
                             }
                         
