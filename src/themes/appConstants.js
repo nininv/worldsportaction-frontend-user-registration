@@ -961,14 +961,28 @@ const AppConstants = {
   ok:"Ok"	,
   useSameEmailAsParent: "Use same email as parent",
   stateMismatchTitleMessage: "Warning",
- stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you want to proceed?",
- CASUAL_FEE: 1,
- SEASONAL_FEE: 2,
- emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
- addressSearch:"Address Search",
-  addressError: "Please select a address from the address search",
- toBeInvoicedViaSchool: "To be invoiced via school",
- userDetailsInvalid: "User Details Invalid"
+  stateMismatchModelMessage: "You can only register for one state at a time. Your other selections will be cleared if you want to select a different state. Do you want to proceed?",
+  CASUAL_FEE: 1,
+  SEASONAL_FEE: 2,
+  emailExp: "/^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/",
+  addressSearch:"Address Search",
+    addressError: "Please select a address from the address search",
+  toBeInvoicedViaSchool: "To be invoiced via school",
+  userDetailsInvalid: "User Details Invalid",
+  participants: "Participants",
+  wouldYouLikeTopay:"How would you like to pay?",
+  addDiscountCode:" Add Discount Code",
+  addGovernmentVoucher:" Add Government Voucher",
+  supportGirlsFoundation: 'Support - Confident Girls Foundation',
+  girlsFoundationDescription:`Confident Girls Foundation works with grassroots service providers to develop and implement programs
+  aimed at creating more opportunities for girls going through adversity. You can help us support them by
+  choosing a donation option below.`,
+  RoundUpAtLeast:"Round up at least",
+  SorryNotAtTheMoment:"No, sorry not at the moment",
+  continuedSuccessOfOurClub:"Your Support is important for the continued success of our Club. Can you help?",
+  yourOrder:"Your order",
+  ConditionsForNetballQLD:"Terms and Conditions for Netball QLD",
+  continue:"Continue",
 };
 
 export default AppConstants;
