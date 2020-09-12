@@ -27,6 +27,9 @@ import * as shopProductSaga from "../saga/shopSaga/productSaga";
 
 import * as deRegisterSaga from '../saga/registrationSaga/deRegisterSaga';
 
+//UserRegistrationSaga
+import * as userRegistrationSaga from '../saga/registrationSaga/userRegistrationSaga';
+
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
@@ -192,6 +195,11 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_DE_REGISTRATION_LOAD, deRegisterSaga.getDeRegisterSaga)
 
   yield takeEvery(ApiConstants.API_GET_YEAR_LISTING_LOAD, getYearListingSaga);
+
+
+
+  //New ragistration design
+  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD_NEW, userRegistrationSaga.endUserRegistrationUserInfoSaga)
 
 
 }

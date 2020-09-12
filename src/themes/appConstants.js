@@ -990,6 +990,7 @@ const AppConstants = {
  selectCompetition: "Select Competitions",
  additionalInformation: "Additional Information",
  addPariticipant: "Add a Participant",
+ selectOrAddParticipant: "Select or Add a participant",
  newParticipant: "New Participant",
  addNewParticipant: "Add a new participant", 
  selectAnother: "Select Another",
@@ -1006,6 +1007,10 @@ const AppConstants = {
  doYouHaveDisablity: "Do you have a disablity?",
  emergencyContact: "Emergency Contact",
  findACompetition: "Find a Competition",
+ newParticipantRegistration: "New Participant Registration",
+ newTeamRegistration: "New Team Registration",
+ noRegisteringMyChild: "No,Registering my child",
+ noRegisteringSomeoneElse: "No,Registering someone else",
 };
 
 export default AppConstants;
