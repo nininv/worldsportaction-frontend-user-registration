@@ -3,6 +3,7 @@ import { Switch, Route, Redirect, HashRouter } from "react-router-dom";
 import { Skeleton } from "antd";
 import PrivateRoute from "../util/protectedRoute";
 import AppRegistrationForm from "../components/registration/appRegistrationForm";
+import AppRegistrationFormNew from "../components/registration/appRegistrationFormNew";
 import NotFound from "./404";
 import UserRegistration from "../components/userRegistration";
 import Login from '../components/login';
@@ -46,6 +47,10 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationForm)}
+        />
+        <PrivateRoute
+          path="/appRegistrationFormNew"
+          component={lazyLoad(AppRegistrationFormNew)}
         />
         <PrivateRoute
           path="/login"

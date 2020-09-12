@@ -968,7 +968,30 @@ const AppConstants = {
  addressSearch:"Address Search",
   addressError: "Please select a address from the address search",
  toBeInvoicedViaSchool: "To be invoiced via school",
- userDetailsInvalid: "User Details Invalid"
+ userDetailsInvalid: "User Details Invalid",
+
+ //new registration form
+ signupToCompetition: "Sign up to competition",
+ participantDetails : "Participant Details",
+ selectCompetition: "Select Competitions",
+ additionalInformation: "Additional Information",
+ addPariticipant: "Add a Participant",
+ newParticipant: "New Participant",
+ addNewParticipant: "Add a new participant", 
+ selectAnother: "Select Another",
+ selectAddress: "Select Address",
+ addNewAddress: "Add New Address",
+ addNewParentGaurdian: "Add New Parent/Gaurdian",
+ chooseMembershipProducts: "Choose Membership Product",
+ uniform: "Uniform",
+ referFriendSubTitle: "Do you have a friend you think would like to play?",
+ findAnotherCompetition: "Find Another Competition",
+ addAnotherCompetition: "Add Another Competition",
+ additionalPersonalInformation: "Additional Personal Information",
+ haveYouEverPlayed: "Have you ever played Netball before?" ,
+ doYouHaveDisablity: "Do you have a disablity?",
+ emergencyContact: "Emergency Contact",
+ findACompetition: "Find a Competition"
 };
 
 export default AppConstants;

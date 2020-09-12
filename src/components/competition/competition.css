@@ -411,3 +411,113 @@
     padding-left: 7%;
   }
 }
+
+/* New registration form styles */
+.ant-steps{ display: block !important;}
+.registration-steps .ant-steps-item-process .ant-steps-item-icon { background: var(--app-color) !important; border-color: var(--app-color) !important;}
+.registration-steps .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title { color: var(--app-color) !important;}
+.registration-steps .ant-steps-item-wait .ant-steps-item-icon{ background : var(--app-77778f) !important;border-color: var(--app-77778f) !important;}
+.registration-steps .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon{ color : white !important;}
+.registration-steps .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title { color: var(--app-77778f) !important;}
+.registration-steps .ant-steps-item-finish .ant-steps-item-icon { background: var(--app-color) !important; border-color: var(--app-color) !important;}
+.registration-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon{ color: white !important;display: flex;justify-content: center;padding-top: 8px;}
+.registration-steps .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title { color: var(--app-color) !important;}
+
+.registration-form-view{
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  padding: 40px;
+  margin-top: 30px;
+}
+
+.new-participant-button-inactive{
+  margin-top: 20px;
+  height: 110px;
+  font-size: 23px;
+  font-weight: 500;
+  border: 1px solid var(--app-ccc);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inter-medium;
+  margin-bottom: 5px;
+}
+
+.new-participant-button-active{
+  margin-top: 20px;
+  height: 110px;
+  font-size: 23px;
+  font-weight: 500;
+  border: 1px solid var(--app-color);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--app-fdf9f0);
+  cursor: pointer;
+  font-family: inter-medium;
+  margin-bottom: 5px;
+}
+
+.registration-radio-group{
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  font-size: 15px;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+  font-weight: normal;
+  font-family: inter;
+  overflow-x: auto;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.registration-radio-group .ant-radio-wrapper{
+  padding: 0px;
+}
+
+.orange-action-txt{
+  color: var(--app-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.question{
+  margin: 30px 0px 10px 0px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inter-medium;
+}
+
+.map-style{
+  height: 250px;
+  background: grey;
+  margin: -40px -40px 0px -40px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.light-grey-border-box{
+  background: var(--app-fdfdfe);
+  border: 1px solid var(--app-f0f0f2);
+  border-radius: 10px;
+  padding: 0px 30px 30px 30px;
+  margin-top: 30px;
+}
+
+.ant-checkbox-group{
+  display: flex;
+}
+
+.ant-checkbox-group .ant-checkbox-group-item {
+  padding-top: 0px;
+}
+
+.inter-medium-font{
+  font-family: inter-medium;
+}
