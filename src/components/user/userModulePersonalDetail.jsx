@@ -58,6 +58,16 @@ const columns = [
         key: "competitionName",
     },
     {
+        title: "Valid Until",
+        dataIndex: "expiryDate",
+        key: "expiryDate",
+        render: (expiryDate, record, index) =>(
+          <span>
+             {expiryDate != null ? moment(expiryDate).format("DD/MM/YYYY") : ""}
+          </span>
+        )
+      },
+    {
         title: 'Membership Product',
         dataIndex: 'membershipProduct',
         key: 'membershipProduct'

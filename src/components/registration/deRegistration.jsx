@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Form, Select, Button, Radio } from 'antd';
+import { Layout, Breadcrumb, Form, Select, Button, Radio, message } from 'antd';
 import './product.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
-import AppImages from "../../themes/appImages";
-import { NavLink } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import history from '../../util/history'
@@ -83,9 +81,18 @@ class DeRegistration extends Component {
             if(!err){
                 let deRegisterState = this.props.deRegistrationState;
                 let saveData = deRegisterState.saveData;
-                
-                this.props.saveDeRegisterDataAction(saveData);
-                this.setState({saveLoad: true});
+                if(saveData.regChangeTypeRefId == 0 || saveData.regChangeTypeRefId == null){
+                    message.config({ duration: 0.9, maxCount: 1 });
+                    message.error(ValidationConstants.deRegisterChangeTypeRequired);
+                }
+                else if(saveData.deRegistrationOptionId == 2 && saveData.reasonTypeRefId == 0){
+                    message.config({ duration: 0.9, maxCount: 1 });
+                    message.error(ValidationConstants.deRegisterReasonRequired);
+                }
+                else{
+                    this.props.saveDeRegisterDataAction(saveData);
+                    this.setState({saveLoad: true});
+                }
             }
         })
     }
@@ -380,10 +387,10 @@ class DeRegistration extends Component {
                             className="input-inside-table-venue-court team-mem_prod_type"
                             onChange={(e) => this.props.updateDeregistrationData(e, "membershipMappingId", "deRegister")}
                             setFieldsValue={saveData.membershipMappingId}
-                            placeholder={AppConstants.membershipTypes}>
+                            placeholder={AppConstants.membershipProduct}>
                         {(membershipTypes || []).map((mem, mIndex) => (
                                 <Option key={mem.membershipMappingId} 
-                                value={mem.membershipMappingId} >{mem.typeName}</Option>
+                                value={mem.membershipMappingId} >{mem.productName + " - " + mem.typeName }</Option>
                             ))
                             }
                         

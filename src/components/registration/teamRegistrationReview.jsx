@@ -34,7 +34,7 @@ class TeamRegistrationReview extends Component {
     componentDidMount() {
          let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
         // console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let userRegId = "791e305e-9f1d-49a6-b9c3-6a2ca79b9364";
+        //let userRegId = "e124f397-3693-4f42-adbe-4cfb1fd2e3de";
         this.setState({userRegId: userRegId});
         this.getApiInfo(userRegId);
     }

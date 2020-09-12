@@ -20,7 +20,7 @@ const initialState = {
     ],
     deRegistionOption: [
         { id: 1, value: "I am over committed with other activities and can't fit in time for netball" },
-        { id: 2, value: "I have been injured or health reason(not netball related" },
+        { id: 2, value: "I have been injured or health reason(not netball related)" },
         { id: 3, value: "Decided not to participant in netball" },
         { id: 4, value: "Moving to a different geographical area" },
         { id: 5, value: "Other" },
