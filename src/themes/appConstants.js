@@ -970,7 +970,21 @@ const AppConstants = {
   toBeInvoicedViaSchool: "To be invoiced via school",
   userDetailsInvalid: "User Details Invalid",
   participants: "Participants",
- //new registration form
+  wouldYouLikeTopay:"How would you like to pay?",
+  addDiscountCode:" Add Discount Code",
+  addGovernmentVoucher:" Add Government Voucher",
+  supportGirlsFoundation: 'Support - Confident Girls Foundation',
+  girlsFoundationDescription:`Confident Girls Foundation works with grassroots service providers to develop and implement programs
+  aimed at creating more opportunities for girls going through adversity. You can help us support them by
+  choosing a donation option below.`,
+  RoundUpAtLeast:"Round up at least",
+  SorryNotAtTheMoment:"No, sorry not at the moment",
+  continuedSuccessOfOurClub:"Your Support is important for the continued success of our Club. Can you help?",
+  yourOrder:"Your order",
+  ConditionsForNetballQLD:"Terms and Conditions for Netball QLD",
+  continue:"Continue",
+
+  //new registration form
  signupToCompetition: "Sign up to competition",
  participantDetails : "Participant Details",
  selectCompetition: "Select Competitions",
@@ -992,19 +1006,6 @@ const AppConstants = {
  doYouHaveDisablity: "Do you have a disablity?",
  emergencyContact: "Emergency Contact",
  findACompetition: "Find a Competition",
-  wouldYouLikeTopay:"How would you like to pay?",
-  addDiscountCode:" Add Discount Code",
-  addGovernmentVoucher:" Add Government Voucher",
-  supportGirlsFoundation: 'Support - Confident Girls Foundation',
-  girlsFoundationDescription:`Confident Girls Foundation works with grassroots service providers to develop and implement programs
-  aimed at creating more opportunities for girls going through adversity. You can help us support them by
-  choosing a donation option below.`,
-  RoundUpAtLeast:"Round up at least",
-  SorryNotAtTheMoment:"No, sorry not at the moment",
-  continuedSuccessOfOurClub:"Your Support is important for the continued success of our Club. Can you help?",
-  yourOrder:"Your order",
-  ConditionsForNetballQLD:"Terms and Conditions for Netball QLD",
-  continue:"Continue",
 };
 
 export default AppConstants;
