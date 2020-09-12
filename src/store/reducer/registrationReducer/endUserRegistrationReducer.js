@@ -1842,11 +1842,13 @@ function checkMemProductFeesType(membershipMappingId, item, participants, paymen
                         x.feeType == "membership");
             //console.log("obj" + JSON.stringify(obj));
             if(isNullOrUndefined(obj)){
-                if(obj.lastTransMonthDiff < 12){
-                    isExists = true;
-                }
-                else{
-                    isExists = false;
+                if(isNullOrUndefined(obj.expiryDate)){
+                    if(moment(item.competitionEndDate).isBefore(obj.expiryDate)){
+                        isExists = true;
+                    }
+                    else{
+                        isExists = false;
+                    }
                 }
             }
         }

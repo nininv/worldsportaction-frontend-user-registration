@@ -92,7 +92,9 @@ const ValidationConstants = {
 	addressRequiredError: "Address is required",
     addressDetailsError: "Please input Address in details",
     userRequired: "Please select User",
-    teamRequired: "Please select Team"
+    teamRequired: "Please select Team",
+    deRegisterReasonRequired: "Please select the reason to De-register",
+    deRegisterChangeTypeRequired: "Please select the De-register change type",
 };
 
 export default ValidationConstants;

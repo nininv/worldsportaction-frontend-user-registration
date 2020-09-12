@@ -137,6 +137,15 @@ function clearYearCompetitionAction() {
   return action
 }
 
+/////get the common year list reference
+function getYearListing(years) {
+  const action = {
+    type: ApiConstants.API_GET_YEAR_LISTING_LOAD,
+    years
+  };
+  return action;
+}
+
 export {
   getYearListAction,
   getOnlyYearListAction,
@@ -152,5 +161,6 @@ export {
   getCompetitionTypesAction,
   getCompetitionFormatTypesAction,
   getYearAndCompetitionAction,
-  clearYearCompetitionAction
+  clearYearCompetitionAction,
+  getYearListing
 };
