@@ -1021,7 +1021,24 @@ const AppConstants = {
  returnToAddressSearch: "Return to Address Search",
  enterAddress: "Enter Address",
  addCompetitionAndMembership: "Add Competition and Membership",
- signupToCompetition: "Sign up to Competition"
+ signupToCompetition: "Sign up to Competition",
+ merchandiseShop:"Merchandise Shop",
+ selectColor:"Select color",
+ vixensWarmUpShirt:"Vixens Warm Up Shirt",
+ allCategories:"All categories",
+ productDescription:`Get kitted out like your favourite players. As worn by the first
+ team on matchdays, this short sleeve shirt is the perfect way
+ to show your pride and passion.`,
+ shippingOptions:"Shipping Options",
+ netballQueenslandMerchandise:"Netball Queensland Merchandise",
+ biloelaAssociationMerchandise:"Biloela Association Merchandise",
+ Pickup:"Pickup",
+ Delivery:"Delivery",
+ deliveryAndBillingAddress:"Delivery and Billing Address",
+ deliveryAddress:"Delivery Address",
+ billingAddress:"Billing Address",
+ useDifferentAddress:"Use a different address",
+
 };
 
 export default AppConstants;

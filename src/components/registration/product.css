@@ -881,7 +881,7 @@ img.bg {
   align-content: flex-start;
   color: var(--app-1b1b34);
   font-weight: 600;
-  font-family: sans-serif ;
+  font-family: sans-serif;
 }
 .btn-text-common {
   font-size: 14px;
@@ -897,17 +897,18 @@ img.bg {
 }
 .product-left-view{
   margin-top:30px;
-  padding: 36px;
+  padding: 36px 45px;
 }
 .product-right-view{
   margin: 21px 29px 30px 29px;
   width: 100%;
 }
 .innerview-outline{
-  background-color: var(--app-fafbfb);
+  background-color: var(--app-f4f2e863);
   padding: 30px;
   border-radius: 15px;
   margin-top: 23px;
+  border:1.5px solid var(--app-ff9835);  
 }
 .product-radio-group {
   font-size: 15px;
@@ -921,4 +922,53 @@ img.bg {
 .termsView-main{
   margin-top: 25px;
 }
+.custom-dropdown .ant-select-selection__placeholder{ 
+  color: var(--app-1b1b34);
+  font-family: sans-serif ;
+}
+.shop-product-text{
+  padding: 20px;
+  border: 1px solid var(--app-d9d9d9);
+  border-radius: 10px;
+}
+.expand-product-text{
+  padding: 20px 21px 35px 25px;
+  border: 1px solid var(--app-d9d9d9);
+  border-radius: 10px;
+}
+.shop-product-text:hover{
+  padding: 20px;
+  border: 1px solid var(--app-color);
+  border-radius: 10px;
+  background-color: var(--app-f4f2e863);
+}
+.card-header-text{
+  color: var(--app-1b1b34);
+  font-weight: 600;
+  font-family: sans-serif ;
+  font-size: 16px;
+  max-width: 235px;
+  margin-top: 20px;
+}
 
+.card-expandView-text{
+  color: var(--app-1b1b34);
+  font-weight: 600;
+  font-family: sans-serif ;
+  margin-right: 20px;
+}
+.back-btn-text {
+  background-color: var(--app-white);
+  border-color: white;
+  color: var(--app-1b1b34);
+  font-weight: 600;
+  font-size: 14px;
+  height: 48px;
+  border-radius: 8px;
+  font-stretch: normal;
+  font-family: inter-medium;
+}
+.address-text-style {
+  font-family: sans-serif;
+  color: black;
+}

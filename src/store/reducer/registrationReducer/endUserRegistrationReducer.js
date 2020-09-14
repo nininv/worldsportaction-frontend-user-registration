@@ -636,135 +636,135 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD:
-            return { ...state, onRegReviewLoad: true };
+        // case ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD:
+        //     return { ...state, onRegReviewLoad: true };
 
-        case ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS:
-           let regReviewData = action.result;
-            return {
-                ...state,
-                onRegReviewLoad: false,
-                status: action.status,
-                registrationReviewList: regReviewData
-            };
+        // case ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS:
+        //    let regReviewData = action.result;
+        //     return {
+        //         ...state,
+        //         onRegReviewLoad: false,
+        //         status: action.status,
+        //         registrationReviewList: regReviewData
+        //     };
 
-        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD:
-            return { ...state, onRegReviewLoad: true };
+        // case ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD:
+        //     return { ...state, onRegReviewLoad: true };
 
-        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
-            return {
-                ...state,
-                onRegReviewLoad: false,
-                status: action.status
-            };
+        // case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
+        //     return {
+        //         ...state,
+        //         onRegReviewLoad: false,
+        //         status: action.status
+        //     };
     
-        case ApiConstants.UPDATE_REVIEW_INFO:
-            let reviewData = state.registrationReviewList;
-            let participantList = reviewData["existingTransactionList"];
-            if(action.subkey == "charity"){
-                reviewData[action.key] = action.value;
-            }
-            else if(action.subkey == "selectedOptions"){
-                let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
-                let compParticipant = reviewData["compParticipants"][action.index];
-                let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
+        // case ApiConstants.UPDATE_REVIEW_INFO:
+        //     let reviewData = state.registrationReviewList;
+        //     let participantList = reviewData["existingTransactionList"];
+        //     if(action.subkey == "charity"){
+        //         reviewData[action.key] = action.value;
+        //     }
+        //     else if(action.subkey == "selectedOptions"){
+        //         let memProds = reviewData["compParticipants"][action.index]["membershipProducts"];
+        //         let compParticipant = reviewData["compParticipants"][action.index];
+        //         let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
               
-                if(action.key == "removeCode"){
+        //         if(action.key == "removeCode"){
                    
-                    let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
-                    memProd["invalidCode"] = 0;
-                    if(action.key == "removeCode"){
-                        let disIndex = memProd.selectedDiscounts.findIndex(x=>x.discountCode === memProd.selectedCode);
-                        memProd.selectedDiscounts.splice(disIndex,1);
-                        memProd["selectedCode"] = null;
-                        memProd.isDiscountApplied = 0;
-                        memProd.discountsToDeduct = 0;
-                        memProd.fees.competitionOrganisorFee.discountsToDeduct = 0;
-                        if(isNullOrUndefined(memProd.fees.affiliateFee)){
-                            memProd.fees.affiliateFee.discountsToDeduct = 0;
-                        }
-                        memProd.fees.membershipFee.discountsToDeduct = 0;
-                    }
-                }
-                else if(action.key == "removeSchoolRegCode"){
-                    reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = null;
-                    reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
-                    reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"] = 0;
-                    memProds.map((x, mIndex) =>{
-                        calculateFee(5, x, gameVoucherVal, compParticipant, 0, participantList);
-                        calculateDiscount(x.selectedDiscounts, x, 5,  gameVoucherVal, null, compParticipant, 0);
+        //             let memProd = reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex];
+        //             memProd["invalidCode"] = 0;
+        //             if(action.key == "removeCode"){
+        //                 let disIndex = memProd.selectedDiscounts.findIndex(x=>x.discountCode === memProd.selectedCode);
+        //                 memProd.selectedDiscounts.splice(disIndex,1);
+        //                 memProd["selectedCode"] = null;
+        //                 memProd.isDiscountApplied = 0;
+        //                 memProd.discountsToDeduct = 0;
+        //                 memProd.fees.competitionOrganisorFee.discountsToDeduct = 0;
+        //                 if(isNullOrUndefined(memProd.fees.affiliateFee)){
+        //                     memProd.fees.affiliateFee.discountsToDeduct = 0;
+        //                 }
+        //                 memProd.fees.membershipFee.discountsToDeduct = 0;
+        //             }
+        //         }
+        //         else if(action.key == "removeSchoolRegCode"){
+        //             reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = null;
+        //             reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
+        //             reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"] = 0;
+        //             memProds.map((x, mIndex) =>{
+        //                 calculateFee(5, x, gameVoucherVal, compParticipant, 0, participantList);
+        //                 calculateDiscount(x.selectedDiscounts, x, 5,  gameVoucherVal, null, compParticipant, 0);
 
-                        x.feesToPay = formatValue(x.feesToPay);
-                        x.discountsToDeduct = formatValue(x.discountsToDeduct);
-                        x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct);
-                    })
-                    setIsSchoolRegistration(reviewData);
-                }
-                else{
-                    //console.log("******", action.index, action.subkey, action.key, action.value);
-                    let isSchoolRegCodeApplied = reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"]
-                    if(action.key == "paymentOptionRefId"){
+        //                 x.feesToPay = formatValue(x.feesToPay);
+        //                 x.discountsToDeduct = formatValue(x.discountsToDeduct);
+        //                 x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct);
+        //             })
+        //             setIsSchoolRegistration(reviewData);
+        //         }
+        //         else{
+        //             //console.log("******", action.index, action.subkey, action.key, action.value);
+        //             let isSchoolRegCodeApplied = reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"]
+        //             if(action.key == "paymentOptionRefId"){
 
-                        if(action.value != 2){
-                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = null;
-                        }
-                        else{
-                            reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = "3";
-                        }
-                        if(action.value != 5){
-                            reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = null;
-                            reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
-                            reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"] = 0;
-                        }
+        //                 if(action.value != 2){
+        //                     reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = null;
+        //                 }
+        //                 else{
+        //                     reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] = "3";
+        //                 }
+        //                 if(action.value != 5){
+        //                     reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = null;
+        //                     reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
+        //                     reviewData["compParticipants"][action.index][action.subkey]["isSchoolRegCodeApplied"] = 0;
+        //                 }
 
-                        let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
-                        console.log("memProds",memProds);
-                        memProds.map((x, mIndex) =>{
-                            console.log("$$$$$$$$$$$$$$")
-                            calculateFee(action.value, x, gameVoucherVal, compParticipant, isSchoolRegCodeApplied, participantList);
-                            calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal, null, compParticipant, isSchoolRegCodeApplied);
+        //                 let gameVoucherVal = reviewData["compParticipants"][action.index][action.subkey]["gameVoucherValue"] ;
+        //                 console.log("memProds",memProds);
+        //                 memProds.map((x, mIndex) =>{
+        //                     console.log("$$$$$$$$$$$$$$")
+        //                     calculateFee(action.value, x, gameVoucherVal, compParticipant, isSchoolRegCodeApplied, participantList);
+        //                     calculateDiscount(x.selectedDiscounts, x, action.value,  gameVoucherVal, null, compParticipant, isSchoolRegCodeApplied);
 
-                            x.feesToPay = formatValue(x.feesToPay);
-                            x.discountsToDeduct = formatValue(x.discountsToDeduct);
-                            x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct);
-                        })
-                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+        //                     x.feesToPay = formatValue(x.feesToPay);
+        //                     x.discountsToDeduct = formatValue(x.discountsToDeduct);
+        //                     x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct);
+        //                 })
+        //                 reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
 
-                        setIsSchoolRegistration(reviewData);
-                    }
-                    else if(action.key == "gameVoucherValue"){
-                        reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
+        //                 setIsSchoolRegistration(reviewData);
+        //             }
+        //             else if(action.key == "gameVoucherValue"){
+        //                 reviewData["compParticipants"][action.index][action.subkey]["paymentOptionRefId"] = 2;
 
-                        memProds.map((x, mIndex) =>{
-                            calculateFee(2, x, action.value, compParticipant, isSchoolRegCodeApplied,participantList);
-                            calculateDiscount(x.selectedDiscounts, x, 2,  action.value, null, compParticipant, isSchoolRegCodeApplied);
-                            x.feesToPay = formatValue(x.feesToPay);
-                            x.discountsToDeduct = formatValue(x.discountsToDeduct);
-                            x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct)
-                        })
+        //                 memProds.map((x, mIndex) =>{
+        //                     calculateFee(2, x, action.value, compParticipant, isSchoolRegCodeApplied,participantList);
+        //                     calculateDiscount(x.selectedDiscounts, x, 2,  action.value, null, compParticipant, isSchoolRegCodeApplied);
+        //                     x.feesToPay = formatValue(x.feesToPay);
+        //                     x.discountsToDeduct = formatValue(x.discountsToDeduct);
+        //                     x.childDiscountsToDeduct = formatValue(x.childDiscountsToDeduct)
+        //                 })
                         
-                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
-                    }
-                    else if(action.key == "selectedCode"){
-                        reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex]["invalidCode"] = 0;
-                        reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex][action.key] = action.value;
-                    }
-                    else if(action.key == "selectedSchoolRegCode"){
-                        reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = action.value ;
-                        reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
-                    }
-                    else{
-                        reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
-                    }
-                }
-            }
+        //                 reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+        //             }
+        //             else if(action.key == "selectedCode"){
+        //                 reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex]["invalidCode"] = 0;
+        //                 reviewData["compParticipants"][action.index]["membershipProducts"][action.subIndex][action.key] = action.value;
+        //             }
+        //             else if(action.key == "selectedSchoolRegCode"){
+        //                 reviewData["compParticipants"][action.index][action.subkey]["selectedSchoolRegCode"] = action.value ;
+        //                 reviewData["compParticipants"][action.index][action.subkey]["invalidSchoolRegCode"] = 0;
+        //             }
+        //             else{
+        //                 reviewData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+        //             }
+        //         }
+        //     }
 
-            //console.log("ReviewData", reviewData);
+        //     //console.log("ReviewData", reviewData);
             
-            return {
-                ...state,
-                error: null
-            }
+        //     return {
+        //         ...state,
+        //         error: null
+        //     }
 
         case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD:
             return { ...state, onRegReviewPrdLoad: true };

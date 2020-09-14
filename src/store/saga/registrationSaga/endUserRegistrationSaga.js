@@ -183,42 +183,42 @@ export function* getRegistrationProductFeesSaga(action) {
 }
 
 
-////// Get Registration Review
-export function* getRegistrationReviewSaga(action) {
-  try {
-    const result = yield call(AxiosApi.getRegistrationReview, action.payload);
-    if (result.status === 1) {
-      yield put({
-        type: ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS,
-        result: result.result.data,
-        status: result.status
-      });
-    } else {
-      yield call(failSaga, result)
-    }
-  } catch (error) {
-    yield call(errorSaga, error)
-  }
-}
+// ////// Get Registration Review
+// export function* getRegistrationReviewSaga(action) {
+//   try {
+//     const result = yield call(AxiosApi.getRegistrationReview, action.payload);
+//     if (result.status === 1) {
+//       yield put({
+//         type: ApiConstants.API_GET_REGISTRATION_REVIEW_SUCCESS,
+//         result: result.result.data,
+//         status: result.status
+//       });
+//     } else {
+//       yield call(failSaga, result)
+//     }
+//   } catch (error) {
+//     yield call(errorSaga, error)
+//   }
+// }
 
 
-////// Save Registration Review
-export function* saveRegistrationReviewSaga(action) {
-  try {
-    const result = yield call(AxiosApi.saveRegistrationReview, action.payload);
-    if (result.status === 1) {
-      yield put({
-        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS,
-        result: result.result.data,
-        status: result.status
-      });
-    } else {
-      yield call(failSaga, result)
-    }
-  } catch (error) {
-    yield call(errorSaga, error)
-  }
-}
+// ////// Save Registration Review
+// export function* saveRegistrationReviewSaga(action) {
+//   try {
+//     const result = yield call(AxiosApi.saveRegistrationReview, action.payload);
+//     if (result.status === 1) {
+//       yield put({
+//         type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS,
+//         result: result.result.data,
+//         status: result.status
+//       });
+//     } else {
+//       yield call(failSaga, result)
+//     }
+//   } catch (error) {
+//     yield call(errorSaga, error)
+//   }
+// }
 
 
 ////// Get Registration Review Products

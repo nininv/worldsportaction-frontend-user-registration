@@ -21,6 +21,8 @@ import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
+import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction, } from 
+            '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -43,11 +45,91 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-
+        //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "ddd181dc-cf8a-4327-a28a-bfa6a789417b";
+        this.setState({registrationUniqueKey: registrationUniqueKey});
+        this.getApiInfo(registrationUniqueKey);
     }
     componentDidUpdate(nextProps){
 
-    }   
+    }  
+    
+    getApiInfo = (registrationUniqueKey) => {
+        let payload = {
+            registrationId: registrationUniqueKey
+        }
+        this.props.getRegistrationReviewAction(payload);
+    }
+
+    saveReviewForm = (e) =>{
+        e.preventDefault();
+        let registrationState = this.props.registrationProductState;
+        let registrationReviewList = registrationState.registrationReviewList;
+        let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        if(incompletePaymentMessage != ''){
+            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            message.error(incompletePaymentMessage);
+            return;
+        }else{
+            incompletePaymentMessage = null;
+        }
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log("Error: " + err);
+            if(!err)
+            {
+                let registrationReview = this.props.endUserRegistrationState.registrationReviewList;
+                registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                // let payload = {
+                //     "registrationId": this.state.registrationUniqueKey,
+                //     "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
+                //     "compParticipants":[]
+                // }
+
+                console.log("registrationReview", registrationReview);
+
+                registrationReview.compParticipants.map((x, index) => {
+                    let arr = [];
+                    x.membershipProducts.map((y) => {
+                        arr.push(...y.selectedDiscounts);
+                     });
+                     x.selectedOptions.selectedDiscounts = arr;
+                });
+
+              //  console.log("payload" + JSON.stringify(registrationReview));
+                this.props.saveRegistrationReview(registrationReview);
+                this.setState({loading: true});
+
+            }
+        });
+    }
+
+    checkPayment = (regReviewData) => {
+        try{
+            let competitionNames = '';
+            let competitionNameMap = new Map();
+            regReviewData.compParticipants.map((participant,index) =>{
+                let paymentOptionTemp = participant.paymentOptions != null ? participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5) : undefined;
+                if(paymentOptionTemp == undefined){
+                    if(competitionNameMap.get(participant.competitionName) == undefined){
+                        competitionNameMap.set(participant.competitionName,index);
+                            if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
+                                competitionNames = competitionNames.slice(0,-2);
+                                competitionNames += " and " + participant.competitionName + ', ';
+                            }else{
+                                competitionNames += participant.competitionName + ', ';
+                            }
+                    }
+                }
+            });
+            console.log("comp name::"+competitionNames);
+            return competitionNames.slice(0,-2);
+        }catch(error){
+            throw error;
+        }
+    }
+
+
     headerView = () =>{
         return(
             <div className="col-sm-8" style={{display:"flex" , justifyContent:"space-between" , paddingRight:0}}>
@@ -66,7 +148,6 @@ class RegistrationProducts extends Component {
             <div>
                 {this.userInfoView()}
                 {this.playerView()}
-                {this.coachView()}
                 {this.discountcodeView()}
                 {this.governmentVoucherView()}
             </div>
@@ -111,46 +192,26 @@ class RegistrationProducts extends Component {
     playerView = () =>{
         return(
             <div className="innerview-outline">
-                <div className = "product-text-common" style={{fontWeight:500}}>
-                    {AppConstants.membershipProduct}
-                </div>
-                <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
-                    {AppConstants.player}
-                </div>
-                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "8px"}}>
+                <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className = "product-text-common" style={{fontWeight:500}}>
+                        {AppConstants.registration}{"(s)"}
+                    </div>
+                    <div className="product-text-common" style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                        {AppConstants.player}
+                    </div>
+                    <div className="product-text-common" style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                        {AppConstants.coach}
+                    </div>
+                </div>               
+                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "16px"}}>
                     {AppConstants.wouldYouLikeTopay}
                 </div>
                 <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">
-                            <Radio  value={1}>{AppConstants.payAsYou}</Radio>
-                            <Radio  value={2}>{AppConstants.gameVoucher}</Radio>
-                            <Radio  value={3}>{AppConstants.payfullAmount}</Radio>
-                            <Radio  value={4}>{AppConstants.weeklyInstalment}</Radio>
-                            <Radio  value={5}>{AppConstants.schoolRegistration}</Radio>
-                    </Radio.Group>
-                </div>
-            </div>
-        )
-    }
-    coachView = () =>{
-        return(
-            <div className="innerview-outline">
-                <div className = "product-text-common" style={{fontWeight:500}}>
-                    {AppConstants.membershipProduct}
-                </div>
-                <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
-                    {AppConstants.coach}
-                </div>
-                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "8px"}}>
-                    {AppConstants.wouldYouLikeTopay}
-                </div>
-                <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">
-                            <Radio  value={1}>{AppConstants.payAsYou}</Radio>
-                            <Radio  value={2}>{AppConstants.gameVoucher}</Radio>
-                            <Radio  value={3}>{AppConstants.payfullAmount}</Radio>
-                            <Radio  value={4}>{AppConstants.weeklyInstalment}</Radio>
-                            <Radio  value={5}>{AppConstants.schoolRegistration}</Radio>
+                    <Radio.Group className="product-radio-group">                           
+                        <Radio  value={1}>{AppConstants.payfullAmount}</Radio>
+                        <Radio  value={2}>{AppConstants.weeklyInstalment}</Radio>
+                        <Radio  value={3}>{AppConstants.payAsYou}</Radio>
+                        <Radio  value={4}>{AppConstants.schoolRegistration}</Radio>
                     </Radio.Group>
                 </div>
             </div>
@@ -288,11 +349,11 @@ class RegistrationProducts extends Component {
                 <div className="product-text-common" style={{fontSize: 21}}>
                     {AppConstants.yourOrder}
                 </div>
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)" , paddingBottom:12}}>
+                <div style={{paddingBottom:12}}>
                     <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
                         John Smith - NWA Winter 2020 - AR1
                     </div>
-                    <div  className="product-text-common mt-10" style={{display:"flex"}}>
+                    <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.player}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
                         <div>
@@ -310,12 +371,29 @@ class RegistrationProducts extends Component {
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
                     </div>
-                    <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500 ,}}>
+                    <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
+                    </div>  
+                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                            <div>
+                                <img src={AppImages.userIcon}/>
+                            </div>
+                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                                <div>
+                                    {AppConstants.vixensWarmUpShirt}
+                                </div>
+                                <div>(X1)</div>                               
+                            </div>
+                        </div>
+                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>-$20</div>
+                        <div style={{paddingTop:26}}>
+                            <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        </div>
                     </div>               
                 </div>
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex"}}>
+                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
                 </div>
@@ -365,12 +443,13 @@ class RegistrationProducts extends Component {
                 <Layout style={{margin: "32px 40px 10px 40px"}}>
                     {this.headerView()}
                     <Form
-                        // autocomplete="off"
-                        // scrollToFirstError={true}
-                        // onSubmit={this.saveRegistrationForm}
-                        // noValidate="noValidate"
+                        autocomplete="off"
+                        scrollToFirstError={true}
+                        onSubmit={this.saveRegistrationForm}
+                        noValidate="noValidate"
                     >
                         <Content>
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
@@ -386,14 +465,16 @@ class RegistrationProducts extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-       						 
+        getRegistrationReviewAction,
+        saveRegistrationReview,
+        updateReviewInfoAction,					 
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        
+       registrationProductState: state.RegistrationProductState 
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationProducts));
