@@ -28,6 +28,9 @@ import ProductDetails from "../components/shop/productDetails";
 import TeamRegistrationReview from '../components/registration/teamRegistrationReview';
 import TeamReviewProducts from '../components/registration/teamReviewProducts';
 import RegistrationProducts from "../components/registration/registrationProducts";
+import RegistrationShop from "../components/registration/registrationShop";
+import RegistrationPayment from "../components/registration/registrationPayment";
+import RegistrationShipping from "../components/registration/registrationShipping";
 
 
 const lazyLoad = Component => {
@@ -137,6 +140,21 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/registrationProducts"
           component={lazyLoad(RegistrationProducts)}
+        />
+
+        <PrivateRoute
+          path="/registrationShop"
+          component={lazyLoad(RegistrationShop)}
+        />
+
+        <PrivateRoute
+          path="/registrationPayment"
+          component={lazyLoad(RegistrationPayment)}
+        />
+
+        <PrivateRoute
+          path="/registrationShipping"
+          component={lazyLoad(RegistrationShipping)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />
