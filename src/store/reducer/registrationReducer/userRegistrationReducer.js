@@ -246,13 +246,13 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
 		if(competitionData){
+			let product = {
+				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
+				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
+				"isSelected": competitionData	
+			}
+			state.registrationObj.competitions[competitionIndex].products.push(product);
 			for(let division of membershipProductInfo.divisions){
-				let product = {
-					"competitionMembershipProductId": division.competitionMembershipProductId,
-					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-					"isSelected": competitionData	
-				}
-				state.registrationObj.competitions[competitionIndex].products.push(product);
 				let divisionInfo = {
 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
