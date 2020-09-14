@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import AppConstants from "../../../themes/appConstants";
+import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -49,53 +49,53 @@ let registrationObjTemp = {
 	],
 	"tempParents": [],
 	"competitions": [
-		{
-			"organisationId": null,
-			"competitionId": null,
-			"organisationInfo": null,
-			"competitionInfo": null,
-			"products": [
-				{
-					"competitionMembershipProductId": null,
-					"competitionMembershipProductTypeId": null,
-					"isSelected": false
-				}
-			],
-			"divisionInfo":[
-				{
-					"competitionMembershipProductTypeId": null,
-					"competitionMembershipProductDivisionId": null
-				}
-			],
-			"divisions": [
-				{
-					"competitionMembershipProductTypeId": null,
-					"competitionMembershipProductDivisionId": null
-				}
-			],
-			"fees": {
-				"totalCasualFee": null,
-				"totalSeasonalFee": null
-			},
-			"positionId1": null,
-			"positionId2": null,
-			"friends": [
-				{
-					"firstName": null,
-					"lastName": null,
-					"mobileNumber": null,
-					"email": null
-				}
-			],
-			"referFriends": [
-				{
-					"firstName": null,
-					"lastName": null,
-					"mobileNumber": null,
-					"email": null
-				}
-			]
-		}
+		// {
+		// 	"organisationId": null,
+		// 	"competitionId": null,
+		// 	"organisationInfo": null,
+		// 	"competitionInfo": null,
+		// 	"products": [
+		// 		{
+		// 			"competitionMembershipProductId": null,
+		// 			"competitionMembershipProductTypeId": null,
+		// 			"isSelected": false
+		// 		}
+		// 	],
+		// 	"divisionInfo":[
+		// 		{
+		// 			"competitionMembershipProductTypeId": null,
+		// 			"competitionMembershipProductDivisionId": null
+		// 		}
+		// 	],
+		// 	"divisions": [
+		// 		{
+		// 			"competitionMembershipProductTypeId": null,
+		// 			"competitionMembershipProductDivisionId": null
+		// 		}
+		// 	],
+		// 	"fees": {
+		// 		"totalCasualFee": null,
+		// 		"totalSeasonalFee": null
+		// 	},
+		// 	"positionId1": null,
+		// 	"positionId2": null,
+		// 	"friends": [
+		// 		{
+		// 			"firstName": null,
+		// 			"lastName": null,
+		// 			"mobileNumber": null,
+		// 			"email": null
+		// 		}
+		// 	],
+		// 	"referFriends": [
+		// 		{
+		// 			"firstName": null,
+		// 			"lastName": null,
+		// 			"mobileNumber": null,
+		// 			"email": null
+		// 		}
+		// 	]
+		// }
 	],
 	"regSetting":{
 		"updates":0,
@@ -144,6 +144,54 @@ let registrationObjTemp = {
 	}
 }
 
+const competitionObjTemp = {
+	"organisationId": null,
+	"competitionId": null,
+	"organisationInfo": null,
+	"competitionInfo": null,
+	"products": [
+		{
+			// "competitionMembershipProductId": null,
+			// "competitionMembershipProductTypeId": null,
+			// "isSelected": false
+		}
+	],
+	"divisionInfo":[
+		// {
+		// 	"competitionMembershipProductTypeId": null,
+		// 	"competitionMembershipProductDivisionId": null
+		// }
+	],
+	"divisions": [
+		// {
+		// 	"competitionMembershipProductTypeId": null,
+		// 	"competitionMembershipProductDivisionId": null
+		// }
+	],
+	"fees": {
+		"totalCasualFee": null,
+		"totalSeasonalFee": null
+	},
+	"positionId1": null,
+	"positionId2": null,
+	"friends": [
+		{
+			"firstName": null,
+			"lastName": null,
+			"mobileNumber": null,
+			"email": null
+		}
+	],
+	"referFriends": [
+		{
+			"firstName": null,
+			"lastName": null,
+			"mobileNumber": null,
+			"email": null
+		}
+	]
+}
+
 const initialState = {
 	onLoad:false,
     registrationObj: null,
@@ -153,24 +201,76 @@ const initialState = {
 }
 
 function getUserUpdatedRegistrationObj(state,action){
-	let registrationObj = registrationObjTemp;
-	if(action.data != -1 && action.data != -2){
-		let selectedUser = state.userInfo.find((user) => user.id == action.data);
-		registrationObj.firstName = selectedUser.firstName;
-		registrationObj.lastName = selectedUser.lastName;
-		registrationObj.email = selectedUser.email;
-		registrationObj.genderRefId = selectedUser.genderRefId;
-		registrationObj.profileUrl = selectedUser.photoUrl;
-		registrationObj.dateOfBirth = selectedUser.dateOfBirth;
-		registrationObj.street1 = selectedUser.street1;
-		registrationObj.street2 = selectedUser.street2;
-		registrationObj.suburb = selectedUser.suburb;
-		registrationObj.postalCode = selectedUser.postalCode;	
-		registrationObj.stateRefId = selectedUser.stateRefId;
-		registrationObj.mobileNumber = selectedUser.mobileNumber;
-		registrationObj.refFlag = "participant";
+	try{
+		let registrationObj = registrationObjTemp;
+		if(action.data != -1 && action.data != -2){
+			let selectedUser = state.userInfo.find((user) => user.id == action.data);
+			registrationObj.firstName = selectedUser.firstName;
+			registrationObj.lastName = selectedUser.lastName;
+			registrationObj.email = selectedUser.email;
+			registrationObj.genderRefId = selectedUser.genderRefId;
+			registrationObj.profileUrl = selectedUser.photoUrl;
+			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
+			registrationObj.street1 = selectedUser.street1;
+			registrationObj.street2 = selectedUser.street2;
+			registrationObj.suburb = selectedUser.suburb;
+			registrationObj.postalCode = selectedUser.postalCode;	
+			registrationObj.stateRefId = selectedUser.stateRefId;
+			registrationObj.mobileNumber = selectedUser.mobileNumber;
+			registrationObj.refFlag = "participant";
+		}
+		return registrationObj;
+	}catch(ex){
+		console.log("Error in getUserUpdatedRegistrationObj in userRegistrationReducer"+ex);
 	}
-	return registrationObj;
+}
+
+function setMembershipProductsInfo(state){
+	try{
+		if(getOrganisationId() != null && getCompetitonId() != null){
+			competitionObjTemp.organisationId = getOrganisationId();
+			competitionObjTemp.competitionId = getCompetitonId();
+			let organisatinInfoTemp = state.membershipProductInfo.find(organisation => organisation.organisationUniqueKey == competitionObjTemp.organisationId);
+			competitionObjTemp.organisationInfo = organisatinInfoTemp;
+			let competitionInfoTemp = competitionObjTemp.organisationInfo.competitions.find(competition => competition.competitionUniqueKey == competitionObjTemp.competitionId);
+			competitionObjTemp.competitionInfo = competitionInfoTemp;
+			state.registrationObj.competitions.push(competitionObjTemp);
+		}
+	}catch(ex){
+		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
+	}
+}
+
+function setMembershipProductsAndDivisionInfo(state,competitionData,competitionIndex,competitionSubIndex){
+	try{
+		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
+		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
+		if(competitionData){
+			let product = {
+				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
+				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
+				"isSelected": competitionData	
+			}
+			state.registrationObj.competitions[competitionIndex].products.push(product);
+			for(let division of membershipProductInfo.divisions){
+				let divisionInfo = {
+					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+					"divisionName": division.divisionName
+				}
+				state.registrationObj.competitions[competitionIndex].divisionInfo.push(divisionInfo);
+			} 
+		}else{
+			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
+			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
+			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);					
+			state.registrationObj.competitions[competitionIndex].products = filteredProducts;
+			let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+			state.registrationObj.competitions[competitionIndex].divisionInfo = filteredDivisionInfo;
+		}
+	}catch(ex){
+		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
+	}
 }
 
 function userRegistrationReducer(state = initialState, action){
@@ -190,6 +290,7 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.SELECT_PARTICIPANT: 
 			registrationObjTemp[action.key] = action.data;
 			state.registrationObj = getUserUpdatedRegistrationObj(state,action);
+			setMembershipProductsInfo(state);
 			return { 
 				...state 
 			}
@@ -227,6 +328,19 @@ function userRegistrationReducer(state = initialState, action){
 				onMembershipLoad: false,
 				status: action.status,
 				membershipProductInfo: data
+			};
+
+		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT: 
+			let competitionData = action.data;
+			let competitionKey = action.key;
+			let competitionIndex = action.index;
+			let competitionSubIndex = action.subIndex;
+			if(competitionKey == "products"){
+				setMembershipProductsAndDivisionInfo(state,competitionData,
+					competitionIndex,competitionSubIndex);
+			}
+			return {
+				...state
 			};
 				
         default:

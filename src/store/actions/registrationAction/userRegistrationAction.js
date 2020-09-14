@@ -26,6 +26,17 @@ function updateUserRegistrationObjectAction(data,key){
     return action;
 }
 
+function updateParticipantCompetitionAction(data,key,index,subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT,
+        data: data,
+        key: key,
+        index: index,
+        subIndex: subIndex
+    }
+    return action;
+}
+
 function getParticipantInfoById(participantKey) {
     const action = {
         type: ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD,
@@ -56,5 +67,6 @@ export{
     updateUserRegistrationObjectAction,
     getParticipantInfoById,
     saveParticipantInfo,
-    membershipProductEndUserRegistrationAction
+    membershipProductEndUserRegistrationAction,
+    updateParticipantCompetitionAction
 }
