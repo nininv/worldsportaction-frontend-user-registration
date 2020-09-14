@@ -21,8 +21,8 @@ import TeamRegistrationForm from "../components/registration/teamRegistrationFor
 import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
 import UserProfileEdit from "../components/user/userProfileEdit"
 import DeRegistration from "../components/registration/deRegistration";
-import RegistrationReviewForm from '../components/registration/registrationReviewForm';
-import ReviewProducts from '../components/registration/reviewProducts';
+// import RegistrationReviewForm from '../components/registration/registrationReviewForm';
+// import ReviewProducts from '../components/registration/reviewProducts';
 import ListProducts from "../components/shop/listProducts";
 import ProductDetails from "../components/shop/productDetails";
 import TeamRegistrationReview from '../components/registration/teamRegistrationReview';
@@ -119,14 +119,14 @@ class Routes extends React.Component {
           path="/productDetails"
           component={lazyLoad(ProductDetails)}
         />
-        <PrivateRoute
+        {/* <PrivateRoute
           path="/registrationReview"
           component={lazyLoad(RegistrationReviewForm)}
         />
         <PrivateRoute
           path="/reviewProducts"
           component={lazyLoad(ReviewProducts)}
-        />
+        /> */}
 
         <PrivateRoute
           path="/teamRegistrationReview"

@@ -21,6 +21,8 @@ import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
+import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction, } from 
+            '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -43,11 +45,91 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-
+        //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "ddd181dc-cf8a-4327-a28a-bfa6a789417b";
+        this.setState({registrationUniqueKey: registrationUniqueKey});
+        this.getApiInfo(registrationUniqueKey);
     }
     componentDidUpdate(nextProps){
 
-    }   
+    }  
+    
+    getApiInfo = (registrationUniqueKey) => {
+        let payload = {
+            registrationId: registrationUniqueKey
+        }
+        this.props.getRegistrationReviewAction(payload);
+    }
+
+    saveReviewForm = (e) =>{
+        e.preventDefault();
+        let registrationState = this.props.registrationProductState;
+        let registrationReviewList = registrationState.registrationReviewList;
+        let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        if(incompletePaymentMessage != ''){
+            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            message.error(incompletePaymentMessage);
+            return;
+        }else{
+            incompletePaymentMessage = null;
+        }
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log("Error: " + err);
+            if(!err)
+            {
+                let registrationReview = this.props.endUserRegistrationState.registrationReviewList;
+                registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                // let payload = {
+                //     "registrationId": this.state.registrationUniqueKey,
+                //     "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
+                //     "compParticipants":[]
+                // }
+
+                console.log("registrationReview", registrationReview);
+
+                registrationReview.compParticipants.map((x, index) => {
+                    let arr = [];
+                    x.membershipProducts.map((y) => {
+                        arr.push(...y.selectedDiscounts);
+                     });
+                     x.selectedOptions.selectedDiscounts = arr;
+                });
+
+              //  console.log("payload" + JSON.stringify(registrationReview));
+                this.props.saveRegistrationReview(registrationReview);
+                this.setState({loading: true});
+
+            }
+        });
+    }
+
+    checkPayment = (regReviewData) => {
+        try{
+            let competitionNames = '';
+            let competitionNameMap = new Map();
+            regReviewData.compParticipants.map((participant,index) =>{
+                let paymentOptionTemp = participant.paymentOptions != null ? participant.paymentOptions.find((paymentOption) => paymentOption.paymentOptionRefId <= 5) : undefined;
+                if(paymentOptionTemp == undefined){
+                    if(competitionNameMap.get(participant.competitionName) == undefined){
+                        competitionNameMap.set(participant.competitionName,index);
+                            if(index == regReviewData.compParticipants.length - 1  && competitionNameMap.size != 1){
+                                competitionNames = competitionNames.slice(0,-2);
+                                competitionNames += " and " + participant.competitionName + ', ';
+                            }else{
+                                competitionNames += participant.competitionName + ', ';
+                            }
+                    }
+                }
+            });
+            console.log("comp name::"+competitionNames);
+            return competitionNames.slice(0,-2);
+        }catch(error){
+            throw error;
+        }
+    }
+
+
     headerView = () =>{
         return(
             <div className="col-sm-8" style={{display:"flex" , justifyContent:"space-between" , paddingRight:0}}>
@@ -361,12 +443,13 @@ class RegistrationProducts extends Component {
                 <Layout style={{margin: "32px 40px 10px 40px"}}>
                     {this.headerView()}
                     <Form
-                        // autocomplete="off"
-                        // scrollToFirstError={true}
-                        // onSubmit={this.saveRegistrationForm}
-                        // noValidate="noValidate"
+                        autocomplete="off"
+                        scrollToFirstError={true}
+                        onSubmit={this.saveRegistrationForm}
+                        noValidate="noValidate"
                     >
                         <Content>
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
@@ -382,14 +465,16 @@ class RegistrationProducts extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-       						 
+        getRegistrationReviewAction,
+        saveRegistrationReview,
+        updateReviewInfoAction,					 
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        
+       registrationProductState: state.RegistrationProductState 
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationProducts));

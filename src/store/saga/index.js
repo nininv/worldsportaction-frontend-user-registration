@@ -17,6 +17,9 @@ import * as userSaga from '../saga/userSaga/userSaga';
 // EndUserRegistrationSaga
 import * as endUserRegSaga from '../saga/registrationSaga/endUserRegistrationSaga';
 
+// Registration Products Saga
+import * as regProductsSaga from '../saga/registrationSaga/registrationProductsSaga';
+
 //Live Score
 import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
 import { liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
@@ -159,10 +162,10 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD, shopProductSaga.addToCartSaga)
 
   //Get Registration Review
-  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, regProductsSaga.getRegistrationReviewSaga)
 
   //Save Registration Revie
-  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
+  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, regProductsSaga.saveRegistrationReviewSaga)
 
   //Get Registration Review Products
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getRegistrationReviewProductsSaga)
