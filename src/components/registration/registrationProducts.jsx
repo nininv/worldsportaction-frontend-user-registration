@@ -66,7 +66,6 @@ class RegistrationProducts extends Component {
             <div>
                 {this.userInfoView()}
                 {this.playerView()}
-                {this.coachView()}
                 {this.discountcodeView()}
                 {this.governmentVoucherView()}
             </div>
@@ -111,46 +110,26 @@ class RegistrationProducts extends Component {
     playerView = () =>{
         return(
             <div className="innerview-outline">
-                <div className = "product-text-common" style={{fontWeight:500}}>
-                    {AppConstants.membershipProduct}
-                </div>
-                <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
-                    {AppConstants.player}
-                </div>
-                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "8px"}}>
+                <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className = "product-text-common" style={{fontWeight:500}}>
+                        {AppConstants.registration}{"(s)"}
+                    </div>
+                    <div className="product-text-common" style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                        {AppConstants.player}
+                    </div>
+                    <div className="product-text-common" style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                        {AppConstants.coach}
+                    </div>
+                </div>               
+                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "16px"}}>
                     {AppConstants.wouldYouLikeTopay}
                 </div>
                 <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">
-                            <Radio  value={1}>{AppConstants.payAsYou}</Radio>
-                            <Radio  value={2}>{AppConstants.gameVoucher}</Radio>
-                            <Radio  value={3}>{AppConstants.payfullAmount}</Radio>
-                            <Radio  value={4}>{AppConstants.weeklyInstalment}</Radio>
-                            <Radio  value={5}>{AppConstants.schoolRegistration}</Radio>
-                    </Radio.Group>
-                </div>
-            </div>
-        )
-    }
-    coachView = () =>{
-        return(
-            <div className="innerview-outline">
-                <div className = "product-text-common" style={{fontWeight:500}}>
-                    {AppConstants.membershipProduct}
-                </div>
-                <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
-                    {AppConstants.coach}
-                </div>
-                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "8px"}}>
-                    {AppConstants.wouldYouLikeTopay}
-                </div>
-                <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">
-                            <Radio  value={1}>{AppConstants.payAsYou}</Radio>
-                            <Radio  value={2}>{AppConstants.gameVoucher}</Radio>
-                            <Radio  value={3}>{AppConstants.payfullAmount}</Radio>
-                            <Radio  value={4}>{AppConstants.weeklyInstalment}</Radio>
-                            <Radio  value={5}>{AppConstants.schoolRegistration}</Radio>
+                    <Radio.Group className="product-radio-group">                           
+                        <Radio  value={1}>{AppConstants.payfullAmount}</Radio>
+                        <Radio  value={2}>{AppConstants.weeklyInstalment}</Radio>
+                        <Radio  value={3}>{AppConstants.payAsYou}</Radio>
+                        <Radio  value={4}>{AppConstants.schoolRegistration}</Radio>
                     </Radio.Group>
                 </div>
             </div>
@@ -288,11 +267,11 @@ class RegistrationProducts extends Component {
                 <div className="product-text-common" style={{fontSize: 21}}>
                     {AppConstants.yourOrder}
                 </div>
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)" , paddingBottom:12}}>
+                <div style={{paddingBottom:12}}>
                     <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
                         John Smith - NWA Winter 2020 - AR1
                     </div>
-                    <div  className="product-text-common mt-10" style={{display:"flex"}}>
+                    <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.player}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
                         <div>
@@ -310,12 +289,29 @@ class RegistrationProducts extends Component {
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
                     </div>
-                    <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500 ,}}>
+                    <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
+                    </div>  
+                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                            <div>
+                                <img src={AppImages.userIcon}/>
+                            </div>
+                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                                <div>
+                                    {AppConstants.vixensWarmUpShirt}
+                                </div>
+                                <div>(X1)</div>                               
+                            </div>
+                        </div>
+                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>-$20</div>
+                        <div style={{paddingTop:26}}>
+                            <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        </div>
                     </div>               
                 </div>
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex"}}>
+                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
                 </div>
