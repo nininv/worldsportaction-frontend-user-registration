@@ -24,7 +24,7 @@ function updateReviewInfoAction(value, key, index, subkey, subIndex){
         value: value,
         key: key,
         index: index,
-        subkey: subkey,
+        subKey: subkey,
         subIndex: subIndex
     }
 
