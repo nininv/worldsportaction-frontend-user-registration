@@ -68,7 +68,7 @@ class UserRegistration extends Component {
             userId!= 0)
             {
                 await setIsUserRegistration(1);
-                history.push("/appRegistrationFormNew")
+                history.push("/appRegistrationForm")
             }
             else{
                 await setIsUserRegistration(1);
