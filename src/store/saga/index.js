@@ -69,7 +69,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, endUserRegSaga.orgRegistrationRegistrationSettings)
 
   //EndUserRegistration Membership Products
-  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, endUserRegSaga.endUserRegistrationMembershipProducts)
+  //yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, endUserRegSaga.endUserRegistrationMembershipProducts)
 
   /// Gender Reference Saga
   yield takeEvery(ApiConstants.API_GENDER_REFERENCE_LOAD, genderReferenceSaga)
@@ -198,13 +198,16 @@ export default function* root_saga() {
 
 
   //New ragistration design
-  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, userRegistrationSaga.endUserRegistrationUserInfoSaga)
+  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, userRegistrationSaga.endUserRegistrationUserInfoSaga);
 
   //Get ParticipantDataById
-  yield takeEvery(ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD, userRegistrationSaga.getParticipantDataById)
+  yield takeEvery(ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD, userRegistrationSaga.getParticipantDataById);
 
   //Save ParticipantData
-  yield takeEvery(ApiConstants.API_SAVE_PARTICIPANT_LOAD, userRegistrationSaga.saveParticipantData)
+  yield takeEvery(ApiConstants.API_SAVE_PARTICIPANT_LOAD, userRegistrationSaga.saveParticipantData);
+
+  //UserRegistration Membership Products
+  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, userRegistrationSaga.endUserRegistrationMembershipProducts)
 
 
 }

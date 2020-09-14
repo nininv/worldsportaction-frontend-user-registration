@@ -1014,6 +1014,14 @@ const AppConstants = {
  loginAndProceedRegistration: "LOGIN & PROCEED TO REGISTRATION",
  proceedToRegistration: "PROCEED TO REGISTRATION",
  forgotResetPassword: 'Forgot/ Reset Password',
+ findAddress: "Find Address",
+ enterAddressManually: "Enter Address Manually",
+ country: "Country",
+ newParentOrGuardian: "New Parent/Guardian",
+ returnToAddressSearch: "Return to Address Search",
+ enterAddress: "Enter Address",
+ addCompetitionAndMembership: "Add Competition and Membership",
+ signupToCompetition: "Sign up to Competition"
 };
 
 export default AppConstants;

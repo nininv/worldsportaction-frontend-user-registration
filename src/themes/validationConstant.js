@@ -95,6 +95,8 @@ const ValidationConstants = {
     teamRequired: "Please select Team",
     deRegisterReasonRequired: "Please select the reason to De-register",
     deRegisterChangeTypeRequired: "Please select the De-register change type",
+
+    countryField: ['Country field is required.'],
 };
 
 export default ValidationConstants;

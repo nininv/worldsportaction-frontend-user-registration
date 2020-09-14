@@ -23,20 +23,22 @@ let registrationObjTemp = {
 	"latitue": null,
 	"longitude": null,
 	"refFlag": null,
+	"addNewAddressFlag": false,
+	"manualEnterAddressFlag": false,
 	"parentOrGuardian": [
-		{
-			"tempParentId": null,
-			"firstName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null,
-			"street1": null,
-			"street2": null,
-			"suburb": null,
-			"stateRefId": null,
-			"countryRefId": null,
-			"postalCode": null
-		}
+		// {
+		// 	"tempParentId": null,
+		// 	"firstName": null,
+		// 	"lastName": null,
+		// 	"mobileNumber": null,
+		// 	"email": null,
+		// 	"street1": null,
+		// 	"street2": null,
+		// 	"suburb": null,
+		// 	"stateRefId": null,
+		// 	"countryRefId": null,
+		// 	"postalCode": null
+		// }
 	],
 	"tempParentsDetail": [
 		{
@@ -146,7 +148,8 @@ const initialState = {
 	onLoad:false,
     registrationObj: null,
     userInfo: [],
-	userInfoOnLoad: false
+	userInfoOnLoad: false,
+	membershipProductInfo: [],
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -212,6 +215,18 @@ function userRegistrationReducer(state = initialState, action){
 				onLoad: false,
 				status: action.status,
 				registrationObj: participantData
+			};
+
+		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
+			return { ...state, onMembershipLoad: true };
+
+		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
+			let data = action.result;
+			return {
+				...state,
+				onMembershipLoad: false,
+				status: action.status,
+				membershipProductInfo: data
 			};
 				
         default:

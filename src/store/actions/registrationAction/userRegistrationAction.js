@@ -42,10 +42,19 @@ function saveParticipantInfo(payload) {
     return action;
 }
 
+function membershipProductEndUserRegistrationAction(payload) {
+    const action = {
+        type: ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
     updateUserRegistrationObjectAction,
     getParticipantInfoById,
-    saveParticipantInfo
+    saveParticipantInfo,
+    membershipProductEndUserRegistrationAction
 }

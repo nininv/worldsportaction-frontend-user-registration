@@ -41,13 +41,13 @@ function orgRegistrationRegSettingsEndUserRegAction(payload) {
 }
 
 /////End User Registration Membership Products
-function membershipProductEndUserRegistrationAction(payload) {
-    const action = {
-        type: ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD,
-        payload: payload
-    };
-    return action;
-}
+// function membershipProductEndUserRegistrationAction(payload) {
+//     const action = {
+//         type: ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD,
+//         payload: payload
+//     };
+//     return action;
+// }
 
 
 /////End User Registration getUser Info
@@ -289,7 +289,7 @@ export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
     orgRegistrationRegSettingsEndUserRegAction,
-    membershipProductEndUserRegistrationAction,
+    //membershipProductEndUserRegistrationAction,
     //getUserRegistrationUserInfoAction,
     clearRegistrationDataAction,
     updateRegistrationSettingsAction,
