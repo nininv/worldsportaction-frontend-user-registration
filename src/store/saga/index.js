@@ -74,8 +74,8 @@ export default function* root_saga() {
   /// Gender Reference Saga
   yield takeEvery(ApiConstants.API_GENDER_REFERENCE_LOAD, genderReferenceSaga)
 
-  /// Gender Reference Saga
-  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
+
+  // yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
 
   /// Disability Reference Saga
   yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)

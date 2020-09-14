@@ -56,12 +56,14 @@ let registrationObjTemp = {
 				{
 					"competitionMembershipProductId": null,
 					"competitionMembershipProductTypeId": null,
+					"isSelected": false
 				}
 			],
 			"divisions": [
 				{
 					"competitionMembershipProductTypeId": null,
 					"competitionMembershipProductDivisionId": null,
+					"isSelected": false
 				}
 			],
 			"fees": {
