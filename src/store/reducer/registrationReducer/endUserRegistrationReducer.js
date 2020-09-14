@@ -244,17 +244,17 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
-            return { ...state, userInfoOnLoad: true };
+        // case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
+        //     return { ...state, userInfoOnLoad: true };
 
-        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS:
-            let userInfoData = action.result;
-            return {
-                ...state,
-                userInfoOnLoad: false,
-                status: action.status,
-                userInfo: userInfoData
-            };
+        // case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS:
+        //     let userInfoData = action.result;
+        //     return {
+        //         ...state,
+        //         userInfoOnLoad: false,
+        //         status: action.status,
+        //         userInfo: userInfoData
+        //     };
        
         case ApiConstants.UPDATE_YOUR_INFO_ACTION:
             state.registrationDetail[action.subKey][action.key] = action.data;

@@ -2,14 +2,12 @@ import ApiConstants from "../../../themes/apiConstants";
 import AppConstants from "../../../themes/appConstants";
 
 let registrationObjTemp = {
-    "registrationUniqueKey": null,
-    "organisationUniqueKey": null,
-    "participantUniqueKey": 1,
+    "registrationId": null,
+    "pariticipantId": null,
     "registeringYourself": null,
-	"whatTypeOfRegistration": null,
-	"whoAreYouRegistering": null,
 	"userId": null,
 	"firstName": null,
+	"middleName": null,
 	"lastName": null,
 	"genderRefId": null,
 	"dateOfBirth": null,
@@ -20,23 +18,25 @@ let registrationObjTemp = {
 	"street2": null,
 	"suburb": null,
 	"stateRefId": null,
+	"countryRefId": null,
 	"postalCode": null,
 	"latitue": null,
 	"longitude": null,
 	"refFlag": null,
 	"parentOrGuardian": [
-		// {
-		// 	"tempParentId": null,
-		// 	"firstName": null,
-		// 	"lastName": null,
-		// 	"mobileNumber": null,
-		// 	"email": null,
-		// 	"street1": null,
-		// 	"street2": null,
-		// 	"suburb": null,
-		// 	"stateRefId": null,
-		// 	"postalCode": null
-		// }
+		{
+			"tempParentId": null,
+			"firstName": null,
+			"lastName": null,
+			"mobileNumber": null,
+			"email": null,
+			"street1": null,
+			"street2": null,
+			"suburb": null,
+			"stateRefId": null,
+			"countryRefId": null,
+			"postalCode": null
+		}
 	],
 	"tempParentsDetail": [
 		{
@@ -46,13 +46,12 @@ let registrationObjTemp = {
 		}
 	],
 	"tempParents": [],
-	"organizationId": null,
 	"competitions": [
 		{
+			"organisationId": null,
 			"competitionId": null,
-			"competitionName": null,
-			"startDate": null,
-			"endDate": null,
+			"organisationInfo": null,
+			"competitionInfo": null,
 			"products": [
 				{
 					"competitionMembershipProductId": null,
@@ -69,11 +68,6 @@ let registrationObjTemp = {
 				"totalCasualFee": null,
 				"totalSeasonalFee": null
 			},
-			"venues": [],
-			"training": null,
-			"specialNotes": null,
-			"organisationLogoUrl": null,
-			"organisationPhotos": [],
 			"positionId1": null,
 			"positionId2": null,
 			"friends": [
@@ -137,13 +131,12 @@ let registrationObjTemp = {
 		"childrenCheckNumber": null,
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
-		"countryRefId": null,
-		"nationalityRefId": null,
-		"languages": null
+		"countryRefId": null
 	}
 }
 
 const initialState = {
+	onLoad:false,
     registrationObj: null,
     userInfo: [],
 	userInfoOnLoad: false
@@ -172,10 +165,10 @@ function getUserUpdatedRegistrationObj(state,action){
 
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
-        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD_NEW:
+        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
             return { ...state, userInfoOnLoad: true };
 
-        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS_NEW:
+        case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS:
             let userInfoData = action.result;
             return {
                 ...state,
@@ -202,6 +195,18 @@ function userRegistrationReducer(state = initialState, action){
 			return { 
 				...state 
 			}
+		case ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD:
+			return { ...state, onLoad: true };
+
+		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
+			let participantData = action.result;
+			return {
+				...state,
+				onLoad: false,
+				status: action.status,
+				registrationObj: participantData
+			};
+				
         default:
             return state;
     }

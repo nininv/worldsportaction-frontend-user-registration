@@ -32,7 +32,42 @@ function* failSaga(result) {
       const result = yield call(AxiosApi.getEndUserRegUserInfo,action.payload);
       if (result.status === 1) {
         yield put({
-          type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS_NEW,
+          type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_SUCCESS,
+          result: result.result.data,
+          status: result.status
+        });
+      } else {
+        yield call(failSaga, result)
+      }
+    } catch (error) {
+      yield call(errorSaga, error)
+    }
+  }
+
+  export function* getParticipantDataById(action) {
+    try {
+      const result = yield call(AxiosApi.getParticipantDataById,action.participantKey);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS,
+          result: result.result.data,
+          status: result.status
+        });
+      } else {
+        yield call(failSaga, result)
+      }
+    } catch (error) {
+      yield call(errorSaga, error)
+    }
+  }
+
+  //Save Participant Data
+  export function* saveParticipantData(action) {
+    try {
+      const result = yield call(AxiosApi.saveParticipantData,action.payload);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_PARTICIPANT_SUCCESS,
           result: result.result.data,
           status: result.status
         });

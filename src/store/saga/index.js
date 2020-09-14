@@ -197,9 +197,14 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_YEAR_LISTING_LOAD, getYearListingSaga);
 
 
-
   //New ragistration design
-  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD_NEW, userRegistrationSaga.endUserRegistrationUserInfoSaga)
+  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, userRegistrationSaga.endUserRegistrationUserInfoSaga)
+
+  //Get ParticipantDataById
+  yield takeEvery(ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD, userRegistrationSaga.getParticipantDataById)
+
+  //Save ParticipantData
+  yield takeEvery(ApiConstants.API_SAVE_PARTICIPANT_LOAD, userRegistrationSaga.saveParticipantData)
 
 
 }

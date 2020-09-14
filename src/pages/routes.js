@@ -27,6 +27,8 @@ import ListProducts from "../components/shop/listProducts";
 import ProductDetails from "../components/shop/productDetails";
 import TeamRegistrationReview from '../components/registration/teamRegistrationReview';
 import TeamReviewProducts from '../components/registration/teamReviewProducts';
+import RegistrationProducts from "../components/registration/registrationProducts";
+
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -45,11 +47,11 @@ class Routes extends React.Component {
       <Switch>
         <Route exact path="/" render={() => <Redirect to="/userPersonal" />} />
         <PrivateRoute
-          path="/appRegistrationForm"
+          path="/appRegistrationFormOld"
           component={lazyLoad(AppRegistrationForm)}
         />
         <PrivateRoute
-          path="/appRegistrationFormNew"
+          path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationFormNew)}
         />
         <PrivateRoute
@@ -119,7 +121,7 @@ class Routes extends React.Component {
           component={lazyLoad(RegistrationReviewForm)}
         />
         <PrivateRoute
-          path="/registrationReviewProducts"
+          path="/reviewProducts"
           component={lazyLoad(ReviewProducts)}
         />
 
@@ -130,6 +132,11 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/teamRegistrationReviewProducts"
           component={lazyLoad(TeamReviewProducts)}
+        />
+
+        <PrivateRoute
+          path="/registrationProducts"
+          component={lazyLoad(RegistrationProducts)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />

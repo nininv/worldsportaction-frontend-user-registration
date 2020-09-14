@@ -1011,6 +1011,9 @@ const AppConstants = {
  newTeamRegistration: "New Team Registration",
  noRegisteringMyChild: "No,Registering my child",
  noRegisteringSomeoneElse: "No,Registering someone else",
+ loginAndProceedRegistration: "LOGIN & PROCEED TO REGISTRATION",
+ proceedToRegistration: "PROCEED TO REGISTRATION",
+ forgotResetPassword: 'Forgot/ Reset Password',
 };
 
 export default AppConstants;

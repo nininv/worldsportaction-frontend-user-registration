@@ -51,13 +51,13 @@ function membershipProductEndUserRegistrationAction(payload) {
 
 
 /////End User Registration getUser Info
-function getUserRegistrationUserInfoAction(payload) {
-    const action = {
-        type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD,
-        payload: payload
-    };
-    return action;
-}
+// function getUserRegistrationUserInfoAction(payload) {
+//     const action = {
+//         type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD,
+//         payload: payload
+//     };
+//     return action;
+// }
 
 function clearRegistrationDataAction()
 {
@@ -290,7 +290,7 @@ export {
     updateEndUserRegisrationAction,
     orgRegistrationRegSettingsEndUserRegAction,
     membershipProductEndUserRegistrationAction,
-    getUserRegistrationUserInfoAction,
+    //getUserRegistrationUserInfoAction,
     clearRegistrationDataAction,
     updateRegistrationSettingsAction,
     updateTeamAction,
