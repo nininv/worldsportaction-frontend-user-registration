@@ -59,11 +59,16 @@ let registrationObjTemp = {
 					"isSelected": false
 				}
 			],
+			"divisionInfo":[
+				{
+					"competitionMembershipProductTypeId": null,
+					"competitionMembershipProductDivisionId": null
+				}
+			],
 			"divisions": [
 				{
 					"competitionMembershipProductTypeId": null,
-					"competitionMembershipProductDivisionId": null,
-					"isSelected": false
+					"competitionMembershipProductDivisionId": null
 				}
 			],
 			"fees": {
