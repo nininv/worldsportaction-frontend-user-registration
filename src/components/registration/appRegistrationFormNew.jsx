@@ -74,7 +74,7 @@ class AppRegistrationFormNew extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 2,
+            currentStep: 0,
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: true,
             searchAddressError: null,
@@ -389,15 +389,14 @@ class AppRegistrationFormNew extends Component{
             e.preventDefault();
             const { registrationObj } = this.props.userRegistrationState;
             this.props.form.validateFieldsAndScroll((err, values) => {
-                this.setState({currentStep: this.state.currentStep + 1});
-                setTimeout(() => {
-                    this.setState({
-                        submitButtonText: this.state.currentStep == 1 ? 
-                        AppConstants.addCompetitionAndMembership : 
-                        AppConstants.signupToCompetition});
-                },100);
                 if(!err){
-                    
+                    this.setState({currentStep: this.state.currentStep + 1});
+                    setTimeout(() => {
+                        this.setState({
+                            submitButtonText: this.state.currentStep == 1 ? 
+                            AppConstants.addCompetitionAndMembership : 
+                            AppConstants.signupToCompetition});
+                    },100);
                 }
             });
         }catch(ex){
