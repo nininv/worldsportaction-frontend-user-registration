@@ -39,7 +39,9 @@ import {
     playerPositionReferenceAction,
     genderReferenceAction, 
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction 
+    personRegisteringRoleReferenceAction ,
+    identificationReferenceAction,
+    otherSportsReferenceAction
 } from '../../store/actions/commonAction/commonAction';
 import { 
     getUserRegistrationUserInfoAction,
@@ -72,7 +74,7 @@ class AppRegistrationFormNew extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
+            currentStep: 2,
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: true,
             searchAddressError: null,
@@ -82,6 +84,12 @@ class AppRegistrationFormNew extends Component{
         this.props.genderReferenceAction();
         this.props.countryReferenceAction();
         this.props.playerPositionReferenceAction();
+        this.props.identificationReferenceAction();
+        this.props.disabilityReferenceAction();
+        this.props.favouriteTeamReferenceAction();
+        this.props.firebirdPlayerReferenceAction();
+        this.props.otherSportsReferenceAction();
+        this.props.heardByReferenceAction();
     }
 
     componentDidUpdate(nextProps){
@@ -381,14 +389,15 @@ class AppRegistrationFormNew extends Component{
             e.preventDefault();
             const { registrationObj } = this.props.userRegistrationState;
             this.props.form.validateFieldsAndScroll((err, values) => {
+                this.setState({currentStep: this.state.currentStep + 1});
+                setTimeout(() => {
+                    this.setState({
+                        submitButtonText: this.state.currentStep == 1 ? 
+                        AppConstants.addCompetitionAndMembership : 
+                        AppConstants.signupToCompetition});
+                },100);
                 if(!err){
-                    this.setState({currentStep: this.state.currentStep + 1});
-                    setTimeout(() => {
-                        this.setState({
-                            submitButtonText: this.state.currentStep == 1 ? 
-                            AppConstants.addCompetitionAndMembership : 
-                            AppConstants.signupToCompetition});
-                    },100);
+                    
                 }
             });
         }catch(ex){
@@ -1106,8 +1115,8 @@ class AppRegistrationFormNew extends Component{
     competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
         const {playerPositionList} = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
-                    let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
-                                        competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '' 
+        let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
+                            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '' 
         return(
             <div className="registration-form-view"  key={competitionIndex}>
                 <div className="map-style"></div>
@@ -1341,17 +1350,21 @@ class AppRegistrationFormNew extends Component{
         );
     }
 
-    additionalInfoStepView = () => {
+    additionalInfoStepView = (getFieldDecorator) => {
+        const { registrationObj } = this.props.userRegistrationState;
         return(
             <div>
-                <div>{this.addedParticipantWithProfileView()}</div> 
-                <div>{this.additionalInfoAddCompetitionView()}</div>
-                <div>{this.additionalPersonalInfoView()}</div>
+                {registrationObj != null && (<div>{this.addedParticipantWithProfileView()}</div> )}
+                
+                {(registrationObj != null && registrationObj.competitions || []).map((competition,competitionIndex) => (
+                    <div>{this.additionalInfoAddCompetitionView(competition,competitionIndex)}</div>
+                ))}
+                <div>{this.additionalPersonalInfoView(getFieldDecorator)}</div>
             </div>
         )
     }
 
-    additionalInfoAddCompetitionView = () => {
+    additionalInfoAddCompetitionView = (competition,competitionIndex) => {
         return(
             <div className="registration-form-view">
                 <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
@@ -1361,21 +1374,83 @@ class AppRegistrationFormNew extends Component{
                     <div className="col">
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
-                            <div className="form-heading" style={{textAlign: "start"}}>NWA Winter 2020</div>
+                            <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.edit}</div>
                         </div>
-                        <div style={{fontWeight: "600",marginTop: "-5px"}}>Player, Coach</div>
+                        <div style={{fontWeight: "600",marginTop: "-5px"}}>
+                            {(competition.products || []).map((product,productIndex) => (
+                                <span>
+                                    <span>{product.competitionMembershipProductName}</span>
+                                    <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
-                <div className="orange-action-txt" style={{marginTop: "20px"}}>&#43; {AppConstants.addAnotherCompetition}</div>
             </div>
         );
     }
 
-    additionalPersonalInfoView = () => {
+    additionalPersonalInfoView = (getFieldDecorator) => {
+        const { registrationObj } = this.props.userRegistrationState;
+        const { countryList, identifyAsList,disabilityList,favouriteTeamsList,firebirdPlayerList,otherSportsList,heardByList } = this.props.commonReducerState;
         return(
             <div className="registration-form-view">
                 <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
+                <InputWithHead heading={AppConstants.whichCountryWereBorn}/>
+                <Form.Item >
+                    {getFieldDecorator(`additionalInfoCountryRefId`, {
+                        rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                    })(
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        setFieldsValue={1}>
+                        {countryList.length > 0 && countryList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
+                <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
+                <Radio.Group
+                    className="registration-radio-group"
+                    setFieldsValue={1}
+                    >
+                    {(identifyAsList || []).map((identification, identificationIndex) => (
+                        <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
+                    ))}
+                </Radio.Group>
+                <InputWithHead heading={AppConstants.injury}/>
+                <TextArea
+                    placeholder={AppConstants.anyInjury}
+                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "existingMedicalCondition", index )} 
+                    // value={item.existingMedicalCondition}
+                    allowClear
+                />
+                <InputWithHead heading={AppConstants.alergy}/>
+                <TextArea
+                    placeholder={AppConstants.anyAlergies}
+                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "existingMedicalCondition", index )} 
+                    // value={item.existingMedicalCondition}
+                    allowClear
+                />
+                <InputWithHead heading={AppConstants.playingOtherParticipantSports}/>
+                <Form.Item >
+                    {getFieldDecorator(`additionalInfoOtherParticpantSport`, {
+                        rules: [{ required: true }],
+                    })(
+                    <Select
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        setFieldsValue={1}>
+                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
                 <InputWithHead heading={AppConstants.haveYouEverPlayed}/>
                 <Radio.Group
                     className="registration-radio-group"
@@ -1439,22 +1514,21 @@ class AppRegistrationFormNew extends Component{
                     // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "heardByRefId", index )} 
                     // value={item.heardByRefId}
                     >
-                        {/* {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))} */}
-                        <Radio>Friend</Radio>
+                    {(heardByList || []).map((heard, index) => (
+                        <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                    ))}
                 </Radio.Group>
                 <div className="row">
                     <div className="col-md-6 col-sm-12">
-                        <InputWithHead heading={AppConstants.favouriteTeam}/>
+                        <InputWithHead heading={AppConstants.teamYouFollow}/>
                         <Select
                             style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                             // onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteTeamRefId", index )}
-                            // value={item.favouriteTeamRefId}
+                            // value={registrationObj.additionalInfo.favouriteTeamRefId}
                             >  
-                            {/* {(favouriteTeamsList || []).map((fav, index) => (
+                            {(favouriteTeamsList || []).map((fav, index) => (
                                 <Option key={fav.id} value={fav.id}>{fav.description}</Option>
-                            ))} */}
+                            ))}
                         </Select>
                     </div>
                     <div className="col-md-6 col-sm-12">
@@ -1464,9 +1538,9 @@ class AppRegistrationFormNew extends Component{
                             // onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteFireBird", index )}
                             // value={item.favouriteFireBird}
                             >  
-                            {/* {(firebirdPlayerList || []).map((fire, index) => (
+                            {(firebirdPlayerList || []).map((fire, index) => (
                                 <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                            ))} */}
+                            ))}
                         </Select>
                     </div>
                 </div>
@@ -1478,30 +1552,31 @@ class AppRegistrationFormNew extends Component{
                         {AppConstants.consentForPhotos}
                 </Checkbox>
 
-                <InputWithHead heading={AppConstants.doYouHaveDisablity} />
+                <InputWithHead heading={AppConstants.haveDisability} />
                 <Radio.Group
                     className="registration-radio-group"
-                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
-                    // value={item.isDisability}
+                    //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
+                    //value={registrationObj.additionalInfo.isDisability}
                     >
                     <Radio value={1}>{AppConstants.yes}</Radio>
-                        {/* {item.isDisability == 1 ? 
-                        <div style={{marginLeft: '25px'}}>
-                            <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
-                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
-                                value={item.disabilityCareNumber}/>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
-                            <Radio.Group
-                                className="reg-competition-radio"
-                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
-                                value={item.disabilityTypeRefId}>
-                                    {(disabilityList || []).map((dis, disIndex) => (
-                                    <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
-                                ))}
-                            </Radio.Group>
-                        </div> 
-                        : null
-                        } */}
+                    {/* {registrationObj.additionalInfo.isDisability == 1 ? 
+                    <div style={{marginLeft: '25px'}}>
+                        <InputWithHead heading={AppConstants.disabilityCareNumber} 
+                        placeholder={AppConstants.disabilityCareNumber} 
+                        //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
+                        value={registrationObj.additionalInfo.disabilityCareNumber}/>
+                        <InputWithHead heading={AppConstants.typeOfDisability} />
+                        <Radio.Group
+                            className="reg-competition-radio"
+                            //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
+                            value={registrationObj.additionalInfo.disabilityTypeRefId}>
+                                {(disabilityList || []).map((dis, disIndex) => (
+                                <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
+                            ))}
+                        </Radio.Group>
+                    </div> 
+                    : null
+                    } */}
                     <Radio value={0}>{AppConstants.no}</Radio>
                 </Radio.Group>
             </div>
@@ -1518,7 +1593,7 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
                }
                {this.state.currentStep == 2 && 
-                    <div>{this.additionalInfoStepView()}</div>
+                    <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
                }
             </div>
         );
@@ -1590,7 +1665,13 @@ function mapDispatchToProps(dispatch)
         membershipProductEndUserRegistrationAction,
         updateParticipantCompetitionAction,
         playerPositionReferenceAction,
-        updateUserRegistrationStateVarAction					 
+        updateUserRegistrationStateVarAction,
+        identificationReferenceAction,
+        disabilityReferenceAction,
+        favouriteTeamReferenceAction,
+        firebirdPlayerReferenceAction,
+        otherSportsReferenceAction,
+        heardByReferenceAction					 
     }, dispatch);
 
 }

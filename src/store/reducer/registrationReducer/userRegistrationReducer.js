@@ -156,6 +156,7 @@ const competitionObj = {
 		{
 			// "competitionMembershipProductId": null,
 			// "competitionMembershipProductTypeId": null,
+			// 	"competitionMembershipProductName": null,
 			// "isSelected": false,
 			// "isPlayer": 0
 		}
@@ -163,7 +164,8 @@ const competitionObj = {
 	"divisionInfo":[
 		// {
 		// 	"competitionMembershipProductTypeId": null,
-		// 	"competitionMembershipProductDivisionId": null
+		// 	"competitionMembershipProductDivisionId": null,
+		// 	"divisionName": null
 		// }
 	],
 	"divisions": [
@@ -263,6 +265,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
 				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
+				"competitionMembershipProductName": membershipProductInfo.shortName,
 				"isSelected": competitionData,
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
