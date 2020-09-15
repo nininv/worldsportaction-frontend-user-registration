@@ -26,13 +26,14 @@ function updateUserRegistrationObjectAction(data,key){
     return action;
 }
 
-function updateParticipantCompetitionAction(data,key,index,subIndex){
+function updateParticipantCompetitionAction(data,key,index,subIndex,subKey){
     const action = {
         type: ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT,
         data: data,
         key: key,
         index: index,
-        subIndex: subIndex
+        subIndex: subIndex,
+        subKey: subKey
     }
     return action;
 }
@@ -61,6 +62,15 @@ function membershipProductEndUserRegistrationAction(payload) {
     return action;
 }
 
+function updateUserRegistrationStateVarAction(key,data){
+    const action = {
+        type: ApiConstants.UPDATE_USER_REGISTRATION_STATE_VAR,
+        key: key,
+        data: data
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -68,5 +78,6 @@ export{
     getParticipantInfoById,
     saveParticipantInfo,
     membershipProductEndUserRegistrationAction,
-    updateParticipantCompetitionAction
+    updateParticipantCompetitionAction,
+    updateUserRegistrationStateVarAction
 }
