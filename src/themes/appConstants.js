@@ -1039,7 +1039,7 @@ const AppConstants = {
  billingAddress:"Billing Address",
  useDifferentAddress:"Use a different address",
  deleteProductMsg: "Do you want to delete the product?",
- deleteParticipantMsg: "Do you want to delete the participant?"
+ deleteParticipantMsg: "Do you want to delete the participant?",
  whichCountryWereBorn: "In which country were you born?",
  doYouIdentifyAs: "Do you identify as: ",
  identifyAs: "IdentifyAs",
