@@ -1040,6 +1040,16 @@ const AppConstants = {
  useDifferentAddress:"Use a different address",
  deleteProductMsg: "Do you want to delete the product?",
  deleteParticipantMsg: "Do you want to delete the participant?"
+ whichCountryWereBorn: "In which country were you born?",
+ doYouIdentifyAs: "Do you identify as: ",
+ identifyAs: "IdentifyAs",
+ injury: "Please list any injury which is current or recurring or requires surgery? ",
+ anyInjury: "Any Injury",
+ alergy: "Please detail any allergies (medical or food) or illnesses?",
+ anyAlergies: "Any Alergies", 
+ teamYouFollow: "Which Suncorp Super Netball Team do you follow?",
+ otherSports: "otherSports",
+ playingOtherParticipantSports: "Are you (Is your child) playing any other participation sport?"
 };
 
 export default AppConstants;

@@ -12,7 +12,8 @@ import {
     Form, 
     Modal, 
     message, 
-    Steps
+    Steps,
+    Tag
 } from "antd";
 import "./product.css";
 import "../user/user.css";
@@ -38,14 +39,17 @@ import {
     playerPositionReferenceAction,
     genderReferenceAction, 
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction 
+    personRegisteringRoleReferenceAction ,
+    identificationReferenceAction,
+    otherSportsReferenceAction
 } from '../../store/actions/commonAction/commonAction';
 import { 
     getUserRegistrationUserInfoAction,
     updateUserRegistrationObjectAction,
     selectParticipantAction,
     membershipProductEndUserRegistrationAction,
-    updateParticipantCompetitionAction
+    updateParticipantCompetitionAction,
+    updateUserRegistrationStateVarAction
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -61,22 +65,10 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const registrationSteps = [
-    {
-      title: AppConstants.participantDetails,
-    },
-    {
-      title: AppConstants.selectCompetition,
-    },
-    {
-      title: AppConstants.additionalInformation,
-    },
+    { title: AppConstants.participantDetails },
+    { title: AppConstants.selectCompetition },
+    { title: AppConstants.additionalInformation },
 ];
-
-const checkboxList = [
-    { label: 'Player', value: 'Player' },
-    { label: 'Coach', value: 'Coach' },
-    { label: 'Umpire', value: 'Umpire' },
-  ];
 
 class AppRegistrationFormNew extends Component{
     constructor(props) {
@@ -85,14 +77,31 @@ class AppRegistrationFormNew extends Component{
             currentStep: 0,
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: true,
-            searchAddressError: null
+            searchAddressError: null,
+            organisationId: null
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
         this.props.countryReferenceAction();
+        this.props.playerPositionReferenceAction();
+        this.props.identificationReferenceAction();
+        this.props.disabilityReferenceAction();
+        this.props.favouriteTeamReferenceAction();
+        this.props.firebirdPlayerReferenceAction();
+        this.props.otherSportsReferenceAction();
+        this.props.heardByReferenceAction();
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(nextProps){
+        if(this.props.userRegistrationState.addCompetitionFlag){
+            this.setState(
+                {
+                    showAddAnotherCompetitionView: false,
+                    organisationId: null
+                }
+            );
+            this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
+        }
         // let { registrationObj } = this.props.userRegistrationState;
         // if(registrationObj != null && registrationObj.refFlag == "participant"){
         //     this.props.form.setFieldsValue({
@@ -317,10 +326,64 @@ class AppRegistrationFormNew extends Component{
         }  
     };
 
-    onChangeSetCompetitionValue = (value,key,index,subIndex) =>{
-        this.props.updateParticipantCompetitionAction(value,key,index,subIndex);
+    onChangeSetCompetitionValue = (value,key,index,subIndex,subKey) =>{
+        this.props.updateParticipantCompetitionAction(value,key,index,subIndex,subKey);
     }
 
+    addFriend = (removeOrAdd,competitionIndex,friendIndex) => {
+        try{
+            const { registrationObj } = this.props.userRegistrationState;
+            let friends = registrationObj.competitions[competitionIndex].friends;
+            if(removeOrAdd == "add"){
+                let friend = {
+                    "firstName": null,
+                    "lastName": null,
+                    "mobileNumber": null,
+                    "email": null
+                }
+                friends.push(friend);
+            }else{
+                friends.splice(friendIndex,1);
+            }
+            this.onChangeSetCompetitionValue(friends,"friends",competitionIndex);
+        }catch(ex){
+            console.log("Error in addFriend"+ex);
+        }
+    }
+
+    addReferFriend = (removeOrAdd,competitionIndex,referFriendIndex) => {
+        try{
+            const { registrationObj } = this.props.userRegistrationState;
+            let referFriends = registrationObj.competitions[competitionIndex].referFriends;
+            if(removeOrAdd == "add"){
+                let friend = {
+                    "firstName": null,
+                    "lastName": null,
+                    "mobileNumber": null,
+                    "email": null
+                }
+                referFriends.push(friend);
+            }else{
+                referFriends.splice(referFriendIndex,1);
+            }
+            this.onChangeSetCompetitionValue(referFriends,"referFriends",competitionIndex);
+        }catch(ex){
+            console.log("Error in addReferFriends"+ex);
+        }
+    }
+
+    addAnotherCompetition = (competition) => {
+        let { membershipProductInfo } = this.props.userRegistrationState;
+        let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
+        if(organisationInfo){
+            let organisation = {
+                organisationInfo : organisationInfo,
+                competitionInfo: competition
+            }
+            this.props.updateUserRegistrationObjectAction(organisation,"competitions");
+        }
+    }
+    
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
@@ -330,7 +393,7 @@ class AppRegistrationFormNew extends Component{
                     this.setState({currentStep: this.state.currentStep + 1});
                     setTimeout(() => {
                         this.setState({
-                            submitButtonText: this.state.currentStep == 2 ? 
+                            submitButtonText: this.state.currentStep == 1 ? 
                             AppConstants.addCompetitionAndMembership : 
                             AppConstants.signupToCompetition});
                     },100);
@@ -961,14 +1024,19 @@ class AppRegistrationFormNew extends Component{
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
-        let { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj } = this.props.userRegistrationState;
         return(
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div> 
+                {(registrationObj.competitions || []).map((competition, competitionIndex) => (
+                    <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
+                ))}
                 {this.state.showAddAnotherCompetitionView && (
                     <div>{this.findAnotherCompetitionView()}</div>
                 )}
-                <div>{this.competitionDetailView(getFieldDecorator)}</div>
+                <div className="orange-action-txt"
+                 style={{marginTop: "20px"}}
+                 onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
             </div>
         )
     }
@@ -1000,248 +1068,302 @@ class AppRegistrationFormNew extends Component{
     }
 
     findAnotherCompetitionView = () => {
+        let { membershipProductInfo } = this.props.userRegistrationState;
+        let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
+        let competitions = [];
+        if(organisation){
+            competitions = organisation.competitions;
+        }
         return(
             <div className="registration-form-view">
                 <div style={{display: "flex",alignItems: "center" }}>
                     <div className="form-heading">{AppConstants.findACompetition}</div>
-                    <div className="orange-action-txt" style={{marginLeft: "auto",paddingBottom: "7.5px"}}>{AppConstants.cancel}</div>
+                    <div className="orange-action-txt" 
+                    style={{marginLeft: "auto",paddingBottom: "7.5px"}}
+                    onClick={() => this.setState({showAddAnotherCompetitionView: false})}>{AppConstants.cancel}</div>
                 </div>
 
                 <div className="light-grey-border-box">
                     <InputWithHead heading={AppConstants.organisationName}/>
                     <Select
-                        style={{ width: "100%", paddingRight: 1 }}
-                        >
+                        onChange={(e) => this.setState({organisationId : e})}
+                        style={{ width: "100%", paddingRight: 1 }}>
+                        {membershipProductInfo.length > 0 && membershipProductInfo.map((item) => (
+                            < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
+                        ))}
                     </Select>
                 </div>
-
                 <div className="row" style={{marginTop: "30px"}}>
-                    <div className="col-md-6 col-sm-12" style={{marginBottom: "20px"}}>
-                        <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                            <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
-                            <div className="form-heading" style={{marginTop: "20px"}}>NWA Winter 2020</div>
-                            <div style={{fontWeight: "600"}}>&#128198; 25/10/2020 - 02/11/2020</div>
+                    {(competitions || []).map((competition,competitionIndex) => (
+                        <div className="col-md-6 col-sm-12"
+                        onClick={() => this.addAnotherCompetition(competition)}
+                        key={competition.competitionUniqueKey} 
+                        style={{marginBottom: "20px"}}>
+                            <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
+                                <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
+                                <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
+                                <div style={{fontWeight: "600"}}>&#128198; {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6 col-sm-12" style={{marginBottom: "20px"}}>
-                        <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                            <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
-                            <div className="form-heading" style={{marginTop: "20px"}}>NWA Winter 2020</div>
-                            <div style={{fontWeight: "600"}}>&#128198; 25/10/2020 - 02/11/2020</div>
-                        </div>
-                    </div>
-                    <div className="col-md-6 col-sm-12" style={{marginBottom: "20px"}}>
-                        <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                            <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
-                            <div className="form-heading" style={{marginTop: "20px"}}>NWA Winter 2020</div>
-                            <div style={{fontWeight: "600"}}>&#128198; 25/10/2020 - 02/11/2020</div>
-                        </div>
-                    </div>
-                    <div className="col-md-6 col-sm-12" style={{marginBottom: "20px"}}>
-                        <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                            <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
-                            <div className="form-heading" style={{marginTop: "20px"}}>NWA Winter 2020</div>
-                            <div style={{fontWeight: "600"}}>&#128198; 25/10/2020 - 02/11/2020</div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         );
     }
 
-    competitionDetailView = (getFieldDecorator) => {
-        const { registrationObj } = this.props.userRegistrationState;
+    competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
+        const {playerPositionList} = this.props.commonReducerState;
+        let competitionInfo = competition.competitionInfo;
+        let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
+                            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '' 
         return(
-            <div className="registration-form-view">
+            <div className="registration-form-view"  key={competitionIndex}>
                 <div className="map-style"></div>
-                {(registrationObj.competitions || []).map((competition, competitionIndex) => {
-                    return(
-                        <div>
-                            <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
-                                <div className="col-sm-1.5">
-                                    <img style={{height: "60px",borderRadius: "50%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/> 
-                                </div>
-                                <div className="col">
-                                    <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
-                                    <div style={{display: "flex",flexWrap: "wrap"}}>
-                                        <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
-                                        <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.findAnotherCompetition}</div>
-                                    </div>
-                                    <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
-                                </div>
+                <div>
+                    <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
+                        <div className="col-sm-1.5">
+                            <img style={{height: "60px",borderRadius: "50%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/> 
+                        </div>
+                        <div className="col">
+                            <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
+                            <div style={{display: "flex",flexWrap: "wrap"}}>
+                                <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
+                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.findAnotherCompetition}</div>
                             </div>
-                            <div className="light-grey-border-box">
-                                <InputWithHead heading={AppConstants.chooseMembershipProducts}/>
-                                {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
-                                    <Checkbox onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked,"products",competitionIndex,membershipProductIndex)}>
-                                        {membershipProduct.shortName}</Checkbox>
+                            <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
+                        </div>
+                    </div>
+                    <div className="light-grey-border-box">
+                        <InputWithHead heading={AppConstants.chooseMembershipProducts}/>
+                        {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
+                            <Checkbox 
+                            key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
+                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked,"products",competitionIndex,membershipProductIndex)}>
+                                {membershipProduct.shortName}</Checkbox>
+                        ))}
+                        <InputWithHead heading={AppConstants.registrationDivisions}/>
+                        <div
+                        style={{marginBottom: "10px"}}>
+                            {(competition.divisions || []).map((division,divisionIndex) => (
+                                <Tag 
+                                key={division.competitionMembershipProductDivisionId + divisionIndex} 
+                                style={{marginBottom: "10px"}}
+                                closable 
+                                color="volcano"
+                                onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
+                            ))}
+                        </div>
+                        <Form.Item>
+                            {getFieldDecorator(`competitionMembershipProductDivisionId${competitionIndex}`, {
+                                rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
+                            })(
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1 }}
+                                    onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex )}
+                                    setFieldsValue={competition.competitionMembershipProductDivisionId}
+                                    >
+                                    {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
+                                        <Option key={divisionInfo.competitionMembershipProductDivisionId + divisionInfoIndex} 
+                                        value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
+                                    ))}
+                                </Select>
+                            )}
+                        </Form.Item>
+                        <div className="row">
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.totalCasualFees}/>
+                                <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                            </div>
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.totalSeasonalFees}/>
+                                <div className="form-heading">$120.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="row" style={{marginTop: "30px"}}>
+                        <div className="col-xl-6 col-sm-12 col-md-6 col-lg-6">
+                            <InputWithHead heading={AppConstants.training}/>
+                            <div 
+                            className="inter-medium-font" 
+                            style={{fontSize: "13px"}}>{competition.competitionInfo.training ? 
+                                competition.competitionInfo.training : 
+                                AppConstants.noInformationProvided}
+                            </div>
+                            <InputWithHead heading={AppConstants.specialNotes}/>
+                            <div 
+                            className="inter-medium-font" 
+                            style={{fontSize: "13px"}}>{competition.competitionInfo.specialNote ? 
+                                competition.competitionInfo.specialNote : 
+                                AppConstants.noInformationProvided}
+                            </div>                                    
+                            <InputWithHead heading={AppConstants.venue}/>
+                            <div 
+                            className="inter-medium-font" 
+                            style={{fontSize: "13px"}}>
+                                {competitionInfo.venues == null || competitionInfo.venues.length == 0 ? AppConstants.noInformationProvided :
+                                    <span>
+                                        {(competitionInfo.venues || []).map((v, vIndex) =>(
+                                            <span>
+                                                <span>{v.venueName}</span>
+                                                <span>{competitionInfo.venues.length != (vIndex + 1) ? ', ': ''}</span>
+                                            </span>
+                                        ))}
+                                    </span>
+                                }
+                            </div> 
+                            <InputWithHead heading={AppConstants.contactDetails}/>
+                            <div  className="inter-medium-font" style={{fontSize: "13px"}}>{contactDetails ? contactDetails : 
+                                AppConstants.noInformationProvided}
+                            </div> 
+                        </div>
+                        <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
+                            <InputWithHead heading={AppConstants.venue}/>
+                            <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
+                        </div>
+                        <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
+                            <InputWithHead heading={AppConstants.uniform}/>
+                            <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
+                        </div>
+                    </div>
+                    
+                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.position1} />
+                            <Select
+                                style={{ width: "100%", paddingRight: 1 }}
+                                onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId1", competitionIndex)}
+                                value={competition.positionId1}
+                                >
+                                {(playerPositionList || []).map((play1, index) => (
+                                    <Option key={play1.id} value={play1.id}>{play1.name}</Option>
                                 ))}
-                                <InputWithHead heading={AppConstants.registrationDivisions}/>
-                                <Form.Item>
-                                    {getFieldDecorator(`competitionMembershipProductDivisionId${competitionIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
-                                    })(
-                                        <Select
-                                            style={{ width: "100%", paddingRight: 1 }}
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e, "competitionMembershipProductDivisionId", competitionIndex )}
-                                            setFieldsValue={competition.competitionMembershipProductDivisionId}
-                                            >
-                                            {(competition.divisionInfo || []).map((division, divisionIndex) => (
-                                                <Option key={division.competitionMembershipProductDivisionId} 
-                                                value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
-                                            ))}
-                                        </Select>
-                                    )}
-                                </Form.Item>
-                                <div className="row">
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.totalCasualFees}/>
-                                        <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.totalSeasonalFees}/>
-                                        <div className="form-heading">$120.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
-                                    </div>
-                                </div>
-                            </div>
+                            </Select>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.position2} />
+                            <Select
+                                style={{ width: "100%", paddingRight: 1 }}
+                                onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId2", competitionIndex)}
+                                value={competition.positionId2}
+                                >
+                                {(playerPositionList || []).map((play2, index) => (
+                                    <Option key={play2.id} value={play2.id}>{play2.name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                    </div>
 
-                            <div className="row" style={{marginTop: "30px"}}>
-                                <div className="col-xl-6 col-sm-12 col-md-6 col-lg-6">
-                                    <InputWithHead heading={AppConstants.training}/>
-                                    <div style={{fontFamily: "inter-medium",fontSize: "13px"}}>No information Provided</div>
-                                    <InputWithHead heading={AppConstants.specialNotes}/>
-                                    <div style={{fontFamily: "inter-medium",fontSize: "13px"}}>No information Provided</div>
-                                    <InputWithHead heading={AppConstants.venue}/>
-                                    <div style={{fontFamily: "inter-medium",fontSize: "13px"}}>No information Provided</div>
-                                    <InputWithHead heading={AppConstants.contactDetails}/>
-                                    <div style={{fontFamily: "inter-medium",fontSize: "13px"}}>No information Provided</div>
-                                </div>
-                                <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
-                                    <InputWithHead heading={AppConstants.venue}/>
-                                    <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
-                                </div>
-                                <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
-                                    <InputWithHead heading={AppConstants.uniform}/>
-                                    <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
-                                </div>
-                            </div>
-                            
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
-                            <div className="row">
-                                <div className="col-sm-12 col-md-6">
-                                    <InputWithHead heading={AppConstants.position1} />
-                                    <Select
-                                        style={{ width: "100%", paddingRight: 1 }}
-                                        // onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex, "positionId1" )}
-                                        // value={item.positionId1}
-                                        >
-                                        {/* {(playerPositionList || []).map((play1, index) => (
-                                            <Option key={play1.id} value={play1.id}>{play1.name}</Option>
-                                        ))} */}
-                                    </Select>
-                                </div>
-                                <div className="col-sm-12 col-md-6">
-                                    <InputWithHead heading={AppConstants.position2} />
-                                    <Select
-                                        style={{ width: "100%", paddingRight: 1 }}
-                                        // onChange={(e) => this.onChangeSetValue(e, index, participantOrProduct, productIndex, "positions", subIndex,"positionId2" )}
-                                        // value={item.positionId2}
-                                        >
-                                        {/* {(playerPositionList || []).map((play2, index) => (
-                                            <Option key={play2.id} value={play2.id}>{play2.name}</Option>
-                                        ))} */}
-                                    </Select>
-                                </div>
-                            </div>
-
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
-                            <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
+                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
+                    <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
+                        {(competition.friends || []).map((friend,friendIndex) => (
                             <div className="light-grey-border-box">
-                                <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend}</div>
+                                <div 
+                                className="orange-action-txt" 
+                                style={{marginTop: "20px"}}
+                                onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>{AppConstants.cancel}</div>
+                                <div className="form-heading" style={{marginTop: "10px"}}>{AppConstants.friend} {friendIndex + 1}</div>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead 
                                             heading={AppConstants.firstName} 
                                             placeholder={AppConstants.firstName} 
-                                            // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "friend", friendIndex, "firstName" )} 
-                                            // value={friend.firstName}
+                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,friendIndex,"friends")} 
+                                            value={friend.firstName}
                                             />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead 
                                             heading={AppConstants.lastName} 
                                             placeholder={AppConstants.lastName} 
-                                            // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "friend", friendIndex, "lastName" )} 
-                                            // value={friend.lastName}
+                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "lastName",competitionIndex, friendIndex, "friends")} 
+                                            value={friend.lastName}
                                         />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                            // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "friend", friendIndex, "email" )} 
-                                            // value={friend.email}
+                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email",competitionIndex, friendIndex, "friends")}  
+                                            value={friend.email}
                                         />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                            // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "friend", friendIndex, "mobileNumber" )} 
-                                            // value={friend.mobileNumber}
+                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
+                                            value={friend.mobileNumber}
                                         />
                                     </div>
-                                </div>  
-                                <div className="orange-action-txt" style={{marginTop: "20px"}}>&#43; {AppConstants.addfriend}</div>	      
+                                </div> 
                             </div>
+                        ))}
+                    <div 
+                        className="orange-action-txt" 
+                        style={{marginTop: "15px"}}
+                        onClick={e => this.addFriend("add",competitionIndex)}>+ {AppConstants.addfriend}
+                    </div>	      
 
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
-                            <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
+                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
+                    <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
+                        {(competition.referFriends || []).map((referFriend,referFriendIndex) => (
                             <div className="light-grey-border-box">
-                                <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend}</div>
+                                <div 
+                                className="orange-action-txt" 
+                                style={{marginTop: "20px"}}
+                                onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>{AppConstants.cancel}</div>
+                                <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName} 
-                                        // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "referFriend", friendIndex, "firstName" )} 
-                                        // value={friend.firstName}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,referFriendIndex,"referFriends")} 
+                                        value={referFriend.firstName}
                                         />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName} 
-                                        // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "referFriend", friendIndex, "lastName" )} 
-                                        // value={friend.lastName}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"lastName",competitionIndex,referFriendIndex,"referFriends")} 
+                                        value={referFriend.lastName}
                                         />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                        // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "referFriend", friendIndex, "email" )} 
-                                        // value={friend.email}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
+                                        value={referFriend.email}
                                         />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                            // onChange={(e) => this.onChangeSetValue(e.target.value, index, participantOrProduct, productIndex, "referFriend", friendIndex, "mobileNumber" )} 
-                                            // value={friend.mobileNumber}
+                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
+                                            value={referFriend.mobileNumber}
                                         />
                                     </div>
-                                </div>  
-                                <div className="orange-action-txt" style={{marginTop: "20px"}}>&#43; {AppConstants.addfriend}</div>	      
+                                </div> 
                             </div>
-                        </div>
-                    );
-                })}
-                <div className="orange-action-txt" style={{marginTop: "20px"}}>&#43; {AppConstants.addAnotherCompetition}</div>
+                        ))}
+                    <div 
+                    className="orange-action-txt" 
+                    style={{marginTop: "15px"}}
+                    onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>	      
+                    
+                </div>
             </div>
         );
     }
 
-    additionalInfoStepView = () => {
+    additionalInfoStepView = (getFieldDecorator) => {
+        const { registrationObj } = this.props.userRegistrationState;
         return(
             <div>
-                <div>{this.addedParticipantWithProfileView()}</div> 
-                <div>{this.additionalInfoAddCompetitionView()}</div>
-                <div>{this.additionalPersonalInfoView()}</div>
+                {registrationObj != null && (<div>{this.addedParticipantWithProfileView()}</div> )}
+                
+                {(registrationObj != null && registrationObj.competitions || []).map((competition,competitionIndex) => (
+                    <div>{this.additionalInfoAddCompetitionView(competition,competitionIndex)}</div>
+                ))}
+                <div>{this.additionalPersonalInfoView(getFieldDecorator)}</div>
             </div>
         )
     }
 
-    additionalInfoAddCompetitionView = () => {
+    additionalInfoAddCompetitionView = (competition,competitionIndex) => {
         return(
             <div className="registration-form-view">
                 <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
@@ -1251,21 +1373,83 @@ class AppRegistrationFormNew extends Component{
                     <div className="col">
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
-                            <div className="form-heading" style={{textAlign: "start"}}>NWA Winter 2020</div>
+                            <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.edit}</div>
                         </div>
-                        <div style={{fontWeight: "600",marginTop: "-5px"}}>Player, Coach</div>
+                        <div style={{fontWeight: "600",marginTop: "-5px"}}>
+                            {(competition.products || []).map((product,productIndex) => (
+                                <span>
+                                    <span>{product.competitionMembershipProductName}</span>
+                                    <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
-                <div className="orange-action-txt" style={{marginTop: "20px"}}>&#43; {AppConstants.addAnotherCompetition}</div>
             </div>
         );
     }
 
-    additionalPersonalInfoView = () => {
+    additionalPersonalInfoView = (getFieldDecorator) => {
+        const { registrationObj } = this.props.userRegistrationState;
+        const { countryList, identifyAsList,disabilityList,favouriteTeamsList,firebirdPlayerList,otherSportsList,heardByList } = this.props.commonReducerState;
         return(
             <div className="registration-form-view">
                 <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
+                <InputWithHead heading={AppConstants.whichCountryWereBorn}/>
+                <Form.Item >
+                    {getFieldDecorator(`additionalInfoCountryRefId`, {
+                        rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                    })(
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        setFieldsValue={1}>
+                        {countryList.length > 0 && countryList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
+                <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
+                <Radio.Group
+                    className="registration-radio-group"
+                    setFieldsValue={1}
+                    >
+                    {(identifyAsList || []).map((identification, identificationIndex) => (
+                        <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
+                    ))}
+                </Radio.Group>
+                <InputWithHead heading={AppConstants.injury}/>
+                <TextArea
+                    placeholder={AppConstants.anyInjury}
+                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "existingMedicalCondition", index )} 
+                    // value={item.existingMedicalCondition}
+                    allowClear
+                />
+                <InputWithHead heading={AppConstants.alergy}/>
+                <TextArea
+                    placeholder={AppConstants.anyAlergies}
+                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "existingMedicalCondition", index )} 
+                    // value={item.existingMedicalCondition}
+                    allowClear
+                />
+                <InputWithHead heading={AppConstants.playingOtherParticipantSports}/>
+                <Form.Item >
+                    {getFieldDecorator(`additionalInfoOtherParticpantSport`, {
+                        rules: [{ required: true }],
+                    })(
+                    <Select
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        setFieldsValue={1}>
+                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
+                    )}
+                </Form.Item>
                 <InputWithHead heading={AppConstants.haveYouEverPlayed}/>
                 <Radio.Group
                     className="registration-radio-group"
@@ -1329,22 +1513,21 @@ class AppRegistrationFormNew extends Component{
                     // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "heardByRefId", index )} 
                     // value={item.heardByRefId}
                     >
-                        {/* {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))} */}
-                        <Radio>Friend</Radio>
+                    {(heardByList || []).map((heard, index) => (
+                        <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                    ))}
                 </Radio.Group>
                 <div className="row">
                     <div className="col-md-6 col-sm-12">
-                        <InputWithHead heading={AppConstants.favouriteTeam}/>
+                        <InputWithHead heading={AppConstants.teamYouFollow}/>
                         <Select
                             style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                             // onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteTeamRefId", index )}
-                            // value={item.favouriteTeamRefId}
+                            // value={registrationObj.additionalInfo.favouriteTeamRefId}
                             >  
-                            {/* {(favouriteTeamsList || []).map((fav, index) => (
+                            {(favouriteTeamsList || []).map((fav, index) => (
                                 <Option key={fav.id} value={fav.id}>{fav.description}</Option>
-                            ))} */}
+                            ))}
                         </Select>
                     </div>
                     <div className="col-md-6 col-sm-12">
@@ -1354,9 +1537,9 @@ class AppRegistrationFormNew extends Component{
                             // onChange={(e) => this.onChangeSetParticipantValue(e, "favouriteFireBird", index )}
                             // value={item.favouriteFireBird}
                             >  
-                            {/* {(firebirdPlayerList || []).map((fire, index) => (
+                            {(firebirdPlayerList || []).map((fire, index) => (
                                 <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                            ))} */}
+                            ))}
                         </Select>
                     </div>
                 </div>
@@ -1368,30 +1551,31 @@ class AppRegistrationFormNew extends Component{
                         {AppConstants.consentForPhotos}
                 </Checkbox>
 
-                <InputWithHead heading={AppConstants.doYouHaveDisablity} />
+                <InputWithHead heading={AppConstants.haveDisability} />
                 <Radio.Group
                     className="registration-radio-group"
-                    // onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
-                    // value={item.isDisability}
+                    //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "isDisability", index )} 
+                    //value={registrationObj.additionalInfo.isDisability}
                     >
                     <Radio value={1}>{AppConstants.yes}</Radio>
-                        {/* {item.isDisability == 1 ? 
-                        <div style={{marginLeft: '25px'}}>
-                            <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
-                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
-                                value={item.disabilityCareNumber}/>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
-                            <Radio.Group
-                                className="reg-competition-radio"
-                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
-                                value={item.disabilityTypeRefId}>
-                                    {(disabilityList || []).map((dis, disIndex) => (
-                                    <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
-                                ))}
-                            </Radio.Group>
-                        </div> 
-                        : null
-                        } */}
+                    {/* {registrationObj.additionalInfo.isDisability == 1 ? 
+                    <div style={{marginLeft: '25px'}}>
+                        <InputWithHead heading={AppConstants.disabilityCareNumber} 
+                        placeholder={AppConstants.disabilityCareNumber} 
+                        //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index )}
+                        value={registrationObj.additionalInfo.disabilityCareNumber}/>
+                        <InputWithHead heading={AppConstants.typeOfDisability} />
+                        <Radio.Group
+                            className="reg-competition-radio"
+                            //onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index )} 
+                            value={registrationObj.additionalInfo.disabilityTypeRefId}>
+                                {(disabilityList || []).map((dis, disIndex) => (
+                                <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
+                            ))}
+                        </Radio.Group>
+                    </div> 
+                    : null
+                    } */}
                     <Radio value={0}>{AppConstants.no}</Radio>
                 </Radio.Group>
             </div>
@@ -1408,7 +1592,7 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
                }
                {this.state.currentStep == 2 && 
-                    <div>{this.additionalInfoStepView()}</div>
+                    <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
                }
             </div>
         );
@@ -1478,7 +1662,15 @@ function mapDispatchToProps(dispatch)
         countryReferenceAction,
         getCommonRefData,
         membershipProductEndUserRegistrationAction,
-        updateParticipantCompetitionAction					 
+        updateParticipantCompetitionAction,
+        playerPositionReferenceAction,
+        updateUserRegistrationStateVarAction,
+        identificationReferenceAction,
+        disabilityReferenceAction,
+        favouriteTeamReferenceAction,
+        firebirdPlayerReferenceAction,
+        otherSportsReferenceAction,
+        heardByReferenceAction					 
     }, dispatch);
 
 }

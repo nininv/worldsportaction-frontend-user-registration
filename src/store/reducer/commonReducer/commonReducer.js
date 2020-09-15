@@ -22,7 +22,9 @@ const initialState = {
     playerPositionList: [],
     genderList: [],
     disabilityList: [],
-    personRegisteringRoleList: []		 
+    personRegisteringRoleList: [],
+    identifyAsList: [],
+    otherSportsList: []		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -203,6 +205,32 @@ function commonReducerState(state = initialState, action) {
                 ...state,
                 status: action.status,
                 personRegisteringRoleList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        ///////get the identification list
+        case ApiConstants.API_IDENTIFICATION_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_IDENTIFICATION_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                identifyAsList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+         ///////get the other sport list
+         case ApiConstants.API_OTHER_SPORTS_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_OTHER_SPORTS_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                otherSportsList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
                 error: null
             };

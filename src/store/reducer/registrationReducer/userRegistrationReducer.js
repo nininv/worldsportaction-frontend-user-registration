@@ -1,5 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
+import { deepCopyFunction} from '../../../util/helpers';
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -22,6 +23,7 @@ let registrationObjTemp = {
 	"postalCode": null,
 	"latitue": null,
 	"longitude": null,
+	"referParentEmail": false,
 	"refFlag": null,
 	"addNewAddressFlag": false,
 	"manualEnterAddressFlag": false,
@@ -144,22 +146,26 @@ let registrationObjTemp = {
 	}
 }
 
-const competitionObjTemp = {
+const competitionObj = {
 	"organisationId": null,
 	"competitionId": null,
 	"organisationInfo": null,
 	"competitionInfo": null,
+	"registrationRestrictionTypeRefId": null,
 	"products": [
 		{
 			// "competitionMembershipProductId": null,
 			// "competitionMembershipProductTypeId": null,
-			// "isSelected": false
+			// 	"competitionMembershipProductName": null,
+			// "isSelected": false,
+			// "isPlayer": 0
 		}
 	],
 	"divisionInfo":[
 		// {
 		// 	"competitionMembershipProductTypeId": null,
-		// 	"competitionMembershipProductDivisionId": null
+		// 	"competitionMembershipProductDivisionId": null,
+		// 	"divisionName": null
 		// }
 	],
 	"divisions": [
@@ -175,20 +181,20 @@ const competitionObjTemp = {
 	"positionId1": null,
 	"positionId2": null,
 	"friends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null
-		}
+		// {
+		// 	"firstName": null,
+		// 	"lastName": null,
+		// 	"mobileNumber": null,
+		// 	"email": null
+		// }
 	],
 	"referFriends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null
-		}
+		// {
+		// 	"firstName": null,
+		// 	"lastName": null,
+		// 	"mobileNumber": null,
+		// 	"email": null
+		// }
 	]
 }
 
@@ -198,11 +204,12 @@ const initialState = {
     userInfo: [],
 	userInfoOnLoad: false,
 	membershipProductInfo: [],
+	addCompetitionFlag: false
 }
 
 function getUserUpdatedRegistrationObj(state,action){
 	try{
-		let registrationObj = registrationObjTemp;
+		let registrationObj = deepCopyFunction(registrationObjTemp);
 		if(action.data != -1 && action.data != -2){
 			let selectedUser = state.userInfo.find((user) => user.id == action.data);
 			registrationObj.firstName = selectedUser.firstName;
@@ -225,16 +232,25 @@ function getUserUpdatedRegistrationObj(state,action){
 	}
 }
 
-function setMembershipProductsInfo(state){
+function setMembershipProductsInfo(state,organisationData){
 	try{
-		if(getOrganisationId() != null && getCompetitonId() != null){
-			competitionObjTemp.organisationId = getOrganisationId();
-			competitionObjTemp.competitionId = getCompetitonId();
-			let organisatinInfoTemp = state.membershipProductInfo.find(organisation => organisation.organisationUniqueKey == competitionObjTemp.organisationId);
-			competitionObjTemp.organisationInfo = organisatinInfoTemp;
-			let competitionInfoTemp = competitionObjTemp.organisationInfo.competitions.find(competition => competition.competitionUniqueKey == competitionObjTemp.competitionId);
-			competitionObjTemp.competitionInfo = competitionInfoTemp;
-			state.registrationObj.competitions.push(competitionObjTemp);
+		let competition = deepCopyFunction(competitionObj);
+		if(organisationData == undefined){
+			if(getOrganisationId() != null && getCompetitonId() != null){
+				competition.organisationId = getOrganisationId();
+				competition.competitionId = getCompetitonId();
+				let organisatinInfoTemp = state.membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
+				competition.organisationInfo = organisatinInfoTemp;
+				let competitionInfoTemp = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
+				competition.competitionInfo = competitionInfoTemp;
+				state.registrationObj.competitions.push(competition);
+			}
+		}else{
+			competition.organisationId = organisationData.organisationInfo.organisationUniqueKey;
+			competition.competitionId = organisationData.competitionInfo.competitionUniqueKey;
+			competition.organisationInfo = organisationData.organisationInfo;
+			competition.competitionInfo = organisationData.competitionInfo;
+			state.registrationObj.competitions.push(competition);
 		}
 	}catch(ex){
 		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
@@ -249,7 +265,9 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
 				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
-				"isSelected": competitionData	
+				"competitionMembershipProductName": membershipProductInfo.shortName,
+				"isSelected": competitionData,
+				"isPlayer": membershipProductInfo.isPlayer	
 			}
 			state.registrationObj.competitions[competitionIndex].products.push(product);
 			for(let division of membershipProductInfo.divisions){
@@ -300,11 +318,14 @@ function userRegistrationReducer(state = initialState, action){
 			let key = action.key;
 			if(key == "registrationObj"){
 				state.registrationObj = value;
+			}else if(key == "competitions"){
+				setMembershipProductsInfo(state,value)
 			}else{
 				state.registrationObj[key] = value;
 			}
 			return { 
-				...state 
+				...state,
+				addCompetitionFlag: true 
 			}
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD:
 			return { ...state, onLoad: true };
@@ -335,10 +356,36 @@ function userRegistrationReducer(state = initialState, action){
 			let competitionKey = action.key;
 			let competitionIndex = action.index;
 			let competitionSubIndex = action.subIndex;
+			let competitionSubKey = action.subKey;
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
 					competitionIndex,competitionSubIndex);
 			}
+			else if(competitionKey == "divisionInfo"){
+				let divisionInfoTemp = state.registrationObj.competitions[competitionIndex].divisionInfo;
+				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData);
+				state.registrationObj.competitions[competitionIndex].divisions.push(divisionInfo);
+			}
+			else if(competitionKey == "divisions"){
+				state.registrationObj.competitions[competitionIndex].divisions.splice(competitionSubIndex,1);
+			}
+			else if(competitionSubKey == "friends"){
+				state.registrationObj.competitions[competitionIndex].friends[competitionSubIndex][competitionKey] = competitionData;
+			}
+			else if(competitionSubKey == "referFriends"){
+				state.registrationObj.competitions[competitionIndex].referFriends[competitionSubIndex][competitionKey] = competitionData;
+			}
+			else{
+				state.registrationObj.competitions[competitionIndex][competitionKey] = competitionData;
+			}
+			return {
+				...state
+			};
+		
+		case ApiConstants.UPDATE_USER_REGISTRATION_STATE_VAR:
+			let stateKey = action.key;
+			let stateData = action.data;
+			state[stateKey] = stateData;
 			return {
 				...state
 			};
