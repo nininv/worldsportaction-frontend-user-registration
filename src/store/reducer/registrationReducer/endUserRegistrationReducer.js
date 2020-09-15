@@ -584,29 +584,29 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };   
        
-        case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
-            return { ...state, onTCLoad: true };
+        // case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
+        //     return { ...state, onTCLoad: true };
 
-        case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
-            let tcData = action.result;
-          //  console.log("TC Input :::", tcData)
-            if(tcData!= null && tcData.termsAndConditions.length > 0){
-                let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
-              //  console.log("isExistsTC", isExistsTC);
-                if(isExistsTC == null || isExistsTC == undefined){
-                    state.termsAndConditions.push(tcData);
-                }
-            }
-           // console.log("TC:::TC Final1111", state.termsAndConditions)
-            state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
-                                            state.registrationDetail.userRegistrations, state);
+        // case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
+        //     let tcData = action.result;
+        //   //  console.log("TC Input :::", tcData)
+        //     if(tcData!= null && tcData.termsAndConditions.length > 0){
+        //         let isExistsTC = state.termsAndConditions.find(x=>x.organisationId == tcData.organisationId);
+        //       //  console.log("isExistsTC", isExistsTC);
+        //         if(isExistsTC == null || isExistsTC == undefined){
+        //             state.termsAndConditions.push(tcData);
+        //         }
+        //     }
+        //    // console.log("TC:::TC Final1111", state.termsAndConditions)
+        //     state.termsAndConditions = updateTermsAndConditions(state.termsAndConditions,
+        //                                     state.registrationDetail.userRegistrations, state);
            
-           // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
-            return {
-                ...state,
-                onTCLoad: false,
-                status: action.status
-            }; 
+        //    // console.log("TC:::TC Final", state.termsAndConditions, state.termsAndConditionsFinal)
+        //     return {
+        //         ...state,
+        //         onTCLoad: false,
+        //         status: action.status
+        //     }; 
             
         case ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD:
             state["participantIndex"] = action.payload.participantIndex;

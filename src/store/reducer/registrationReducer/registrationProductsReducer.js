@@ -5,7 +5,8 @@ import AppConstants from "../../../themes/appConstants";
 const initialState = {
     onLoad: false,
     onRegReviewLoad: false,
-    registrationReviewList: null
+    registrationReviewList: null,
+    termsAndConditions: []
 }
 
 function registrationProductsReducer(state = initialState, action){
@@ -50,20 +51,63 @@ function registrationProductsReducer(state = initialState, action){
                         typeId: 2,
                         isValid: null
                     }
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedDiscounts"].push(obj)
+                    reviewData["compParticipants"][action.index][action.subKey]["discountCodes"].push(obj)
                 }
                 else if(action.key == "removeDiscount"){
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedDiscounts"].splice(action.subIndex, 1);
+                    reviewData["compParticipants"][action.index][action.subKey]["discountCodes"].splice(action.subIndex, 1);
                 }
                 else if(action.key == "discountCode"){
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedDiscounts"][action.subIndex][action.key] = action.value;
+                    reviewData["compParticipants"][action.index][action.subKey]["discountCodes"][action.subIndex][action.key] = action.value;
                 }
+                else {
+                    reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
+                }
+               
             }
-            
+            else if (action.subKey == "volunteerInfo"){
+                reviewData[action.subKey][action.index][action.key] = action.value;
+            }
             return {
                 ...state,
                 error: null
             }
+
+        case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS:
+            let regReviewDeleteData = action.result;
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status,
+                registrationReviewList: regReviewDeleteData
+            };
+
+        case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD:
+            return { ...state, onRegReviewLoad: true };
+
+        case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_SUCCESS:
+            let regReviewUpdatedData = action.result;
+            return {
+                ...state,
+                onRegReviewLoad: false,
+                status: action.status,
+                registrationReviewList: regReviewUpdatedData
+            };
+
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD:
+            return { ...state, onLoad: true };
+
+        case ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS:
+            let termsAndConditionsData = action.result;
+            console.log("termsAndConditionsData",termsAndConditionsData);
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                termsAndConditions:  termsAndConditionsData
+            }; 
         default:
             return state;
     }

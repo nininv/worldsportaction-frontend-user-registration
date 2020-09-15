@@ -65,3 +65,59 @@ export function* saveRegistrationReviewSaga(action) {
   }
 }
 
+////// Delete Registration Product
+export function* deleteRegistrationProductSaga(action) {
+  try {
+    const result = yield call(AxiosApi.deleteRegistrationProduct, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+////// Delete Registration Participant
+export function* deleteRegistrationParticipantSaga(action) {
+  try {
+    const result = yield call(AxiosApi.deleteRegistrationParticipant, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+////// Get Terms and conditions 
+export function* getTermsAndConditionsSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getTermsAndConditions, action.payload);
+    console.log('result.status ' + result.status );
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+

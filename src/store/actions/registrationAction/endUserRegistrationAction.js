@@ -126,15 +126,15 @@ function updateTeamRegistrationInvite(payload) {
     return action;
 }
 
-// Get Terms and Condition
-function getTermsAndConditionsAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
-        payload: payload
-    }
+// // Get Terms and Condition
+// function getTermsAndConditionsAction(payload){
+//     const action = {
+//         type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+//         payload: payload
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
 function getRegistrationProductFeesAction(payload){
     const action = {
@@ -299,7 +299,7 @@ export {
     updateTeamParentInfoAction,
     updateTeamRegSettingAction,
     updateTeamRegistrationInvite,
-    getTermsAndConditionsAction,
+    // getTermsAndConditionsAction,
     getRegistrationProductFeesAction,
     // getRegistrationReviewAction,
     // saveRegistrationReview,

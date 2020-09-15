@@ -141,7 +141,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_USER_PROFILE_UPDATE_LOAD, userSaga.updateUserProfileSaga)
 
   //Terms and Conditions
-  yield takeEvery(ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD, endUserRegSaga.getTermsAndConditionsSaga)
+  yield takeEvery(ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD, regProductsSaga.getTermsAndConditionsSaga)
 
   //Terms and Conditions
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD, endUserRegSaga.getRegistrationProductFeesSaga)
@@ -211,6 +211,12 @@ export default function* root_saga() {
 
   //UserRegistration Membership Products
   yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, userRegistrationSaga.endUserRegistrationMembershipProducts)
+
+  //UserRegistration Membership Products Delete
+  yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD, regProductsSaga.deleteRegistrationProductSaga)
+
+  //UserRegistration Membership Products
+  yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD, regProductsSaga.deleteRegistrationParticipantSaga)
 
 
 }

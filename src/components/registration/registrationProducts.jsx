@@ -22,7 +22,9 @@ import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import { liveScore_formateDate } from "../../themes/dateformate";
-import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction, } from 
+import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction,
+    deleteRegistrationProductAction, deleteRegistrationParticipantAction,
+    getTermsAndConditionsAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
@@ -42,14 +44,18 @@ class RegistrationProducts extends Component {
         super(props);
         this.state = {
            buttonPressed: null,
-           registrationUniqueKey: null
+           registrationUniqueKey: null,
+           productModalVisible: false,
+           participantModalVisible: false,
+           id: null,
         };
+
     }
 
     componentDidMount(){
         //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         // console.log("registrationUniqueKey"+registrationUniqueKey);
-        let registrationUniqueKey = "ddd181dc-cf8a-4327-a28a-bfa6a789417b";
+        let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -62,7 +68,10 @@ class RegistrationProducts extends Component {
             registrationId: registrationUniqueKey
         }
         this.props.getRegistrationReviewAction(payload);
+        this.props.getTermsAndConditionsAction(payload);
     }
+
+   
 
     saveReviewForm = (e) =>{
         e.preventDefault();
@@ -82,26 +91,8 @@ class RegistrationProducts extends Component {
             {
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
-                // let payload = {
-                //     "registrationId": this.state.registrationUniqueKey,
-                //     "charityRoundUpRefId":registrationReview.charityRoundUpRefId,
-                //     "compParticipants":[]
-                // }
-
                 console.log("registrationReview", registrationReview);
-
-                registrationReview.compParticipants.map((x, index) => {
-                    let arr = [];
-                    x.membershipProducts.map((y) => {
-                        arr.push(...y.selectedDiscounts);
-                     });
-                     x.selectedOptions.selectedDiscounts = arr;
-                });
-
-              //  console.log("payload" + JSON.stringify(registrationReview));
-                this.props.saveRegistrationReview(registrationReview);
-                this.setState({loading: true});
-
+                this.callSaveRegistrationProducts("save", registrationReview);
             }
         });
     }
@@ -144,45 +135,65 @@ class RegistrationProducts extends Component {
     setReviewInfo = (value, key, index, subkey, subIndex) => {
         let registrationReview = this.props.registrationProductState.registrationReviewList;
         registrationReview["registrationId"] = this.state.registrationUniqueKey;
-        // if(key == "isSelected"){
-        //     let payload = {
-        //         "competitionMembershipProductTypeId":value.competitionMembershipProductTypeId,
-        //         "membershipMappingId": value.membershipMappingId,
-        //         "code":value.selectedCode,
-        //         "key": "discount"
-        //     }
-        //     if(value.selectedCode!= null && value.selectedCode!= ""){
-        //         this.props.validateDiscountCode(payload, index, subIndex);
-        //     }
-        // }
-        // else if (key == "isSchoolRegCodeApplied"){
-        //     let payload = {
-        //         "isTeamRegistration":value.isTeamRegistration,
-        //         "competitionUniqueKey": value.competitionUniqueKey,
-        //         "code":value.selectedOptions.selectedSchoolRegCode,
-        //         "key": "school"
-        //     }
-        //     if(payload.code!= null && payload.code!= ""){
-        //         this.props.validateDiscountCode(payload, index, subIndex);
-        //     }
-        // }
-        // else{
-        //     this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
-        // }
-
+        registrationReview["index"] = index;
         this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
-        if(key == "paymentOptionRefId"){
+        if(key == "paymentOptionRefId" || key == "discount"){
            this.callSaveRegistrationProducts(key, registrationReview)
         }
-       
+        else if(key == "removeDiscount"){
+            this.callSaveRegistrationProducts("discount", registrationReview)
+        }
+        else if(key == "isSchoolRegCodeApplied"){
+            this.callSaveRegistrationProducts("school", registrationReview)
+        }
     }
 
-    callSaveRegistrationProducts = (flag, registrationReview) =>{
-      
-        registrationReview["flag"] = flag;
+    callSaveRegistrationProducts = (key, registrationReview) =>{
+        registrationReview["key"] = key;
         console.log("registrationReview", registrationReview);
         this.props.saveRegistrationReview(registrationReview);
-        this.setState({loading: true, buttonPressed: flag});
+        this.setState({loading: true, buttonPressed: key});
+    }
+
+    removeProductModal = (key, id) =>{
+        if(key == "show"){
+            this.setState({productModalVisible: true, id: id});
+        }
+        else if(key == "ok"){
+            this.setState({productModalVisible: false});
+            let payload = {
+                registrationId : this.state.registrationUniqueKey,
+                orgRegParticipantId: this.state.id
+            }
+            this.props.deleteRegistrationProductAction(payload);
+            this.setState({loading: true});
+        }
+        else if(key == "cancel"){
+            this.setState({productModalVisible: false});
+        }
+    }
+
+    removeParticipantModal = (key, id) =>{
+        if(key == "show"){
+            this.setState({participantModalVisible: true, id: id});
+        }
+        else if(key == "ok"){
+            this.setState({participantModalVisible: false});
+            let payload = {
+                registrationId : this.state.registrationUniqueKey,
+                participantId: this.state.id
+            }
+
+            this.props.deleteRegistrationParticipantAction(payload);
+            this.setState({loading: true});
+        }
+        else if(key == "cancel"){
+            this.setState({participantModalVisible: false});
+        }
+    }
+
+    redirect = (id) =>{
+        history.push({pathname: '/appRegistrationForm', state: {participantId: id}})
     }
 
 
@@ -202,17 +213,18 @@ class RegistrationProducts extends Component {
 
     participantDetailView = () =>{
         const {registrationReviewList} = this.props.registrationProductState;
-        console.log("registrationReviewList", this.props.registrationProductState);
+        //console.log("registrationReviewList", this.props.registrationProductState);
         let compParticipants = registrationReviewList!= null ? 
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
         return(
             <div>
                 {(compParticipants || []).map((item, index) =>(
-                    <div>
+                    <div key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
+                        {item.isTeamRegistration == 1 &&  this.schoolRegistrationView(item,index)}
                         {this.governmentVoucherView(item, index)}
                     </div>
                 ))}
@@ -241,13 +253,13 @@ class RegistrationProducts extends Component {
                             liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
                         </div>
                     </div>
-                    <div className="transfer-image-view pointer" style={{marginLeft: 'auto'}}>                   
+                    <div className="transfer-image-view pointer" style={{marginLeft: 'auto'}} onClick={() => this.redirect(item.participantId)}>                   
                         <span className="btn-text-common">
                             {AppConstants.edit}
                         </span>
                         <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                     </div> 
-                    <div className="transfer-image-view pointer" style={{paddingLeft: '15px',}}>                   
+                    <div className="transfer-image-view pointer" style={{paddingLeft: '15px',}} onClick={() => this.removeParticipantModal('show', item.participantId)}>                   
                         <span className="btn-text-common">
                             {AppConstants.remove}
                         </span>
@@ -283,7 +295,8 @@ class RegistrationProducts extends Component {
                         {AppConstants.registration}{"(s)"}
                     </div>
                     { (item.membershipProducts || []).map((mem, memIndex) =>(
-                        <div className="product-text-common" style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                        <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="product-text-common" 
+                        style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
                             {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
                         </div>
                     )) }
@@ -296,7 +309,7 @@ class RegistrationProducts extends Component {
                         value={item.selectedOptions.paymentOptionRefId}
                         onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
                         {(item.paymentOptions || []).map((p, pIndex) =>(  
-                            <span>
+                            <span key={p.paymentOptionRefId}>
                                 {p.paymentOptionRefId == 1 && 
                                     <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
                                 }  
@@ -317,7 +330,7 @@ class RegistrationProducts extends Component {
                 {item.selectedOptions.paymentOptionRefId == 4 && 
                 <div className="row" style={{marginTop: '20px'}}>
                     {(item.instalmentDates || []).map((i, iIndex) => (
-                        <div className="col-sm-2">
+                        <div className="col-sm-2" key={iIndex}>
                         <div>{(iIndex + 1) + " instalment"}</div>
                         <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
                     </div>
@@ -328,14 +341,14 @@ class RegistrationProducts extends Component {
     }
 
     discountcodeView = (item, index) =>{
-        let selectedOptions = item.selectedOptions;
+        let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
                 <div className="product-text-common" style={{fontSize: 21 , marginTop: "5px"}}>
                     {AppConstants.discountCode}
                 </div>
-                {(selectedOptions.selectedDiscounts || []).map((dis, disIndex) =>(
-                    <div style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between"}}>
+                {(discountCodes || []).map((dis, disIndex) =>(
+                    <div key={index +"#" + disIndex} style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between"}}>
                         <div style={{ width: "100%"}}>
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
@@ -350,7 +363,12 @@ class RegistrationProducts extends Component {
                                     onClick={() => this.setReviewInfo(null, "removeDiscount", index,"selectedOptions", disIndex)}>
                                 <i className="fa fa-trash-o" aria-hidden="true"></i>
                             </span>
-                        </div>                    
+                        </div>    
+                        {dis.isValid == 0 && 
+                        <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                            Invalid code
+                        </div>
+                        }                
                     </div>
                 ))
                 }
@@ -361,15 +379,55 @@ class RegistrationProducts extends Component {
                             + {AppConstants.addDiscountCode}
                         </span>
                     </div>  
-                    {selectedOptions.selectedDiscounts.length > 0 && 
+                    {discountCodes && discountCodes.length > 0 && 
                     <div style={{marginLeft: 'auto', paddingTop:'15px'}}>
                         <Button className="open-reg-button"
-                            onClick={(e) =>  this.setReviewInfo(null, "applyDiscountCode", index,"selectedOptions", null)}
+                            onClick={(e) =>  this.setReviewInfo(null, "discount", index,null, null)}
                             type="primary">
                             {AppConstants.applyCode}
                         </Button>
                     </div> 
                     }
+                </div>
+            </div>
+        )
+    }
+
+    schoolRegistrationView =(item, index) =>{
+        return (
+            <div>
+                <div>
+                    <div className="inputfield-style">                    
+                        <div className="row" style={{marginLeft:0 , marginTop: 12}}>
+                            <div  className="" style={{paddingLeft: 9, alignSelf: "center" , marginRight: 30}}>
+                            {AppConstants.registrationCode} 
+                            </div>
+                            <div style={{ marginRight: 30}}>
+                                <InputWithHead 
+                                    placeholder={AppConstants.code} 
+                                    onChange={(e) => this.setReviewInfo(e.target.value, "selectedSchoolRegCode", index,"selectedOptions", null)}
+                                    value={item.selectedOptions.selectedSchoolRegCode}/>
+                            </div>
+                            <div className="" style={{alignSelf:"center"}}>
+                                {item.selectedOptions.isSchoolRegCodeApplied == 1 ?
+                                <Button className="open-reg-button"
+                                    onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", null)}
+                                    type="primary">
+                                    {AppConstants.removeCode}
+                                </Button> : 
+                                <Button className="open-reg-button"
+                                onClick={(e) =>  this.setReviewInfo(item, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                                type="primary">
+                                {AppConstants.applyCode}
+                            </Button>}
+                            </div>   
+                            {item.selectedOptions.invalidSchoolRegCode == 1 && 
+                            <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                                Invalid code
+                            </div>
+                            }
+                        </div>                   
+                    </div>
                 </div>
             </div>
         )
@@ -417,6 +475,7 @@ class RegistrationProducts extends Component {
         const {registrationReviewList} = this.props.registrationProductState;
         let charity = registrationReviewList!= null ? registrationReviewList.charity : null;
         let charityRoundUp = registrationReviewList!= null ? registrationReviewList.charityRoundUp : [];
+        
         return(
             <div style={{marginTop: "23px"}}>   
                 {charity!= null &&             
@@ -443,6 +502,8 @@ class RegistrationProducts extends Component {
     }
 
     otherinfoView = () =>{
+        const {registrationReviewList} = this.props.registrationProductState;
+        let otherInfo = registrationReviewList!= null ? registrationReviewList.volunteerInfo : [];
         return(
             <div style={{marginTop: "23px"}}>                  
             <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
@@ -452,9 +513,13 @@ class RegistrationProducts extends Component {
                 {AppConstants.continuedSuccessOfOurClub}
             </div>
             <div style={{marginTop:6}}>
-            <Checkbox className="single-checkbox">
-                {AppConstants.coach}
-            </Checkbox>
+                {(otherInfo || []).map((item, index) =>(
+                    <Checkbox className="single-checkbox" key={item.id} checked={item.isActive}
+                    onChange={(e) => this.setReviewInfo(e.target.checked, "isActive", index,"volunteerInfo", null)}>
+                        {item.description}
+                    </Checkbox>
+                ))}
+            
             </div>
         </div>
         )
@@ -470,10 +535,12 @@ class RegistrationProducts extends Component {
     }
 
     productLeftView = ()=>{
+        const {registrationReviewList} = this.props.registrationProductState;
+        let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         return(
             <div className="col-sm-8 product-left-view outline-style">
                 {this.participantDetailView()}
-                {this.charityView()}
+                {isSchoolRegistration == 0 && this.charityView()}
                 {this.otherinfoView()}
             </div>
         )
@@ -494,6 +561,7 @@ class RegistrationProducts extends Component {
         let compParticipants = registrationReviewList!= null ? 
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
+        let total = registrationReviewList!= null ? registrationReviewList.total : null;
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
                 <div className="product-text-common" style={{fontSize: 21}}>
@@ -502,17 +570,17 @@ class RegistrationProducts extends Component {
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
-                    <div style={{paddingBottom:12}}>
+                    <div style={{paddingBottom:12}} key={item.participantId}>
                         <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
-                            <div>
+                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
                                 <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                    <div>
-                                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
                                 
@@ -559,22 +627,55 @@ class RegistrationProducts extends Component {
                 </div> 
                 <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
             </div>
         )
     }
 
+    deleteParticiantModalView = () => {
+        return (
+            <div>
+              <Modal
+                className="add-membership-type-modal"
+                title="Registration Participant"
+                visible={this.state.participantModalVisible}
+                onOk={() => this.removeParticipantModal("ok")}
+                onCancel={() => this.removeParticipantModal("cancel")}>
+                  <p>{AppConstants.deleteParticipantMsg}</p>
+              </Modal>
+            </div>
+          );
+    }
+
+    deleteProductModalView = () => {
+        return (
+            <div>
+              <Modal
+                className="add-membership-type-modal"
+                title="Registration Product"
+                visible={this.state.productModalVisible}
+                onOk={() => this.removeProductModal("ok")}
+                onCancel={() => this.removeProductModal("cancel")}>
+                  <p>{AppConstants.deleteProductMsg}</p>
+              </Modal>
+            </div>
+          );
+    }
+
     termsAndConditionsView = () =>{
+        const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
                 <span className="form-heading" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </span>
-                <div className="pt-2">                  
+                <div className="pt-2">   
+                { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 btn-text-common">
-                    <a  target='_blank' >
-                        {AppConstants.ConditionsForNetballQLD}
-                    </a>
-                    </div>                   
+                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                        Terms and Conditions for {item.name}
+                        </a>
+                    </div> 
+                ))}                  
                 </div>                           
                 <div className="single-checkbox mt-0" style={{display:"flex"}}>
                     <div>
@@ -618,6 +719,8 @@ class RegistrationProducts extends Component {
                         <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
+                                {this.deleteParticiantModalView()}
+                                {this.deleteProductModalView()}
                             </div>
                         </Content>
                     </Form>
@@ -633,14 +736,17 @@ function mapDispatchToProps(dispatch)
     return bindActionCreators({
         getRegistrationReviewAction,
         saveRegistrationReview,
-        updateReviewInfoAction,					 
+        updateReviewInfoAction,	
+        deleteRegistrationProductAction,
+        deleteRegistrationParticipantAction,
+        getTermsAndConditionsAction			 
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-       registrationProductState: state.RegistrationProductState 
+       registrationProductState: state.RegistrationProductState
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationProducts));

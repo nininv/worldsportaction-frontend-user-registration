@@ -31,10 +31,40 @@ function updateReviewInfoAction(value, key, index, subkey, subIndex){
     return action;
 }
 
+function deleteRegistrationProductAction(payload){
+    const action = {
+        type: ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function deleteRegistrationParticipantAction(payload){
+    const action = {
+        type: ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+// Get Terms and Condition
+function getTermsAndConditionsAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 
 export{
     getRegistrationReviewAction,
     saveRegistrationReview,
     updateReviewInfoAction,
-   
+    deleteRegistrationProductAction,
+    deleteRegistrationParticipantAction,
+    getTermsAndConditionsAction
 }

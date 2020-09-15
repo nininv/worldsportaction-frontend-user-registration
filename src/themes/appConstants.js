@@ -1038,7 +1038,8 @@ const AppConstants = {
  deliveryAddress:"Delivery Address",
  billingAddress:"Billing Address",
  useDifferentAddress:"Use a different address",
-
+ deleteProductMsg: "Do you want to delete the product?",
+ deleteParticipantMsg: "Do you want to delete the participant?"
 };
 
 export default AppConstants;

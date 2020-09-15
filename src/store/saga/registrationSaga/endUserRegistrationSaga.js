@@ -145,23 +145,6 @@ export function* teamRegistrationInviteUpdateSaga(action) {
 }
 
 
-////// Get Terms and conditions 
-export function* getTermsAndConditionsSaga(action) {
-  try {
-    const result = yield call(AxiosApi.getTermsAndConditions, action.payload);
-    if (result.status === 1) {
-      yield put({
-        type: ApiConstants.API_GET_TERMS_AND_CONDITION_SUCCESS,
-        result: result.result.data,
-        status: result.status
-      });
-    } else {
-      yield call(failSaga, result)
-    }
-  } catch (error) {
-    yield call(errorSaga, error)
-  }
-}
 
 
 ////// Get Registration Product Fees
