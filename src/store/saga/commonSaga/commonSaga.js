@@ -281,3 +281,37 @@ export function* otherSportsReferenceSaga(action){
     }
 }
 
+export function* accreditationUmpireReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.accreditationUmpire);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* accreditationCoachReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.accreditationCoach);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_ACCREDITATION_COACH_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
