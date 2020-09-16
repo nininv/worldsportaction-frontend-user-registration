@@ -14,6 +14,7 @@ let registrationObjTemp = {
 	"dateOfBirth": null,
 	"mobileNumber": null,
 	"email": null,
+	"participantPhoto": null,
 	"profileUrl": null,
 	"street1": null,
 	"street2": null,
@@ -27,6 +28,9 @@ let registrationObjTemp = {
 	"refFlag": null,
 	"addNewAddressFlag": false,
 	"manualEnterAddressFlag": false,
+	"umpireFlag": 0,
+	"coachFlag": 0,
+	"walkingNetballFlag": 0,
 	"parentOrGuardian": [
 		// {
 		// 	"tempParentId": null,
@@ -42,13 +46,13 @@ let registrationObjTemp = {
 		// 	"postalCode": null
 		// }
 	],
-	"tempParentsDetail": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"tempParentId": null
-		}
-	],
+	// "tempParentsDetail": [
+	// 	// {
+	// 	// 	"firstName": null,
+	// 	// 	"lastName": null,
+	// 	// 	"tempParentId": null
+	// 	// }
+	// ],
 	"tempParents": [],
 	"competitions": [
 		// {
@@ -128,9 +132,9 @@ let registrationObjTemp = {
 		"isChildrenCheckNumber": null,
 		"disabilityTypeRefId": null,
 		"disabilityCareNumber": null,
-		"emergencyContactNumber": "",
-		"emergencyContactName": "",
-		"isPlayedBefore": false,
+		"emergencyContactNumber": null,
+		"emergencyContactName": null,
+		"playedBefore": 0,
 		"existingMedicalCondition": null,
 		"regularMedication": null,
 		"heardByRefId": null,
@@ -142,7 +146,24 @@ let registrationObjTemp = {
 		"childrenCheckNumber": null,
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
-		"countryRefId": null
+		"countryRefId": 1,
+		"identifyRefId": null,
+		"injuryInfo": null,
+		"allergyInfo": null,
+		"otherSportsInfo": null,
+		"yearsPlayed": null,
+		"schoolId": null,
+		"schoolGradeInfo": null,
+		"isParticipatedInSSP": null,
+		"accreditationLevelUmpireRefId": null,
+		"accreditationLevelCoachRefId": null,
+		"newToUmpiring": null,
+		"associationLevelInfo": null,
+		"accreditationUmpireExpiryDate": null,
+		"accreditationCoachExpiryDate": null,
+		"isPrerequestTrainingComplete": null,
+		"walkingNetballRefId": null,
+		"walkingNetballInfo": null
 	}
 }
 
@@ -153,13 +174,13 @@ const competitionObj = {
 	"competitionInfo": null,
 	"registrationRestrictionTypeRefId": null,
 	"products": [
-		{
-			// "competitionMembershipProductId": null,
-			// "competitionMembershipProductTypeId": null,
-			// 	"competitionMembershipProductName": null,
-			// "isSelected": false,
-			// "isPlayer": 0
-		}
+		// {
+		// 	"competitionMembershipProductId": null,
+		// 	"competitionMembershipProductTypeId": null,
+		// 		"competitionMembershipProductName": null,
+		// 	"isSelected": false,
+		// 	"isPlayer": 0
+		// }
 	],
 	"divisionInfo":[
 		// {
@@ -204,7 +225,9 @@ const initialState = {
     userInfo: [],
 	userInfoOnLoad: false,
 	membershipProductInfo: [],
-	addCompetitionFlag: false
+	addCompetitionFlag: false,
+	registrationId: null,
+	isSavedParticipant: false
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -243,6 +266,7 @@ function setMembershipProductsInfo(state,organisationData){
 				competition.organisationInfo = organisatinInfoTemp;
 				let competitionInfoTemp = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
 				competition.competitionInfo = competitionInfoTemp;
+				competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 				state.registrationObj.competitions.push(competition);
 			}
 		}else{
@@ -250,6 +274,7 @@ function setMembershipProductsInfo(state,organisationData){
 			competition.competitionId = organisationData.competitionInfo.competitionUniqueKey;
 			competition.organisationInfo = organisationData.organisationInfo;
 			competition.competitionInfo = organisationData.competitionInfo;
+			competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 			state.registrationObj.competitions.push(competition);
 		}
 	}catch(ex){
@@ -288,6 +313,19 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		}
 	}catch(ex){
 		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
+	}
+}
+
+function updateUmpireCoachWalkingNetball(state){
+	try{
+		state.registrationObj.umpireFlag = state.registrationObj.competitions.find(x => 
+			x.products.find(y => y.competitionMembershipProductName == "Umpire")) ? 1 : 0;
+		state.registrationObj.coachFlag = state.registrationObj.competitions.find(x => 
+			x.products.find(y => y.competitionMembershipProductName == "Coach")) ? 1 : 0;
+		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
+			x.products.find(y => y.competitionMembershipProductName == "Walking Netball")) ? 1 : 0;
+	}catch(ex){
+		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
 	}
 }
 
@@ -360,6 +398,8 @@ function userRegistrationReducer(state = initialState, action){
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
 					competitionIndex,competitionSubIndex);
+					console.log("before");
+				updateUmpireCoachWalkingNetball(state);
 			}
 			else if(competitionKey == "divisionInfo"){
 				let divisionInfoTemp = state.registrationObj.competitions[competitionIndex].divisionInfo;
@@ -389,7 +429,27 @@ function userRegistrationReducer(state = initialState, action){
 			return {
 				...state
 			};
-				
+
+		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
+			let additionalInfoKey = action.key;
+			let additionalInfoData = action.data;
+			state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+			return {
+				...state
+			};
+
+		case ApiConstants.API_SAVE_PARTICIPANT_LOAD:
+			return { ...state, onLoad: true };
+
+		case ApiConstants.API_GET_PARTICIPANT_SUCCESS:
+			return {
+				...state,
+				onLoad: false,
+				status: action.status,
+				registrationId: action.result.id,
+				isSavedParticipant: true
+			};
+
         default:
             return state;
     }

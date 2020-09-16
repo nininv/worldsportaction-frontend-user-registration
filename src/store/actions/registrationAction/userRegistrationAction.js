@@ -71,6 +71,15 @@ function updateUserRegistrationStateVarAction(key,data){
     return action;
 }
 
+function updateParticipantAdditionalInfoAction(key,data){
+    const action = {
+        type: ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO,
+        key: key,
+        data: data
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -79,5 +88,6 @@ export{
     saveParticipantInfo,
     membershipProductEndUserRegistrationAction,
     updateParticipantCompetitionAction,
-    updateUserRegistrationStateVarAction
+    updateUserRegistrationStateVarAction,
+    updateParticipantAdditionalInfoAction
 }
