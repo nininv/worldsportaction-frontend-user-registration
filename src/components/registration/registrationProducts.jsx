@@ -146,13 +146,16 @@ class RegistrationProducts extends Component {
         else if(key == "isSchoolRegCodeApplied"){
             this.callSaveRegistrationProducts("school", registrationReview)
         }
+        else if(key == "voucher"){
+            this.callSaveRegistrationProducts(key, registrationReview)
+        }
     }
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
         registrationReview["key"] = key;
-        console.log("registrationReview", registrationReview);
-        this.props.saveRegistrationReview(registrationReview);
-        this.setState({loading: true, buttonPressed: key});
+        console.log("registrationReview" + JSON.stringify(registrationReview));
+        // this.props.saveRegistrationReview(registrationReview);
+        // this.setState({loading: true, buttonPressed: key});
     }
 
     removeProductModal = (key, id) =>{
@@ -434,39 +437,69 @@ class RegistrationProducts extends Component {
     }
 
     governmentVoucherView = (item, index) =>{
+        let selectedVouchers = item.selectedOptions.selectedGovernmentVouchers;
         return(
             <div>
                 <div className="product-text-common" style={{fontSize: 21 , marginTop: "30px"}}>
                     {AppConstants.governmentVouchers}
                 </div>
-                <div style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between"}}>
-                    <div style={{ width: "100%" , marginRight: "30px"}}>
-                        <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.favouriteTeam}</div>
-                        <div>
-                            <Select
-                                style={{ width: "100%", paddingRight: 1, minWidth: 182 }}                  
-                                placeholder={AppConstants.selectVenue}                               
-                            >
-                                <Option value={1}>1</Option>     
-                            </Select>
+                {(selectedVouchers || []).map((gov, govIndex) =>(
+                    <div style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between"}}>
+                        <div style={{ width: "100%" , marginRight: "30px"}}>
+                            <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.favouriteTeam}</div>
+                            <div>
+                                <Select
+                                        required={"required-field pt-0 pb-0"}
+                                        className="input-inside-table-venue-court team-mem_prod_type"
+                                        onChange={(e) => this.setReviewInfo(e, "governmentVoucherRefId", index,"selectedOptions", govIndex)}
+                                        value={gov.governmentVoucherRefId}
+                                        placeholder={'Code'}>
+                                        {(item.governmentVouchers || []).map((gv, gvIndex) => (
+                                                <Option key={gv.governmentVoucherRefId + "#" + gvIndex} 
+                                                value={gv.governmentVoucherRefId} >{gv.description}</Option>
+                                            ))
+                                        }
+                                    
+                                    </Select>
+                            </div>
+                        </div>                   
+                        <div style={{ width: "100%"}}>
+                            <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.code}</div>
+                            <InputWithHead
+                                required={"required-field pt-0 pb-0"}
+                                placeholder={AppConstants.code}  
+                                value={gov.voucherCode} 
+                                onChange={(e) => this.setReviewInfo(e.target.value, "voucherCode", index,"selectedOptions", govIndex)}                    
+                            />
                         </div>
-                    </div>                   
-                    <div style={{ width: "100%"}}>
-                        <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.code}</div>
-                        <InputWithHead
-                            required={"required-field pt-0 pb-0"}
-                            placeholder={AppConstants.discountCode}                       
-                        />
+                        <div className="transfer-image-view pointer" style={{paddingLeft: '15px',paddingTop:26}}
+                            onClick={() => this.setReviewInfo(null, "removeVoucher", index,"selectedOptions", govIndex)}>                   
+                            <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        </div>    
+                        {gov.isValid == 0 && 
+                        <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                            {gov.message}
+                        </div>
+                        }                          
                     </div>
-                    <div className="transfer-image-view pointer" style={{paddingLeft: '15px',paddingTop:26}}>                   
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
-                    </div>                    
-                </div>
-                <div style={{marginTop: "13px"}}>
-                    <span className="btn-text-common pointer" style={{paddingTop: 7}}>
-                        + {AppConstants.addGovernmentVoucher}
-                    </span>
-                </div>                
+                ))}
+                <div style={{display: 'flex'}}>
+                    <div style={{marginTop: "13px"}}>
+                        <span className="btn-text-common pointer" style={{paddingTop: 7}} 
+                                onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
+                            + {AppConstants.addGovernmentVoucher}
+                        </span>
+                    </div>  
+                    {selectedVouchers && selectedVouchers.length > 0 && 
+                    <div style={{marginLeft: 'auto', paddingTop:'15px'}}>
+                        <Button className="open-reg-button"
+                            onClick={(e) =>  this.setReviewInfo(null, "voucher", index,null, null)}
+                            type="primary">
+                            {AppConstants.applyCode}
+                        </Button>
+                    </div> 
+                    }   
+                </div>           
             </div>
         )
     }
