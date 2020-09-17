@@ -145,10 +145,10 @@ let AxiosApi = {
         var url = `/api/registration/review/products?registrationId=${payload.registrationId}`;
         return Method.dataPost(url, token, payload);
     },
-    // getRegistrationById(payload) {
-    //     var url = `/api/registration?registrationId=${payload.registrationId}`;
-    //     return Method.dataGet(url, token);
-    // },
+    getRegistrationById(payload) {
+        var url = `/api/registration?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
     // validateDiscountCode(payload) {
     //     var url = `/api/registration/discountcode/validate`;
     //     return Method.dataPost(url, token, payload);

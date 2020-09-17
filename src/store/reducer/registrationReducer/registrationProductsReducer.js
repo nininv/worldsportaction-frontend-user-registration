@@ -125,6 +125,20 @@ function registrationProductsReducer(state = initialState, action){
                 status: action.status,
                 termsAndConditions:  termsAndConditionsData
             }; 
+        
+            case ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD:
+                return { ...state, onRegReviewLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS:
+                let registrationData = action.result;
+                return {
+                    ...state,
+                    onRegReviewLoad: false,
+                    status: action.status,
+                    registrationReviewList: registrationData
+                };
+            
+ 
         default:
             return state;
     }

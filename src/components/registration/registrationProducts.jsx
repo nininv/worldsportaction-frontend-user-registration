@@ -27,7 +27,7 @@ import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoActio
     getTermsAndConditionsAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
-import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
+import {isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -49,6 +49,7 @@ class RegistrationProducts extends Component {
            productModalVisible: false,
            participantModalVisible: false,
            id: null,
+           agreeTerm: false
         };
 
     }
@@ -94,6 +95,7 @@ class RegistrationProducts extends Component {
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
                 console.log("registrationReview", registrationReview);
                 this.callSaveRegistrationProducts("save", registrationReview);
+                this.goToShop();
             }
         });
     }
@@ -201,7 +203,7 @@ class RegistrationProducts extends Component {
     }
 
     goToShop = () =>{
-        history.push({pathname: '/registrationShop', state: {registrationdId: this.state.registrationUniqueKey}})
+        history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
 
@@ -564,11 +566,11 @@ class RegistrationProducts extends Component {
         )
     }
 
-    contentView = () =>{
+    contentView = (getFieldDecorator) =>{
         return(
             <div className="row" style={{margin:0}}>
                 {this.productLeftView()}
-                {this.productRightView()}                
+                {this.productRightView(getFieldDecorator)}                
             </div>
         );
     }
@@ -585,11 +587,11 @@ class RegistrationProducts extends Component {
         )
     }
 
-    productRightView = ()=>{
+    productRightView = (termsAndConditionsView)=>{
         return(
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
                 {this.yourOrderView()}
-                {this.termsAndConditionsView()}
+                {this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
             </div>
         )
@@ -702,7 +704,7 @@ class RegistrationProducts extends Component {
           );
     }
 
-    termsAndConditionsView = () =>{
+    termsAndConditionsView = (getFieldDecorator) =>{
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
@@ -717,10 +719,22 @@ class RegistrationProducts extends Component {
                 ))}                  
                 </div>                           
                 <div className="single-checkbox mt-0" style={{display:"flex"}}>
+                <Form.Item>
+                        {getFieldDecorator(`termsAndCondition`, {
+                            rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
+                        })(  
                     <div>
-                        <Checkbox></Checkbox>
+                        <Checkbox
+                                className="single-checkbox mt-0"
+                                checked={this.state.agreeTerm}
+                                onChange={e => this.setState({ agreeTerm: e.target.checked })}>
+                                {AppConstants.agreeTerm}
+                                <span style={{marginLeft:"5px"}} ></span>
+                            </Checkbox>
                     </div>
-                    <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                   
+                     )}
+                     </Form.Item> 
+                    {/* <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                    */}
                 </div>                      
             </div>
         )
@@ -729,8 +743,10 @@ class RegistrationProducts extends Component {
     buttonView = () =>{
         return(
             <div style={{marginTop:23}}>
-                 <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
-                 onClick={()=> this.goToShop()}>
+                 <Button className="open-reg-button" 
+                  htmlType="submit"
+                  type="primary"
+                 style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
                     {AppConstants.continue}
                 </Button>     
             </div>
@@ -752,7 +768,7 @@ class RegistrationProducts extends Component {
                     <Form
                         autocomplete="off"
                         scrollToFirstError={true}
-                        onSubmit={this.saveRegistrationForm}
+                        onSubmit={this.saveReviewForm}
                         noValidate="noValidate"
                     >
                         <Content>

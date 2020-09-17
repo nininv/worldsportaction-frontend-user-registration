@@ -176,7 +176,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.saveRegistrationReviewProductsSaga)
 
   //Get Registration By Id
-  yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, regProductsSaga.getRegistrationByIdSaga)
 
   //Validate Discount Code
   yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)

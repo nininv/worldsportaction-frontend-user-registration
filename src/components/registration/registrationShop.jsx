@@ -21,8 +21,10 @@ import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
+import {isArrayNotEmpty} from '../../util/helpers';
 import ValidationConstants from "../../themes/validationConstant";
-import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
+import {getRegistrationByIdAction, deleteRegistrationProductAction} from 
+            '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -39,35 +41,79 @@ class RegistrationShop extends Component {
         super(props);
         this.state = {
             showCardView:false,
-            registrationUniqueKey: null,          
+            registrationUniqueKey: null,   
+            productModalVisible: false ,
+            id: null      
         };
     }
 
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         this.setState({registrationUniqueKey: registrationUniqueKey});
+
+        this.getApiInfo(registrationUniqueKey);
     }
 
     componentDidUpdate(nextProps){
 
-    }  
+    } 
+
+ 
 
     getApiInfo = (registrationUniqueKey) => {
         let payload = {
             registrationId: registrationUniqueKey
         }
+        console.log("payload",payload);
+        this.props.getRegistrationByIdAction(payload);
     }
 
     goToShipping = () =>{
-        history.push({pathname: '/registrationShipping', state: {registrationdId: this.state.registrationUniqueKey}})
+        history.push({pathname: '/registrationShipping', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
     goToRegistrationProducts = () =>{
-        history.push({pathname: '/registrationProducts', state: {registrationdId: this.state.registrationUniqueKey}})
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
+    getPaymentOptionText = (paymentOptionRefId) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
-    
+        return paymentOptionTxt;
+    }
+
+    removeProductModal = (key, id) =>{
+        if(key == "show"){
+            this.setState({productModalVisible: true, id: id});
+        }
+        else if(key == "ok"){
+            this.setState({productModalVisible: false});
+            let payload = {
+                registrationId : this.state.registrationUniqueKey,
+                orgRegParticipantId: this.state.id
+            }
+            this.props.deleteRegistrationProductAction(payload);
+            this.setState({loading: true});
+        }
+        else if(key == "cancel"){
+            this.setState({productModalVisible: false});
+        }
+    }
+
+    saveShop = (e) =>{
+        e.preventDefault();
+
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if(!err){
+
+                this.goToShipping();
+            }
+        });
+    }
 
     enableExpandView = (key) =>{
         if(key == "show")
@@ -203,37 +249,57 @@ class RegistrationShop extends Component {
     }
 
     yourOrderView = () =>{
-        return( 
-        <div className="outline-style " style={{padding: "36px 20px 22px 20px"}}>
-            <div className="product-text-common" style={{fontSize: 21}}>
-                {AppConstants.yourOrder}
-            </div>
-            <div style={{paddingBottom:12}}>
-                <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
-                    John Smith - NWA Winter 2020 - AR1
+        const {registrationReviewList} = this.props.registrationProductState;
+        let compParticipants = registrationReviewList!= null ? 
+                    isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                    registrationReviewList.compParticipants : [] : [];
+        let total = registrationReviewList!= null ? registrationReviewList.total : null;
+        return(
+            <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
+                <div className="product-text-common" style={{fontSize: 21}}>
+                    {AppConstants.yourOrder}
                 </div>
-                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.player}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
-                    <div>
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
-                    </div>
-                </div>
-                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discounts}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
-                </div>
-                <div style={{color: "var(--app-bbbbc6)"}}>
-                    {AppConstants.payAsYou}
-                </div>
-                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
-                </div>
-                <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
-                </div>  
+                {(compParticipants || []).map((item, index) => {
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    return(
+                    <div style={{paddingBottom:12}} key={item.participantId}>
+                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                            {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
+                        </div>
+                        {(item.membershipProducts || []).map((mem, memIndex) =>(
+                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                                
+                                {mem.discountsToDeduct!= "0.00" && 
+                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
+                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                </div>
+                                }
+                                {mem.childDiscountsToDeduct!= "0.00" && 
+                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
+                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                </div>
+                                }
+                                {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
+                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
+                                </div>  */}
+                            </div>
+                        ))}
+                        <div style={{color: "var(--app-bbbbc6)"}}>
+                            {paymentOptionTxt}
+                        </div>
+                    </div> 
+                    )}
+                )}
                 <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                         <div>
@@ -250,14 +316,28 @@ class RegistrationShop extends Component {
                     <div style={{paddingTop:26}}>
                         <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                     </div>
-                </div>               
+                </div> 
+                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+                </div>
             </div>
-            <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
-                <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                <div className="alignself-center pt-2" style={{marginRight:10}}>$123.00</div>
-            </div>
-        </div>
         )
+    }
+
+    deleteProductModalView = () => {
+        return (
+            <div>
+              <Modal
+                className="add-membership-type-modal"
+                title="Registration Product"
+                visible={this.state.productModalVisible}
+                onOk={() => this.removeProductModal("ok")}
+                onCancel={() => this.removeProductModal("cancel")}>
+                  <p>{AppConstants.deleteProductMsg}</p>
+              </Modal>
+            </div>
+          );
     }
 
     buttonView = () =>{
@@ -265,7 +345,8 @@ class RegistrationShop extends Component {
             <div style={{marginTop:23}}>
                 <div>
                     <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
-                     onClick={()=> this.goToShipping()}>
+                      htmlType="submit"
+                      type="primary">
                         {AppConstants.continue}
                     </Button>
                 </div>                 
@@ -292,14 +373,16 @@ class RegistrationShop extends Component {
                 <InnerHorizontalMenu />
                 <Layout style={{margin: "32px 40px 10px 40px"}}>
                     <Form
-                        // autocomplete="off"
-                        // scrollToFirstError={true}
-                        // onSubmit={this.saveRegistrationForm}
-                        // noValidate="noValidate"
+                        autocomplete="off"
+                        scrollToFirstError={true}
+                        onSubmit={this.saveShop}
+                        noValidate="noValidate"
                     >
                         <Content>
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
+                                {this.deleteProductModalView()}
                             </div>
                         </Content>
                     </Form>
@@ -313,14 +396,15 @@ class RegistrationShop extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-       						 
+        getRegistrationByIdAction,
+        deleteRegistrationProductAction					 
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        
+        registrationProductState: state.RegistrationProductState
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationShop));

@@ -208,14 +208,6 @@ function updateReviewProductAction(value, key, index, subIndex, subkey){
     return action;
 }
 
-function getRegistrationByIdAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD,
-        payload: payload
-    }
-
-    return action;
-}
 
 
 function validateDiscountCode(payload, index, subIndex){
@@ -307,7 +299,7 @@ export {
     getRegistrationReviewProductAction,
     saveRegistrationReviewProduct,
     updateReviewProductAction,
-    getRegistrationByIdAction,
+    //getRegistrationByIdAction,
     validateDiscountCode,
     teamNameValidationAction,
     getTeamRegistrationReviewAction,

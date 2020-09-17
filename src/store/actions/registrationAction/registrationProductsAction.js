@@ -59,6 +59,16 @@ function getTermsAndConditionsAction(payload){
     return action;
 }
 
+function getRegistrationByIdAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+
 
 export{
     getRegistrationReviewAction,
@@ -66,5 +76,6 @@ export{
     updateReviewInfoAction,
     deleteRegistrationProductAction,
     deleteRegistrationParticipantAction,
-    getTermsAndConditionsAction
+    getTermsAndConditionsAction,
+    getRegistrationByIdAction
 }

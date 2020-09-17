@@ -241,25 +241,6 @@ export function* saveRegistrationReviewProductsSaga(action) {
   }
 }
 
-
-////// Get Registration By Id
-export function* getRegistrationByIdSaga(action) {
-  try {
-    const result = yield call(AxiosApi.getRegistrationById, action.payload);
-    if (result.status === 1) {
-      yield put({
-        type: ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS,
-        result: result.result.data,
-        status: result.status
-      });
-    } else {
-      yield call(failSaga, result)
-    }
-  } catch (error) {
-    yield call(errorSaga, error)
-  }
-}
-
 ////// Validate Discount Code
 export function* validateDiscountCodeSaga(action) {
   try {
