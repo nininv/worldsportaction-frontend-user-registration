@@ -140,6 +140,13 @@ function accreditationCoachReferenceAction() {
     return action;
 }
 
+function walkingNetballQuesReferenceAction() {
+    const action = {
+        type: ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -159,5 +166,6 @@ export {
     identificationReferenceAction,
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
-    accreditationCoachReferenceAction		
+    accreditationCoachReferenceAction,
+    walkingNetballQuesReferenceAction		
 }

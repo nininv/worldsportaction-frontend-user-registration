@@ -11,7 +11,7 @@ import {
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
   identificationReferenceSaga,otherSportsReferenceSaga,accreditationUmpireReferenceSaga,
-  accreditationCoachReferenceSaga
+  accreditationCoachReferenceSaga,walkingNetballQuesReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -221,6 +221,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD, accreditationUmpireReferenceSaga)
 
   yield takeEvery(ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD, accreditationCoachReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD, walkingNetballQuesReferenceSaga)
 
   //UserRegistration Membership Products Delete
   yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD, regProductsSaga.deleteRegistrationProductSaga)

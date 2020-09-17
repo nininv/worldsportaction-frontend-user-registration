@@ -315,3 +315,20 @@ export function* accreditationCoachReferenceSaga(action){
     }
 }
 
+export function* walkingNetballQuesReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.walkingNetball);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+

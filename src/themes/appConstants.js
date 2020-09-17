@@ -1067,7 +1067,7 @@ const AppConstants = {
  associationLevel: "Association Level",
  workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number?",
  haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
- walkingNetball: "Walking Netball"
+ walkingNetball: "WalkingNetball"
 };
 
 export default AppConstants;
