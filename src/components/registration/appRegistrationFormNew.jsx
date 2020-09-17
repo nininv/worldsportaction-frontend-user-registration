@@ -79,7 +79,8 @@ class AppRegistrationFormNew extends Component{
             searchAddressError: null,
             organisationId: null,
             enabledSteps: [],
-            completedSteps: []
+            completedSteps: [],
+            singleCompModalVisible: false
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -97,20 +98,27 @@ class AppRegistrationFormNew extends Component{
     }
 
     componentDidUpdate(nextProps){
-        if(this.props.userRegistrationState.addCompetitionFlag){
+        let registrationState = this.props.userRegistrationState;
+        if(registrationState.addCompetitionFlag){
             this.setState({
                 showAddAnotherCompetitionView: false,
                 organisationId: null
             });
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
         }
-        if(this.props.userRegistrationState.isSavedParticipant){
+        if(registrationState.isSavedParticipant){
             this.props.updateUserRegistrationStateVarAction("isSavedParticipant",false);
-            history.push("/registrationProducts", {
-                registrationId: this.props.userRegistrationState.registrationId,
-                paymentSuccess: false					 
-            })
+            if(registrationState.saveValidationErrorMsg!= null && registrationState.saveValidationErrorMsg.length > 0){
+                this.setState({singleCompModalVisible: true});
+            }else{
+                history.push("/registrationProducts", {
+                    registrationId: this.props.userRegistrationState.registrationId,
+                    paymentSuccess: false					 
+                })
+            }
         }
+        
+
     }
 
     componentDidMount(){
@@ -146,7 +154,8 @@ class AppRegistrationFormNew extends Component{
                 [`participantSuburb`]: registrationObj.suburb,
                 [`participantStateRefId`]: registrationObj.stateRefId,
                 [`participantPostalCode`]: registrationObj.postalCode,
-                [`participantCountryRefId`]: registrationObj.countryRefId
+                [`participantCountryRefId`]: registrationObj.countryRefId,
+                [`participantAddressSearch`]: this.getAddress(registrationObj)
             });
             {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
                 this.props.form.setFieldsValue({
@@ -165,6 +174,22 @@ class AppRegistrationFormNew extends Component{
         }catch(ex){
             console.log("Error in setParticipantDetailStepFormFields"+ex);
         }
+    }
+
+    getAddress = (registrationObj) => {
+        const { stateList,countryList } = this.props.commonReducerState;
+		const state = stateList.length > 0 && registrationObj.stateRefId > 0
+            ? stateList.find((state) => state.id === registrationObj.stateRefId).name
+            : null;
+
+        let defaultAddress = '';
+        if(registrationObj.street1 && registrationObj.suburb && state){
+            defaultAddress = `${ registrationObj.street1 ? `${registrationObj.street1},` : '' } 
+                ${ registrationObj.suburb ? `${registrationObj.suburb},` : '' } 
+                ${ state ? `${state},` : '' } 
+                ${ registrationObj.postalCode ? `${registrationObj.postalCode},` : ``} Australia`;
+        }
+        return defaultAddress;
     }
 
     getUserInfo = () => {
@@ -444,10 +469,22 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
-            console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
+            //console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
             this.props.form.validateFieldsAndScroll((err, values) => {
-                
                 if(!err){
+                    if(registrationObj.profileUrl == null){
+                        message.error(ValidationConstants.userPhotoIsRequired);
+                        return;
+                    }
+                    if(!registrationObj.addNewAddressFlag){
+                        message.error(ValidationConstants.addressDetailsIsRequired)
+                        return;
+                    }
+                    if(registrationObj.parentOrGuardian.length == 0 && 
+                        getAge(registrationObj.dateOfBirth) < 18){
+                        message.error(ValidationConstants.parentDetailsIsRequired)
+                        return;
+                    }
                     if(this.state.currentStep != 2){
                         let nextStep = this.state.currentStep + 1;
                         if(nextStep == 1){
@@ -599,18 +636,6 @@ class AppRegistrationFormNew extends Component{
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
         const { genderList,stateList,countryList } = this.props.commonReducerState;
-		const state = stateList.length > 0 && registrationObj.stateRefId > 0
-            ? stateList.find((state) => state.id === registrationObj.stateRefId).name
-            : null;
-
-        let defaultAddress = '';
-        if(registrationObj.street1 && registrationObj.suburb && state){
-            defaultAddress = `${ registrationObj.street1 ? `${registrationObj.street1},` : '' } 
-                ${ registrationObj.suburb ? `${registrationObj.suburb},` : '' } 
-                ${ state ? `${state},` : '' } 
-                ${ registrationObj.postalCode ? `${registrationObj.postalCode},` : ``} Australia`;
-        }
-
         return(
             <div className="registration-form-view">
                 <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.participantDetails}</div>
@@ -745,18 +770,11 @@ class AppRegistrationFormNew extends Component{
                 :
                     <div>
                         <div className="form-heading" style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.findAddress}</div>
-                        <Form.Item name="addressSearch">
-                            <PlacesAutocomplete
-                                defaultValue={defaultAddress}
-                                heading={AppConstants.addressSearch}
-                                required
-                                error={this.state.searchAddressError}
-                                onBlur={() => { this.setState({searchAddressError: ''})}}
-                                onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
-                            />
-                        </Form.Item>
                         {registrationObj.manualEnterAddressFlag ? 
                             <div>
+                                <div className="orange-action-txt" style={{marginTop: "10px"}}
+                                onClick={() => this.onChangeSetParticipantValue(false,"manualEnterAddressFlag")}
+                                >{AppConstants.returnToAddressSearch}</div>
                                 <Form.Item >
                                     {getFieldDecorator(`participantStreet1`, {
                                         rules: [{ required: true, message: ValidationConstants.addressField}],
@@ -843,9 +861,24 @@ class AppRegistrationFormNew extends Component{
                                 </Form.Item>
                             </div>
                         : 
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => this.onChangeSetParticipantValue(true,"manualEnterAddressFlag")}
-                            >{AppConstants.enterAddressManually}</div>	                    
+                            <div>
+                                <Form.Item name="addressSearch">
+                                    {getFieldDecorator(`participantAddressSearch`, {
+                                        rules: [{ required: true, message: ValidationConstants.addressField}],
+                                    })(
+                                        <PlacesAutocomplete
+                                            heading={AppConstants.addressSearch}
+                                            required
+                                            error={this.state.searchAddressError}
+                                            onBlur={() => { this.setState({searchAddressError: ''})}}
+                                            onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                        />
+                                    )}
+                                </Form.Item>
+                                <div className="orange-action-txt" style={{marginTop: "10px"}}
+                                onClick={() => this.onChangeSetParticipantValue(true,"manualEnterAddressFlag")}
+                                >{AppConstants.enterAddressManually}</div>	 
+                            </div>                  
                         } 
                     </div>
                 }	
@@ -1917,6 +1950,7 @@ class AppRegistrationFormNew extends Component{
                      <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                 </Steps>
                 {this.stepsContentView(getFieldDecorator)}
+                {this.singleCompModalView()};
             </div>
         );
     }
@@ -1931,6 +1965,30 @@ class AppRegistrationFormNew extends Component{
                 className="open-reg-button">{this.state.submitButtonText}</Button>
             </div>
         );
+    }
+
+    singleCompModalView = () =>{
+        let {saveValidationErrorMsg} = this.props.userRegistrationState;
+        let {saveValidationErrorCode} = this.props.userRegistrationState;
+        let errorMsg = saveValidationErrorMsg!=  null ? saveValidationErrorMsg : [];
+        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+        return (
+            <div>
+              <Modal
+                className="add-membership-type-modal"
+                title={title}
+                visible={this.state.singleCompModalVisible}
+                footer={[
+                    <Button onClick={() => this.setState({singleCompModalVisible: false})}>
+                        {AppConstants.ok}                          
+                    </Button>
+                ]}>
+                {(errorMsg || []).map((item, index) =>(
+                    <p key= {index}> {item}</p>
+                ))}
+              </Modal>
+            </div>
+          );
     }
 
     render(){
@@ -1955,6 +2013,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                         </Content>
                         <Footer>{this.footerView()}</Footer>
+                        <Loader visible={this.props.userRegistrationState.onMembershipLoad} />
                     </Form>
                 </Layout>
             </div>

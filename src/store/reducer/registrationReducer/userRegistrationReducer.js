@@ -227,7 +227,10 @@ const initialState = {
 	membershipProductInfo: [],
 	addCompetitionFlag: false,
 	registrationId: null,
-	isSavedParticipant: false
+	isSavedParticipant: false,
+	saveValidationErrorMsg: null,
+	saveValidationErrorCode: null,
+	onMembershipLoad: false
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -443,11 +446,13 @@ function userRegistrationReducer(state = initialState, action){
 			return { ...state, onLoad: true };
 
 		case ApiConstants.API_GET_PARTICIPANT_SUCCESS:
+			state.registrationId = action.result ? action.result.id : null;
+            state.saveValidationErrorMsg = action.result ? action.result.errorMsg : null;
+			state.saveValidationErrorCode = action.result ? action.result.errorCode : null;
 			return {
 				...state,
 				onLoad: false,
 				status: action.status,
-				registrationId: action.result.id,
 				isSavedParticipant: true
 			};
 

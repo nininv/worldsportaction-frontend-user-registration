@@ -97,6 +97,9 @@ const ValidationConstants = {
     deRegisterChangeTypeRequired: "Please select the De-register change type",
 
     countryField: ['Country field is required.'],
+
+    parentDetailsIsRequired: "Parent details is required",
+    addressDetailsIsRequired: "Address details is required"
 };
 
 export default ValidationConstants;
