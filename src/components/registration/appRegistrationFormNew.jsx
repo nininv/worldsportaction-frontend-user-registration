@@ -78,7 +78,8 @@ class AppRegistrationFormNew extends Component{
             showAddAnotherCompetitionView: true,
             searchAddressError: null,
             organisationId: null,
-            enabledSteps: []
+            enabledSteps: [],
+            completedSteps: []
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -189,7 +190,6 @@ class AppRegistrationFormNew extends Component{
     }
 
     setImage = (data,key) => {
-        let { registrationObj } = this.props.userRegistrationState;
         if(data.files[0] !== undefined){
             if(key == "participantPhoto"){
                 let profileUrl = URL.createObjectURL(data.files[0]);
@@ -455,8 +455,10 @@ class AppRegistrationFormNew extends Component{
                         }else{
                             this.state.enabledSteps.push(nextStep);
                         }
+                        this.state.completedSteps.push(this.state.currentStep);
                         this.setState({currentStep: nextStep,
-                        enabledSteps: this.state.enabledSteps});
+                        enabledSteps: this.state.enabledSteps,
+                        completedSteps: this.state.completedSteps});
                     }
                     setTimeout(() => {
                         this.setState({
@@ -1910,9 +1912,9 @@ class AppRegistrationFormNew extends Component{
         return(
             <div className="pt-0" style={{width: "70%",margin: "auto"}}>
                 <Steps className="registration-steps" current={this.state.currentStep} onChange={this.changeStep}>
-                     <Step status={this.state.enabledSteps.includes(0) && "finish"} title={AppConstants.participantDetails}/>
-                     <Step status={this.state.enabledSteps.includes(0) && this.state.enabledSteps.includes(1) && "finish"} title={AppConstants.selectCompetition}/>
-                     <Step status={this.state.enabledSteps.includes(0) && this.state.enabledSteps.includes(1) && this.state.enabledSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
+                     <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.participantDetails}/>
+                     <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.selectCompetition}/>
+                     <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                 </Steps>
                 {this.stepsContentView(getFieldDecorator)}
             </div>
