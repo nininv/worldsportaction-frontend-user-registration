@@ -10,7 +10,8 @@ import {
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
-  identificationReferenceSaga,otherSportsReferenceSaga
+  identificationReferenceSaga,otherSportsReferenceSaga,accreditationUmpireReferenceSaga,
+  accreditationCoachReferenceSaga,walkingNetballQuesReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -216,6 +217,12 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_IDENTIFICATION_REFERENCE_LOAD, identificationReferenceSaga)
 
   yield takeEvery(ApiConstants.API_OTHER_SPORTS_REFERENCE_LOAD, otherSportsReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD, accreditationUmpireReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD, accreditationCoachReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD, walkingNetballQuesReferenceSaga)
 
   //UserRegistration Membership Products Delete
   yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD, regProductsSaga.deleteRegistrationProductSaga)

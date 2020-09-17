@@ -51,7 +51,7 @@ class RegistrationShipping extends Component {
 
     shippingOption = () =>{
         return(
-            <div  className="outline-style product-left-view">
+            <div  className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="product-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.shippingOptions}</div>
                 <div className="product-text-common" style={{fontFamily:"inter-medium"}}>{AppConstants.netballQueenslandMerchandise}</div>
                 <div style={{marginTop:6}}>
@@ -74,7 +74,7 @@ class RegistrationShipping extends Component {
     }
     deliveryAndBillingView = () =>{
         return(
-            <div className="outline-style product-left-view">
+            <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="product-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
                 <div class="row">
                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
@@ -103,7 +103,7 @@ class RegistrationShipping extends Component {
     }
     shippingLeftView = ()=>{
         return(
-            <div className="col-sm-12 col-md-7 col-lg-7" style={{cursor:"pointer"}}>
+            <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
                 {this.deliveryAndBillingView()}               
             </div>

@@ -1049,7 +1049,25 @@ const AppConstants = {
  anyAlergies: "Any Alergies", 
  teamYouFollow: "Which Suncorp Super Netball Team do you follow?",
  otherSports: "otherSports",
- playingOtherParticipantSports: "Are you (Is your child) playing any other participation sport?"
+ playingOtherParticipantSports: "Are you (Is your child) playing any other participation sport?",
+ firstYearPlayingNetball: "If this your first year playing netball",
+ yearsOfPlaying: "Years of playing",
+ schoolYouAttend: "Which school do you attend?",
+ schoolYourChildAttend: "Which school does your child attend?",
+ yourChildSchoolGrade: "What school grade is your child in",
+ yourSchoolGrade: "What school grade are you in",
+ schoolGrade: "School Grade",
+ participatedSchoolProgram: "Have you participated in the Sporting School Program?",
+ accreditationUmpire: "accreditationUmpire",
+ accreditationCoach: "accreditationCoach",
+ nationalAccreditationLevelUmpire: "What is your national accreditation level (Umpire)?",
+ nationalAccreditationLevelCoach: "What is your national accreditation level (Coach)?",
+ newToUmpiring: "Are you new to Umpiring?",
+ yourAssociationLevel: "What is your Association Level?",
+ associationLevel: "Association Level",
+ workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number?",
+ haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
+ walkingNetball: "WalkingNetball"
 };
 
 export default AppConstants;

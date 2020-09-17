@@ -126,6 +126,27 @@ function otherSportsReferenceAction() {
     return action;
 }
 
+function accreditationUmpireReferenceAction() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function accreditationCoachReferenceAction() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function walkingNetballQuesReferenceAction() {
+    const action = {
+        type: ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -143,5 +164,8 @@ export {
     disabilityReferenceAction,
     personRegisteringRoleReferenceAction,
     identificationReferenceAction,
-    otherSportsReferenceAction		
+    otherSportsReferenceAction,
+    accreditationUmpireReferenceAction,
+    accreditationCoachReferenceAction,
+    walkingNetballQuesReferenceAction		
 }

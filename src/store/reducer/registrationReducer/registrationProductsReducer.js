@@ -59,6 +59,23 @@ function registrationProductsReducer(state = initialState, action){
                 else if(action.key == "discountCode"){
                     reviewData["compParticipants"][action.index][action.subKey]["discountCodes"][action.subIndex][action.key] = action.value;
                 }
+                else if(action.key =="addVoucher"){
+                    let obj = {
+                        governmentVoucherRefId: null,
+                        voucherCode: null,
+                        balance: 0,
+                        isValid: null,
+                        message: null
+                    }
+
+                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"].push(obj);
+                }
+                else if(action.key == "voucherCode" || action.key == "governmentVoucherRefId"){
+                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"][action.subIndex][action.key] = action.value;
+                }
+                else if (action.key == "removeVoucher"){
+                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"].splice(action.subIndex, 1);
+                }
                 else {
                     reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
                 }
