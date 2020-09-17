@@ -58,11 +58,11 @@ class RegistrationShop extends Component {
 
     headerView = () =>{
         return(
-            <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 , marginBottom: "37px"}}>
-                <div className="product-text-common" style={{fontSize: 22 , alignSelf:"center"}}> {AppConstants.merchandiseShop}</div>
-                <div>
+            <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 , marginBottom: "37px",flexWrap: "wrap"}}>
+                <div className="product-text-common" style={{fontSize: 22 , alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
+                <div style={{width:"230px",marginTop: "10px"}}>
                     <Select
-                        style={{ width: "100%", paddingRight: 1, minWidth: 300}}                  
+                        style={{ width: "100%", paddingRight: 1}}                  
                         placeholder={AppConstants.allCategories}  
                         className="custom-dropdown"                                                     
                     >
@@ -79,11 +79,11 @@ class RegistrationShop extends Component {
             <div style ={{ display: "flex" , justifyContent: "space-between" , flexWrap: "wrap"}}>
                 {array.map(()=>{
                     return(
-                        <div class="col-lg-4 shop-product-text card-header-text" onClick={(e)=>this.enableExpandView("show")}>
+                        <div class="shop-product-text card-header-text" onClick={(e)=>this.enableExpandView("show")}>
                         <div style={{textAlign: "center"}}>
                             <img src={AppImages.userIcon}/>
                         </div>
-                        <div style={{ fontFamily: "inter-medium" , fontWeight:500 ,margin:"10px 0px 10px 5px"}}>{AppConstants.vixensWarmUpShirt}</div>
+                        <div style={{ fontFamily: "inter-medium" , fontWeight:500 ,margin:"10px 0px 10px 0px"}}>{AppConstants.vixensWarmUpShirt}</div>
                         <div>$60.00</div>
                     </div>
                     )
@@ -99,21 +99,21 @@ class RegistrationShop extends Component {
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
                 </div>           
-                <div style={{display:"Flex",marginTop: "17px"}}>
-                    <div class="col-4">
+                <div class="row" style={{marginTop: "17px"}}>
+                    <div class="col-lg-4" style={{textAlign: "center" , marginTop: "20px"}}>
                         <img src={AppImages.userIcon}/>
                     </div>
-                    <div className="card-expandView-text">
+                    <div className="col-lg-8 card-expandView-text" style={{paddingRight:"40px"}}>
                         <div style={{fontSize:23}}>{AppConstants.vixensWarmUpShirt}</div>
                         <div className ="mt-5" style={{ fontSize:15 , fontFamily: "inter-medium" , fontWeight:500}}>{AppConstants.productDescription}</div>
-                        <div style={{display: "flex",justifyContent: "space-between" , marginTop:27}}>
-                            <div>
+                        <div style={{display:"flex",justifyContent:"space-between" , flexWrap:"wrap"}}>
+                            <div style={{marginTop:27}}>
                                 <div>
                                     {AppConstants.selectColor}
                                 </div>
                                 <div style={{marginTop:7}}>
                                     <Select
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 220 , fontWeight: 500 ,fontSize: "17px"}}                  
+                                        style={{ width: "166px", paddingRight: 1 , fontWeight: 500 ,fontSize: "17px"}}                  
                                         placeholder={AppConstants.allCategories}  
                                         className="custom-dropdown"                                                     
                                     >
@@ -121,22 +121,22 @@ class RegistrationShop extends Component {
                                     </Select>
                                 </div>
                             </div>
-                            <div>
+                            <div style={{marginTop:27}}>
                                 <div>
                                     {AppConstants.quantity}
                                 </div>
-                                <div style={{marginTop:7}}>                                    
-                                    <InputNumber  style={{ minWidth: 220,fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}  />
+                                <div style={{marginTop:7,width: "166px"}}>                                    
+                                    <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}  />
                                 </div>
                             </div>                        
                         </div>
-                        <div style={{marginTop:23 , display:"flex",justifyContent:"space-between"}}>
-                            <div className="col-9" style={{paddingLeft:0}}>
+                        <div class = "row" style={{margin:0}}>
+                            <div class = "col-lg-9 col-sm-12" style={{padding:0,marginTop:23}}>
                                 <Button className="open-reg-button" style={{color:"var(--app-white)" , width:"100%", height: "53px",textTransform: "uppercase"}}>
                                     {AppConstants.addToCart}
                                 </Button> 
                             </div>
-                            <div>
+                            <div class = "col-lg-3 col-sm-12" style={{padding:0,marginTop:23}}>
                                 <Button className="back-btn-text" style={{boxShadow: "0px 1px 5px 0px" , width:"100%",height: "49px",textTransform: "uppercase"}}>
                                     {AppConstants.cancel}
                                 </Button> 
@@ -151,7 +151,7 @@ class RegistrationShop extends Component {
     
     contentView = () =>{
         return(
-            <div style={{display:"flex"}}>
+            <div class="row">
                 {this.shopLeftView()}
                 {this.shopRightView()}                
             </div>
@@ -159,7 +159,7 @@ class RegistrationShop extends Component {
     }
     shopLeftView = ()=>{
         return(
-            <div className="col-sm-8 product-left-view outline-style" style={{cursor:"pointer"}}>
+            <div className="col-sm-12 col-md-12 col-lg-8 product-left-view outline-style" style={{cursor:"pointer" ,padding:"26px 47px"}}>
                 {this.headerView()}
                 {this.cardView()}
                 {this.state.showCardView &&
@@ -172,7 +172,7 @@ class RegistrationShop extends Component {
     }
     shopRightView = ()=>{
         return(
-            <div className="product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft: "0px",paddingRight:0}}>
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -181,7 +181,7 @@ class RegistrationShop extends Component {
 
     yourOrderView = () =>{
         return( 
-        <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
+        <div className="outline-style " style={{padding: "36px 20px 22px 20px"}}>
             <div className="product-text-common" style={{fontSize: 21}}>
                 {AppConstants.yourOrder}
             </div>

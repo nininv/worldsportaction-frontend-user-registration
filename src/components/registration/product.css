@@ -896,13 +896,17 @@ img.bg {
   border-radius: 10px;
 }
 .product-left-view{
-  margin-top:30px;
-  padding: 36px 45px;
+  margin-top:21px;
+  padding: 36px 32px;
+  margin-right: 27px;
 }
 .product-right-view{
-  margin: 21px 29px 30px 29px;
+  margin: 21px 0px 30px 0px;
   width: 100%;
+  flex: 31 18 26.333333%!important;
+  max-width: 100%!important;
 }
+
 .innerview-outline{
   background-color: var(--app-f4f2e863);
   padding: 30px;
@@ -947,7 +951,7 @@ img.bg {
   font-weight: 600;
   font-family: sans-serif ;
   font-size: 16px;
-  max-width: 235px;
+  /* max-width: 235px; */
   margin-top: 20px;
 }
 
@@ -955,7 +959,7 @@ img.bg {
   color: var(--app-1b1b34);
   font-weight: 600;
   font-family: sans-serif ;
-  margin-right: 20px;
+  /* margin-right: 20px; */
 }
 .back-btn-text {
   background-color: var(--app-white);

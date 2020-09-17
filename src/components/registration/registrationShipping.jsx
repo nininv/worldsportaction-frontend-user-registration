@@ -75,16 +75,16 @@ class RegistrationShipping extends Component {
     deliveryAndBillingView = () =>{
         return(
             <div className="outline-style product-left-view">
-                <div className="product-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.deliveryAndBillingAddress}</div>
-                <div style={{display:"flex"}}>
-                    <div>
+                <div className="product-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
+                <div class="row">
+                    <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                         <div className="address-text-style">{AppConstants.deliveryAddress}</div>  
-                        <div className="col-8 product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4}}>100 George Street Sydney NSW 2000</div>                        
+                        <div className="product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4}}>100 George Street Sydney NSW 2000</div>                        
                         <div className="btn-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
-                    <div>
+                    <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                         <div className="address-text-style">{AppConstants.billingAddress}</div>
-                        <div className="col-8  product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4 }}>100 George Street Sydney NSW 2000</div>
+                        <div className="product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4 }}>100 George Street Sydney NSW 2000</div>
                         <div className="btn-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
                 </div>
@@ -95,7 +95,7 @@ class RegistrationShipping extends Component {
   
     contentView = () =>{
         return(
-            <div style={{display:"flex"}}>
+            <div class="row">
                 {this.shippingLeftView()}
                 {this.shippingRightView()}                
             </div>
@@ -103,7 +103,7 @@ class RegistrationShipping extends Component {
     }
     shippingLeftView = ()=>{
         return(
-            <div className="col-sm-8" style={{cursor:"pointer"}}>
+            <div className="col-sm-12 col-md-7 col-lg-7" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
                 {this.deliveryAndBillingView()}               
             </div>
@@ -111,7 +111,7 @@ class RegistrationShipping extends Component {
     }
     shippingRightView = ()=>{
         return(
-            <div className="product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
