@@ -54,7 +54,8 @@ import {
     updateParticipantCompetitionAction,
     updateUserRegistrationStateVarAction,
     updateParticipantAdditionalInfoAction,
-    saveParticipantInfo
+    saveParticipantInfo,
+    getParticipantInfoById
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -122,6 +123,10 @@ class AppRegistrationFormNew extends Component{
     }
 
     componentDidMount(){
+        let participantId = this.props.location.state ? this.props.location.state.participantId : null;
+        if(participantId){
+            this.props.getParticipantInfoById(participantId);
+        }
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         if(getOrganisationId() != null && getCompetitonId != null){
@@ -2044,7 +2049,8 @@ function mapDispatchToProps(dispatch)
         accreditationUmpireReferenceAction,
         accreditationCoachReferenceAction,
         walkingNetballQuesReferenceAction,
-        saveParticipantInfo					 
+        saveParticipantInfo	,
+        getParticipantInfoById				 
     }, dispatch);
 
 }
