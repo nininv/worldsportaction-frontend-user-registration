@@ -38,16 +38,36 @@ class RegistrationShop extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showCardView:false           
+            showCardView:false,
+            registrationUniqueKey: null,          
         };
     }
 
     componentDidMount(){
-
+        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        this.setState({registrationUniqueKey: registrationUniqueKey});
     }
+
     componentDidUpdate(nextProps){
 
     }  
+
+    getApiInfo = (registrationUniqueKey) => {
+        let payload = {
+            registrationId: registrationUniqueKey
+        }
+    }
+
+    goToShipping = () =>{
+        history.push({pathname: '/registrationShipping', state: {registrationdId: this.state.registrationUniqueKey}})
+    }
+
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationdId: this.state.registrationUniqueKey}})
+    }
+
+
+    
 
     enableExpandView = (key) =>{
         if(key == "show")
@@ -73,6 +93,7 @@ class RegistrationShop extends Component {
         );
 
     }
+
     cardView = () =>{
         let array = [1,2,3,4];
         return(
@@ -157,6 +178,7 @@ class RegistrationShop extends Component {
             </div>
         );
     }
+
     shopLeftView = ()=>{
         return(
             <div className="col-sm-8 product-left-view outline-style" style={{cursor:"pointer"}}>
@@ -170,6 +192,7 @@ class RegistrationShop extends Component {
             </div>
         )
     }
+
     shopRightView = ()=>{
         return(
             <div className="product-right-view">
@@ -236,16 +259,19 @@ class RegistrationShop extends Component {
         </div>
         )
     }
+
     buttonView = () =>{
         return(
             <div style={{marginTop:23}}>
                 <div>
-                    <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
+                    <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
+                     onClick={()=> this.goToShipping()}>
                         {AppConstants.continue}
                     </Button>
                 </div>                 
                 <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}>
+                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
+                     onClick={()=> this.goToRegistrationProducts()}>
                         {AppConstants.back}
                     </Button> 
                 </div>     

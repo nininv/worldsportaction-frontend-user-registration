@@ -28,7 +28,7 @@ function registrationProductsReducer(state = initialState, action){
             return { ...state, onRegReviewLoad: true };
 
         case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
-            let regReviewSaveData = action.result;
+            let regReviewSaveData = action.result.response;
             return {
                 ...state,
                 onRegReviewLoad: false,
@@ -68,13 +68,13 @@ function registrationProductsReducer(state = initialState, action){
                         message: null
                     }
 
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"].push(obj);
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"].push(obj);
                 }
                 else if(action.key == "voucherCode" || action.key == "governmentVoucherRefId"){
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"][action.subIndex][action.key] = action.value;
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"][action.subIndex][action.key] = action.value;
                 }
                 else if (action.key == "removeVoucher"){
-                    reviewData["compParticipants"][action.index][action.subKey]["selectedGovernmentVouchers"].splice(action.subIndex, 1);
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"].splice(action.subIndex, 1);
                 }
                 else {
                     reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;

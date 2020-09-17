@@ -53,9 +53,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
+        //let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        //console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -154,8 +154,8 @@ class RegistrationProducts extends Component {
     callSaveRegistrationProducts = (key, registrationReview) =>{
         registrationReview["key"] = key;
         console.log("registrationReview" + JSON.stringify(registrationReview));
-        // this.props.saveRegistrationReview(registrationReview);
-        // this.setState({loading: true, buttonPressed: key});
+        this.props.saveRegistrationReview(registrationReview);
+        this.setState({loading: true, buttonPressed: key});
     }
 
     removeProductModal = (key, id) =>{
@@ -197,6 +197,10 @@ class RegistrationProducts extends Component {
 
     redirect = (id) =>{
         history.push({pathname: '/appRegistrationForm', state: {participantId: id}})
+    }
+
+    goToShop = () =>{
+        history.push({pathname: '/registrationShop', state: {registrationdId: this.state.registrationUniqueKey}})
     }
 
 
@@ -437,7 +441,7 @@ class RegistrationProducts extends Component {
     }
 
     governmentVoucherView = (item, index) =>{
-        let selectedVouchers = item.selectedOptions.selectedGovernmentVouchers;
+        let selectedVouchers = item.selectedOptions.vouchers;
         return(
             <div>
                 <div className="product-text-common" style={{fontSize: 21 , marginTop: "30px"}}>
@@ -723,7 +727,8 @@ class RegistrationProducts extends Component {
     buttonView = () =>{
         return(
             <div style={{marginTop:23}}>
-                 <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
+                 <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
+                 onClick={()=> this.goToShop()}>
                     {AppConstants.continue}
                 </Button>     
             </div>
