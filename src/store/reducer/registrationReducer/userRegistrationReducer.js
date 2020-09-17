@@ -258,11 +258,12 @@ function getUserUpdatedRegistrationObj(state,action){
 function setMembershipProductsInfo(state,organisationData){
 	try{
 		let competition = deepCopyFunction(competitionObj);
+		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
 		if(organisationData == undefined){
 			if(getOrganisationId() != null && getCompetitonId() != null){
 				competition.organisationId = getOrganisationId();
 				competition.competitionId = getCompetitonId();
-				let organisatinInfoTemp = state.membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
+				let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
 				competition.organisationInfo = organisatinInfoTemp;
 				let competitionInfoTemp = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
 				competition.competitionInfo = competitionInfoTemp;
@@ -286,6 +287,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 	try{
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
+		membershipProductInfo.isChecked = competitionData;
 		if(competitionData){
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
@@ -397,8 +399,7 @@ function userRegistrationReducer(state = initialState, action){
 			let competitionSubKey = action.subKey;
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
-					competitionIndex,competitionSubIndex);
-					console.log("before");
+					competitionIndex,competitionSubIndex);;
 				updateUmpireCoachWalkingNetball(state);
 			}
 			else if(competitionKey == "divisionInfo"){

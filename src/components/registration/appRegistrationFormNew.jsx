@@ -43,7 +43,8 @@ import {
     identificationReferenceAction,
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
-    accreditationCoachReferenceAction
+    accreditationCoachReferenceAction,
+    walkingNetballQuesReferenceAction
 } from '../../store/actions/commonAction/commonAction';
 import { 
     getUserRegistrationUserInfoAction,
@@ -68,12 +69,6 @@ const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const registrationSteps = [
-    { title: AppConstants.participantDetails },
-    { title: AppConstants.selectCompetition },
-    { title: AppConstants.additionalInformation },
-];
-
 class AppRegistrationFormNew extends Component{
     constructor(props) {
         super(props);
@@ -82,7 +77,8 @@ class AppRegistrationFormNew extends Component{
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: true,
             searchAddressError: null,
-            organisationId: null
+            organisationId: null,
+            enabledSteps: []
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -96,16 +92,15 @@ class AppRegistrationFormNew extends Component{
         this.props.heardByReferenceAction();
         this.props.accreditationUmpireReferenceAction();
         this.props.accreditationCoachReferenceAction();
+        this.props.walkingNetballQuesReferenceAction();
     }
 
     componentDidUpdate(nextProps){
         if(this.props.userRegistrationState.addCompetitionFlag){
-            this.setState(
-                {
-                    showAddAnotherCompetitionView: false,
-                    organisationId: null
-                }
-            );
+            this.setState({
+                showAddAnotherCompetitionView: false,
+                organisationId: null
+            });
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
         }
         if(this.props.userRegistrationState.isSavedParticipant){
@@ -115,18 +110,6 @@ class AppRegistrationFormNew extends Component{
                 paymentSuccess: false					 
             })
         }
-        // let { registrationObj } = this.props.userRegistrationState;
-        // if(registrationObj != null && registrationObj.refFlag == "participant"){
-        //     this.props.form.setFieldsValue({
-        //         [`participantFirstName`]:  registrationObj.firstName,
-        //         [`participantLastName`]:  registrationObj.lastName,
-        //         [`genderRefId`]:  registrationObj.genderRefId,
-        //         [`dateOfBirth`]:  registrationObj.dateOfBirth,
-        //         [`participantEmail`]:  registrationObj.email,
-        //         [`participantMobileNumber`]:  registrationObj.mobileNumber,
-        //     });  
-        //     this.props.updateUserRegistrationObjectAction(null,"refFlag")   
-        // }
     }
 
     componentDidMount(){
@@ -134,6 +117,52 @@ class AppRegistrationFormNew extends Component{
         this.props.membershipProductEndUserRegistrationAction({});
         if(getOrganisationId() != null && getCompetitonId != null){
             this.setState({showAddAnotherCompetitionView: false})
+        }
+    }
+
+    changeStep = (current) => {
+        if(this.state.enabledSteps.includes(current)){
+            this.setState({currentStep: current});
+        }
+        if(current == 0){
+            setTimeout(() => {
+                this.setParticipantDetailStepFormFields();
+            },300);
+        }
+    }
+
+    setParticipantDetailStepFormFields(){
+        const { registrationObj } = this.props.userRegistrationState;
+        try{
+            this.props.form.setFieldsValue({
+                [`genderRefId`]: registrationObj.genderRefId,
+                [`dateOfBirth`]: registrationObj.dateOfBirth,
+                [`participantFirstName`]: registrationObj.firstName,
+                [`participantLastName`]: registrationObj.lastName,
+                [`participantMobileNumber`]: registrationObj.mobileNumber,
+                [`participantEmail`]: registrationObj.email,
+                [`participantStreet1`]: registrationObj.street1,
+                [`participantSuburb`]: registrationObj.suburb,
+                [`participantStateRefId`]: registrationObj.stateRefId,
+                [`participantPostalCode`]: registrationObj.postalCode,
+                [`participantCountryRefId`]: registrationObj.countryRefId
+            });
+            {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
+                this.props.form.setFieldsValue({
+                    [`parentFirstName${pIndex}`]: parent.firstName,
+                    [`parentLastName${pIndex}`]: parent.lastName,
+                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
+                    [`parentEmail${pIndex}`]: parent.email,
+                    [`parentStreet1${pIndex}`]: parent.street1,
+                    [`parentSuburb${pIndex}`]: parent.suburb,
+                    [`parentStateRefId${pIndex}`]: parent.stateRefId,
+                    [`parentCountryRefId${pIndex}`]: parent.countryRefId,
+                    [`parentPostalCode${pIndex}`]: parent.postalCode,
+                });
+            })}
+                
+        }catch(ex){
+            console.log("Error in setParticipantDetailStepFormFields"+ex);
         }
     }
 
@@ -148,10 +177,6 @@ class AppRegistrationFormNew extends Component{
             this.setState({getUserLoad: true});
             this.props.getUserRegistrationUserInfoAction(payload);
         }
-    }
-
-    changeStep = (current) => {
-        this.setState({currentStep: current})
     }
 
     selectImage() {
@@ -424,7 +449,14 @@ class AppRegistrationFormNew extends Component{
                 
                 if(!err){
                     if(this.state.currentStep != 2){
-                        this.setState({currentStep: this.state.currentStep + 1});
+                        let nextStep = this.state.currentStep + 1;
+                        if(nextStep == 1){
+                            this.state.enabledSteps.push(0,nextStep);
+                        }else{
+                            this.state.enabledSteps.push(nextStep);
+                        }
+                        this.setState({currentStep: nextStep,
+                        enabledSteps: this.state.enabledSteps});
                     }
                     setTimeout(() => {
                         this.setState({
@@ -897,7 +929,7 @@ class AppRegistrationFormNew extends Component{
                                 </div>
                                 <div className="col-sm-6">
                                     <Form.Item>
-                                        {getFieldDecorator(`parentContactField${parentIndex}`, {
+                                        {getFieldDecorator(`parentMobileNumber${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.contactField }],
                                         })(
                                         <InputWithHead 
@@ -1178,6 +1210,7 @@ class AppRegistrationFormNew extends Component{
                         <InputWithHead heading={AppConstants.chooseMembershipProducts}/>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox 
+                            checked={membershipProduct.isChecked}
                             key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
                             onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked,"products",competitionIndex,membershipProductIndex)}>
                                 {membershipProduct.shortName}</Checkbox>
@@ -1194,22 +1227,21 @@ class AppRegistrationFormNew extends Component{
                                 onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
                             ))}
                         </div>
-                        <Form.Item>
+                        {/* <Form.Item>
                             {getFieldDecorator(`competitionMembershipProductDivisionId${competitionIndex}`, {
                                 rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
-                            })(
+                            })( */}
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
                                     onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex )}
-                                    setFieldsValue={competition.competitionMembershipProductDivisionId}
                                     >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
                                         <Option key={divisionInfo.competitionMembershipProductDivisionId + divisionInfoIndex} 
                                         value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
                                     ))}
                                 </Select>
-                            )}
-                        </Form.Item>
+                            {/* )}
+                        </Form.Item> */}
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.totalCasualFees}/>
@@ -1434,37 +1466,27 @@ class AppRegistrationFormNew extends Component{
     additionalPersonalInfoView = (getFieldDecorator) => {
         const { registrationObj } = this.props.userRegistrationState;
         const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
-            firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList } = this.props.commonReducerState;
+            firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
         let yearsOfPlayingList = ['1','2','3','4','5','6','7','8','9','10+'];
-        let walkingNetballQuesList = [
-            'Has your doctor ever said you have heart trouble?',
-            'Do you frequently have pains in your heart or chest?',
-            'Do you often feel faint or have spells of server dizziness?',
-            'Has your doctor ever said your blood pressure is too high?',
-            'Do you have any joint or bone problem(s) that may be worsened with exercise?',
-            'Do you know of any reason why you should not take part in physical activity?',
-            'Are you or have you been pregnant in the last 6 months?',
-            'Do you suffer from any problems of the lower back?'
-        ]
         return(
             <div className="registration-form-view">
                 <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
                 <InputWithHead heading={AppConstants.whichCountryWereBorn}/>
-                <Form.Item >
+                {/* <Form.Item >
                     {getFieldDecorator(`additionalInfoCountryRefId`, {
                         rules: [{ required: true, message: ValidationConstants.countryField[0] }],
-                    })(
+                    })( */}
                     <Select
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
                         onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
-                        setFieldsValue={registrationObj.additionalInfo.countryRefId}>
+                        value={registrationObj.additionalInfo.countryRefId}>
                         {countryList.length > 0 && countryList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
-                    )}
-                </Form.Item>
+                    {/* )}
+                </Form.Item> */}
                 <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                 <Radio.Group
                     className="registration-radio-group"
@@ -1490,22 +1512,22 @@ class AppRegistrationFormNew extends Component{
                     allowClear
                 />
                 <InputWithHead heading={AppConstants.playingOtherParticipantSports}/>
-                <Form.Item >
+                {/* <Form.Item >
                     {getFieldDecorator(`additionalInfoOtherParticpantSport`, {
                         rules: [{ required: true }],
-                    })(
+                    })( */}
                     <Select
                         mode="multiple"
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
                         onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                        setFieldsValue={registrationObj.additionalInfo.otherSportsInfo}>
+                        value={registrationObj.additionalInfo.otherSportsInfo}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
-                    )}
-                </Form.Item>
+                    {/* )}
+                </Form.Item> */}
                 <InputWithHead heading={AppConstants.haveYouEverPlayed}/>
                 <Radio.Group
                     className="registration-radio-group"
@@ -1851,7 +1873,7 @@ class AppRegistrationFormNew extends Component{
                                 value={registrationObj.additionalInfo.walkingNetballRefId}
                                 >
                                 {(walkingNetballQuesList || []).map((ques,quesIndex) => (
-                                    <Radio key={"WalkingNetballQues"+quesIndex} value={quesIndex}>{ques}</Radio>
+                                    <Radio key={ques.id} value={ques.id}>{ques.description}</Radio>
                                 ))}
                             </Radio.Group>
                             {registrationObj.additionalInfo.walkingNetballRefId != null && (
@@ -1888,9 +1910,9 @@ class AppRegistrationFormNew extends Component{
         return(
             <div className="pt-0" style={{width: "70%",margin: "auto"}}>
                 <Steps className="registration-steps" current={this.state.currentStep} onChange={this.changeStep}>
-                    {registrationSteps.map((item,index) => (
-                        <Step key={item.title} title={item.title}/>
-                    ))} 
+                     <Step status={this.state.enabledSteps.includes(0) && "finish"} title={AppConstants.participantDetails}/>
+                     <Step status={this.state.enabledSteps.includes(0) && this.state.enabledSteps.includes(1) && "finish"} title={AppConstants.selectCompetition}/>
+                     <Step status={this.state.enabledSteps.includes(0) && this.state.enabledSteps.includes(1) && this.state.enabledSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                 </Steps>
                 {this.stepsContentView(getFieldDecorator)}
             </div>
@@ -1960,6 +1982,7 @@ function mapDispatchToProps(dispatch)
         updateParticipantAdditionalInfoAction,
         accreditationUmpireReferenceAction,
         accreditationCoachReferenceAction,
+        walkingNetballQuesReferenceAction,
         saveParticipantInfo					 
     }, dispatch);
 

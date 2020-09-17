@@ -26,7 +26,8 @@ const initialState = {
     identifyAsList: [],
     otherSportsList: [],
     accreditationUmpireList: [],
-    accreditationCoachList: [] 		 
+    accreditationCoachList: [] ,
+    walkingNetballQuesList: []		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -259,6 +260,19 @@ function commonReducerState(state = initialState, action) {
                 ...state,
                 status: action.status,
                 accreditationCoachList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+         ///////get the walingNetball questiion list
+         case ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                walkingNetballQuesList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
                 error: null
             };
