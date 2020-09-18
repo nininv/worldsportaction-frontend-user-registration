@@ -23,7 +23,8 @@ import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import {isArrayNotEmpty} from '../../util/helpers';
 import ValidationConstants from "../../themes/validationConstant";
-import {getRegistrationByIdAction, deleteRegistrationProductAction} from 
+import {getRegistrationByIdAction, deleteRegistrationProductAction,
+    getRegistrationShopProductAction} from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
@@ -43,7 +44,11 @@ class RegistrationShop extends Component {
             showCardView:false,
             registrationUniqueKey: null,   
             productModalVisible: false ,
-            id: null      
+            id: null,
+            typeId: -1,
+            expandObj: null,
+            variantOptionId: null,
+            quantity: null
         };
     }
 
@@ -66,6 +71,26 @@ class RegistrationShop extends Component {
         }
         console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+    }
+
+    getRegistrationProducts = (registrationId, page, typeId) =>{
+        
+        let payload = {
+            registrationId: registrationId,
+            typeId: typeId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+
+        this.props.getRegistrationShopProductAction(payload);
+    }
+
+    onChangeSetValue = (key, value) =>{
+        this.setState({typeId: value});
+        this.getRegistrationProducts(this.state.registrationId, 1, value);
     }
 
     goToShipping = () =>{
@@ -104,6 +129,7 @@ class RegistrationShop extends Component {
         }
     }
 
+
     saveShop = (e) =>{
         e.preventDefault();
 
@@ -115,14 +141,18 @@ class RegistrationShop extends Component {
         });
     }
 
-    enableExpandView = (key) =>{
-        if(key == "show")
-        this.setState({showCardView:true});  
-        else 
-        this.setState({showCardView:false}); 
+    enableExpandView = (key, item) =>{
+        if(key == "show"){
+            this.setState({showCardView:true, expandObj: item}); 
+        } 
+        else {
+            this.setState({showCardView:false}); 
+        }
     }
 
     headerView = () =>{
+        const {shopProductsTypes} = this.props.registrationProductState;
+        let types = shopProductsTypes ? shopProductsTypes : [];
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 , marginBottom: "37px",flexWrap: "wrap"}}>
                 <div className="product-text-common" style={{fontSize: 22 , alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
@@ -130,9 +160,16 @@ class RegistrationShop extends Component {
                     <Select
                         style={{ width: "100%", paddingRight: 1}}                  
                         placeholder={AppConstants.allCategories}  
-                        className="custom-dropdown"                                                     
+                        className="custom-dropdown"
+                        onChange={(e) => this.onChangeSetValue("typeId", e)}
+                        value={this.state.typeId}                                               
                     >
-                        <Option value={1}>All categories</Option>     
+                        <Option value={-1}>All categories</Option> 
+                        {
+                            (types || []).map((item, index) =>(
+                                <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
+                            ))
+                        }    
                     </Select>
                 </div>
             </div>
@@ -141,18 +178,18 @@ class RegistrationShop extends Component {
     }
 
     cardView = () =>{
-        let array = [1,2,3,4];
+        const {shopProductList} = this.props.registrationProductState;
         return(
-            <div style ={{ display: "flex" , justifyContent: "space-between" , flexWrap: "wrap"}}>
-                {array.map(()=>{
+            <div style ={{ display: "flex" , flexWrap: "wrap"}}>
+                {(shopProductList || []).map((item, index)=>{
                     return(
-                        <div class="shop-product-text card-header-text" onClick={(e)=>this.enableExpandView("show")}>
-                        <div style={{textAlign: "center"}}>
-                            <img src={AppImages.userIcon}/>
+                        <div class="shop-product-text card-header-text" style={{marginRight: 20}} onClick={(e)=>this.enableExpandView("show", item)}>
+                            <div style={{textAlign: "center"}}>
+                                <img src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                            </div>
+                            <div style={{ fontFamily: "inter-medium" , fontWeight:500 ,margin:"10px 0px 10px 0px"}}>{item.productName}</div>
+                            <div>$60.00</div>
                         </div>
-                        <div style={{ fontFamily: "inter-medium" , fontWeight:500 ,margin:"10px 0px 10px 0px"}}>{AppConstants.vixensWarmUpShirt}</div>
-                        <div>$60.00</div>
-                    </div>
                     )
                 })}           
             </div>
@@ -161,54 +198,67 @@ class RegistrationShop extends Component {
   
   
     cardExpandView = () =>{
+        let expandObj = this.state.expandObj;
+        console.log("expandObj", expandObj);
         return(
             <div class = "expand-product-text"  style={{marginTop: "23px"}}>     
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
                 </div>           
                 <div class="row" style={{marginTop: "17px"}}>
-                    <div class="col-lg-4" style={{textAlign: "center" , marginTop: "20px"}}>
-                        <img src={AppImages.userIcon}/>
+                    <div class="col-lg-4" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
+                        <img src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
                     <div className="col-lg-8 card-expandView-text" style={{paddingRight:"40px"}}>
-                        <div style={{fontSize:23}}>{AppConstants.vixensWarmUpShirt}</div>
-                        <div className ="mt-5" style={{ fontSize:15 , fontFamily: "inter-medium" , fontWeight:500}}>{AppConstants.productDescription}</div>
-                        <div style={{display:"flex",justifyContent:"space-between" , flexWrap:"wrap"}}>
-                            <div style={{marginTop:27}}>
-                                <div>
-                                    {AppConstants.selectColor}
+                        <div style={{fontSize:23}}>{expandObj.productName}</div>
+                        <div className ="mt-5" style={{ fontSize:15 , fontFamily: "inter-medium" , fontWeight:500}}>{expandObj.description}</div>
+                        {(expandObj.varients || []).map((varnt, vIndex) =>(
+                            <div>
+                            <div style={{display:"flex", flexWrap:"wrap"}}>
+                                <div style={{marginTop:27, marginRight: 20}}>
+                                    <div>
+                                        {"Select " + varnt.name}
+                                    </div>
+                                    <div style={{marginTop:7}}>
+                                        <Select
+                                            style={{ width: "166px", paddingRight: 1 , fontWeight: 500 ,fontSize: "17px"}}                  
+                                            placeholder={AppConstants.allCategories}  
+                                            className="custom-dropdown" 
+                                            value={this.state.variantOptionId}   
+                                            onChange={(e)=> this.setState({variantOptionId: e})}                                                 
+                                        >
+                                            {(varnt.variantOptions || []).map((varOpt, vOptIndex) =>(
+                                                <Option key={varOpt.variantOptionId} value={varOpt.variantOptionId}>
+                                                    {varOpt.optionName}</Option>  
+                                            ))}  
+                                        </Select>
+                                    </div>
                                 </div>
-                                <div style={{marginTop:7}}>
-                                    <Select
-                                        style={{ width: "166px", paddingRight: 1 , fontWeight: 500 ,fontSize: "17px"}}                  
-                                        placeholder={AppConstants.allCategories}  
-                                        className="custom-dropdown"                                                     
-                                    >
-                                        <Option value={1}>Blue</Option>     
-                                    </Select>
-                                </div>
+                                <div style={{marginTop:27}}>
+                                    <div>
+                                        {AppConstants.quantity}
+                                    </div>
+                                    <div style={{marginTop:7,width: "166px"}}>                                    
+                                        <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
+                                        onChange={(e)=> this.setState({quantity: e})}
+                                        value= {this.state.quantity}  />
+                                    </div>
+                                </div>  
                             </div>
-                            <div style={{marginTop:27}}>
-                                <div>
-                                    {AppConstants.quantity}
+                            <div class = "row" style={{margin:0}}>
+                                <div class = "col-lg-8 col-sm-12" style={{padding:0,marginTop:23, marginRight: 10}}>
+                                    <Button className="open-reg-button" style={{color:"var(--app-white)" , width:"100%", height: "53px",textTransform: "uppercase"}}>
+                                        {AppConstants.addToCart}
+                                    </Button> 
                                 </div>
-                                <div style={{marginTop:7,width: "166px"}}>                                    
-                                    <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}  />
-                                </div>
-                            </div>                        
-                        </div>
-                        <div class = "row" style={{margin:0}}>
-                            <div class = "col-lg-9 col-sm-12" style={{padding:0,marginTop:23}}>
-                                <Button className="open-reg-button" style={{color:"var(--app-white)" , width:"100%", height: "53px",textTransform: "uppercase"}}>
-                                    {AppConstants.addToCart}
-                                </Button> 
+                                <div class = "col-lg-3 col-sm-12" style={{padding:0,marginTop:23}}>
+                                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 5px 0px" , width:"100%",height: "49px",textTransform: "uppercase"}}>
+                                        {AppConstants.cancel}
+                                    </Button> 
+                                </div>                       
+                            </div> 
                             </div>
-                            <div class = "col-lg-3 col-sm-12" style={{padding:0,marginTop:23}}>
-                                <Button className="back-btn-text" style={{boxShadow: "0px 1px 5px 0px" , width:"100%",height: "49px",textTransform: "uppercase"}}>
-                                    {AppConstants.cancel}
-                                </Button> 
-                            </div>                       
-                        </div>
+                        ))}
                     </div>                   
                 </div> 
                    
@@ -397,7 +447,8 @@ function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         getRegistrationByIdAction,
-        deleteRegistrationProductAction					 
+        deleteRegistrationProductAction,
+        getRegistrationShopProductAction				 
     }, dispatch);
 
 }

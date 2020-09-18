@@ -230,6 +230,8 @@ export default function* root_saga() {
   //UserRegistration Membership Products
   yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD, regProductsSaga.deleteRegistrationParticipantSaga)
 
+  //Get Registration Shop Products
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD, regProductsSaga.getRegistrationShopProductsSaga)
   //EndUserRegistration Registration Settings
   yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, userRegistrationSaga.orgRegistrationRegistrationSettings)
 

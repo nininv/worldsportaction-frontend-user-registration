@@ -68,6 +68,15 @@ function getRegistrationByIdAction(payload){
     return action;
 }
 
+function getRegistrationShopProductAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 
 
 export{
@@ -77,5 +86,6 @@ export{
     deleteRegistrationProductAction,
     deleteRegistrationParticipantAction,
     getTermsAndConditionsAction,
-    getRegistrationByIdAction
+    getRegistrationByIdAction,
+    getRegistrationShopProductAction
 }
