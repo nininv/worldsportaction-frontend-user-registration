@@ -80,6 +80,14 @@ function updateParticipantAdditionalInfoAction(key,data){
     return action;
 }
 
+function orgRegistrationRegSettingsEndUserRegAction(payload) {
+    const action = {
+        type: ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -89,5 +97,6 @@ export{
     membershipProductEndUserRegistrationAction,
     updateParticipantCompetitionAction,
     updateUserRegistrationStateVarAction,
-    updateParticipantAdditionalInfoAction
+    updateParticipantAdditionalInfoAction,
+    orgRegistrationRegSettingsEndUserRegAction
 }

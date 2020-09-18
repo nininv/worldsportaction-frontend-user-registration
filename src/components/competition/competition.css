@@ -493,10 +493,12 @@
 
 .map-style{
   height: 250px;
-  background: grey;
   margin: -40px -40px 0px -40px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid var(--app-f0f0f2)
 }
 
 .light-grey-border-box{

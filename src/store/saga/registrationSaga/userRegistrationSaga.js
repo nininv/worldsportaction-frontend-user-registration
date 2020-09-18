@@ -97,3 +97,22 @@ export function* endUserRegistrationMembershipProducts(action) {
     yield call(errorSaga, error)
   }
 }
+
+////// Org Registration Registration Settings
+export function* orgRegistrationRegistrationSettings(action) {
+  try {
+    const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings, 
+          action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

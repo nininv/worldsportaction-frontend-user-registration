@@ -70,8 +70,8 @@ export default function* root_saga() {
   //get particular user organisation 
   yield takeEvery(ApiConstants.API_GET_USER_ORGANISATION_LOAD, userSaga.getUserOrganisationSaga)
 
-  //EndUserRegistration Registration Settings
-  yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, endUserRegSaga.orgRegistrationRegistrationSettings)
+  // //EndUserRegistration Registration Settings
+  // yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, endUserRegSaga.orgRegistrationRegistrationSettings)
 
   //EndUserRegistration Membership Products
   //yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, endUserRegSaga.endUserRegistrationMembershipProducts)
@@ -232,5 +232,8 @@ export default function* root_saga() {
 
   //Get Registration Shop Products
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD, regProductsSaga.getRegistrationShopProductsSaga)
+  //EndUserRegistration Registration Settings
+  yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, userRegistrationSaga.orgRegistrationRegistrationSettings)
+
 
 }
