@@ -545,8 +545,8 @@ class AppRegistrationFormNew extends Component{
                     </Breadcrumb>
                 </Header>
             </div>
-        );
-    };
+        )
+    }
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
@@ -570,7 +570,7 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.addOrSelectParticipantView()}</div> 
                 }
             </div>
-        );
+        )
     }
 
     addOrSelectParticipantView = () => {
@@ -626,7 +626,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                 : null}
             </div>
-        );
+        )
     }
 
     addedParticipantView = () => {
@@ -639,7 +639,7 @@ class AppRegistrationFormNew extends Component{
                 </div>
                 <div style={{fontWeight: "600",marginTop: "-5px"}}>Child</div>
             </div>
-        );
+        )
     }
 
     participantDetailView = (getFieldDecorator) => {
@@ -917,7 +917,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                 }	
             </div>
-        );
+        )
     } 
 
     parentOrGuardianView = (getFieldDecorator) => {
@@ -1162,7 +1162,7 @@ class AppRegistrationFormNew extends Component{
                 onClick={() => {this.addParent("add")}}
                 >+ {AppConstants.addNewParentGaurdian}</div>	
             </div>
-        );
+        )
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
@@ -1206,7 +1206,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 
     findAnotherCompetitionView = () => {
@@ -1259,7 +1259,7 @@ class AppRegistrationFormNew extends Component{
                     ))}
                 </div>
             </div>
-        );
+        )
     }
 
     competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
@@ -1511,7 +1511,7 @@ class AppRegistrationFormNew extends Component{
                     )}	 
                 </div>
             </div>
-        );
+        )
     }
 
     additionalInfoStepView = (getFieldDecorator) => {
@@ -1552,7 +1552,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 
     additionalPersonalInfoView = (getFieldDecorator) => {
@@ -1994,7 +1994,7 @@ class AppRegistrationFormNew extends Component{
                     )}
                 </div>
             </div>
-        );
+        )
     }
 
     stepsContentView = (getFieldDecorator) => {
@@ -2010,7 +2010,7 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
                }
             </div>
-        );
+        )
     }
 
     contentView = (getFieldDecorator) => {
@@ -2022,9 +2022,9 @@ class AppRegistrationFormNew extends Component{
                      <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                 </Steps>
                 {this.stepsContentView(getFieldDecorator)}
-                {this.singleCompModalView()};
+                {this.singleCompModalView()}
             </div>
-        );
+        )
     }
 
     footerView = () => {
@@ -2036,7 +2036,7 @@ class AppRegistrationFormNew extends Component{
                 style={{float: "right",color: "white"}} 
                 className="open-reg-button">{this.state.submitButtonText}</Button>
             </div>
-        );
+        )
     }
 
     singleCompModalView = () =>{
@@ -2060,7 +2060,7 @@ class AppRegistrationFormNew extends Component{
                 ))}
               </Modal>
             </div>
-          );
+          )
     }
 
     render(){
