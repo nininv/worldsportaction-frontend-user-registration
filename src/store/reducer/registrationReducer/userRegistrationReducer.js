@@ -284,6 +284,7 @@ function setMembershipProductsInfo(state,organisationData){
 
 function getFilteredDivisions(divisions,state){
 	try{
+		console.log("divisions",divisions);
 		let filteredDivisions = [];
 		let genderRefId = state.registrationObj.genderRefId;
 		var date = moment(state.registrationObj.dateOfBirth, "DD/MM/YYYY");
@@ -328,8 +329,9 @@ function getFilteredDivisions(divisions,state){
 				}      
 				filteredDivisions.push(div); 
 			}
-			return filteredDivisions;
 		}
+		console.log("division array",filteredDivisions);
+		return filteredDivisions;
 	}catch(ex){
 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
 	}
@@ -349,7 +351,8 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
 			state.registrationObj.competitions[competitionIndex].products.push(product);
-			state.registrationObj.competitions[competitionIndex].divisionInfo = getFilteredDivisions(membershipProductInfo.divisions,state)
+			let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
+			divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state))
 			// for(let division of membershipProductInfo.divisions){
 			// 	let divisionInfo = {
 			// 		"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
