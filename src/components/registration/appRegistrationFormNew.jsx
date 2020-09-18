@@ -901,8 +901,8 @@ class AppRegistrationFormNew extends Component{
                                         rules: [{ required: true, message: ValidationConstants.addressField}],
                                     })(
                                         <PlacesAutocomplete
+                                            setFieldsValue={"participantAddressSearch"}
                                             heading={AppConstants.addressSearch}
-                                            required
                                             error={this.state.searchAddressError}
                                             onBlur={() => { this.setState({searchAddressError: ''})}}
                                             onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
@@ -1224,7 +1224,7 @@ class AppRegistrationFormNew extends Component{
                     <div className="form-heading">{AppConstants.findACompetition}</div>
                     <div className="orange-action-txt" 
                     style={{marginLeft: "auto",paddingBottom: "7.5px"}}
-                    onClick={() => this.setState({showAddAnotherCompetitionView: false})}>{AppConstants.cancel}</div>
+                    onClick={() => this.setState({showAddAnotherCompetitionView: false,organisationId: null})}>{AppConstants.cancel}</div>
                 </div>
 
                 <div className="light-grey-border-box">
@@ -1250,7 +1250,7 @@ class AppRegistrationFormNew extends Component{
                                 borderRadius: "10px 10px 0px 0px",
                                 margin: "-20px -20px -0px -20px",
                                 borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={organisationCoverImage}/>
+                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.compLogoUrl}/>
                                 </div>
                                 <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
                                 <div style={{fontWeight: "600"}}>&#128198; {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
@@ -1263,27 +1263,26 @@ class AppRegistrationFormNew extends Component{
     }
 
     competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
-        console.log("competition",competition);
         const {playerPositionList} = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
-                            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '' 
-        let organisationCoverImage = competition.organisationInfo.organisationLogoUrl;
+                            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
         return(
             <div className="registration-form-view"  key={competitionIndex}>
                 <div className="map-style">
-                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={organisationCoverImage}/>
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.compLogoUrl}/>
                 </div>
                 <div>
                     <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
                         <div className="col-sm-1.5">
-                            <img style={{height: "60px",borderRadius: "50%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/> 
+                            <img style={{height: "60px",borderRadius: "50%"}} src={competitionInfo.compLogoUrl}/> 
                         </div>
                         <div className="col">
                             <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
                             <div style={{display: "flex",flexWrap: "wrap"}}>
                                 <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
-                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.findAnotherCompetition}</div>
+                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
+                                onClick={() => this.setState({showAddAnotherCompetitionView: true})}>{AppConstants.findAnotherCompetition}</div>
                             </div>
                             <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                         </div>
