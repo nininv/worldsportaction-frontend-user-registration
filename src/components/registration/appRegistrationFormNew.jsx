@@ -81,7 +81,9 @@ class AppRegistrationFormNew extends Component{
             organisationId: null,
             enabledSteps: [],
             completedSteps: [],
-            singleCompModalVisible: false
+            singleCompModalVisible: false,
+            getMembershipLoad: false,
+            getParticipantByIdLoad: false
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -100,6 +102,25 @@ class AppRegistrationFormNew extends Component{
 
     componentDidUpdate(nextProps){
         let registrationState = this.props.userRegistrationState;
+        if(!registrationState.onMembershipLoad && this.state.getMembershipLoad){
+            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
+            //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f"
+            if(participantId){
+                this.props.getParticipantInfoById(participantId);
+                this.setState({getParticipantByIdLoad: true})
+            }
+            this.setState({getMembershipLoad: false});
+        }
+        if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
+            this.state.completedSteps = [0,1,2];
+            this.state.enabledSteps = [0,1,2];
+            this.setState({getParticipantByIdLoad: false,
+                completedSteps: this.state.completedSteps,
+                enabledSteps: this.state.enabledSteps});
+            setTimeout(() => {
+                this.setParticipantDetailStepFormFields();
+            },300);
+        }
         if(registrationState.addCompetitionFlag){
             this.setState({
                 showAddAnotherCompetitionView: false,
@@ -123,12 +144,9 @@ class AppRegistrationFormNew extends Component{
     }
 
     componentDidMount(){
-        let participantId = this.props.location.state ? this.props.location.state.participantId : null;
-        if(participantId){
-            this.props.getParticipantInfoById(participantId);
-        }
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
+        this.setState({getMembershipLoad: true});
         if(getOrganisationId() != null && getCompetitonId != null){
             this.setState({showAddAnotherCompetitionView: false})
         }
@@ -150,8 +168,9 @@ class AppRegistrationFormNew extends Component{
         try{
             this.props.form.setFieldsValue({
                 [`genderRefId`]: registrationObj.genderRefId,
-                [`dateOfBirth`]: registrationObj.dateOfBirth,
+                [`dateOfBirth`]: moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
                 [`participantFirstName`]: registrationObj.firstName,
+                [`participantMiddleName`]: registrationObj.middleName,
                 [`participantLastName`]: registrationObj.lastName,
                 [`participantMobileNumber`]: registrationObj.mobileNumber,
                 [`participantEmail`]: registrationObj.email,
@@ -253,32 +272,6 @@ class AppRegistrationFormNew extends Component{
     }
 
     onChangeSetParticipantValue = (value,key) => {
-        let userRegistrationstate = this.props.userRegistrationState;
-        let registrationObj = userRegistrationstate.registrationObj;
-        // if(key == "dateOfBirth"){
-        //     if(registrationObj.parentOrGuardian.length == 0){
-        //         this.props.updateUserRegistrationObjectAction(value,key);
-        //         if(getAge(value) <= 18){
-        //             let parentObj = this.getParentObj();
-        //             registrationObj.parentOrGuardian.push(parentObj);
-        //             key = "registrationObj";
-        //             value = registrationObj;
-        //         }else{
-        //             registrationObj.parentOrGuardian = null;
-        //             key = "registrationObj";
-        //             value = registrationObj; 
-        //         }
-        //     }
-        // }
-        // if(key == "registeringYourself" && value == 2){
-        //     if(registrationObj.parentOrGuardian.length == 0){
-        //         this.props.updateUserRegistrationObjectAction(value,key);
-        //         let parentObj = this.getParentObj();
-        //         registrationObj.parentOrGuardian.push(parentObj);
-        //         key = "registrationObj";
-        //         value = registrationObj;
-        //     } 
-        // }
         this.props.updateUserRegistrationObjectAction(value,key)
     }
 
@@ -545,6 +538,7 @@ class AppRegistrationFormNew extends Component{
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
+        console.log("registrationObj",registrationObj);
         return(
             <div>
                 {registrationObj != null && 
@@ -556,7 +550,7 @@ class AppRegistrationFormNew extends Component{
                             <div>{this.addedParticipantWithProfileView()}</div>
                         }
                         <div>{this.participantDetailView(getFieldDecorator)}</div>
-                        {(getAge(registrationObj.dateOfBirth) <= 18 || 
+                        {(getAge(registrationObj.dateOfBirth) < 18 || 
                         registrationObj.registeringYourself == 2) && (
                             <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                         )}
@@ -679,7 +673,7 @@ class AppRegistrationFormNew extends Component{
                 </Form.Item>
             
                 <div className="row">
-                    <div className="col-sm-6">
+                    <div className="col-sm-12 col-md-6">
                     <Form.Item >
                         {getFieldDecorator(`participantFirstName`, {
                             rules: [{ required: true, message: ValidationConstants.nameField[0] }],
@@ -694,7 +688,22 @@ class AppRegistrationFormNew extends Component{
                         )}
                     </Form.Item>
                     </div>
-                    <div className="col-sm-6">
+                    <div className="col-sm-12 col-md-6">
+                        <Form.Item >
+                            {getFieldDecorator(`participantMiddleName`, {
+                                rules: [{ required: false }],
+                            })(
+                            <InputWithHead
+                                required={"pt-0 pb-0"}
+                                heading={AppConstants.participant_middleName}
+                                placeholder={AppConstants.participant_middleName}
+                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "middleName")} 
+                                setFieldsValue={registrationObj.middleName}
+                            />
+                            )}
+                        </Form.Item>
+                    </div>
+                    <div className="col-sm-12 col-md-12">
                         <Form.Item >
                             {getFieldDecorator(`participantLastName`, {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
@@ -709,7 +718,7 @@ class AppRegistrationFormNew extends Component{
                             )}
                         </Form.Item>
                     </div>
-                    <div className="col-sm-6">
+                    <div className="col-sm-12 col-md-6">
                         <Form.Item >
                             {getFieldDecorator(`participantMobileNumber`, {
                                 rules: [{ required: true, message: ValidationConstants.contactField }],
@@ -724,21 +733,30 @@ class AppRegistrationFormNew extends Component{
                             )}
                         </Form.Item>
                     </div>
-                    <div className="col-sm-6">
-                        <Form.Item >
-                            {getFieldDecorator(`participantEmail`, {
-                                rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                            })(
-                                <InputWithHead
-                                    required={"required-field pt-0 pb-0"}
-                                    disabled={registrationObj.userId == getUserId()}
-                                    heading={AppConstants.contactEmail}
-                                    placeholder={AppConstants.contactEmail}
-                                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")} 
-                                    setFieldsValue={registrationObj.email}
-                                />
-                            )}
-                        </Form.Item>
+                    <div className="col-sm-12 col-md-6"
+                    style={registrationObj.referParentEmail ? {alignSelf: "center",marginTop: "20px"} : {}}>
+                        {!registrationObj.referParentEmail && (
+                            <Form.Item >
+                                {getFieldDecorator(`participantEmail`, {
+                                    rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        disabled={registrationObj.userId == getUserId()}
+                                        heading={AppConstants.contactEmail}
+                                        placeholder={AppConstants.contactEmail}
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")} 
+                                        setFieldsValue={registrationObj.email}
+                                    />
+                                )}
+                            </Form.Item>
+                        )}
+                        <Checkbox
+                            className="single-checkbox"
+                            checked={registrationObj.referParentEmail}
+                            onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
+                            {AppConstants.useParentsEmailAddress}
+                        </Checkbox> 
                     </div>
                 </div>
 
@@ -2018,7 +2036,8 @@ class AppRegistrationFormNew extends Component{
                         </div>
                         </Content>
                         <Footer>{this.footerView()}</Footer>
-                        <Loader visible={this.props.userRegistrationState.onMembershipLoad} />
+                        <Loader visible={this.props.userRegistrationState.onMembershipLoad || 
+                                            this.props.userRegistrationState.onParticipantByIdLoad} />
                     </Form>
                 </Layout>
             </div>

@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
-import { deepCopyFunction} from '../../../util/helpers';
+import { deepCopyFunction, getAge} from '../../../util/helpers';
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -230,7 +230,8 @@ const initialState = {
 	isSavedParticipant: false,
 	saveValidationErrorMsg: null,
 	saveValidationErrorCode: null,
-	onMembershipLoad: false
+	onMembershipLoad: false,
+	onParticipantByIdLoad: false
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -334,6 +335,40 @@ function updateUmpireCoachWalkingNetball(state){
 	}
 }
 
+function updateParticipantByIdByMembershipInfo(state,partcipantData){
+	try{
+		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
+		for(let competition of partcipantData.competitions){
+			let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
+			competition.organisationInfo = organisationInfo;
+			let competitionInfo = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
+			competition.competitionInfo = competitionInfo;
+			for(let product of competition.products){
+				let membershipProduct = competition.competitionInfo.membershipProducts.find(x => x.competitionMembershipProductId == product.competitionMembershipProductId)
+				if(membershipProduct != undefined){
+					membershipProduct.isChecked = true;
+				}
+			}
+		}
+		return partcipantData;
+	}catch(ex){
+		console.log("Error in updateParticipantByIdByMembershipInfo in userRegistrationReducer"+ex);
+	}
+}
+
+function checkDateOfBirth(state,dateOfBirth){
+	try{
+		state.registrationObj.dateOfBirth = dateOfBirth;
+		if(getAge(dateOfBirth) < 18){
+			state.registrationObj.referParentEmail = true;
+		}else{
+			state.registrationObj.referParentEmail = false;
+		}
+	}catch(ex){
+		console.log("Error in checkDateOfBirth in userRegistrationReducer"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -363,6 +398,8 @@ function userRegistrationReducer(state = initialState, action){
 				state.registrationObj = value;
 			}else if(key == "competitions"){
 				setMembershipProductsInfo(state,value)
+			}else if(key == "dateOfBirth"){
+				checkDateOfBirth(state,value)
 			}else{
 				state.registrationObj[key] = value;
 			}
@@ -371,15 +408,15 @@ function userRegistrationReducer(state = initialState, action){
 				addCompetitionFlag: true 
 			}
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD:
-			return { ...state, onLoad: true };
+			return { ...state, onParticipantByIdLoad: true };
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
 			let participantData = action.result;
 			return {
 				...state,
-				onLoad: false,
+				onParticipantByIdLoad: false,
 				status: action.status,
-				registrationObj: participantData
+				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData)
 			};
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
