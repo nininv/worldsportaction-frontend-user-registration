@@ -1,6 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge} from '../../../util/helpers';
+import moment from 'moment';
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -281,6 +282,61 @@ function setMembershipProductsInfo(state,organisationData){
 	}
 }
 
+function getFilteredDivisions(divisions,state){
+	try{
+		console.log("divisions",divisions);
+		let filteredDivisions = [];
+		let genderRefId = state.registrationObj.genderRefId;
+		var date = moment(state.registrationObj.dateOfBirth, "DD/MM/YYYY");
+		for(let division of divisions){
+			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
+				if(division.genderRefId == genderRefId || genderRefId == 3){
+					let div = {
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+						"divisionName": division.divisionName
+					}      
+					filteredDivisions.push(div);
+				}
+			}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
+				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+				var endDate = moment(division.toDate, "YYYY-MM-DD");
+				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
+					let div = {
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+						"divisionName": division.divisionName
+					}      
+					filteredDivisions.push(div);
+				}
+			}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
+				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+				var endDate = moment(division.toDate, "YYYY-MM-DD");
+				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
+					&& (division.genderRefId == genderRefId || genderRefId == 3)){
+						let div = {
+							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+							"divisionName": division.divisionName
+						}      
+						filteredDivisions.push(div);
+				}
+			}else{
+				let div = {
+					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+					"divisionName": division.divisionName
+				}      
+				filteredDivisions.push(div); 
+			}
+		}
+		console.log("division array",filteredDivisions);
+		return filteredDivisions;
+	}catch(ex){
+		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
+	}
+}
+
 function setMembershipProductsAndDivisionInfo(state,competitionData,competitionIndex,competitionSubIndex){
 	try{
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
@@ -295,14 +351,16 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
 			state.registrationObj.competitions[competitionIndex].products.push(product);
-			for(let division of membershipProductInfo.divisions){
-				let divisionInfo = {
-					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-					"divisionName": division.divisionName
-				}
-				state.registrationObj.competitions[competitionIndex].divisionInfo.push(divisionInfo);
-			} 
+			let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
+			divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state))
+			// for(let division of membershipProductInfo.divisions){
+			// 	let divisionInfo = {
+			// 		"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+			// 		"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+			// 		"divisionName": division.divisionName
+			// 	}
+			// 	state.registrationObj.competitions[competitionIndex].divisionInfo.push(divisionInfo);
+			// } 
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
