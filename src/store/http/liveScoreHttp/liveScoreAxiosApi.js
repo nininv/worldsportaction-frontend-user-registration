@@ -18,31 +18,31 @@ let token = getAuthToken();
 
 
 let LiveScoreAxiosApi = {
-   
+
     liveScoreGetDivision(data, compKey) {
-    
+
         var url = null
-        if(compKey){
-            url =  `/division?competitionKey=${compKey}`
-        }else{
-            url =  `/division?competitionId=${data}`
+        if (compKey) {
+            url = `/division?competitionKey=${compKey}`
+        } else {
+            url = `/division?competitionId=${data}`
         }
 
-       
+
         return Method.dataGet(url, null)
     },
-  
+
 
     liveScoreLadderList(divisionId, competitionID, compKey) {
         var url = null;
-        if(compKey){
-             url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
-        }else{
-             url = `/teams/ladder?divisionIds=${divisionId}&competitionIds=${competitionID}`;
+        if (compKey) {
+            url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
+        } else {
+            url = `/teams/ladder?divisionIds=${divisionId}&competitionIds=${competitionID}`;
         }
-       
+
         return Method.dataGet(url, localStorage.token)
-       // return Method.dataPost(url, localStorage.token, postBody)
+        // return Method.dataPost(url, localStorage.token, postBody)
     },
 
 
@@ -53,8 +53,8 @@ let LiveScoreAxiosApi = {
     },
 
     //Get Fixture Competition List
-    getFixtureCompList(orgId){
-        let url = `/competitions/list?organisationUniqueKey=${orgId}`
+    getFixtureCompList(orgId, yearId) {
+        let url = `/competitions/list?organisationUniqueKey=${orgId}&yearRefId=${yearId}`
         return Method.dataGet(url, localStorage.token);
     }
 };
@@ -150,7 +150,7 @@ const Method = {
                 });
         });
     },
-   
+
     // Method to GET response
 
     async dataGet(newurl, authorization) {

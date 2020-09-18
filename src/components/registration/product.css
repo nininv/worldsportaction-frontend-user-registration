@@ -883,3 +883,49 @@ img.bg {
 .discount-validation {
   color:var(--app-red-bg);
 }
+.product-text-common {
+  display: flex;
+  align-content: flex-start;
+  color: var(--app-1b1b34);
+  font-weight: 600;
+  font-family: sans-serif ;
+}
+.btn-text-common {
+  font-size: 14px;
+  color: var(--app-color);
+  font-weight: 600;
+  font-family: sans-serif;
+  margin-left: 5px;
+  margin-right: 15px;
+}
+.outline-style{
+  background: white;
+  border-radius: 10px;
+}
+.product-left-view{
+  margin-top:30px;
+  padding: 36px;
+}
+.product-right-view{
+  margin: 21px 29px 30px 29px;
+  width: 100%;
+}
+.innerview-outline{
+  background-color: var(--app-fafbfb);
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 23px;
+}
+.product-radio-group {
+  font-size: 15px;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+  font-weight: normal;
+}
+.mt-10{
+  margin-top: 10px;
+}
+.termsView-main{
+  margin-top: 25px;
+}
+

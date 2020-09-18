@@ -469,3 +469,28 @@ export function* getOnlyYearAndCompetitionListSaga(action) {
     });
   }
 }
+
+export function* getYearListingSaga(action) {
+  try {
+    const result = isArrayNotEmpty(action.years) ? { status: 1, result: { data: action.years } } : yield call(AxiosApi.getYearListing, action);
+    if (result.status === 1) {
+
+      yield put({
+        type: ApiConstants.API_GET_YEAR_LISTING_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield put({ type: ApiConstants.API_APP_FAIL });
+      setTimeout(() => {
+        alert(result.data.message);
+      }, 800);
+    }
+  } catch (error) {
+    yield put({
+      type: ApiConstants.API_APP_ERROR,
+      error: error,
+      status: error.status
+    });
+  }
+}

@@ -10,8 +10,8 @@ import history from "../../util/history";
 import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID, getLiveScoreCompetiton } from '../../util/sessionStorage'
 import { isArrayNotEmpty } from '../../util/helpers'
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
-
 import { fixtureCompetitionListAction } from "../../store/actions/LiveScoreAction/LiveScoreFixtureAction"
+import { getYearListing } from "../../store/actions/appAction";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -137,7 +137,9 @@ class LiveScorePublicLadder extends Component {
             gameTimeTracking: false,
             onCompLoad: false,
             onDivisionLoad: false,
-            selectedComp: null
+            selectedComp: null,
+            yearId: null,
+            yearLoading: false
         }
     }
 
@@ -157,6 +159,9 @@ class LiveScorePublicLadder extends Component {
     }
 
     async componentDidMount() {
+        this.props.getYearListing(this.props.appState)
+        this.setState({ yearLoading: true })
+
         setUserId(userId);
         setAuthToken(token);
         // let orgParam =  this.props.location.search.split("?organisationId=")
@@ -164,15 +169,15 @@ class LiveScorePublicLadder extends Component {
         let orgId = orgParam[1]
 
         setliveScoreOrgID(orgId)
-        let organisationId = await getliveScoreOrgID()
+        // let organisationId = await getliveScoreOrgID()
 
-        if (organisationId != undefined) {
-            this.setState({ onCompLoad: true })
-            this.props.fixtureCompetitionListAction(organisationId)
-        } else {
+        // if (organisationId != undefined) {
+        //     this.setState({ onCompLoad: true })
+        //     this.props.fixtureCompetitionListAction(organisationId)
+        // } else {
 
-            history.push('/liveScorePublicLadder')
-        }
+        //     history.push('/liveScorePublicLadder')
+        // }
 
         // this.props.fixtureCompetitionListAction(orgId)
     }
@@ -183,7 +188,22 @@ class LiveScorePublicLadder extends Component {
     }
 
 
-    componentDidUpdate(nextProps) {
+    async componentDidUpdate(nextProps) {
+
+        if (nextProps.appState !== this.props.appState) {
+            if (this.props.appState.onLoad === false && this.state.yearLoading === true) {
+                let yearId = this.props.appState.yearListing[0].id
+                let organisationId = await getliveScoreOrgID()
+                if (organisationId != undefined) {
+                    this.props.fixtureCompetitionListAction(organisationId, yearId)
+                    this.setState({ onCompLoad: true, yearLoading: false, yearId })
+                } else {
+
+                    history.push('/liveScorePublicLadder')
+                }
+            }
+        }
+
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
                 if (this.props.liveScoreFixturCompState.comptitionList.length > 0) {
@@ -196,10 +216,11 @@ class LiveScorePublicLadder extends Component {
             }
         }
 
+
         if (this.props.liveScoreLadderState !== nextProps.liveScoreLadderState) {
             if (this.props.liveScoreLadderState.onLoad == false && this.state.onDivisionLoad == true) {
 
-                if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0) {
+                if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0 && this.props.liveScoreFixturCompState.comptitionList.length > 0) {
                     let division = this.props.liveScoreLadderState.liveScoreLadderDivisionData[0].id
                     this.setState({ onDivisionLoad: false, division })
                     this.props.liveScoreLaddersListAction(this.state.selectedComp, division, this.state.competitionUniqueKey)
@@ -229,15 +250,47 @@ class LiveScorePublicLadder extends Component {
 
     }
 
+    async setYearId(yearId) {
+        this.setState({ yearId, onCompLoad: true, selectedComp: null, division: null })
+        this.props.clearLadderList()
+        let organisationId = await getliveScoreOrgID()
+        if (organisationId != undefined) {
+            this.props.fixtureCompetitionListAction(organisationId, yearId)
+            // this.setState({ onCompLoad: true, yearLoading: false, yearId })
+        } else {
+
+            history.push('/liveScorePublicLadder')
+        }
+    }
+
 
     ///dropdown view containing all the dropdown of header
     dropdownView = () => {
         const { liveScoreLadderState } = this.props;
         let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
         let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
+        const { yearListing } = this.props.appState
         return (
             <div className="comp-player-grades-header-drop-down-view">
                 <div className="row" >
+
+                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className="year-select-heading">
+                            {AppConstants.year}:</span>
+                        <Select
+                            className="year-select reg-filter-select-year ml-2"
+                            style={{ width: 90 }}
+                            onChange={yearId => this.setYearId(yearId)}
+                            value={this.state.yearId}
+                        >
+                            {yearListing.length > 0 && yearListing.map((item, yearIndex) => (
+                                < Option key={"yearlist" + yearIndex} value={item.id} > {item.name}</Option>
+                            ))
+                            }
+                        </Select>
+                    </div>
+
+
                     <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <span className='year-select-heading'>{AppConstants.competition}:</span>
                         <Select
@@ -324,7 +377,7 @@ class LiveScorePublicLadder extends Component {
     }
 }
 function mapDispatchtoprops(dispatch) {
-    return bindActionCreators({ clearLadderList, liveScoreLaddersListAction, getLiveScoreDivisionList, fixtureCompetitionListAction }, dispatch)
+    return bindActionCreators({ clearLadderList, liveScoreLaddersListAction, getLiveScoreDivisionList, fixtureCompetitionListAction, getYearListing, }, dispatch)
 
 }
 
@@ -332,6 +385,7 @@ function mapStatetoProps(state) {
     return {
         liveScoreLadderState: state.LiveScoreLadderState,
         liveScoreFixturCompState: state.LiveScoreFixturCompState,
+        appState: state.AppState,
     }
 }
 export default connect(mapStatetoProps, mapDispatchtoprops)((LiveScorePublicLadder));

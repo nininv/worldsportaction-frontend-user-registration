@@ -16,6 +16,8 @@ import StripeState from "./stripeReducer/stripeReducer";
 import DeRegistrationState from "./registrationReducer/deRegisterReducer";
 import ShopProductState from "./shopReducer/productReducer";
 
+import UserRegistrationState from "./registrationReducer/userRegistrationReducer";
+
 const rootReducer = combineReducers({
   LoginState,
   MenuNavigationState,
@@ -30,6 +32,8 @@ const rootReducer = combineReducers({
   StripeState,
   DeRegistrationState,
   ShopProductState,
+
+  UserRegistrationState
 });
 
 export default rootReducer;
