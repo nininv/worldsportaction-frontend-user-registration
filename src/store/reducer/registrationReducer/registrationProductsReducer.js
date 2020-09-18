@@ -1,5 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import AppConstants from "../../../themes/appConstants";
+import { feeIsNull } from "../../../util/helpers";
 
 
 const initialState = {
@@ -87,6 +88,32 @@ function registrationProductsReducer(state = initialState, action){
             }
             else if (action.subKey == "volunteerInfo"){
                 reviewData[action.subKey][action.index][action.key] = action.value;
+            }
+            else if(action.subKey == "shopProducts"){
+                if(action.key == "addShopProduct"){
+                    console.log("action.value", action.value);
+                    reviewData[action.subKey].push(action.value);
+                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
+                                            feeIsNull(action.value.amount);
+                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
+                                            feeIsNull(action.value.tax);
+                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) +
+                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+
+                                            
+                }
+                else if(action.key == "removeShopProduct"){
+                    let shopData = reviewData[action.subKey][action.index];
+                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) -
+                                                feeIsNull(shopData.amount);
+                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) -
+                                        feeIsNull(shopData.tax);
+                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
+                    
+                    reviewData[action.subKey].splice(action.index,1);
+                }
+                console.log("reviewData", reviewData);
             }
             return {
                 ...state,

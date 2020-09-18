@@ -23,7 +23,8 @@ import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import ValidationConstants from "../../themes/validationConstant";
 import {isArrayNotEmpty} from '../../util/helpers';
-import {getRegistrationByIdAction, deleteRegistrationProductAction} from 
+import {getRegistrationByIdAction, deleteRegistrationProductAction, updateReviewInfoAction,
+    saveRegistrationReview } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
@@ -42,7 +43,8 @@ class RegistrationShipping extends Component {
         this.state = {
             registrationUniqueKey: null, 
             productModalVisible: false ,
-            id: null                         
+            id: null,
+            loading: false                    
         };
     }
 
@@ -53,7 +55,12 @@ class RegistrationShipping extends Component {
         this.getApiInfo(registrationUniqueKey);
     }
     componentDidUpdate(nextProps){
-
+        let registrationProductState = this.props.registrationProductState
+        if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
+            if(this.state.buttonPressed == "continue"){
+                this.goToRegistrationPayments();
+            }
+        }
     }  
 
     getApiInfo = (registrationUniqueKey) => {
@@ -100,14 +107,22 @@ class RegistrationShipping extends Component {
         }
     }
 
+    removeFromCart = (index, key, subKey) =>{
+        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+    }
+
 
     saveBilling = (e) =>{
         e.preventDefault();
 
         this.props.form.validateFieldsAndScroll((err, values) => {
             if(!err){
-
-                this.goToRegistrationPayments();
+                let registrationReview = this.props.registrationProductState.registrationReviewList;
+                registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                registrationReview["key"] = "save";
+                console.log("registrationReview" + JSON.stringify(registrationReview));
+                this.props.saveRegistrationReview(registrationReview);
+                this.setState({loading: true, buttonPressed: "continue"});
             }
         });
     }
@@ -189,6 +204,9 @@ class RegistrationShipping extends Component {
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
         let total = registrationReviewList!= null ? registrationReviewList.total : null;
+        let shopProducts = registrationReviewList!= null ? 
+                isArrayNotEmpty(registrationReviewList.shopProducts) ?
+                registrationReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
                 <div className="product-text-common" style={{fontSize: 21}}>
@@ -235,23 +253,25 @@ class RegistrationShipping extends Component {
                     </div> 
                     )}
                 )}
-                <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
-                        <div>
-                            <img src={AppImages.userIcon}/>
-                        </div>
-                        <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                 {(shopProducts).map((shop, index) =>(
+                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
-                                {AppConstants.vixensWarmUpShirt}
+                                <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div>(X1)</div>                               
+                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                                <div>
+                                    {shop.productName}
+                                </div>
+                                <div>({shop.optionName})</div>                               
+                            </div>
+                        </div>
+                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
+                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                         </div>
                     </div>
-                    <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>-$20</div>
-                    <div style={{paddingTop:26}}>
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
-                    </div>
-                </div> 
+                ))}
                 <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
@@ -331,7 +351,9 @@ function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         getRegistrationByIdAction,
-        deleteRegistrationProductAction			 
+        deleteRegistrationProductAction,
+        updateReviewInfoAction,
+        saveRegistrationReview 	 
     }, dispatch);
 
 }

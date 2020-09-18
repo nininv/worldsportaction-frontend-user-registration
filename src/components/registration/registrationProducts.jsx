@@ -49,7 +49,8 @@ class RegistrationProducts extends Component {
            productModalVisible: false,
            participantModalVisible: false,
            id: null,
-           agreeTerm: false
+           agreeTerm: false,
+           loading: false
         };
 
     }
@@ -62,7 +63,13 @@ class RegistrationProducts extends Component {
         this.getApiInfo(registrationUniqueKey);
     }
     componentDidUpdate(nextProps){
-
+        let registrationProductState = this.props.registrationProductState
+        if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
+            if(this.state.buttonPressed == "save"){
+                this.goToShop();
+            }
+        }
+       
     }  
     
     getApiInfo = (registrationUniqueKey) => {
@@ -95,7 +102,6 @@ class RegistrationProducts extends Component {
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
                 console.log("registrationReview", registrationReview);
                 this.callSaveRegistrationProducts("save", registrationReview);
-                this.goToShop();
             }
         });
     }
@@ -204,6 +210,10 @@ class RegistrationProducts extends Component {
 
     goToShop = () =>{
         history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
+    }
+
+    removeFromCart = (index, key, subKey) =>{
+        this.props.updateReviewInfoAction(null,key, index, subKey,null);
     }
 
 
@@ -603,6 +613,9 @@ class RegistrationProducts extends Component {
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
         let total = registrationReviewList!= null ? registrationReviewList.total : null;
+        let shopProducts = registrationReviewList!= null ? 
+                            isArrayNotEmpty(registrationReviewList.shopProducts) ?
+                            registrationReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
                 <div className="product-text-common" style={{fontSize: 21}}>
@@ -649,23 +662,25 @@ class RegistrationProducts extends Component {
                     </div> 
                     )}
                 )}
-                <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
-                        <div>
-                            <img src={AppImages.userIcon}/>
-                        </div>
-                        <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                {(shopProducts).map((shop, index) =>(
+                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
-                                {AppConstants.vixensWarmUpShirt}
+                                <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div>(X1)</div>                               
+                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                                <div>
+                                    {shop.productName}
+                                </div>
+                                <div>({shop.optionName})</div>                               
+                            </div>
+                        </div>
+                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
+                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
                         </div>
                     </div>
-                    <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>-$20</div>
-                    <div style={{paddingTop:26}}>
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
-                    </div>
-                </div> 
+                ))} 
                 <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
