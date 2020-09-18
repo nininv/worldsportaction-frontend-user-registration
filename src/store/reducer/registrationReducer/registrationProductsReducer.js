@@ -6,7 +6,11 @@ const initialState = {
     onLoad: false,
     onRegReviewLoad: false,
     registrationReviewList: null,
-    termsAndConditions: []
+    termsAndConditions: [],
+    shopProductList: [],
+    shopProductsTotalCount: 1,
+    shopProductsPage: 1,
+    shopProductsTypes: []
 }
 
 function registrationProductsReducer(state = initialState, action){
@@ -136,6 +140,22 @@ function registrationProductsReducer(state = initialState, action){
                     onRegReviewLoad: false,
                     status: action.status,
                     registrationReviewList: registrationData
+                };
+
+            case ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD:
+                return { ...state, onLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_SUCCESS:
+                let shopProductData = action.result;
+                return {
+                    ...state,
+                    onLoad: false,
+                    status: action.status,
+                    shopProductList: shopProductData.products,
+                    shopProductsTotalCount: shopProductData.page.totalCount,
+                    shopProductsPage: shopProductData.page
+                        ? shopProductData.page.currentPage: 1,
+                    shopProductsTypes: shopProductData.types
                 };
             
  

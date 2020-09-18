@@ -1,6 +1,7 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import AxiosApi from "../../http/registrationHttp/registrationAxios";
+import ShopAxiosApi from "../../http/shopHttp/shopAxios";
 import { message } from "antd";
 
 
@@ -128,6 +129,25 @@ export function* getRegistrationByIdSaga(action) {
     if (result.status === 1) {
       yield put({
         type: ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+
+////// Get Registration Shop Products
+export function* getRegistrationShopProductsSaga(action) {
+  try {
+    const result = yield call(ShopAxiosApi.getRegistrationShopProducts, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_SUCCESS,
         result: result.result.data,
         status: result.status
       });
