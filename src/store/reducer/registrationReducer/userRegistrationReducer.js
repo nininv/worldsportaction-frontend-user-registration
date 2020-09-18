@@ -104,24 +104,10 @@ let registrationObjTemp = {
 		// }
 	],
 	"regSetting":{
-		"updates":0,
-		"daily":0,
-		"weekly":0,
-		"monthly":0,
-		"played_before":0,
-		"nominate_positions":0,
-        "last_captain":0,
-		"play_friend":0,
-		"refer_friend":0,
-		"attended_state_game":0,
-		"photo_consent":0,
-		"club_volunteer":0,
-        "country":0,
-        "nationality":0,
-        "language":0,
-		"disability":0,
-		"shop":0,
-		"voucher":0
+		"netball_experience": 0,
+		"school_grade": 0,
+		"school_program": 0,
+		"school_standard": 0
 	},
 	"additionalInfo": {
 		"playedYear": null,
@@ -173,6 +159,11 @@ const competitionObj = {
 	"organisationInfo": null,
 	"competitionInfo": null,
 	"registrationRestrictionTypeRefId": null,
+	"regSetting": {
+		"nominate_positions": 0,
+		"play_friend": 0,
+		"refer_friend": 0,
+	},
 	"products": [
 		// {
 		// 	"competitionMembershipProductId": null,
@@ -231,7 +222,8 @@ const initialState = {
 	saveValidationErrorMsg: null,
 	saveValidationErrorCode: null,
 	onMembershipLoad: false,
-	onParticipantByIdLoad: false
+	onParticipantByIdLoad: false,
+	lastAddedCompetitionIndex: null
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -282,6 +274,8 @@ function setMembershipProductsInfo(state,organisationData){
 			competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 			state.registrationObj.competitions.push(competition);
 		}
+		state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
+		state.addCompetitionFlag = true; 
 	}catch(ex){
 		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
 	}
@@ -369,6 +363,24 @@ function checkDateOfBirth(state,dateOfBirth){
 	}
 }
 
+function setRegistrationSetting(state,settings){
+	try{
+		let registrationObj = state.registrationObj;
+		let competition = registrationObj.competitions[state.lastAddedCompetitionIndex];
+		let settingKeys = Object.keys(settings);
+		for(let key of settingKeys){
+			if(registrationObj.regSetting[key] == 0){
+				registrationObj.regSetting[key] = settings[key];
+			}
+			if(competition.regSetting[key] == 0){
+				competition.regSetting[key] = settings[key];
+			}
+		}
+	}catch(ex){
+		console.log("Error in setRegistrationSetting in userRegistrationReducer"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -404,9 +416,9 @@ function userRegistrationReducer(state = initialState, action){
 				state.registrationObj[key] = value;
 			}
 			return { 
-				...state,
-				addCompetitionFlag: true 
+				...state
 			}
+
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD:
 			return { ...state, onParticipantByIdLoad: true };
 
@@ -492,6 +504,18 @@ function userRegistrationReducer(state = initialState, action){
 				status: action.status,
 				isSavedParticipant: true
 			};
+
+			case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
+				return { ...state, onLoad: true };
+	
+			case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
+				let registrationSettings = action.result;
+				setRegistrationSetting(state,registrationSettings);
+				return {
+					...state,
+					onLoad: false,
+					status: action.status
+				};
 
         default:
             return state;

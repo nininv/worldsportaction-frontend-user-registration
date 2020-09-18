@@ -55,7 +55,8 @@ import {
     updateUserRegistrationStateVarAction,
     updateParticipantAdditionalInfoAction,
     saveParticipantInfo,
-    getParticipantInfoById
+    getParticipantInfoById,
+    orgRegistrationRegSettingsEndUserRegAction
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -79,11 +80,12 @@ class AppRegistrationFormNew extends Component{
             showAddAnotherCompetitionView: true,
             searchAddressError: null,
             organisationId: null,
+            competitionId: null,
             enabledSteps: [],
             completedSteps: [],
             singleCompModalVisible: false,
             getMembershipLoad: false,
-            getParticipantByIdLoad: false
+            getParticipantByIdLoad: false,
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -111,6 +113,7 @@ class AppRegistrationFormNew extends Component{
             }
             this.setState({getMembershipLoad: false});
         }
+
         if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
             this.state.completedSteps = [0,1,2];
             this.state.enabledSteps = [0,1,2];
@@ -121,13 +124,21 @@ class AppRegistrationFormNew extends Component{
                 this.setParticipantDetailStepFormFields();
             },300);
         }
+
         if(registrationState.addCompetitionFlag){
-            this.setState({
-                showAddAnotherCompetitionView: false,
-                organisationId: null
+            //calling setting service after added competition
+            let payload = {
+                "organisationUniqueKey": this.state.organisationId,
+                "competitionUniqueKey": this.state.competitionId
+            }
+            this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
+            this.setState({showAddAnotherCompetitionView: false,
+                organisationId: null,
+                competitionId: null
             });
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
         }
+
         if(registrationState.isSavedParticipant){
             this.props.updateUserRegistrationStateVarAction("isSavedParticipant",false);
             if(registrationState.saveValidationErrorMsg!= null && registrationState.saveValidationErrorMsg.length > 0){
@@ -139,8 +150,6 @@ class AppRegistrationFormNew extends Component{
                 })
             }
         }
-        
-
     }
 
     componentDidMount(){
@@ -148,7 +157,9 @@ class AppRegistrationFormNew extends Component{
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({getMembershipLoad: true});
         if(getOrganisationId() != null && getCompetitonId != null){
-            this.setState({showAddAnotherCompetitionView: false})
+            this.setState({showAddAnotherCompetitionView: false,
+            organisationId: getOrganisationId(),
+            competitionId: getCompetitonId()})
         }
     }
 
@@ -436,6 +447,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     addAnotherCompetition = (competition) => {
+        this.setState({competitionId: competition.competitionUniqueKey});
         let { membershipProductInfo } = this.props.userRegistrationState;
         let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
         if(organisationInfo){
@@ -538,7 +550,6 @@ class AppRegistrationFormNew extends Component{
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
-        console.log("registrationObj",registrationObj);
         return(
             <div>
                 {registrationObj != null && 
@@ -1202,8 +1213,10 @@ class AppRegistrationFormNew extends Component{
         let { membershipProductInfo } = this.props.userRegistrationState;
         let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
         let competitions = [];
+        let organisationCoverImage;
         if(organisation){
             competitions = organisation.competitions;
+            organisationCoverImage = organisation.organisationLogoUrl;
         }
         return(
             <div className="registration-form-view">
@@ -1231,7 +1244,14 @@ class AppRegistrationFormNew extends Component{
                         key={competition.competitionUniqueKey} 
                         style={{marginBottom: "20px"}}>
                             <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                                <div style={{height: "150px",background: "grey",borderRadius: "10px 10px 0px 0px",margin: "-20px -20px -0px -20px"}}></div>
+                                <div style={{height: "150px",
+                                display: "flex",
+                                justifyContent: "center",
+                                borderRadius: "10px 10px 0px 0px",
+                                margin: "-20px -20px -0px -20px",
+                                borderBottom: "1px solid var(--app-f0f0f2)"}}>
+                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={organisationCoverImage}/>
+                                </div>
                                 <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
                                 <div style={{fontWeight: "600"}}>&#128198; {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                             </div>
@@ -1243,13 +1263,17 @@ class AppRegistrationFormNew extends Component{
     }
 
     competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
+        console.log("competition",competition);
         const {playerPositionList} = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
                             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '' 
+        let organisationCoverImage = competition.organisationInfo.organisationLogoUrl;
         return(
             <div className="registration-form-view"  key={competitionIndex}>
-                <div className="map-style"></div>
+                <div className="map-style">
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={organisationCoverImage}/>
+                </div>
                 <div>
                     <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
                         <div className="col-sm-1.5">
@@ -1358,123 +1382,134 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     
-                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
-                    <div className="row">
-                        <div className="col-sm-12 col-md-6">
-                            <InputWithHead heading={AppConstants.position1} />
-                            <Select
-                                style={{ width: "100%", paddingRight: 1 }}
-                                onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId1", competitionIndex)}
-                                value={competition.positionId1}
-                                >
-                                {(playerPositionList || []).map((play1, index) => (
-                                    <Option key={play1.id} value={play1.id}>{play1.name}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div className="col-sm-12 col-md-6">
-                            <InputWithHead heading={AppConstants.position2} />
-                            <Select
-                                style={{ width: "100%", paddingRight: 1 }}
-                                onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId2", competitionIndex)}
-                                value={competition.positionId2}
-                                >
-                                {(playerPositionList || []).map((play2, index) => (
-                                    <Option key={play2.id} value={play2.id}>{play2.name}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                    </div>
-
-                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
-                    <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
-                        {(competition.friends || []).map((friend,friendIndex) => (
-                            <div className="light-grey-border-box">
-                                <div 
-                                className="orange-action-txt" 
-                                style={{marginTop: "20px"}}
-                                onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>{AppConstants.cancel}</div>
-                                <div className="form-heading" style={{marginTop: "10px"}}>{AppConstants.friend} {friendIndex + 1}</div>
-                                <div className="row">
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead 
-                                            heading={AppConstants.firstName} 
-                                            placeholder={AppConstants.firstName} 
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,friendIndex,"friends")} 
-                                            value={friend.firstName}
-                                            />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead 
-                                            heading={AppConstants.lastName} 
-                                            placeholder={AppConstants.lastName} 
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "lastName",competitionIndex, friendIndex, "friends")} 
-                                            value={friend.lastName}
-                                        />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email",competitionIndex, friendIndex, "friends")}  
-                                            value={friend.email}
-                                        />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
-                                            value={friend.mobileNumber}
-                                        />
-                                    </div>
-                                </div> 
+                    {competition.regSetting.nominate_positions == 1 && (
+                        <div>
+                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
+                            <div className="row">
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead heading={AppConstants.position1} />
+                                    <Select
+                                        style={{ width: "100%", paddingRight: 1 }}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId1", competitionIndex)}
+                                        value={competition.positionId1}
+                                        >
+                                        {(playerPositionList || []).map((play1, index) => (
+                                            <Option key={play1.id} value={play1.id}>{play1.name}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead heading={AppConstants.position2} />
+                                    <Select
+                                        style={{ width: "100%", paddingRight: 1 }}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId2", competitionIndex)}
+                                        value={competition.positionId2}
+                                        >
+                                        {(playerPositionList || []).map((play2, index) => (
+                                            <Option key={play2.id} value={play2.id}>{play2.name}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
                             </div>
-                        ))}
-                    <div 
-                        className="orange-action-txt" 
-                        style={{marginTop: "15px"}}
-                        onClick={e => this.addFriend("add",competitionIndex)}>+ {AppConstants.addfriend}
-                    </div>	      
+                        </div>
+                    )}
 
-                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
-                    <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
-                        {(competition.referFriends || []).map((referFriend,referFriendIndex) => (
-                            <div className="light-grey-border-box">
-                                <div 
+                    {competition.regSetting.play_friend == 1 && (
+                        <div>
+                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
+                            <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
+                                {(competition.friends || []).map((friend,friendIndex) => (
+                                    <div className="light-grey-border-box">
+                                        <div 
+                                        className="orange-action-txt" 
+                                        style={{marginTop: "20px"}}
+                                        onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>{AppConstants.cancel}</div>
+                                        <div className="form-heading" style={{marginTop: "10px"}}>{AppConstants.friend} {friendIndex + 1}</div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead 
+                                                    heading={AppConstants.firstName} 
+                                                    placeholder={AppConstants.firstName} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,friendIndex,"friends")} 
+                                                    value={friend.firstName}
+                                                    />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead 
+                                                    heading={AppConstants.lastName} 
+                                                    placeholder={AppConstants.lastName} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "lastName",competitionIndex, friendIndex, "friends")} 
+                                                    value={friend.lastName}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email",competitionIndex, friendIndex, "friends")}  
+                                                    value={friend.email}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
+                                                    value={friend.mobileNumber}
+                                                />
+                                            </div>
+                                        </div> 
+                                    </div>
+                                ))}
+                            <div 
                                 className="orange-action-txt" 
-                                style={{marginTop: "20px"}}
-                                onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>{AppConstants.cancel}</div>
-                                <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
-                                <div className="row">
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName} 
-                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,referFriendIndex,"referFriends")} 
-                                        value={referFriend.firstName}
-                                        />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName} 
-                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"lastName",competitionIndex,referFriendIndex,"referFriends")} 
-                                        value={referFriend.lastName}
-                                        />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                        onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
-                                        value={referFriend.email}
-                                        />
-                                    </div>
-                                    <div className="col-sm-12 col-md-6">
-                                        <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
-                                            value={referFriend.mobileNumber}
-                                        />
-                                    </div>
-                                </div> 
+                                style={{marginTop: "15px"}}
+                                onClick={e => this.addFriend("add",competitionIndex)}>+ {AppConstants.addfriend}
                             </div>
-                        ))}
-                    <div 
-                    className="orange-action-txt" 
-                    style={{marginTop: "15px"}}
-                    onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>	      
-                    
+                        </div>
+                    )}
+
+                    {competition.regSetting.refer_friend == 1 && (
+                        <div>
+                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
+                            <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
+                                {(competition.referFriends || []).map((referFriend,referFriendIndex) => (
+                                    <div className="light-grey-border-box">
+                                        <div 
+                                        className="orange-action-txt" 
+                                        style={{marginTop: "20px"}}
+                                        onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>{AppConstants.cancel}</div>
+                                        <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName} 
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,referFriendIndex,"referFriends")} 
+                                                value={referFriend.firstName}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName} 
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"lastName",competitionIndex,referFriendIndex,"referFriends")} 
+                                                value={referFriend.lastName}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
+                                                value={referFriend.email}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.mobileNumber}
+                                                />
+                                            </div>
+                                        </div> 
+                                    </div>
+                                ))}
+                            <div 
+                            className="orange-action-txt" 
+                            style={{marginTop: "15px"}}
+                            onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>
+                        </div>
+                    )}	 
                 </div>
             </div>
         );
@@ -1720,63 +1755,78 @@ class AppRegistrationFormNew extends Component{
                     </div> 
                     : null
                 }
-                <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
-                <Radio.Group
-                    className="registration-radio-group"
-                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "yearsPlayed")} 
-                    value={registrationObj.additionalInfo.yearsPlayed}
-                    >
-                    <Radio value={1}>{AppConstants.yes}</Radio>
-                    <Radio value={0}>{AppConstants.no}</Radio>
-                </Radio.Group>
-                {registrationObj.additionalInfo.yearsPlayed == 1 && (
-                    <div>
-                       <Select
-                            placeholder={AppConstants.yearsOfPlaying}
-                            style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                            value={registrationObj.additionalInfo.yearsPlayed}
-                            >  
-                            {(yearsOfPlayingList || []).map((years, index) => (
-                                <Option key={years} value={years}>{years}</Option>
-                            ))}
-                        </Select> 
-                    </div>
-                )}
 
-                {(getAge(registrationObj.dateOfBirth) < 18) && (
+                {registrationObj.regSetting.netball_experience == 1 && (
                     <div>
-                        {registrationObj.registeringYourself == 2 && (
-                            <InputWithHead heading={AppConstants.schoolYourChildAttend} />
-                        )}
-                        {registrationObj.registeringYourself == 1 && (
-                            <InputWithHead heading={AppConstants.schoolYouAttend} />
-                        )}
-                        <Select
-                            style={{ width: "100%", paddingRight: 1, minWidth: 182}}
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
-                            value={registrationObj.additionalInfo.schoolId}
-                            >  
-                            {/* {(yearsOfPlayingList || []).map((years, index) => (
-                                <Option key={years} value={years}>{years}</Option>
-                            ))} */}
-                        </Select> 
-                        <InputWithHead 
-                        heading={(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
-                            || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)} 
-                        placeholder={AppConstants.schoolGrade} 
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"schoolGradeInfo")} 
-                        value={registrationObj.additionalInfo.schoolGradeInfo}
-                        />
-                        <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
+                        <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                         <Radio.Group
                             className="registration-radio-group"
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")} 
-                            value={registrationObj.additionalInfo.isParticipatedInSSP}
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "yearsPlayed")} 
+                            value={registrationObj.additionalInfo.yearsPlayed}
                             >
                             <Radio value={1}>{AppConstants.yes}</Radio>
                             <Radio value={0}>{AppConstants.no}</Radio>
                         </Radio.Group>
+                        {registrationObj.additionalInfo.yearsPlayed == 1 && (
+                            <div>
+                            <Select
+                                    placeholder={AppConstants.yearsOfPlaying}
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                    value={registrationObj.additionalInfo.yearsPlayed}
+                                    >  
+                                    {(yearsOfPlayingList || []).map((years, index) => (
+                                        <Option key={years} value={years}>{years}</Option>
+                                    ))}
+                                </Select> 
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {(getAge(registrationObj.dateOfBirth) < 18) (
+                    <div>
+                        {registrationObj.regSetting.school_standard == 1 && (
+                            <div>
+                                {registrationObj.registeringYourself == 2 && (
+                                    <InputWithHead heading={AppConstants.schoolYourChildAttend} />
+                                )}
+                                {registrationObj.registeringYourself == 1 && (
+                                    <InputWithHead heading={AppConstants.schoolYouAttend} />
+                                )}
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
+                                    value={registrationObj.additionalInfo.schoolId}
+                                    >  
+                                    {/* {(yearsOfPlayingList || []).map((years, index) => (
+                                        <Option key={years} value={years}>{years}</Option>
+                                    ))} */}
+                                </Select> 
+                            </div>
+                        )}
+                        {registrationObj.regSetting.school_grade == 1 && (
+                            <InputWithHead 
+                            heading={(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
+                                || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)} 
+                            placeholder={AppConstants.schoolGrade} 
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"schoolGradeInfo")} 
+                            value={registrationObj.additionalInfo.schoolGradeInfo}
+                            />
+                        )}
+                        {registrationObj.regSetting.school_program == 1 && (
+                            <div>
+                                <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
+                                <Radio.Group
+                                    className="registration-radio-group"
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")} 
+                                    value={registrationObj.additionalInfo.isParticipatedInSSP}
+                                    >
+                                    <Radio value={1}>{AppConstants.yes}</Radio>
+                                    <Radio value={0}>{AppConstants.no}</Radio>
+                                </Radio.Group>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -2069,7 +2119,8 @@ function mapDispatchToProps(dispatch)
         accreditationCoachReferenceAction,
         walkingNetballQuesReferenceAction,
         saveParticipantInfo	,
-        getParticipantInfoById				 
+        getParticipantInfoById,
+        orgRegistrationRegSettingsEndUserRegAction				 
     }, dispatch);
 
 }
