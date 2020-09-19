@@ -551,6 +551,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     getFilteredRegisrationObj = (registrationObj) => {
+        registrationObj["existingUserId"] = getUserId();
         registrationObj.userId = registrationObj.userId == -1 || registrationObj.userId == -2 ? null : registrationObj.userId;
         let competitions = registrationObj.competitions;
         for(let competition of competitions){

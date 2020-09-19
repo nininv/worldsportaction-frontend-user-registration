@@ -32,6 +32,11 @@ import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
 import { wrap } from "@progress/kendo-drawing";
+import { 
+    getCommonRefData,
+    countryReferenceAction
+} from '../../store/actions/commonAction/commonAction';
+import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -50,15 +55,21 @@ class RegistrationProducts extends Component {
            participantModalVisible: false,
            id: null,
            agreeTerm: false,
-           loading: false
+           loading: false,
+           newYourDetails: false,
+           selectAddressFlag: true,
+           addressSearchFlag: false,
+           manualEnterAddressFlag: false
         };
+        this.props.getCommonRefData();
+        this.props.countryReferenceAction();
 
     }
 
     componentDidMount(){
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         //console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
+        let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -579,23 +590,288 @@ class RegistrationProducts extends Component {
         )
     }
 
+    yourDetailsView = (getFieldDecorator) => {
+        const { stateList,countryList } = this.props.commonReducerState;
+        return(
+            <div>
+                <div className="headline-text-common">{AppConstants.yourDetails}</div>
+                {!this.state.newYourDetails ? 
+                    <div>
+                        <InputWithHead heading={AppConstants.selectFromParticipantAndParentDetails} 
+                        required={"required-field"}/>
+                        <Form.Item >
+                            {getFieldDecorator(`yourDetailsSelectUser`, {
+                                rules: [{ required: true}],
+                            })(
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.select}
+                                    setFieldsValue={""}>
+                                    {/* {stateList.length > 0 && stateList.map((item) => (
+                                        < Option key={item.id} value={item.id}> {item.name}</Option>
+                                    ))} */}
+                                </Select>
+                            )}
+                        </Form.Item> 
+                        <div className="btn-text-common pointer" style={{marginTop: "20px"}}  
+                         onClick={() => {
+                            this.setState({
+                                newYourDetails: true
+                            });
+                        }}>
+                        + {AppConstants.addNewDetails}
+                        </div>
+                    </div>
+                : 
+                    <div className="light-grey-border-box" style={{paddingTop: "30px"}}>
+                        <div className="btn-text-common pointer"
+                         onClick={() => {
+                            this.setState({
+                                newYourDetails: false
+                            });
+                        }}>
+                            {AppConstants.selectFromParticipantAndParentDetails}
+                        </div>
+                        <div className="row">
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.firstName} required={"required-field"}/>
+                                <Form.Item >
+                                    {getFieldDecorator(`yourDetailsFirstName`, {
+                                        rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                    })(
+                                        <InputWithHead
+                                            placeholder={AppConstants.firstName}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.lastName} required={"required-field"}/>
+                                <Form.Item >
+                                    {getFieldDecorator(`yourDetailsLastName`, {
+                                        rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                    })(
+                                        <InputWithHead
+                                            placeholder={AppConstants.lastName}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.phone} required={"required-field"}/>
+                                <Form.Item >
+                                    {getFieldDecorator(`yourDetailsPhone`, {
+                                        rules: [{ required: true, message: ValidationConstants.contactField}],
+                                    })(
+                                        <InputWithHead
+                                            placeholder={AppConstants.phone}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div className="col-sm-12 col-md-6">
+                                <InputWithHead heading={AppConstants.email} required={"required-field"}/>
+                                <Form.Item >
+                                    {getFieldDecorator(`yourDetailsEmail`, {
+                                        rules: [{ required: true, message: ValidationConstants.emailField[0]}],
+                                    })(
+                                        <InputWithHead
+                                            placeholder={AppConstants.email}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            {this.state.selectAddressFlag && (
+                                <div>
+                                    <div className="headline-text-common"
+                                    style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
+                                    <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsSelectAddress`, {
+                                            rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
+                                        })(
+                                        <Select
+                                            style={{ width: "100%" }}
+                                            placeholder={AppConstants.select}
+                                            setFieldsValue={""}>
+                                            {/* {stateList.length > 0 && stateList.map((item) => (
+                                                < Option key={item.id} value={item.id}> {item.name}</Option>
+                                            ))} */}
+                                        </Select>
+                                        )}
+                                    </Form.Item> 
+                                    <div className="btn-text-common pointer" style={{marginTop: "10px"}}
+                                    onClick={() => {
+                                        this.setState({
+                                            selectAddressFlag: false,
+                                            searchAddressFlag: true
+                                        });
+                                    }}
+                                    >+ {AppConstants.addNewAddress}</div>	
+                                </div>
+                            )} 
+                                
+                            {this.state.searchAddressFlag && (
+                                <div>
+                                    <div className="btn-text-common pointer" style={{marginTop: "20px",marginBottom: "10px"}}
+                                    onClick={() => {
+                                        this.setState({
+                                            selectAddressFlag: true,
+                                            searchAddressFlag: false
+                                        });
+                                    }}
+                                    >{AppConstants.returnToSelectAddress}</div>
+                                    <div className="headline-text-common"
+                                    style={{paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                                    <div>
+                                        <Form.Item name="addressSearch">
+                                            {getFieldDecorator(`yourDetailsAddressSearch`, {
+                                                rules: [{ required: true, message: ValidationConstants.addressField}],
+                                            })(
+                                                <PlacesAutocomplete
+                                                    setFieldsValue={"yourDetailsAddressSearch"}
+                                                    heading={AppConstants.addressSearch}
+                                                    error={this.state.searchAddressError}
+                                                    onBlur={() => { this.setState({searchAddressError: ''})}}
+                                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                                />
+                                            )}
+                                        </Form.Item>
+                                        <div className="btn-text-common pointer" style={{marginTop: "10px"}}
+                                        onClick={() => {
+                                            this.setState({
+                                                manualEnterAddressFlag: true,
+                                                searchAddressFlag: false
+                                            });
+                                        }}
+                                        >{AppConstants.enterAddressManually}</div>	 
+                                    </div> 
+                                </div>
+                            )}
+
+                            {this.state.manualEnterAddressFlag && (
+                                <div>
+                                    <div className="btn-text-common pointer" style={{marginTop: "20px",marginBottom: "10px"}}
+                                    onClick={() => {
+                                        this.setState({
+                                            manualEnterAddressFlag: false,
+                                            searchAddressFlag: true
+                                        });
+                                    }}
+                                    >{AppConstants.returnToAddressSearch}</div>
+                                    <div className="headline-text-common"
+                                    style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsStreet1`, {
+                                            rules: [{ required: true, message: ValidationConstants.addressField}],
+                                        })(
+                                        <InputWithHead
+                                            required={"required-field pt-0 pb-0"}
+                                            heading={AppConstants.addressOne}
+                                            placeholder={AppConstants.addressOne}
+                                            setFieldsValue={""}
+                                        />
+                                        )}
+                                    </Form.Item>
+                                    <InputWithHead
+                                        heading={AppConstants.addressTwo}
+                                        placeholder={AppConstants.addressTwo}
+                                    />
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsSuburb`, {
+                                            rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                                        })(
+                                        <InputWithHead
+                                            required={"required-field pt-0 pb-0"}
+                                            heading={AppConstants.suburb}
+                                            placeholder={AppConstants.suburb} o
+                                            setFieldsValue={""}
+                                        />
+                                        )}
+                                    </Form.Item>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
+                                            <Form.Item >
+                                                {getFieldDecorator(`yourDetailsStateRefId`, {
+                                                    rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                                })(
+                                                <Select
+                                                    style={{ width: "100%" }}
+                                                    placeholder={AppConstants.state}
+                                                    setFieldsValue={""}>
+                                                    {stateList.length > 0 && stateList.map((item) => (
+                                                        < Option key={item.id} value={item.id}> {item.name}</Option>
+                                                    ))}
+                                                </Select>
+                                                )}
+                                            </Form.Item>
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.postCode}   required={"required-field"}/>
+                                            <Form.Item >
+                                                {getFieldDecorator(`yourDetailsPostalCode`, {
+                                                    rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                                })(
+                                                <InputWithHead
+                                                    required={"required-field pt-0 pb-0"}
+                                                    placeholder={AppConstants.postcode}
+                                                    maxLength={4}
+                                                    setFieldsValue={""}
+                                                />
+                                                )}
+                                            </Form.Item>
+                                        </div>
+                                    </div>
+                                    <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsCountryRefId`, {
+                                            rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                                        })(
+                                        <Select
+                                            style={{ width: "100%" }}
+                                            placeholder={AppConstants.country}
+                                            setFieldsValue={""}>
+                                            {countryList.length > 0 && countryList.map((item) => (
+                                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                                            ))}
+                                        </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            )} 
+                        </div>
+                    </div>  
+                }
+            </div>
+        )
+    }
+
     contentView = (getFieldDecorator) =>{
         return(
             <div className="row" style={{margin:0}}>
-                {this.productLeftView()}
+                {this.productLeftView(getFieldDecorator)}
                 {this.productRightView(getFieldDecorator)}                
             </div>
         );
     }
 
-    productLeftView = ()=>{
+    productLeftView = (getFieldDecorator)=>{
         const {registrationReviewList} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8 product-left-view outline-style">
-                {this.participantDetailView()}
-                {isSchoolRegistration == 0 && this.charityView()}
-                {this.otherinfoView()}
+            <div className="col-sm-12 col-md-8 col-lg-8 ">
+                <div className="product-left-view outline-style">
+                    {this.participantDetailView()}
+                    {isSchoolRegistration == 0 && this.charityView()}
+                    {this.otherinfoView()}
+                </div>
+                <div className="product-left-view outline-style">
+                    {this.yourDetailsView(getFieldDecorator)}
+                </div>
             </div>
         )
     }
@@ -813,14 +1089,17 @@ function mapDispatchToProps(dispatch)
         updateReviewInfoAction,	
         deleteRegistrationProductAction,
         deleteRegistrationParticipantAction,
-        getTermsAndConditionsAction			 
+        getTermsAndConditionsAction,
+        getCommonRefData,
+        countryReferenceAction,		 
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-       registrationProductState: state.RegistrationProductState
+       registrationProductState: state.RegistrationProductState,
+       commonReducerState: state.CommonReducerState
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationProducts));

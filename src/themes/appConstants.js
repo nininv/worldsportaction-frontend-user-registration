@@ -1069,7 +1069,10 @@ const AppConstants = {
  haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
  walkingNetball: "WalkingNetball",
  useParentsEmailAddress: "Use parent's email address",
- returnToSelectAddress: "Return to select address"
+ returnToSelectAddress: "Return to select address",
+ yourDetails: "Your Details",
+ selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
+ addNewDetails: "Add new Details"
 };
 
 export default AppConstants;
