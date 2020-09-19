@@ -1149,7 +1149,7 @@ class AppRegistrationFormNew extends Component{
                                 this.onChangeSetParentValue(true,"manualEnterAddressFlag",parentIndex);
                                 this.onChangeSetParentValue(false,"addNewAddressFlag",parentIndex);
                                 setTimeout(() => {
-                                    this.setParticipantDetailStepParentAddressFormFields("manualEnterAddressFlag",parent,pIndex)
+                                    this.setParticipantDetailStepParentAddressFormFields("manualEnterAddressFlag",parent,parentIndex)
                                 },300);
                             }}
                             >{AppConstants.enterAddressManually}</div>
@@ -1163,7 +1163,7 @@ class AppRegistrationFormNew extends Component{
                                 this.onChangeSetParentValue(false,"manualEnterAddressFlag",parentIndex);
                                 this.onChangeSetParentValue(true,"addNewAddressFlag",parentIndex);
                                 setTimeout(() => {
-                                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex)
+                                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,parentIndex)
                                 },300);
                             }}
                             >{AppConstants.returnToAddressSearch}</div>
