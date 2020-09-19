@@ -399,32 +399,29 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
 		membershipProductInfo.isChecked = competitionData;
-		if(competitionData){
-			let product = {
-				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
-				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
-				"competitionMembershipProductName": membershipProductInfo.shortName,
-				"isSelected": competitionData,
-				"isPlayer": membershipProductInfo.isPlayer	
+		if(membershipProductInfo.isPlayer == 1){
+			if(competitionData){
+				let product = {
+					"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
+					"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
+					"competitionMembershipProductName": membershipProductInfo.shortName,
+					"isSelected": competitionData,
+					"isPlayer": membershipProductInfo.isPlayer	
+				}
+				state.registrationObj.competitions[competitionIndex].products.push(product);
+				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
+				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
+			}else{
+				let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
+				let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
+				let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
+				let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);					
+				state.registrationObj.competitions[competitionIndex].products = filteredProducts;
+				let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+				state.registrationObj.competitions[competitionIndex].divisionInfo = filteredDivisionInfo;
+				let filteredDivisions = registrationObjDivisions.filter(division => division.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+				state.registrationObj.competitions[competitionIndex].divisions = filteredDivisions;
 			}
-			state.registrationObj.competitions[competitionIndex].products.push(product);
-			let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
-			divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state))
-			// for(let division of membershipProductInfo.divisions){
-			// 	let divisionInfo = {
-			// 		"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-			// 		"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-			// 		"divisionName": division.divisionName
-			// 	}
-			// 	state.registrationObj.competitions[competitionIndex].divisionInfo.push(divisionInfo);
-			// } 
-		}else{
-			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
-			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
-			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);					
-			state.registrationObj.competitions[competitionIndex].products = filteredProducts;
-			let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
-			state.registrationObj.competitions[competitionIndex].divisionInfo = filteredDivisionInfo;
 		}
 	}catch(ex){
 		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
@@ -465,7 +462,7 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData){
 	}
 }
 
-function checkDateOfBirth(state,dateOfBirth){
+function checkByDateOfBirth(state,dateOfBirth){
 	try{
 		state.registrationObj.dateOfBirth = dateOfBirth;
 		if(getAge(dateOfBirth) < 18){
@@ -473,8 +470,34 @@ function checkDateOfBirth(state,dateOfBirth){
 		}else{
 			state.registrationObj.referParentEmail = false;
 		}
+		let competitions = state.registrationObj.competitions;
+		for(let competition of competitions){
+			competition.products = [];
+			competition.divisionInfo = [];
+			competition.divisions = [];
+			for(let membershipProduct of competition.competitionInfo.membershipProducts){
+				membershipProduct.isChecked = false;
+			}
+		}
 	}catch(ex){
-		console.log("Error in checkDateOfBirth in userRegistrationReducer"+ex);
+		console.log("Error in checkByDateOfBirth in userRegistrationReducer"+ex);
+	}
+}
+
+function checkByGender(state,genderRefId){
+	try{
+		state.registrationObj.genderRefId = genderRefId;
+		let competitions = state.registrationObj.competitions;
+		for(let competition of competitions){
+			competition.products = [];
+			competition.divisionInfo = [];
+			competition.divisions = [];
+			for(let membershipProduct of competition.competitionInfo.membershipProducts){
+				membershipProduct.isChecked = false;
+			}
+		}
+	}catch(ex){
+		console.log("Error in checkByGender"+ex);
 	}
 }
 
@@ -526,7 +549,9 @@ function userRegistrationReducer(state = initialState, action){
 			}else if(key == "competitions"){
 				setMembershipProductsInfo(state,value)
 			}else if(key == "dateOfBirth"){
-				checkDateOfBirth(state,value)
+				checkByDateOfBirth(state,value);
+			}else if(key == "genderRefId"){
+				checkByGender(state,value);
 			}else{
 				state.registrationObj[key] = value;
 			}

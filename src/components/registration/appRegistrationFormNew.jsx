@@ -175,9 +175,14 @@ class AppRegistrationFormNew extends Component{
             this.setState({currentStep: current});
         }
         if(current == 0){
+            this.setState({submitButtonText: AppConstants.addPariticipant})
             setTimeout(() => {
                 this.setParticipantDetailStepFormFields();
             },300);
+        }else if(current == 1){
+            this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
+        }else{
+            this.setState({submitButtonText: AppConstants.signupToCompetition});
         }
     }
 
@@ -194,22 +199,18 @@ class AppRegistrationFormNew extends Component{
                 [`participantEmail`]: registrationObj.email
             });
             if(registrationObj.addNewAddressFlag){
-                setTimeout(() => {
-                    this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
-                },300);
+                this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
             }
             {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
                 this.props.form.setFieldsValue({
                     [`parentFirstName${pIndex}`]: parent.firstName,
+                    [`parentMiddleName${pIndex}`]: parent.middleName,
                     [`parentLastName${pIndex}`]: parent.lastName,
-                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
-                    [`parentEmail${pIndex}`]: parent.email,
-                    [`parentStreet1${pIndex}`]: parent.street1,
-                    [`parentSuburb${pIndex}`]: parent.suburb,
-                    [`parentStateRefId${pIndex}`]: parent.stateRefId,
-                    [`parentCountryRefId${pIndex}`]: parent.countryRefId,
-                    [`parentPostalCode${pIndex}`]: parent.postalCode,
+                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber
                 });
+                if(parent.addNewAddressFlag){
+                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex);
+                }
             })}
                 
         }catch(ex){
@@ -238,12 +239,36 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
+    setParticipantDetailStepParentAddressFormFields = (key,parent,pIndex) => {
+        try{
+            if(key == "addNewAddressFlag"){
+                this.props.form.setFieldsValue({
+                    [`parentAddressSearch${pIndex}`]: this.getParentAddress(parent),
+                });
+            }else if(key == "manualEnterAddressFlag"){
+                this.props.form.setFieldsValue({
+                    [`parentEmail${pIndex}`]: parent.email,
+                    [`parentStreet1${pIndex}`]: parent.street1,
+                    [`parentSuburb${pIndex}`]: parent.suburb,
+                    [`parentStateRefId${pIndex}`]: parent.stateRefId,
+                    [`parentCountryRefId${pIndex}`]: parent.countryRefId,
+                    [`parentPostalCode${pIndex}`]: parent.postalCode,
+                }); 
+            }
+        }catch(ex){
+            console.log("Error in setParticipantDetailStepParentAddressFormFields"+ex);
+        }
+    }
+
     getPartcipantAddress = (registrationObj) => {
         try{
             const { stateList,countryList } = this.props.commonReducerState;
             const state = stateList.length > 0 && registrationObj.stateRefId > 0
                 ? stateList.find((state) => state.id === registrationObj.stateRefId).name
                 : null;
+            const country = countryList.length > 0 && registrationObj.countryRefId > 0
+            ? countryList.find((country) => country.id === registrationObj.countryRefId).name
+            : null;
 
             let defaultAddress = '';
             if(registrationObj.street1 && registrationObj.suburb && state){
@@ -251,11 +276,35 @@ class AppRegistrationFormNew extends Component{
                 (registrationObj.suburb ? registrationObj.suburb + ',': '') +
                 (state ? state + ',': '') +
                 (registrationObj.postalCode ? registrationObj.postalCode + ',': '') + 
-                "Australia";
+                (country ? country + ',': '');
             }
             return defaultAddress;
         }catch(ex){
             console.log("Error in getPartcipantAddress"+ex);
+        }
+    }
+
+    getParentAddress = (parent) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            const state = stateList.length > 0 && parent.stateRefId > 0
+                ? stateList.find((state) => state.id === parent.stateRefId).name
+                : null;
+            const country = countryList.length > 0 && parent.countryRefId > 0
+                ? countryList.find((country) => country.id === parent.countryRefId).name
+                : null;
+
+            let defaultAddress = '';
+            if(parent.street1 && parent.suburb && state){
+                defaultAddress = (parent.street1 ? parent.street1 + ',': '') + 
+                (parent.suburb ? parent.suburb + ',': '') +
+                (state ? state + ',': '') +
+                (parent.postalCode ? parent.postalCode + ',': '') + 
+                (country ? country + ',': '');
+            }
+            return defaultAddress;
+        }catch(ex){
+            console.log("Error in getParentAddress"+ex);
         }
     }
 
@@ -625,7 +674,11 @@ class AppRegistrationFormNew extends Component{
         let userInfo = userRegistrationstate.userInfo;
         let registrationObj = userRegistrationstate.registrationObj;
         return(
-            <div className="registration-form-view">
+            <div style={{marginTop: "0px !important",
+            margin: "auto",
+            backgroundColor: "white",
+            borderRadius: "10px",
+            padding: "40px"}}>
                 <div className="form-heading" 
                 style={{paddingBottom: "0px"}}>
                     {userInfo.length == 0 ? AppConstants.addPariticipant : AppConstants.selectOrAddParticipant}
@@ -1029,17 +1082,7 @@ class AppRegistrationFormNew extends Component{
         try{
             const { registrationObj } = this.props.userRegistrationState;
             const { stateList,countryList } = this.props.commonReducerState;
-            const state = stateList.length > 0 && parent.stateRefId > 0
-            ? stateList.find((state) => state.id === parent.stateRefId).name
-            : null;
-
-            let defaultAddress = '';
-            if(parent.street1 && parent.suburb && state){
-            defaultAddress = `${ parent.street1 ? `${parent.street1},` : '' } 
-                ${ parent.suburb ? `${parent.suburb},` : '' } 
-                ${ state ? `${state},` : '' } 
-                ${ parent.postalCode ? `${parent.postalCode},` : ``} Australia`;
-            }
+            
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2) ? true : false;
             return(
                 <div>
@@ -1105,6 +1148,9 @@ class AppRegistrationFormNew extends Component{
                             onClick={() => {
                                 this.onChangeSetParentValue(true,"manualEnterAddressFlag",parentIndex);
                                 this.onChangeSetParentValue(false,"addNewAddressFlag",parentIndex);
+                                setTimeout(() => {
+                                    this.setParticipantDetailStepParentAddressFormFields("manualEnterAddressFlag",parent,pIndex)
+                                },300);
                             }}
                             >{AppConstants.enterAddressManually}</div>
                         </div>
@@ -1116,6 +1162,9 @@ class AppRegistrationFormNew extends Component{
                             onClick={() => {
                                 this.onChangeSetParentValue(false,"manualEnterAddressFlag",parentIndex);
                                 this.onChangeSetParentValue(true,"addNewAddressFlag",parentIndex);
+                                setTimeout(() => {
+                                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex)
+                                },300);
                             }}
                             >{AppConstants.returnToAddressSearch}</div>
                             <div className="form-heading" 
@@ -1267,7 +1316,7 @@ class AppRegistrationFormNew extends Component{
                                 </div>
                                 <div className="col-sm-12 col-md-6">
                                     <Form.Item>
-                                        {getFieldDecorator(`parentLastName${parentIndex}`, {
+                                        {getFieldDecorator(`parentMiddleName${parentIndex}`, {
                                             rules: [{ required: false }],
                                         })(
                                         <InputWithHead 
