@@ -26,7 +26,7 @@ let registrationObjTemp = {
 	"latitue": null,
 	"longitude": null,
 	"referParentEmail": false,
-	"refFlag": null,
+	"selectAddressFlag": true,
 	"addNewAddressFlag": false,
 	"manualEnterAddressFlag": false,
 	"umpireFlag": 0,
@@ -111,9 +111,9 @@ let registrationObjTemp = {
 		"school_standard": 0
 	},
 	"additionalInfo": {
-		"playedYear": null,
-		"playedClub": null,
-		"playedGrade": null,
+		// "playedYear": null,
+		// "playedClub": null,
+		// "playedGrade": null,
 		"hasDivisionError": null,
 		"isPlayer": null,
 		"isChildrenCheckNumber": null,
@@ -121,7 +121,7 @@ let registrationObjTemp = {
 		"disabilityCareNumber": null,
 		"emergencyContactNumber": null,
 		"emergencyContactName": null,
-		"playedBefore": 0,
+		//"playedBefore": 0,
 		"existingMedicalCondition": null,
 		"regularMedication": null,
 		"heardByRefId": null,
@@ -224,7 +224,8 @@ const initialState = {
 	saveValidationErrorCode: null,
 	onMembershipLoad: false,
 	onParticipantByIdLoad: false,
-	lastAddedCompetitionIndex: null
+	lastAddedCompetitionIndex: null,
+	updateExistingUserOnLoad: false,
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -238,13 +239,71 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.genderRefId = selectedUser.genderRefId;
 			registrationObj.profileUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
-			registrationObj.street1 = selectedUser.street1;
-			registrationObj.street2 = selectedUser.street2;
-			registrationObj.suburb = selectedUser.suburb;
-			registrationObj.postalCode = selectedUser.postalCode;	
-			registrationObj.stateRefId = selectedUser.stateRefId;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
-			registrationObj.refFlag = "participant";
+			if(selectedUser.street1 && selectedUser.suburb && selectedUser.postalCode){
+				registrationObj.selectAddressFlag = true;
+				registrationObj.street1 = selectedUser.street1;
+				registrationObj.street2 = selectedUser.street2;
+				registrationObj.suburb = selectedUser.suburb;
+				registrationObj.postalCode = selectedUser.postalCode;	
+				registrationObj.stateRefId = selectedUser.stateRefId;
+				registrationObj.countryRefId = selectedUser.countryRefId;
+			}
+			if(selectedUser.parentOrGuardian != null && selectedUser.parentOrGuardian.length > 0){
+				let i = 0;
+				for(let parent of selectedUser.parentOrGuardian){
+					let parentObj = {
+						"tempParentId": i,
+						"firstName": parent.firstName,
+						"lastName": parent.lastName,
+						"mobileNumber": parent.mobileNumber,
+						"email": parent.email,
+						"street1": parent.street1,
+						"street2": parent.street2,
+						"suburb": parent.suburb,
+						"stateRefId": parent.stateRefId,
+						"countryRefId": parent.countryRefId,
+						"postalCode": parent.postalCode,
+						"selectAddressFlag": true,
+						"addNewAddressFlag": false,
+						"manualEnterAddressFlag": false
+					}
+					registrationObj.parentOrGuardian.push(parentObj);
+					i++;
+				}
+			}
+			registrationObj.registeringYourself = selectedUser.additionalInfo.registeringYourselfRefId == null ? 1 : selectedUser.additionalInfo.registeringYourselfRefId;
+			registrationObj.additionalInfo.countryRefId = selectedUser.additionalInfo.countryRefId;
+			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId
+			registrationObj.additionalInfo.injuryInfo = selectedUser.additionalInfo.injuryInfo;
+			registrationObj.additionalInfo.allergyInfo = selectedUser.additionalInfo.allergyInfo;
+			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo;
+			registrationObj.additionalInfo.existingMedicalCondition = selectedUser.additionalInfo.existingMedicalCondition;
+			registrationObj.additionalInfo.regularMedication = selectedUser.additionalInfo.regularMedication;
+			registrationObj.additionalInfo.heardByRefId = selectedUser.additionalInfo.heardByRefId;
+			registrationObj.additionalInfo.favouriteTeamRefId = selectedUser.additionalInfo.favouriteTeamRefId;
+			registrationObj.additionalInfo.favouriteFireBird = selectedUser.additionalInfo.favouriteFireBird;
+			registrationObj.additionalInfo.isConsentPhotosGiven = selectedUser.additionalInfo.isConsentPhotosGiven;
+			registrationObj.additionalInfo.isDisability = selectedUser.additionalInfo.isDisability;
+			registrationObj.additionalInfo.disabilityCareNumber = selectedUser.additionalInfo.disabilityCareNumber;
+			registrationObj.additionalInfo.disabilityTypeRefId = selectedUser.additionalInfo.disabilityTypeRefId;
+			registrationObj.additionalInfo.yearsPlayed = selectedUser.additionalInfo.yearsPlayed;
+			registrationObj.additionalInfo.schoolId = selectedUser.additionalInfo.schoolId;
+			registrationObj.additionalInfo.isParticipatedInSSP = selectedUser.additionalInfo.isParticipatedInSSP;
+			registrationObj.additionalInfo.accreditationLevelUmpireRefId = selectedUser.additionalInfo.accreditationLevelUmpireRefId;
+			registrationObj.additionalInfo.associationLevelInfo = selectedUser.additionalInfo.associationLevelInfo;
+			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate;
+			registrationObj.additionalInfo.isPrerequestTrainingComplete = selectedUser.additionalInfo.isPrerequestTrainingComplete;
+			registrationObj.additionalInfo.accreditationLevelCoachRefId = selectedUser.additionalInfo.accreditationLevelCoachRefId;
+			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate;
+			registrationObj.additionalInfo.childrenCheckNumber = selectedUser.additionalInfo.childrenCheckNumber;
+			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate;
+			registrationObj.additionalInfo.walkingNetballRefId = selectedUser.additionalInfo.walkingNetballRefId;
+			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
+			state.updateExistingUserOnLoad = true;
+		}else{
+			registrationObj.selectAddressFlag = false;
+			registrationObj.addNewAddressFlag = true;
 		}
 		return registrationObj;
 	}catch(ex){
@@ -284,7 +343,6 @@ function setMembershipProductsInfo(state,organisationData){
 
 function getFilteredDivisions(divisions,state){
 	try{
-		console.log("divisions",divisions);
 		let filteredDivisions = [];
 		let genderRefId = state.registrationObj.genderRefId;
 		var date = moment(state.registrationObj.dateOfBirth, "DD/MM/YYYY");
@@ -330,7 +388,6 @@ function getFilteredDivisions(divisions,state){
 				filteredDivisions.push(div); 
 			}
 		}
-		console.log("division array",filteredDivisions);
 		return filteredDivisions;
 	}catch(ex){
 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
