@@ -1068,7 +1068,8 @@ const AppConstants = {
  workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number?",
  haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
  walkingNetball: "WalkingNetball",
- useParentsEmailAddress: "Use parent's email address"
+ useParentsEmailAddress: "Use parent's email address",
+ returnToSelectAddress: "Return to select address"
 };
 
 export default AppConstants;
