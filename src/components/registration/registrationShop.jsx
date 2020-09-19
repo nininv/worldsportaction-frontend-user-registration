@@ -222,11 +222,11 @@ class RegistrationShop extends Component {
                 {(shopProductList || []).map((item, index)=>{
                     return(
                         <div class="shop-product-text card-header-text" style={{marginRight: 20}} onClick={(e)=>this.enableExpandView("show", item)}>
-                            <div style={{textAlign: "center"}}>
-                                <img src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                            <div style={{textAlign: "center" , height: "250px" , width: "188px"}}>
+                                <img style={{width:"100%"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div style={{ fontFamily: "inter-medium" , fontWeight:500 ,margin:"10px 0px 10px 0px"}}>{item.productName}</div>
-                            <div>${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                            <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
                         </div>
                     )
                 })}           
@@ -243,24 +243,24 @@ class RegistrationShop extends Component {
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
                 </div>           
                 <div class="row" style={{marginTop: "17px"}}>
-                    <div class="col-lg-4" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
+                    <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
+                        <img style={{width: "100%" , height: "180px"}} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
-                    <div className="col-lg-8 card-expandView-text" style={{paddingRight:"40px"}}>
-                        <div style={{fontSize:23}}>{expandObj.productName}</div>
-                        <div className ="mt-5" style={{ fontSize:15 , fontFamily: "inter-medium" , fontWeight:500}}>{expandObj.description}</div>
+                    <div className="col-lg-8" style={{paddingRight:"15px"}}>
+                        <div class = "headline-text-common">{expandObj.productName}</div>
+                        <div className ="mt-5 body-text-common">{expandObj.description}</div>
                         {(expandObj.varients || []).map((varnt, vIndex) =>(
                             <div>
                             <div style={{display:"flex", flexWrap:"wrap"}}>
-                                <div style={{marginTop:27, marginRight: 20}}>
-                                    <div>
+                                <div class="col-lg-6" style={{marginTop:27,padding:0}}>
+                                    <div className="subtitle-text-common">
                                         {"Select " + varnt.name}
                                     </div>
                                     <div style={{marginTop:7}}>
                                         <Select
-                                            style={{ width: "166px", paddingRight: 1 , fontWeight: 500 ,fontSize: "17px"}}                  
+                                            style={{ padding:0 , fontWeight: 500 ,fontSize: "17px"}}                  
                                             placeholder={AppConstants.allCategories}  
-                                            className="custom-dropdown" 
+                                            className="custom-dropdown col-lg-11" 
                                             value={this.state.variantOptionId}   
                                             onChange={(e)=> this.setState({variantOptionId: e})}                                                 
                                         >
@@ -271,26 +271,28 @@ class RegistrationShop extends Component {
                                         </Select>
                                     </div>
                                 </div>
-                                <div style={{marginTop:27}}>
-                                    <div>
+                                <div style={{marginTop:27,padding:0}} className="col-lg-6">
+                                    <div className="subtitle-text-common">
                                         {AppConstants.quantity}
                                     </div>
-                                    <div style={{marginTop:7,width: "166px"}}>                                    
+                                    <div style={{marginTop:7,fontFamily: "inter"}}>                                    
                                         <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
                                         onChange={(e)=> this.setState({quantity: e})}
-                                        value= {this.state.quantity}  />
+                                        value= {this.state.quantity}
+                                        className="col-lg-11"
+                                        />
                                     </div>
                                 </div>  
                             </div>
                             <div class = "row" style={{margin:0}}>
-                                <div class = "col-lg-8 col-sm-12" style={{padding:0,marginTop:23, marginRight: 10}}>
-                                    <Button className="open-reg-button" style={{color:"var(--app-white)" , width:"100%", height: "53px",textTransform: "uppercase"}}
+                                <div class = "col-lg-8 col-12" style={{padding:0,marginTop:23, marginRight: 22}}>
+                                    <Button className="open-reg-button addToCart"
                                     onClick={() => this.addToCart(expandObj, varnt,'addShopProduct', 'shopProducts')}>
                                         {AppConstants.addToCart}
                                     </Button> 
                                 </div>
-                                <div class = "col-lg-3 col-sm-12" style={{padding:0,marginTop:23}}>
-                                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 5px 0px" , width:"100%",height: "49px",textTransform: "uppercase"}}
+                                <div class = "col-lg-3 col-12" style={{padding:0,marginTop:23}}>
+                                    <Button className="cancel-button-text" style={{height: "49px"}}
                                      onClick = {() => this.enableExpandView('hide')}>
                                         {AppConstants.cancel}
                                     </Button> 
@@ -348,36 +350,38 @@ class RegistrationShop extends Component {
                 registrationReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
-                <div className="product-text-common" style={{fontSize: 21}}>
+                <div className="headline-text-common">
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                        <div className = "body-text-common" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                        <span className="user-remove-btn pointer" >
+                                             <img  class="marginIcon" src={AppImages.removeIcon} />
+                                        </span>
                                     </div>
                                 </div>
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
                                 </div>
                                 }
                                 {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
@@ -386,19 +390,19 @@ class RegistrationShop extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)"}}>
+                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                     </div> 
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                            <div style={{marginLeft:"6px"}}>
                                 <div>
                                     {shop.productName}
                                 </div>
@@ -407,12 +411,14 @@ class RegistrationShop extends Component {
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn pointer" >
+                                <img  class="marginIcon" src={AppImages.removeIcon} />
+                            </span>
                         </div>
                     </div>
                 ))}
                  
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
