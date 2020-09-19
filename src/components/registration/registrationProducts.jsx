@@ -219,12 +219,12 @@ class RegistrationProducts extends Component {
 
     headerView = () =>{
         return(
-            <div style={{display:"flex",justifyContent:"space-between",flexWrap: "wrap"}}>
-                <div className="product-text-common" style={{fontSize: 21,padding:0}}> {AppConstants.participants}</div>
-                <div class = "">
-                    <span className="btn-text-common pointer" style={{margin:0}}>
+            <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
+                <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
+                <div>
+                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}>
                         + {AppConstants.addAnotherParticipant}
-                    </span>
+                    </div>
                 </div>
             </div>
         );
@@ -257,37 +257,37 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div style={{display:"flex",flexWrap:'wrap'}}>
-                    <div className="circular--landscape">
+                    <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
                         {
                             item.photoUrl ? (
-                                <img src={item.photoUrl} alt="" />
+                                <img src={item.photoUrl}/>
                             ):
                             (
                                 <img src={AppImages.userIcon} alt=""/>     
                             )
                         }
                     </div>
-                    <div style={{marginLeft:10,marginRight: "auto"}}>
-                        <div className="product-text-common" style={{fontSize:21}}>{item.firstName + ' ' + item.lastName}</div>
-                        <div className="product-text-common" style={{fontWeight:500}}>{item.gender + ', ' + 
+                    <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                        <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                        <div className="body-text-common">{item.gender + ', ' + 
                             liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
                         </div>
                     </div>
                     <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId)}>                   
-                        <span className="btn-text-common" style={{marginLeft: "10px"}}>
+                        <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
                     </div> 
                     <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId)}>                   
-                        <span className="btn-text-common">
+                        <span className="link-text-common" style={{marginRight: "15px"}}>
                             {AppConstants.remove}
                         </span>
-                        <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                        <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                     </div> 
                 </div>
                 <div style={{display:"flex" , marginTop:30}}>
-                     <div className="circular--landscape">
+                     <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
                      {
                             item.competitionLogoUrl ? (
                                 <img src={item.competitionLogoUrl} alt="" />
@@ -297,10 +297,10 @@ class RegistrationProducts extends Component {
                             )
                         }              
                     </div>
-                    <div style={{marginLeft:10}}>
-                        <div className="product-text-common" style={{fontWeight:500}}>Competition</div>
-                        <div className="product-text-common" style={{fontSize:21}}>{item.competitionName}</div>
-                        <div className="product-text-common" style={{fontWeight:500}}>{item.organisationName}</div>
+                    <div class = "pt-3 pl-2" style={{marginLeft:10}}>
+                        <div className="body-text-common">Competition</div>
+                        <div className="headline-text-common">{item.competitionName}</div>
+                        <div className="body-text-common">{item.organisationName}</div>
                     </div>
                 </div>               
             </div>
@@ -311,21 +311,21 @@ class RegistrationProducts extends Component {
         return(
             <div className="innerview-outline">
                 <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
-                    <div className = "product-text-common" style={{fontWeight:500}}>
+                    <div className = "body-text-common">
                         {AppConstants.registration}{"(s)"}
                     </div>
                     { (item.membershipProducts || []).map((mem, memIndex) =>(
-                        <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="product-text-common" 
+                        <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
                         style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
                             {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
                         </div>
                     )) }
                 </div>               
-                <div className="product-text-common" style={{fontFamily: "inherit" ,marginTop: "16px"}}>
+                <div className="subtitle-text-common" style={{marginTop: "16px"}}>
                     {AppConstants.wouldYouLikeTopay}
                 </div>
                 <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group"
+                    <Radio.Group className="body-text-common"
                         value={item.selectedOptions.paymentOptionRefId}
                         onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
                         {(item.paymentOptions || []).map((p, pIndex) =>(  
@@ -364,13 +364,14 @@ class RegistrationProducts extends Component {
         let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
-                <div className="product-text-common" style={{fontSize: 21 , marginTop: "21px"}}>
+                <div className="headline-text-common" style={{marginTop: "21px"}}>
                     {AppConstants.discountCode}
                 </div>
                 {(discountCodes || []).map((dis, disIndex) =>(
-                    <div key={index +"#" + disIndex} style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between"}}>
+                    <div key={index +"#" + disIndex} style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between",marginRight:26}}>
                         <div style={{ width: "100%"}}>
                             <InputWithHead
+                                style={{ width: "97%"}}
                                 required={"required-field pt-0 pb-0"}
                                 placeholder={AppConstants.discountCode} 
                                 value={dis.discountCode}
@@ -381,7 +382,7 @@ class RegistrationProducts extends Component {
                         <div className="transfer-image-view pointer" style={{paddingLeft: '15px',}}>                   
                             <span className="user-remove-btn" 
                                     onClick={() => this.setReviewInfo(null, "removeDiscount", index,"selectedOptions", disIndex)}>
-                                <i className="fa fa-trash-o" aria-hidden="true"></i>
+                                    <img class="marginIcon" src={AppImages.removeIcon} />                           
                             </span>
                         </div>    
                         {dis.isValid == 0 && 
@@ -392,15 +393,15 @@ class RegistrationProducts extends Component {
                     </div>
                 ))
                 }
-                <div class="row" style={{marginLeft:0}}>
-                    <div class = "col-sm-12 col-lg-9" style={{padding:"0px",margin:"13px 38px 0px 0px",alignSelf: "center"}}>
-                        <span className="btn-text-common pointer" style={{paddingTop: 7}}
+                <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
+                    <div style={{marginTop: "13px", alignSelf: "center"}}>
+                        <span className="btn-text-common pointer" style={{paddingTop: 7}} 
                         onClick={(e) => this.setReviewInfo(null, "addDiscount", index,"selectedOptions")}>
                             + {AppConstants.addDiscountCode}
                         </span>
                     </div>  
                     {discountCodes && discountCodes.length > 0 && 
-                    <div class = "col-sm-12 col-lg-2" style={{padding:"15px 0px 0px 0px"}}>
+                    <div style={{padding:"15px 0px 0px 0px"}}>
                         <Button className="open-reg-button"
                             onClick={(e) =>  this.setReviewInfo(null, "discount", index,null, null)}
                             type="primary">
@@ -457,18 +458,18 @@ class RegistrationProducts extends Component {
         let selectedVouchers = item.selectedOptions.vouchers;
         return(
             <div>
-                <div className="product-text-common" style={{fontSize: 21 , marginTop: "30px"}}>
+                <div className="headline-text-common" style={{marginTop: "30px"}}>
                     {AppConstants.governmentVouchers}
                 </div>
                 {(selectedVouchers || []).map((gov, govIndex) =>(
                     <div className="row">
                         <div class ="col-sm-11 col-lg-6"  style={{ width: "100%",margin: "15px 0px 0px 0px"}}>
-                            <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.favouriteTeam}</div>
+                            <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.favouriteTeam}</div>
                             <div>
                                 <Select
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}  
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182  }}  
                                         required={"required-field pt-0 pb-0"}
-                                        className="input-inside-table-venue-court team-mem_prod_type"
+                                        className="input-inside-table-venue-court"
                                         onChange={(e) => this.setReviewInfo(e, "governmentVoucherRefId", index,"selectedOptions", govIndex)}
                                         value={gov.governmentVoucherRefId}
                                         placeholder={'Code'}>
@@ -482,7 +483,7 @@ class RegistrationProducts extends Component {
                             </div>
                         </div>                   
                         <div class="col-sm-11 col-lg-5 col-9" style={{ width: "100%",margin: "15px 0px 0px 0px"}} >
-                            <div className="product-text-common" style={{fontFamily:"inherit" , marginBottom:7}}>{AppConstants.code}</div>
+                            <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.code}</div>
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
                                 placeholder={AppConstants.code}  
@@ -492,7 +493,9 @@ class RegistrationProducts extends Component {
                         </div>
                         <div className="transfer-image-view pointer" style={{paddingLeft: '15px',paddingTop:44}}
                             onClick={() => this.setReviewInfo(null, "removeVoucher", index,"selectedOptions", govIndex)}>                   
-                            <span className="user-remove-btn" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn" >
+                                <img class="marginIcon" src={AppImages.removeIcon} />
+                            </span>
                         </div>    
                         {gov.isValid == 0 && 
                         <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
@@ -530,7 +533,7 @@ class RegistrationProducts extends Component {
         return(
             <div style={{marginTop: "23px"}}>   
                 {charity!= null &&             
-                <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
+                <div className="headline-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
                     {charity.name}
                 </div>}
                 {charity!= null && 
@@ -557,7 +560,7 @@ class RegistrationProducts extends Component {
         let otherInfo = registrationReviewList!= null ? registrationReviewList.volunteerInfo : [];
         return(
             <div style={{marginTop: "23px"}}>                  
-            <div className="product-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
+            <div className="headline-text-common" style={{marginTop: "5px"}}>
                 {AppConstants.otherInformation}
             </div>
             <div className = "product-text-common" style={{fontWeight:500 ,  marginTop: "8px" ,width: "92%" , textAlign: "left"}}>
@@ -589,7 +592,7 @@ class RegistrationProducts extends Component {
         const {registrationReviewList} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         return(
-            <div className="col-sm-12 col-md-8 col-lg-7 product-left-view outline-style">
+            <div className="col-sm-12 col-md-8 col-lg-8 product-left-view outline-style">
                 {this.participantDetailView()}
                 {isSchoolRegistration == 0 && this.charityView()}
                 {this.otherinfoView()}
@@ -618,36 +621,36 @@ class RegistrationProducts extends Component {
                             registrationReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
-                <div className="product-text-common" style={{fontSize: 21}}>
+                <div className="headline-text-common">
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                        <div className = "body-text-common" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
                                 </div>
                                 }
                                 {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
@@ -656,19 +659,19 @@ class RegistrationProducts extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)"}}>
+                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                     </div> 
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                            <div style={{marginLeft:"6px"}}>
                                 <div>
                                     {shop.productName}
                                 </div>
@@ -677,11 +680,11 @@ class RegistrationProducts extends Component {
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
                 ))} 
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
@@ -723,17 +726,17 @@ class RegistrationProducts extends Component {
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
-                <span className="form-heading" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </span>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </div>
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
-                    <div className="pb-4 btn-text-common" style={{marginLeft:0}}>
+                    <div className="pb-4 link-text-common" style={{marginLeft:0}}>
                          <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
                         Terms and Conditions for {item.name}
                         </a>
                     </div> 
                 ))}                  
                 </div>                           
-                <div className="single-checkbox mt-0" style={{display:"flex"}}>
+                <div className="body-text-common mt-0" style={{display:"flex"}}>
                 <Form.Item>
                         {getFieldDecorator(`termsAndCondition`, {
                             rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
@@ -758,10 +761,10 @@ class RegistrationProducts extends Component {
     buttonView = () =>{
         return(
             <div style={{marginTop:23}}>
-                 <Button className="open-reg-button" 
+                 <Button className="open-reg-button link-text-common" 
                   htmlType="submit"
                   type="primary"
-                 style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
+                 style={{ width:"100%"}}>
                     {AppConstants.continue}
                 </Button>     
             </div>

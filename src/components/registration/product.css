@@ -955,12 +955,7 @@ img.bg {
   margin-top: 20px;
 }
 
-.card-expandView-text{
-  color: var(--app-1b1b34);
-  font-weight: 600;
-  font-family: sans-serif ;
-  /* margin-right: 20px; */
-}
+
 .back-btn-text {
   background-color: var(--app-white);
   border-color: white;
@@ -975,4 +970,21 @@ img.bg {
 .address-text-style {
   font-family: sans-serif;
   color: black;
+}
+.cancel-button-text {
+  width: 100%;
+  text-transform: uppercase;
+  font-family: inter;
+  color: #414141;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+.addToCart {
+  color:var(--app-white);
+  width:100%;
+  text-transform: uppercase;
+  font-family:inter;
+  font-weight:500;
+  font-size: 13px;
 }
