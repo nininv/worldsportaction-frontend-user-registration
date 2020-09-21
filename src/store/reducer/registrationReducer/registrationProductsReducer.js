@@ -11,7 +11,30 @@ const initialState = {
     shopProductList: [],
     shopProductsTotalCount: 1,
     shopProductsPage: 1,
-    shopProductsTypes: []
+    shopProductsTypes: [],
+    participantUsers: []
+}
+
+function setYourInfo(action,state){
+    try{
+        let email = action.value;
+        let yourInfo = state.registrationReviewList.yourInfo;
+        let user = state.participantUsers.find(x => x.email === email);
+        if(user != undefined){
+            yourInfo["firstName"] = user.firstName;
+            yourInfo["lastName"] = user.lastName;
+            yourInfo["mobileNumber"] = user.mobileNumber;
+            yourInfo["postalCode"] = user.postalCode;
+            yourInfo["email"] = user.email;
+            yourInfo["street1"] = user.street1;
+            yourInfo["street2"] = user.street2;
+            yourInfo["suburb"] = user.suburb;
+            yourInfo["stateRefId"] = user.stateRefId;
+            yourInfo["countryRefId"] = user.countryRefId;
+        }
+    }catch(ex){
+        console.log("Error in setYourInfo"+ex);
+    }
 }
 
 function registrationProductsReducer(state = initialState, action){
@@ -117,7 +140,11 @@ function registrationProductsReducer(state = initialState, action){
                 console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
-                reviewData[action.subKey][action.key] = action.value;
+                if(action.key == "email"){
+                    setYourInfo(action,state);
+                }else{
+                    reviewData[action.subKey][action.key] = action.value
+                }   
             }
             return {
                 ...state,

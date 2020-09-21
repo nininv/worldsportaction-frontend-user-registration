@@ -610,6 +610,9 @@ function userRegistrationReducer(state = initialState, action){
 			else if(competitionSubKey == "referFriends"){
 				state.registrationObj.competitions[competitionIndex].referFriends[competitionSubIndex][competitionKey] = competitionData;
 			}
+			else if(competitionKey == "competition"){
+				state.registrationObj.competitions.splice(competitionIndex,1);
+			}
 			else{
 				state.registrationObj.competitions[competitionIndex][competitionKey] = competitionData;
 			}

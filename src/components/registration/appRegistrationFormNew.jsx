@@ -580,6 +580,14 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
+    findAnotherCompetition = (competitionIndex) => {
+        if(competitionIndex == 0){
+            this.setState({showAddAnotherCompetitionView: true})
+        }else{
+            this.onChangeSetCompetitionValue(null,"competition",competitionIndex,null,null)
+        }  
+    }
+
     disabledOrNot = () => {
         // let disabled;
         // this.props.form.validateFields((err,values) => {
@@ -1524,11 +1532,11 @@ class AppRegistrationFormNew extends Component{
                             <img style={{height: "60px",borderRadius: "50%"}} src={competitionInfo.compLogoUrl}/> 
                         </div>
                         <div className="col">
-                            <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
+                            <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
                             <div style={{display: "flex",flexWrap: "wrap"}}>
                                 <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
                                 <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                onClick={() => this.setState({showAddAnotherCompetitionView: true})}>{AppConstants.findAnotherCompetition}</div>
+                                onClick={() => this.findAnotherCompetition(competitionIndex)}>{competitionIndex == 0 ? AppConstants.findAnotherCompetition : AppConstants.cancel}</div>
                             </div>
                             <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                         </div>
