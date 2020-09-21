@@ -24,7 +24,7 @@ import { NavLink } from "react-router-dom";
 import { liveScore_formateDate } from "../../themes/dateformate";
 import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction,
     deleteRegistrationProductAction, deleteRegistrationParticipantAction,
-    getTermsAndConditionsAction } from 
+    getTermsAndConditionsAction, getRegParticipantUsersAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 import {isArrayNotEmpty} from '../../util/helpers';
@@ -68,8 +68,8 @@ class RegistrationProducts extends Component {
 
     componentDidMount(){
         // registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        //console.log("registrationUniqueKey"+registrationUniqueKey);
-        let registrationUniqueKey = "8b7d5e49-6296-47cb-893a-5d9336be96f5";
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "147f3dfd-b323-46d6-a12e-3d8f9c0104fd";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -80,7 +80,6 @@ class RegistrationProducts extends Component {
                 this.goToShop();
             }
         }
-       
     }  
     
     getApiInfo = (registrationUniqueKey) => {
@@ -89,9 +88,8 @@ class RegistrationProducts extends Component {
         }
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
+        this.props.getRegParticipantUsersAction(payload);
     }
-
-   
 
     saveReviewForm = (e) =>{
         e.preventDefault();
@@ -592,6 +590,8 @@ class RegistrationProducts extends Component {
 
     yourDetailsView = (getFieldDecorator) => {
         const { stateList,countryList } = this.props.commonReducerState;
+        const {participantUsers, registrationReviewList} = this.props.registrationProductState;
+        let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
         return(
             <div>
                 <div className="headline-text-common">{AppConstants.yourDetails}</div>
@@ -606,10 +606,11 @@ class RegistrationProducts extends Component {
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
-                                    setFieldsValue={""}>
-                                    {/* {stateList.length > 0 && stateList.map((item) => (
-                                        < Option key={item.id} value={item.id}> {item.name}</Option>
-                                    ))} */}
+                                    setFieldsValue={yourInfo ? yourInfo.email : null}
+                                    onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
+                                    {(participantUsers || []).map((item) => (
+                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                    ))}
                                 </Select>
                             )}
                         </Form.Item> 
@@ -641,6 +642,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.firstName}
+                                            setFieldsValue={yourInfo.firstName }
                                         />
                                     )}
                                 </Form.Item>
@@ -653,6 +655,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.lastName}
+                                            setFieldsValue={yourInfo.lastName }
                                         />
                                     )}
                                 </Form.Item>
@@ -665,6 +668,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.phone}
+                                            setFieldsValue={yourInfo.mobileNumber }
                                         />
                                     )}
                                 </Form.Item>
@@ -677,6 +681,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.email}
+                                            setFieldsValue={yourInfo.email }
                                         />
                                     )}
                                 </Form.Item>
@@ -684,35 +689,37 @@ class RegistrationProducts extends Component {
                         </div>
                     
                         <div>
-                            {this.state.selectAddressFlag && (
-                                <div>
-                                    <div className="headline-text-common"
-                                    style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
-                                    <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
-                                    <Form.Item >
-                                        {getFieldDecorator(`yourDetailsSelectAddress`, {
-                                            rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
-                                        })(
-                                        <Select
-                                            style={{ width: "100%" }}
-                                            placeholder={AppConstants.select}
-                                            setFieldsValue={""}>
-                                            {/* {stateList.length > 0 && stateList.map((item) => (
-                                                < Option key={item.id} value={item.id}> {item.name}</Option>
-                                            ))} */}
-                                        </Select>
-                                        )}
-                                    </Form.Item> 
-                                    <div className="btn-text-common pointer" style={{marginTop: "10px"}}
-                                    onClick={() => {
-                                        this.setState({
-                                            selectAddressFlag: false,
-                                            searchAddressFlag: true
-                                        });
-                                    }}
-                                    >+ {AppConstants.addNewAddress}</div>	
-                                </div>
-                            )} 
+                            {
+                            // this.state.selectAddressFlag && (
+                            //     <div>
+                            //         <div className="headline-text-common"
+                            //         style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
+                            //         <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
+                            //         <Form.Item >
+                            //             {getFieldDecorator(`yourDetailsSelectAddress`, {
+                            //                 rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
+                            //             })(
+                            //             <Select
+                            //                 style={{ width: "100%" }}
+                            //                 placeholder={AppConstants.select}
+                            //                 setFieldsValue={yourInfo. }>
+                            //                 {/* {stateList.length > 0 && stateList.map((item) => (
+                            //                     < Option key={item.id} value={item.id}> {item.name}</Option>
+                            //                 ))} */}
+                            //             </Select>
+                            //             )}
+                            //         </Form.Item> 
+                            //         <div className="btn-text-common pointer" style={{marginTop: "10px"}}
+                            //         onClick={() => {
+                            //             this.setState({
+                            //                 selectAddressFlag: false,
+                            //                 searchAddressFlag: true
+                            //             });
+                            //         }}
+                            //         >+ {AppConstants.addNewAddress}</div>	
+                            //     </div>
+                            // )
+                            } 
                                 
                             {this.state.searchAddressFlag && (
                                 <div>
@@ -772,13 +779,14 @@ class RegistrationProducts extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.addressOne}
                                             placeholder={AppConstants.addressOne}
-                                            setFieldsValue={""}
+                                            setFieldsValue={yourInfo.street1}
                                         />
                                         )}
                                     </Form.Item>
                                     <InputWithHead
                                         heading={AppConstants.addressTwo}
                                         placeholder={AppConstants.addressTwo}
+                                        value={yourInfo.street2}
                                     />
                                     <Form.Item >
                                         {getFieldDecorator(`yourDetailsSuburb`, {
@@ -788,7 +796,7 @@ class RegistrationProducts extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.suburb}
                                             placeholder={AppConstants.suburb} o
-                                            setFieldsValue={""}
+                                            setFieldsValue={yourInfo.suburb}
                                         />
                                         )}
                                     </Form.Item>
@@ -802,7 +810,7 @@ class RegistrationProducts extends Component {
                                                 <Select
                                                     style={{ width: "100%" }}
                                                     placeholder={AppConstants.state}
-                                                    setFieldsValue={""}>
+                                                    setFieldsValue={yourInfo.stateRefId}>
                                                     {stateList.length > 0 && stateList.map((item) => (
                                                         < Option key={item.id} value={item.id}> {item.name}</Option>
                                                     ))}
@@ -820,7 +828,7 @@ class RegistrationProducts extends Component {
                                                     required={"required-field pt-0 pb-0"}
                                                     placeholder={AppConstants.postcode}
                                                     maxLength={4}
-                                                    setFieldsValue={""}
+                                                    setFieldsValue={yourInfo.postalCode}
                                                 />
                                                 )}
                                             </Form.Item>
@@ -834,7 +842,7 @@ class RegistrationProducts extends Component {
                                         <Select
                                             style={{ width: "100%" }}
                                             placeholder={AppConstants.country}
-                                            setFieldsValue={""}>
+                                            setFieldsValue={yourInfo.countryRefId}>
                                             {countryList.length > 0 && countryList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                                             ))}
@@ -860,7 +868,7 @@ class RegistrationProducts extends Component {
     }
 
     productLeftView = (getFieldDecorator)=>{
-        const {registrationReviewList} = this.props.registrationProductState;
+        const {registrationReviewList, participantUsers} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         return(
             <div className="col-sm-12 col-md-8 col-lg-8 ">
@@ -869,9 +877,11 @@ class RegistrationProducts extends Component {
                     {isSchoolRegistration == 0 && this.charityView()}
                     {this.otherinfoView()}
                 </div>
+                {participantUsers && participantUsers.length > 0 ? 
                 <div className="product-left-view outline-style">
                     {this.yourDetailsView(getFieldDecorator)}
                 </div>
+                 : null }
             </div>
         )
     }
@@ -1091,7 +1101,8 @@ function mapDispatchToProps(dispatch)
         deleteRegistrationParticipantAction,
         getTermsAndConditionsAction,
         getCommonRefData,
-        countryReferenceAction,		 
+        countryReferenceAction,	
+        getRegParticipantUsersAction	 
     }, dispatch);
 
 }

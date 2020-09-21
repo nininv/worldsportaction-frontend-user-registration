@@ -113,7 +113,11 @@ function registrationProductsReducer(state = initialState, action){
                     
                     reviewData[action.subKey].splice(action.index,1);
                 }
+                
                 console.log("reviewData", reviewData);
+            }
+            else if(action.subKey == "yourInfo"){
+                reviewData[action.subKey][action.key] = action.value;
             }
             return {
                 ...state,
@@ -185,7 +189,18 @@ function registrationProductsReducer(state = initialState, action){
                     shopProductsTypes: shopProductData.types
                 };
             
- 
+            case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_LOAD:
+                return { ...state, onLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_SUCCESS:
+                let participantUsers = action.result;
+                return {
+                    ...state,
+                    onLoad: false,
+                    status: action.status,
+                    participantUsers: participantUsers
+                };
+    
         default:
             return state;
     }

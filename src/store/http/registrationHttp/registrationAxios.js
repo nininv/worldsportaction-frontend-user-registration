@@ -193,6 +193,10 @@ let AxiosApi = {
         var url = `/api/registration/participant/delete?registrationId=${payload.registrationId}&participantId=${payload.participantId}`;
         return Method.dataDelete(url, token);
     },
+    getRegParticipantUsers(payload) {
+        var url = `/api/registration/participant/users?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
 };
 
 const Method = {

@@ -160,3 +160,22 @@ export function* getRegistrationShopProductsSaga(action) {
 }
 
 
+////// Get Registration By Id
+export function* getRegParticipantUsersSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getRegParticipantUsers, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+
