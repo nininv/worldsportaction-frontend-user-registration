@@ -334,7 +334,11 @@ function setMembershipProductsInfo(state,organisationData){
 			competition.organisationInfo = organisationData.organisationInfo;
 			competition.competitionInfo = organisationData.competitionInfo;
 			competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
-			state.registrationObj.competitions.push(competition);
+			if(!organisationData.findAnotherCompetition){
+				state.registrationObj.competitions.push(competition);
+			}else{
+				state.registrationObj.competitions[0] = competition;
+			}
 			state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
 			state.addCompetitionFlag = true; 
 		}

@@ -86,6 +86,7 @@ class AppRegistrationFormNew extends Component{
             singleCompModalVisible: false,
             getMembershipLoad: false,
             getParticipantByIdLoad: false,
+            findAnotherCompetitionFlag: false
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -110,6 +111,8 @@ class AppRegistrationFormNew extends Component{
             if(participantId){
                 this.props.getParticipantInfoById(participantId);
                 this.setState({getParticipantByIdLoad: true})
+            }else{
+                this.selectAnotherParticipant();
             }
             this.setState({getMembershipLoad: false});
         }
@@ -136,6 +139,9 @@ class AppRegistrationFormNew extends Component{
                 organisationId: null,
                 competitionId: null
             });
+            if(this.state.findAnotherCompetitionFlag){
+                this.setState({findAnotherCompetitionFlag: false})
+            }
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
         }
 
@@ -542,7 +548,8 @@ class AppRegistrationFormNew extends Component{
         if(organisationInfo){
             let organisation = {
                 organisationInfo : deepCopyFunction(organisationInfo),
-                competitionInfo: competition
+                competitionInfo: competition,
+                findAnotherCompetition: this.state.findAnotherCompetitionFlag
             }
             this.props.updateUserRegistrationObjectAction(organisation,"competitions");
         }
@@ -582,7 +589,8 @@ class AppRegistrationFormNew extends Component{
 
     findAnotherCompetition = (competitionIndex) => {
         if(competitionIndex == 0){
-            this.setState({showAddAnotherCompetitionView: true})
+            this.setState({showAddAnotherCompetitionView: true,
+            findAnotherCompetitionFlag: true});
         }else{
             this.onChangeSetCompetitionValue(null,"competition",competitionIndex,null,null)
         }  
@@ -595,6 +603,10 @@ class AppRegistrationFormNew extends Component{
         // });
         // console.log("button",disabled);
         // return disabled;
+    }
+
+    selectAnotherParticipant = () => {
+        this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
     
     saveRegistrationForm = (e) => {
@@ -761,7 +773,8 @@ class AppRegistrationFormNew extends Component{
                 <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
                 <div style={{display: "flex",flexWrap: "wrap"}}>
                     <div className="form-heading" style={{textAlign: "start"}}>{AppConstants.addNewParticipant}</div>
-                    <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}>{AppConstants.selectAnother}</div>
+                    <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
+                    onClick={() => this.selectAnotherParticipant()}>{AppConstants.selectAnother}</div>
                 </div>
                 <div style={{fontWeight: "600",marginTop: "-5px"}}>{this.getParticipantType()}</div>
             </div>
@@ -1423,15 +1436,20 @@ class AppRegistrationFormNew extends Component{
         return(
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div> 
-                {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                    <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
-                ))}
-                {this.state.showAddAnotherCompetitionView && (
-                    <div>{this.findAnotherCompetitionView()}</div>
+                {!this.state.showAddAnotherCompetitionView && (
+                    <div>
+                        {(registrationObj.competitions || []).map((competition, competitionIndex) => (
+                            <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
+                        ))}
+                    </div>
                 )}
-                <div className="orange-action-txt"
-                 style={{marginTop: "20px"}}
-                 onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                {this.state.showAddAnotherCompetitionView ? 
+                    <div>{this.findAnotherCompetitionView()}</div>
+                    : 
+                    <div className="orange-action-txt"
+                    style={{marginTop: "20px"}}
+                    onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                }
             </div>
         )
     }
@@ -1453,7 +1471,8 @@ class AppRegistrationFormNew extends Component{
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
                             <div className="form-heading" style={{textAlign: "start"}}>{registrationObj.firstName} {registrationObj.lastName}</div>
-                            <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}>{AppConstants.selectAnother}</div>
+                            <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
+                            onClick={() => this.selectAnotherParticipant()}>{AppConstants.selectAnother}</div>
                         </div>
                         <div style={{fontWeight: "600",marginTop: "-5px"}}>{registrationObj.genderRefId == 2 ? 'Male' : 'Female'}, {moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}</div>
                     </div>
@@ -2298,7 +2317,7 @@ class AppRegistrationFormNew extends Component{
         let { registrationObj } = this.props.userRegistrationState;
         return(
             <div>
-                {registrationObj != null && registrationObj.registeringYourself && (
+                {registrationObj != null && registrationObj.registeringYourself && !this.state.showAddAnotherCompetitionView && (
                     <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
                         <Button 
                         htmlType="submit"
