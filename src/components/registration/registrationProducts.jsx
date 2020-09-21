@@ -230,7 +230,7 @@ class RegistrationProducts extends Component {
 
     headerView = () =>{
         return(
-            <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
+            <div style={{display:"flex",flexWrap: "wrap" , width:"100%"}}>
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
                 <div>
                     <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}>
@@ -413,7 +413,7 @@ class RegistrationProducts extends Component {
                     </div>  
                     {discountCodes && discountCodes.length > 0 && 
                     <div style={{padding:"15px 0px 0px 0px"}}>
-                        <Button className="open-reg-button"
+                        <Button className="open-reg-button addToCart"
                             onClick={(e) =>  this.setReviewInfo(null, "discount", index,null, null)}
                             type="primary">
                             {AppConstants.applyCode}
@@ -442,12 +442,12 @@ class RegistrationProducts extends Component {
                             </div>
                             <div className="" style={{alignSelf:"center"}}>
                                 {item.selectedOptions.isSchoolRegCodeApplied == 1 ?
-                                <Button className="open-reg-button"
+                                <Button className="open-reg-button addToCart"
                                     onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", null)}
                                     type="primary">
                                     {AppConstants.removeCode}
                                 </Button> : 
-                                <Button className="open-reg-button"
+                                <Button className="open-reg-button addToCart"
                                 onClick={(e) =>  this.setReviewInfo(item, "isSchoolRegCodeApplied", index,"selectedOptions")}
                                 type="primary">
                                 {AppConstants.applyCode}
@@ -480,7 +480,7 @@ class RegistrationProducts extends Component {
                                 <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182  }}  
                                         required={"required-field pt-0 pb-0"}
-                                        className="input-inside-table-venue-court"
+                                        className="body-text-common"
                                         onChange={(e) => this.setReviewInfo(e, "governmentVoucherRefId", index,"selectedOptions", govIndex)}
                                         value={gov.governmentVoucherRefId}
                                         placeholder={'Code'}>
@@ -495,12 +495,15 @@ class RegistrationProducts extends Component {
                         </div>                   
                         <div class="col-sm-11 col-lg-5 col-9" style={{ width: "100%",margin: "15px 0px 0px 0px"}} >
                             <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.code}</div>
-                            <InputWithHead
-                                required={"required-field pt-0 pb-0"}
-                                placeholder={AppConstants.code}  
-                                value={gov.voucherCode} 
-                                onChange={(e) => this.setReviewInfo(e.target.value, "voucherCode", index,"selectedOptions", govIndex)}                    
-                            />
+                            <div className="body-text-common">
+                                <InputWithHead
+                                    required={"required-field pt-0 pb-0"}
+                                    placeholder={AppConstants.code}  
+                                    value={gov.voucherCode}      
+                                    style={{color:"inherit"}}                             
+                                    onChange={(e) => this.setReviewInfo(e.target.value, "voucherCode", index,"selectedOptions", govIndex)}                    
+                                />
+                            </div>                            
                         </div>
                         <div className="transfer-image-view pointer" style={{paddingLeft: '15px',paddingTop:44}}
                             onClick={() => this.setReviewInfo(null, "removeVoucher", index,"selectedOptions", govIndex)}>                   
@@ -524,7 +527,7 @@ class RegistrationProducts extends Component {
                     </div>  
                     {selectedVouchers && selectedVouchers.length > 0 && 
                     <div style={{paddingTop:'15px'}}>
-                        <Button className="open-reg-button"
+                        <Button className="open-reg-button addToCart"
                             onClick={(e) =>  this.setReviewInfo(null, "voucher", index,null, null)}
                             type="primary">
                             {AppConstants.applyCode}
@@ -606,7 +609,8 @@ class RegistrationProducts extends Component {
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
-                                    setFieldsValue={""}>
+                                    setFieldsValue={""} 
+                                    className="body-text-common">                                        
                                     {/* {stateList.length > 0 && stateList.map((item) => (
                                         < Option key={item.id} value={item.id}> {item.name}</Option>
                                     ))} */}
@@ -696,7 +700,8 @@ class RegistrationProducts extends Component {
                                         <Select
                                             style={{ width: "100%" }}
                                             placeholder={AppConstants.select}
-                                            setFieldsValue={""}>
+                                            setFieldsValue={""}
+                                            className="body-text-common">
                                             {/* {stateList.length > 0 && stateList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.name}</Option>
                                             ))} */}
@@ -863,10 +868,14 @@ class RegistrationProducts extends Component {
         const {registrationReviewList} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8 ">
+            <div className="col-sm-12 col-md-8 col-lg-8 " style={{padding:0}}>
                 <div className="product-left-view outline-style">
                     {this.participantDetailView()}
+                </div>
+                <div className="product-left-view outline-style">
                     {isSchoolRegistration == 0 && this.charityView()}
+                </div>
+                <div className="product-left-view outline-style">
                     {this.otherinfoView()}
                 </div>
                 <div className="product-left-view outline-style">
@@ -913,7 +922,9 @@ class RegistrationProducts extends Component {
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        <span className="user-remove-btn pointer" >
+                                            <img class="marginIcon" src={AppImages.removeIcon} />
+                                        </span>
                                     </div>
                                 </div>
                                 
@@ -942,8 +953,8 @@ class RegistrationProducts extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                    <div  className="subtitle-text-common shop-detail-text-common">
+                        <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
@@ -956,7 +967,9 @@ class RegistrationProducts extends Component {
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                            <span className="user-remove-btn pointer">
+                                <img class="marginIcon" src={AppImages.removeIcon}/>
+                            </span>
                         </div>
                     </div>
                 ))} 
@@ -1037,7 +1050,7 @@ class RegistrationProducts extends Component {
     buttonView = () =>{
         return(
             <div style={{marginTop:23}}>
-                 <Button className="open-reg-button link-text-common" 
+                 <Button className="open-reg-button addToCart" 
                   htmlType="submit"
                   type="primary"
                  style={{ width:"100%"}}>
