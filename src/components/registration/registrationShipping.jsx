@@ -338,6 +338,7 @@ class RegistrationShipping extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteProductModalView()}

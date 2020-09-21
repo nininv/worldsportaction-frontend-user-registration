@@ -1015,7 +1015,7 @@ class RegistrationProducts extends Component {
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
-                    <div style={{paddingBottom:12}} key={item.participantId}>
+                    <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
                         <div className = "body-text-common" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>

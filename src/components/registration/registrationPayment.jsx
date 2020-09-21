@@ -639,6 +639,8 @@ class RegistrationPayment extends Component {
                                 {this.contentView()}
                                 {this.deleteProductModalView()}
                             </div>
+                            <Loader visible={this.props.registrationProductState.onRegReviewLoad ||
+                             this.state.onLoad} />
                         </Content>
                     </Form>
                 </Layout>

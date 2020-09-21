@@ -2406,7 +2406,7 @@ class AppRegistrationFormNew extends Component{
 
     render(){
         const { getFieldDecorator } = this.props.form;
-        console.log("form",this.props.form);
+       // console.log("form",this.props.form);
         return(
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
