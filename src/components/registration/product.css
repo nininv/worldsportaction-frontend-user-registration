@@ -395,7 +395,7 @@
   font-family: inter-semi-bold;
   font-size: 15px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: 12px;
   background-image: var(--app-gradient-right);
 }
 
@@ -963,7 +963,7 @@ img.bg {
   font-weight: 600;
   font-size: 14px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-stretch: normal;
   font-family: inter-medium;
 }
@@ -986,5 +986,22 @@ img.bg {
   text-transform: uppercase;
   font-family:inter;
   font-weight:500;
-  font-size: 13px;
+  font-size: 14px;
+}
+.shop-detail-text-common {
+  display:flex; 
+  font-weight:500 ;
+  border-bottom:1px solid var(--app-e1e1f5);
+  border-top:1px solid var(--app-e1e1f5);
+}
+.image-text-view {
+  margin-right:auto; 
+  display: flex;
+  margin-top: 12px; 
+  padding: 8px;
+}
+.btn-inner-view {
+  box-shadow: 0px 1px 3px 0px;
+  width:100%;
+  text-transform: uppercase;
 }

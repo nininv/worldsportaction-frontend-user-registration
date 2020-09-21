@@ -131,15 +131,15 @@ class RegistrationShipping extends Component {
     shippingOption = () =>{
         return(
             <div  className="outline-style product-left-view" style={{marginRight:0}}>
-                <div className="product-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.shippingOptions}</div>
-                <div className="product-text-common" style={{fontFamily:"inter-medium"}}>{AppConstants.netballQueenslandMerchandise}</div>
+                <div className="headline-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.shippingOptions}</div>
+                <div className="subtitle-text-common">{AppConstants.netballQueenslandMerchandise}</div>
                 <div style={{marginTop:6}}>
                     <Radio.Group className="product-radio-group">                           
                         <Radio  value={1}>{AppConstants.Pickup}</Radio>
                         <Radio  value={2}>{AppConstants.Delivery}</Radio>
                     </Radio.Group>
                 </div>      
-                <div className="product-text-common" style={{marginTop : 25,fontFamily:"inter-medium"}}>{AppConstants.biloelaAssociationMerchandise}</div>
+                <div className="subtitle-text-common" style={{marginTop : 25}}>{AppConstants.biloelaAssociationMerchandise}</div>
                 <div style={{marginTop:6}}>
                     <Radio.Group className="product-radio-group">                           
                         <Radio  value={1}>{AppConstants.Pickup}</Radio>
@@ -155,17 +155,17 @@ class RegistrationShipping extends Component {
     deliveryAndBillingView = () =>{
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
-                <div className="product-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
+                <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
                 <div class="row">
                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-                        <div className="address-text-style">{AppConstants.deliveryAddress}</div>  
-                        <div className="product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4}}>100 George Street Sydney NSW 2000</div>                        
-                        <div className="btn-text-common">{AppConstants.useDifferentAddress}</div> 
+                        <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+                        <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>100 George Street Sydney NSW 2000</div>                        
+                        <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-                        <div className="address-text-style">{AppConstants.billingAddress}</div>
-                        <div className="product-text-common" style={{fontSize:24 , paddingLeft:0,marginBottom:4 }}>100 George Street Sydney NSW 2000</div>
-                        <div className="btn-text-common">{AppConstants.useDifferentAddress}</div> 
+                        <div className="body-text-common">{AppConstants.billingAddress}</div>
+                        <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>100 George Street Sydney NSW 2000</div>
+                        <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
                 </div>
             </div>
@@ -209,34 +209,36 @@ class RegistrationShipping extends Component {
                 registrationReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
-                <div className="product-text-common" style={{fontSize: 21}}>
+                <div className="headline-text-common">
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                        <div className = "body-text-common" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                        <span className="user-remove-btn pointer">
+                                            <img class="marginIcon" src={AppImages.removeIcon} />
+                                        </span>
                                     </div>
                                 </div>
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                     <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
                                     <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
                                 </div>
@@ -247,15 +249,15 @@ class RegistrationShipping extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)"}}>
+                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                     </div> 
                     )}
                 )}
                  {(shopProducts).map((shop, index) =>(
-                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                    <div  className="subtitle-text-common shop-detail-text-common">
+                        <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
@@ -268,11 +270,13 @@ class RegistrationShipping extends Component {
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn pointer">
+                                <img class="marginIcon" src={AppImages.removeIcon}/>
+                            </span>
                         </div>
                     </div>
                 ))}
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
@@ -299,14 +303,14 @@ class RegistrationShipping extends Component {
         return(
             <div style={{marginTop:23}}>
                 <div>
-                    <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
+                    <Button className="open-reg-button addToCart"
                      htmlType="submit"
                      type="primary">
                         {AppConstants.continue}
                     </Button>
                 </div>                 
                 <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
+                    <Button className="back-btn-text btn-inner-view"
                     onClick={() => this.goToShop()}>
                         {AppConstants.back}
                     </Button> 

@@ -193,7 +193,7 @@ class RegistrationShop extends Component {
         let types = shopProductsTypes ? shopProductsTypes : [];
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 , marginBottom: "37px",flexWrap: "wrap"}}>
-                <div className="product-text-common" style={{fontSize: 22 , alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
+                <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
                 <div style={{width:"230px",marginTop: "10px"}}>
                     <Select
                         style={{ width: "100%", paddingRight: 1}}                  
@@ -258,9 +258,9 @@ class RegistrationShop extends Component {
                                     </div>
                                     <div style={{marginTop:7}}>
                                         <Select
-                                            style={{ padding:0 , fontWeight: 500 ,fontSize: "17px"}}                  
+                                            style={{ padding:0}}                  
                                             placeholder={AppConstants.allCategories}  
-                                            className="custom-dropdown col-lg-11" 
+                                            className="body-text-common col-lg-11" 
                                             value={this.state.variantOptionId}   
                                             onChange={(e)=> this.setState({variantOptionId: e})}                                                 
                                         >
@@ -279,7 +279,7 @@ class RegistrationShop extends Component {
                                         <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
                                         onChange={(e)=> this.setState({quantity: e})}
                                         value= {this.state.quantity}
-                                        className="col-lg-11"
+                                        className="col-lg-11 body-text-common"
                                         />
                                     </div>
                                 </div>  
@@ -392,13 +392,16 @@ class RegistrationShop extends Component {
                         ))}
                         <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
+                            <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
+                                {AppConstants.edit}
+                            </span>
                         </div>
                     </div> 
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                    <div  className="subtitle-text-common shop-detail-text-common">
+                        <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
@@ -445,14 +448,14 @@ class RegistrationShop extends Component {
         return(
             <div style={{marginTop:23}}>
                 <div>
-                    <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
+                    <Button className="open-reg-button addToCart" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
                       htmlType="submit"
                       type="primary">
                         {AppConstants.continue}
                     </Button>
                 </div>                 
                 <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
+                    <Button className="back-btn-text btn-inner-view"
                      onClick={()=> this.goToRegistrationProducts()}>
                         {AppConstants.back}
                     </Button> 

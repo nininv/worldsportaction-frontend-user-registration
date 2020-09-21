@@ -246,6 +246,7 @@ class AppRegistrationFormNew extends Component{
                     [`parentAddressSearch${pIndex}`]: this.getParentAddress(parent),
                 });
             }else if(key == "manualEnterAddressFlag"){
+                console.log("country",parent.countryRefId);
                 this.props.form.setFieldsValue({
                     [`parentEmail${pIndex}`]: parent.email,
                     [`parentStreet1${pIndex}`]: parent.street1,
@@ -356,7 +357,8 @@ class AppRegistrationFormNew extends Component{
 			"street1": null,
 			"street2": null,
 			"suburb": null,
-			"stateRefId": null,
+            "stateRefId": null,
+            "countryRefId": 1,
             "postalCode": null,
             "isSameAddress": false,
             "selectAddressFlag": true,
@@ -566,16 +568,25 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             let participantType;
             if(registrationObj.registeringYourself == 1){
-                participantType = "MySelf";
+                participantType = "Myself";
             }else if(registrationObj.registeringYourself == 2){
                 participantType = "Child";
             }else{
-                participantType = "Registering Someone else"
+                participantType = "Registering someone else"
             }
             return participantType;
         }catch(ex){
             console.log("Error in getParticipantType"+ex);
         }
+    }
+
+    disabledOrNot = () => {
+        // let disabled;
+        // this.props.form.validateFields((err,values) => {
+        //     disabled = err ? true : false;
+        // });
+        // console.log("button",disabled);
+        // return disabled;
     }
     
     saveRegistrationForm = (e) => {
@@ -591,14 +602,20 @@ class AppRegistrationFormNew extends Component{
                         message.error(ValidationConstants.userPhotoIsRequired);
                         return;
                     }
-                    if(!registrationObj.addNewAddressFlag){
-                        message.error(ValidationConstants.addressDetailsIsRequired)
-                        return;
-                    }
                     if(registrationObj.parentOrGuardian.length == 0 && 
                         getAge(registrationObj.dateOfBirth) < 18){
                         message.error(ValidationConstants.parentDetailsIsRequired)
                         return;
+                    }
+                    if(this.state.currentStep == 1){
+                        if(registrationObj.competitions.length == 0){
+                            message.error(ValidationConstants.competitionField);
+                            return;
+                        }else{
+                            if(this.state.showAddAnotherCompetitionView){
+                                this.setState({showAddAnotherCompetitionView: false});
+                            }
+                        }
                     }
                     if(this.state.currentStep != 2){
                         let nextStep = this.state.currentStep + 1;
@@ -1248,7 +1265,7 @@ class AppRegistrationFormNew extends Component{
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.country}
                                     onChange={(e) => this.onChangeSetParentValue(e, "countryRefId", parentIndex)}
-                                    setFieldsValue={registrationObj.countryRefId}>
+                                    setFieldsValue={parent.countryRefId}>
                                     {countryList.length > 0 && countryList.map((item) => (
                                         < Option key={item.id} value={item.id}> {item.description}</Option>
                                     ))}
@@ -1467,7 +1484,7 @@ class AppRegistrationFormNew extends Component{
                 </div>
                 <div className="row" style={{marginTop: "30px"}}>
                     {(competitions || []).map((competition,competitionIndex) => (
-                        <div className="col-md-6 col-sm-12"
+                        <div className="col-md-6 col-sm-12 pointer"
                         onClick={() => this.addAnotherCompetition(competition)}
                         key={competition.competitionUniqueKey} 
                         style={{marginBottom: "20px"}}>
@@ -1833,23 +1850,23 @@ class AppRegistrationFormNew extends Component{
                         value={registrationObj.additionalInfo.allergyInfo}
                         allowClear
                     />
-                    <InputWithHead heading={AppConstants.playingOtherParticipantSports}/>
-                    {/* <Form.Item >
-                        {getFieldDecorator(`additionalInfoOtherParticpantSport`, {
-                            rules: [{ required: true }],
-                        })( */}
-                        <Select
-                            mode="multiple"
-                            style={{ width: "100%" }}
-                            placeholder={AppConstants.select}
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                            value={registrationObj.additionalInfo.otherSportsInfo}>
-                            {otherSportsList.length > 0 && otherSportsList.map((item) => (
-                                < Option key={item.id} value={item.id}> {item.description}</Option>
-                            ))}
-                        </Select>
-                        {/* )}
-                    </Form.Item> */}
+
+                    {registrationObj.registeringYourself == 2 && (
+                        <InputWithHead heading={AppConstants.childPlayingOtherParticipantSports} />
+                    )}
+                    {registrationObj.registeringYourself == 1 && (
+                        <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    )}
+                    <Select
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
+                        value={registrationObj.additionalInfo.otherSportsInfo}>
+                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
 
                     {/* <InputWithHead heading={AppConstants.haveYouEverPlayed}/>
                     <Radio.Group
@@ -2278,7 +2295,8 @@ class AppRegistrationFormNew extends Component{
                         <Button 
                         htmlType="submit"
                         type="primary"
-                        style={{float: "right",color: "white"}} 
+                        style={{float: "right",color: "white"}}
+                        disabled={this.disabledOrNot()} 
                         className="open-reg-button">{this.state.submitButtonText}</Button>
                     </div>
                 )}
@@ -2312,6 +2330,7 @@ class AppRegistrationFormNew extends Component{
 
     render(){
         const { getFieldDecorator } = this.props.form;
+        console.log("form",this.props.form);
         return(
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout

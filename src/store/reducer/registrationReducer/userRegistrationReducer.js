@@ -21,7 +21,7 @@ let registrationObjTemp = {
 	"street2": null,
 	"suburb": null,
 	"stateRefId": null,
-	"countryRefId": null,
+	"countryRefId": 1,
 	"postalCode": null,
 	"latitue": null,
 	"longitude": null,
@@ -137,7 +137,7 @@ let registrationObjTemp = {
 		"identifyRefId": null,
 		"injuryInfo": null,
 		"allergyInfo": null,
-		"otherSportsInfo": null,
+		"otherSportsInfo": [],
 		"yearsPlayed": null,
 		"schoolId": null,
 		"schoolGradeInfo": null,
@@ -325,6 +325,8 @@ function setMembershipProductsInfo(state,organisationData){
 				competition.competitionInfo = competitionInfoTemp;
 				competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 				state.registrationObj.competitions.push(competition);
+				state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
+				state.addCompetitionFlag = true; 
 			}
 		}else{
 			competition.organisationId = organisationData.organisationInfo.organisationUniqueKey;
@@ -333,9 +335,9 @@ function setMembershipProductsInfo(state,organisationData){
 			competition.competitionInfo = organisationData.competitionInfo;
 			competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 			state.registrationObj.competitions.push(competition);
+			state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
+			state.addCompetitionFlag = true; 
 		}
-		state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
-		state.addCompetitionFlag = true; 
 	}catch(ex){
 		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
 	}
