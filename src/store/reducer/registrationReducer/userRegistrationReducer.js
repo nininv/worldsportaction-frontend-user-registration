@@ -170,7 +170,7 @@ const competitionObj = {
 		// {
 		// 	"competitionMembershipProductId": null,
 		// 	"competitionMembershipProductTypeId": null,
-		// 		"competitionMembershipProductName": null,
+		// 		"membershipTypeName": null,
 		// 	"isSelected": false,
 		// 	"isPlayer": 0
 		// }
@@ -414,7 +414,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
 				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
-				"competitionMembershipProductName": membershipProductInfo.shortName,
+				"membershipTypeName": membershipProductInfo.shortName,
 				"isSelected": competitionData,
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
@@ -448,11 +448,11 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 function updateUmpireCoachWalkingNetball(state){
 	try{
 		state.registrationObj.umpireFlag = state.registrationObj.competitions.find(x => 
-			x.products.find(y => y.competitionMembershipProductName == "Umpire")) ? 1 : 0;
+			x.products.find(y => y.membershipTypeName == "Umpire")) ? 1 : 0;
 		state.registrationObj.coachFlag = state.registrationObj.competitions.find(x => 
-			x.products.find(y => y.competitionMembershipProductName == "Coach")) ? 1 : 0;
+			x.products.find(y => y.membershipTypeName == "Coach")) ? 1 : 0;
 		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
-			x.products.find(y => y.competitionMembershipProductName == "Walking Netball")) ? 1 : 0;
+			x.products.find(y => y.membershipTypeName == "Walking Netball")) ? 1 : 0;
 		console.log("registration obj",state.registrationObj);
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);

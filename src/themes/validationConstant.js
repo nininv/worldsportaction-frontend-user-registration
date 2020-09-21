@@ -101,7 +101,8 @@ const ValidationConstants = {
     parentDetailsIsRequired: "Parent details is required",
     addressDetailsIsRequired: "Address details is required",
 
-    selectAddressRequired: "Select address required"
+    selectAddressRequired: "Select address required",
+    fillMembershipProductInformation: "Please fill Membership product information"
 };
 
 export default ValidationConstants;

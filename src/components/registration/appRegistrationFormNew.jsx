@@ -615,6 +615,33 @@ class AppRegistrationFormNew extends Component{
     selectAnotherParticipant = () => {
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
+
+    checkProductEitherAddOrNot = () => {
+        try{
+            const { registrationObj } = this.props.userRegistrationState;
+            let competitions = registrationObj.competitions;
+            let check;
+            for(let competition of competitions){
+                if(competition.products.length > 0){
+                    for(let product of competition.products){
+                        if(product.isPlayer == 1){
+                            let division = competitions.divisions.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId);
+                            if(division != undefined){
+                                check = true;
+                            }else{
+                                check = false;
+                            }
+                        }
+                    }
+                }else{
+                    check = false;
+                }
+            }
+            return check;
+        }catch(ex){
+            console.log("Error in checkProductEitherAddOrNot"+ex);
+        }
+    }
     
     saveRegistrationForm = (e) => {
         try{
@@ -639,9 +666,11 @@ class AppRegistrationFormNew extends Component{
                             message.error(ValidationConstants.competitionField);
                             return;
                         }else{
-                            if(this.state.showAddAnotherCompetitionView){
-                                this.setState({showAddAnotherCompetitionView: false});
-                            }
+                            // let productAdded = this.checkProductEitherAddOrNot();
+                            // if(!productAdded){
+                            //     message.error(ValidationConstants.fillMembershipProductInformation);
+                            //     return;
+                            // }
                         }
                     }
                     if(this.state.currentStep != 2){
@@ -1827,7 +1856,7 @@ class AppRegistrationFormNew extends Component{
                         <div style={{fontWeight: "600",marginTop: "-5px"}}>
                             {(competition.products || []).map((product,productIndex) => (
                                 <span>
-                                    <span>{product.competitionMembershipProductName}</span>
+                                    <span>{product.membershipTypeName}</span>
                                     <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
                                 </span>
                             ))}
