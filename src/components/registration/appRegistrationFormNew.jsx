@@ -1992,18 +1992,20 @@ class AppRegistrationFormNew extends Component{
                                 ))}
                             </Select>
                         </div>
-                        <div className="col-md-6 col-sm-12">
-                            <InputWithHead heading={AppConstants.who_fav_bird} />
-                            <Select
-                                style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
-                                value={registrationObj.additionalInfo.favouriteFireBird}
-                                >  
-                                {(firebirdPlayerList || []).map((fire, index) => (
-                                    <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                                ))}
-                            </Select>
-                        </div>
+                        {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
+                            <div className="col-md-6 col-sm-12">
+                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
+                                    value={registrationObj.additionalInfo.favouriteFireBird}
+                                    >  
+                                    {(firebirdPlayerList || []).map((fire, index) => (
+                                        <Option key={fire.id} value={fire.id}>{fire.description}</Option>
+                                    ))}
+                                </Select>
+                            </div>
+                        )}
                     </div>
                     <Checkbox
                         className="single-checkbox pt-3"
