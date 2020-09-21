@@ -1813,10 +1813,10 @@ class AppRegistrationFormNew extends Component{
             <div className="registration-form-view">
                 <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
                     <div className="col-sm-1.5">
-                        <img style={{height: "60px",borderRadius: "50%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/> 
+                        <img style={{height: "60px",borderRadius: "50%"}} src={competition.competitionInfo.compLogoUrl}/> 
                     </div>
                     <div className="col">
-                        <div style={{fontWeight: "600",marginBottom: "5px"}}>competition</div>
+                        <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
                             <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.edit}</div>
@@ -2386,7 +2386,9 @@ class AppRegistrationFormNew extends Component{
                         </Content>
                         <Footer>{this.footerView()}</Footer>
                         <Loader visible={this.props.userRegistrationState.onMembershipLoad || 
-                                            this.props.userRegistrationState.onParticipantByIdLoad} />
+                                            this.props.userRegistrationState.onParticipantByIdLoad ||
+                                            this.props.userRegistrationState.isSavedParticipant
+                                        } />
                     </Form>
                 </Layout>
             </div>
