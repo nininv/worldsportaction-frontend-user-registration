@@ -125,6 +125,7 @@ let registrationObjTemp = {
 		"existingMedicalCondition": null,
 		"regularMedication": null,
 		"heardByRefId": null,
+		"heardByOther": null,
 		"favouriteTeamRefId": null,
 		"favouriteFireBird": null,
 		"isConsentPhotosGiven": false,
@@ -282,6 +283,9 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.additionalInfo.existingMedicalCondition = selectedUser.additionalInfo.existingMedicalCondition;
 			registrationObj.additionalInfo.regularMedication = selectedUser.additionalInfo.regularMedication;
 			registrationObj.additionalInfo.heardByRefId = selectedUser.additionalInfo.heardByRefId;
+			if(registrationObj.additionalInfo.heardByRefId == 6){
+				registrationObj.additionalInfo.heardByOther = selectedUser.additionalInfo.heardByOther;
+			}
 			registrationObj.additionalInfo.favouriteTeamRefId = selectedUser.additionalInfo.favouriteTeamRefId;
 			registrationObj.additionalInfo.favouriteFireBird = selectedUser.additionalInfo.favouriteFireBird;
 			registrationObj.additionalInfo.isConsentPhotosGiven = selectedUser.additionalInfo.isConsentPhotosGiven;

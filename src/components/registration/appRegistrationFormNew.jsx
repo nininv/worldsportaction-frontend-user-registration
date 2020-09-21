@@ -1979,6 +1979,14 @@ class AppRegistrationFormNew extends Component{
                             <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
                         ))}
                     </Radio.Group>
+                    {registrationObj.additionalInfo.heardByRefId == 6 && (
+                        <div style={{marginTop: "10px"}}>
+                            <InputWithHead 
+                            placeholder={AppConstants.other} 
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByOther")}
+                            value={registrationObj.additionalInfo.heardByOther}/>
+                        </div>
+                    )}
                     <div className="row">
                         <div className="col-md-6 col-sm-12">
                             <InputWithHead heading={AppConstants.teamYouFollow}/>
