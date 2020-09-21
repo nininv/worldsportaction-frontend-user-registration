@@ -406,27 +406,33 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
 		membershipProductInfo.isChecked = competitionData;
-		if(membershipProductInfo.isPlayer == 1){
-			if(competitionData){
-				let product = {
-					"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
-					"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
-					"competitionMembershipProductName": membershipProductInfo.shortName,
-					"isSelected": competitionData,
-					"isPlayer": membershipProductInfo.isPlayer	
-				}
-				state.registrationObj.competitions[competitionIndex].products.push(product);
+		if(competitionData){
+			let product = {
+				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
+				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
+				"competitionMembershipProductName": membershipProductInfo.shortName,
+				"isSelected": competitionData,
+				"isPlayer": membershipProductInfo.isPlayer	
+			}
+			state.registrationObj.competitions[competitionIndex].products.push(product);
+			if(membershipProductInfo.isPlayer == 1){
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
-			}else{
-				let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
-				let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
-				let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
-				let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);					
+			}
+		}else{
+			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
+			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
+			let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
+			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);	
+			if(filteredProducts != undefined){
 				state.registrationObj.competitions[competitionIndex].products = filteredProducts;
-				let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+			}	
+			let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+			if(filteredDivisionInfo != undefined){
 				state.registrationObj.competitions[competitionIndex].divisionInfo = filteredDivisionInfo;
-				let filteredDivisions = registrationObjDivisions.filter(division => division.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+			}
+			let filteredDivisions = registrationObjDivisions.filter(division => division.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
+			if(filteredDivisions != undefined){
 				state.registrationObj.competitions[competitionIndex].divisions = filteredDivisions;
 			}
 		}
@@ -443,6 +449,7 @@ function updateUmpireCoachWalkingNetball(state){
 			x.products.find(y => y.competitionMembershipProductName == "Coach")) ? 1 : 0;
 		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
 			x.products.find(y => y.competitionMembershipProductName == "Walking Netball")) ? 1 : 0;
+		console.log("registration obj",state.registrationObj);
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
 	}
