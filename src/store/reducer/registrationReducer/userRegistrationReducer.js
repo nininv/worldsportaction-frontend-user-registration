@@ -226,6 +226,7 @@ const initialState = {
 	onParticipantByIdLoad: false,
 	lastAddedCompetitionIndex: null,
 	updateExistingUserOnLoad: false,
+	onSaveLoad: false 
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -641,7 +642,7 @@ function userRegistrationReducer(state = initialState, action){
 			};
 
 		case ApiConstants.API_SAVE_PARTICIPANT_LOAD:
-			return { ...state, onLoad: true };
+			return { ...state, onSaveLoad: true };
 
 		case ApiConstants.API_GET_PARTICIPANT_SUCCESS:
 			state.registrationId = action.result ? action.result.id : null;
@@ -649,7 +650,7 @@ function userRegistrationReducer(state = initialState, action){
 			state.saveValidationErrorCode = action.result ? action.result.errorCode : null;
 			return {
 				...state,
-				onLoad: false,
+				onSaveLoad: false,
 				status: action.status,
 				isSavedParticipant: true
 			};
