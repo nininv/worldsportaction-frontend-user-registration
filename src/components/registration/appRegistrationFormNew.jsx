@@ -1258,7 +1258,7 @@ class AppRegistrationFormNew extends Component{
                             </div>
                             <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`parentCountryRefId`, {
+                                {getFieldDecorator(`parentCountryRefId${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                                 })(
                                 <Select
