@@ -77,7 +77,7 @@ class AppRegistrationFormNew extends Component{
         this.state = {
             currentStep: 0,
             submitButtonText: AppConstants.addPariticipant,
-            showAddAnotherCompetitionView: true,
+            showAddAnotherCompetitionView: false,
             searchAddressError: null,
             organisationId: null,
             competitionId: null,
@@ -186,9 +186,13 @@ class AppRegistrationFormNew extends Component{
                 this.setParticipantDetailStepFormFields();
             },300);
         }else if(current == 1){
-            this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
+            if(this.state.enabledSteps.includes(1)){
+                this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
+            }
         }else{
-            this.setState({submitButtonText: AppConstants.signupToCompetition});
+            if(this.state.enabledSteps.includes(2)){
+                this.setState({submitButtonText: AppConstants.signupToCompetition});
+            }
         }
     }
 
@@ -640,6 +644,9 @@ class AppRegistrationFormNew extends Component{
                     if(this.state.currentStep != 2){
                         let nextStep = this.state.currentStep + 1;
                         if(nextStep == 1){
+                            if(registrationObj.competitions.length == 0){
+                                this.setState({showAddAnotherCompetitionView: true});
+                            }
                             this.state.enabledSteps.push(0,nextStep);
                         }else{
                             this.state.enabledSteps.push(nextStep);
