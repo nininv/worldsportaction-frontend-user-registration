@@ -21,6 +21,7 @@ function setYourInfo(action,state){
         let yourInfo = state.registrationReviewList.yourInfo;
         let user = state.participantUsers.find(x => x.email === email);
         if(user != undefined){
+            yourInfo["userId"] = user.id;
             yourInfo["firstName"] = user.firstName;
             yourInfo["lastName"] = user.lastName;
             yourInfo["mobileNumber"] = user.mobileNumber;

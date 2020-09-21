@@ -16,7 +16,7 @@ let registrationObjTemp = {
 	"mobileNumber": null,
 	"email": null,
 	"participantPhoto": null,
-	"profileUrl": null,
+	"photoUrl": null,
 	"street1": null,
 	"street2": null,
 	"suburb": null,
@@ -238,7 +238,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.lastName = selectedUser.lastName;
 			registrationObj.email = selectedUser.email;
 			registrationObj.genderRefId = selectedUser.genderRefId;
-			registrationObj.profileUrl = selectedUser.photoUrl;
+			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			if(selectedUser.street1 && selectedUser.suburb && selectedUser.postalCode){

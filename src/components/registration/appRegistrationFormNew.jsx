@@ -211,6 +211,9 @@ class AppRegistrationFormNew extends Component{
             if(registrationObj.addNewAddressFlag){
                 this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
             }
+            if(registrationObj.manualEnterAddressFlag){
+                this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
+            }
             {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
                 this.props.form.setFieldsValue({
                     [`parentFirstName${pIndex}`]: parent.firstName,
@@ -344,8 +347,8 @@ class AppRegistrationFormNew extends Component{
     setImage = (data,key) => {
         if(data.files[0] !== undefined){
             if(key == "participantPhoto"){
-                let profileUrl = URL.createObjectURL(data.files[0]);
-                this.props.updateUserRegistrationObjectAction(profileUrl, "profileUrl");
+                let photoUrl = URL.createObjectURL(data.files[0]);
+                this.props.updateUserRegistrationObjectAction(photoUrl, "photoUrl");
                 let particpantPhoto = data.files[0];
                 this.props.updateUserRegistrationObjectAction(particpantPhoto, "participantPhoto");
             }
@@ -385,7 +388,7 @@ class AppRegistrationFormNew extends Component{
     addParent = (key,parentIndex) => {
         try{
             const { registrationObj } = this.props.userRegistrationState;
-            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2) ? true : false;
+            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             if(key == "add"){
                 let parentObj = this.getParentObj();
                 parentObj.selectAddressFlag = newUser ? false : true;
@@ -622,7 +625,7 @@ class AppRegistrationFormNew extends Component{
             //console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
-                    if(registrationObj.profileUrl == null){
+                    if(registrationObj.photoUrl == null){
                         message.error(ValidationConstants.userPhotoIsRequired);
                         return;
                     }
@@ -792,7 +795,7 @@ class AppRegistrationFormNew extends Component{
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
         const { stateList,countryList } = this.props.commonReducerState;
-        let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2) ? true : false;
+        let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         return(
             <div>
                 {registrationObj.selectAddressFlag && (
@@ -1097,9 +1100,9 @@ class AppRegistrationFormNew extends Component{
                 </div>
 
                 <InputWithHead heading={AppConstants.photo}/>
-                {registrationObj.profileUrl ? 
+                {registrationObj.photoUrl ? 
                     <img
-                        src={registrationObj.profileUrl}
+                        src={registrationObj.photoUrl}
                         alt=""
                         height="80"
                         width="80"
@@ -1129,7 +1132,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             const { stateList,countryList } = this.props.commonReducerState;
             
-            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2) ? true : false;
+            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             return(
                 <div>
                     {parent.selectAddressFlag && (
@@ -1472,7 +1475,7 @@ class AppRegistrationFormNew extends Component{
                         height="80px"
                         width="80px"
                         style={{borderRadius: "50%"}} 
-                        src={registrationObj.profileUrl != null && registrationObj.profileUrl}/> 
+                        src={registrationObj.photoUrl != null && registrationObj.photoUrl}/> 
                     </div>
                     <div className="col">
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
