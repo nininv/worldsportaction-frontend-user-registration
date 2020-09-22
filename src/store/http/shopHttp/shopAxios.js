@@ -40,6 +40,10 @@ let AxiosApi = {
     getRegistrationShopProducts(payload){
         var url = `/api/registration/products`;
         return Method.dataPost(url, token, payload);
+    },
+    getRegistrationShopPickupAddress(payload){
+        var url = `/api/registration/pickupaddress`;
+        return Method.dataPost(url, token, payload);
     }
 
 };

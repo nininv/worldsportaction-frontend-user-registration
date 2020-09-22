@@ -86,6 +86,24 @@ function getRegParticipantUsersAction(payload){
     return action;
 }
 
+function getRegParticipantAddressAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function getRegistrationShopPickupAddressAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
 
 
 export{
@@ -97,5 +115,7 @@ export{
     getTermsAndConditionsAction,
     getRegistrationByIdAction,
     getRegistrationShopProductAction,
-    getRegParticipantUsersAction
+    getRegParticipantUsersAction,
+    getRegParticipantAddressAction,
+    getRegistrationShopPickupAddressAction
 }

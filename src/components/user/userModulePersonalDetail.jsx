@@ -1220,16 +1220,16 @@ class UserModulePersonalDetail extends Component {
         let primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
         let childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
         let countryName = "";
-        let nationalityName = "";
-        let languages = "";
+        //let nationalityName = "";
+        //let languages = "";
         let userRegId = null;
 		let childrenCheckNumber = "";
         let childrenCheckExpiryDate = "";						 
 
         if (personalByCompData != null && personalByCompData.length > 0) {
             countryName = personalByCompData[0].countryName;
-            nationalityName = personalByCompData[0].nationalityName;
-            languages = personalByCompData[0].languages;
+            // nationalityName = personalByCompData[0].nationalityName;
+            // languages = personalByCompData[0].languages;
             userRegId = personalByCompData[0].userRegistrationId;
             childrenCheckNumber = personalByCompData[0].childrenCheckNumber;
             childrenCheckExpiryDate = personalByCompData[0].childrenCheckExpiryDate;																					
@@ -1306,14 +1306,14 @@ class UserModulePersonalDetail extends Component {
                                     <div className="year-select-heading other-info-label" >{AppConstants.countryOfBirth}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{countryName}</div>
                                 </div>
-                                <div className="other-info-row">
+                                {/* <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.nationalityReference}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{nationalityName}</div>
                                 </div>
                                 <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.childLangSpoken}</div>
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
-                                </div>
+                                </div> */}
                             </div>}
                                <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>

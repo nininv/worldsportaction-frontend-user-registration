@@ -24,7 +24,8 @@ import { NavLink } from "react-router-dom";
 import ValidationConstants from "../../themes/validationConstant";
 import {isArrayNotEmpty} from '../../util/helpers';
 import {getRegistrationByIdAction, deleteRegistrationProductAction, updateReviewInfoAction,
-    saveRegistrationReview } from 
+    saveRegistrationReview, getRegistrationShopPickupAddressAction, getRegParticipantAddressAction
+ } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
@@ -69,6 +70,8 @@ class RegistrationShipping extends Component {
         }
         console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
+        this.props.getRegistrationShopPickupAddressAction(payload);
+        this.props.getRegParticipantAddressAction(payload);
     }
 
     goToShop = () =>{
@@ -358,7 +361,9 @@ function mapDispatchToProps(dispatch)
         getRegistrationByIdAction,
         deleteRegistrationProductAction,
         updateReviewInfoAction,
-        saveRegistrationReview 	 
+        saveRegistrationReview,
+        getRegParticipantAddressAction,
+        getRegistrationShopPickupAddressAction
     }, dispatch);
 
 }

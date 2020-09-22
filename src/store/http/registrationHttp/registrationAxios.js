@@ -197,6 +197,10 @@ let AxiosApi = {
         var url = `/api/registration/participant/users?registrationId=${payload.registrationId}`;
         return Method.dataGet(url, token);
     },
+    getRegParticipantAddress(payload) {
+        var url = `/api/registration/participant/address?registrationId=${payload.registrationId}`;
+        return Method.dataGet(url, token);
+    },
 };
 
 const Method = {
