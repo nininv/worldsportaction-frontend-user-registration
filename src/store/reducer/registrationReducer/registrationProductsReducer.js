@@ -14,7 +14,8 @@ const initialState = {
     shopProductsTypes: [],
     participantUsers: [],
     participantAddresses: [],
-    shopPickupAddresses: []
+    shopPickupAddresses: [],
+    pickupAddressLoad: false
 }
 
 function setYourInfo(action,state){
@@ -148,6 +149,16 @@ function registrationProductsReducer(state = initialState, action){
                 }else{
                     reviewData[action.subKey][action.key] = action.value
                 }   
+            }else if(action.subKey == "shippingOptions"){
+                let organisationId = action.value;
+                reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
+                let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
+                if(action.key == "add"){
+                   reviewData.shippingOptions.push(pickupAddress);
+                }else if(action.key == "remove"){
+                    let index = state.shopPickupAddresses.indexOf(pickupAddress);
+                    reviewData.shippingOptions.splice(index,1);
+                }
             }
             return {
                 ...state,
@@ -244,13 +255,13 @@ function registrationProductsReducer(state = initialState, action){
                 };
 
             case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD:
-                return { ...state, onLoad: true };
+                return { ...state, pickupAddressLoad: true };
         
             case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_SUCCESS:
                 let shopPickupAddresses = action.result;
                 return {
                     ...state,
-                    onLoad: false,
+                    pickupAddressLoad: false,
                     status: action.status,
                     shopPickupAddresses: shopPickupAddresses
                 };

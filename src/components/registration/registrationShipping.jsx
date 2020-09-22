@@ -22,7 +22,7 @@ import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import ValidationConstants from "../../themes/validationConstant";
-import {isArrayNotEmpty} from '../../util/helpers';
+import {isArrayNotEmpty,deepCopyFunction} from '../../util/helpers';
 import {getRegistrationByIdAction, deleteRegistrationProductAction, updateReviewInfoAction,
     saveRegistrationReview, getRegistrationShopPickupAddressAction, getRegParticipantAddressAction
  } from 
@@ -30,6 +30,10 @@ import {getRegistrationByIdAction, deleteRegistrationProductAction, updateReview
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
+import { 
+    getCommonRefData,
+    countryReferenceAction
+} from '../../store/actions/commonAction/commonAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -45,8 +49,12 @@ class RegistrationShipping extends Component {
             registrationUniqueKey: null, 
             productModalVisible: false ,
             id: null,
-            loading: false                    
+            loading: false ,
+            apiOnLoad: false ,
+            shippingOptions: null                  
         };
+        this.props.getCommonRefData();
+        this.props.countryReferenceAction();
     }
 
     componentDidMount(){
@@ -62,6 +70,11 @@ class RegistrationShipping extends Component {
                 this.goToRegistrationPayments();
             }
         }
+        if(registrationProductState.onRegReviewLoad == false && 
+            registrationProductState.pickupAddressLoad == false && this.state.apiOnLoad){
+            this.setShippingOptions();
+            this.setState({apiOnLoad: false});
+        }
     }  
 
     getApiInfo = (registrationUniqueKey) => {
@@ -72,6 +85,19 @@ class RegistrationShipping extends Component {
         this.props.getRegistrationByIdAction(payload);
         this.props.getRegistrationShopPickupAddressAction(payload);
         this.props.getRegParticipantAddressAction(payload);
+        this.setState({apiOnLoad: true});
+    }
+
+    setShippingOptions = () => {
+        try{
+            const { registrationReviewList,shopPickupAddresses } = this.props.registrationProductState;
+            let shopProducts = registrationReviewList != null ? isArrayNotEmpty(registrationReviewList.shopProducts) ?
+                                                                deepCopyFunction(registrationReviewList.shopProducts) : [] : [];
+            let filteredShippingProductsAddresses = shopPickupAddresses.filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
+            this.setState({shippingOptions: filteredShippingProductsAddresses})
+        }catch(ex){
+            console.log("Error in setShippingOptions"+ex);
+        }
     }
 
     goToShop = () =>{
@@ -114,6 +140,68 @@ class RegistrationShipping extends Component {
         this.props.updateReviewInfoAction(null,key, index, subKey,null);
     }
 
+    getAddress = (addressObject) => {
+        try{
+            if(addressObject){
+                const { stateList,countryList } = this.props.commonReducerState;
+                const state = stateList.length > 0 && addressObject.stateRefId > 0
+                    ? stateList.find((state) => state.id === addressObject.stateRefId).name
+                    : null;
+                const country = countryList.length > 0 && addressObject.countryRefId > 0
+                ? countryList.find((country) => country.id === addressObject.countryRefId).name
+                : null;
+    
+                let defaultAddress = '';
+                if(addressObject.street1 && addressObject.suburb && state){
+                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                    (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                    (state ? state + ', ': '') +
+                    (country ? country + '.': '');
+                }
+                return defaultAddress;
+            }
+        }catch(ex){
+            console.log("Error in getAddress"+ex);
+        }
+    }
+
+    getShippingOptionValue = (organisationId) => {
+        try{
+            const { registrationReviewList } = this.props.registrationProductState;
+            let value;
+            if(registrationReviewList.shippingOptions){
+                let shippingOption = registrationReviewList.shippingOptions.find(x => x.organisationId == organisationId);
+                if(shippingOption != undefined){
+                    value = 1;
+                }else{
+                    value = 2;
+                }
+            }else{
+                value = 2;
+            }
+            return value;
+        }catch(ex){
+            console.log("Error in getShippingOptionValue"+ex);
+        }
+    }
+
+    onChangeSetShippingOptions = (value,index) => {
+        try{
+            let shippingOptions = [...this.state.shippingOptions];
+            shippingOptions[index]["pickupOrDelivery"] = value;
+            this.setState({shippingOptions: shippingOptions});
+            console.log(shippingOptions[index].organisationId)
+            if(value == 1){
+                this.props.updateReviewInfoAction(shippingOptions[index].organisationId,"add", null, "shippingOptions",null);
+            }else{
+                this.props.updateReviewInfoAction(shippingOptions[index].organisationId,"remove", null, "shippingOptions",null);
+            }
+        }catch(ex){
+            console.log("Error in onChangeSetShippingOptions"+ex);
+        }
+    }
+
 
     saveBilling = (e) =>{
         e.preventDefault();
@@ -133,41 +221,56 @@ class RegistrationShipping extends Component {
 
     shippingOption = () =>{
         return(
-            <div  className="outline-style product-left-view" style={{marginRight:0}}>
+            <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.shippingOptions}</div>
-                <div className="subtitle-text-common">{AppConstants.netballQueenslandMerchandise}</div>
-                <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">                           
-                        <Radio  value={1}>{AppConstants.Pickup}</Radio>
-                        <Radio  value={2}>{AppConstants.Delivery}</Radio>
-                    </Radio.Group>
-                </div>      
-                <div className="subtitle-text-common" style={{marginTop : 25}}>{AppConstants.biloelaAssociationMerchandise}</div>
-                <div style={{marginTop:6}}>
-                    <Radio.Group className="product-radio-group">                           
-                        <Radio  value={1}>{AppConstants.Pickup}</Radio>
-                        <Radio  value={2}>{AppConstants.Delivery}</Radio>
-                    </Radio.Group>
-                </div>     
-                       
+                {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
+                    <div>
+                        <div className="subtitle-text-common">{item.organisationName}</div>
+                        <div style={{marginTop:6}}>
+                            <Radio.Group className="product-radio-group"
+                            onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
+                            value={this.getShippingOptionValue(item.organisationId)}>                           
+                                <Radio value={1}>{AppConstants.Pickup}</Radio>
+                                <Radio value={2}>{AppConstants.Delivery}</Radio>
+                            </Radio.Group>
+                        </div>  
+                        {item.pickupOrDelivery == 1 && (
+                            <div style={{
+                                background: "var(--app-fdfdfe)",
+                                border: "1px solid var(--app-f0f0f2)",
+                                borderRadius: "10px",
+                                padding: "15px",
+                                marginTop: "10px"
+                            }}>
+                                <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                <div style={{marginTop: "5px" }}>{item.address} {item.suburb} {item.postcode} {item.state}</div>
+                            </div>    
+                        )}
+                    </div>
+                ))}
             </div>
         );
 
     }
 
+
+
     deliveryAndBillingView = () =>{
+        const { registrationReviewList } = this.props.registrationProductState;
+        let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
+        let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
                 <div class="row">
                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-                        <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>100 George Street Sydney NSW 2000</div>                        
+                        <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>                        
                         <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                         <div className="body-text-common">{AppConstants.billingAddress}</div>
-                        <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>100 George Street Sydney NSW 2000</div>
+                        <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
                         <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
                     </div>  
                 </div>
@@ -363,14 +466,17 @@ function mapDispatchToProps(dispatch)
         updateReviewInfoAction,
         saveRegistrationReview,
         getRegParticipantAddressAction,
-        getRegistrationShopPickupAddressAction
+        getRegistrationShopPickupAddressAction,
+        getCommonRefData,
+        countryReferenceAction
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        registrationProductState: state.RegistrationProductState
+        registrationProductState: state.RegistrationProductState,
+        commonReducerState: state.CommonReducerState
     }
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(RegistrationShipping));

@@ -63,7 +63,7 @@ class RegistrationShop extends Component {
     componentDidUpdate(nextProps){
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
-            if(this.state.buttonPressed == "continue"){
+            if(this.state.buttonPressed == "shop"){
                 this.goToShipping();
             }
         }

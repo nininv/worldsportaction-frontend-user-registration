@@ -1073,7 +1073,8 @@ const AppConstants = {
  returnToSelectAddress: "Return to select address",
  yourDetails: "Your Details",
  selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
- addNewDetails: "Add new Details"
+ addNewDetails: "Add new Details",
+ pickupAddress: "Pickup Address"
 };
 
 export default AppConstants;
