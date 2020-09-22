@@ -192,7 +192,7 @@ class RegistrationShop extends Component {
         const {shopProductsTypes} = this.props.registrationProductState;
         let types = shopProductsTypes ? shopProductsTypes : [];
         return(
-            <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 , marginBottom: "37px",flexWrap: "wrap"}}>
+            <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
                 <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
                 <div style={{width:"230px",marginTop: "10px"}}>
                     <Select
@@ -218,18 +218,33 @@ class RegistrationShop extends Component {
     cardView = () =>{
         const {shopProductList} = this.props.registrationProductState;
         return(
-            <div style ={{ display: "flex" , flexWrap: "wrap"}}>
-                {(shopProductList || []).map((item, index)=>{
-                    return(
-                        <div class="shop-product-text card-header-text" style={{marginRight: 20}} onClick={(e)=>this.enableExpandView("show", item)}>
-                            <div style={{textAlign: "center" , height: "250px" , width: "188px"}}>
-                                <img style={{width:"100%"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+            // <div style ={{ display: "flex" , flexWrap: "wrap"}}>
+            //     {(shopProductList || []).map((item, index)=>{
+            //         return(
+            //             <div class="shop-product-text card-header-text" style={{marginRight: 20}} onClick={(e)=>this.enableExpandView("show", item)}>
+            //                 <div style={{textAlign: "center" , height: "250px" , width: "188px"}}>
+            //                     <img style={{width:"100%"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+            //                 </div>
+            //                 <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+            //                 <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
+            //             </div>
+            //         )
+            //     })}           
+            // </div>
+            <div className="row">
+                {(shopProductList || []).map((item, index)=> (
+                    <div className="col-sm-12 col-md-4 ">
+                        <div className="shop-product-text card-header-text"
+                        style={{height: "240px"}}
+                        onClick={(e)=>this.enableExpandView("show", item)}>
+                            <div style={{display: "flex",justifyContent: "center"}}>
+                                <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
                             <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
                             <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
                         </div>
-                    )
-                })}           
+                    </div>
+                ))}
             </div>
         )
     } 
