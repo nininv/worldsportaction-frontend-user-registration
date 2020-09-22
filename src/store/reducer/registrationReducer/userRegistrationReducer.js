@@ -256,6 +256,7 @@ function getUserUpdatedRegistrationObj(state,action){
 				for(let parent of selectedUser.parentOrGuardian){
 					let parentObj = {
 						"tempParentId": i,
+						"userId": parent.userId,
 						"firstName": parent.firstName,
 						"lastName": parent.lastName,
 						"mobileNumber": parent.mobileNumber,
@@ -279,7 +280,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId;
 			registrationObj.additionalInfo.injuryInfo = selectedUser.additionalInfo.injuryInfo;
 			registrationObj.additionalInfo.allergyInfo = selectedUser.additionalInfo.allergyInfo;
-			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo;
+			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo ? selectedUser.additionalInfo.otherSportsInfo : [];
 			registrationObj.additionalInfo.existingMedicalCondition = selectedUser.additionalInfo.existingMedicalCondition;
 			registrationObj.additionalInfo.regularMedication = selectedUser.additionalInfo.regularMedication;
 			registrationObj.additionalInfo.heardByRefId = selectedUser.additionalInfo.heardByRefId;
@@ -537,9 +538,9 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
-function setParticipantAddressBySelect(state,userId,key){
+function setParticipantAddressBySelect(state,userId){
 	try{
-		if(key == "addAddressBySelect"){
+		if(userId){
 			let userInfoList = deepCopyFunction(state.userInfo);
 			let userInfo = userInfoList.find(x => x.id == userId);
 			state.registrationObj.street1 = userInfo.street1;
@@ -548,7 +549,7 @@ function setParticipantAddressBySelect(state,userId,key){
 			state.registrationObj.suburb = userInfo.suburb;
 			state.registrationObj.stateRefId = userInfo.stateRefId;
 			state.registrationObj.countryRefId = userInfo.countryRefId;
-		}else if(key == "removeAddressBySelect"){
+		}else{
 			state.registrationObj.street1 = null;
 			state.registrationObj.street2 = null;
 			state.registrationObj.postalCode = null;
@@ -594,10 +595,8 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
-			}else if(key == "addAddressBySelect"){
-				setParticipantAddressBySelect(state,value,key)
-			}else if(key == "removeAddressBySelect"){
-				setParticipantAddressBySelect(state,value,key)
+			}else if(key == "addOrRemoveAddressBySelect"){
+				setParticipantAddressBySelect(state,value)
 			}else{
 				state.registrationObj[key] = value;
 			}

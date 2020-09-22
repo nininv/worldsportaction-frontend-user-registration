@@ -65,6 +65,7 @@ import Loader from '../../customComponents/loader';
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
+import { isEmptyArray } from "formik";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -390,7 +391,15 @@ class AppRegistrationFormNew extends Component{
     }
 
     onChangeSetParticipantValue = (value,key) => {
-        this.props.updateUserRegistrationObjectAction(value,key)
+        const { registrationObj } = this.props.userRegistrationState;
+        this.props.updateUserRegistrationObjectAction(value,key);
+        if(key == "dateOfBirth" || key == "referParentEmail"){
+            setTimeout(() => {
+                this.props.form.setFieldsValue({
+                    [`participantEmail`]: registrationObj.email ? registrationObj.email : null
+                });
+            });
+        }
     }
 
     addParent = (key,parentIndex) => {
@@ -426,31 +435,36 @@ class AppRegistrationFormNew extends Component{
                     registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = registrationObj.countryRefId;
                     registrationObj.parentOrGuardian[parentIndex]["postalCode"] = registrationObj.postalCode;
                 }else{
-                    registrationObj.parentOrGuardian[parentIndex]["street1"] = null;
-                    registrationObj.parentOrGuardian[parentIndex]["street2"] = null;
-                    registrationObj.parentOrGuardian[parentIndex]["suburb"] = null;
-                    registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = null;
-                    registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = null;
-                    registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
+                    this.clearParentAddress(registrationObj,parentIndex);
+                }
+            }else if(key == "addOrRemoveAddressBySelect"){
+                if(value){
+                    let userInfoList = deepCopyFunction(this.props.userRegistrationState.userInfo);
+                    let userInfo = userInfoList.find(x => x.id == registrationObj.userId);
+                    let parentInfo = userInfo.parentOrGuardian.find(x => x.userId == value);
+                    registrationObj.parentOrGuardian[parentIndex]["street1"] = parentInfo.street1;
+                    registrationObj.parentOrGuardian[parentIndex]["street2"] = parentInfo.street2;
+                    registrationObj.parentOrGuardian[parentIndex]["postalCode"] = parentInfo.postalCode;
+                    registrationObj.parentOrGuardian[parentIndex]["suburb"] = parentInfo.suburb;
+                    registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = parentInfo.stateRefId;
+                    registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = parentInfo.countryRefId;
+                }else{
+                   this.clearParentAddress(registrationObj,parentIndex);
                 }
             }
-            // else if(key == "addAddressBySelect"){
-            //     if(value){
-            //         let userInfoList = deepCopyFunction(this.props.userRegistrationState.userInfo);
-            //         let userInfo = userInfoList.find(x => x.id == value);
-            //         registrationObj.parentOrGuardian[parentIndex]["street1"] = userInfo.street1;
-            //         registrationObj.parentOrGuardian[parentIndex]["street2"] = userInfo.street2;
-            //         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = userInfo.postalCode;
-            //         registrationObj.parentOrGuardian[parentIndex]["suburb"] = userInfo.suburb;
-            //         registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = userInfo.suburb;
-            //         registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = userInfo.countryRefId;
-            //     }
-            // }
             this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
         }catch(ex){
             console.log("Exception occured in onChangeSetParentValue"+ex);
         }
+    }
 
+    clearParentAddress = (registrationObj,parentIndex) => {
+        registrationObj.parentOrGuardian[parentIndex]["street1"] = null;
+        registrationObj.parentOrGuardian[parentIndex]["street2"] = null;
+        registrationObj.parentOrGuardian[parentIndex]["suburb"] = null;
+        registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = null;
+        registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = null;
+        registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
     }
 
     handlePlacesAutocomplete = (addressData,key,parentGuardianIndex) => {
@@ -642,26 +656,25 @@ class AppRegistrationFormNew extends Component{
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
 
-    checkProductEitherAddOrNot = () => {
+    productValidation = () => {
         try{
             const { registrationObj } = this.props.userRegistrationState;
             let competitions = registrationObj.competitions;
-            let check;
+            let check = true;
             for(let competition of competitions){
-                if(competition.products.length > 0){
+                if(isArrayNotEmpty(competition.products)){
                     for(let product of competition.products){
                         if(product.isPlayer == 1){
-                            let division = competitions.divisions.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId);
-                            if(division != undefined){
-                                check = true;
-                            }else{
+                            let divisionsTemp = competition.divisions.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId);
+                            if(divisionsTemp == undefined){
                                 check = false;
+                                break;
                             }
                         }
                     }
                 }else{
                     check = false;
-                }
+                } 
             }
             return check;
         }catch(ex){
@@ -692,11 +705,11 @@ class AppRegistrationFormNew extends Component{
                             message.error(ValidationConstants.competitionField);
                             return;
                         }else{
-                            // let productAdded = this.checkProductEitherAddOrNot();
-                            // if(!productAdded){
-                            //     message.error(ValidationConstants.fillMembershipProductInformation);
-                            //     return;
-                            // }
+                            let productAdded = this.productValidation();
+                            if(!productAdded){
+                                message.error(ValidationConstants.fillMembershipProductInformation);
+                                return;
+                            }
                         }
                     }
                     if(this.state.currentStep != 2){
@@ -866,7 +879,7 @@ class AppRegistrationFormNew extends Component{
                             <Select
                                 style={{ width: "100%" }}
                                 placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetParticipantValue(e, "addAddressBySelect")}
+                                onChange={(e) => this.onChangeSetParticipantValue(e, "addOrRemoveAddressBySelect")}
                                 setFieldsValue={registrationObj.stateRefId}>
                                 {userInfo.length > 0 && userInfo.map((item) => (
                                     <Option key={item.id} value={item.id}> {this.getAddress(item)}</Option>
@@ -878,7 +891,7 @@ class AppRegistrationFormNew extends Component{
                         onClick={() => {
                             this.onChangeSetParticipantValue(true,"addNewAddressFlag")
                             this.onChangeSetParticipantValue(false,"selectAddressFlag");
-                            this.onChangeSetParticipantValue(null,"removeAddressBySelect");
+                            this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
                         }}
                         >+ {AppConstants.addNewAddress}</div>	
                     </div>
@@ -1201,10 +1214,10 @@ class AppRegistrationFormNew extends Component{
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
-                                    onChange={(e) => this.onChangeSetParentValue(e, "addAddressBySelect",parentIndex)}
+                                    onChange={(e) => this.onChangeSetParentValue(e, "addOrRemoveAddressBySelect",parentIndex)}
                                     setFieldsValue={registrationObj.stateRefId}>
-                                    {userInfo.length > 0 && userInfo.map((item) => (
-                                        <Option key={item.id} value={item.id}> {this.getAddress(item)}</Option>
+                                    {userInfo.parentOrGuardian && userInfo.parentOrGuardian.length > 0 && userInfo.parentOrGuardian.map((item) => (
+                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
                                     ))}
                                 </Select>
                                 )}
@@ -1213,6 +1226,7 @@ class AppRegistrationFormNew extends Component{
                             onClick={() => {
                                 this.onChangeSetParentValue(true,"addNewAddressFlag",parentIndex)
                                 this.onChangeSetParentValue(false,"selectAddressFlag",parentIndex);
+                                this.onChangeSetParentValue(null, "addOrRemoveAddressBySelect",parentIndex)
                             }}
                             >+ {AppConstants.addNewAddress}</div>	
                         </div>
