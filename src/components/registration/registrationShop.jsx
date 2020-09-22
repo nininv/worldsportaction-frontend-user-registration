@@ -101,6 +101,10 @@ class RegistrationShop extends Component {
         history.push({pathname: '/registrationShipping', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
+    goToRegistrationPayments = () =>{
+        history.push({pathname: '/registrationPayment', state: {registrationId: this.state.registrationUniqueKey}})
+    }
+
     goToRegistrationProducts = () =>{
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
     }
@@ -145,7 +149,8 @@ class RegistrationShop extends Component {
             quantity: this.state.quantity,
             amount: variantOption ? (variantOption.price * this.state.quantity) : 0,
             tax: expandObj.tax,
-            totalAmt: 0
+            totalAmt: 0,
+            organisationId: expandObj.organisationId
         }
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateReviewInfoAction(obj,key, null, subKey,null);
@@ -164,9 +169,15 @@ class RegistrationShop extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if(!err){
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
-                registrationReview["registrationId"] = this.state.registrationUniqueKey;
-                registrationReview["key"] = "continue";
-                this.callSaveRegistrationProducts("continue", registrationReview);
+                if(isArrayNotEmpty(registrationReview.shopProducts)){
+                    registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                    registrationReview["key"] = "shop";
+                    this.callSaveRegistrationProducts("shop", registrationReview);
+                }
+                else{
+                    this.goToRegistrationPayments();
+                }
+               
             }
         });
     }
