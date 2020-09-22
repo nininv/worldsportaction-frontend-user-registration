@@ -12,7 +12,9 @@ const initialState = {
     shopProductsTotalCount: 1,
     shopProductsPage: 1,
     shopProductsTypes: [],
-    participantUsers: []
+    participantUsers: [],
+    participantAddresses: [],
+    shopPickupAddresses: []
 }
 
 function setYourInfo(action,state){
@@ -227,6 +229,30 @@ function registrationProductsReducer(state = initialState, action){
                     onLoad: false,
                     status: action.status,
                     participantUsers: participantUsers
+                };
+
+            case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD:
+                return { ...state, onLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_SUCCESS:
+                let participantAddresses = action.result;
+                return {
+                    ...state,
+                    onLoad: false,
+                    status: action.status,
+                    participantAddresses: participantAddresses
+                };
+
+            case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD:
+                return { ...state, onLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_SUCCESS:
+                let shopPickupAddresses = action.result;
+                return {
+                    ...state,
+                    onLoad: false,
+                    status: action.status,
+                    shopPickupAddresses: shopPickupAddresses
                 };
     
         default:

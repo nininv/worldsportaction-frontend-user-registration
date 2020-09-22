@@ -179,3 +179,38 @@ export function* getRegParticipantUsersSaga(action) {
 }
 
 
+////// Get Registration Particants Address
+export function* getRegParticipantAddressSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getRegParticipantAddress, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+////// Get Registration Shop Pickup Address
+export function* getRegistrationShopPickupAddressSaga(action) {
+  try {
+    const result = yield call(ShopAxiosApi.getRegistrationShopPickupAddress, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
