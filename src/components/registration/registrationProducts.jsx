@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         // console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "20c061cc-6a1e-4fc5-af34-357460b16342";
+        //let registrationUniqueKey = "33630431-2c04-461b-a541-0769ece7a628";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -218,8 +218,8 @@ class RegistrationProducts extends Component {
         }
     }
 
-    redirect = (id) =>{
-        history.push({pathname: '/appRegistrationForm', state: {participantId: id}})
+    redirect = (participantId,registrationId) =>{
+        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
     }
 
     goToShop = () =>{
@@ -322,7 +322,8 @@ class RegistrationProducts extends Component {
             <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
                 <div>
-                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}>
+                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
+                    onClick={() => this.redirect(null,this.state.registrationUniqueKey)}>
                         + {AppConstants.addAnotherParticipant}
                     </div>
                 </div>
@@ -373,7 +374,7 @@ class RegistrationProducts extends Component {
                             liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
                         </div>
                     </div>
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>

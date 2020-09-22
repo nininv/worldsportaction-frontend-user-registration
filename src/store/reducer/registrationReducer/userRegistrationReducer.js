@@ -5,7 +5,7 @@ import moment from 'moment';
 
 let registrationObjTemp = {
     "registrationId": null,
-    "pariticipantId": null,
+    "participantId": null,
     "registeringYourself": null,
 	"userId": null,
 	"firstName": null,
@@ -256,6 +256,7 @@ function getUserUpdatedRegistrationObj(state,action){
 				for(let parent of selectedUser.parentOrGuardian){
 					let parentObj = {
 						"tempParentId": i,
+						"userId": parent.userId,
 						"firstName": parent.firstName,
 						"lastName": parent.lastName,
 						"mobileNumber": parent.mobileNumber,
@@ -276,10 +277,10 @@ function getUserUpdatedRegistrationObj(state,action){
 			}
 			registrationObj.registeringYourself = selectedUser.additionalInfo.registeringYourselfRefId == null ? 1 : selectedUser.additionalInfo.registeringYourselfRefId;
 			registrationObj.additionalInfo.countryRefId = selectedUser.additionalInfo.countryRefId;
-			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId
+			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId;
 			registrationObj.additionalInfo.injuryInfo = selectedUser.additionalInfo.injuryInfo;
 			registrationObj.additionalInfo.allergyInfo = selectedUser.additionalInfo.allergyInfo;
-			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo;
+			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo ? selectedUser.additionalInfo.otherSportsInfo : [];
 			registrationObj.additionalInfo.existingMedicalCondition = selectedUser.additionalInfo.existingMedicalCondition;
 			registrationObj.additionalInfo.regularMedication = selectedUser.additionalInfo.regularMedication;
 			registrationObj.additionalInfo.heardByRefId = selectedUser.additionalInfo.heardByRefId;
@@ -453,7 +454,6 @@ function updateUmpireCoachWalkingNetball(state){
 			x.products.find(y => y.membershipTypeName == "Coach")) ? 1 : 0;
 		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
 			x.products.find(y => y.membershipTypeName == "Walking Netball")) ? 1 : 0;
-		console.log("registration obj",state.registrationObj);
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
 	}
@@ -468,7 +468,7 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData){
 			let competitionInfo = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
 			competition.competitionInfo = competitionInfo;
 			for(let product of competition.products){
-				let membershipProduct = competition.competitionInfo.membershipProducts.find(x => x.competitionMembershipProductId == product.competitionMembershipProductId)
+				let membershipProduct = competition.competitionInfo.membershipProducts.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId)
 				if(membershipProduct != undefined){
 					membershipProduct.isChecked = true;
 				}
@@ -497,6 +497,7 @@ function checkByDateOfBirth(state,dateOfBirth){
 				membershipProduct.isChecked = false;
 			}
 		}
+		console.log(state.registrationObj);
 	}catch(ex){
 		console.log("Error in checkByDateOfBirth in userRegistrationReducer"+ex);
 	}
@@ -537,6 +538,30 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
+function setParticipantAddressBySelect(state,userId){
+	try{
+		if(userId){
+			let userInfoList = deepCopyFunction(state.userInfo);
+			let userInfo = userInfoList.find(x => x.id == userId);
+			state.registrationObj.street1 = userInfo.street1;
+			state.registrationObj.street2 = userInfo.street2;
+			state.registrationObj.postalCode = userInfo.postalCode;
+			state.registrationObj.suburb = userInfo.suburb;
+			state.registrationObj.stateRefId = userInfo.stateRefId;
+			state.registrationObj.countryRefId = userInfo.countryRefId;
+		}else{
+			state.registrationObj.street1 = null;
+			state.registrationObj.street2 = null;
+			state.registrationObj.postalCode = null;
+			state.registrationObj.suburb = null;
+			state.registrationObj.stateRefId = null;
+			state.registrationObj.countryRefId = null;
+		}
+	}catch(ex){
+		console.log("Error in setParticipantAddressBySelect"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -570,6 +595,8 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
+			}else if(key == "addOrRemoveAddressBySelect"){
+				setParticipantAddressBySelect(state,value)
 			}else{
 				state.registrationObj[key] = value;
 			}
