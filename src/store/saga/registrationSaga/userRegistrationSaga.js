@@ -51,7 +51,6 @@ export function* getParticipantDataById(action) {
       yield put({
         type: ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS,
         result: result.result.data,
-        participantId: action.participantKey,
         status: result.status
       });
     } else {

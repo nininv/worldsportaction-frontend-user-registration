@@ -86,7 +86,9 @@ class AppRegistrationFormNew extends Component{
             singleCompModalVisible: false,
             getMembershipLoad: false,
             getParticipantByIdLoad: false,
-            findAnotherCompetitionFlag: false
+            findAnotherCompetitionFlag: false,
+            registrationId: null,
+            participantId: null
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -108,7 +110,8 @@ class AppRegistrationFormNew extends Component{
         if(!registrationState.onMembershipLoad && this.state.getMembershipLoad){
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f"
+            //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f";
+            this.setState({participantId: participantId,registrationId: registrationId});
             if(participantId){
                 this.props.getParticipantInfoById(participantId);
                 this.setState({getParticipantByIdLoad: true})
@@ -241,7 +244,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             if(key == "addNewAddressFlag"){
                 this.props.form.setFieldsValue({
-                    [`participantAddressSearch`]: this.getPartcipantAddress(registrationObj)
+                    [`participantAddressSearch`]: this.getAddress(registrationObj)
                 });
             }else if(key == "manualEnterAddressFlag"){
                 this.props.form.setFieldsValue({
@@ -261,7 +264,7 @@ class AppRegistrationFormNew extends Component{
         try{
             if(key == "addNewAddressFlag"){
                 this.props.form.setFieldsValue({
-                    [`parentAddressSearch${pIndex}`]: this.getParentAddress(parent),
+                    [`parentAddressSearch${pIndex}`]: this.getAddress(parent),
                 });
             }else if(key == "manualEnterAddressFlag"){
                 console.log("country",parent.countryRefId);
@@ -278,53 +281,53 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
-    getPartcipantAddress = (registrationObj) => {
+    getAddress = (addressObject) => {
         try{
             const { stateList,countryList } = this.props.commonReducerState;
-            const state = stateList.length > 0 && registrationObj.stateRefId > 0
-                ? stateList.find((state) => state.id === registrationObj.stateRefId).name
+            const state = stateList.length > 0 && addressObject.stateRefId > 0
+                ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
-            const country = countryList.length > 0 && registrationObj.countryRefId > 0
-            ? countryList.find((country) => country.id === registrationObj.countryRefId).name
+            const country = countryList.length > 0 && addressObject.countryRefId > 0
+            ? countryList.find((country) => country.id === addressObject.countryRefId).name
             : null;
 
             let defaultAddress = '';
-            if(registrationObj.street1 && registrationObj.suburb && state){
-                defaultAddress = (registrationObj.street1 ? registrationObj.street1 + ',': '') + 
-                (registrationObj.suburb ? registrationObj.suburb + ',': '') +
-                (state ? state + ',': '') +
-                (registrationObj.postalCode ? registrationObj.postalCode + ',': '') + 
-                (country ? country + ',': '');
+            if(addressObject.street1 && addressObject.suburb && state){
+                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                (state ? state + ', ': '') +
+                (country ? country + '.': '');
             }
             return defaultAddress;
         }catch(ex){
-            console.log("Error in getPartcipantAddress"+ex);
+            console.log("Error in getPartcipantParentAddress"+ex);
         }
     }
 
-    getParentAddress = (parent) => {
-        try{
-            const { stateList,countryList } = this.props.commonReducerState;
-            const state = stateList.length > 0 && parent.stateRefId > 0
-                ? stateList.find((state) => state.id === parent.stateRefId).name
-                : null;
-            const country = countryList.length > 0 && parent.countryRefId > 0
-                ? countryList.find((country) => country.id === parent.countryRefId).name
-                : null;
+    // getParentAddress = (parent) => {
+    //     try{
+    //         const { stateList,countryList } = this.props.commonReducerState;
+    //         const state = stateList.length > 0 && parent.stateRefId > 0
+    //             ? stateList.find((state) => state.id === parent.stateRefId).name
+    //             : null;
+    //         const country = countryList.length > 0 && parent.countryRefId > 0
+    //             ? countryList.find((country) => country.id === parent.countryRefId).name
+    //             : null;
 
-            let defaultAddress = '';
-            if(parent.street1 && parent.suburb && state){
-                defaultAddress = (parent.street1 ? parent.street1 + ',': '') + 
-                (parent.suburb ? parent.suburb + ',': '') +
-                (state ? state + ',': '') +
-                (parent.postalCode ? parent.postalCode + ',': '') + 
-                (country ? country + ',': '');
-            }
-            return defaultAddress;
-        }catch(ex){
-            console.log("Error in getParentAddress"+ex);
-        }
-    }
+    //         let defaultAddress = '';
+    //         if(parent.street1 && parent.suburb && state){
+    //             defaultAddress = (parent.street1 ? parent.street1 + ', ': '') + 
+    //             (parent.suburb ? parent.suburb + ', ': '') +
+    //             (parent.postalCode ? parent.postalCode + ', ': '') + 
+    //             (state ? state + ', ': '') +
+    //             (country ? country + '.': '');
+    //         }
+    //         return defaultAddress;
+    //     }catch(ex){
+    //         console.log("Error in getParentAddress"+ex);
+    //     }
+    // }
 
     getUserInfo = () => {
         if(getUserId() != 0)
@@ -365,7 +368,8 @@ class AppRegistrationFormNew extends Component{
 
     getParentObj = () => {
         let parentObj = {
-			"tempParentId": null,
+            "tempParentId": null,
+            "userId": 0,
             "firstName": null,
             "middleName": null,
 			"lastName": null,
@@ -430,6 +434,18 @@ class AppRegistrationFormNew extends Component{
                     registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
                 }
             }
+            // else if(key == "addAddressBySelect"){
+            //     if(value){
+            //         let userInfoList = deepCopyFunction(this.props.userRegistrationState.userInfo);
+            //         let userInfo = userInfoList.find(x => x.id == value);
+            //         registrationObj.parentOrGuardian[parentIndex]["street1"] = userInfo.street1;
+            //         registrationObj.parentOrGuardian[parentIndex]["street2"] = userInfo.street2;
+            //         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = userInfo.postalCode;
+            //         registrationObj.parentOrGuardian[parentIndex]["suburb"] = userInfo.suburb;
+            //         registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = userInfo.suburb;
+            //         registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = userInfo.countryRefId;
+            //     }
+            // }
             this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
         }catch(ex){
             console.log("Exception occured in onChangeSetParentValue"+ex);
@@ -572,6 +588,8 @@ class AppRegistrationFormNew extends Component{
 
     getFilteredRegisrationObj = (registrationObj) => {
         registrationObj["existingUserId"] = getUserId() ? Number(getUserId()) : null;
+        registrationObj.participantId = this.state.participantId != null ? this.state.participantId : null;
+        registrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null; 
         registrationObj.userId = registrationObj.userId == -1 || registrationObj.userId == -2 ? null : registrationObj.userId;
         let competitions = registrationObj.competitions;
         for(let competition of competitions){
@@ -617,6 +635,10 @@ class AppRegistrationFormNew extends Component{
     }
 
     selectAnotherParticipant = () => {
+        let empty = [];
+        this.setState({enabledSteps: empty,
+            completedSteps: empty,
+            currentStep: 0});
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
 
@@ -827,6 +849,7 @@ class AppRegistrationFormNew extends Component{
     participantAddressView = (getFieldDecorator) => {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
+        let userInfo = userRegistrationstate.userInfo;
         const { stateList,countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         return(
@@ -843,11 +866,11 @@ class AppRegistrationFormNew extends Component{
                             <Select
                                 style={{ width: "100%" }}
                                 placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetParticipantValue(e, "stateRefId")}
+                                onChange={(e) => this.onChangeSetParticipantValue(e, "addAddressBySelect")}
                                 setFieldsValue={registrationObj.stateRefId}>
-                                {/* {stateList.length > 0 && stateList.map((item) => (
-                                    < Option key={item.id} value={item.id}> {item.name}</Option>
-                                ))} */}
+                                {userInfo.length > 0 && userInfo.map((item) => (
+                                    <Option key={item.id} value={item.id}> {this.getAddress(item)}</Option>
+                                ))}
                             </Select>
                             )}
                         </Form.Item> 
@@ -855,9 +878,7 @@ class AppRegistrationFormNew extends Component{
                         onClick={() => {
                             this.onChangeSetParticipantValue(true,"addNewAddressFlag")
                             this.onChangeSetParticipantValue(false,"selectAddressFlag");
-                            setTimeout(() => {
-                                this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
-                            },300);
+                            this.onChangeSetParticipantValue(null,"removeAddressBySelect");
                         }}
                         >+ {AppConstants.addNewAddress}</div>	
                     </div>
@@ -1164,7 +1185,7 @@ class AppRegistrationFormNew extends Component{
         try{
             const { registrationObj } = this.props.userRegistrationState;
             const { stateList,countryList } = this.props.commonReducerState;
-            
+            const { userInfo } = this.props.userRegistrationState;
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             return(
                 <div>
@@ -1180,11 +1201,11 @@ class AppRegistrationFormNew extends Component{
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
-                                    onChange={(e) => this.onChangeSetParentValue(e, "stateRefId")}
+                                    onChange={(e) => this.onChangeSetParentValue(e, "addAddressBySelect",parentIndex)}
                                     setFieldsValue={registrationObj.stateRefId}>
-                                    {/* {stateList.length > 0 && stateList.map((item) => (
-                                        < Option key={item.id} value={item.id}> {item.name}</Option>
-                                    ))} */}
+                                    {userInfo.length > 0 && userInfo.map((item) => (
+                                        <Option key={item.id} value={item.id}> {this.getAddress(item)}</Option>
+                                    ))}
                                 </Select>
                                 )}
                             </Form.Item> 
@@ -2192,10 +2213,10 @@ class AppRegistrationFormNew extends Component{
                                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"associationLevelInfo")} 
                                                         value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
-                                                        <Form.Item >
+                                                        {/* <Form.Item >
                                                             {getFieldDecorator(`accreditationUmpireExpiryDate`, {
                                                                 rules: [{ required: true}],
-                                                            })(
+                                                            })( */}
                                                                 <DatePicker
                                                                     size="large"
                                                                     placeholder={AppConstants.checkExpiryDate}
@@ -2203,18 +2224,19 @@ class AppRegistrationFormNew extends Component{
                                                                     onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
                                                                     format={"DD-MM-YYYY"}
                                                                     showTime={false}
-                                                                    name={'accreditationUmpireExpiryDate'}
+                                                                    value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
+                                                                    // name={'accreditationUmpireExpiryDate'}
                                                                 />
-                                                            )}
-                                                        </Form.Item>
+                                                            {/* )}
+                                                        </Form.Item> */}
                                                     </div>
                                                 )}
                                             </div>
                                         : 
-                                        <Form.Item >
-                                            {getFieldDecorator(`accreditationUmpireExpiryDate`, {
-                                                rules: [{ required: true}],
-                                            })(
+                                        // <Form.Item >
+                                        //     {getFieldDecorator(`accreditationUmpireExpiryDate`, {
+                                        //         rules: [{ required: true}],
+                                        //     })(
                                                 <DatePicker
                                                     size="large"
                                                     placeholder={AppConstants.checkExpiryDate}
@@ -2222,10 +2244,11 @@ class AppRegistrationFormNew extends Component{
                                                     onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
                                                     format={"DD-MM-YYYY"}
                                                     showTime={false}
-                                                    name={'accreditationUmpireExpiryDate'}
+                                                    value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
+                                                    // name={'accreditationUmpireExpiryDate'}
                                                 />
-                                            )}
-                                        </Form.Item>
+                                        //     )}
+                                        // </Form.Item>
                                         }
                                     </div> 
                                 )}
@@ -2254,10 +2277,10 @@ class AppRegistrationFormNew extends Component{
                                     ))}
                                 </Radio.Group>
                                 {(registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
-                                    <Form.Item >
-                                        {getFieldDecorator(`accreditationCoachExpiryDate`, {
-                                            rules: [{ required: true}],
-                                        })(
+                                    // <Form.Item >
+                                    //     {getFieldDecorator(`accreditationCoachExpiryDate`, {
+                                    //         rules: [{ required: true}],
+                                    //     })(
                                             <DatePicker
                                                 size="large"
                                                 placeholder={AppConstants.checkExpiryDate}
@@ -2265,10 +2288,11 @@ class AppRegistrationFormNew extends Component{
                                                 onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
                                                 format={"DD-MM-YYYY"}
                                                 showTime={false}
-                                                name={'accreditationCoachExpiryDate'}
+                                                value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
+                                                // name={'accreditationCoachExpiryDate'}
                                             />
-                                        )}
-                                    </Form.Item>
+                                    //     )}
+                                    // </Form.Item>
                                 )}
                             </div>
                         )}
@@ -2281,10 +2305,10 @@ class AppRegistrationFormNew extends Component{
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"childrenCheckNumber")} 
                                 value={registrationObj.additionalInfo.childrenCheckNumber}
                                 />
-                                <Form.Item >
+                                {/* <Form.Item >
                                     {getFieldDecorator(`childrenCheckExpiryDate`, {
                                         rules: [{ required: true}],
-                                    })(
+                                    })( */}
                                         <DatePicker
                                             size="large"
                                             placeholder={AppConstants.checkExpiryDate}
@@ -2292,10 +2316,11 @@ class AppRegistrationFormNew extends Component{
                                             onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
                                             format={"DD-MM-YYYY"}
                                             showTime={false}
-                                            name={'childrenCheckExpiryDate'}
+                                            value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                            // name={'childrenCheckExpiryDate'}
                                         />
-                                    )}
-                                </Form.Item>
+                                    {/* )}
+                                </Form.Item> */}
                             </div>
                         )}
 

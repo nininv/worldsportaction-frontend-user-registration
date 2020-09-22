@@ -5,7 +5,7 @@ import moment from 'moment';
 
 let registrationObjTemp = {
     "registrationId": null,
-    "pariticipantId": null,
+    "participantId": null,
     "registeringYourself": null,
 	"userId": null,
 	"firstName": null,
@@ -307,8 +307,6 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;
 		}else{
-			console.log("state.registrationId",state.registrationId)
-			registrationObj.registrationId = state.registrationId;
 			registrationObj.selectAddressFlag = false;
 			registrationObj.addNewAddressFlag = true;
 		}
@@ -460,7 +458,7 @@ function updateUmpireCoachWalkingNetball(state){
 	}
 }
 
-function updateParticipantByIdByMembershipInfo(state,partcipantData,participantId){
+function updateParticipantByIdByMembershipInfo(state,partcipantData){
 	try{
 		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
 		for(let competition of partcipantData.competitions){
@@ -469,14 +467,12 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData,participantI
 			let competitionInfo = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
 			competition.competitionInfo = competitionInfo;
 			for(let product of competition.products){
-				let membershipProduct = competition.competitionInfo.membershipProducts.find(x => x.competitionMembershipProductId == product.competitionMembershipProductId)
+				let membershipProduct = competition.competitionInfo.membershipProducts.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId)
 				if(membershipProduct != undefined){
 					membershipProduct.isChecked = true;
 				}
 			}
 		}
-		partcipantData.pariticipantId = participantId;
-		console.log("registration obj",partcipantData);
 		return partcipantData;
 	}catch(ex){
 		console.log("Error in updateParticipantByIdByMembershipInfo in userRegistrationReducer"+ex);
@@ -500,6 +496,7 @@ function checkByDateOfBirth(state,dateOfBirth){
 				membershipProduct.isChecked = false;
 			}
 		}
+		console.log(state.registrationObj);
 	}catch(ex){
 		console.log("Error in checkByDateOfBirth in userRegistrationReducer"+ex);
 	}
@@ -540,6 +537,30 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
+function setParticipantAddressBySelect(state,userId,key){
+	try{
+		if(key == "addAddressBySelect"){
+			let userInfoList = deepCopyFunction(state.userInfo);
+			let userInfo = userInfoList.find(x => x.id == userId);
+			state.registrationObj.street1 = userInfo.street1;
+			state.registrationObj.street2 = userInfo.street2;
+			state.registrationObj.postalCode = userInfo.postalCode;
+			state.registrationObj.suburb = userInfo.suburb;
+			state.registrationObj.stateRefId = userInfo.stateRefId;
+			state.registrationObj.countryRefId = userInfo.countryRefId;
+		}else if(key == "removeAddressBySelect"){
+			state.registrationObj.street1 = null;
+			state.registrationObj.street2 = null;
+			state.registrationObj.postalCode = null;
+			state.registrationObj.suburb = null;
+			state.registrationObj.stateRefId = null;
+			state.registrationObj.countryRefId = null;
+		}
+	}catch(ex){
+		console.log("Error in setParticipantAddressBySelect"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -573,6 +594,10 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
+			}else if(key == "addAddressBySelect"){
+				setParticipantAddressBySelect(state,value,key)
+			}else if(key == "removeAddressBySelect"){
+				setParticipantAddressBySelect(state,value,key)
 			}else{
 				state.registrationObj[key] = value;
 			}
@@ -585,12 +610,11 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
 			let participantData = action.result;
-			let participantId = action.participantId;
 			return {
 				...state,
 				onParticipantByIdLoad: false,
 				status: action.status,
-				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData,participantId)
+				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData)
 			};
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
