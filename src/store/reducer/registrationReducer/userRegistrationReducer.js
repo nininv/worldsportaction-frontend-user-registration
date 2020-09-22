@@ -276,7 +276,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			}
 			registrationObj.registeringYourself = selectedUser.additionalInfo.registeringYourselfRefId == null ? 1 : selectedUser.additionalInfo.registeringYourselfRefId;
 			registrationObj.additionalInfo.countryRefId = selectedUser.additionalInfo.countryRefId;
-			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId
+			registrationObj.additionalInfo.identifyRefId = selectedUser.additionalInfo.identifyRefId;
 			registrationObj.additionalInfo.injuryInfo = selectedUser.additionalInfo.injuryInfo;
 			registrationObj.additionalInfo.allergyInfo = selectedUser.additionalInfo.allergyInfo;
 			registrationObj.additionalInfo.otherSportsInfo = selectedUser.additionalInfo.otherSportsInfo;
@@ -307,6 +307,8 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;
 		}else{
+			console.log("state.registrationId",state.registrationId)
+			registrationObj.registrationId = state.registrationId;
 			registrationObj.selectAddressFlag = false;
 			registrationObj.addNewAddressFlag = true;
 		}
@@ -453,13 +455,12 @@ function updateUmpireCoachWalkingNetball(state){
 			x.products.find(y => y.membershipTypeName == "Coach")) ? 1 : 0;
 		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
 			x.products.find(y => y.membershipTypeName == "Walking Netball")) ? 1 : 0;
-		console.log("registration obj",state.registrationObj);
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
 	}
 }
 
-function updateParticipantByIdByMembershipInfo(state,partcipantData){
+function updateParticipantByIdByMembershipInfo(state,partcipantData,participantId){
 	try{
 		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
 		for(let competition of partcipantData.competitions){
@@ -474,6 +475,8 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData){
 				}
 			}
 		}
+		partcipantData.pariticipantId = participantId;
+		console.log("registration obj",partcipantData);
 		return partcipantData;
 	}catch(ex){
 		console.log("Error in updateParticipantByIdByMembershipInfo in userRegistrationReducer"+ex);
@@ -582,11 +585,12 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
 			let participantData = action.result;
+			let participantId = action.participantId;
 			return {
 				...state,
 				onParticipantByIdLoad: false,
 				status: action.status,
-				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData)
+				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData,participantId)
 			};
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:

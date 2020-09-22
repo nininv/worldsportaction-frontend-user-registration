@@ -107,12 +107,16 @@ class AppRegistrationFormNew extends Component{
         let registrationState = this.props.userRegistrationState;
         if(!registrationState.onMembershipLoad && this.state.getMembershipLoad){
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f"
             if(participantId){
                 this.props.getParticipantInfoById(participantId);
                 this.setState({getParticipantByIdLoad: true})
             }else{
-                this.selectAnotherParticipant();
+                if(registrationId){
+                    this.props.updateUserRegistrationStateVarAction("registrationId",registrationId);
+                    this.selectAnotherParticipant();
+                } 
             }
             this.setState({getMembershipLoad: false});
         }
@@ -219,7 +223,8 @@ class AppRegistrationFormNew extends Component{
                     [`parentFirstName${pIndex}`]: parent.firstName,
                     [`parentMiddleName${pIndex}`]: parent.middleName,
                     [`parentLastName${pIndex}`]: parent.lastName,
-                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber
+                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
+                    [`parentEmail${pIndex}`]: parent.email,
                 });
                 if(parent.addNewAddressFlag){
                     this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex);
@@ -261,7 +266,6 @@ class AppRegistrationFormNew extends Component{
             }else if(key == "manualEnterAddressFlag"){
                 console.log("country",parent.countryRefId);
                 this.props.form.setFieldsValue({
-                    [`parentEmail${pIndex}`]: parent.email,
                     [`parentStreet1${pIndex}`]: parent.street1,
                     [`parentSuburb${pIndex}`]: parent.suburb,
                     [`parentStateRefId${pIndex}`]: parent.stateRefId,
@@ -1896,7 +1900,7 @@ class AppRegistrationFormNew extends Component{
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
-                        setFieldsValue={registrationObj.additionalInfo.identifyRefId}
+                        value={registrationObj.additionalInfo.identifyRefId}
                         >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
