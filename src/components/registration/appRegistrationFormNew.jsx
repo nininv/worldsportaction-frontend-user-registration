@@ -177,7 +177,7 @@ class AppRegistrationFormNew extends Component{
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({getMembershipLoad: true});
-        if(getOrganisationId() != null && getCompetitonId != null){
+        if(getOrganisationId() != null && getCompetitonId() != null){
             this.setState({showAddAnotherCompetitionView: false,
             organisationId: getOrganisationId(),
             competitionId: getCompetitonId()})
@@ -305,30 +305,6 @@ class AppRegistrationFormNew extends Component{
             console.log("Error in getPartcipantParentAddress"+ex);
         }
     }
-
-    // getParentAddress = (parent) => {
-    //     try{
-    //         const { stateList,countryList } = this.props.commonReducerState;
-    //         const state = stateList.length > 0 && parent.stateRefId > 0
-    //             ? stateList.find((state) => state.id === parent.stateRefId).name
-    //             : null;
-    //         const country = countryList.length > 0 && parent.countryRefId > 0
-    //             ? countryList.find((country) => country.id === parent.countryRefId).name
-    //             : null;
-
-    //         let defaultAddress = '';
-    //         if(parent.street1 && parent.suburb && state){
-    //             defaultAddress = (parent.street1 ? parent.street1 + ', ': '') + 
-    //             (parent.suburb ? parent.suburb + ', ': '') +
-    //             (parent.postalCode ? parent.postalCode + ', ': '') + 
-    //             (state ? state + ', ': '') +
-    //             (country ? country + '.': '');
-    //         }
-    //         return defaultAddress;
-    //     }catch(ex){
-    //         console.log("Error in getParentAddress"+ex);
-    //     }
-    // }
 
     getUserInfo = () => {
         if(getUserId() != 0)
@@ -653,6 +629,14 @@ class AppRegistrationFormNew extends Component{
         this.setState({enabledSteps: empty,
             completedSteps: empty,
             currentStep: 0});
+        
+        //For retain competition in the url for a another participant
+        if(getOrganisationId() != null && getCompetitonId() != null){
+            this.setState({showAddAnotherCompetitionView: false,
+            organisationId: getOrganisationId(),
+            competitionId: getCompetitonId()})
+        }
+
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
 
@@ -808,7 +792,7 @@ class AppRegistrationFormNew extends Component{
                                 <img className="profile-img" src={user.photoUrl}/> 
                                 <div style={{width: "75%",paddingLeft: "15px"}}>
                                     <div>{user.firstName} {user.lastName}</div>
-                                    <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Male' : 'Female'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
+                                    <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Female' : 'Male'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
                                 </div>
                             </div>
                         </div>

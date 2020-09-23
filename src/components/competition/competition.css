@@ -447,6 +447,11 @@
   cursor: pointer;
 }
 
+.new-participant-button-inactive:hover{
+  border: 1px solid var(--app-color);
+  background-color: var(--app-fdf9f0);
+}
+
 .new-participant-button-active{
   margin-top: 20px;
   height: 110px;

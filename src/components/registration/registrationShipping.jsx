@@ -51,7 +51,10 @@ class RegistrationShipping extends Component {
             id: null,
             loading: false ,
             apiOnLoad: false ,
-            shippingOptions: null                  
+            shippingOptions: null,
+            useDiffDeliveryAddressFlag: false,
+            userDiffBillingAddressFlag: false,
+            deliveryOrBillingAddressSelected: false                  
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -75,6 +78,14 @@ class RegistrationShipping extends Component {
             this.setShippingOptions();
             this.setState({apiOnLoad: false});
         }
+        if(registrationProductState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
+            if(this.state.useDiffDeliveryAddressFlag){
+                this.setState({useDiffDeliveryAddressFlag: false});
+            }else if(this.state.useDiffBillingAddressFlag){
+                this.setState({useDiffBillingAddressFlag: false});
+            }
+            this.setState({deliveryOrBillingAddressSelected: false});
+        }
     }  
 
     getApiInfo = (registrationUniqueKey) => {
@@ -93,7 +104,10 @@ class RegistrationShipping extends Component {
             const { registrationReviewList,shopPickupAddresses } = this.props.registrationProductState;
             let shopProducts = registrationReviewList != null ? isArrayNotEmpty(registrationReviewList.shopProducts) ?
                                                                 deepCopyFunction(registrationReviewList.shopProducts) : [] : [];
-            let filteredShippingProductsAddresses = shopPickupAddresses.filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
+            let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
+            for(let address of filteredShippingProductsAddresses){
+                address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+            }
             this.setState({shippingOptions: filteredShippingProductsAddresses})
         }catch(ex){
             console.log("Error in setShippingOptions"+ex);
@@ -202,6 +216,28 @@ class RegistrationShipping extends Component {
         }
     }
 
+    addAddress = (index,subKey) => {
+        this.setState({deliveryOrBillingAddressSelected: true});
+        this.props.updateReviewInfoAction(null,null, index, subKey,null);
+    }
+
+    checkAnyDeliveryAddress = () => {
+        try{
+            if(isArrayNotEmpty(this.state.shippingOptions)){
+                let shippingOptions = [...this.state.shippingOptions];
+                console.log(shippingOptions);
+                let deliveryAddress = shippingOptions.find(x => x.pickupOrDelivery == 2);
+                if(deliveryAddress != undefined){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }catch(ex){
+            console.log("Error in checkAnyDeliveryAddress"+ex);
+        }
+    }
+
 
     saveBilling = (e) =>{
         e.preventDefault();
@@ -243,7 +279,7 @@ class RegistrationShipping extends Component {
                                 marginTop: "10px"
                             }}>
                                 <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
-                                <div style={{marginTop: "5px" }}>{item.address} {item.suburb} {item.postcode} {item.state}</div>
+                                <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
                             </div>    
                         )}
                     </div>
@@ -256,23 +292,77 @@ class RegistrationShipping extends Component {
 
 
     deliveryAndBillingView = () =>{
-        const { registrationReviewList } = this.props.registrationProductState;
+        const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
         let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
         let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
-                <div class="row">
-                    <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
+                {this.state.useDiffDeliveryAddressFlag && (
+                    <div style={{marginTop: "10px"}}>
                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-                        <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>                        
-                        <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
-                    </div>  
-                    <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-                        <div className="body-text-common">{AppConstants.billingAddress}</div>
-                        <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
-                        <div className="link-text-common">{AppConstants.useDifferentAddress}</div> 
-                    </div>  
+                        <div className="row">
+                            {participantAddresses != null && participantAddresses.map((item,index) => (
+                                <div className="col-sm-12 col-md-6" 
+                                onClick={() => this.addAddress(index,"deliveryAddress")}>
+                                    <div className="address-border-box">
+                                        <div className="headline-text-common" 
+                                        style={{fontSize:21}}>{this.getAddress(item)}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{marginTop: "10px"}}>
+                            <span className="link-text-common"
+                            onClick={() => this.setState({useDiffDeliveryAddressFlag: false})}>
+                                {AppConstants.cancel}
+                            </span>
+                        </div>
+                    </div>
+                )}
+                 {this.state.useDiffBillingAddressFlag && (
+                    <div style={{marginTop: "10px"}}>
+                        <div className="body-text-common">{AppConstants.billingAddress}</div>  
+                        <div className="row">
+                            {participantAddresses != null && participantAddresses.map((item,index) => (
+                                <div className="col-sm-12 col-md-6" 
+                                onClick={() => this.addAddress(index,"billingAddress")}>
+                                    <div className="address-border-box">
+                                        <div className="headline-text-common" 
+                                        style={{fontSize:21}}>{this.getAddress(item)}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{marginTop: "10px"}}>
+                            <span className="link-text-common"
+                            onClick={() => this.setState({useDiffBillingAddressFlag: false})}>
+                                {AppConstants.cancel}
+                            </span>
+                        </div>
+                    </div>
+                )}
+                <div class="row">
+                    {!this.state.useDiffDeliveryAddressFlag && (
+                        <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
+                            <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+                            <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>                        
+                            <div className="link-text-common"
+                            onClick={() => {
+                                this.setState({useDiffDeliveryAddressFlag: participantAddresses.length > 0 ? true : false})
+                            }}>{AppConstants.useDifferentAddress}</div> 
+                        </div>  
+                    )}
+                    {!this.state.useDiffBillingAddressFlag && (
+                         <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
+                            <div className="body-text-common">{AppConstants.billingAddress}</div>
+                            <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
+                            <div className="link-text-common"
+                            onClick={() => {
+                                this.setState({useDiffBillingAddressFlag: participantAddresses.length > 0 ? true : false})
+                            }}>{AppConstants.useDifferentAddress}</div> 
+                        </div>  
+                    )}
                 </div>
             </div>
         )
@@ -288,10 +378,13 @@ class RegistrationShipping extends Component {
         );
     }
     shippingLeftView = ()=>{
+        console.log("reutnr",this.checkAnyDeliveryAddress());
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
-                {this.deliveryAndBillingView()}               
+                {this.checkAnyDeliveryAddress() && (
+                    <div>{this.deliveryAndBillingView()}</div> 
+                )}               
             </div>
         )
     }

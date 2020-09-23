@@ -15,7 +15,8 @@ const initialState = {
     participantUsers: [],
     participantAddresses: [],
     shopPickupAddresses: [],
-    pickupAddressLoad: false
+    pickupAddressLoad: false,
+    deliveryOrBillingAddressSelected: false
 }
 
 function setYourInfo(action,state){
@@ -159,6 +160,15 @@ function registrationProductsReducer(state = initialState, action){
                     let index = state.shopPickupAddresses.indexOf(pickupAddress);
                     reviewData.shippingOptions.splice(index,1);
                 }
+            }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
+                let index = action.index;
+                reviewData[action.subKey]["street1"] = state.participantAddresses[index].street1;
+                reviewData[action.subKey]["street2"] = state.participantAddresses[index].steet2;
+                reviewData[action.subKey]["suburb"] = state.participantAddresses[index].suburb;
+                reviewData[action.subKey]["postalCode"] = state.participantAddresses[index].postalCode;
+                reviewData[action.subKey]["stateRefId"] = state.participantAddresses[index].stateRefId;
+                reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
+                state.deliveryOrBillingAddressSelected = true;
             }
             return {
                 ...state,
