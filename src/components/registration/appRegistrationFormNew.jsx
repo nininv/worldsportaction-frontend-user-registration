@@ -808,7 +808,7 @@ class AppRegistrationFormNew extends Component{
                                 <img className="profile-img" src={user.photoUrl}/> 
                                 <div style={{width: "75%",paddingLeft: "15px"}}>
                                     <div>{user.firstName} {user.lastName}</div>
-                                    <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Male' : 'Female'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
+                                    <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Female' : 'Male'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
                                 </div>
                             </div>
                         </div>
