@@ -423,6 +423,10 @@
 .registration-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon{ color: white !important;display: flex;justify-content: center;padding-top: 8px;}
 .registration-steps .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title { color: var(--app-color) !important;}
 
+ /* pagination styles */
+.ant-pagination-item { border: none;font-weight: 700;color: var(--app-77778f); }
+.ant-pagination-item-active { color: var(--app-color); } 
+
 .registration-form-view{
   margin: auto;
   background-color: white;

@@ -55,55 +55,7 @@ let registrationObjTemp = {
 	// 	// }
 	// ],
 	"tempParents": [],
-	"competitions": [
-		// {
-		// 	"organisationId": null,
-		// 	"competitionId": null,
-		// 	"organisationInfo": null,
-		// 	"competitionInfo": null,
-		// 	"products": [
-		// 		{
-		// 			"competitionMembershipProductId": null,
-		// 			"competitionMembershipProductTypeId": null,
-		// 			"isSelected": false
-		// 		}
-		// 	],
-		// 	"divisionInfo":[
-		// 		{
-		// 			"competitionMembershipProductTypeId": null,
-		// 			"competitionMembershipProductDivisionId": null
-		// 		}
-		// 	],
-		// 	"divisions": [
-		// 		{
-		// 			"competitionMembershipProductTypeId": null,
-		// 			"competitionMembershipProductDivisionId": null
-		// 		}
-		// 	],
-		// 	"fees": {
-		// 		"totalCasualFee": null,
-		// 		"totalSeasonalFee": null
-		// 	},
-		// 	"positionId1": null,
-		// 	"positionId2": null,
-		// 	"friends": [
-		// 		{
-		// 			"firstName": null,
-		// 			"lastName": null,
-		// 			"mobileNumber": null,
-		// 			"email": null
-		// 		}
-		// 	],
-		// 	"referFriends": [
-		// 		{
-		// 			"firstName": null,
-		// 			"lastName": null,
-		// 			"mobileNumber": null,
-		// 			"email": null
-		// 		}
-		// 	]
-		// }
-	],
+	"competitions": [],
 	"regSetting":{
 		"netball_experience": 0,
 		"school_grade": 0,
@@ -171,7 +123,7 @@ const competitionObj = {
 		// 	"competitionMembershipProductId": null,
 		// 	"competitionMembershipProductTypeId": null,
 		// 		"membershipTypeName": null,
-		// 	"isSelected": false,
+		// 	"isChecked": false,
 		// 	"isPlayer": 0
 		// }
 	],
@@ -227,7 +179,8 @@ const initialState = {
 	onParticipantByIdLoad: false,
 	lastAddedCompetitionIndex: null,
 	updateExistingUserOnLoad: false,
-	onSaveLoad: false 
+	onSaveLoad: false,
+	allCompetitions: [] 
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -320,8 +273,8 @@ function getUserUpdatedRegistrationObj(state,action){
 function setMembershipProductsInfo(state,organisationData){
 	try{
 		let competition = deepCopyFunction(competitionObj);
-		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
 		if(organisationData == undefined){
+			let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
 			if(getOrganisationId() != null && getCompetitonId() != null){
 				competition.organisationId = getOrganisationId();
 				competition.competitionId = getCompetitonId();
@@ -337,8 +290,8 @@ function setMembershipProductsInfo(state,organisationData){
 		}else{
 			competition.organisationId = organisationData.organisationInfo.organisationUniqueKey;
 			competition.competitionId = organisationData.competitionInfo.competitionUniqueKey;
-			competition.organisationInfo = organisationData.organisationInfo;
-			competition.competitionInfo = organisationData.competitionInfo;
+			competition.organisationInfo = deepCopyFunction(organisationData.organisationInfo);
+			competition.competitionInfo = deepCopyFunction(organisationData.competitionInfo);
 			competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 			if(!organisationData.findAnotherCompetition){
 				state.registrationObj.competitions.push(competition);
@@ -416,11 +369,12 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
 				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
 				"membershipTypeName": membershipProductInfo.shortName,
-				"isSelected": competitionData,
+				"isChecked": competitionData,
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
 			state.registrationObj.competitions[competitionIndex].products.push(product);
 			if(membershipProductInfo.isPlayer == 1){
+				console.log("inside");
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
@@ -621,6 +575,11 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
 			let data = action.result;
+			for(let org of data){
+                for(let comp of org.competitions){
+                    state.allCompetitions.push(comp);
+                }
+            }
 			return {
 				...state,
 				onMembershipLoad: false,

@@ -13,7 +13,8 @@ import {
     Modal, 
     message, 
     Steps,
-    Tag
+    Tag,
+    Pagination
 } from "antd";
 import "./product.css";
 import "../user/user.css";
@@ -89,7 +90,11 @@ class AppRegistrationFormNew extends Component{
             getParticipantByIdLoad: false,
             findAnotherCompetitionFlag: false,
             registrationId: null,
-            participantId: null
+            participantId: null,
+            allCompetitionsByOrgId: [],
+            competitions: [],
+            competitionsCountPerPage: 6,
+            currentCompetitions: 1,
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -122,7 +127,8 @@ class AppRegistrationFormNew extends Component{
                     this.selectAnotherParticipant();
                 } 
             }
-            this.setState({getMembershipLoad: false});
+            this.setState({getMembershipLoad: false,
+            competitions: registrationState.allCompetitions.slice(0,this.state.competitionsCountPerPage)});
         }
 
         if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
@@ -187,6 +193,7 @@ class AppRegistrationFormNew extends Component{
     changeStep = (current) => {
         if(this.state.enabledSteps.includes(current)){
             this.setState({currentStep: current});
+            this.scrollToTop();
         }
         if(current == 0){
             this.setState({submitButtonText: AppConstants.addPariticipant})
@@ -202,6 +209,10 @@ class AppRegistrationFormNew extends Component{
                 this.setState({submitButtonText: AppConstants.signupToCompetition});
             }
         }
+    }
+
+    scrollToTop = () => {
+        window.scrollTo(0, 0);
     }
 
     setParticipantDetailStepFormFields(){
@@ -561,10 +572,10 @@ class AppRegistrationFormNew extends Component{
     addAnotherCompetition = (competition) => {
         this.setState({competitionId: competition.competitionUniqueKey});
         let { membershipProductInfo } = this.props.userRegistrationState;
-        let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
+        let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == competition.organisationUniqueKey);
         if(organisationInfo){
             let organisation = {
-                organisationInfo : deepCopyFunction(organisationInfo),
+                organisationInfo : organisationInfo,
                 competitionInfo: competition,
                 findAnotherCompetition: this.state.findAnotherCompetitionFlag
             }
@@ -665,6 +676,60 @@ class AppRegistrationFormNew extends Component{
             console.log("Error in checkProductEitherAddOrNot"+ex);
         }
     }
+
+    isPlayerActive = (competition) => {
+        try{
+            let value = true;
+            if(isArrayNotEmpty(competition.products)){
+                let checkedPlayerProduct = competition.products.find(x => x.isChecked == true && x.isPlayer == 1);
+                if(checkedPlayerProduct == undefined){
+                    value = false;
+                }
+            }else{
+                value = false;
+            }
+            return value;
+        }catch(ex){
+            console.log("Error in isPlayerActive"+ex);
+        }
+    }
+
+    onChangeSetOrganisation = (organisationId) => {
+        try{
+            let { membershipProductInfo } = this.props.userRegistrationState;
+            this.setState({organisationId : organisationId,
+            currentCompetitions: 1});
+            let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == organisationId);
+            if(organisationInfo){
+                this.setState({allCompetitionsByOrgId: organisationInfo.competitions,
+                    competitions: organisationInfo.competitions.slice(0,this.state.competitionsCountPerPage)});
+            }
+        }catch(ex){
+            console.log("Error in onChangeSetOrganisation"+ex);
+        }
+    }
+
+    paginationItems = (current, type, originalElement) => {
+        if (type === 'prev') {
+          return <a style={{color: "var(--app-color)",fontWeight: "700"}}>Prev</a>;
+        }
+        if (type === 'next') {
+          return <a style={{color: "var(--app-color)",fontWeight: "700"}}>Next</a>;
+        }
+        return originalElement;
+    }
+
+    pagingCompetitions = (current) => {
+        const { allCompetitions } = this.props.userRegistrationState;
+        let startIndex = (current - 1 ) * this.state.competitionsCountPerPage;
+        let endIndex = current * this.state.competitionsCountPerPage;
+        this.setState({currentCompetitions: current});
+        if(this.state.organisationId == null){
+            this.setState({competitions: allCompetitions.slice(startIndex,endIndex)});
+        }else{
+            this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
+        }
+    }
     
     saveRegistrationForm = (e) => {
         try{
@@ -698,6 +763,7 @@ class AppRegistrationFormNew extends Component{
                     }
                     if(this.state.currentStep != 2){
                         let nextStep = this.state.currentStep + 1;
+                        this.scrollToTop();
                         if(nextStep == 1){
                             if(registrationObj.competitions.length == 0){
                                 this.setState({showAddAnotherCompetitionView: true});
@@ -1421,7 +1487,7 @@ class AppRegistrationFormNew extends Component{
                                             rules: [{ required: false }],
                                         })(
                                         <InputWithHead 
-                                            required={"required-field pt-0 pb-0"}
+                                            required={"pt-0 pb-0"}
                                             heading={AppConstants.middleName} 
                                             placeholder={AppConstants.middleName} 
                                             onChange={(e) => this.onChangeSetParentValue(e.target.value, "middleName", parentIndex )} 
@@ -1544,14 +1610,8 @@ class AppRegistrationFormNew extends Component{
     }
 
     findAnotherCompetitionView = () => {
-        let { membershipProductInfo } = this.props.userRegistrationState;
-        let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
-        let competitions = [];
-        let organisationCoverImage;
-        if(organisation){
-            competitions = organisation.competitions;
-            organisationCoverImage = organisation.organisationLogoUrl;
-        }
+        let { membershipProductInfo,allCompetitions } = this.props.userRegistrationState;
+       
         return(
             <div className="registration-form-view">
                 <div style={{display: "flex",alignItems: "center" }}>
@@ -1564,7 +1624,9 @@ class AppRegistrationFormNew extends Component{
                 <div className="light-grey-border-box">
                     <InputWithHead heading={AppConstants.organisationName}/>
                     <Select
-                        onChange={(e) => this.setState({organisationId : e})}
+                        showSearch
+                        optionFilterProp="children"
+                        onChange={(e) => this.onChangeSetOrganisation(e)}
                         style={{ width: "100%", paddingRight: 1 }}>
                         {membershipProductInfo.length > 0 && membershipProductInfo.map((item) => (
                             < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
@@ -1572,7 +1634,7 @@ class AppRegistrationFormNew extends Component{
                     </Select>
                 </div>
                 <div className="row" style={{marginTop: "30px"}}>
-                    {(competitions || []).map((competition,competitionIndex) => (
+                    {(this.state.competitions || []).map((competition,competitionIndex) => (
                         <div className="col-md-6 col-sm-12 pointer"
                         onClick={() => this.addAnotherCompetition(competition)}
                         key={competition.competitionUniqueKey} 
@@ -1587,17 +1649,26 @@ class AppRegistrationFormNew extends Component{
                                     <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.compLogoUrl}/>
                                 </div>
                                 <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
+                                {this.state.organisationId == null && (
+                                    <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
+                                )}
                                 <div style={{fontWeight: "600"}}>&#128198; {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                             </div>
                         </div>
                     ))}
                 </div>
+                <Pagination 
+                    onChange={(e) => this.pagingCompetitions(e)}
+                    pageSize={this.state.competitionsCountPerPage}
+                    current={this.state.currentCompetitions}
+                    style={{textAlign: "center"}} 
+                    total={this.state.organisationId == null ? allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                    itemRender={this.paginationItems}/>
             </div>
         )
     }
 
     competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
-        console.log("competition",competition);
         const {playerPositionList} = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
@@ -1631,22 +1702,21 @@ class AppRegistrationFormNew extends Component{
                             onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked,"products",competitionIndex,membershipProductIndex)}>
                                 {membershipProduct.shortName}</Checkbox>
                         ))}
-                        <InputWithHead heading={AppConstants.registrationDivisions}/>
-                        <div
-                        style={{marginBottom: "10px"}}>
-                            {(competition.divisions || []).map((division,divisionIndex) => (
-                                <Tag 
-                                key={division.competitionMembershipProductDivisionId + divisionIndex} 
-                                style={{marginBottom: "10px"}}
-                                closable 
-                                color="volcano"
-                                onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
-                            ))}
-                        </div>
-                        {/* <Form.Item>
-                            {getFieldDecorator(`competitionMembershipProductDivisionId${competitionIndex}`, {
-                                rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
-                            })( */}
+
+                        {this.isPlayerActive(competition) && (
+                            <div>
+                                <InputWithHead heading={AppConstants.registrationDivisions}/>
+                                <div
+                                style={{marginBottom: "10px"}}>
+                                    {(competition.divisions || []).map((division,divisionIndex) => (
+                                        <Tag 
+                                        key={division.competitionMembershipProductDivisionId + divisionIndex} 
+                                        style={{marginBottom: "10px"}}
+                                        closable 
+                                        color="volcano"
+                                        onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
+                                    ))}
+                                </div>
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
                                     onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex )}
@@ -1656,8 +1726,9 @@ class AppRegistrationFormNew extends Component{
                                         value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
                                     ))}
                                 </Select>
-                            {/* )}
-                        </Form.Item> */}
+                            </div>
+                        )}
+
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.totalCasualFees}/>
@@ -1874,7 +1945,8 @@ class AppRegistrationFormNew extends Component{
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
                             <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
-                            <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}>{AppConstants.edit}</div>
+                            <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
+                            onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                         </div>
                         <div style={{fontWeight: "600",marginTop: "-5px"}}>
                             {(competition.products || []).map((product,productIndex) => (
@@ -2398,7 +2470,7 @@ class AppRegistrationFormNew extends Component{
                         <Button 
                         htmlType="submit"
                         type="primary"
-                        style={{float: "right",color: "white"}}
+                        style={{float: "right",color: "white",textTransform: "uppercase"}}
                         disabled={this.disabledOrNot()} 
                         className="open-reg-button">{this.state.submitButtonText}</Button>
                     </div>
