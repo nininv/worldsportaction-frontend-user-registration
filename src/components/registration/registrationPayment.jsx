@@ -31,7 +31,8 @@ import {isArrayNotEmpty} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getRegistrationByIdAction, deleteRegistrationProductAction} from 
+import {getRegistrationByIdAction, deleteRegistrationProductAction, 
+    updateReviewInfoAction} from 
             '../../store/actions/registrationAction/registrationProductsAction';
             import StripeKeys from "../stripe/stripeKeys";
 
@@ -654,7 +655,8 @@ function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
         getRegistrationByIdAction,
-        deleteRegistrationProductAction									 
+        deleteRegistrationProductAction,
+        updateReviewInfoAction								 
     }, dispatch);
 
 }

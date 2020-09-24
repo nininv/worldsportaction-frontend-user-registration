@@ -97,6 +97,8 @@ function registrationProductsReducer(state = initialState, action){
                         governmentVoucherRefId: null,
                         voucherCode: null,
                         balance: 0,
+                        redeemAmount: 0,
+                        remainingAmount: 0,
                         isValid: null,
                         message: null
                     }
