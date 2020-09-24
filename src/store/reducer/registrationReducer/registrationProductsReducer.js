@@ -122,6 +122,11 @@ function registrationProductsReducer(state = initialState, action){
             else if(action.subKey == "shopProducts"){
                 if(action.key == "addShopProduct"){
                     console.log("action.value", action.value);
+                    let sameProduct = reviewData[action.subKey].find(x => x.productId == action.value.productId && x.variantOptionId == action.value.variantOptionId);
+                    if(sameProduct){
+                        let index = reviewData[action.subKey].indexOf(sameProduct);
+                        reviewData[action.subKey].splice(index,1);
+                    }
                     reviewData[action.subKey].push(action.value);
                     reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
                                             feeIsNull(action.value.amount);

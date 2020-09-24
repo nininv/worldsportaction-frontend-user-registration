@@ -122,6 +122,10 @@ class RegistrationShipping extends Component {
         history.push({pathname: '/registrationPayment', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
+    }
+
     getPaymentOptionText = (paymentOptionRefId) =>{
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
@@ -450,6 +454,11 @@ class RegistrationShipping extends Component {
                         ))}
                         <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
+                            <span className="link-text-common pointer" 
+                            onClick={() => this.goToRegistrationProducts()}
+                            style={{margin: "0px 15px 0px 10px"}}>
+                                {AppConstants.edit}
+                            </span>
                         </div>
                     </div> 
                     )}

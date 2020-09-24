@@ -61,10 +61,16 @@ class RegistrationShop extends Component {
     }
 
     componentDidUpdate(nextProps){
-        let registrationProductState = this.props.registrationProductState
+        let registrationProductState = this.props.registrationProductState;
+        let registrationReviewList = registrationProductState.registrationReviewList;
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
-            if(this.state.buttonPressed == "shop"){
+            // if(this.state.buttonPressed == "shop"){
+            //     this.goToShipping();
+            // }
+            if(isArrayNotEmpty(registrationReviewList.shopProducts)){
                 this.goToShipping();
+            }else{
+                this.goToRegistrationPayments();
             }
         }
     } 
@@ -148,7 +154,7 @@ class RegistrationShop extends Component {
             optionName: variantOption ? variantOption.optionName : null,
             quantity: this.state.quantity,
             amount: variantOption ? (variantOption.price * this.state.quantity) : 0,
-            tax: expandObj.tax,
+            tax: this.state.quantity * expandObj.tax,
             totalAmt: 0,
             organisationId: expandObj.organisationId,
             skuId: variantOption ? (variantOption.skuId) : 0,
@@ -170,14 +176,14 @@ class RegistrationShop extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if(!err){
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
-                if(isArrayNotEmpty(registrationReview.shopProducts)){
+                //if(isArrayNotEmpty(registrationReview.shopProducts)){
                     registrationReview["registrationId"] = this.state.registrationUniqueKey;
                     registrationReview["key"] = "shop";
                     this.callSaveRegistrationProducts("shop", registrationReview);
-                }
-                else{
-                    this.goToRegistrationPayments();
-                }
+                // }
+                // else{
+                //     this.goToRegistrationPayments();
+                // }
                
             }
         });
@@ -264,6 +270,7 @@ class RegistrationShop extends Component {
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
         console.log("expandObj", expandObj);
+        var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         return(
             <div class = "expand-product-text"  style={{marginTop: "23px"}}>     
                 <div style={{textAlign:"right"}}>
@@ -275,7 +282,7 @@ class RegistrationShop extends Component {
                     </div>
                     <div className="col-lg-8" style={{paddingRight:"15px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
-                        <div className ="mt-5 body-text-common">{expandObj.description}</div>
+                        <div className ="mt-5 body-text-common">{description}</div>
                         {(expandObj.varients || []).map((varnt, vIndex) =>(
                             <div>
                             <div style={{display:"flex", flexWrap:"wrap"}}>
@@ -314,6 +321,7 @@ class RegistrationShop extends Component {
                             <div class = "row" style={{margin:0}}>
                                 <div class = "col-lg-8 col-12" style={{padding:0,marginTop:23, marginRight: 22}}>
                                     <Button className="open-reg-button addToCart"
+                                    disabled={this.state.quantity == null || this.state.variantOptionId == null}
                                     onClick={() => this.addToCart(expandObj, varnt,'addShopProduct', 'shopProducts')}>
                                         {AppConstants.addToCart}
                                     </Button> 
@@ -419,7 +427,9 @@ class RegistrationShop extends Component {
                         ))}
                         <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
-                            <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
+                            <span className="link-text-common pointer" 
+                            onClick={() => this.goToRegistrationProducts()}
+                            style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
@@ -436,7 +446,7 @@ class RegistrationShop extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>                               
+                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
