@@ -172,6 +172,9 @@ class RegistrationProducts extends Component {
         else if(key == "voucher"){
             this.callSaveRegistrationProducts(key, registrationReview)
         }
+        else if(key == "removeVoucher"){
+            this.callSaveRegistrationProducts("voucher", registrationReview);
+        }
     }
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
