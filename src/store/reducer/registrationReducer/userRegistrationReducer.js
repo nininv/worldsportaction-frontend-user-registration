@@ -33,19 +33,25 @@ let registrationObjTemp = {
 	"coachFlag": 0,
 	"walkingNetballFlag": 0,
 	"parentOrGuardian": [
-		// {
-		// 	"tempParentId": null,
-		// 	"firstName": null,
-		// 	"lastName": null,
-		// 	"mobileNumber": null,
-		// 	"email": null,
-		// 	"street1": null,
-		// 	"street2": null,
-		// 	"suburb": null,
-		// 	"stateRefId": null,
-		// 	"countryRefId": null,
-		// 	"postalCode": null
-		// }
+		{
+			"tempParentId": null,
+            "userId": 0,
+            "firstName": null,
+            "middleName": null,
+			"lastName": null,
+			"mobileNumber": null,
+			"email": null,
+			"street1": null,
+			"street2": null,
+			"suburb": null,
+            "stateRefId": null,
+            "countryRefId": 1,
+            "postalCode": null,
+            "isSameAddress": false,
+            "selectAddressFlag": true,
+            "addNewAddressFlag": false,
+            "manualEnterAddressFlag": false
+		}
 	],
 	// "tempParentsDetail": [
 	// 	// {
@@ -147,20 +153,22 @@ const competitionObj = {
 	"positionId1": null,
 	"positionId2": null,
 	"friends": [
-		// {
-		// 	"firstName": null,
-		// 	"lastName": null,
-		// 	"mobileNumber": null,
-		// 	"email": null
-		// }
+		{
+			"firstName": null,
+			"lastName": null,
+			"middleName": null,
+			"mobileNumber": null,
+			"email": null
+		}
 	],
 	"referFriends": [
-		// {
-		// 	"firstName": null,
-		// 	"lastName": null,
-		// 	"mobileNumber": null,
-		// 	"email": null
-		// }
+		{
+			"firstName": null,
+			"lastName": null,
+			"middleName": null,
+			"mobileNumber": null,
+			"email": null
+		}
 	]
 }
 

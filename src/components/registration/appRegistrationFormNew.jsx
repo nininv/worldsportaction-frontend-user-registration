@@ -535,6 +535,7 @@ class AppRegistrationFormNew extends Component{
                 let friend = {
                     "firstName": null,
                     "lastName": null,
+                    "middleName": null,
                     "mobileNumber": null,
                     "email": null
                 }
@@ -556,6 +557,7 @@ class AppRegistrationFormNew extends Component{
                 let friend = {
                     "firstName": null,
                     "lastName": null,
+                    "middleName": null,
                     "mobileNumber": null,
                     "email": null
                 }
@@ -742,11 +744,6 @@ class AppRegistrationFormNew extends Component{
                 if(!err){
                     if(registrationObj.photoUrl == null){
                         message.error(ValidationConstants.userPhotoIsRequired);
-                        return;
-                    }
-                    if(registrationObj.parentOrGuardian.length == 0 && 
-                        getAge(registrationObj.dateOfBirth) < 18){
-                        message.error(ValidationConstants.parentDetailsIsRequired)
                         return;
                     }
                     if(this.state.currentStep == 1){
@@ -1457,14 +1454,17 @@ class AppRegistrationFormNew extends Component{
                 {(registrationObj.parentOrGuardian || []).map((parent, parentIndex) => {
                     return(
                         <div key={"parent"+parentIndex} className="light-grey-border-box">
-                            <div className="orange-action-txt" style={{marginTop: "30px"}}
-                                onClick={() => {this.addParent("remove",parentIndex)}}
-                                >{AppConstants.cancel}
-                            </div>
+                            {registrationObj.parentOrGuardian.length != 1 && (
+                                <div className="orange-action-txt" style={{marginTop: "30px"}}
+                                    onClick={() => {this.addParent("remove",parentIndex)}}
+                                    >{AppConstants.cancel}
+                                </div>
+                            )}
                             <div className="form-heading" 
-                            style={{
-                                paddingBottom: "0px",
-                                marginTop: "10px"}}>{AppConstants.newParentOrGuardian}
+                            style={registrationObj.parentOrGuardian.length != 1 ? 
+                            {paddingBottom: "0px",marginTop: "10px"} : 
+                            {paddingBottom: "0px",marginTop: "30px"}}>
+                                {AppConstants.newParentOrGuardian}
                             </div>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
@@ -1825,11 +1825,15 @@ class AppRegistrationFormNew extends Component{
                             <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
                                 {(competition.friends || []).map((friend,friendIndex) => (
                                     <div className="light-grey-border-box">
-                                        <div 
-                                        className="orange-action-txt" 
-                                        style={{marginTop: "20px"}}
-                                        onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>{AppConstants.cancel}</div>
-                                        <div className="form-heading" style={{marginTop: "10px"}}>{AppConstants.friend} {friendIndex + 1}</div>
+                                        {competition.friends.length != 1 && (
+                                            <div 
+                                                className="orange-action-txt" 
+                                                style={{marginTop: "20px"}}
+                                                onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>
+                                                    {AppConstants.cancel}
+                                            </div>
+                                        )}
+                                        <div className="form-heading" style={{marginTop: "20px"}}>{AppConstants.friend} {friendIndex + 1}</div>
                                         <div className="row">
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead 
@@ -1841,6 +1845,14 @@ class AppRegistrationFormNew extends Component{
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead 
+                                                    heading={AppConstants.middleName} 
+                                                    placeholder={AppConstants.middleName} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"middleName",competitionIndex,friendIndex,"friends")} 
+                                                    value={friend.middleName}
+                                                />
+                                            </div>
+                                            <div className="col-md-12">
+                                                <InputWithHead 
                                                     heading={AppConstants.lastName} 
                                                     placeholder={AppConstants.lastName} 
                                                     onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "lastName",competitionIndex, friendIndex, "friends")} 
@@ -1848,15 +1860,15 @@ class AppRegistrationFormNew extends Component{
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email",competitionIndex, friendIndex, "friends")}  
-                                                    value={friend.email}
+                                                <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
+                                                    value={friend.mobileNumber}
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
-                                                    value={friend.mobileNumber}
+                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email",competitionIndex, friendIndex, "friends")}  
+                                                    value={friend.email}
                                                 />
                                             </div>
                                         </div> 
@@ -1876,34 +1888,44 @@ class AppRegistrationFormNew extends Component{
                             <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
                                 {(competition.referFriends || []).map((referFriend,referFriendIndex) => (
                                     <div className="light-grey-border-box">
-                                        <div 
-                                        className="orange-action-txt" 
-                                        style={{marginTop: "20px"}}
-                                        onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>{AppConstants.cancel}</div>
-                                        <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
+                                        {competition.referFriends.length != 1 && (
+                                            <div 
+                                                className="orange-action-txt" 
+                                                style={{marginTop: "20px"}}
+                                                onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>
+                                                    {AppConstants.cancel}
+                                            </div>
+                                        )}
+                                        <div className="form-heading" style={{marginTop: "20px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
                                         <div className="row">
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName} 
-                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,referFriendIndex,"referFriends")} 
-                                                value={referFriend.firstName}
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"firstName",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.firstName}
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.middleName} placeholder={AppConstants.middleName} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"middleName",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.middleName}
+                                                />
+                                            </div>
+                                            <div className="col-md-12">
                                                 <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName} 
-                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"lastName",competitionIndex,referFriendIndex,"referFriends")} 
-                                                value={referFriend.lastName}
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"lastName",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.lastName}
+                                                />
+                                            </div>
+                                            <div className="col-sm-12 col-md-6">
+                                                <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.mobileNumber}
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
-                                                value={referFriend.email}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.mobile} placeholder={AppConstants.mobile} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.mobileNumber}
+                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    value={referFriend.email}
                                                 />
                                             </div>
                                         </div> 
