@@ -155,6 +155,8 @@ const CheckoutForm = (props) => {
         }
     }
 
+    
+
     const previousCall = () =>{
         history.push("/registrationReview", {
             registrationId: registrationUniqueKey
@@ -414,6 +416,14 @@ class RegistrationPayment extends Component {
         history.push({pathname: '/registrationShipping', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
+    goToShop = () =>{
+        history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
+    }
+
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
+    }
+
     getPaymentOptionText = (paymentOptionRefId) =>{
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
@@ -536,6 +546,11 @@ class RegistrationPayment extends Component {
                         ))}
                         <div style={{color: "var(--app-bbbbc6)"}}>
                             {paymentOptionTxt}
+                            <span className="link-text-common pointer" 
+                            onClick={() => this.goToRegistrationProducts()}
+                            style={{margin: "0px 15px 0px 10px"}}>
+                                {AppConstants.edit}
+                            </span>
                         </div>
                     </div> 
                     )}
@@ -602,6 +617,7 @@ class RegistrationPayment extends Component {
     }
 
     buttonView = () =>{
+        const {registrationReviewList} = this.props.registrationProductState;
         return(
             <div style={{marginTop:23}}>
                 {/* <div>
@@ -611,7 +627,7 @@ class RegistrationPayment extends Component {
                 </div>                  */}
                 <div style={{marginTop:23}}> 
                     <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
-                     onClick={() => this.goToShipping()}>
+                     onClick={() => isArrayNotEmpty(registrationReviewList.shopProducts) ? this.goToShipping() : this.goToShop()}>
                         {AppConstants.back}
                     </Button> 
                 </div>     
