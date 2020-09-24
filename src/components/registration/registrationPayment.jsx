@@ -109,6 +109,7 @@ const CheckoutForm = (props) => {
     const elements = useElements();
     let paymentOptions = props.paymentOptions;
     let isSchoolRegistration = props.isSchoolRegistration;
+    let isHardshipEnabled = props.isHardshipEnabled;
     let payload = props.payload;
     let registrationUniqueKey = props.registrationUniqueKey;
     
@@ -177,7 +178,7 @@ const CheckoutForm = (props) => {
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
         console.log(auBankAccount, card)
-        if (auBankAccount || card || isSchoolRegistration == 1) {
+        if (auBankAccount || card || isSchoolRegistration == 1 || isHardshipEnabled == 1) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -236,13 +237,13 @@ const CheckoutForm = (props) => {
                     })
                 }
             }
-            else if(isSchoolRegistration){
+            else if(isSchoolRegistration || isHardshipEnabled){
                 props.onLoad(true)
                 stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
             }
         }
         else {
-            if(!isSchoolRegistration){
+            if(!isSchoolRegistration && !isHardshipEnabled){
                 message.config({
                     maxCount: 1, duration: 0.9
                 })
@@ -255,7 +256,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {paymentOptions.length > 0 && 
+                {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) && 
                 <div className="content-view pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
@@ -365,7 +366,7 @@ const CheckoutForm = (props) => {
                 <div className="mt-5">
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
-                            {(paymentOptions.length > 0 || isSchoolRegistration == 1) ?
+                            {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ?
                                 <Button
                                     className="open-reg-button"
                                     htmlType="submit"
@@ -470,6 +471,7 @@ class RegistrationPayment extends Component {
         const {registrationReviewList} = this.props.registrationProductState;
         let securePaymentOptions = registrationReviewList!= null ? registrationReviewList.securePaymentOptions : [];
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
+        let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
             <div className="col-sm-8 product-left-view outline-style">              
                 <div className="product-text-common" style={{fontSize:22}}>
@@ -479,7 +481,7 @@ class RegistrationPayment extends Component {
                     <Elements stripe={stripePromise} >
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
                         payload={registrationReviewList} registrationUniqueKey = {this.state.registrationUniqueKey}
-                        isSchoolRegistration={isSchoolRegistration}/>
+                        isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}/>
                     </Elements>
                </div>              
             </div>
@@ -718,13 +720,14 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             paymentType: paymentType,
         }
     }
-    else if(props.isSchoolRegistration){
+    else if(props.isSchoolRegistration || props.isHardshipEnabled){
         body = {
             registrationId: registrationUniqueKey,
             //invoiceId: invoiceId,
             payload: payload,
             paymentType: null,
-            isSchoolRegistration: 1
+            isSchoolRegistration: 1,
+            isHardshipEnabled: 1
         }
     }
     console.log("payload" + JSON.stringify(payload));
