@@ -32,34 +32,7 @@ let registrationObjTemp = {
 	"umpireFlag": 0,
 	"coachFlag": 0,
 	"walkingNetballFlag": 0,
-	"parentOrGuardian": [
-		{
-			"tempParentId": null,
-            "userId": 0,
-            "firstName": null,
-            "middleName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null,
-			"street1": null,
-			"street2": null,
-			"suburb": null,
-            "stateRefId": null,
-            "countryRefId": 1,
-            "postalCode": null,
-            "isSameAddress": false,
-            "selectAddressFlag": true,
-            "addNewAddressFlag": false,
-            "manualEnterAddressFlag": false
-		}
-	],
-	// "tempParentsDetail": [
-	// 	// {
-	// 	// 	"firstName": null,
-	// 	// 	"lastName": null,
-	// 	// 	"tempParentId": null
-	// 	// }
-	// ],
+	"parentOrGuardian": [],
 	"tempParents": [],
 	"competitions": [],
 	"regSetting":{
@@ -152,24 +125,16 @@ const competitionObj = {
 	},
 	"positionId1": null,
 	"positionId2": null,
-	"friends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"middleName": null,
-			"mobileNumber": null,
-			"email": null
-		}
-	],
-	"referFriends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"middleName": null,
-			"mobileNumber": null,
-			"email": null
-		}
-	]
+	"friends": [],
+	"referFriends": []
+}
+
+let friendObj = {
+	"firstName": null,
+	"lastName": null,
+	"middleName": null,
+	"mobileNumber": null,
+	"email": null
 }
 
 const initialState = {
@@ -494,6 +459,14 @@ function setRegistrationSetting(state,settings){
 			if(competition.regSetting[key] == 0){
 				competition.regSetting[key] = settings[key];
 			}
+		}
+		if(competition.regSetting.play_friend == 1){
+			let playFriend = deepCopyFunction(friendObj);
+			competition.friends.push(playFriend);
+		}
+		if(competition.regSetting.refer_friend == 1){
+			let playFriend = deepCopyFunction(friendObj);
+			competition.referFriends.push(playFriend);
 		}
 	}catch(ex){
 		console.log("Error in setRegistrationSetting in userRegistrationReducer"+ex);

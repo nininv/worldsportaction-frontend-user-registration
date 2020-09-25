@@ -386,6 +386,13 @@ class AppRegistrationFormNew extends Component{
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
                 });
             });
+            if(key == "dateOfBirth"){
+                if(getAge(value) < 18){
+                    this.addParent("add");
+                }else{
+                    this.addParent("removeAllParent")
+                }
+            }
         }
     }
 
@@ -394,7 +401,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             if(key == "add"){
-                let parentObj = this.getParentObj();
+                let parentObj = deepCopyFunction(this.getParentObj());
                 parentObj.selectAddressFlag = newUser ? false : true;
                 parentObj.addNewAddressFlag = newUser ? true : false;
                 parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1; 
@@ -402,6 +409,9 @@ class AppRegistrationFormNew extends Component{
             }
             if(key == "remove"){
                 registrationObj.parentOrGuardian.splice(parentIndex,1);
+            }
+            if(key == "removeAllParent"){
+                registrationObj.parentOrGuardian = [];
             }
             this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj")
         }catch(ex){
@@ -825,7 +835,8 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 && (
+                {getAge(registrationObj.dateOfBirth) < 18 && 
+                registrationObj.parentOrGuardian.length > 0 && (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 )}
             </div>
