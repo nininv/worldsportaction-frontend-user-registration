@@ -835,8 +835,7 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 && 
-                registrationObj.parentOrGuardian.length > 0 && (
+                {getAge(registrationObj.dateOfBirth) < 18 && (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 )}
             </div>

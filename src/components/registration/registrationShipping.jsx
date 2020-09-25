@@ -262,10 +262,11 @@ class RegistrationShipping extends Component {
     shippingOption = () =>{
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
-                <div className="headline-text-common" style={{fontSize:21 , marginBottom : 25}}>{AppConstants.shippingOptions}</div>
+                <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.shippingOptions}</div>
                 {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
                     <div>
-                        <div className="subtitle-text-common">{item.organisationName}</div>
+                        <div className="subtitle-text-common"
+                        style={{marginTop: "20px"}}>{item.organisationName}</div>
                         <div style={{marginTop:6}}>
                             <Radio.Group className="product-radio-group"
                             onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
