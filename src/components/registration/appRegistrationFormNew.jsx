@@ -119,7 +119,6 @@ class AppRegistrationFormNew extends Component{
             //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f";
             this.setState({participantId: participantId,registrationId: registrationId});
             if(participantId && registrationId){
-                console.log("inside");
                 this.props.getParticipantInfoById(participantId,'');
                 this.setState({getParticipantByIdLoad: true})
             }else{
@@ -1459,7 +1458,7 @@ class AppRegistrationFormNew extends Component{
                         <Select
                             mode="multiple"
                             style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                            onChange={(e) => this.onChangeSetParentValue(e)} >
+                            onChange={(e) => this.onChangeSetParticipantValue(e,"tempParents")} >
                                 {parents.length > 0 && parents.map((tParent, tpIndex) => (
                                     <Option key={tParent.email} value={tParent.email}>
                                         {tParent.firstName + " " + tParent.lastName} 
@@ -1479,7 +1478,7 @@ class AppRegistrationFormNew extends Component{
                                 </div>
                             )}
                             <div className="form-heading" 
-                            style={registrationObj.parentOrGuardian.length != 1 ? 
+                            style={(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) ? 
                             {paddingBottom: "0px",marginTop: "10px"} : 
                             {paddingBottom: "0px",marginTop: "30px"}}>
                                 {AppConstants.newParentOrGuardian}
