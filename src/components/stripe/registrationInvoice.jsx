@@ -51,7 +51,7 @@ class RegistrationInvoice extends Component {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let registrationId = "5dcd7ca9-1b1d-4fce-bbdc-f3c633b7469b";
+    //    let registrationId = "2e0c9975-263a-4798-97ca-a1742e46f740";
     //    let userRegId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
@@ -75,8 +75,8 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-             //let registrationId = "80288a95-4dce-4b60-86db-4011cdbb45f7";
-             //let userRegId = null;
+            //  let registrationId = "2e0c9975-263a-4798-97ca-a1742e46f740";
+            //  let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -214,6 +214,9 @@ class RegistrationInvoice extends Component {
         membershipProductName = membershipProductName!= null ? membershipProductName : '';
         let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ? 
                                         membershipDetail.childDiscountsToDeduct : 0;
+        let governmentVoucherAmount = membershipDetail.governmentVoucherAmount!= null ? 
+                                membershipDetail.governmentVoucherAmount : 0;
+
         return (
             < div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -238,7 +241,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={(parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) 
-                                        + parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
+                                        + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -264,6 +267,8 @@ class RegistrationInvoice extends Component {
     competitionOrganiserView = (competitionDetails) => {
         let childDiscountsToDeduct = competitionDetails.childDiscountsToDeduct!= null ? 
                                 competitionDetails.childDiscountsToDeduct : 0;
+        let governmentVoucherAmount = competitionDetails.governmentVoucherAmount!= null ? 
+                                competitionDetails.governmentVoucherAmount : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pr-0 pl-0" >
@@ -288,7 +293,8 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={(parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                    heading={(parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) + parseFloat((childDiscountsToDeduct).toFixed(2))
+                                        ).toFixed(2)}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -300,7 +306,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required="invoice"
                                     heading={(  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
-                                        parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
+                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -314,6 +320,8 @@ class RegistrationInvoice extends Component {
     competitionAffiliateView = (affiliateDetail) => {
         let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ? 
                         affiliateDetail.childDiscountsToDeduct : 0;
+        let governmentVoucherAmount = affiliateDetail.governmentVoucherAmount!= null ? 
+                                    affiliateDetail.governmentVoucherAmount : 0;
         return (
             <div className="row" >
                 <div className="invoice-col-View pb-0 pr-0 pl-0" >
@@ -357,7 +365,7 @@ class RegistrationInvoice extends Component {
                                     < InputWithHead
                                         required="invoice"
                                         heading={(parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
-                                            parseFloat((childDiscountsToDeduct).toFixed(2)) ).toFixed(2)}
+                                            parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                     />}
                             </div>
 
