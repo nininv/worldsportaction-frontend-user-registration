@@ -177,8 +177,8 @@ let AxiosApi = {
         var url = `/api/deregister`;
         return Method.dataPost(url, token, payload);
     },
-    getParticipantDataById(participantKey) {
-        var url = `/api/registration/participant?participantId=${participantKey}`;
+    getParticipantDataById(participantKey,registrationKey) {
+        var url = `/api/registration/participant?participantId=${participantKey}&registrationId=${registrationKey}`;
         return Method.dataGet(url, token);
     },
     saveParticipantData(payload) {

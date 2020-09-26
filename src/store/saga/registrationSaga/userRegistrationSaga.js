@@ -46,17 +46,19 @@ export function* endUserRegistrationUserInfoSaga(action) {
 
 export function* getParticipantDataById(action) {
   try {
-    const result = yield call(AxiosApi.getParticipantDataById,action.participantKey);
+    const result = yield call(AxiosApi.getParticipantDataById,action.participantKey,action.registrationKey);
     if (result.status === 1) {
       yield put({
         type: ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS,
         result: result.result.data,
+        participantId: action.participantKey,
         status: result.status
       });
     } else {
       yield call(failSaga, result)
     }
   } catch (error) {
+    console.log("error in saga",error);
     yield call(errorSaga, error)
   }
 }

@@ -118,13 +118,15 @@ class AppRegistrationFormNew extends Component{
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f";
             this.setState({participantId: participantId,registrationId: registrationId});
-            if(participantId){
-                this.props.getParticipantInfoById(participantId);
+            if(participantId && registrationId){
+                console.log("inside");
+                this.props.getParticipantInfoById(participantId,'');
                 this.setState({getParticipantByIdLoad: true})
             }else{
                 if(registrationId){
                     this.props.updateUserRegistrationStateVarAction("registrationId",registrationId);
-                    this.selectAnotherParticipant();
+                    this.props.getParticipantInfoById('',registrationId);
+                    this.setState({getParticipantByIdLoad: true})
                 } 
             }
             this.setState({getMembershipLoad: false,
@@ -132,14 +134,19 @@ class AppRegistrationFormNew extends Component{
         }
 
         if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
-            this.state.completedSteps = [0,1,2];
-            this.state.enabledSteps = [0,1,2];
-            this.setState({getParticipantByIdLoad: false,
-                completedSteps: this.state.completedSteps,
-                enabledSteps: this.state.enabledSteps});
-            setTimeout(() => {
-                this.setParticipantDetailStepFormFields();
-            },300);
+            if(this.state.participantId != null){
+                this.state.completedSteps = [0,1,2];
+                this.state.enabledSteps = [0,1,2];
+                this.setState({getParticipantByIdLoad: false,
+                    completedSteps: this.state.completedSteps,
+                    enabledSteps: this.state.enabledSteps});
+                setTimeout(() => {
+                    this.setParticipantDetailStepFormFields();
+                },300);
+            }else{
+                this.setState({getParticipantByIdLoad: false});
+                this.selectAnotherParticipant();
+            } 
         }
 
         if(registrationState.addCompetitionFlag){
@@ -218,34 +225,35 @@ class AppRegistrationFormNew extends Component{
     setParticipantDetailStepFormFields(){
         const { registrationObj } = this.props.userRegistrationState;
         try{
-            this.props.form.setFieldsValue({
-                [`genderRefId`]: registrationObj.genderRefId,
-                [`dateOfBirth`]: moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
-                [`participantFirstName`]: registrationObj.firstName,
-                [`participantMiddleName`]: registrationObj.middleName,
-                [`participantLastName`]: registrationObj.lastName,
-                [`participantMobileNumber`]: registrationObj.mobileNumber,
-                [`participantEmail`]: registrationObj.email
-            });
-            if(registrationObj.addNewAddressFlag){
-                this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
-            }
-            if(registrationObj.manualEnterAddressFlag){
-                this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
-            }
-            {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
+            if(registrationObj){
                 this.props.form.setFieldsValue({
-                    [`parentFirstName${pIndex}`]: parent.firstName,
-                    [`parentMiddleName${pIndex}`]: parent.middleName,
-                    [`parentLastName${pIndex}`]: parent.lastName,
-                    [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
-                    [`parentEmail${pIndex}`]: parent.email,
+                    [`genderRefId`]: registrationObj.genderRefId,
+                    [`dateOfBirth`]: moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`participantFirstName`]: registrationObj.firstName,
+                    [`participantMiddleName`]: registrationObj.middleName,
+                    [`participantLastName`]: registrationObj.lastName,
+                    [`participantMobileNumber`]: registrationObj.mobileNumber,
+                    [`participantEmail`]: registrationObj.email
                 });
-                if(parent.addNewAddressFlag){
-                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex);
+                if(registrationObj.addNewAddressFlag){
+                    this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
                 }
-            })}
-                
+                if(registrationObj.manualEnterAddressFlag){
+                    this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
+                }
+                {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
+                    this.props.form.setFieldsValue({
+                        [`parentFirstName${pIndex}`]: parent.firstName,
+                        [`parentMiddleName${pIndex}`]: parent.middleName,
+                        [`parentLastName${pIndex}`]: parent.lastName,
+                        [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
+                        [`parentEmail${pIndex}`]: parent.email,
+                    });
+                    if(parent.addNewAddressFlag){
+                        this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex);
+                    }
+                })}
+            }      
         }catch(ex){
             console.log("Error in setParticipantDetailStepFormFields"+ex);
         }
@@ -378,7 +386,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     onChangeSetParticipantValue = (value,key) => {
-        const { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj,parents } = this.props.userRegistrationState;
         this.props.updateUserRegistrationObjectAction(value,key);
         if(key == "dateOfBirth" || key == "referParentEmail"){
             setTimeout(() => {
@@ -386,6 +394,15 @@ class AppRegistrationFormNew extends Component{
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
                 });
             });
+            if(key == "dateOfBirth"){
+                if(getAge(value) < 18){
+                    if(isEmptyArray(parents)){
+                        this.addParent("add");
+                    }
+                }else{
+                    this.addParent("removeAllParent")
+                }
+            }
         }
     }
 
@@ -394,7 +411,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             if(key == "add"){
-                let parentObj = this.getParentObj();
+                let parentObj = deepCopyFunction(this.getParentObj());
                 parentObj.selectAddressFlag = newUser ? false : true;
                 parentObj.addNewAddressFlag = newUser ? true : false;
                 parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1; 
@@ -402,6 +419,9 @@ class AppRegistrationFormNew extends Component{
             }
             if(key == "remove"){
                 registrationObj.parentOrGuardian.splice(parentIndex,1);
+            }
+            if(key == "removeAllParent"){
+                registrationObj.parentOrGuardian = [];
             }
             this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj")
         }catch(ex){
@@ -1429,32 +1449,30 @@ class AppRegistrationFormNew extends Component{
     }
 
     parentOrGuardianView = (getFieldDecorator) => {
-        let userRegistrationstate = this.props.userRegistrationState;
-        let registrationObj = userRegistrationstate.registrationObj;
-        const { stateList,countryList } = this.props.commonReducerState;
+        const { registrationObj,parents } = this.props.userRegistrationState;
         return(
             <div className="registration-form-view">
                 <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.parentOrGuardianDetail}</div>
-                {/* <Select
-                    mode="multiple"
-                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                    //onChange={(e) => this.onChangeTempParent(index, e)}
-                    // value={item.tempParents}
-                    >
-                    {(filteredRegistrations).map((reg, regIndex) => (
-                        (reg.parentOrGuardian).map((tParent, tpIndex) => (
-                            <Option key={tParent.tempParentId + tpIndex} 
-                                value={tParent.tempParentId}>
-                                {tParent.firstName + " " + tParent.lastName} 
-                            </Option>
-                        ))
-                    ))}  
-                </Select> */}
+                {isArrayNotEmpty(parents) && (
+                    <div>
+                        <InputWithHead heading={AppConstants.selectParentOrGuardian}/>
+                        <Select
+                            mode="multiple"
+                            style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                            onChange={(e) => this.onChangeSetParentValue(e)} >
+                                {parents.length > 0 && parents.map((tParent, tpIndex) => (
+                                    <Option key={tParent.email} value={tParent.email}>
+                                        {tParent.firstName + " " + tParent.lastName} 
+                                    </Option>
+                                ))}
+                        </Select>
+                    </div>
+                )}
 
                 {(registrationObj.parentOrGuardian || []).map((parent, parentIndex) => {
                     return(
                         <div key={"parent"+parentIndex} className="light-grey-border-box">
-                            {registrationObj.parentOrGuardian.length != 1 && (
+                            {(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) && (
                                 <div className="orange-action-txt" style={{marginTop: "30px"}}
                                     onClick={() => {this.addParent("remove",parentIndex)}}
                                     >{AppConstants.cancel}

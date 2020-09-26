@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
-import { deepCopyFunction, getAge} from '../../../util/helpers';
+import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
 
 let registrationObjTemp = {
@@ -32,34 +32,7 @@ let registrationObjTemp = {
 	"umpireFlag": 0,
 	"coachFlag": 0,
 	"walkingNetballFlag": 0,
-	"parentOrGuardian": [
-		{
-			"tempParentId": null,
-            "userId": 0,
-            "firstName": null,
-            "middleName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null,
-			"street1": null,
-			"street2": null,
-			"suburb": null,
-            "stateRefId": null,
-            "countryRefId": 1,
-            "postalCode": null,
-            "isSameAddress": false,
-            "selectAddressFlag": true,
-            "addNewAddressFlag": false,
-            "manualEnterAddressFlag": false
-		}
-	],
-	// "tempParentsDetail": [
-	// 	// {
-	// 	// 	"firstName": null,
-	// 	// 	"lastName": null,
-	// 	// 	"tempParentId": null
-	// 	// }
-	// ],
+	"parentOrGuardian": [],
 	"tempParents": [],
 	"competitions": [],
 	"regSetting":{
@@ -152,24 +125,16 @@ const competitionObj = {
 	},
 	"positionId1": null,
 	"positionId2": null,
-	"friends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"middleName": null,
-			"mobileNumber": null,
-			"email": null
-		}
-	],
-	"referFriends": [
-		{
-			"firstName": null,
-			"lastName": null,
-			"middleName": null,
-			"mobileNumber": null,
-			"email": null
-		}
-	]
+	"friends": [],
+	"referFriends": []
+}
+
+let friendObj = {
+	"firstName": null,
+	"lastName": null,
+	"middleName": null,
+	"mobileNumber": null,
+	"email": null
 }
 
 const initialState = {
@@ -188,7 +153,8 @@ const initialState = {
 	lastAddedCompetitionIndex: null,
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
-	allCompetitions: [] 
+	allCompetitions: [],
+	parents: [] 
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -421,10 +387,10 @@ function updateUmpireCoachWalkingNetball(state){
 	}
 }
 
-function updateParticipantByIdByMembershipInfo(state,partcipantData){
+function updateParticipantByIdByMembershipInfo(state,participantData){
 	try{
 		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
-		for(let competition of partcipantData.competitions){
+		for(let competition of participantData.competitions){
 			let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
 			competition.organisationInfo = organisationInfo;
 			let competitionInfo = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
@@ -436,7 +402,8 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData){
 				}
 			}
 		}
-		return partcipantData;
+		state.parents = participantData.parents;
+		return participantData;
 	}catch(ex){
 		console.log("Error in updateParticipantByIdByMembershipInfo in userRegistrationReducer"+ex);
 	}
@@ -494,6 +461,14 @@ function setRegistrationSetting(state,settings){
 			if(competition.regSetting[key] == 0){
 				competition.regSetting[key] = settings[key];
 			}
+		}
+		if(competition.regSetting.play_friend == 1){
+			let playFriend = deepCopyFunction(friendObj);
+			competition.friends.push(playFriend);
+		}
+		if(competition.regSetting.refer_friend == 1){
+			let playFriend = deepCopyFunction(friendObj);
+			competition.referFriends.push(playFriend);
 		}
 	}catch(ex){
 		console.log("Error in setRegistrationSetting in userRegistrationReducer"+ex);
@@ -570,13 +545,25 @@ function userRegistrationReducer(state = initialState, action){
 			return { ...state, onParticipantByIdLoad: true };
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
-			let participantData = action.result;
-			return {
-				...state,
-				onParticipantByIdLoad: false,
-				status: action.status,
-				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData)
-			};
+			try{
+				let responseData = action.result;
+				let participantId = action.participantId;
+				let registrationObjTemp = null;
+				if(isNullOrEmptyString(participantId)){
+					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,responseData);
+				}else{
+					state.parents = responseData.parents;
+				}
+				return {
+					...state,
+					onParticipantByIdLoad: false,
+					status: action.status,
+					registrationObj: registrationObjTemp
+				};
+			}catch(ex){
+				console.log("Error in success",ex);
+			}
+			
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
 			return { ...state, onMembershipLoad: true };

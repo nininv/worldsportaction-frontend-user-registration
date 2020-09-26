@@ -164,7 +164,7 @@ function registrationProductsReducer(state = initialState, action){
                 if(action.key == "add"){
                    reviewData.shippingOptions.push(pickupAddress);
                 }else if(action.key == "remove"){
-                    let index = state.shopPickupAddresses.indexOf(pickupAddress);
+                    let index = reviewData.shippingOptions.indexOf(pickupAddress);
                     reviewData.shippingOptions.splice(index,1);
                 }
             }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
