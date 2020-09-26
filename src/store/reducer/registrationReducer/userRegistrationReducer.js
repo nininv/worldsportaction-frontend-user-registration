@@ -153,7 +153,8 @@ const initialState = {
 	lastAddedCompetitionIndex: null,
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
-	allCompetitions: [] 
+	allCompetitions: [],
+	parents: [] 
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -386,10 +387,10 @@ function updateUmpireCoachWalkingNetball(state){
 	}
 }
 
-function updateParticipantByIdByMembershipInfo(state,partcipantData){
+function updateParticipantByIdByMembershipInfo(state,participantData){
 	try{
 		let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
-		for(let competition of partcipantData.competitions){
+		for(let competition of participantData.competitions){
 			let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
 			competition.organisationInfo = organisationInfo;
 			let competitionInfo = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
@@ -401,7 +402,8 @@ function updateParticipantByIdByMembershipInfo(state,partcipantData){
 				}
 			}
 		}
-		return partcipantData;
+		state.parents = participantData.parents;
+		return participantData;
 	}catch(ex){
 		console.log("Error in updateParticipantByIdByMembershipInfo in userRegistrationReducer"+ex);
 	}
@@ -544,11 +546,13 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
 			try{
-				let participantData = action.result;
+				let responseData = action.result;
 				let participantId = action.participantId;
 				let registrationObjTemp = null;
 				if(isNullOrEmptyString(participantId)){
-					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,participantData);
+					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,responseData);
+				}else{
+					state.parents = responseData.parents;
 				}
 				return {
 					...state,

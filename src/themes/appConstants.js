@@ -1075,7 +1075,8 @@ const AppConstants = {
  selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
  addNewDetails: "Add new Details",
  pickupAddress: "Pickup Address",
- qty: "Qty"
+ qty: "Qty",
+ selectParentOrGuardian: "Select Parent/Guardian"
 };
 
 export default AppConstants;
