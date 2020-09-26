@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
-import { deepCopyFunction, getAge} from '../../../util/helpers';
+import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
 
 let registrationObjTemp = {
@@ -543,13 +543,23 @@ function userRegistrationReducer(state = initialState, action){
 			return { ...state, onParticipantByIdLoad: true };
 
 		case ApiConstants.API_GET_PARTICIPANT_BY_ID_SUCCESS:
-			let participantData = action.result;
-			return {
-				...state,
-				onParticipantByIdLoad: false,
-				status: action.status,
-				registrationObj: updateParticipantByIdByMembershipInfo(state,participantData)
-			};
+			try{
+				let participantData = action.result;
+				let participantId = action.participantId;
+				let registrationObjTemp = null;
+				if(isNullOrEmptyString(participantId)){
+					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,participantData);
+				}
+				return {
+					...state,
+					onParticipantByIdLoad: false,
+					status: action.status,
+					registrationObj: registrationObjTemp
+				};
+			}catch(ex){
+				console.log("Error in success",ex);
+			}
+			
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
 			return { ...state, onMembershipLoad: true };

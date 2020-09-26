@@ -119,12 +119,13 @@ class AppRegistrationFormNew extends Component{
             //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f";
             this.setState({participantId: participantId,registrationId: registrationId});
             if(participantId){
-                this.props.getParticipantInfoById(participantId);
+                this.props.getParticipantInfoById(participantId,'');
                 this.setState({getParticipantByIdLoad: true})
             }else{
                 if(registrationId){
                     this.props.updateUserRegistrationStateVarAction("registrationId",registrationId);
-                    this.selectAnotherParticipant();
+                    this.props.getParticipantInfoById('',registrationId);
+                    this.setState({getParticipantByIdLoad: true})
                 } 
             }
             this.setState({getMembershipLoad: false,
@@ -132,14 +133,20 @@ class AppRegistrationFormNew extends Component{
         }
 
         if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
-            this.state.completedSteps = [0,1,2];
-            this.state.enabledSteps = [0,1,2];
-            this.setState({getParticipantByIdLoad: false,
-                completedSteps: this.state.completedSteps,
-                enabledSteps: this.state.enabledSteps});
-            setTimeout(() => {
-                this.setParticipantDetailStepFormFields();
-            },300);
+            if(this.state.participantId){
+                this.state.completedSteps = [0,1,2];
+                this.state.enabledSteps = [0,1,2];
+                this.setState({getParticipantByIdLoad: false,
+                    completedSteps: this.state.completedSteps,
+                    enabledSteps: this.state.enabledSteps});
+                setTimeout(() => {
+                    this.setParticipantDetailStepFormFields();
+                },300);
+            }
+            if(this.state.registrationId){
+                this.setState({getParticipantByIdLoad: false});
+                this.selectAnotherParticipant();
+            } 
         }
 
         if(registrationState.addCompetitionFlag){

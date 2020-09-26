@@ -38,10 +38,11 @@ function updateParticipantCompetitionAction(data,key,index,subIndex,subKey){
     return action;
 }
 
-function getParticipantInfoById(participantKey) {
+function getParticipantInfoById(participantKey,registrarionKey) {
     const action = {
         type: ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD,
-        participantKey: participantKey
+        participantKey: participantKey,
+        registrationKey: registrarionKey
     };
     return action;
 }
