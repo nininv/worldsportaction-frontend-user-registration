@@ -256,7 +256,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) && 
+                {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) ?
                 <div className="content-view pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
@@ -361,6 +361,9 @@ const CheckoutForm = (props) => {
                         </div>}
                     </div>
                     ))}
+                </div> : 
+                <div className="content-view pt-5 secure-payment-msg">
+                    {AppConstants.securePaymentMsg}
                 </div>
                 }
                 <div className="mt-5">

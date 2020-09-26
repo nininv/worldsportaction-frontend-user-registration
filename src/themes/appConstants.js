@@ -1076,6 +1076,7 @@ const AppConstants = {
  addNewDetails: "Add new Details",
  pickupAddress: "Pickup Address",
  qty: "Qty",
+ securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian"
 };
 

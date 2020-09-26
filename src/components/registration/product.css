@@ -1005,3 +1005,9 @@ img.bg {
   width:100%;
   text-transform: uppercase;
 }
+
+.secure-payment-msg{
+  font-size: 18px;
+  text-align: center;
+  font-family:inter;
+}
