@@ -1,18 +1,21 @@
 import React, { Component } from "react";
 import { Layout, Breadcrumb, Button, Form, Spin } from 'antd';
+import { NavLink } from "react-router-dom";
 import InputWithHead from "../customComponents/InputWithHead";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import loginAction from "../store/actions/authentication"
+import {loginAction} from "../store/actions/authentication"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
 import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId, 
-    getIsUserRegistration, getUserId } from '../util/sessionStorage'
+    getIsUserRegistration, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
+const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9578a18b0605ead797aee4263a4cb6a10dc5dfc60170e2b10a37eade9f7dc86a3298ba7e5642cdb5a4b88b4e7b932851f80b9a5389c362e6f939711875d92f76015583478e9a57cd4fba380d411583d0925262a49c34e783650864c4ad81d90af2a4cac53ea7a31136e1943de8fdfd1378dcf58a08abcc5a90d4b54b94c6a419797ae6408f65828b09d2b479827f37374c508e0461ab9c8daae6736a0d950cbb3e';
+const userId = 0;
 const loginFormSchema = Yup.object().shape({
     userName: Yup.string().min(2, 'Username must be at least 2 characters').required('Username is required'),
     password: Yup.string().min(5, 'Too Short!').required('Password is required')
@@ -21,8 +24,7 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loginButton: false,
-
+            loginButton: false
         }
     }
 
@@ -53,6 +55,12 @@ class Login extends Component {
                 }
             }
         }
+    }
+
+    redirect = async() =>{
+        setUserId(userId);
+        setAuthToken(token);
+        history.push('/appRegistrationForm');
     }
 
     ///////view for breadcrumb
@@ -97,13 +105,33 @@ class Login extends Component {
                 {errors.password && touched.password && (
                     <span className="form-err">{errors.password}</span>
                 )}
+                 <NavLink to={{ pathname: `/forgotPassword`, state: { email: values.userName } }}>
+                    <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
+                </NavLink>
+
+                {getIsUserRegistration() == 1 ?
+                <div className="row pt-5" >
+                    <div className="col-sm" >
+                        <div style={{display:'flex'}}>
+                            <Button className="ant-btn-proceed-text login-btn-login-proceed"  htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.loginAndProceedRegistration}</Button>
+                        </div>
+                        <div style={{display: 'flex'}}>
+                            <div className="login-or-border"></div>
+                            <div className="login-or">or</div>
+                            <div className="login-or-border"></div>
+                        </div>
+                        <div style={{display:'flex'}}>
+                            <Button className="ant-btn-proceed-text login-btn-proceed" onClick={() => this.redirect()} type="primary" disabled={this.state.loginButton}>{AppConstants.proceedToRegistration}</Button>
+                        </div>
+                    </div>
+                </div> :
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div className="comp-finals-button-view">
                             <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
                         </div>
                     </div>
-                </div>
+                </div> }
             </div>
         )
     }

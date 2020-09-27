@@ -466,6 +466,18 @@ textarea.ant-input {
   color: var(--app-color);
 }
 
+.ant-btn-proceed-text {
+  background-color: var(--app-white);
+  border-color: white;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-size: 14px;
+  height: 48px;
+  border-radius: 8px;
+  font-stretch: normal;
+  font-style: normal;
+}
+
 @media (max-width: 767px) {
   .ant-tabs-nav .ant-tabs-tab {
     padding: 12px 16px;

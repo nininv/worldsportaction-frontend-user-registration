@@ -111,6 +111,43 @@ function personRegisteringRoleReferenceAction(){
     };
     return action;
 }
+
+function identificationReferenceAction() {
+    const action = {
+        type: ApiConstants.API_IDENTIFICATION_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function otherSportsReferenceAction() {
+    const action = {
+        type: ApiConstants.API_OTHER_SPORTS_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function accreditationUmpireReferenceAction() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function accreditationCoachReferenceAction() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+function walkingNetballQuesReferenceAction() {
+    const action = {
+        type: ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD,
+    };
+    return action;
+}
+
+
 export {
     timeSlotInit,
     getCommonRefData,
@@ -125,5 +162,10 @@ export {
     clearFilter,
     genderReferenceAction,
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction		
+    personRegisteringRoleReferenceAction,
+    identificationReferenceAction,
+    otherSportsReferenceAction,
+    accreditationUmpireReferenceAction,
+    accreditationCoachReferenceAction,
+    walkingNetballQuesReferenceAction		
 }

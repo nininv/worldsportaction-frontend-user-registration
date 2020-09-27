@@ -70,6 +70,10 @@ class UserRegistration extends Component {
                 await setIsUserRegistration(1);
                 history.push("/appRegistrationForm")
             }
+            else{
+                await setIsUserRegistration(1);
+                history.push("/login");
+            }
     }
 
     parseHttpHeaders(httpHeaders) {

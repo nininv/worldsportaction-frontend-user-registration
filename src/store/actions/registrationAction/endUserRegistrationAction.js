@@ -41,23 +41,23 @@ function orgRegistrationRegSettingsEndUserRegAction(payload) {
 }
 
 /////End User Registration Membership Products
-function membershipProductEndUserRegistrationAction(payload) {
-    const action = {
-        type: ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD,
-        payload: payload
-    };
-    return action;
-}
+// function membershipProductEndUserRegistrationAction(payload) {
+//     const action = {
+//         type: ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD,
+//         payload: payload
+//     };
+//     return action;
+// }
 
 
 /////End User Registration getUser Info
-function getUserRegistrationUserInfoAction(payload) {
-    const action = {
-        type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD,
-        payload: payload
-    };
-    return action;
-}
+// function getUserRegistrationUserInfoAction(payload) {
+//     const action = {
+//         type: ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD,
+//         payload: payload
+//     };
+//     return action;
+// }
 
 function clearRegistrationDataAction()
 {
@@ -126,15 +126,15 @@ function updateTeamRegistrationInvite(payload) {
     return action;
 }
 
-// Get Terms and Condition
-function getTermsAndConditionsAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
-        payload: payload
-    }
+// // Get Terms and Condition
+// function getTermsAndConditionsAction(payload){
+//     const action = {
+//         type: ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD,
+//         payload: payload
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
 function getRegistrationProductFeesAction(payload){
     const action = {
@@ -145,36 +145,36 @@ function getRegistrationProductFeesAction(payload){
     return action;
 }
 
-function getRegistrationReviewAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD,
-        payload: payload
-    }
+// function getRegistrationReviewAction(payload){
+//     const action = {
+//         type: ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD,
+//         payload: payload
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
-function saveRegistrationReview(payload){
-    const action = {
-        type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD,
-        payload: payload
-    }
+// function saveRegistrationReview(payload){
+//     const action = {
+//         type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD,
+//         payload: payload
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
-function updateReviewInfoAction(value, key, index, subkey, subIndex){
-    const action = {
-        type: ApiConstants.UPDATE_REVIEW_INFO,
-        value: value,
-        key: key,
-        index: index,
-        subkey: subkey,
-        subIndex: subIndex
-    }
+// function updateReviewInfoAction(value, key, index, subkey, subIndex){
+//     const action = {
+//         type: ApiConstants.UPDATE_REVIEW_INFO,
+//         value: value,
+//         key: key,
+//         index: index,
+//         subkey: subkey,
+//         subIndex: subIndex
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
 function getRegistrationReviewProductAction(payload){
     const action = {
@@ -208,14 +208,6 @@ function updateReviewProductAction(value, key, index, subIndex, subkey){
     return action;
 }
 
-function getRegistrationByIdAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD,
-        payload: payload
-    }
-
-    return action;
-}
 
 
 function validateDiscountCode(payload, index, subIndex){
@@ -289,8 +281,8 @@ export {
     saveEndUserRegistrationAction,
     updateEndUserRegisrationAction,
     orgRegistrationRegSettingsEndUserRegAction,
-    membershipProductEndUserRegistrationAction,
-    getUserRegistrationUserInfoAction,
+    //membershipProductEndUserRegistrationAction,
+    //getUserRegistrationUserInfoAction,
     clearRegistrationDataAction,
     updateRegistrationSettingsAction,
     updateTeamAction,
@@ -299,15 +291,15 @@ export {
     updateTeamParentInfoAction,
     updateTeamRegSettingAction,
     updateTeamRegistrationInvite,
-    getTermsAndConditionsAction,
+    // getTermsAndConditionsAction,
     getRegistrationProductFeesAction,
-    getRegistrationReviewAction,
-    saveRegistrationReview,
-    updateReviewInfoAction,
+    // getRegistrationReviewAction,
+    // saveRegistrationReview,
+    // updateReviewInfoAction,
     getRegistrationReviewProductAction,
     saveRegistrationReviewProduct,
     updateReviewProductAction,
-    getRegistrationByIdAction,
+    //getRegistrationByIdAction,
     validateDiscountCode,
     teamNameValidationAction,
     getTeamRegistrationReviewAction,

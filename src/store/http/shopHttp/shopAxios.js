@@ -36,6 +36,14 @@ let AxiosApi = {
     addToCart(payload){
         var url = `/cart/add`;
         return Method.dataPost(url, token, payload);
+    },
+    getRegistrationShopProducts(payload){
+        var url = `/api/registration/products`;
+        return Method.dataPost(url, token, payload);
+    },
+    getRegistrationShopPickupAddress(payload){
+        var url = `/api/registration/pickupaddress`;
+        return Method.dataPost(url, token, payload);
     }
 
 };

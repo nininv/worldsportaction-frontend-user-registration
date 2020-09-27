@@ -46,9 +46,8 @@ let LiveScoreAxiosApi = {
     },
 
 
-    liveScoreRound(competitionID) {
-        console.log("colled")
-        var url = `/round?competitionId=${competitionID}`;
+    liveScoreRound(competitionID, division) {
+        var url = `/round?competitionId=${competitionID}&divisionId=${division}`;
         return Method.dataGet(url, localStorage.token)
     },
 
