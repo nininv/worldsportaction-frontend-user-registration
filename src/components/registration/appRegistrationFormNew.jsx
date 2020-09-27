@@ -57,7 +57,8 @@ import {
     updateParticipantAdditionalInfoAction,
     saveParticipantInfo,
     getParticipantInfoById,
-    orgRegistrationRegSettingsEndUserRegAction
+    orgRegistrationRegSettingsEndUserRegAction,
+    registrationExpiryCheckAction
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -163,6 +164,9 @@ class AppRegistrationFormNew extends Component{
                 this.setState({findAnotherCompetitionFlag: false})
             }
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
+            if(registrationState.expiredRegistration != null){
+                this.props.updateUserRegistrationStateVarAction("expiredRegistration",null);
+            }
         }
 
         if(registrationState.isSavedParticipant){
@@ -183,12 +187,24 @@ class AppRegistrationFormNew extends Component{
             },300);
             this.props.updateUserRegistrationStateVarAction("updateExistingUserOnLoad",false);
         }
+
+        if(registrationState.expiredRegistrationFlag){
+            if(getOrganisationId() && getCompetitonId()){
+                let payload = {
+                    organisationId: getOrganisationId(),
+                    competitionId: getCompetitonId()
+                }
+                this.props.registrationExpiryCheckAction(payload);
+            }
+            this.props.updateUserRegistrationStateVarAction("expiredRegistrationFlag",false);
+        }
     }
 
     componentDidMount(){
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({getMembershipLoad: true});
+        console.log(getOrganisationId(),getCompetitonId());
         if(getOrganisationId() != null && getCompetitonId() != null){
             this.setState({showAddAnotherCompetitionView: false,
             organisationId: getOrganisationId(),
@@ -473,7 +489,7 @@ class AppRegistrationFormNew extends Component{
         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
     }
 
-    handlePlacesAutocomplete = (addressData,key,parentGuardianIndex) => {
+    handlePlacesAutocomplete = (addressData,key,parentIndex) => {
         const { stateList } = this.props.commonReducerState;
         const address = addressData;
         // if (!address.addressOne) {
@@ -483,48 +499,30 @@ class AppRegistrationFormNew extends Component{
         // }
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
         if(address){
-            // if(key == "parent"){
-            //     this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.addressOne, "street1", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.suburb, "suburb", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.postcode, "postalCode", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.lat, "lat", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.lng, "lng", index, parentGuardianIndex);
-            //     this.props.form.setFieldsValue({
-            //         [`parentStreet1${index}${parentGuardianIndex}`]: address.addressOne,
-            //         [`parentSuburb${index}${parentGuardianIndex}`]: address.suburb,
-            //         [`parentStateRefId${index}${parentGuardianIndex}`]: stateRefId,
-            //         [`parentPostalCode${index}${parentGuardianIndex}`]: address.postcode,
-            //     });
-            // }
+            if(key == "parent"){
+                this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
+                this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
+                this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
+                this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
+                this.props.form.setFieldsValue({
+                    [`parentStreet1${parentIndex}`]: address.addressOne,
+                    [`parentSuburb${parentIndex}`]: address.suburb,
+                    [`parentStateRefId${parentIndex}`]: stateRefId,
+                    [`parentPostalCode${parentIndex}`]: address.postcode,
+                });
+            }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");
-                this.onChangeSetParticipantValue(address.lat, "latitue");
-                this.onChangeSetParticipantValue(address.lng, "longitude");
                 this.props.form.setFieldsValue({
                     [`participantStreet1`]:  address.addressOne,
                     [`participantSuburb`]:  address.suburb,
                     [`participantStateRefId`]:  stateRefId,
                     [`participantPostalCode`]:  address.postcode,
                 });              
-            }
-            // if(key == "yourInfo"){
-            //     this.onChangeSetYourInfo(stateRefId, "stateRefId")
-            //     this.onChangeSetYourInfo(address.addressOne, "street1");
-            //     this.onChangeSetYourInfo(address.suburb, "suburb");
-            //     this.onChangeSetYourInfo(address.postcode, "postalCode");
-            //     this.onChangeSetYourInfo(address.lat, "lat");
-            //     this.onChangeSetYourInfo(address.lng, "lng");
-            //     this.props.form.setFieldsValue({
-            //         [`yStreet1`]:  address.addressOne,
-            //         [`ySuburb`]:  address.suburb,
-            //         [`yStateRefId`]:  stateRefId,
-            //         [`yPostalCode`]:  address.postcode,
-            //     });
-            // }  
+            } 
             // if(key == "team"){
             //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
             //     this.onChangeSetTeam(address.addressOne, "street1", index, "team")
@@ -672,6 +670,29 @@ class AppRegistrationFormNew extends Component{
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
 
+    addressSearchValidation = () => {
+        try{
+            let error = false;
+            const { registrationObj } = this.props.userRegistrationState;
+            if(registrationObj.addNewAddressFlag && 
+                !isNullOrEmptyString(registrationObj.street1) && 
+                !isNullOrEmptyString(registrationObj.postalCode)){
+                error = true;
+            }
+            if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
+                let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag ==  true && 
+                    !isNullOrEmptyString(x.street1) && 
+                    !isNullOrEmptyString(x.postalCode));
+                if(parent != undefined){
+                    error = true;
+                }
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
     productValidation = () => {
         try{
             const { registrationObj } = this.props.userRegistrationState;
@@ -751,11 +772,15 @@ class AppRegistrationFormNew extends Component{
             this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
         }
     }
+
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
+    }
     
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
-            const { registrationObj } = this.props.userRegistrationState;
+            const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
             //console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
@@ -764,6 +789,13 @@ class AppRegistrationFormNew extends Component{
                     if(registrationObj.photoUrl == null){
                         message.error(ValidationConstants.userPhotoIsRequired);
                         return;
+                    }
+                    if(this.state.currentStep == 0){
+                        let addressSearchError = this.addressSearchValidation();
+                        if(addressSearchError){
+                            message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
                     }
                     if(this.state.currentStep == 1){
                         if(registrationObj.competitions.length == 0){
@@ -781,7 +813,8 @@ class AppRegistrationFormNew extends Component{
                         let nextStep = this.state.currentStep + 1;
                         this.scrollToTop();
                         if(nextStep == 1){
-                            if(registrationObj.competitions.length == 0){
+                            if(registrationObj.competitions.length == 0 && 
+                                expiredRegistration == null){
                                 this.setState({showAddAnotherCompetitionView: true});
                             }
                             this.state.enabledSteps.push(0,nextStep);
@@ -977,18 +1010,15 @@ class AppRegistrationFormNew extends Component{
                         style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                         <div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`participantAddressSearch`, {
-                                    rules: [{ required: true, message: ValidationConstants.addressField}],
-                                })(
-                                    <PlacesAutocomplete
-                                        setFieldsValue={"participantAddressSearch"}
-                                        heading={AppConstants.addressSearch}
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => { this.setState({searchAddressError: ''})}}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
-                                    />
-                                )}
-                            </Form.Item>
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(registrationObj)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => { this.setState({searchAddressError: ''})}}
+                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                />
+                            </Form.Item> 
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"manualEnterAddressFlag");
@@ -1310,22 +1340,18 @@ class AppRegistrationFormNew extends Component{
                             <div className="form-heading" 
                             style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`parentAddressSearch${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.addressField[0] }],
-                                    })(
-                                    <PlacesAutocomplete
-                                        setFieldsValue={"defaultAddress"}
-                                        heading={AppConstants.addressSearch}
-                                        required
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => {
-                                            this.setState({
-                                                searchAddressError: ''
-                                            })
-                                        }}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,parentIndex,"parent")}
-                                    />
-                                )}
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(parent)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => {
+                                        this.setState({
+                                            searchAddressError: ''
+                                        })
+                                    }}
+                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"parent",parentIndex)}
+                                />
                             </Form.Item>
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
@@ -1577,23 +1603,34 @@ class AppRegistrationFormNew extends Component{
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
-        const { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+        console.log("dfsf",expiredRegistration);
         return(
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div> 
                 {!this.state.showAddAnotherCompetitionView && (
                     <div>
-                        {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                            <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
-                        ))}
+                        {expiredRegistration == null ? 
+                            <div>
+                                {(registrationObj.competitions || []).map((competition, competitionIndex) => (
+                                    <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
+                                ))}
+                            </div>
+                        : 
+                            <div>{this.expiredRegistrationView()}</div>
+                        }
                     </div>
                 )}
                 {this.state.showAddAnotherCompetitionView ? 
                     <div>{this.findAnotherCompetitionView()}</div>
                     : 
-                    <div className="orange-action-txt"
-                    style={{marginTop: "20px"}}
-                    onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                    <div>
+                        {expiredRegistration == null && (
+                            <div className="orange-action-txt"
+                            style={{marginTop: "20px"}}
+                            onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                        )}
+                    </div>
                 }
             </div>
         )
@@ -1663,7 +1700,7 @@ class AppRegistrationFormNew extends Component{
                                 borderRadius: "10px 10px 0px 0px",
                                 margin: "-20px -20px -0px -20px",
                                 borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.compLogoUrl}/>
+                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.heroImageUrl}/>
                                 </div>
                                 <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
                                 {this.state.organisationId == null && (
@@ -1693,7 +1730,7 @@ class AppRegistrationFormNew extends Component{
         return(
             <div className="registration-form-view"  key={competitionIndex}>
                 <div className="map-style">
-                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.compLogoUrl}/>
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
                 </div>
                 <div>
                     <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
@@ -1954,6 +1991,38 @@ class AppRegistrationFormNew extends Component{
                             onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>
                         </div>
                     )}	 
+                </div>
+            </div>
+        )
+    }
+
+    expiredRegistrationView = () => {
+        const { expiredRegistration } = this.props.userRegistrationState;
+        console.log(expiredRegistration);
+        return(
+            <div className="registration-form-view">
+                <div className="map-style">
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
+                </div>
+                <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
+                    <div className="col-sm-1.5">
+                        <img style={{height: "60px",width: "60px",borderRadius: "50%"}} 
+                        src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser}/> 
+                    </div>
+                    <div className="col">
+                        <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
+                        <div className="form-heading" style={{textAlign: "start"}}>{expiredRegistration.competitionName}</div>
+                        <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                    </div>
+                </div>
+                <div className="light-grey-border-box" style={{textAlign: "center"}}>
+                    <div className="form-heading" 
+                    style={{marginTop: "30px",justifyContent:"center",marginBottom: "20px"}}>{expiredRegistration.validateMessage}</div>
+                    <Button 
+                    type="primary"
+                    style={{color: "white",textTransform: "uppercase"}}
+                    onClick={() => this.findAnotherCompetition(0)}
+                    className="open-reg-button">{AppConstants.findAnotherCompetition}</Button>
                 </div>
             </div>
         )
@@ -2482,6 +2551,13 @@ class AppRegistrationFormNew extends Component{
         let { registrationObj } = this.props.userRegistrationState;
         return(
             <div className="pt-0" style={{width: "70%",margin: "auto"}}>
+                {this.state.registrationId && (
+                    <div className="orange-action-txt"
+                    onClick={() => this.goToRegistrationProducts()}
+                    style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart}
+                    <img style={{height: "20px",width: "20px",marginLeft: "7px"}} src={AppImages.shoppingCartIcon}/>
+                    </div>
+                )}
                 {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
                     <div>{this.addOrSelectParticipantView()}</div>
                 )}
@@ -2501,10 +2577,12 @@ class AppRegistrationFormNew extends Component{
     }
 
     footerView = () => {
-        let { registrationObj } = this.props.userRegistrationState;
+        let { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+        let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
         return(
             <div>
-                {registrationObj != null && registrationObj.registeringYourself && !this.state.showAddAnotherCompetitionView && (
+                {registrationObj != null && registrationObj.registeringYourself && 
+                !this.state.showAddAnotherCompetitionView && !expiredRegistrationExist && (
                     <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
                         <Button 
                         htmlType="submit"
@@ -2529,11 +2607,13 @@ class AppRegistrationFormNew extends Component{
                 className="add-membership-type-modal"
                 title={title}
                 visible={this.state.singleCompModalVisible}
+                onCancel={() => this.setState({singleCompModalVisible: false})}
                 footer={[
                     <Button onClick={() => this.setState({singleCompModalVisible: false})}>
                         {AppConstants.ok}                          
                     </Button>
-                ]}>
+                ]}
+                >
                 {(errorMsg || []).map((item, index) =>(
                     <p key= {index}> {item}</p>
                 ))}
@@ -2601,7 +2681,8 @@ function mapDispatchToProps(dispatch)
         walkingNetballQuesReferenceAction,
         saveParticipantInfo	,
         getParticipantInfoById,
-        orgRegistrationRegSettingsEndUserRegAction				 
+        orgRegistrationRegSettingsEndUserRegAction,
+        registrationExpiryCheckAction				 
     }, dispatch);
 
 }

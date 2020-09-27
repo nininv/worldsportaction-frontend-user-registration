@@ -245,5 +245,7 @@ export default function* root_saga() {
   //Get Registration Participant Address
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD, regProductsSaga.getRegParticipantAddressSaga)
 
+  //Expired competition check
+  yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
 
 }

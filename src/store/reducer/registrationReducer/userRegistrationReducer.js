@@ -154,7 +154,9 @@ const initialState = {
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
 	allCompetitions: [],
-	parents: [] 
+	parents: [],
+	expiredRegistrationFlag: false,
+	expiredRegistration: null 
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -253,13 +255,21 @@ function setMembershipProductsInfo(state,organisationData){
 				competition.organisationId = getOrganisationId();
 				competition.competitionId = getCompetitonId();
 				let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == competition.organisationId);
-				competition.organisationInfo = organisatinInfoTemp;
-				let competitionInfoTemp = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
-				competition.competitionInfo = competitionInfoTemp;
-				competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
-				state.registrationObj.competitions.push(competition);
-				state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
-				state.addCompetitionFlag = true; 
+				if(organisatinInfoTemp != undefined){
+					competition.organisationInfo = organisatinInfoTemp;
+					let competitionInfoTemp = competition.organisationInfo.competitions.find(x => x.competitionUniqueKey == competition.competitionId);
+					if(competitionInfoTemp != undefined){
+						competition.competitionInfo = competitionInfoTemp;
+						competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
+						state.registrationObj.competitions.push(competition);
+						state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
+						state.addCompetitionFlag = true; 
+					}else{
+						state.expiredRegistrationFlag = true;
+					}
+				}else{
+					state.expiredRegistrationFlag = true;
+				}
 			}
 		}else{
 			competition.organisationId = organisationData.organisationInfo.organisationUniqueKey;
@@ -656,6 +666,19 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					onLoad: false,
+					status: action.status
+				};
+
+			case ApiConstants.API_EXPIRED_REGISTRATION_LOAD: 
+				return {...state,onLoad: true}
+			
+			case ApiConstants.API_EXPIRED_REGISTRATION_SUCCESS:
+				let expiredRegistrationTemp = action.result;
+				console.log("sersf",expiredRegistrationTemp)
+				return {
+					...state,
+					onLoad: false,
+					expiredRegistration: expiredRegistrationTemp,
 					status: action.status
 				};
 

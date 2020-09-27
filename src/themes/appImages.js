@@ -45,6 +45,7 @@ const AppImages = {
   crossImage: require("../images/close.png"),
   removeIcon: require("../images/removeIcon.svg"),
   editIcon: require("../images/editIcon.svg"),
+  shoppingCartIcon: require("../images/shopping_cart_icon.svg")
 };
 
 export default AppImages;
