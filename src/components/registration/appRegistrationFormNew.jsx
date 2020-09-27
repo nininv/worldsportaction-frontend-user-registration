@@ -654,6 +654,29 @@ class AppRegistrationFormNew extends Component{
         this.props.updateUserRegistrationStateVarAction("registrationObj",null);
     }
 
+    addressSearchValidation = () => {
+        try{
+            let error = false;
+            const { registrationObj } = this.props.userRegistrationState;
+            if(registrationObj.addNewAddressFlag && 
+                !isNullOrEmptyString(registrationObj.street1) && 
+                !isNullOrEmptyString(registrationObj.postalCode)){
+                error = true;
+            }
+            if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
+                let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag ==  true && 
+                    !isNullOrEmptyString(x.street1) && 
+                    !isNullOrEmptyString(x.postalCode));
+                if(parent != undefined){
+                    error = true;
+                }
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
     productValidation = () => {
         try{
             const { registrationObj } = this.props.userRegistrationState;
@@ -750,6 +773,13 @@ class AppRegistrationFormNew extends Component{
                     if(registrationObj.photoUrl == null){
                         message.error(ValidationConstants.userPhotoIsRequired);
                         return;
+                    }
+                    if(this.state.currentStep == 0){
+                        let addressSearchError = this.addressSearchValidation();
+                        if(addressSearchError){
+                            message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
                     }
                     if(this.state.currentStep == 1){
                         if(registrationObj.competitions.length == 0){
