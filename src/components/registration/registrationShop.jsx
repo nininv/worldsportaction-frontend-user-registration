@@ -100,7 +100,7 @@ class RegistrationShop extends Component {
 
     onChangeSetValue = (key, value) =>{
         this.setState({typeId: value});
-        this.getRegistrationProducts(this.state.registrationId, 1, value);
+        this.getRegistrationProducts(this.state.registrationUniqueKey , 1, value);
     }
 
     goToShipping = () =>{
