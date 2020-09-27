@@ -751,7 +751,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.lastName}
-                                            onChange={(e) => this.setReviewInfo(e.target.value, "firstName", null,"yourInfo", null)}
+                                            onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null,"yourInfo", null)}
                                             setFieldsValue={yourInfo.lastName }
                                         />
                                     )}
@@ -765,7 +765,7 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.phone}
-                                            onChange={(e) => this.setReviewInfo(e.target.value, "firstName", null,"yourInfo", null)}
+                                            onChange={(e) => this.setReviewInfo(e.target.value, "mobileNumber", null,"yourInfo", null)}
                                             setFieldsValue={yourInfo.mobileNumber }
                                         />
                                     )}

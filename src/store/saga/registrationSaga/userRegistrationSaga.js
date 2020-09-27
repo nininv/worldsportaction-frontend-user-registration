@@ -118,3 +118,21 @@ export function* orgRegistrationRegistrationSettings(action) {
     yield call(errorSaga, error)
   }
 }
+
+////// Org Registration expired registration
+export function* expiredRegistrationCheck(action) {
+  try {
+    const result = yield call(AxiosApi.expiredRegistrationCheck,action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_EXPIRED_REGISTRATION_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

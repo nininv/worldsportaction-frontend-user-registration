@@ -57,7 +57,8 @@ import {
     updateParticipantAdditionalInfoAction,
     saveParticipantInfo,
     getParticipantInfoById,
-    orgRegistrationRegSettingsEndUserRegAction
+    orgRegistrationRegSettingsEndUserRegAction,
+    registrationExpiryCheckAction
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -163,6 +164,9 @@ class AppRegistrationFormNew extends Component{
                 this.setState({findAnotherCompetitionFlag: false})
             }
             this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
+            if(registrationState.expiredRegistration != null){
+                this.props.updateUserRegistrationStateVarAction("expiredRegistration",null);
+            }
         }
 
         if(registrationState.isSavedParticipant){
@@ -183,12 +187,24 @@ class AppRegistrationFormNew extends Component{
             },300);
             this.props.updateUserRegistrationStateVarAction("updateExistingUserOnLoad",false);
         }
+
+        if(registrationState.expiredRegistrationFlag){
+            if(getOrganisationId() && getCompetitonId()){
+                let payload = {
+                    organisationId: getOrganisationId(),
+                    competitionId: getCompetitonId()
+                }
+                this.props.registrationExpiryCheckAction(payload);
+            }
+            this.props.updateUserRegistrationStateVarAction("expiredRegistrationFlag",false);
+        }
     }
 
     componentDidMount(){
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({getMembershipLoad: true});
+        console.log(getOrganisationId(),getCompetitonId());
         if(getOrganisationId() != null && getCompetitonId() != null){
             this.setState({showAddAnotherCompetitionView: false,
             organisationId: getOrganisationId(),
@@ -764,7 +780,7 @@ class AppRegistrationFormNew extends Component{
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
-            const { registrationObj } = this.props.userRegistrationState;
+            const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
             //console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
@@ -797,7 +813,8 @@ class AppRegistrationFormNew extends Component{
                         let nextStep = this.state.currentStep + 1;
                         this.scrollToTop();
                         if(nextStep == 1){
-                            if(registrationObj.competitions.length == 0){
+                            if(registrationObj.competitions.length == 0 && 
+                                expiredRegistration == null){
                                 this.setState({showAddAnotherCompetitionView: true});
                             }
                             this.state.enabledSteps.push(0,nextStep);
@@ -1586,23 +1603,34 @@ class AppRegistrationFormNew extends Component{
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
-        const { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+        console.log("dfsf",expiredRegistration);
         return(
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div> 
                 {!this.state.showAddAnotherCompetitionView && (
                     <div>
-                        {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                            <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
-                        ))}
+                        {expiredRegistration == null ? 
+                            <div>
+                                {(registrationObj.competitions || []).map((competition, competitionIndex) => (
+                                    <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
+                                ))}
+                            </div>
+                        : 
+                            <div>{this.expiredRegistrationView()}</div>
+                        }
                     </div>
                 )}
                 {this.state.showAddAnotherCompetitionView ? 
                     <div>{this.findAnotherCompetitionView()}</div>
                     : 
-                    <div className="orange-action-txt"
-                    style={{marginTop: "20px"}}
-                    onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                    <div>
+                        {expiredRegistration == null && (
+                            <div className="orange-action-txt"
+                            style={{marginTop: "20px"}}
+                            onClick={() => this.setState({showAddAnotherCompetitionView: true})}>+ {AppConstants.addAnotherCompetition}</div>
+                        )}
+                    </div>
                 }
             </div>
         )
@@ -1672,7 +1700,7 @@ class AppRegistrationFormNew extends Component{
                                 borderRadius: "10px 10px 0px 0px",
                                 margin: "-20px -20px -0px -20px",
                                 borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.compLogoUrl}/>
+                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.heroImageUrl}/>
                                 </div>
                                 <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
                                 {this.state.organisationId == null && (
@@ -1702,7 +1730,7 @@ class AppRegistrationFormNew extends Component{
         return(
             <div className="registration-form-view"  key={competitionIndex}>
                 <div className="map-style">
-                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.compLogoUrl}/>
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
                 </div>
                 <div>
                     <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
@@ -1963,6 +1991,38 @@ class AppRegistrationFormNew extends Component{
                             onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>
                         </div>
                     )}	 
+                </div>
+            </div>
+        )
+    }
+
+    expiredRegistrationView = () => {
+        const { expiredRegistration } = this.props.userRegistrationState;
+        console.log(expiredRegistration);
+        return(
+            <div className="registration-form-view">
+                <div className="map-style">
+                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
+                </div>
+                <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
+                    <div className="col-sm-1.5">
+                        <img style={{height: "60px",width: "60px",borderRadius: "50%"}} 
+                        src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser}/> 
+                    </div>
+                    <div className="col">
+                        <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
+                        <div className="form-heading" style={{textAlign: "start"}}>{expiredRegistration.competitionName}</div>
+                        <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                    </div>
+                </div>
+                <div className="light-grey-border-box" style={{textAlign: "center"}}>
+                    <div className="form-heading" 
+                    style={{marginTop: "30px",justifyContent:"center",marginBottom: "20px"}}>{expiredRegistration.validateMessage}</div>
+                    <Button 
+                    type="primary"
+                    style={{color: "white",textTransform: "uppercase"}}
+                    onClick={() => this.findAnotherCompetition(0)}
+                    className="open-reg-button">{AppConstants.findAnotherCompetition}</Button>
                 </div>
             </div>
         )
@@ -2517,10 +2577,12 @@ class AppRegistrationFormNew extends Component{
     }
 
     footerView = () => {
-        let { registrationObj } = this.props.userRegistrationState;
+        let { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+        let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
         return(
             <div>
-                {registrationObj != null && registrationObj.registeringYourself && !this.state.showAddAnotherCompetitionView && (
+                {registrationObj != null && registrationObj.registeringYourself && 
+                !this.state.showAddAnotherCompetitionView && !expiredRegistrationExist && (
                     <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
                         <Button 
                         htmlType="submit"
@@ -2619,7 +2681,8 @@ function mapDispatchToProps(dispatch)
         walkingNetballQuesReferenceAction,
         saveParticipantInfo	,
         getParticipantInfoById,
-        orgRegistrationRegSettingsEndUserRegAction				 
+        orgRegistrationRegSettingsEndUserRegAction,
+        registrationExpiryCheckAction				 
     }, dispatch);
 
 }

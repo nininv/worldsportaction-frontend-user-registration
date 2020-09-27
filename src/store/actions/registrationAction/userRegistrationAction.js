@@ -89,6 +89,14 @@ function orgRegistrationRegSettingsEndUserRegAction(payload) {
     return action;
 }
 
+function registrationExpiryCheckAction(payload){
+    const action = {
+        type: ApiConstants.API_EXPIRED_REGISTRATION_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -99,5 +107,6 @@ export{
     updateParticipantCompetitionAction,
     updateUserRegistrationStateVarAction,
     updateParticipantAdditionalInfoAction,
-    orgRegistrationRegSettingsEndUserRegAction
+    orgRegistrationRegSettingsEndUserRegAction,
+    registrationExpiryCheckAction
 }
