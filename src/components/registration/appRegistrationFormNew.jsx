@@ -473,7 +473,7 @@ class AppRegistrationFormNew extends Component{
         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
     }
 
-    handlePlacesAutocomplete = (addressData,key,parentGuardianIndex) => {
+    handlePlacesAutocomplete = (addressData,key,parentIndex) => {
         const { stateList } = this.props.commonReducerState;
         const address = addressData;
         // if (!address.addressOne) {
@@ -483,48 +483,30 @@ class AppRegistrationFormNew extends Component{
         // }
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
         if(address){
-            // if(key == "parent"){
-            //     this.onChangeSetParentValue(stateRefId, "stateRefId", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.addressOne, "street1", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.suburb, "suburb", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.postcode, "postalCode", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.lat, "lat", index, parentGuardianIndex);
-            //     this.onChangeSetParentValue(address.lng, "lng", index, parentGuardianIndex);
-            //     this.props.form.setFieldsValue({
-            //         [`parentStreet1${index}${parentGuardianIndex}`]: address.addressOne,
-            //         [`parentSuburb${index}${parentGuardianIndex}`]: address.suburb,
-            //         [`parentStateRefId${index}${parentGuardianIndex}`]: stateRefId,
-            //         [`parentPostalCode${index}${parentGuardianIndex}`]: address.postcode,
-            //     });
-            // }
+            if(key == "parent"){
+                this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
+                this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
+                this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
+                this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
+                this.props.form.setFieldsValue({
+                    [`parentStreet1${parentIndex}`]: address.addressOne,
+                    [`parentSuburb${parentIndex}`]: address.suburb,
+                    [`parentStateRefId${parentIndex}`]: stateRefId,
+                    [`parentPostalCode${parentIndex}`]: address.postcode,
+                });
+            }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");
-                this.onChangeSetParticipantValue(address.lat, "latitue");
-                this.onChangeSetParticipantValue(address.lng, "longitude");
                 this.props.form.setFieldsValue({
                     [`participantStreet1`]:  address.addressOne,
                     [`participantSuburb`]:  address.suburb,
                     [`participantStateRefId`]:  stateRefId,
                     [`participantPostalCode`]:  address.postcode,
                 });              
-            }
-            // if(key == "yourInfo"){
-            //     this.onChangeSetYourInfo(stateRefId, "stateRefId")
-            //     this.onChangeSetYourInfo(address.addressOne, "street1");
-            //     this.onChangeSetYourInfo(address.suburb, "suburb");
-            //     this.onChangeSetYourInfo(address.postcode, "postalCode");
-            //     this.onChangeSetYourInfo(address.lat, "lat");
-            //     this.onChangeSetYourInfo(address.lng, "lng");
-            //     this.props.form.setFieldsValue({
-            //         [`yStreet1`]:  address.addressOne,
-            //         [`ySuburb`]:  address.suburb,
-            //         [`yStateRefId`]:  stateRefId,
-            //         [`yPostalCode`]:  address.postcode,
-            //     });
-            // }  
+            } 
             // if(key == "team"){
             //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
             //     this.onChangeSetTeam(address.addressOne, "street1", index, "team")
@@ -981,17 +963,14 @@ class AppRegistrationFormNew extends Component{
                         style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                         <div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`participantAddressSearch`, {
-                                    rules: [{ required: true, message: ValidationConstants.addressField}],
-                                })(
-                                    <PlacesAutocomplete
-                                        setFieldsValue={this.getAddress(registrationObj)}
-                                        heading={AppConstants.addressSearch}
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => { this.setState({searchAddressError: ''})}}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
-                                    />
-                                )}
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(registrationObj)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => { this.setState({searchAddressError: ''})}}
+                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                />
                             </Form.Item> 
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
@@ -1314,22 +1293,18 @@ class AppRegistrationFormNew extends Component{
                             <div className="form-heading" 
                             style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`parentAddressSearch${parentIndex}`, {
-                                        rules: [{ required: true, message: ValidationConstants.addressField[0] }],
-                                    })(
-                                    <PlacesAutocomplete
-                                        setFieldsValue={"defaultAddress"}
-                                        heading={AppConstants.addressSearch}
-                                        required
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => {
-                                            this.setState({
-                                                searchAddressError: ''
-                                            })
-                                        }}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,parentIndex,"parent")}
-                                    />
-                                )}
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(parent)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => {
+                                        this.setState({
+                                            searchAddressError: ''
+                                        })
+                                    }}
+                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"parent",parentIndex)}
+                                />
                             </Form.Item>
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
