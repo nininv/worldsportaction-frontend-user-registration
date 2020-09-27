@@ -158,6 +158,7 @@ class RegistrationShop extends Component {
             totalAmt: 0,
             organisationId: expandObj.organisationId,
             skuId: variantOption ? (variantOption.skuId) : 0,
+            variantName: varnt.name
         }
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateReviewInfoAction(obj,key, null, subKey,null);

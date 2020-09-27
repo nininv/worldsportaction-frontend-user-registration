@@ -51,7 +51,7 @@ class RegistrationInvoice extends Component {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let registrationId = "2e0c9975-263a-4798-97ca-a1742e46f740";
+    //    let registrationId = "3be6fba2-e864-4500-89d8-5d626238bb02";
     //    let userRegId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
@@ -75,7 +75,7 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = "2e0c9975-263a-4798-97ca-a1742e46f740";
+            //  let registrationId = "3be6fba2-e864-4500-89d8-5d626238bb02";
             //  let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
@@ -493,6 +493,9 @@ class RegistrationInvoice extends Component {
                     )
                 })
                 }
+                {
+                    this.shopView()
+                }
             </div>
         )
     }
@@ -599,6 +602,75 @@ class RegistrationInvoice extends Component {
                 </div>
             </div >
         )
+    }
+
+    shopView = () => {
+        let {invoiceData} = this.props.stripeState;
+        let shopProducts = invoiceData!= null ? invoiceData.shopProducts : []
+        let totalAmount = 0;
+        shopProducts.map((x) =>{
+            totalAmount += x.totalAmt;
+        })
+        return(
+            <div>
+                {(shopProducts || []).map((item, index) =>(
+                    <div className="row" >
+                    <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                        {item.productName &&
+                            <InputWithHead
+                                heading={item.organisationName + " - " + item.productName + " - " + item.variantName +'('+ item.optionName+')' + " - Shop Product Fees"}
+                            />
+                        }
+                    </div>
+                    <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                        <div>
+                            <div className="row">
+                                <div className="col-sm invoice-description" >
+                                    <InputWithHead heading={(Number(item.quantity)).toFixed(2)} />
+                                </div>
+                                <div className="col-sm invoice-description" >
+                                    <InputWithHead
+                                            heading={(Number(item.amount)).toFixed(2)}
+                                        />
+                                </div>
+                                <div className="col-sm invoice-description" >
+                                    <InputWithHead
+                                            heading={"0.00"}
+                                        />
+                                </div>
+                                <div className="col-sm invoice-description" >
+                                        < InputWithHead
+                                            heading={(Number(item.tax)).toFixed(2)}
+                                        />
+                                </div>
+                                <div className="col-sm" >
+                                        < InputWithHead
+                                            required="invoice"
+                                            heading={(Number(item.totalAmt)).toFixed(2)}
+                                        />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <Divider className="mt-0 mb-0" />
+                    </div>
+                ))}
+                <div className="d-flex row d-flex justify-content-end" >
+                    <div className="invoice-total justify-content-end">
+                        <InputWithHead
+                            heading={"Total"}
+                        />
+                    </div>
+                    <div className="invoice-total-Amount">
+                        <InputWithHead
+                            required="invoice"
+                            heading={"$" + totalAmount ? (totalAmount).toFixed(2) : "N/A"}
+                        />
+                    </div> 
+                </div>
+            </div>
+         )
     }
 
     //////footer view containing all the buttons like submit and cancel
