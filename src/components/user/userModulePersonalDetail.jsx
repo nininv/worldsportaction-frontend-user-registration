@@ -86,18 +86,29 @@ const columns = [
           return <div>{divisionName != null ?  divisionName : ""}</div>;
         },
     },
-    // {
-    //     title: 'Payment Method',
-    //     dataIndex: 'paymentType',
-    //     key: 'paymentType',
-    //     render:(paymentType, record, index) =>{
-    //         return(
-    //             <span style={{textTransform:'capitalize'}}>
-    //                 {paymentType}
-    //             </span>
-    //         )
-    //     }
-    // },
+    {
+        title: "Paid By",
+        dataIndex: "paidBy",
+        key: "paidBy",
+        render: (paidBy, record, index) => { 
+          return(
+          <div>
+            {this_Obj.state.userId == record.paidByUserId ? 'Self' :
+            <NavLink
+                      to={{
+                          pathname: `/userPersonal`,
+                          state: {
+                              userId: record.paidByUserId,
+                              tabKey: "registration"
+                          },
+                      }}
+                  >
+                      <span className="input-heading-add-another pt-0">{paidBy}</span>
+            </NavLink>}
+            </div>
+            )
+        },
+      },
     // {
     //     title: 'Shop Purchases',
     //     dataIndex: 'shopPurchases',
