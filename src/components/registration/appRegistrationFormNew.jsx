@@ -980,19 +980,19 @@ class AppRegistrationFormNew extends Component{
                         <div className="form-heading" 
                         style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                         <div>
-                            {/* <Form.Item name="addressSearch">
+                            <Form.Item name="addressSearch">
                                 {getFieldDecorator(`participantAddressSearch`, {
                                     rules: [{ required: true, message: ValidationConstants.addressField}],
-                                })( */}
+                                })(
                                     <PlacesAutocomplete
-                                        defaultAddress={this.getAddress(registrationObj)}
+                                        setFieldsValue={this.getAddress(registrationObj)}
                                         heading={AppConstants.addressSearch}
                                         error={this.state.searchAddressError}
                                         onBlur={() => { this.setState({searchAddressError: ''})}}
                                         onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
                                     />
-                                {/* )}
-                            </Form.Item> */}
+                                )}
+                            </Form.Item> 
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"manualEnterAddressFlag");
