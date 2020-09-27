@@ -11,7 +11,7 @@ import Loader from "../../customComponents/loader";
 import SelectResetType from "./SelectResetType";
 import ContentView from "./ContentView";
 
-import "./style.scss";
+import "./style.css";
 
 const { Content } = Layout;
 const loginFormSchema = Yup.object().shape({
