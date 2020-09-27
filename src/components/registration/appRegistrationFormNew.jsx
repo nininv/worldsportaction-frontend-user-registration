@@ -2464,7 +2464,9 @@ class AppRegistrationFormNew extends Component{
                 {this.state.registrationId && (
                     <div className="orange-action-txt"
                     onClick={() => this.goToRegistrationProducts()}
-                    style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart} &#x1f6d2;</div>
+                    style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart}
+                    <img style={{height: "20px",width: "20px",marginLeft: "7px"}} src={AppImages.shoppingCartIcon}/>
+                    </div>
                 )}
                 {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
                     <div>{this.addOrSelectParticipantView()}</div>
