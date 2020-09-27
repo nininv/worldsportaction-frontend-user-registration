@@ -751,6 +751,10 @@ class AppRegistrationFormNew extends Component{
             this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
         }
     }
+
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
+    }
     
     saveRegistrationForm = (e) => {
         try{
@@ -976,19 +980,19 @@ class AppRegistrationFormNew extends Component{
                         <div className="form-heading" 
                         style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                         <div>
-                            <Form.Item name="addressSearch">
+                            {/* <Form.Item name="addressSearch">
                                 {getFieldDecorator(`participantAddressSearch`, {
                                     rules: [{ required: true, message: ValidationConstants.addressField}],
-                                })(
+                                })( */}
                                     <PlacesAutocomplete
-                                        setFieldsValue={"participantAddressSearch"}
+                                        defaultAddress={this.getAddress(registrationObj)}
                                         heading={AppConstants.addressSearch}
                                         error={this.state.searchAddressError}
                                         onBlur={() => { this.setState({searchAddressError: ''})}}
                                         onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
                                     />
-                                )}
-                            </Form.Item>
+                                {/* )}
+                            </Form.Item> */}
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"manualEnterAddressFlag");
@@ -2482,6 +2486,11 @@ class AppRegistrationFormNew extends Component{
         let { registrationObj } = this.props.userRegistrationState;
         return(
             <div className="pt-0" style={{width: "70%",margin: "auto"}}>
+                {this.state.registrationId && (
+                    <div className="orange-action-txt"
+                    onClick={() => this.goToRegistrationProducts()}
+                    style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart} &#x1f6d2;</div>
+                )}
                 {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
                     <div>{this.addOrSelectParticipantView()}</div>
                 )}
@@ -2529,11 +2538,13 @@ class AppRegistrationFormNew extends Component{
                 className="add-membership-type-modal"
                 title={title}
                 visible={this.state.singleCompModalVisible}
+                onCancel={() => this.setState({singleCompModalVisible: false})}
                 footer={[
                     <Button onClick={() => this.setState({singleCompModalVisible: false})}>
                         {AppConstants.ok}                          
                     </Button>
-                ]}>
+                ]}
+                >
                 {(errorMsg || []).map((item, index) =>(
                     <p key= {index}> {item}</p>
                 ))}
