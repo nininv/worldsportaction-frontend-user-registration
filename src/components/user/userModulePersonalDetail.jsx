@@ -62,8 +62,8 @@ const columns = [
         dataIndex: "expiryDate",
         key: "expiryDate",
         render: (expiryDate, record, index) =>(
-          <span>
-             {expiryDate != null ? moment(expiryDate).format("DD/MM/YYYY") : ""}
+            <span>
+            {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate ) : ""}
           </span>
         )
       },
