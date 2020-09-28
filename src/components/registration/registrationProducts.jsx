@@ -24,7 +24,7 @@ import { NavLink } from "react-router-dom";
 import { liveScore_formateDate } from "../../themes/dateformate";
 import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction,
     deleteRegistrationProductAction, deleteRegistrationParticipantAction,
-    getTermsAndConditionsAction, getRegParticipantUsersAction } from 
+    getTermsAndConditionsAction, getRegParticipantUsersAction,getRegistrationShopProductAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 import {isArrayNotEmpty,isNullOrEmptyString} from '../../util/helpers';
@@ -77,7 +77,11 @@ class RegistrationProducts extends Component {
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
             if(this.state.buttonPressed == "save"){
-                this.goToShop();
+                if(isArrayNotEmpty(registrationProductState.shopProductList)){
+                    this.goToShop();
+                }else{
+                    this.goToRegistrationPayments();
+                } 
             }
         }
         if(this.state.onLoading == true && registrationProductState.onRegReviewLoad == false){
@@ -85,6 +89,10 @@ class RegistrationProducts extends Component {
             this.setState({onLoading: false});
         }
     }  
+
+    goToRegistrationPayments = () =>{
+        history.push({pathname: '/registrationPayment', state: {registrationId: this.state.registrationUniqueKey}})
+    }
     
     getApiInfo = (registrationUniqueKey) => {
         this.setState({onLoading: true});
@@ -94,7 +102,21 @@ class RegistrationProducts extends Component {
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
         this.props.getRegParticipantUsersAction(payload);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
     }
+
+    getRegistrationProducts = (registrationId, page, typeId) =>{
+        let payload = {
+            registrationId: registrationId,
+            typeId: typeId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+        this.props.getRegistrationShopProductAction(payload);
+    }
+
 
     saveReviewForm = (e) =>{
         e.preventDefault();
@@ -638,12 +660,14 @@ class RegistrationProducts extends Component {
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
-                    <div style={{marginTop: "13px", alignSelf: "center"}}>
-                        <span className="btn-text-common pointer" style={{paddingTop: 7}} 
-                                onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
-                            + {AppConstants.addGovernmentVoucher}
-                        </span>
-                    </div>  
+                    {isArrayNotEmpty(item.governmentVouchers) && (
+                        <div style={{marginTop: "13px", alignSelf: "center"}}>
+                            <span className="btn-text-common pointer" style={{paddingTop: 7}} 
+                                    onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
+                                + {AppConstants.addGovernmentVoucher}
+                            </span>
+                        </div>  
+                    )}
                     {selectedVouchers && selectedVouchers.length > 0 && 
                     <div style={{paddingTop:'15px'}}>
                         <Button className="open-reg-button"
@@ -1240,7 +1264,8 @@ function mapDispatchToProps(dispatch)
         getTermsAndConditionsAction,
         getCommonRefData,
         countryReferenceAction,	
-        getRegParticipantUsersAction	 
+        getRegParticipantUsersAction,
+        getRegistrationShopProductAction	 
     }, dispatch);
 
 }
