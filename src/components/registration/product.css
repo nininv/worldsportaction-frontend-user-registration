@@ -1011,3 +1011,14 @@ img.bg {
   text-align: center;
   font-family:inter;
 }
+.img-upload-target {
+  width: 100px;
+  height: 100px;
+  background: white;
+  text-align: center;
+  align-self: center;
+  padding-top: 24px;
+  border-radius: 50%;
+  border: 1px dashed var( --app-d9d9d9);
+  cursor: pointer;
+}

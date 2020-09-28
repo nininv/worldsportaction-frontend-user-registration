@@ -951,7 +951,7 @@ class AppRegistrationFormNew extends Component{
                 <div style={{display: "flex",flexWrap: "wrap"}}>
                     <div className="form-heading" style={{textAlign: "start"}}>{AppConstants.addNewParticipant}</div>
                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
-                    onClick={() => this.selectAnotherParticipant()}>{AppConstants.selectAnother}</div>
+                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
                 </div>
                 <div style={{fontWeight: "600",marginTop: "-5px"}}>{this.getParticipantType()}</div>
             </div>
@@ -1263,9 +1263,19 @@ class AppRegistrationFormNew extends Component{
                 </div>
 
                 <InputWithHead heading={AppConstants.photo}/>
-                {registrationObj.photoUrl ? 
+                {registrationObj.photoUrl == null ?  
+                        <div className = "img-upload-target" onClick={ () => this.selectImage()}>
+                            <div style={{fontSize:"22px"}}>
+                                +
+                            </div>
+                            <div style={{marginTop: "-7px"}}>
+                                {AppConstants.upload}
+                            </div>                    
+                        </div>:null
+                }
+                 {registrationObj.photoUrl ? 
                     <img
-                        src={registrationObj.photoUrl}
+                        src={registrationObj.photoUrl}  
                         alt=""
                         height="80"
                         width="80"
@@ -1275,9 +1285,7 @@ class AppRegistrationFormNew extends Component{
                             ev.target.src = AppImages.circleImage;
                         }}
                         onClick={ () => this.selectImage()}
-                    />
-                : 
-                    <div className="orange-action-txt" onClick={ () => this.selectImage()}>+ {AppConstants.upload}</div>
+                    />:null
                 }
                 <input
                     type="file"
@@ -1654,7 +1662,7 @@ class AppRegistrationFormNew extends Component{
                         <div style={{display: "flex",flexWrap: "wrap"}}>
                             <div className="form-heading" style={{textAlign: "start"}}>{registrationObj.firstName} {registrationObj.lastName}</div>
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
-                            onClick={() => this.selectAnotherParticipant()}>{AppConstants.selectAnother}</div>
+                            onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
                         </div>
                         <div style={{fontWeight: "600",marginTop: "-5px"}}>{registrationObj.genderRefId == 2 ? 'Male' : 'Female'}, {moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}</div>
                     </div>
