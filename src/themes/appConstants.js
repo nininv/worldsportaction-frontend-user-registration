@@ -1078,7 +1078,7 @@ const AppConstants = {
  qty: "Qty",
  securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian",
- returnToShoppingCart: "Return to Shoppin Cart"
+ returnToShoppingCart: "Return to Shopping Cart"
 };
 
 export default AppConstants;
