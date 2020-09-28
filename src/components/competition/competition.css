@@ -427,6 +427,11 @@
 .ant-pagination-item { border: none;font-weight: 700;color: var(--app-77778f); }
 .ant-pagination-item-active { color: var(--app-color); } 
 
+/* multiple selection arrow */
+.ant-select-selection--multiple .ant-select-arrow{
+  top: 28px;
+}
+
 .registration-form-view{
   margin: auto;
   background-color: white;

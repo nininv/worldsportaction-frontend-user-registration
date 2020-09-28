@@ -118,10 +118,10 @@ class RegistrationProducts extends Component {
                     message.error(ValidationConstants.addressDetailsIsRequired);
                     return;
                 }
-                // let registrationReview = this.props.registrationProductState.registrationReviewList;
-                // registrationReview["registrationId"] = this.state.registrationUniqueKey;
-                // console.log("registrationReview", registrationReview);
-                // this.callSaveRegistrationProducts("save", registrationReview);
+                let registrationReview = this.props.registrationProductState.registrationReviewList;
+                registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                console.log("registrationReview", registrationReview);
+                this.callSaveRegistrationProducts("save", registrationReview);
             }
         });
     }

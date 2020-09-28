@@ -96,6 +96,7 @@ class AppRegistrationFormNew extends Component{
             competitions: [],
             competitionsCountPerPage: 6,
             currentCompetitions: 1,
+            postalCode: null
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -768,6 +769,14 @@ class AppRegistrationFormNew extends Component{
     goToRegistrationProducts = () =>{
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
     }
+
+    searchOrganisationByPostalCode = () => {
+        try{
+
+        }catch(ex){
+            console.log("Error in searchOrganisationByPostalCode"+ex);
+        }
+    }
     
     saveRegistrationForm = (e) => {
         try{
@@ -1244,12 +1253,14 @@ class AppRegistrationFormNew extends Component{
                                 </Form.Item>
                             </div>
                         )}
-                        <Checkbox
-                            className="single-checkbox"
-                            checked={registrationObj.referParentEmail}
-                            onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
-                            {AppConstants.useParentsEmailAddress}
-                        </Checkbox> 
+                        {getAge(registrationObj.dateOfBirth) < 18 && (
+                            <Checkbox
+                                className="single-checkbox"
+                                checked={registrationObj.referParentEmail}
+                                onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
+                                {AppConstants.useParentsEmailAddress}
+                            </Checkbox> 
+                        )}
                     </div>
                 </div>
 
@@ -1675,6 +1686,22 @@ class AppRegistrationFormNew extends Component{
                 </div>
 
                 <div className="light-grey-border-box">
+                    <div className="row">
+                        <div className="col">
+                            <InputWithHead 
+                                heading={AppConstants.postCode} 
+                                placeholder={AppConstants.postCode} 
+                                onChange={(e) => this.setState({postalCode: e.target.value})} 
+                            />
+                        </div>
+                        <div className="col">
+                            <Button 
+                                type="primary"
+                                style={{color: "white",textTransform: "uppercase"}}
+                                onClick={() => this.searchOrganisationByPostalCode()}
+                                className="open-reg-button">{AppConstants.search}</Button>
+                        </div>
+                    </div>
                     <InputWithHead heading={AppConstants.organisationName}/>
                     <Select
                         showSearch
@@ -2193,10 +2220,11 @@ class AppRegistrationFormNew extends Component{
                     )}
                     <Select
                         mode="multiple"
+                        showArrow
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
                         onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                        value={registrationObj.additionalInfo.otherSportsInfo}>
+                        defaultValue={registrationObj.additionalInfo.otherSportsInfo}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
