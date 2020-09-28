@@ -24,6 +24,7 @@ function setYourInfo(action,state){
         let email = action.value;
         let yourInfo = state.registrationReviewList.yourInfo;
         let user = state.participantUsers.find(x => x.email === email);
+        console.log("user",user);
         if(user != undefined){
             yourInfo["userId"] = user.id;
             yourInfo["firstName"] = user.firstName;
@@ -154,7 +155,7 @@ function registrationProductsReducer(state = initialState, action){
                 console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
-                if(action.key == "emailSelection"){
+                if(action.key == "email"){
                     setYourInfo(action,state);
                 }else{
                     reviewData[action.subKey][action.key] = action.value
