@@ -1078,7 +1078,10 @@ const AppConstants = {
  qty: "Qty",
  securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian",
- returnToShoppingCart: "Return to Shopping Cart"
+ returnToShoppingCart: "Return to Shopping Cart",
+ anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies or illnesses. Please upload a Management Plan (if applicable)",
+ anyRedularMedicalConditions: "Any Regular Medications",
+ registeringAs:  " Registering as?"
 };
 
 export default AppConstants;

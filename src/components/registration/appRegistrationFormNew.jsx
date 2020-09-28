@@ -490,7 +490,8 @@ class AppRegistrationFormNew extends Component{
     }
 
     handlePlacesAutocomplete = (addressData,key,parentIndex) => {
-        const { stateList } = this.props.commonReducerState;
+        const { registrationObj } = this.props.userRegistrationState;
+        const { stateList,countryList } = this.props.commonReducerState;
         const address = addressData;
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
@@ -498,30 +499,27 @@ class AppRegistrationFormNew extends Component{
         //     this.setState({searchAddressError: ''})
         // }
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
+        const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
         if(address){
             if(key == "parent"){
                 this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
-                this.props.form.setFieldsValue({
-                    [`parentStreet1${parentIndex}`]: address.addressOne,
-                    [`parentSuburb${parentIndex}`]: address.suburb,
-                    [`parentStateRefId${parentIndex}`]: stateRefId,
-                    [`parentPostalCode${parentIndex}`]: address.postcode,
-                });
+                this.onChangeSetParentValue(countryRefId, "countryRefId", parentIndex);
             }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");
-                this.props.form.setFieldsValue({
-                    [`participantStreet1`]:  address.addressOne,
-                    [`participantSuburb`]:  address.suburb,
-                    [`participantStateRefId`]:  stateRefId,
-                    [`participantPostalCode`]:  address.postcode,
-                });              
+                this.onChangeSetParticipantValue(countryRefId, "countryRefId"); 
+                if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
+                    for(let parent of registrationObj.parentOrGuardian){
+                        parent.isSameAddress = false;
+                    }
+                }
+                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");           
             } 
             // if(key == "team"){
             //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
@@ -530,12 +528,6 @@ class AppRegistrationFormNew extends Component{
             //     this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
             //     this.onChangeSetTeam(address.lat, "lat", index, "team")
             //     this.onChangeSetTeam(address.lng, "lng", index, "team");
-            //     this.props.form.setFieldsValue({
-            //         [`tStreet1${index}`]:  address.addressOne,
-            //         [`tSuburb${index}`]:  address.suburb,
-            //         [`tStateRefId${index}`]:  stateRefId,
-            //         [`tPostalCode${index}`]:  address.postcode,
-            //     });
             // }  
         }  
     };
@@ -1235,7 +1227,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                     <div className="col-sm-12 col-md-6"
                     style={registrationObj.referParentEmail ? {alignSelf: "center",marginTop: "25px"} : {}}>
-                        {!registrationObj.referParentEmail ? 
+                        {!registrationObj.referParentEmail && (
                             <div>
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"}/>
                                 <Form.Item >
@@ -1251,14 +1243,13 @@ class AppRegistrationFormNew extends Component{
                                     )}
                                 </Form.Item>
                             </div>
-                        : 
-                            <Checkbox
-                                className="single-checkbox"
-                                checked={registrationObj.referParentEmail}
-                                onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
-                                {AppConstants.useParentsEmailAddress}
-                            </Checkbox> 
-                        }
+                        )}
+                        <Checkbox
+                            className="single-checkbox"
+                            checked={registrationObj.referParentEmail}
+                            onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
+                            {AppConstants.useParentsEmailAddress}
+                        </Checkbox> 
                     </div>
                 </div>
 
@@ -1737,11 +1728,13 @@ class AppRegistrationFormNew extends Component{
                             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
         return(
             <div className="registration-form-view"  key={competitionIndex}>
-                <div className="map-style">
-                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
-                </div>
+                {competitionInfo.heroImageUrl && (
+                    <div className="map-style">
+                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
+                    </div>
+                )}
                 <div>
-                    <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
+                    <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
                         <div className="col-sm-1.5">
                             <img style={{height: "60px",borderRadius: "50%"}} src={competitionInfo.compLogoUrl}/> 
                         </div>
@@ -1756,7 +1749,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <InputWithHead heading={AppConstants.chooseMembershipProducts}/>
+                        <InputWithHead heading={AppConstants.registeringAs}/>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox 
                             checked={membershipProduct.isChecked}
@@ -2085,24 +2078,18 @@ class AppRegistrationFormNew extends Component{
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
             let yearsOfPlayingList = ['1','2','3','4','5','6','7','8','9','10+'];
             return(
-                <div className="registration-form-view">
+                <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
                     <InputWithHead heading={AppConstants.whichCountryWereBorn}/>
-                    {/* <Form.Item >
-                        {getFieldDecorator(`additionalInfoCountryRefId`, {
-                            rules: [{ required: true, message: ValidationConstants.countryField[0] }],
-                        })( */}
-                        <Select
-                            style={{ width: "100%" }}
-                            placeholder={AppConstants.select}
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
-                            value={registrationObj.additionalInfo.countryRefId}>
-                            {countryList.length > 0 && countryList.map((item) => (
-                                < Option key={item.id} value={item.id}> {item.description}</Option>
-                            ))}
-                        </Select>
-                        {/* )}
-                    </Form.Item> */}
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
+                        value={registrationObj.additionalInfo.countryRefId}>
+                        {countryList.length > 0 && countryList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
                     <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                     <Radio.Group
                         className="registration-radio-group"
@@ -2113,6 +2100,20 @@ class AppRegistrationFormNew extends Component{
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
+                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
+                    <TextArea
+                        placeholder={AppConstants.existingMedConditions}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "existingMedicalCondition")} 
+                        value={registrationObj.additionalInfo.existingMedicalCondition}
+                        allowClear
+                    />
+                    <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  />
+                    <TextArea
+                        placeholder={AppConstants.redularMedicalConditions}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "regularMedication")} 
+                        value={registrationObj.additionalInfo.regularMedication}
+                        allowClear
+                    />
                     <InputWithHead heading={AppConstants.injury}/>
                     <TextArea
                         placeholder={AppConstants.anyInjury}
@@ -2127,140 +2128,6 @@ class AppRegistrationFormNew extends Component{
                         value={registrationObj.additionalInfo.allergyInfo}
                         allowClear
                     />
-
-                    {registrationObj.registeringYourself == 2 && (
-                        <InputWithHead heading={AppConstants.childPlayingOtherParticipantSports} />
-                    )}
-                    {registrationObj.registeringYourself == 1 && (
-                        <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
-                    )}
-                    <Select
-                        mode="multiple"
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                        value={registrationObj.additionalInfo.otherSportsInfo}>
-                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
-                            < Option key={item.id} value={item.id}> {item.description}</Option>
-                        ))}
-                    </Select>
-
-                    {/* <InputWithHead heading={AppConstants.haveYouEverPlayed}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "playedBefore")}
-                        value={registrationObj.additionalInfo.playedBefore}
-                        >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    {registrationObj.additionalInfo.playedBefore == true && (
-                        <div>
-                            <InputWithHead 
-                            heading={AppConstants.year} 
-                            placeholder={AppConstants.year}
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "playedYear")} 
-                            value={registrationObj.additionalInfo.playedYear!= null ? parseInt(registrationObj.additionalInfo.playedYear) : registrationObj.additionalInfo.playedYear} 
-                            maxLength={4}/>
-
-                            <InputWithHead 
-                            heading={AppConstants.clubOther} 
-                            placeholder={AppConstants.clubOther} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "playedClub")} 
-                            value={registrationObj.additionalInfo.playedClub}/>
-
-                            <InputWithHead 
-                            heading={AppConstants.grade} 
-                            placeholder={AppConstants.grade} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "playedGrade")} 
-                            value={registrationObj.additionalInfo.playedGrade}/>
-                            {registrationObj.regSetting.last_captain === 1 && (
-                                <div>
-                                    <span className="applicable-to-heading">
-                                        {AppConstants.lastCaptainName}
-                                    </span>
-                                    <InputWithHead 
-                                    heading={AppConstants.fullName} 
-                                    placeholder={AppConstants.lastCaptainName}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "lastCaptainName")} 
-                                    value={registrationObj.additionalInfo.lastCaptainName}/>
-                                </div>
-                            )}
-                        </div>
-                    )} */}
-
-                    <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.additionalInformation}</div>
-                    <InputWithHead heading={AppConstants.emergencyContact}/>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                        >  
-                    </Select>
-                    <InputWithHead heading={AppConstants.existingMedConditions}/>
-                    <TextArea
-                        placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "existingMedicalCondition")} 
-                        value={registrationObj.additionalInfo.existingMedicalCondition}
-                        allowClear
-                    />
-                    <InputWithHead heading={AppConstants.redularMedicalConditions}  />
-                    <TextArea
-                        placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "regularMedication")} 
-                        value={registrationObj.additionalInfo.regularMedication}
-                        allowClear
-                    />
-                    <InputWithHead heading={AppConstants.hearAbouttheCompition} />
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
-                        value={registrationObj.additionalInfo.heardByRefId}
-                        >
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                    </Radio.Group>
-                    {registrationObj.additionalInfo.heardByRefId == 6 && (
-                        <div style={{marginTop: "10px"}}>
-                            <InputWithHead 
-                            placeholder={AppConstants.other} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByOther")}
-                            value={registrationObj.additionalInfo.heardByOther}/>
-                        </div>
-                    )}
-                    <div className="row">
-                        <div className="col-md-6 col-sm-12">
-                            <InputWithHead heading={AppConstants.teamYouFollow}/>
-                            <Select
-                                style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteTeamRefId")}
-                                value={registrationObj.additionalInfo.favouriteTeamRefId}
-                                >  
-                                {(favouriteTeamsList || []).map((fav, index) => (
-                                    <Option key={fav.id} value={fav.id}>{fav.description}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                        {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
-                            <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
-                                <Select
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
-                                    value={registrationObj.additionalInfo.favouriteFireBird}
-                                    >  
-                                    {(firebirdPlayerList || []).map((fire, index) => (
-                                        <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                                    ))}
-                                </Select>
-                            </div>
-                        )}
-                    </div>
-                    <Checkbox
-                        className="single-checkbox pt-3"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.checked, "isConsentPhotosGiven")}
-                        checked={registrationObj.additionalInfo.isConsentPhotosGiven}>{AppConstants.consentForPhotos}
-                    </Checkbox>
-
                     <InputWithHead heading={AppConstants.haveDisability} />
                     <Radio.Group
                         className="registration-radio-group"
@@ -2289,6 +2156,79 @@ class AppRegistrationFormNew extends Component{
                         </div> 
                         : null
                     }
+                    <div className="row">
+                        <div className="col-md-6 col-sm-12">
+                            <InputWithHead heading={AppConstants.teamYouFollow}/>
+                            <Select
+                                style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteTeamRefId")}
+                                value={registrationObj.additionalInfo.favouriteTeamRefId}
+                                >  
+                                {(favouriteTeamsList || []).map((fav, index) => (
+                                    <Option key={fav.id} value={fav.id}>{fav.description}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
+                            <div className="col-md-6 col-sm-12">
+                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
+                                    value={registrationObj.additionalInfo.favouriteFireBird}
+                                    >  
+                                    {(firebirdPlayerList || []).map((fire, index) => (
+                                        <Option key={fire.id} value={fire.id}>{fire.description}</Option>
+                                    ))}
+                                </Select>
+                            </div>
+                        )}
+                    </div>
+
+                    {registrationObj.registeringYourself == 2 && (
+                        <InputWithHead heading={AppConstants.childPlayingOtherParticipantSports} />
+                    )}
+                    {registrationObj.registeringYourself == 1 && (
+                        <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    )}
+                    <Select
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder={AppConstants.select}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
+                        value={registrationObj.additionalInfo.otherSportsInfo}>
+                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                        ))}
+                    </Select>
+                    {/* <InputWithHead heading={AppConstants.emergencyContact}/>
+                    <Select
+                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                        >  
+                    </Select> */}
+                    <InputWithHead heading={AppConstants.hearAbouttheCompition} />
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
+                        value={registrationObj.additionalInfo.heardByRefId}
+                        >
+                        {(heardByList || []).map((heard, index) => (
+                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                        ))}
+                    </Radio.Group>
+                    {registrationObj.additionalInfo.heardByRefId == 6 && (
+                        <div style={{marginTop: "10px"}}>
+                            <InputWithHead 
+                            placeholder={AppConstants.other} 
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByOther")}
+                            value={registrationObj.additionalInfo.heardByOther}/>
+                        </div>
+                    )}
+                    <Checkbox
+                        className="single-checkbox pt-3"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.checked, "isConsentPhotosGiven")}
+                        checked={registrationObj.additionalInfo.isConsentPhotosGiven}>{AppConstants.consentForPhotos}
+                    </Checkbox>
 
                     {registrationObj.regSetting.netball_experience == 1 && (
                         <div>
@@ -2301,19 +2241,17 @@ class AppRegistrationFormNew extends Component{
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
-                            {registrationObj.additionalInfo.yearsPlayed == 1 && (
-                                <div>
+                            {registrationObj.additionalInfo.yearsPlayed == 0 && (
                                 <Select
-                                        placeholder={AppConstants.yearsOfPlaying}
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                        value={registrationObj.additionalInfo.yearsPlayed}
-                                        >  
-                                        {(yearsOfPlayingList || []).map((years, index) => (
-                                            <Option key={years} value={years}>{years}</Option>
-                                        ))}
-                                    </Select> 
-                                </div>
+                                    placeholder={AppConstants.yearsOfPlaying}
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                    value={registrationObj.additionalInfo.yearsPlayed}
+                                    >  
+                                    {(yearsOfPlayingList || []).map((years, index) => (
+                                        <Option key={years} value={years}>{years}</Option>
+                                    ))}
+                                </Select> 
                             )}
                         </div>
                     )}
@@ -2339,6 +2277,7 @@ class AppRegistrationFormNew extends Component{
                                     </Select> 
                                 </div>
                             )}
+
                             {registrationObj.regSetting.school_grade == 1 && (
                                 <InputWithHead 
                                 heading={(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
@@ -2348,6 +2287,7 @@ class AppRegistrationFormNew extends Component{
                                 value={registrationObj.additionalInfo.schoolGradeInfo}
                                 />
                             )}
+
                             {registrationObj.regSetting.school_program == 1 && (
                                 <div>
                                     <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
@@ -2399,42 +2339,28 @@ class AppRegistrationFormNew extends Component{
                                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"associationLevelInfo")} 
                                                         value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
-                                                        {/* <Form.Item >
-                                                            {getFieldDecorator(`accreditationUmpireExpiryDate`, {
-                                                                rules: [{ required: true}],
-                                                            })( */}
-                                                                <DatePicker
-                                                                    size="large"
-                                                                    placeholder={AppConstants.checkExpiryDate}
-                                                                    style={{ width: "100%",marginTop: "20px" }}
-                                                                    onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
-                                                                    format={"DD-MM-YYYY"}
-                                                                    showTime={false}
-                                                                    value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
-                                                                    // name={'accreditationUmpireExpiryDate'}
-                                                                />
-                                                            {/* )}
-                                                        </Form.Item> */}
+                                                        <DatePicker
+                                                            size="large"
+                                                            placeholder={AppConstants.checkExpiryDate}
+                                                            style={{ width: "100%",marginTop: "20px" }}
+                                                            onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
+                                                            format={"DD-MM-YYYY"}
+                                                            showTime={false}
+                                                            value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
+                                                        />
                                                     </div>
                                                 )}
                                             </div>
                                         : 
-                                        // <Form.Item >
-                                        //     {getFieldDecorator(`accreditationUmpireExpiryDate`, {
-                                        //         rules: [{ required: true}],
-                                        //     })(
-                                                <DatePicker
-                                                    size="large"
-                                                    placeholder={AppConstants.checkExpiryDate}
-                                                    style={{ width: "100%",marginTop: "20px" }}
-                                                    onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
-                                                    format={"DD-MM-YYYY"}
-                                                    showTime={false}
-                                                    value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
-                                                    // name={'accreditationUmpireExpiryDate'}
-                                                />
-                                        //     )}
-                                        // </Form.Item>
+                                            <DatePicker
+                                                size="large"
+                                                placeholder={AppConstants.checkExpiryDate}
+                                                style={{ width: "100%",marginTop: "20px" }}
+                                                onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
+                                                format={"DD-MM-YYYY"}
+                                                showTime={false}
+                                                value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
+                                            />
                                         }
                                     </div> 
                                 )}
@@ -2463,27 +2389,20 @@ class AppRegistrationFormNew extends Component{
                                     ))}
                                 </Radio.Group>
                                 {(registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
-                                    // <Form.Item >
-                                    //     {getFieldDecorator(`accreditationCoachExpiryDate`, {
-                                    //         rules: [{ required: true}],
-                                    //     })(
-                                            <DatePicker
-                                                size="large"
-                                                placeholder={AppConstants.checkExpiryDate}
-                                                style={{ width: "100%",marginTop: "20px" }}
-                                                onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
-                                                format={"DD-MM-YYYY"}
-                                                showTime={false}
-                                                value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
-                                                // name={'accreditationCoachExpiryDate'}
-                                            />
-                                    //     )}
-                                    // </Form.Item>
+                                    <DatePicker
+                                        size="large"
+                                        placeholder={AppConstants.checkExpiryDate}
+                                        style={{ width: "100%",marginTop: "20px" }}
+                                        onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
+                                        format={"DD-MM-YYYY"}
+                                        showTime={false}
+                                        value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
+                                    />
                                 )}
                             </div>
                         )}
                         
-                        {registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1 && (
+                        {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
                                 <InputWithHead 
                                 heading={AppConstants.workingWithChildrenCheckNumber}
@@ -2491,22 +2410,15 @@ class AppRegistrationFormNew extends Component{
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"childrenCheckNumber")} 
                                 value={registrationObj.additionalInfo.childrenCheckNumber}
                                 />
-                                {/* <Form.Item >
-                                    {getFieldDecorator(`childrenCheckExpiryDate`, {
-                                        rules: [{ required: true}],
-                                    })( */}
-                                        <DatePicker
-                                            size="large"
-                                            placeholder={AppConstants.checkExpiryDate}
-                                            style={{ width: "100%",marginTop: "20px" }}
-                                            onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
-                                            format={"DD-MM-YYYY"}
-                                            showTime={false}
-                                            value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
-                                            // name={'childrenCheckExpiryDate'}
-                                        />
-                                    {/* )}
-                                </Form.Item> */}
+                                <DatePicker
+                                    size="large"
+                                    placeholder={AppConstants.checkExpiryDate}
+                                    style={{ width: "100%",marginTop: "20px" }}
+                                    onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
+                                    format={"DD-MM-YYYY"}
+                                    showTime={false}
+                                    value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                />
                             </div>
                         )}
 
@@ -2632,7 +2544,6 @@ class AppRegistrationFormNew extends Component{
 
     render(){
         const { getFieldDecorator } = this.props.form;
-       // console.log("form",this.props.form);
         return(
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout

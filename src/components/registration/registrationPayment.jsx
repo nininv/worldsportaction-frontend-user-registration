@@ -576,7 +576,7 @@ class RegistrationPayment extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>                               
+                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>

@@ -27,7 +27,7 @@ import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoActio
     getTermsAndConditionsAction, getRegParticipantUsersAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
-import {isArrayNotEmpty} from '../../util/helpers';
+import {isArrayNotEmpty,isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -101,6 +101,7 @@ class RegistrationProducts extends Component {
         let registrationState = this.props.registrationProductState;
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
         if(incompletePaymentMessage != ''){
             incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
             message.error(incompletePaymentMessage);
@@ -112,10 +113,15 @@ class RegistrationProducts extends Component {
             console.log("Error: " + err);
             if(!err)
             {
-                let registrationReview = this.props.registrationProductState.registrationReviewList;
-                registrationReview["registrationId"] = this.state.registrationUniqueKey;
-                console.log("registrationReview", registrationReview);
-                this.callSaveRegistrationProducts("save", registrationReview);
+                console.log(this.state.searchAddressFlag,yourInfo.street1,yourInfo.postalCode);
+                if(this.state.searchAddressFlag && !isNullOrEmptyString(yourInfo.street1) && !isNullOrEmptyString(yourInfo.postalCode)){
+                    message.error(ValidationConstants.addressDetailsIsRequired);
+                    return;
+                }
+                // let registrationReview = this.props.registrationProductState.registrationReviewList;
+                // registrationReview["registrationId"] = this.state.registrationUniqueKey;
+                // console.log("registrationReview", registrationReview);
+                // this.callSaveRegistrationProducts("save", registrationReview);
             }
         });
     }
@@ -313,9 +319,28 @@ class RegistrationProducts extends Component {
                 this.setReviewInfo(address.suburb, "suburb", null,"yourInfo", null);
                 this.setReviewInfo(stateRefId, "stateRefId", null,"yourInfo", null);
                 this.setReviewInfo(countryRefId, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(address.postcode, "postalCode", null,"yourInfo", null);
             }
         }catch(ex){
             console.log("Error in yourInfoAddressSearch"+ex);
+        }
+    }
+
+    updateYourInfo = (key) => {
+        try{
+            if(key == "new"){
+                this.setReviewInfo(null, "firstName", null,"yourInfo", null);
+                this.setReviewInfo(null, "lastName", null,"yourInfo", null);
+                this.setReviewInfo(null, "email", null,"yourInfo", null);
+                this.setReviewInfo(null, "mobileNumber", null,"yourInfo", null);
+                this.setReviewInfo(null, "street1", null,"yourInfo", null);
+                this.setReviewInfo(null, "suburb", null,"yourInfo", null);
+                this.setReviewInfo(null, "stateRefId", null,"yourInfo", null);
+                this.setReviewInfo(null, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(null, "postalCode", null,"yourInfo", null);
+            }
+        }catch(ex){
+            console.log("Error in updateYourInfo"+ex);
         }
     }
 
@@ -468,9 +493,11 @@ class RegistrationProducts extends Component {
         let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
-                <div className="headline-text-common" style={{marginTop: "21px"}}>
-                    {AppConstants.discountCode}
-                </div>
+                {isArrayNotEmpty(discountCodes) && (
+                    <div className="headline-text-common" style={{marginTop: "21px"}}>
+                        {AppConstants.discountCode}
+                    </div>
+                )}
                 {(discountCodes || []).map((dis, disIndex) =>(
                     <div key={index +"#" + disIndex} style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between",marginRight:26}}>
                         <div style={{ width: "100%"}}>
@@ -562,9 +589,11 @@ class RegistrationProducts extends Component {
         let selectedVouchers = item.selectedOptions.vouchers;
         return(
             <div>
-                <div className="headline-text-common" style={{marginTop: "30px"}}>
-                    {AppConstants.governmentVouchers}
-                </div>
+                {isArrayNotEmpty(selectedVouchers) && (
+                    <div className="headline-text-common" style={{marginTop: "30px"}}>
+                        {AppConstants.governmentVouchers}
+                    </div>
+                )}
                 {(selectedVouchers || []).map((gov, govIndex) =>(
                     <div className="row">
                         <div class ="col-sm-11 col-lg-6"  style={{ width: "100%",margin: "15px 0px 0px 0px"}}>
@@ -711,9 +740,8 @@ class RegistrationProducts extends Component {
                         </Form.Item> 
                         <div className="btn-text-common pointer" style={{marginTop: "20px"}}  
                          onClick={() => {
-                            this.setState({
-                                newYourDetails: true
-                            });
+                            this.setState({newYourDetails: true});
+                            this.updateYourInfo("new");
                         }}>
                         + {AppConstants.addNewDetails}
                         </div>
@@ -826,20 +854,20 @@ class RegistrationProducts extends Component {
                                     }}
                                     >{AppConstants.returnToSelectAddress}</div> */}
                                     <div className="headline-text-common"
-                                    style={{paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                                    style={{paddingBottom: "0px",marginBottom: "-20px",marginTop: "20px"}}>{AppConstants.findAddress}</div>
                                     <div>
                                         <Form.Item name="addressSearch">
-                                            {getFieldDecorator(`yourDetailsAddressSearch`, {
+                                            {/* {getFieldDecorator(`yourDetailsAddressSearch`, {
                                                 rules: [{ required: true, message: ValidationConstants.addressField}],
-                                            })(
+                                            })( */}
                                                 <PlacesAutocomplete
-                                                    setFieldsValue={"yourDetailsAddressSearch"}
+                                                    defaultValue={this.getYourInfoAddress(yourInfo)}
                                                     heading={AppConstants.addressSearch}
                                                     error={this.state.searchAddressError}
                                                     onBlur={() => { this.setState({searchAddressError: ''})}}
                                                     onSetData={(e)=>this.yourInfoAddressSearch(e)}
                                                 />
-                                            )}
+                                            {/* )} */}
                                         </Form.Item>
                                         <div className="btn-text-common pointer" style={{marginTop: "10px"}}
                                         onClick={() => {
@@ -1160,7 +1188,7 @@ class RegistrationProducts extends Component {
                  <Button className="open-reg-button link-text-common" 
                   htmlType="submit"
                   type="primary"
-                 style={{ width:"100%"}}>
+                 style={{ width:"100%",textTransform: "uppercase"}}>
                     {AppConstants.continue}
                 </Button>     
             </div>
