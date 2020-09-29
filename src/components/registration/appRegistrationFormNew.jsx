@@ -864,17 +864,19 @@ class AppRegistrationFormNew extends Component{
                 "countryRefId": user.countryRefId 
             }
             addresses.push(address);
-            for(let parent of user.parentOrGuardian){
-                let parentAddress = {
-                    "userId": parent.userId,
-                    "street1": parent.street1,
-                    "street2": parent.street2,
-                    "suburb": parent.suburb,
-                    "postalCode": parent.postalCode,
-                    "stateRefId": parent.stateRefId,
-                    "countryRefId": parent.countryRefId 
+            if(isArrayNotEmpty(user.parentOrGuardian)){
+                for(let parent of user.parentOrGuardian){
+                    let parentAddress = {
+                        "userId": parent.userId,
+                        "street1": parent.street1,
+                        "street2": parent.street2,
+                        "suburb": parent.suburb,
+                        "postalCode": parent.postalCode,
+                        "stateRefId": parent.stateRefId,
+                        "countryRefId": parent.countryRefId 
+                    }
+                    addresses.push(parentAddress);
                 }
-                addresses.push(parentAddress);
             }
             return addresses;
         }catch(ex){
@@ -1018,7 +1020,11 @@ class AppRegistrationFormNew extends Component{
                                 }
                                 <div style={{width: "75%",paddingLeft: "15px"}}>
                                     <div>{user.firstName} {user.lastName}</div>
-                                    <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Female' : 'Male'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
+                                    {(user.genderRefId != 0 || user.dateOfBirth != null) && (
+                                        <div style={{fontSize: "15px"}}>
+                                            {user.genderRefId != 0 && (user.genderRefId == 1 ? 'Female' : 'Male')}, {user.dateOfBirth != null && moment(user.dateOfBirth).format("DD/MM/YYYY")}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -1763,14 +1769,20 @@ class AppRegistrationFormNew extends Component{
         let registrationObj = userRegistrationstate.registrationObj;
         return(
             <div className="registration-form-view">
-                <div className="row">
-                    <div className="col-sm-1.5">
-                        <img 
-                        height="80px"
-                        width="80px"
-                        style={{borderRadius: "50%"}} 
-                        src={registrationObj.photoUrl != null && registrationObj.photoUrl}/> 
-                    </div>
+                <div className="row" style={{alignItems: "center"}}>
+                    {registrationObj.photoUrl ?
+                        <div className="col-sm-1.5">
+                            <img 
+                            height="80px"
+                            width="80px"
+                            style={{borderRadius: "50%"}} 
+                            src={registrationObj.photoUrl}/> 
+                        </div>
+                    : 
+                        <div className="profile-default-img">
+                            {registrationObj.firstName.slice(0,1)}{registrationObj.lastName.slice(0,1)}
+                        </div>
+                    }
                     <div className="col">
                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
@@ -1778,7 +1790,11 @@ class AppRegistrationFormNew extends Component{
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
                             onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
                         </div>
-                        <div style={{fontWeight: "600",marginTop: "-5px"}}>{registrationObj.genderRefId == 2 ? 'Male' : 'Female'}, {moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}</div>
+                        {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
+                            <div style={{fontWeight: "600",marginTop: "-5px"}}>
+                                {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
