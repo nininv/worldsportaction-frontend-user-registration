@@ -68,6 +68,7 @@ import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceS
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { isEmptyArray } from "formik";
+import { get } from "jquery";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -92,10 +93,12 @@ class AppRegistrationFormNew extends Component{
             findAnotherCompetitionFlag: false,
             registrationId: null,
             participantId: null,
+            allCompetitions: [],
             allCompetitionsByOrgId: [],
             competitions: [],
             competitionsCountPerPage: 6,
             currentCompetitions: 1,
+            organisations: [],
             postalCode: null
         } 
         this.props.getCommonRefData();
@@ -116,9 +119,9 @@ class AppRegistrationFormNew extends Component{
     componentDidUpdate(nextProps){
         let registrationState = this.props.userRegistrationState;
         if(!registrationState.onMembershipLoad && this.state.getMembershipLoad){
+            this.setState({organisations: registrationState.membershipProductInfo});
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            //let participantId = "5f85e320-ba23-4654-848e-8b9aa00ca15f";
             this.setState({participantId: participantId,registrationId: registrationId});
             if(participantId && registrationId){
                 this.props.getParticipantInfoById(participantId,'');
@@ -130,8 +133,9 @@ class AppRegistrationFormNew extends Component{
                     this.setState({getParticipantByIdLoad: true})
                 } 
             }
-            this.setState({getMembershipLoad: false,
-            competitions: registrationState.allCompetitions.slice(0,this.state.competitionsCountPerPage)});
+            //Set all competitins of all organisation
+            this.setAllCompetitions(registrationState.membershipProductInfo);
+            this.setState({getMembershipLoad: false});
         }
 
         if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
@@ -213,6 +217,19 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
+    setAllCompetitions = (membershipProductInfo) => {
+        try{
+            let allCompetitionsTemp = [];
+            for(let org of membershipProductInfo){
+                allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
+            }
+            this.setState({allCompetitions: allCompetitionsTemp});
+            this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
+        }catch(ex){
+            console.log("Error in setAllCompetitions"+ex);
+        }
+    }
+
     changeStep = (current) => {
         if(this.state.enabledSteps.includes(current)){
             this.setState({currentStep: current});
@@ -251,8 +268,8 @@ class AppRegistrationFormNew extends Component{
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
                     [`participantEmail`]: registrationObj.email
                 });
-                if(registrationObj.addNewAddressFlag){
-                    this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
+                if(registrationObj.selectAddressFlag){
+                    this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
                 }
                 if(registrationObj.manualEnterAddressFlag){
                     this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
@@ -277,11 +294,14 @@ class AppRegistrationFormNew extends Component{
 
     setParticipantDetailStepAddressFormFields = (key) => {
         try{
-            const { registrationObj } = this.props.userRegistrationState;
-            if(key == "addNewAddressFlag"){
-                this.props.form.setFieldsValue({
-                    [`participantAddressSearch`]: this.getAddress(registrationObj)
-                });
+            const { registrationObj,userInfo } = this.props.userRegistrationState;
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            if(key == "selectAddressFlag"){
+                if(isArrayNotEmpty(userInfo) && this.getSelectAddressDropdown(user).length == 1){
+                    this.props.form.setFieldsValue({
+                        [`participantSelectAddress`]: this.getAddress(user)
+                    });
+                }
             }else if(key == "manualEnterAddressFlag"){
                 this.props.form.setFieldsValue({
                     [`participantStreet1`]: registrationObj.street1,
@@ -298,10 +318,14 @@ class AppRegistrationFormNew extends Component{
 
     setParticipantDetailStepParentAddressFormFields = (key,parent,pIndex) => {
         try{
-            if(key == "addNewAddressFlag"){
-                this.props.form.setFieldsValue({
-                    [`parentAddressSearch${pIndex}`]: this.getAddress(parent),
-                });
+            const { registrationObj,userInfo } = this.props.userRegistrationState;
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            if(key == "selectAddressFlag"){
+                if(isArrayNotEmpty(userInfo) && this.getSelectAddressDropdown(user).length == 1){
+                    this.props.form.setFieldsValue({
+                        [`parentSelectAddress${pIndex}`]: this.getAddress(user),
+                    });
+                }
             }else if(key == "manualEnterAddressFlag"){
                 console.log("country",parent.countryRefId);
                 this.props.form.setFieldsValue({
@@ -402,8 +426,24 @@ class AppRegistrationFormNew extends Component{
     }
 
     onChangeSetParticipantValue = (value,key) => {
-        const { registrationObj,parents } = this.props.userRegistrationState;
-        this.props.updateUserRegistrationObjectAction(value,key);
+        const { registrationObj,parents,userInfo } = this.props.userRegistrationState;
+        if(key == "addOrRemoveAddressBySelect"){
+            if(value){
+                let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+                let participantAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
+                registrationObj.street1 = participantAddress.street1;
+                registrationObj.street2 = participantAddress.street2;
+                registrationObj.postalCode = participantAddress.postalCode;
+                registrationObj.suburb = participantAddress.suburb;
+                registrationObj.stateRefId = participantAddress.stateRefId;
+                registrationObj.countryRefId = participantAddress.countryRefId;
+                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
+            }else{
+                this.clearParticipantAddress(registrationObj);
+            }
+        }else{
+            this.props.updateUserRegistrationObjectAction(value,key);
+        }
         if(key == "dateOfBirth" || key == "referParentEmail"){
             setTimeout(() => {
                 this.props.form.setFieldsValue({
@@ -420,6 +460,16 @@ class AppRegistrationFormNew extends Component{
                 }
             }
         }
+    }
+
+    clearParticipantAddress = (registrationObj) => {
+        registrationObj.street1 = null;
+        registrationObj.street2 = null;
+        registrationObj.postalCode = null;
+        registrationObj.suburb = null;
+        registrationObj.stateRefId = null;
+        registrationObj.countryRefId = null;
+        this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
     }
 
     addParent = (key,parentIndex) => {
@@ -447,8 +497,7 @@ class AppRegistrationFormNew extends Component{
 
     onChangeSetParentValue = (value,key,parentIndex) => {
         try{
-            const { registrationObj } = this.props.userRegistrationState;
-            registrationObj.parentOrGuardian[parentIndex][key] = value;
+            const { registrationObj,userInfo } = this.props.userRegistrationState;
             if(key == "isSameAddress"){
                 if(value){
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
@@ -457,25 +506,28 @@ class AppRegistrationFormNew extends Component{
                     registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = registrationObj.stateRefId;
                     registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = registrationObj.countryRefId;
                     registrationObj.parentOrGuardian[parentIndex]["postalCode"] = registrationObj.postalCode;
+                    this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
                 }else{
                     this.clearParentAddress(registrationObj,parentIndex);
                 }
             }else if(key == "addOrRemoveAddressBySelect"){
                 if(value){
-                    let userInfoList = deepCopyFunction(this.props.userRegistrationState.userInfo);
-                    let userInfo = userInfoList.find(x => x.id == registrationObj.userId);
-                    let parentInfo = userInfo.parentOrGuardian.find(x => x.userId == value);
-                    registrationObj.parentOrGuardian[parentIndex]["street1"] = parentInfo.street1;
-                    registrationObj.parentOrGuardian[parentIndex]["street2"] = parentInfo.street2;
-                    registrationObj.parentOrGuardian[parentIndex]["postalCode"] = parentInfo.postalCode;
-                    registrationObj.parentOrGuardian[parentIndex]["suburb"] = parentInfo.suburb;
-                    registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = parentInfo.stateRefId;
-                    registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = parentInfo.countryRefId;
+                    let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+                    let parentAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
+                    registrationObj.parentOrGuardian[parentIndex]["street1"] = parentAddress.street1;
+                    registrationObj.parentOrGuardian[parentIndex]["street2"] = parentAddress.street2;
+                    registrationObj.parentOrGuardian[parentIndex]["postalCode"] = parentAddress.postalCode;
+                    registrationObj.parentOrGuardian[parentIndex]["suburb"] = parentAddress.suburb;
+                    registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = parentAddress.stateRefId;
+                    registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = parentAddress.countryRefId;
+                    this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
                 }else{
                    this.clearParentAddress(registrationObj,parentIndex);
                 }
+            }else{
+                registrationObj.parentOrGuardian[parentIndex][key] = value;
+                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
             }
-            this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
         }catch(ex){
             console.log("Exception occured in onChangeSetParentValue"+ex);
         }
@@ -488,6 +540,7 @@ class AppRegistrationFormNew extends Component{
         registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = null;
         registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = null;
         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
+        this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
     }
 
     handlePlacesAutocomplete = (addressData,key,parentIndex) => {
@@ -755,12 +808,11 @@ class AppRegistrationFormNew extends Component{
     }
 
     pagingCompetitions = (current) => {
-        const { allCompetitions } = this.props.userRegistrationState;
         let startIndex = (current - 1 ) * this.state.competitionsCountPerPage;
         let endIndex = current * this.state.competitionsCountPerPage;
         this.setState({currentCompetitions: current});
         if(this.state.organisationId == null){
-            this.setState({competitions: allCompetitions.slice(startIndex,endIndex)});
+            this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
         }else{
             this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
         }
@@ -770,11 +822,63 @@ class AppRegistrationFormNew extends Component{
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
     }
 
-    searchOrganisationByPostalCode = () => {
+    onChangeSetPostalCode = (postalCode) => {
         try{
-
+            this.setState({postalCode: postalCode});
+            setTimeout(() => {
+                if(postalCode == ''){
+                    this.searchOrganisationByPostalCode();
+                } 
+            },300);
         }catch(ex){
             console.log("Error in searchOrganisationByPostalCode"+ex);
+        }
+    }
+
+    searchOrganisationByPostalCode = () => {
+        try{
+            let { membershipProductInfo } = this.props.userRegistrationState;
+            if(this.state.postalCode){
+                let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode.toLowerCase().indexOf(this.state.postalCode) > -1);
+                this.setState({organisations: filteredOrganisation});
+                this.setAllCompetitions(filteredOrganisation);
+            }else{
+                this.setState({organisations: membershipProductInfo});
+                this.setAllCompetitions(membershipProductInfo);
+            }
+        }catch(ex){
+            console.log("Error in searchOrganisationByPostalCode"+ex);
+        }
+    }
+
+    getSelectAddressDropdown = (user) => {
+        try{
+            let addresses = [];
+            let address = {
+                "userId": user.id,
+                "street1": user.street1,
+                "street2": user.street2,
+                "suburb": user.suburb,
+                "postalCode": user.postalCode,
+                "stateRefId": user.stateRefId,
+                "countryRefId": user.countryRefId 
+            }
+            addresses.push(address);
+            for(let parent of user.parentOrGuardian){
+                let parentAddress = {
+                    "userId": parent.userId,
+                    "street1": parent.street1,
+                    "street2": parent.street2,
+                    "suburb": parent.suburb,
+                    "postalCode": parent.postalCode,
+                    "stateRefId": parent.stateRefId,
+                    "countryRefId": parent.countryRefId 
+                }
+                addresses.push(parentAddress);
+            }
+            return addresses;
+        }catch(ex){
+            console.log("Error in getSelectAddressDropdown"+ex);
         }
     }
     
@@ -905,7 +1009,13 @@ class AppRegistrationFormNew extends Component{
                             <div 
                             onClick={() => this.addOrSelectParticipant(user.id)}
                             className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
-                                <img className="profile-img" src={user.photoUrl}/> 
+                                {user.photoUrl ? 
+                                    <img className="profile-img" src={user.photoUrl}/> 
+                                : 
+                                    <div className="profile-default-img">
+                                        {user.firstName.slice(0,1)}{user.lastName.slice(0,1)}
+                                    </div>
+                                }
                                 <div style={{width: "75%",paddingLeft: "15px"}}>
                                     <div>{user.firstName} {user.lastName}</div>
                                     <div style={{fontSize: "15px"}}>{user.genderRefId == 1 ? 'Female' : 'Male'}, {moment(user.dateOfBirth).format("DD/MM/YYYY")}</div>
@@ -962,7 +1072,8 @@ class AppRegistrationFormNew extends Component{
     participantAddressView = (getFieldDecorator) => {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
-        let userInfo = userRegistrationstate.userInfo;
+        let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
+        let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList,countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         return(
@@ -980,9 +1091,9 @@ class AppRegistrationFormNew extends Component{
                                 style={{ width: "100%" }}
                                 placeholder={AppConstants.select}
                                 onChange={(e) => this.onChangeSetParticipantValue(e, "addOrRemoveAddressBySelect")}
-                                setFieldsValue={registrationObj.stateRefId}>
-                                {userInfo.length > 0 && userInfo.map((item) => (
-                                    <Option key={item.id} value={item.id}> {this.getAddress(item)}</Option>
+                                setFieldsValue={this.getAddress(user)}>
+                                {(this.getSelectAddressDropdown(user) || []).map((item) => (
+                                    <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
                                 ))}
                             </Select>
                             )}
@@ -1305,6 +1416,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj } = this.props.userRegistrationState;
             const { stateList,countryList } = this.props.commonReducerState;
             const { userInfo } = this.props.userRegistrationState;
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             return(
                 <div>
@@ -1321,8 +1433,8 @@ class AppRegistrationFormNew extends Component{
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
                                     onChange={(e) => this.onChangeSetParentValue(e, "addOrRemoveAddressBySelect",parentIndex)}
-                                    setFieldsValue={registrationObj.stateRefId}>
-                                    {userInfo.parentOrGuardian && userInfo.parentOrGuardian.length > 0 && userInfo.parentOrGuardian.map((item) => (
+                                    setFieldsValue={this.getAddress(user)}>
+                                    {(this.getSelectAddressDropdown(user)).map((item) => (
                                         <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
                                     ))}
                                 </Select>
@@ -1674,7 +1786,8 @@ class AppRegistrationFormNew extends Component{
     }
 
     findAnotherCompetitionView = () => {
-        let { membershipProductInfo,allCompetitions } = this.props.userRegistrationState;
+        let { membershipProductInfo } = this.props.userRegistrationState;
+        let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
        
         return(
             <div className="registration-form-view">
@@ -1689,15 +1802,19 @@ class AppRegistrationFormNew extends Component{
                     <div className="row">
                         <div className="col">
                             <InputWithHead 
+                                allowClear 
                                 heading={AppConstants.postCode} 
+                                value={this.state.postalCode}
                                 placeholder={AppConstants.postCode} 
-                                onChange={(e) => this.setState({postalCode: e.target.value})} 
+                                onChange={(e) => this.onChangeSetPostalCode(e.target.value)} 
                             />
                         </div>
-                        <div className="col">
+                        <div className="col" style={{alignSelf: "center"}}>
                             <Button 
                                 type="primary"
-                                style={{color: "white",textTransform: "uppercase"}}
+                                style={{color: "white",textTransform: "uppercase",
+                                marginTop: "45px",float: "right",
+                                paddingLeft: "50px",paddingRight: "50px"}}
                                 onClick={() => this.searchOrganisationByPostalCode()}
                                 className="open-reg-button">{AppConstants.search}</Button>
                         </div>
@@ -1708,10 +1825,19 @@ class AppRegistrationFormNew extends Component{
                         optionFilterProp="children"
                         onChange={(e) => this.onChangeSetOrganisation(e)}
                         style={{ width: "100%", paddingRight: 1 }}>
-                        {membershipProductInfo.length > 0 && membershipProductInfo.map((item) => (
+                        {(this.state.organisations || []).map((item) => (
                             < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
                         ))}
                     </Select>
+                    {organisationInfo && (
+                        <div style={{display: "flex",alignItems: "center",marginTop: "20px"}}>
+                            <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
+                            <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
+                            {organisationInfo.mobileNumber && (
+                                <div style={{marginLeft: "20px"}}><img style={{height: "20px",width: "20px",marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <div className="row" style={{marginTop: "30px"}}>
                     {(this.state.competitions || []).map((competition,competitionIndex) => (
@@ -1732,7 +1858,7 @@ class AppRegistrationFormNew extends Component{
                                 {this.state.organisationId == null && (
                                     <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                 )}
-                                <div style={{fontWeight: "600"}}>&#128198; {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                             </div>
                         </div>
                     ))}
@@ -1742,7 +1868,7 @@ class AppRegistrationFormNew extends Component{
                     pageSize={this.state.competitionsCountPerPage}
                     current={this.state.currentCompetitions}
                     style={{textAlign: "center"}} 
-                    total={this.state.organisationId == null ? allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                    total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
                     itemRender={this.paginationItems}/>
             </div>
         )
@@ -1763,16 +1889,16 @@ class AppRegistrationFormNew extends Component{
                 <div>
                     <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
                         <div className="col-sm-1.5">
-                            <img style={{height: "60px",borderRadius: "50%"}} src={competitionInfo.compLogoUrl}/> 
+                            <img className="profile-img" src={competitionInfo.compLogoUrl}/> 
                         </div>
                         <div className="col">
-                            <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
+                            <div className="form-heading" style={{paddingBottom: "0px"}}>{competition.competitionInfo.organisationName}</div>
                             <div style={{display: "flex",flexWrap: "wrap"}}>
-                                <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
+                                <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
                                 <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                 onClick={() => this.findAnotherCompetition(competitionIndex)}>{competitionIndex == 0 ? AppConstants.findAnotherCompetition : AppConstants.cancel}</div>
                             </div>
-                            <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "-5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box">
@@ -2029,23 +2155,27 @@ class AppRegistrationFormNew extends Component{
         console.log(expiredRegistration);
         return(
             <div className="registration-form-view">
-                <div className="map-style">
-                    <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
-                </div>
-                <div className="row" style={{marginTop: "30px",marginLeft: "0px",marginRight: "0px"}}>
+                {expiredRegistration.heroImageUrl && (
+                    <div className="map-style">
+                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
+                    </div>
+                )}
+                <div className="row" style={expiredRegistration.heroImageUrl ? 
+                {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : 
+                {marginLeft: "0px",marginRight: "0px"}}>
                     <div className="col-sm-1.5">
                         <img style={{height: "60px",width: "60px",borderRadius: "50%"}} 
                         src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser}/> 
                     </div>
                     <div className="col">
-                        <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
-                        <div className="form-heading" style={{textAlign: "start"}}>{expiredRegistration.competitionName}</div>
-                        <div style={{fontWeight: "600",marginTop: "-5px"}}>&#128198; {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                        <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
+                        <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
+                        <div style={{fontWeight: "600",marginTop: "5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                     </div>
                 </div>
                 <div className="light-grey-border-box" style={{textAlign: "center"}}>
                     <div className="form-heading" 
-                    style={{marginTop: "30px",justifyContent:"center",marginBottom: "20px"}}>{expiredRegistration.validateMessage}</div>
+                    style={{marginTop: "30px",justifyContent:"center",marginBottom: "5px"}}>{expiredRegistration.validateMessage}</div>
                     <Button 
                     type="primary"
                     style={{color: "white",textTransform: "uppercase"}}
@@ -2078,20 +2208,25 @@ class AppRegistrationFormNew extends Component{
                         <img style={{height: "60px",borderRadius: "50%"}} src={competition.competitionInfo.compLogoUrl}/> 
                     </div>
                     <div className="col">
-                        <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.competition}</div>
+                        <div className="form-heading" style={{paddingBottom: "0px"}}>{competition.competitionInfo.organisationName}</div>
                         <div style={{display: "flex",flexWrap: "wrap"}}>
-                            <div className="form-heading" style={{textAlign: "start"}}>{competition.competitionInfo.competitionName}</div>
+                            <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
                             <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                             onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                         </div>
-                        <div style={{fontWeight: "600",marginTop: "-5px"}}>
-                            {(competition.products || []).map((product,productIndex) => (
-                                <span>
-                                    <span>{product.membershipTypeName}</span>
-                                    <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
-                                </span>
-                            ))}
+                        <div style={{fontWeight: "600",marginTop: "-5px",
+                        display: "flex",alignItems: "center"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate} 
+                            <div >
+                                <img style={{height: "15px",width: "15px",marginRight: "5px",marginLeft: "25px"}} src={AppImages.umpireIcon}/>
+                                {(competition.products || []).map((product,productIndex) => (
+                                    <span>
+                                        <span>{product.membershipTypeName}</span>
+                                        <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
+                                    </span>
+                                ))}
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

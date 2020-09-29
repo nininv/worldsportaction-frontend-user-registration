@@ -153,7 +153,6 @@ const initialState = {
 	lastAddedCompetitionIndex: null,
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
-	allCompetitions: [],
 	parents: [],
 	expiredRegistrationFlag: false,
 	expiredRegistration: null 
@@ -485,30 +484,6 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
-function setParticipantAddressBySelect(state,userId){
-	try{
-		if(userId){
-			let userInfoList = deepCopyFunction(state.userInfo);
-			let userInfo = userInfoList.find(x => x.id == userId);
-			state.registrationObj.street1 = userInfo.street1;
-			state.registrationObj.street2 = userInfo.street2;
-			state.registrationObj.postalCode = userInfo.postalCode;
-			state.registrationObj.suburb = userInfo.suburb;
-			state.registrationObj.stateRefId = userInfo.stateRefId;
-			state.registrationObj.countryRefId = userInfo.countryRefId;
-		}else{
-			state.registrationObj.street1 = null;
-			state.registrationObj.street2 = null;
-			state.registrationObj.postalCode = null;
-			state.registrationObj.suburb = null;
-			state.registrationObj.stateRefId = null;
-			state.registrationObj.countryRefId = null;
-		}
-	}catch(ex){
-		console.log("Error in setParticipantAddressBySelect"+ex);
-	}
-}
-
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -542,8 +517,6 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
-			}else if(key == "addOrRemoveAddressBySelect"){
-				setParticipantAddressBySelect(state,value)
 			}else{
 				state.registrationObj[key] = value;
 			}
@@ -580,11 +553,6 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
 			let data = action.result;
-			for(let org of data){
-                for(let comp of org.competitions){
-                    state.allCompetitions.push(comp);
-                }
-            }
 			return {
 				...state,
 				onMembershipLoad: false,
