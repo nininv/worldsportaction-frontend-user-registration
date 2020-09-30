@@ -24,7 +24,6 @@ function setYourInfo(action,state){
         let email = action.value;
         let yourInfo = state.registrationReviewList.yourInfo;
         let user = state.participantUsers.find(x => x.email === email);
-        console.log("user",user);
         if(user != undefined){
             yourInfo["userId"] = user.id;
             yourInfo["firstName"] = user.firstName;
@@ -38,7 +37,7 @@ function setYourInfo(action,state){
             yourInfo["stateRefId"] = user.stateRefId;
             yourInfo["countryRefId"] = user.countryRefId;
         }else{
-            yourInfo.email = email;
+            yourInfo["email"] = email;
         }
     }catch(ex){
         console.log("Error in setYourInfo"+ex);
