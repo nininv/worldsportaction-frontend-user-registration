@@ -500,6 +500,7 @@ class AppRegistrationFormNew extends Component{
             const { registrationObj,userInfo } = this.props.userRegistrationState;
             if(key == "isSameAddress"){
                 if(value){
+                    registrationObj.parentOrGuardian[parentIndex][key] = value;
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
                     registrationObj.parentOrGuardian[parentIndex]["street2"] = registrationObj.street2;
                     registrationObj.parentOrGuardian[parentIndex]["suburb"] = registrationObj.suburb;
@@ -839,7 +840,7 @@ class AppRegistrationFormNew extends Component{
         try{
             let { membershipProductInfo } = this.props.userRegistrationState;
             if(this.state.postalCode){
-                let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode.toLowerCase().indexOf(this.state.postalCode) > -1);
+                let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode?.toLowerCase().indexOf(this.state.postalCode) > -1);
                 this.setState({organisations: filteredOrganisation});
                 this.setAllCompetitions(filteredOrganisation);
             }else{
@@ -1732,7 +1733,6 @@ class AppRegistrationFormNew extends Component{
 
     selectCompetitionStepView = (getFieldDecorator) => {
         const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
-        console.log("dfsf",expiredRegistration);
         return(
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div> 
