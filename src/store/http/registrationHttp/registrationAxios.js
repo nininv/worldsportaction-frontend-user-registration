@@ -205,6 +205,10 @@ let AxiosApi = {
     expiredRegistrationCheck(payload){
         var url = `/api/registration/expiry/check?organisationId=${payload.organisationId}&competitionId=${payload.competitionId}`;
         return Method.dataGet(url, token);
+    },
+    getTransferOrganisationsData(payload) {
+        var url = `/api/transfer/competitions?`;
+        return Method.dataPost(url, token, payload);
     }
 };
 

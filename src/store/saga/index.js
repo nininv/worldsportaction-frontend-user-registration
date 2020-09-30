@@ -248,4 +248,5 @@ export default function* root_saga() {
   //Expired competition check
   yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
 
+  yield takeEvery(ApiConstants.API_GET_TRANSFER_COMPETITIONS_LOAD, deRegisterSaga.getTransferOrganisationsSaga);
 }
