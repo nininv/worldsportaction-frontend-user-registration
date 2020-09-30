@@ -823,6 +823,10 @@ class AppRegistrationFormNew extends Component{
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
     }
 
+    goToTeamRegistrationForm = () => {
+        history.push({pathname: '/appTeamRegistrationForm'});
+    }
+
     onChangeSetPostalCode = (postalCode) => {
         try{
             this.setState({postalCode: postalCode});
