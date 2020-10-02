@@ -33,7 +33,8 @@ import {
     orgteamRegistrationRegSettingsAction,
     saveTeamInfoAction	, 
     updateTeamAdditionalInfoAction,
-    getTeamInfoById
+    getTeamInfoById,
+    getExistingTeamInfoById
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -90,7 +91,9 @@ class AppTeamRegistrationForm extends Component{
             participantId: null,
             registrationId: null,
             getTeamInfoByIdLoad: false,
-            singleCompModalVisible: false
+            singleCompModalVisible: false,
+            existingTeamParticipantId: null,
+            onExistingTeamInfoByIdLoad: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -129,6 +132,9 @@ class AppTeamRegistrationForm extends Component{
                 if(this.state.participantId && this.state.registrationId){
                     this.props.getTeamInfoById(this.state.participantId,'');
                     this.setState({getTeamInfoByIdLoad: true})
+                }else if(this.state.existingTeamParticipantId){
+                    this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
+                    this.setState({onExistingTeamInfoByIdLoad: true})
                 }else{
                     this.props.selectTeamAction();
                 }
@@ -163,6 +169,10 @@ class AppTeamRegistrationForm extends Component{
                         this.setSelectCompetitionStepFormFields();
                     },300);
                 }
+            }
+
+            if(!teamRegistrationState.onExistingTeamInfoByIdLoad && this.state.onExistingTeamInfoByIdLoad){
+                this.setState({onExistingTeamInfoByIdLoad: false,showFindAnotherCompetitionview: true})
             }
 
             if(teamRegistrationState.isSavedTeam){
@@ -1718,7 +1728,8 @@ function mapDispatchToProps(dispatch){
         orgteamRegistrationRegSettingsAction,
         saveTeamInfoAction	,
         updateTeamAdditionalInfoAction,
-        getTeamInfoById
+        getTeamInfoById,
+        getExistingTeamInfoById
     }, dispatch);
 
 }

@@ -160,7 +160,8 @@ const initialState = {
     saveValidationErrorCode: null,
     onSaveLoad: false,
     registrationId: null,
-    onTeamInfoByIdLoad: false
+    onTeamInfoByIdLoad: false,
+    onExistingTeamInfoByIdLoad: false
 }
 
 function setCompetitionDetails(state,details){
@@ -206,7 +207,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
     if(membershipProduct){
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
-      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
+      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
         state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
       }
       for(let division of membershipProduct.divisions){
@@ -353,6 +354,20 @@ function teamRegistrationReducer(state = initialState, action){
               status: action.status,
               teamRegistrationObj: teamRegistrationObjTemp
             };
+
+        case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD:
+            return { ...state, onExistingTeamInfoByIdLoad: true };
+      
+        case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS:
+            let existingTeamInfo = action.result;
+            //teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,existingTeamInfo);
+            return {
+              ...state,
+              onExistingTeamInfoByIdLoad: false,
+              status: action.status,
+              teamRegistrationObj: existingTeamInfo
+            };
+  
 
         default:
             return state;

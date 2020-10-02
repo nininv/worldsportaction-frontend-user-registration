@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "1152e357-f237-4469-93f8-6ec8957eeb03";
+        //let registrationUniqueKey = "a4781a40-d0d2-474c-9e9a-f58045968094";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -422,12 +422,20 @@ class RegistrationProducts extends Component {
                             )
                         }
                     </div>
-                    <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                        <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                        <div className="body-text-common">{item.gender + ', ' + 
-                            liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                    {item.isTeamRegistration == 1 ?
+                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                            <div className="headline-text-common">{item.teamName}</div>
+                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
                         </div>
-                    </div>
+                    :
+                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                            <div className="body-text-common">{item.gender + ', ' + 
+                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                            </div>
+                        </div>
+                    }
+                   
                     <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
@@ -465,17 +473,38 @@ class RegistrationProducts extends Component {
     productsView = (item, index) =>{
         return(
             <div className="innerview-outline">
-                <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
-                    <div className = "body-text-common">
-                        {AppConstants.registration}{"(s)"}
-                    </div>
-                    { (item.membershipProducts || []).map((mem, memIndex) =>(
-                        <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
-                        style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
-                            {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
+                {item.isTeamRegistration == 1 ? 
+                    <div>
+                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px",marginTop: "20px"}}>
+                            <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
+                            {(item.teamMembers.payingForList || []).map((payingFor,payigForIndex) => (
+                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                    {payingFor.membershipProductTypeName + ' ' + payingFor.name}
+                                </div>
+                            ))}
+                            <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
+                            {(item.teamMembers.notPayingForList || []).map((notPlayingFor,notPayigForIndex) => (
+                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                    {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
+                                </div>
+                            ))}
                         </div>
-                    )) }
-                </div>               
+                    </div>
+                : 
+                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                        <div className = "body-text-common">
+                            {AppConstants.registration}{"(s)"}
+                        </div>
+                        { (item.membershipProducts || []).map((mem, memIndex) =>(
+                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
+                            style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
+                            </div>
+                        )) }
+                    </div>
+                }
+                               
                 <div className="subtitle-text-common" style={{marginTop: "16px"}}>
                     {AppConstants.wouldYouLikeTopay}
                 </div>

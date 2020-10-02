@@ -95,3 +95,22 @@ export function* getTeamDataById(action) {
         yield call(errorSaga, error)
     }
 }
+
+export function* getExistingTeamDataById(action) {
+    try {
+        const result = yield call(AxiosApi.getExistingTeamDataById,action.participantKey);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS,
+                result: result.result.data,
+                status: result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        console.log("error in saga",error);
+        yield call(errorSaga, error)
+    }
+}
+

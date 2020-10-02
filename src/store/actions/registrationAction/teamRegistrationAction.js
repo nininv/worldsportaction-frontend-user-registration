@@ -79,6 +79,14 @@ function getTeamInfoById(participantKey,registrarionKey) {
     return action;
 }
 
+function getExistingTeamInfoById(existingTeamParticipatKey){
+    const action = {
+        type: ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD,
+        participantKey: existingTeamParticipatKey
+    };
+    return action;
+}
+
 
 export{
     membershipProductTeamRegistrationAction,
@@ -89,5 +97,6 @@ export{
     orgteamRegistrationRegSettingsAction,
     saveTeamInfoAction,
     updateTeamAdditionalInfoAction,
-    getTeamInfoById
+    getTeamInfoById,
+    getExistingTeamInfoById
 }

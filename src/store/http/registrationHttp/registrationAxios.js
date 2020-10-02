@@ -209,6 +209,11 @@ let AxiosApi = {
     getTransferOrganisationsData(payload) {
         var url = `/api/transfer/competitions?`;
         return Method.dataPost(url, token, payload);
+    },
+
+    getExistingTeamDataById(participantId){
+        var url = `/api/registration/teamparticipant?participantId=${participantId}`;
+        return Method.dataGet(url, token);
     }
 };
 
