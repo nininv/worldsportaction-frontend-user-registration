@@ -1,7 +1,9 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction } from "../../../util/helpers";
+import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 
 const teamObj = {
+  "registrationId": null,
+  "participantId": null,
   "registeringYourself": null,
   "organisationId": null,
   "competitionId": null,
@@ -38,10 +40,10 @@ const teamObj = {
     "totalSeasonalFee": null
   },
   "regSetting": {
-    "school_grade": null,
-    "school_program": null,
-    "school_standard": null,
-    "netball_experience": null
+    "school_grade": 0,
+    "school_program": 0,
+    "school_standard": 0,
+    "netball_experience": 0
   },
   "personRoleRefId":null,
   "genderRefId": null,
@@ -122,8 +124,7 @@ const teamObj = {
     "accreditationCoachExpiryDate": null,
     "accreditationLevelCoachRefId": null,
     "isPrerequestTrainingComplete": null,
-  },
-  "registrationId": null
+  }
 }
 
 const teamMemberObj = {
@@ -158,7 +159,8 @@ const initialState = {
     saveValidationErrorMsg: null,
     saveValidationErrorCode: null,
     onSaveLoad: false,
-    registrationId: null
+    registrationId: null,
+    onTeamInfoByIdLoad: false
 }
 
 function setCompetitionDetails(state,details){
@@ -231,98 +233,126 @@ function setTeamRegistrationSetting(state,settings){
 			}
 		}
 	}catch(ex){
-		console.log("Error in setRegistrationSetting in userRegistrationReducer"+ex);
+		console.log("Error in setTeamRegistrationSetting in teamRegistrationReducer"+ex);
+	}
+}
+
+function updateTeamInfoByIdByMembershipInfo(state,teamData){
+	try{
+    let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
+    teamData.organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == teamData.organisationId);
+    teamData.competitionInfo = teamData.organisationInfo.competitions.find(x => x.competitionUniqueKey == teamData.competitionId);
+		return teamData;
+	}catch(ex){
+		console.log("Error in updateTeamInfoByIdByMembershipInfo in teamRegistrationReducer"+ex);
 	}
 }
 
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
-          state[action.key] = action.data;
-          return{
-            ...state
-          }
+            state[action.key] = action.data;
+            return{
+              ...state
+            }
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD:
-          return { ...state, onMembershipLoad: true };
+            return { ...state, onMembershipLoad: true };
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
-          let data = action.result;
-          return {
-            ...state,
-            onMembershipLoad: false,
-            status: action.status,
-            membershipProductInfo: data
-          };
+            let data = action.result;
+            return {
+              ...state,
+              onMembershipLoad: false,
+              status: action.status,
+              membershipProductInfo: data
+            };
 
         case ApiConstants.SELECT_TEAM: 
-          state.teamRegistrationObj = deepCopyFunction(teamObj);
-          return { 
-            ...state,
-            hasTeamSelected: true 
-          };
+            state.teamRegistrationObj = deepCopyFunction(teamObj);
+            return { 
+              ...state,
+              hasTeamSelected: true 
+            };
         
         case ApiConstants.UPDATE_TEAM_REGISTRATION_OBJECT:
-          if(action.key == "competitionDetail"){
-            let details = action.data;
-            setCompetitionDetails(state,details);
-          }else if(action.key == "competitionMembershipProductTypeId"){
-            setDivisions(state,action.data)
-          }else if(action.key == "addTeamMember"){
-            let teamMemberObj = getUpdatedTeamMemberObj(state);
-            state.teamRegistrationObj.teamMembers.push(teamMemberObj);
-          }else if(action.key == "removeTeamMember"){
-            state.teamRegistrationObj.teamMembers.splice(action.data,1);
-          }else{
-            state.teamRegistrationObj[action.key] = action.data;
-          }
-          return{
-            ...state
-          };
+            if(action.key == "competitionDetail"){
+              let details = action.data;
+              setCompetitionDetails(state,details);
+            }else if(action.key == "competitionMembershipProductTypeId"){
+              setDivisions(state,action.data)
+            }else if(action.key == "addTeamMember"){
+              let teamMemberObj = getUpdatedTeamMemberObj(state);
+              state.teamRegistrationObj.teamMembers.push(teamMemberObj);
+            }else if(action.key == "removeTeamMember"){
+              state.teamRegistrationObj.teamMembers.splice(action.data,1);
+            }else{
+              state.teamRegistrationObj[action.key] = action.data;
+            }
+            return{
+              ...state
+            };
         
         case ApiConstants.UPDATE_REGISTRATION_TEAM_MEMBER_ACTION:
-          if(action.key == "membershipProductTypes"){
-            state.teamRegistrationObj.teamMembers[action.index][action.key][action.subIndex].isChecked = action.data;
-          }else{
-            state.teamRegistrationObj.teamMembers[action.index][action.key] = action.data;
-          }
-          return{
-            ...state
-          }
+            if(action.key == "membershipProductTypes"){
+              state.teamRegistrationObj.teamMembers[action.index][action.key][action.subIndex].isChecked = action.data;
+            }else{
+              state.teamRegistrationObj.teamMembers[action.index][action.key] = action.data;
+            }
+            return{
+              ...state
+            }
             
         case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD:
-          return { ...state, onLoad: true };
+            return { ...state, onLoad: true };
     
         case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_SUCCESS:
-          let registrationSettings = action.result;
-          setTeamRegistrationSetting(state,registrationSettings);
-          return {
-            ...state,
-            onLoad: false,
-            status: action.status
-          };
+            let registrationSettings = action.result;
+            setTeamRegistrationSetting(state,registrationSettings);
+            return {
+              ...state,
+              onLoad: false,
+              status: action.status
+            };
         
         case ApiConstants.API_SAVE_TEAM_LOAD:
-          return { ...state, onSaveLoad: true };
+            return { ...state, onSaveLoad: true };
     
         case ApiConstants.API_SAVE_TEAM_SUCCESS:
-          state.registrationId = action.result ? action.result.id : null;
-          state.saveValidationErrorMsg = action.result ? action.result.errorMsg : null;
-          state.saveValidationErrorCode = action.result ? action.result.errorCode : null;
-          return {
-            ...state,
-            onSaveLoad: false,
-            status: action.status,
-            isSavedTeam: true
-          };
+            state.registrationId = action.result ? action.result.id : null;
+            state.saveValidationErrorMsg = action.result ? action.result.errorMsg : null;
+            state.saveValidationErrorCode = action.result ? action.result.errorCode : null;
+            return {
+              ...state,
+              onSaveLoad: false,
+              status: action.status,
+              isSavedTeam: true
+            };
 
         case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO: 
-          let additionalInfoKey = action.key;
-          let additionalInfoData = action.data;
-          state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
-          return {
-            ...state
-          };
+            let additionalInfoKey = action.key;
+            let additionalInfoData = action.data;
+            state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+            return {
+              ...state
+            };
+
+        case ApiConstants.API_GET_TEAM_BY_ID_LOAD:
+            return { ...state, onTeamInfoByIdLoad: true };
+    
+        case ApiConstants.API_GET_TEAM_BY_ID_SUCCESS:
+            let responseData = action.result;
+            let participantId = action.participantId;
+            let teamRegistrationObjTemp = null;
+            if(isNullOrEmptyString(participantId)){
+              teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,responseData);
+            }
+            return {
+              ...state,
+              onTeamInfoByIdLoad: false,
+              status: action.status,
+              teamRegistrationObj: teamRegistrationObjTemp
+            };
 
         default:
             return state;

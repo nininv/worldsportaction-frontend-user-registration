@@ -32,7 +32,8 @@ import {
     updateRegistrationTeamMemberAction,
     orgteamRegistrationRegSettingsAction,
     saveTeamInfoAction	, 
-    updateTeamAdditionalInfoAction
+    updateTeamAdditionalInfoAction,
+    getTeamInfoById
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -61,6 +62,7 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
+import history from "../../util/history";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -84,7 +86,11 @@ class AppTeamRegistrationForm extends Component{
             allCompetitions: [],
             allCompetitionsByOrgId: [],
             competitionsCountPerPage: 6,
-            competitionsCurrentPage: 1
+            competitionsCurrentPage: 1,
+            participantId: null,
+            registrationId: null,
+            getTeamInfoByIdLoad: false,
+            singleCompModalVisible: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -104,6 +110,10 @@ class AppTeamRegistrationForm extends Component{
 
     componentDidMount(){
         try{
+            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            this.setState({participantId: participantId,registrationId: registrationId});
+
             this.props.membershipProductTeamRegistrationAction({});  
             this.setState({getMembershipLoad: true});
         }catch(ex){
@@ -116,7 +126,12 @@ class AppTeamRegistrationForm extends Component{
             let teamRegistrationState = this.props.teamRegistrationState;
 
             if(!teamRegistrationState.onMembershipLoad && this.state.getMembershipLoad){
-                this.props.selectTeamAction();
+                if(this.state.participantId && this.state.registrationId){
+                    this.props.getTeamInfoById(this.state.participantId,'');
+                    this.setState({getTeamInfoByIdLoad: true})
+                }else{
+                    this.props.selectTeamAction();
+                }
                 this.setState({organisations: teamRegistrationState.membershipProductInfo});
                 this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
                 this.setState({getMembershipLoad: false});
@@ -136,8 +151,129 @@ class AppTeamRegistrationForm extends Component{
                 this.setState({showFindAnotherCompetitionview: false});
                 this.props.updateTeamRegistrationStateVarAction(false,"hasCompetitionSelected");
             }
+
+            if(!teamRegistrationState.onTeamInfoByIdLoad && this.state.getTeamInfoByIdLoad){
+                if(this.state.participantId != null){
+                    this.state.completedSteps = [0,1,2];
+                    this.state.enabledSteps = [0,1,2];
+                    this.setState({getTeamInfoByIdLoad: false,
+                        completedSteps: this.state.completedSteps,
+                        enabledSteps: this.state.enabledSteps});
+                    setTimeout(() => {
+                        this.setSelectCompetitionStepFormFields();
+                    },300);
+                }
+            }
+
+            if(teamRegistrationState.isSavedTeam){
+                this.props.updateTeamRegistrationStateVarAction(false,"isSavedTeam");
+                if(teamRegistrationState.saveValidationErrorMsg!= null && teamRegistrationState.saveValidationErrorMsg.length > 0){
+                    this.setState({singleCompModalVisible: true});
+                }else{
+                    history.push("/registrationProducts", {
+                        registrationId: teamRegistrationState.registrationId,
+                        paymentSuccess: false					 
+                    })
+                }
+            }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
+        }
+    }
+
+    goToRegistrationProducts = () =>{
+        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
+    }
+
+    getAddress = (addressObject) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            const state = stateList.length > 0 && addressObject.stateRefId > 0
+                ? stateList.find((state) => state.id === addressObject.stateRefId).name
+                : null;
+            const country = countryList.length > 0 && addressObject.countryRefId > 0
+            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            : null;
+
+            let defaultAddress = '';
+            if(addressObject.street1 && addressObject.suburb && state){
+                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                (state ? state + ', ': '') +
+                (country ? country + '.': '');
+            }
+            return defaultAddress;
+        }catch(ex){
+            console.log("Error in getPartcipantParentAddress"+ex);
+        }
+    }
+
+    setSelectCompetitionStepFormFields = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            if(teamRegistrationObj){
+                this.props.form.setFieldsValue({
+                    [`competitionMembershipProductTypeId`]: teamRegistrationObj.competitionMembershipProductTypeId,
+                    [`competitionMembershipProductDivisionId`]: teamRegistrationObj.competitionMembershipProductDivisionId,
+                });
+            }
+        }catch(ex){
+            console.log("Error in setSelectCompetitionStepFormFields::"+ex);
+        }
+    }
+
+    setParticipantDetailStepAddressFormFields = (key) => {
+        try{
+            const { teamRegistrationObj,userInfo } = this.props.teamRegistrationState;
+            if(key == "manualEnterAddressFlag"){
+                this.props.form.setFieldsValue({
+                    [`yourDetailsStreet1`]: teamRegistrationObj.street1,
+                    [`yourDetailsSuburb`]: teamRegistrationObj.suburb,
+                    [`yourDetailsStateRefId`]: teamRegistrationObj.stateRefId,
+                    [`yourDetailsPostalCode`]: teamRegistrationObj.postalCode,
+                    [`yourDetailsCountryRefId`]: teamRegistrationObj.countryRefId
+                }); 
+            }
+        }catch(ex){
+            console.log("Error in setParticipantDetailStepAddressFormFields"+ex);
+        }
+    }
+
+    setParticipantDetailStepFormFields = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            if(teamRegistrationObj){
+                this.props.form.setFieldsValue({
+                    [`yourDetailsPersonRoleRefId`]: teamRegistrationObj.personRoleRefId,
+                    [`yourDetailsgenderRefId`]: teamRegistrationObj.genderRefId,
+                    [`yourDetailsFirstName`]: teamRegistrationObj.firstName,
+                    [`yourDetailsMiddleName`]: teamRegistrationObj.middleName,
+                    [`yourDetailsLastName`]: teamRegistrationObj.lastName,
+                    [`yourDetailsdateOfBirth`]: moment(teamRegistrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
+                    [`yourDetailsEmail`]: teamRegistrationObj.email,
+                    [`teamName`]: teamRegistrationObj.teamName
+                });
+                if(teamRegistrationObj.manualEnterAddressFlag){
+                    this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
+                }
+                if(teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
+                    {(teamRegistrationObj.teamMembers || []).map((member,mIndex) =>{
+                        this.props.form.setFieldsValue({
+                            [`teamMemberGenderRefId${mIndex}`]: member.genderRefId,
+                            [`teamMemberFirstName${mIndex}`]: member.firstName,
+                            [`teamMemberMiddleName${mIndex}`]: member.middleName,
+                            [`teamMemberLastName${mIndex}`]: member.lastName,
+                            [`teamMemberDateOfBirth${mIndex}`]:  moment(member.dateOfBirth, "YYYY-MM-DD"),
+                            [`teamMemberMobileNumber${mIndex}`]:  member.mobileNumber,
+                            [`teamMemberEmail${mIndex}`]:  member.email,
+                        });
+                    })}
+                } 
+            }
+        }catch(ex){
+            console.log("Error in setParticipantDetailStepFormFields::"+ex);
         }
     }
 
@@ -148,10 +284,16 @@ class AppTeamRegistrationForm extends Component{
                 this.scrollToTop();
             }
             if(current == 0){
-                this.setState({submitButtonText: AppConstants.signupToCompetition})
+                this.setState({submitButtonText: AppConstants.signupToCompetition});
+                setTimeout(() => {
+                    this.setSelectCompetitionStepFormFields();
+                },300);
             }else if(current == 1){
                 if(this.state.enabledSteps.includes(1)){
                     this.setState({submitButtonText: AppConstants.addPariticipant});
+                    setTimeout(() => {
+                        this.setParticipantDetailStepFormFields();
+                    },300);
                 }
             }else{
                 if(this.state.enabledSteps.includes(2)){
@@ -282,6 +424,8 @@ class AppTeamRegistrationForm extends Component{
         try{
             teamRegistrationObj["existingUserId"] = getUserId() ? Number(getUserId()) : null;
             teamRegistrationObj.registeringYourself = 4;
+            teamRegistrationObj.participantId = this.state.participantId != null ? this.state.participantId : null;
+            teamRegistrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null; 
             let memArr = [];
             (teamRegistrationObj.competitionInfo.membershipProducts).map((i, ind) => {
                 if(i.allowTeamRegistrationTypeRefId != null && teamRegistrationObj.competitionMembershipProductId == 
@@ -323,6 +467,9 @@ class AppTeamRegistrationForm extends Component{
                         this.scrollToTop();
                         if(nextStep == 1){
                             this.state.enabledSteps.push(0,nextStep);
+                            setTimeout(() => {
+                                this.setParticipantDetailStepFormFields();
+                            },300);
                         }else{
                             this.state.enabledSteps.push(nextStep);
                         }
@@ -702,7 +849,7 @@ class AppTeamRegistrationForm extends Component{
                             <div>
                                 <Form.Item name="addressSearch">
                                     <PlacesAutocomplete
-                                        //defaultValue={this.getAddress(registrationObj)}
+                                        defaultValue={this.getAddress(teamRegistrationObj)}
                                         heading={AppConstants.addressSearch}
                                         required
                                         error={this.state.searchAddressError}
@@ -799,7 +946,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`participantCountryRefId`, {
+                                {getFieldDecorator(`yourDetailsCountryRefId`, {
                                     rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                                 })(
                                 <Select
@@ -838,7 +985,7 @@ class AppTeamRegistrationForm extends Component{
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetTeamValue(e.target.value,"personRoleRefId")}
-                                value={teamRegistrationObj.personRoleRefId}>
+                                setFieldsValue={teamRegistrationObj.personRoleRefId}>
                                 <Radio value={1}>{AppConstants.admin}</Radio>
                                 <Radio value={2}>{AppConstants.coach}</Radio>
                                 <Radio value={3}>{AppConstants.manager}</Radio>
@@ -894,7 +1041,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.lastName} required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`participantLastName`, {
+                                {getFieldDecorator(`yourDetailsLastName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                 })(
                                     <InputWithHead
@@ -954,17 +1101,18 @@ class AppTeamRegistrationForm extends Component{
                     </div>
                     <div>{this.yourDetailsAddressView(getFieldDecorator)}</div>
                     {(teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && 
-                    teamRegistrationObj.personRoleRefId != 4) ? 
-                    <div>
-                        <InputWithHead heading={AppConstants.areYouRegisteringAsPlayer} required={"required-field"}></InputWithHead>
-                        <Radio.Group
-                            className="reg-competition-radio"
-                            onChange={(e) => this.onChangeSetTeamValue(e.target.value, "registeringAsAPlayer")}
-                            value={teamRegistrationObj.registeringAsAPlayer}>
-                            <Radio value={1}>{AppConstants.yes}</Radio>
-                            <Radio value={2}>{AppConstants.no}</Radio>
-                        </Radio.Group>
-                    </div> : null}
+                    teamRegistrationObj.personRoleRefId != 4) && (
+                        <div>
+                            <InputWithHead heading={AppConstants.areYouRegisteringAsPlayer} required={"required-field"}></InputWithHead>
+                            <Radio.Group
+                                className="reg-competition-radio"
+                                onChange={(e) => this.onChangeSetTeamValue(e.target.value, "registeringAsAPlayer")}
+                                value={teamRegistrationObj.registeringAsAPlayer}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={2}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        </div>
+                    )}
                 </div>
             )
         }catch(ex){
@@ -996,7 +1144,7 @@ class AppTeamRegistrationForm extends Component{
                     ))}
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
                     <Form.Item >
-                        {getFieldDecorator(`teamGenderRefId${teamMemberIndex}`, {
+                        {getFieldDecorator(`teamMemberGenderRefId${teamMemberIndex}`, {
                             rules: [{ required: true, message: ValidationConstants.genderField }],
                         })(
                             <Radio.Group
@@ -1538,7 +1686,8 @@ class AppTeamRegistrationForm extends Component{
                         noValidate="noValidate">
                         <Content>{this.contentView(getFieldDecorator)}</Content>
                         <Footer>{this.footerView()}</Footer>
-                        <Loader visible={this.props.teamRegistrationState.onMembershipLoad} />
+                        <Loader visible={this.props.teamRegistrationState.onMembershipLoad || 
+                        this.props.teamRegistrationState.onTeamInfoByIdLoad} />
                     </Form>
                 </Layout>
             </div>
@@ -1568,7 +1717,8 @@ function mapDispatchToProps(dispatch){
         walkingNetballQuesReferenceAction,
         orgteamRegistrationRegSettingsAction,
         saveTeamInfoAction	,
-        updateTeamAdditionalInfoAction
+        updateTeamAdditionalInfoAction,
+        getTeamInfoById
     }, dispatch);
 
 }

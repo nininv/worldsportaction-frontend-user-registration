@@ -70,6 +70,16 @@ function updateTeamAdditionalInfoAction(key,data){
     return action;
 }
 
+function getTeamInfoById(participantKey,registrarionKey) {
+    const action = {
+        type: ApiConstants.API_GET_TEAM_BY_ID_LOAD,
+        participantKey: participantKey,
+        registrationKey: registrarionKey
+    };
+    return action;
+}
+
+
 export{
     membershipProductTeamRegistrationAction,
     selectTeamAction,
@@ -78,5 +88,6 @@ export{
     updateRegistrationTeamMemberAction,
     orgteamRegistrationRegSettingsAction,
     saveTeamInfoAction,
-    updateTeamAdditionalInfoAction
+    updateTeamAdditionalInfoAction,
+    getTeamInfoById
 }

@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "cac32a5e-d22e-46e9-9613-fb051210bdc5";
+        //let registrationUniqueKey = "1152e357-f237-4469-93f8-6ec8957eeb03";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -249,8 +249,12 @@ class RegistrationProducts extends Component {
         }
     }
 
-    redirect = (participantId,registrationId) =>{
-        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+    redirect = (participantId,registrationId,isTeamRegistration) =>{
+        if(isTeamRegistration == 0){
+            history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+        }else{
+            history.push({pathname: '/appTeamRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+        } 
     }
 
     goToShop = () =>{
@@ -424,7 +428,7 @@ class RegistrationProducts extends Component {
                             liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
                         </div>
                     </div>
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>

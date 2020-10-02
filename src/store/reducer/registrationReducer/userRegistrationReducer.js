@@ -535,6 +535,7 @@ function userRegistrationReducer(state = initialState, action){
 				if(isNullOrEmptyString(participantId)){
 					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,responseData);
 				}else{
+					//Link previous participant parents for next participant 
 					state.parents = responseData.parents;
 				}
 				return {
