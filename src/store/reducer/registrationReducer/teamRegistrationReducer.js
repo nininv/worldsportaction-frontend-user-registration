@@ -1,0 +1,332 @@
+import ApiConstants from "../../../themes/apiConstants";
+import { deepCopyFunction } from "../../../util/helpers";
+
+const teamObj = {
+  "registeringYourself": null,
+  "organisationId": null,
+  "competitionId": null,
+  "organisationInfo": null,
+  "competitionInfo": null,
+  "registrationRestrictionTypeRefId": null,
+  "competitionMembershipProductId": null,
+  "competitionMembershipProductTypeId": null,
+  "competitionMembershipProductDivisionId": null,
+  "membershipProductList": [
+    // {
+    //   "competitionMembershipProductId": null,
+    //   "competitionMembershipProductTypeId": null,
+    //   "productName": null,
+    //   "divisions": [
+    //     {
+    //       "divisionName": null,
+    //       "competitionMembershipProductTypeId": null,
+    //       "competitionMembershipProductDivisionId": null
+    //     }
+    //   ],
+	  // }
+  ],
+  "membershipProducts":[],
+  "divisions": [
+    // {
+    //   "divisionName": null,
+    //   "competitionMembershipProductTypeId": null,
+    //   "competitionMembershipProductDivisionId": null
+    // }
+  ],
+  "fees": {
+    "totalCasualFee": null,
+    "totalSeasonalFee": null
+  },
+  "regSetting": {
+    "school_grade": null,
+    "school_program": null,
+    "school_standard": null,
+    "netball_experience": null
+  },
+  "personRoleRefId":null,
+  "genderRefId": null,
+  "email": null,
+  "suburb": null,
+  "userId": null,
+  "street1": null,
+  "street2": null,
+  "lastName": null,
+  "firstName": null,
+  "middleName": null,
+  "postalCode": null,
+  "stateRefId": null,
+  "dateOfBirth": null,
+  "genderRefId": null,
+  "countryRefId": 1,
+  "addNewAddressFlag": true,
+  "selectAddressFlag": false,
+  "manualEnterAddressFlag": false,
+  "mobileNumber": null,
+  "teamId": null,
+  "teamName": null,
+  "registeringAsAPlayer": null,
+  "allowTeamRegistrationTypeRefId": null,
+  "teamMembers": [
+    // {
+    //   "genderRefId": null,
+    //   "email": null,
+    //   "lastName": null,
+    //   "firstName": null,
+    //   "middleName": null,
+    //   "dateOfBirth": null,
+    //   "mobileNumber":null,
+    //   "payingFor": 0,
+    //   "membershipProductTypes": [
+    //     {
+    //       "competitionMembershipProductId": null,
+    //       "competitionMembershipProductTypeId": null,
+    //       "isPlayer": null,
+    //       "productTypeName": null,
+    //       "isChecked": null
+    //     }
+    //   ]
+    // }
+  ],
+  "additionalInfo": {
+    "isPlayer": null,
+    "schoolId": null,
+    "injuryInfo": null,
+    "allergyInfo": null,
+    "yearsPlayed": null,
+    "countryRefId": 1,
+    "heardByOther": null,
+    "heardByRefId": null,
+    "isDisability": false,
+    "identifyRefId": null,
+    "newToUmpiring": null,
+    "lastCaptainName": null,
+    "otherSportsInfo": [],
+    "schoolGradeInfo": null,
+    "hasDivisionError": null,
+    "favouriteFireBird": null,
+    "regularMedication": null,
+    "favouriteTeamRefId": null,
+    "walkingNetballInfo": null,
+    "childrenCheckNumber": null,
+    "disabilityTypeRefId": null,
+    "isParticipatedInSSP": null,
+    "walkingNetballRefId": null,
+    "associationLevelInfo": null,
+    "disabilityCareNumber": null,
+    "emergencyContactName": null,
+    "isConsentPhotosGiven": false,
+    "isChildrenCheckNumber": null,
+    "emergencyContactNumber": null,
+    "childrenCheckExpiryDate": null,
+    "existingMedicalCondition": null,
+    "accreditationCoachExpiryDate": null,
+    "accreditationLevelCoachRefId": null,
+    "isPrerequestTrainingComplete": null,
+  },
+  "registrationId": null
+}
+
+const teamMemberObj = {
+  "genderRefId": null,
+  "email": null,
+  "lastName": null,
+  "firstName": null,
+  "middleName": null,
+  "dateOfBirth": null,
+  "mobileNumber":null,
+  "payingFor": 0,
+  "membershipProductTypes": [
+    // {
+    //   "competitionMembershipProductId": null,
+    //   "competitionMembershipProductTypeId": null,
+    //   "isPlayer": null,
+    //   "productTypeName": null,
+    //   "isChecked": null
+    // }
+  ]
+}
+
+const initialState = {
+    onMembershipLoad: false,
+    status: null,
+    membershipProductInfo: [],
+    teamRegistrationObj : null,
+    hasTeamSelected: false,
+    hasCompetitionSelected: false,
+    userInfoOnLoad: false,
+    isSavedTeam: false,
+    saveValidationErrorMsg: null,
+    saveValidationErrorCode: null,
+    onSaveLoad: false,
+    registrationId: null
+}
+
+function setCompetitionDetails(state,details){
+  try{
+    state.teamRegistrationObj.organisationInfo = deepCopyFunction(details.organisationInfo);
+    state.teamRegistrationObj.organisationId = state.teamRegistrationObj.organisationInfo.organisationUniqueKey;
+    state.teamRegistrationObj.competitionInfo = deepCopyFunction(details.competitionInfo);
+    state.teamRegistrationObj.competitionId = state.teamRegistrationObj.competitionInfo.competitionUniqueKey;
+    state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId; 
+    let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1 && x.isTeamRegistration == 1);
+    state.teamRegistrationObj.membershipProductList = filteredPayerAndTeamMembershipProducts;
+    state.hasCompetitionSelected = true;
+  }catch(ex){
+    console.log("Error in setCompetitionDetails::"+ex);
+  }
+}
+
+function getUpdatedTeamMemberObj(state){
+  try{
+    let teamMemberTemp = deepCopyFunction(teamMemberObj);
+    let competitionInfo = state.teamRegistrationObj.competitionInfo;
+    let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1);
+    for(let product of filteredTeamMembershipProducts){
+      let obj = {
+        "competitionMembershipProductId": product.competitionMembershipProductId,
+        "competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+        "isPlayer": product.isPlayer,
+        "productTypeName": product.shortName,
+        "isChecked": false
+      }
+      teamMemberTemp.membershipProductTypes.push(obj);
+    }
+    return teamMemberTemp;
+  }catch(ex){
+    console.log("Error in getUpdatedTeamMemberObj::"+ex);
+  }
+}
+
+function setDivisions(state,competitionMembershipProductTypeId){
+  try{
+    state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
+    let membershipProduct = state.teamRegistrationObj.membershipProductList.find(x => x.competitionMembershipProductTypeId == competitionMembershipProductTypeId);
+    if(membershipProduct){
+      state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
+      state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
+      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
+        state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
+      }
+      for(let division of membershipProduct.divisions){
+        let div = {
+          "divisionName": division.divisionName,
+          "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+			    "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+        }
+        state.teamRegistrationObj.divisions.push(div);
+      }
+    }
+  }catch(ex){
+    console.log("Error in setDivisions::"+ex);
+  }
+}
+
+function setTeamRegistrationSetting(state,settings){
+	try{
+		let teamRegistrationObj = state.teamRegistrationObj;
+		let settingKeys = Object.keys(settings);
+		for(let key of settingKeys){
+			if(teamRegistrationObj.regSetting[key] == 0){
+				teamRegistrationObj.regSetting[key] = settings[key];
+			}
+		}
+	}catch(ex){
+		console.log("Error in setRegistrationSetting in userRegistrationReducer"+ex);
+	}
+}
+
+function teamRegistrationReducer(state = initialState, action){
+    switch(action.type){
+        case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
+          state[action.key] = action.data;
+          return{
+            ...state
+          }
+
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD:
+          return { ...state, onMembershipLoad: true };
+
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
+          let data = action.result;
+          return {
+            ...state,
+            onMembershipLoad: false,
+            status: action.status,
+            membershipProductInfo: data
+          };
+
+        case ApiConstants.SELECT_TEAM: 
+          state.teamRegistrationObj = deepCopyFunction(teamObj);
+          return { 
+            ...state,
+            hasTeamSelected: true 
+          };
+        
+        case ApiConstants.UPDATE_TEAM_REGISTRATION_OBJECT:
+          if(action.key == "competitionDetail"){
+            let details = action.data;
+            setCompetitionDetails(state,details);
+          }else if(action.key == "competitionMembershipProductTypeId"){
+            setDivisions(state,action.data)
+          }else if(action.key == "addTeamMember"){
+            let teamMemberObj = getUpdatedTeamMemberObj(state);
+            state.teamRegistrationObj.teamMembers.push(teamMemberObj);
+          }else if(action.key == "removeTeamMember"){
+            state.teamRegistrationObj.teamMembers.splice(action.data,1);
+          }else{
+            state.teamRegistrationObj[action.key] = action.data;
+          }
+          return{
+            ...state
+          };
+        
+        case ApiConstants.UPDATE_REGISTRATION_TEAM_MEMBER_ACTION:
+          if(action.key == "membershipProductTypes"){
+            state.teamRegistrationObj.teamMembers[action.index][action.key][action.subIndex].isChecked = action.data;
+          }else{
+            state.teamRegistrationObj.teamMembers[action.index][action.key] = action.data;
+          }
+          return{
+            ...state
+          }
+            
+        case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD:
+          return { ...state, onLoad: true };
+    
+        case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_SUCCESS:
+          let registrationSettings = action.result;
+          setTeamRegistrationSetting(state,registrationSettings);
+          return {
+            ...state,
+            onLoad: false,
+            status: action.status
+          };
+        
+        case ApiConstants.API_SAVE_TEAM_LOAD:
+          return { ...state, onSaveLoad: true };
+    
+        case ApiConstants.API_SAVE_TEAM_SUCCESS:
+          state.registrationId = action.result ? action.result.id : null;
+          state.saveValidationErrorMsg = action.result ? action.result.errorMsg : null;
+          state.saveValidationErrorCode = action.result ? action.result.errorCode : null;
+          return {
+            ...state,
+            onSaveLoad: false,
+            status: action.status,
+            isSavedTeam: true
+          };
+
+        case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO: 
+          let additionalInfoKey = action.key;
+          let additionalInfoData = action.data;
+          state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+          return {
+            ...state
+          };
+
+        default:
+            return state;
+    }
+}
+
+export default teamRegistrationReducer;

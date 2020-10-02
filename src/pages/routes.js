@@ -58,10 +58,10 @@ class Routes extends React.Component {
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationFormNew)}
         />
-        {/* <PrivateRoute
+        <PrivateRoute
           path="/appTeamRegistrationForm"
           component={lazyLoad(AppTeamRegistrationForm)}
-        /> */}
+        />
         <PrivateRoute
           path="/login"
           component={lazyLoad(Login)}

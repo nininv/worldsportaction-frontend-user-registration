@@ -552,3 +552,28 @@
   justify-content: center;
   font-size: 25px;
 }
+
+.white-button{
+  background-color: white;
+  border-color: white;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  font-family: inter-semi-bold;
+  font-size: 15px;
+  height: 48px;
+  border-radius: 12px;
+  color: black;
+  box-shadow: 0 3px 7px var(--app-d9d9d9);
+}
+
+.white-button:hover{
+  background-color: var(--app-d9d9d9);
+  border-color: var(--app-d9d9d9);
+}
+
+.white-button:focus{
+  background-color: white;
+  border-color: white;
+  color: black;
+}

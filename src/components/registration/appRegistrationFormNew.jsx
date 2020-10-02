@@ -824,7 +824,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     goToTeamRegistrationForm = () => {
-        history.push({pathname: '/appTeamRegistrationForm'});
+        history.push({pathname: '/appTeamRegistrationForm',state: {}});
     }
 
     onChangeSetPostalCode = (postalCode) => {
@@ -1042,7 +1042,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                     <div className='col-sm-12 col-md-6'>
                         <div 
-                        onClick={() => this.addOrSelectParticipant(-2)}
+                        onClick={() => this.goToTeamRegistrationForm()}
                         className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
                         style={{textAlign: "center",padding: "0px 70px"}}>+ {AppConstants.newTeamRegistration}</div>
                     </div>

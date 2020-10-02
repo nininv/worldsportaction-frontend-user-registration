@@ -1082,7 +1082,12 @@ const AppConstants = {
  anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies or illnesses. Please upload a Management Plan (if applicable)",
  anyRedularMedicalConditions: "Any Regular Medications",
  registeringAs:  " Registering as?",
- search: "Search"
+ search: "Search",
+ admin: "Admin",
+ teamDetails: "Team Details",
+ teamMember: "Team Member",
+ payingForMember: "I am paying for this member",
+ addTeamMember: "Add Team Member"
 };
 
 export default AppConstants;

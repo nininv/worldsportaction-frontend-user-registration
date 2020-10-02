@@ -34,6 +34,7 @@ import * as deRegisterSaga from '../saga/registrationSaga/deRegisterSaga';
 
 //UserRegistrationSaga
 import * as userRegistrationSaga from '../saga/registrationSaga/userRegistrationSaga';
+import * as teamRegistrationSaga from '../saga/registrationSaga/teamRegistrationSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
@@ -247,5 +248,10 @@ export default function* root_saga() {
 
   //Expired competition check
   yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
+
+  //Team registration saga
+  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,teamRegistrationSaga.teamRegistrationMembershipProducts);
+  yield takeEvery(ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD,teamRegistrationSaga.orgTeamRegistrationSettings);
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD,teamRegistrationSaga.saveTeamData);
 
 }
