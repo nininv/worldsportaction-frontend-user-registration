@@ -92,6 +92,11 @@ export function* endUserRegistrationMembershipProducts(action) {
         result: result.result.data,
         status: result.status
       });
+      yield put({
+        type: ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
     } else {
       yield call(failSaga, result)
     }

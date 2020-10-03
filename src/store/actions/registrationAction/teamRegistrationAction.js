@@ -1,14 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
 
-function membershipProductTeamRegistrationAction(payload) {
-    console.log("action");
-    const action = {
-        type: ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,
-        payload: payload
-    };
-    return action;
-}
-
 function selectTeamAction() {
     const action = {
         type: ApiConstants.SELECT_TEAM
@@ -89,7 +80,6 @@ function getExistingTeamInfoById(existingTeamParticipatKey){
 
 
 export{
-    membershipProductTeamRegistrationAction,
     selectTeamAction,
     updateTeamRegistrationObjectAction,
     updateTeamRegistrationStateVarAction,

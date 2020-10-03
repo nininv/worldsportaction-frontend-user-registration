@@ -257,9 +257,6 @@ function teamRegistrationReducer(state = initialState, action){
               ...state
             }
 
-        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD:
-            return { ...state, onMembershipLoad: true };
-
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
             return {

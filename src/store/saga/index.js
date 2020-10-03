@@ -250,8 +250,9 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
 
   yield takeEvery(ApiConstants.API_GET_TRANSFER_COMPETITIONS_LOAD, deRegisterSaga.getTransferOrganisationsSaga);
+  
   //Team registration saga
-  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,teamRegistrationSaga.teamRegistrationMembershipProducts);
+  //yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,teamRegistrationSaga.teamRegistrationMembershipProducts);
   yield takeEvery(ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD,teamRegistrationSaga.orgTeamRegistrationSettings);
   yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD,teamRegistrationSaga.saveTeamData);
   yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD,teamRegistrationSaga.getTeamDataById);

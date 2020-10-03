@@ -25,7 +25,6 @@ import "./product.css";
 import "../user/user.css";
 import '../competition/competition.css';
 import { 
-    membershipProductTeamRegistrationAction,
     selectTeamAction,
     updateTeamRegistrationObjectAction,
     updateTeamRegistrationStateVarAction,
@@ -117,8 +116,18 @@ class AppTeamRegistrationForm extends Component{
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             this.setState({participantId: participantId,registrationId: registrationId});
 
-            this.props.membershipProductTeamRegistrationAction({});  
-            this.setState({getMembershipLoad: true});
+            let teamRegistrationState = this.props.teamRegistrationState;
+            if(this.state.participantId && this.state.registrationId){
+                this.props.getTeamInfoById(this.state.participantId,'');
+                this.setState({getTeamInfoByIdLoad: true})
+            }else if(this.state.existingTeamParticipantId){
+                this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
+                this.setState({onExistingTeamInfoByIdLoad: true})
+            }else{
+                this.props.selectTeamAction();
+            }
+            this.setState({organisations: teamRegistrationState.membershipProductInfo});
+            this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
         }catch(ex){
             console.log("Error in componentDidMount::"+ex);
         }
@@ -128,20 +137,20 @@ class AppTeamRegistrationForm extends Component{
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
 
-            if(!teamRegistrationState.onMembershipLoad && this.state.getMembershipLoad){
-                if(this.state.participantId && this.state.registrationId){
-                    this.props.getTeamInfoById(this.state.participantId,'');
-                    this.setState({getTeamInfoByIdLoad: true})
-                }else if(this.state.existingTeamParticipantId){
-                    this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
-                    this.setState({onExistingTeamInfoByIdLoad: true})
-                }else{
-                    this.props.selectTeamAction();
-                }
-                this.setState({organisations: teamRegistrationState.membershipProductInfo});
-                this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
-                this.setState({getMembershipLoad: false});
-            }
+            // if(!teamRegistrationState.onMembershipLoad && this.state.getMembershipLoad){
+            //     if(this.state.participantId && this.state.registrationId){
+            //         this.props.getTeamInfoById(this.state.participantId,'');
+            //         this.setState({getTeamInfoByIdLoad: true})
+            //     }else if(this.state.existingTeamParticipantId){
+            //         this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
+            //         this.setState({onExistingTeamInfoByIdLoad: true})
+            //     }else{
+            //         this.props.selectTeamAction();
+            //     }
+            //     this.setState({organisations: teamRegistrationState.membershipProductInfo});
+            //     this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
+            //     this.setState({getMembershipLoad: false});
+            // }
 
             if(teamRegistrationState.hasTeamSelected){
                 this.setState({showFindAnotherCompetitionview: true});
@@ -1696,8 +1705,7 @@ class AppTeamRegistrationForm extends Component{
                         noValidate="noValidate">
                         <Content>{this.contentView(getFieldDecorator)}</Content>
                         <Footer>{this.footerView()}</Footer>
-                        <Loader visible={this.props.teamRegistrationState.onMembershipLoad || 
-                        this.props.teamRegistrationState.onTeamInfoByIdLoad} />
+                        <Loader visible={this.props.teamRegistrationState.onTeamInfoByIdLoad} />
                     </Form>
                 </Layout>
             </div>
@@ -1707,7 +1715,6 @@ class AppTeamRegistrationForm extends Component{
 
 function mapDispatchToProps(dispatch){
     return bindActionCreators({	
-        membershipProductTeamRegistrationAction,
         selectTeamAction,
         updateTeamRegistrationObjectAction,
         updateTeamRegistrationStateVarAction,

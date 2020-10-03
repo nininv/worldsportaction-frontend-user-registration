@@ -25,23 +25,6 @@ function* errorSaga(error) {
     }, 800);
 }
 
-export function* teamRegistrationMembershipProducts(action) {
-    try {
-        const result = yield call(AxiosApi.getEndUserRegMembershipProducts,action.payload);
-        if (result.status === 1) {
-            yield put({
-                type: ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS,
-                result: result.result.data,
-                status: result.status
-            });
-        }else{
-            yield call(failSaga, result)
-        }
-    }catch (error) {
-        yield call(errorSaga, error)
-    }
-}
-
 export function* orgTeamRegistrationSettings(action) {
     try {
       const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings, 
