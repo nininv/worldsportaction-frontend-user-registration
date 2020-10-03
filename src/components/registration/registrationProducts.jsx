@@ -206,10 +206,14 @@ class RegistrationProducts extends Component {
     }
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
-        registrationReview["key"] = key;
-        console.log("registrationReview" + JSON.stringify(registrationReview));
-        this.props.saveRegistrationReview(registrationReview);
-        this.setState({loading: true, buttonPressed: key});
+        try{
+            registrationReview["key"] = key;
+            console.log("registrationReview" , registrationReview);
+            this.props.saveRegistrationReview(registrationReview);
+            this.setState({loading: true, buttonPressed: key});
+        }catch(ex){
+            console.log("Error in callSaveRegistrationProducts::"+ex);
+        }
     }
 
     removeProductModal = (key, id) =>{
@@ -399,7 +403,7 @@ class RegistrationProducts extends Component {
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
-                        {item.isTeamRegistration == 1 &&  this.schoolRegistrationView(item,index)}
+                        {item.isTeamRegistration == 1 && item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
                         {this.governmentVoucherView(item, index)}
                     </div>
                 ))}
@@ -623,7 +627,7 @@ class RegistrationProducts extends Component {
                                     {AppConstants.removeCode}
                                 </Button> : 
                                 <Button className="open-reg-button"
-                                onClick={(e) =>  this.setReviewInfo(item, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                                onClick={(e) =>  this.setReviewInfo(null, "isSchoolRegCodeApplied", index,"selectedOptions")}
                                 type="primary">
                                 {AppConstants.applyCode}
                             </Button>}
