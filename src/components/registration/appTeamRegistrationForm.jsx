@@ -269,7 +269,7 @@ class AppTeamRegistrationForm extends Component{
                     [`yourDetailsFirstName`]: teamRegistrationObj.firstName,
                     [`yourDetailsMiddleName`]: teamRegistrationObj.middleName,
                     [`yourDetailsLastName`]: teamRegistrationObj.lastName,
-                    [`yourDetailsdateOfBirth`]: moment(teamRegistrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`yourDetailsdateOfBirth`]: teamRegistrationObj.dateOfBirth && moment(teamRegistrationObj.dateOfBirth, "YYYY-MM-DD"),
                     [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
                     [`yourDetailsEmail`]: teamRegistrationObj.email,
                     [`teamName`]: teamRegistrationObj.teamName
@@ -284,7 +284,7 @@ class AppTeamRegistrationForm extends Component{
                             [`teamMemberFirstName${mIndex}`]: member.firstName,
                             [`teamMemberMiddleName${mIndex}`]: member.middleName,
                             [`teamMemberLastName${mIndex}`]: member.lastName,
-                            [`teamMemberDateOfBirth${mIndex}`]:  moment(member.dateOfBirth, "YYYY-MM-DD"),
+                            [`teamMemberDateOfBirth${mIndex}`]: member.dateOfBirth && moment(member.dateOfBirth, "YYYY-MM-DD"),
                             [`teamMemberMobileNumber${mIndex}`]:  member.mobileNumber,
                             [`teamMemberEmail${mIndex}`]:  member.email,
                         });

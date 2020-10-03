@@ -99,7 +99,7 @@ class AppRegistrationFormNew extends Component{
             competitionsCountPerPage: 6,
             currentCompetitions: 1,
             organisations: [],
-            postalCode: null
+            postalCode: null,
         } 
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
@@ -155,6 +155,7 @@ class AppRegistrationFormNew extends Component{
         }
 
         if(registrationState.addCompetitionFlag){
+            console.log(this.state.organisationId,this.state.competitionId)
             //calling setting service after added competition
             let payload = {
                 "organisationUniqueKey": this.state.organisationId,
@@ -639,6 +640,7 @@ class AppRegistrationFormNew extends Component{
         this.setState({competitionId: competition.competitionUniqueKey});
         let { membershipProductInfo } = this.props.userRegistrationState;
         let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == competition.organisationUniqueKey);
+        this.setState({organisationId: organisationInfo.organisationUniqueKey});
         if(organisationInfo){
             let organisation = {
                 organisationInfo : organisationInfo,
@@ -2418,13 +2420,13 @@ class AppRegistrationFormNew extends Component{
                             <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "yearsPlayed")} 
-                                value={registrationObj.additionalInfo.yearsPlayed}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
+                                value={registrationObj.additionalInfo.isYearsPlayed}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
-                            {registrationObj.additionalInfo.yearsPlayed == 0 && (
+                            {registrationObj.additionalInfo.isYearsPlayed == 0 && (
                                 <Select
                                     placeholder={AppConstants.yearsOfPlaying}
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}

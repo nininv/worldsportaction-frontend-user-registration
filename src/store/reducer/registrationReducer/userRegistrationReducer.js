@@ -70,6 +70,7 @@ let registrationObjTemp = {
 		"injuryInfo": null,
 		"allergyInfo": null,
 		"otherSportsInfo": [],
+		"isYearsPlayed": null,
 		"yearsPlayed": null,
 		"schoolId": null,
 		"schoolGradeInfo": null,
@@ -607,6 +608,11 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
+			if(additionalInfoKey == "isYearsPlayed"){
+				if(additionalInfoData == 1){
+					state.registrationObj.additionalInfo.yearsPlayed = additionalInfoData;
+				}
+			}
 			state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			return {
 				...state
