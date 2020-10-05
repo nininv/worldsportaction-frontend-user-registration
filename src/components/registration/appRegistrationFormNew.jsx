@@ -825,8 +825,12 @@ class AppRegistrationFormNew extends Component{
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
     }
 
-    goToTeamRegistrationForm = () => {
-        history.push({pathname: '/appTeamRegistrationForm',state: {}});
+    goToTeamRegistrationForm = (uniqueKey) => {
+        if(uniqueKey){
+            history.push({pathname: '/appTeamRegistrationForm',state: {existingTeamParticipantId: uniqueKey}});
+        }else{
+            history.push({pathname: '/appTeamRegistrationForm'});
+        } 
     }
 
     onChangeSetPostalCode = (postalCode) => {
@@ -1015,26 +1019,38 @@ class AppRegistrationFormNew extends Component{
                 <div className="row">
                     {(userInfo || []).map((user,index) => (
                         <div className='col-sm-12 col-md-6' key={index}>
-                            <div 
-                            onClick={() => this.addOrSelectParticipant(user.id)}
-                            className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
-                                {user.photoUrl ? 
-                                    <img className="profile-img" src={user.photoUrl}/> 
-                                : 
-                                    <div className="profile-default-img">
-                                        {user.firstName.slice(0,1)}{user.lastName.slice(0,1)}
-                                    </div>
-                                }
-                                <div style={{width: "75%",paddingLeft: "15px"}}>
-                                    <div>{user.firstName} {user.lastName}</div>
-                                    {(user.genderRefId != 0 || user.dateOfBirth != null) && (
-                                        <div style={{fontSize: "15px"}}>
-                                            {user.genderRefId != 0 && (user.genderRefId == 1 ? 'Female' : 'Male')}, {user.dateOfBirth != null && moment(user.dateOfBirth).format("DD/MM/YYYY")}
+                            {!user.isTeamRegistration ? 
+                                <div 
+                                onClick={() => this.addOrSelectParticipant(user.id)}
+                                className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
+                                    {user.photoUrl ? 
+                                        <img className="profile-img" src={user.photoUrl}/> 
+                                    : 
+                                        <div className="profile-default-img">
+                                            {user.firstName.slice(0,1)}{user.lastName.slice(0,1)}
                                         </div>
-                                    )}
+                                    }
+                                    <div style={{width: "75%",paddingLeft: "15px"}}>
+                                        <div>{user.firstName} {user.lastName}</div>
+                                        {(user.genderRefId != 0 || user.dateOfBirth != null) && (
+                                            <div style={{fontSize: "15px"}}>
+                                                {user.genderRefId != 0 && (user.genderRefId == 1 ? 'Female' : 'Male')}, {user.dateOfBirth != null && moment(user.dateOfBirth).format("DD/MM/YYYY")}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            : 
+                                <div 
+                                onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey)}
+                                className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
+                                    <div className="profile-default-img"></div>
+                                    <div style={{width: "75%",paddingLeft: "15px"}}>
+                                        <div>{user.teamName}</div>
+                                        <div>{user.totalMembers} {AppConstants.members}</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>    
                     ))}
                     <div className='col-sm-12 col-md-6'>
                         <div 
@@ -1044,7 +1060,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                     <div className='col-sm-12 col-md-6'>
                         <div 
-                        onClick={() => this.goToTeamRegistrationForm()}
+                        onClick={() => this.goToTeamRegistrationForm(null)}
                         className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
                         style={{textAlign: "center",padding: "0px 70px"}}>+ {AppConstants.newTeamRegistration}</div>
                     </div>

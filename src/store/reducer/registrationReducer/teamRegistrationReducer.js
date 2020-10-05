@@ -1,5 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
+import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 
 const teamObj = {
   "registrationId": null,
@@ -164,6 +165,26 @@ const initialState = {
     onExistingTeamInfoByIdLoad: false
 }
 
+function setTeamRegistrationObj(state){
+  try{
+    state.teamRegistrationObj = deepCopyFunction(teamObj);
+    let membershipProducts = deepCopyFunction(state.membershipProductInfo)
+    if(getOrganisationId() != null && getCompetitonId() != null){
+      state.teamRegistrationObj.organisationId = getOrganisationId();
+      state.teamRegistrationObj.competitionId = getCompetitonId();
+      let organisationInfoTemp = membershipProducts.find(x => x.organisationUniqueKey == state.teamRegistrationObj.organisationId);
+      let competitionInfoTemp = organisationInfoTemp.competitions.find(x => x.competitionUniqueKey == state.teamRegistrationObj.competitionId);
+      let details = {
+        organisationInfo: organisationInfoTemp,
+        competitionInfo: competitionInfoTemp
+      }
+      setCompetitionDetails(state,details);
+    }
+  }catch(ex){
+    console.log("Error in getTeamRegistrationObj in teamRegistrationReducer::"+ex);
+  }
+}
+
 function setCompetitionDetails(state,details){
   try{
     state.teamRegistrationObj.organisationInfo = deepCopyFunction(details.organisationInfo);
@@ -267,7 +288,7 @@ function teamRegistrationReducer(state = initialState, action){
             };
 
         case ApiConstants.SELECT_TEAM: 
-            state.teamRegistrationObj = deepCopyFunction(teamObj);
+            setTeamRegistrationObj(state);
             return { 
               ...state,
               hasTeamSelected: true 

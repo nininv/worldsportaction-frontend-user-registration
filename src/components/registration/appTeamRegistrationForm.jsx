@@ -79,6 +79,7 @@ class AppTeamRegistrationForm extends Component{
             completedSteps: [],
             submitButtonText: AppConstants.signupToCompetition,
             organisationId: null,
+            competitionId: null,
             showFindAnotherCompetitionview: false,
             postalCode: null,
             organisations: [],
@@ -112,16 +113,22 @@ class AppTeamRegistrationForm extends Component{
 
     componentDidMount(){
         try{
+            if(getOrganisationId() != null && getCompetitonId() != null){
+                this.setState({organisationId: getOrganisationId(),
+                competitionId: getCompetitonId()});
+            }
+
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            this.setState({participantId: participantId,registrationId: registrationId});
+            let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
+            this.setState({participantId: participantId,registrationId: registrationId,existingTeamParticipantId: existingTeamParticipantId});
 
             let teamRegistrationState = this.props.teamRegistrationState;
-            if(this.state.participantId && this.state.registrationId){
-                this.props.getTeamInfoById(this.state.participantId,'');
+            if(participantId && registrationId){
+                this.props.getTeamInfoById(participantId,'');
                 this.setState({getTeamInfoByIdLoad: true})
-            }else if(this.state.existingTeamParticipantId){
-                this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
+            }else if(existingTeamParticipantId){
+                this.props.getExistingTeamInfoById(existingTeamParticipantId);
                 this.setState({onExistingTeamInfoByIdLoad: true})
             }else{
                 this.props.selectTeamAction();
@@ -137,23 +144,10 @@ class AppTeamRegistrationForm extends Component{
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
 
-            // if(!teamRegistrationState.onMembershipLoad && this.state.getMembershipLoad){
-            //     if(this.state.participantId && this.state.registrationId){
-            //         this.props.getTeamInfoById(this.state.participantId,'');
-            //         this.setState({getTeamInfoByIdLoad: true})
-            //     }else if(this.state.existingTeamParticipantId){
-            //         this.props.getExistingTeamInfoById(this.state.existingTeamParticipantId);
-            //         this.setState({onExistingTeamInfoByIdLoad: true})
-            //     }else{
-            //         this.props.selectTeamAction();
-            //     }
-            //     this.setState({organisations: teamRegistrationState.membershipProductInfo});
-            //     this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
-            //     this.setState({getMembershipLoad: false});
-            // }
-
             if(teamRegistrationState.hasTeamSelected){
-                this.setState({showFindAnotherCompetitionview: true});
+                if(getOrganisationId() == null && getCompetitonId() == null){
+                    this.setState({showFindAnotherCompetitionview: true});
+                }
                 this.props.updateTeamRegistrationStateVarAction(false,"hasTeamSelected");
             }
 
