@@ -257,5 +257,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD,teamRegistrationSaga.saveTeamData);
   yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD,teamRegistrationSaga.getTeamDataById);
   yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD,teamRegistrationSaga.getExistingTeamDataById);
+  yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD,teamRegistrationSaga.expiredTeamRegistrationCheck);
 
 }

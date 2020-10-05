@@ -86,6 +86,14 @@ function membershipProductTeamRegistrationAction(payload){
     return action;
 }
 
+function teamRegistrationExpiryCheckAction(payload){
+    const action = {
+        type: ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD,
+        payload: payload
+    }
+    return action;
+}
+
 
 export{
     selectTeamAction,
@@ -97,5 +105,6 @@ export{
     updateTeamAdditionalInfoAction,
     getTeamInfoById,
     getExistingTeamInfoById,
-    membershipProductTeamRegistrationAction
+    membershipProductTeamRegistrationAction,
+    teamRegistrationExpiryCheckAction
 }

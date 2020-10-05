@@ -115,3 +115,20 @@ export function* teamRegistrationMembershipProducts(action) {
     }
   }
 
+  export function* expiredTeamRegistrationCheck(action) {
+    try {
+      const result = yield call(AxiosApi.expiredRegistrationCheck,action.payload);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_EXPIRED_TEAM_REGISTRATION_SUCCESS,
+          result: result.result.data,
+          status: result.status
+        });
+      } else {
+        yield call(failSaga, result)
+      }
+    } catch (error) {
+      yield call(errorSaga, error)
+    }
+  }
+

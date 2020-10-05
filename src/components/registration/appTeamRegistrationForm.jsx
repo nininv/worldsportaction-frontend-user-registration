@@ -34,7 +34,8 @@ import {
     updateTeamAdditionalInfoAction,
     getTeamInfoById,
     getExistingTeamInfoById,
-    membershipProductTeamRegistrationAction
+    membershipProductTeamRegistrationAction,
+    teamRegistrationExpiryCheckAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -94,7 +95,9 @@ class AppTeamRegistrationForm extends Component{
             getTeamInfoByIdLoad: false,
             singleCompModalVisible: false,
             existingTeamParticipantId: null,
-            onExistingTeamInfoByIdLoad: false
+            onExistingTeamInfoByIdLoad: false,
+            onExpiredRegistrationCheckLoad: false,
+            showExpiredRegistrationView: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -183,6 +186,24 @@ class AppTeamRegistrationForm extends Component{
                         paymentSuccess: false					 
                     })
                 }
+            }
+
+            if(teamRegistrationState.expiredRegistrationFlag){
+                if(getOrganisationId() && getCompetitonId()){
+                    let payload = {
+                        organisationId: getOrganisationId(),
+                        competitionId: getCompetitonId()
+                    }
+                    this.props.teamRegistrationExpiryCheckAction(payload);
+                }
+                this.setState({onExpiredRegistrationCheckLoad: true});
+                this.props.updateTeamRegistrationStateVarAction(false,"expiredRegistrationFlag"); 
+            }
+
+            if(!teamRegistrationState.onExpiredRegistrationCheckLoad && this.state.onExpiredRegistrationCheckLoad){
+                this.setState({showFindAnotherCompetitionview: true});
+                this.setState({onExpiredRegistrationCheckLoad: false});
+                this.setState({showExpiredRegistrationView: true});
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -479,6 +500,39 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    handlePlacesAutocomplete = (addressData,key) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            const address = addressData;
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+            if(address){
+                if(key == "yourDetails"){
+                    this.onChangeSetTeamValue(address.addressOne, "street1");
+                    this.onChangeSetTeamValue(address.suburb, "suburb");
+                    this.onChangeSetTeamValue(address.postcode, "postalCode");
+                    this.onChangeSetTeamValue(countryRefId, "countryRefId");
+                    this.onChangeSetTeamValue(stateRefId, "stateRefId");
+                }
+            }
+        }catch(ex){
+            console.log("Error in handlePlacesAutoComplete::"+ex);
+        }
+    }
+
+    checkIsPlayer = (membershipProductTypes) => {
+        try{
+            let exist = false;
+            let isPlayer = membershipProductTypes.find(x => x.isPlayer == 1 && x.isChecked == true);
+            if(isPlayer){
+                exist = true;
+            }
+            return exist;
+        }catch(ex){
+            console.log("Error in checkIsPlayer::"+ex);
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
@@ -553,16 +607,22 @@ class AppTeamRegistrationForm extends Component{
 
     findAnotherCompetitionView = () => {
         try{
-            let { teamRegistrationObj,membershipProductInfo } = this.props.teamRegistrationState;
+            let { teamRegistrationObj,membershipProductInfo,expiredRegistration } = this.props.teamRegistrationState;
             let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
             return(
                 <div className="registration-form-view">
                     <div style={{display: "flex",alignItems: "center" }}>
                         <div className="form-heading">{AppConstants.findACompetition}</div>
-                        {teamRegistrationObj?.competitionInfo && (
+                        {(teamRegistrationObj?.competitionInfo || expiredRegistration != null) && (
                             <div className="orange-action-txt" 
                             style={{marginLeft: "auto",paddingBottom: "7.5px"}}
-                            onClick={() => this.setState({showFindAnotherCompetitionview: false})}>{AppConstants.cancel}</div>
+                            onClick={() => {
+                                if(expiredRegistration != null){
+                                    this.setState({showExpiredRegistrationView: true,showFindAnotherCompetitionview: true,organisationId:null});
+                                }else{
+                                    this.setState({showFindAnotherCompetitionview: false,organisationId: null})
+                                }
+                            }}>{AppConstants.cancel}</div>
                         )}
                     </div>
     
@@ -779,13 +839,61 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    expiredRegistrationView = () => {
+        try{
+            const { expiredRegistration } = this.props.teamRegistrationState;
+            return(
+                <div className="registration-form-view">
+                    {expiredRegistration.heroImageUrl && (
+                        <div className="map-style">
+                            <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
+                        </div>
+                    )}
+                    <div className="row" style={expiredRegistration.heroImageUrl ? 
+                    {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : 
+                    {marginLeft: "0px",marginRight: "0px"}}>
+                        <div className="col-sm-1.5">
+                            <img style={{height: "60px",width: "60px",borderRadius: "50%"}} 
+                            src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser}/> 
+                        </div>
+                        <div className="col">
+                            <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
+                            <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                        </div>
+                    </div>
+                    <div className="light-grey-border-box" style={{textAlign: "center"}}>
+                        <div className="form-heading" 
+                        style={{marginTop: "30px",justifyContent:"center",marginBottom: "5px"}}>{expiredRegistration.validateMessage}</div>
+                        <Button 
+                        type="primary"
+                        style={{color: "white",textTransform: "uppercase"}}
+                        onClick={() => {
+                            this.setState({showFindAnotherCompetitionview: true,showExpiredRegistrationView: false});
+                            this.setState({organisationId: null});
+                        }}
+                        className="open-reg-button">{AppConstants.findAnotherCompetition}</Button>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in expiredRegistrationView::"+ex);
+        }
+    }
+
     selectCompetitionStepView = (getFieldDecorator) => {
-        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        const { teamRegistrationObj,expiredRegistration } = this.props.teamRegistrationState;
         try{
             return(
                 <div>
                     {this.state.showFindAnotherCompetitionview ?
-                        <div>{this.findAnotherCompetitionView()}</div>
+                        <div>
+                            {this.state.showExpiredRegistrationView ?
+                                <div>{this.expiredRegistrationView()}</div>
+                            : 
+                                <div>{this.findAnotherCompetitionView()}</div>
+                            } 
+                        </div> 
                     : 
                         <div>
                             {teamRegistrationObj?.competitionInfo && (
@@ -886,7 +994,7 @@ class AppTeamRegistrationForm extends Component{
                                         required
                                         error={this.state.searchAddressError}
                                         onBlur={() => { this.setState({searchAddressError: ''})}}
-                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,"yourDetails")}
                                     />
                                 </Form.Item> 
                                 <div className="orange-action-txt" style={{marginTop: "10px"}}
@@ -1280,12 +1388,14 @@ class AppTeamRegistrationForm extends Component{
                             </Form.Item>
                         </div>
                     </div>
-                    <Checkbox
-                        className="single-checkbox"
-                        checked={teamMember.payingFor == 1 ? true : false}
-                        onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)} >
-                        {AppConstants.payingForMember}
-                    </Checkbox>
+                    {this.checkIsPlayer(teamMember.membershipProductTypes) && (
+                        <Checkbox
+                            className="single-checkbox"
+                            checked={teamMember.payingFor == 1 ? true : false}
+                            onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)} >
+                            {AppConstants.payingForMember}
+                        </Checkbox>
+                    )}
                 </div>
             )
         }catch(ex){
@@ -1303,10 +1413,12 @@ class AppTeamRegistrationForm extends Component{
                             <div className="form-heading">{AppConstants.teamDetails}</div>
                         </div>
                         <div className="col-sm-12 col-md-6">
-                            <Button 
-                                style={{float: "right",textTransform: "uppercase"}}
-                                className="white-button">{AppConstants.importTeam}
-                            </Button>
+                            {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
+                                <Button 
+                                    style={{float: "right",textTransform: "uppercase"}}
+                                    className="white-button">{AppConstants.importTeam}
+                                </Button>
+                            )}
                         </div>
                     </div>
                     <InputWithHead heading={AppConstants.teamName} required={"required-field"}/>
@@ -1322,16 +1434,16 @@ class AppTeamRegistrationForm extends Component{
                         )}
                     </Form.Item>
                     
-                    {(teamRegistrationObj.teamMembers || []).map((teamMember,teamMemberIndex) => (
+                    {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (teamRegistrationObj.teamMembers || []).map((teamMember,teamMemberIndex) => (
                         <div>{this.teamMemberView(teamMember,teamMemberIndex,getFieldDecorator)}</div>
                     ))}
-                    
-                    <div className="orange-action-txt" 
-                    style={{marginTop: "10px"}}
-                    onClick={() => {
-                        this.onChangeSetTeamValue(null,"addTeamMember");
-                    }}>+ {AppConstants.addTeamMember}</div>
-
+                    {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
+                         <div className="orange-action-txt" 
+                         style={{marginTop: "10px"}}
+                         onClick={() => {
+                             this.onChangeSetTeamValue(null,"addTeamMember");
+                         }}>+ {AppConstants.addTeamMember}</div>
+                    )}
                 </div>
             )
         }catch(ex){
@@ -1346,9 +1458,7 @@ class AppTeamRegistrationForm extends Component{
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
-                        <div>{this.teamDetailsView(getFieldDecorator)}</div>
-                    )}
+                    <div>{this.teamDetailsView(getFieldDecorator)}</div>
                 </div>
             )
         }catch(ex){
@@ -1751,7 +1861,8 @@ function mapDispatchToProps(dispatch){
         updateTeamAdditionalInfoAction,
         getTeamInfoById,
         getExistingTeamInfoById,
-        membershipProductTeamRegistrationAction
+        membershipProductTeamRegistrationAction,
+        teamRegistrationExpiryCheckAction
     }, dispatch);
 
 }

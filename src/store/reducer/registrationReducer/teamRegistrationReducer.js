@@ -162,7 +162,10 @@ const initialState = {
     onSaveLoad: false,
     registrationId: null,
     onTeamInfoByIdLoad: false,
-    onExistingTeamInfoByIdLoad: false
+    onExistingTeamInfoByIdLoad: false,
+    expiredRegistrationFlag: false,
+    expiredRegistration: null,
+    onExpiredRegistrationCheckLoad: false 
 }
 
 function setTeamRegistrationObj(state){
@@ -173,12 +176,20 @@ function setTeamRegistrationObj(state){
       state.teamRegistrationObj.organisationId = getOrganisationId();
       state.teamRegistrationObj.competitionId = getCompetitonId();
       let organisationInfoTemp = membershipProducts.find(x => x.organisationUniqueKey == state.teamRegistrationObj.organisationId);
-      let competitionInfoTemp = organisationInfoTemp.competitions.find(x => x.competitionUniqueKey == state.teamRegistrationObj.competitionId);
-      let details = {
-        organisationInfo: organisationInfoTemp,
-        competitionInfo: competitionInfoTemp
+      if(organisationInfoTemp != null){
+        let competitionInfoTemp = organisationInfoTemp.competitions.find(x => x.competitionUniqueKey == state.teamRegistrationObj.competitionId);
+        if(competitionInfoTemp != null){
+          let details = {
+            organisationInfo: organisationInfoTemp,
+            competitionInfo: competitionInfoTemp
+          }
+          setCompetitionDetails(state,details);
+        }else{
+          state.expiredRegistrationFlag = true;
+        }
+      }else{
+        state.expiredRegistrationFlag = true;
       }
-      setCompetitionDetails(state,details);
     }
   }catch(ex){
     console.log("Error in getTeamRegistrationObj in teamRegistrationReducer::"+ex);
@@ -229,8 +240,10 @@ function setDivisions(state,competitionMembershipProductTypeId){
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
       if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
+        state.teamRegistrationObj.teamMembers = [];
         state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
       }
+      state.teamRegistrationObj.divisions = [];
       for(let division of membershipProduct.divisions){
         let div = {
           "divisionName": division.divisionName,
@@ -389,6 +402,18 @@ function teamRegistrationReducer(state = initialState, action){
               onExistingTeamInfoByIdLoad: false,
               status: action.status,
               teamRegistrationObj: existingTeamInfo
+            };
+
+        case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD: 
+            return {...state,onExpiredRegistrationCheckLoad: true}
+          
+        case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_SUCCESS:
+            let expiredRegistrationTemp = action.result;
+            return {
+              ...state,
+              onExpiredRegistrationCheckLoad: false,
+              expiredRegistration: expiredRegistrationTemp,
+              status: action.status
             };
   
 
