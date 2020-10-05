@@ -78,6 +78,14 @@ function getExistingTeamInfoById(existingTeamParticipatKey){
     return action;
 }
 
+function membershipProductTeamRegistrationAction(payload){
+    const action = {
+        type: ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,
+        payload: payload
+    };
+    return action;
+}
+
 
 export{
     selectTeamAction,
@@ -88,5 +96,6 @@ export{
     saveTeamInfoAction,
     updateTeamAdditionalInfoAction,
     getTeamInfoById,
-    getExistingTeamInfoById
+    getExistingTeamInfoById,
+    membershipProductTeamRegistrationAction
 }

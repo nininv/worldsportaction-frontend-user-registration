@@ -33,7 +33,8 @@ import {
     saveTeamInfoAction	, 
     updateTeamAdditionalInfoAction,
     getTeamInfoById,
-    getExistingTeamInfoById
+    getExistingTeamInfoById,
+    membershipProductTeamRegistrationAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -118,23 +119,12 @@ class AppTeamRegistrationForm extends Component{
                 competitionId: getCompetitonId()});
             }
 
-            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
-            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
-            this.setState({participantId: participantId,registrationId: registrationId,existingTeamParticipantId: existingTeamParticipantId});
-
-            let teamRegistrationState = this.props.teamRegistrationState;
-            if(participantId && registrationId){
-                this.props.getTeamInfoById(participantId,'');
-                this.setState({getTeamInfoByIdLoad: true})
-            }else if(existingTeamParticipantId){
-                this.props.getExistingTeamInfoById(existingTeamParticipantId);
-                this.setState({onExistingTeamInfoByIdLoad: true})
+            if(isArrayNotEmpty(this.props.teamRegistrationState.membershipProductInfo)){
+                this.initialSetting();
             }else{
-                this.props.selectTeamAction();
-            }
-            this.setState({organisations: teamRegistrationState.membershipProductInfo});
-            this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
+                this.props.membershipProductTeamRegistrationAction({});
+                this.setState({getMembershipLoad: true});
+            }  
         }catch(ex){
             console.log("Error in componentDidMount::"+ex);
         }
@@ -143,6 +133,11 @@ class AppTeamRegistrationForm extends Component{
     componentDidUpdate(){
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
+
+            if(!teamRegistrationState.onMembershipLoad && this.state.getMembershipLoad){
+                this.initialSetting();
+                this.setState({getMembershipLoad: false});
+            }
 
             if(teamRegistrationState.hasTeamSelected){
                 if(getOrganisationId() == null && getCompetitonId() == null){
@@ -191,6 +186,30 @@ class AppTeamRegistrationForm extends Component{
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
+        }
+    }
+
+    initialSetting = () => {
+        try{
+            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
+            this.setState({participantId: participantId,registrationId: registrationId,existingTeamParticipantId: existingTeamParticipantId});
+
+            let teamRegistrationState = this.props.teamRegistrationState;
+            if(participantId && registrationId){
+                this.props.getTeamInfoById(participantId,'');
+                this.setState({getTeamInfoByIdLoad: true})
+            }else if(existingTeamParticipantId){
+                this.props.getExistingTeamInfoById(existingTeamParticipantId);
+                this.setState({onExistingTeamInfoByIdLoad: true})
+            }else{
+                this.props.selectTeamAction();
+            }
+            this.setState({organisations: teamRegistrationState.membershipProductInfo});
+            this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
+        }catch(ex){
+            console.log("Error in initialSetting::"+ex);
         }
     }
 
@@ -1699,7 +1718,8 @@ class AppTeamRegistrationForm extends Component{
                         noValidate="noValidate">
                         <Content>{this.contentView(getFieldDecorator)}</Content>
                         <Footer>{this.footerView()}</Footer>
-                        <Loader visible={this.props.teamRegistrationState.onTeamInfoByIdLoad} />
+                        <Loader visible={this.props.teamRegistrationState.onTeamInfoByIdLoad || 
+                        this.props.teamRegistrationState.onMembershipLoad} />
                     </Form>
                 </Layout>
             </div>
@@ -1730,7 +1750,8 @@ function mapDispatchToProps(dispatch){
         saveTeamInfoAction	,
         updateTeamAdditionalInfoAction,
         getTeamInfoById,
-        getExistingTeamInfoById
+        getExistingTeamInfoById,
+        membershipProductTeamRegistrationAction
     }, dispatch);
 
 }

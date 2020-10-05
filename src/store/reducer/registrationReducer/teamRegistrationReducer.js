@@ -262,7 +262,9 @@ function setTeamRegistrationSetting(state,settings){
 function updateTeamInfoByIdByMembershipInfo(state,teamData){
 	try{
     let membershipProductInfo = deepCopyFunction(state.membershipProductInfo);
+    console.log("membership",membershipProductInfo);
     teamData.organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == teamData.organisationId);
+    console.log("organisationinfo",teamData.organisationInfo);
     teamData.competitionInfo = teamData.organisationInfo.competitions.find(x => x.competitionUniqueKey == teamData.competitionId);
 		return teamData;
 	}catch(ex){
@@ -278,13 +280,16 @@ function teamRegistrationReducer(state = initialState, action){
               ...state
             }
 
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD: 
+            return {...state,onMembershipLoad: true}
+
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
             return {
               ...state,
-              onMembershipLoad: false,
+              membershipProductInfo: data,
               status: action.status,
-              membershipProductInfo: data
+              onMembershipLoad: false
             };
 
         case ApiConstants.SELECT_TEAM: 
