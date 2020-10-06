@@ -656,19 +656,21 @@ class RegistrationInvoice extends Component {
                     <Divider className="mt-0 mb-0" />
                     </div>
                 ))}
-                <div className="d-flex row d-flex justify-content-end" >
-                    <div className="invoice-total justify-content-end">
-                        <InputWithHead
-                            heading={"Total"}
-                        />
+                {isArrayNotEmpty(shopProducts) && (
+                    <div className="d-flex row d-flex justify-content-end" >
+                        <div className="invoice-total justify-content-end">
+                            <InputWithHead
+                                heading={"Total"}
+                            />
+                        </div>
+                        <div className="invoice-total-Amount">
+                            <InputWithHead
+                                required="invoice"
+                                heading={"$" + totalAmount ? (totalAmount).toFixed(2) : "N/A"}
+                            />
+                        </div> 
                     </div>
-                    <div className="invoice-total-Amount">
-                        <InputWithHead
-                            required="invoice"
-                            heading={"$" + totalAmount ? (totalAmount).toFixed(2) : "N/A"}
-                        />
-                    </div> 
-                </div>
+                )}
             </div>
          )
     }

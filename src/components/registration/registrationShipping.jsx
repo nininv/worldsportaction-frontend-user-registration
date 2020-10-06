@@ -351,21 +351,21 @@ class RegistrationShipping extends Component {
                     {!this.state.useDiffDeliveryAddressFlag && (
                         <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                             <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-                            <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>                        
-                            <div className="link-text-common"
-                            onClick={() => {
-                                this.setState({useDiffDeliveryAddressFlag: participantAddresses.length > 0 ? true : false})
-                            }}>{AppConstants.useDifferentAddress}</div> 
+                            <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>   
+                            {participantAddresses.length > 1 && (
+                                <div className="link-text-common"
+                                onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
+                            )}   
                         </div>  
                     )}
                     {!this.state.useDiffBillingAddressFlag && (
                          <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
                             <div className="body-text-common">{AppConstants.billingAddress}</div>
                             <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
-                            <div className="link-text-common"
-                            onClick={() => {
-                                this.setState({useDiffBillingAddressFlag: participantAddresses.length > 0 ? true : false})
-                            }}>{AppConstants.useDifferentAddress}</div> 
+                            {participantAddresses.length > 1 && (
+                                <div className="link-text-common"
+                                onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
+                            )}   
                         </div>  
                     )}
                 </div>
@@ -480,7 +480,7 @@ class RegistrationShipping extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>                               
+                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>

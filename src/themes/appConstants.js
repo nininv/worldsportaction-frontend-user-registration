@@ -1009,8 +1009,8 @@ const AppConstants = {
  findACompetition: "Find a Competition",
  newParticipantRegistration: "New Participant Registration",
  newTeamRegistration: "New Team Registration",
- noRegisteringMyChild: "No,Registering my child",
- noRegisteringSomeoneElse: "No,Registering someone else",
+ noRegisteringMyChild: "No, Registering my child",
+ noRegisteringSomeoneElse: "No, Registering someone else",
  loginAndProceedRegistration: "LOGIN & PROCEED TO REGISTRATION",
  proceedToRegistration: "PROCEED TO REGISTRATION",
  forgotResetPassword: 'Forgot/ Reset Password',
@@ -1078,7 +1078,20 @@ const AppConstants = {
  qty: "Qty",
  securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian",
- returnToShoppingCart: "Return to Shopping Cart"
+ returnToShoppingCart: "Return to Shopping Cart",
+ anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies or illnesses. Please detail a Management Plan (if applicable)",
+ anyRedularMedicalConditions: "Any Regular Medications",
+ registeringAs:  " Registering as?",
+ search: "Search",
+ admin: "Admin",
+ teamDetails: "Team Details",
+ teamMember: "Team Member",
+ payingForMember: "I am paying for this member",
+ addTeamMember: "Add Team Member",
+ members: "Members",
+ payingFor: "I am paying for",
+ notPayingFor: "I am not paying for",
+ ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from the team"
 };
 
 export default AppConstants;

@@ -24,10 +24,10 @@ import { NavLink } from "react-router-dom";
 import { liveScore_formateDate } from "../../themes/dateformate";
 import {getRegistrationReviewAction,saveRegistrationReview,updateReviewInfoAction,
     deleteRegistrationProductAction, deleteRegistrationParticipantAction,
-    getTermsAndConditionsAction, getRegParticipantUsersAction } from 
+    getTermsAndConditionsAction, getRegParticipantUsersAction,getRegistrationShopProductAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
-import {isArrayNotEmpty} from '../../util/helpers';
+import {isArrayNotEmpty,isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "94d89747-e81c-464a-8349-2d341e67680e";
+        //let registrationUniqueKey = "05cf99ab-0609-479c-83b6-182a800c48ef";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -77,7 +77,11 @@ class RegistrationProducts extends Component {
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
             if(this.state.buttonPressed == "save"){
-                this.goToShop();
+                if(isArrayNotEmpty(registrationProductState.shopProductList)){
+                    this.goToShop();
+                }else{
+                    this.goToRegistrationPayments();
+                } 
             }
         }
         if(this.state.onLoading == true && registrationProductState.onRegReviewLoad == false){
@@ -85,6 +89,10 @@ class RegistrationProducts extends Component {
             this.setState({onLoading: false});
         }
     }  
+
+    goToRegistrationPayments = () =>{
+        history.push({pathname: '/registrationPayment', state: {registrationId: this.state.registrationUniqueKey}})
+    }
     
     getApiInfo = (registrationUniqueKey) => {
         this.setState({onLoading: true});
@@ -94,13 +102,28 @@ class RegistrationProducts extends Component {
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
         this.props.getRegParticipantUsersAction(payload);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
     }
+
+    getRegistrationProducts = (registrationId, page, typeId) =>{
+        let payload = {
+            registrationId: registrationId,
+            typeId: typeId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+        this.props.getRegistrationShopProductAction(payload);
+    }
+
 
     saveReviewForm = (e) =>{
         e.preventDefault();
         let registrationState = this.props.registrationProductState;
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
+        let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
         if(incompletePaymentMessage != ''){
             incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
             message.error(incompletePaymentMessage);
@@ -112,6 +135,11 @@ class RegistrationProducts extends Component {
             console.log("Error: " + err);
             if(!err)
             {
+                console.log(this.state.searchAddressFlag,yourInfo.street1,yourInfo.postalCode);
+                if(this.state.searchAddressFlag && !isNullOrEmptyString(yourInfo.street1) && !isNullOrEmptyString(yourInfo.postalCode)){
+                    message.error(ValidationConstants.addressDetailsIsRequired);
+                    return;
+                }
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
                 console.log("registrationReview", registrationReview);
@@ -178,10 +206,14 @@ class RegistrationProducts extends Component {
     }
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
-        registrationReview["key"] = key;
-        console.log("registrationReview" + JSON.stringify(registrationReview));
-        this.props.saveRegistrationReview(registrationReview);
-        this.setState({loading: true, buttonPressed: key});
+        try{
+            registrationReview["key"] = key;
+            console.log("registrationReview" , registrationReview);
+            this.props.saveRegistrationReview(registrationReview);
+            this.setState({loading: true, buttonPressed: key});
+        }catch(ex){
+            console.log("Error in callSaveRegistrationProducts::"+ex);
+        }
     }
 
     removeProductModal = (key, id) =>{
@@ -221,8 +253,12 @@ class RegistrationProducts extends Component {
         }
     }
 
-    redirect = (participantId,registrationId) =>{
-        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+    redirect = (participantId,registrationId,isTeamRegistration) =>{
+        if(isTeamRegistration == 0){
+            history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+        }else{
+            history.push({pathname: '/appTeamRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+        } 
     }
 
     goToShop = () =>{
@@ -313,9 +349,28 @@ class RegistrationProducts extends Component {
                 this.setReviewInfo(address.suburb, "suburb", null,"yourInfo", null);
                 this.setReviewInfo(stateRefId, "stateRefId", null,"yourInfo", null);
                 this.setReviewInfo(countryRefId, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(address.postcode, "postalCode", null,"yourInfo", null);
             }
         }catch(ex){
             console.log("Error in yourInfoAddressSearch"+ex);
+        }
+    }
+
+    updateYourInfo = (key) => {
+        try{
+            if(key == "new"){
+                this.setReviewInfo(null, "firstName", null,"yourInfo", null);
+                this.setReviewInfo(null, "lastName", null,"yourInfo", null);
+                this.setReviewInfo(null, "email", null,"yourInfo", null);
+                this.setReviewInfo(null, "mobileNumber", null,"yourInfo", null);
+                this.setReviewInfo(null, "street1", null,"yourInfo", null);
+                this.setReviewInfo(null, "suburb", null,"yourInfo", null);
+                this.setReviewInfo(null, "stateRefId", null,"yourInfo", null);
+                this.setReviewInfo(null, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(null, "postalCode", null,"yourInfo", null);
+            }
+        }catch(ex){
+            console.log("Error in updateYourInfo"+ex);
         }
     }
 
@@ -348,7 +403,7 @@ class RegistrationProducts extends Component {
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
-                        {item.isTeamRegistration == 1 &&  this.schoolRegistrationView(item,index)}
+                        {item.isTeamRegistration == 1 && item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
                         {this.governmentVoucherView(item, index)}
                     </div>
                 ))}
@@ -371,13 +426,21 @@ class RegistrationProducts extends Component {
                             )
                         }
                     </div>
-                    <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                        <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                        <div className="body-text-common">{item.gender + ', ' + 
-                            liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                    {item.isTeamRegistration == 1 ?
+                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                            <div className="headline-text-common">{item.teamName}</div>
+                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
                         </div>
-                    </div>
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey)}>                   
+                    :
+                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                            <div className="body-text-common">{item.gender + ', ' + 
+                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                            </div>
+                        </div>
+                    }
+                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>
@@ -414,17 +477,38 @@ class RegistrationProducts extends Component {
     productsView = (item, index) =>{
         return(
             <div className="innerview-outline">
-                <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
-                    <div className = "body-text-common">
-                        {AppConstants.registration}{"(s)"}
-                    </div>
-                    { (item.membershipProducts || []).map((mem, memIndex) =>(
-                        <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
-                        style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
-                            {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
+                {item.isTeamRegistration == 1 ? 
+                    <div>
+                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px",marginTop: "20px"}}>
+                            <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
+                            {(item.teamMembers.payingForList || []).map((payingFor,payigForIndex) => (
+                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                    {payingFor.membershipProductTypeName + ' ' + payingFor.name}
+                                </div>
+                            ))}
+                            <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
+                            {(item.teamMembers.notPayingForList || []).map((notPlayingFor,notPayigForIndex) => (
+                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                    {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
+                                </div>
+                            ))}
                         </div>
-                    )) }
-                </div>               
+                    </div>
+                : 
+                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                        <div className = "body-text-common">
+                            {AppConstants.registration}{"(s)"}
+                        </div>
+                        { (item.membershipProducts || []).map((mem, memIndex) =>(
+                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
+                            style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
+                            </div>
+                        )) }
+                    </div>
+                }
+                               
                 <div className="subtitle-text-common" style={{marginTop: "16px"}}>
                     {AppConstants.wouldYouLikeTopay}
                 </div>
@@ -468,9 +552,11 @@ class RegistrationProducts extends Component {
         let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
-                <div className="headline-text-common" style={{marginTop: "21px"}}>
-                    {AppConstants.discountCode}
-                </div>
+                {isArrayNotEmpty(discountCodes) && (
+                    <div className="headline-text-common" style={{marginTop: "21px"}}>
+                        {AppConstants.discountCode}
+                    </div>
+                )}
                 {(discountCodes || []).map((dis, disIndex) =>(
                     <div key={index +"#" + disIndex} style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between",marginRight:26}}>
                         <div style={{ width: "100%"}}>
@@ -541,7 +627,7 @@ class RegistrationProducts extends Component {
                                     {AppConstants.removeCode}
                                 </Button> : 
                                 <Button className="open-reg-button"
-                                onClick={(e) =>  this.setReviewInfo(item, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                                onClick={(e) =>  this.setReviewInfo(null, "isSchoolRegCodeApplied", index,"selectedOptions")}
                                 type="primary">
                                 {AppConstants.applyCode}
                             </Button>}
@@ -562,9 +648,11 @@ class RegistrationProducts extends Component {
         let selectedVouchers = item.selectedOptions.vouchers;
         return(
             <div>
-                <div className="headline-text-common" style={{marginTop: "30px"}}>
-                    {AppConstants.governmentVouchers}
-                </div>
+                {isArrayNotEmpty(selectedVouchers) && (
+                    <div className="headline-text-common" style={{marginTop: "30px"}}>
+                        {AppConstants.governmentVouchers}
+                    </div>
+                )}
                 {(selectedVouchers || []).map((gov, govIndex) =>(
                     <div className="row">
                         <div class ="col-sm-11 col-lg-6"  style={{ width: "100%",margin: "15px 0px 0px 0px"}}>
@@ -609,12 +697,14 @@ class RegistrationProducts extends Component {
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
-                    <div style={{marginTop: "13px", alignSelf: "center"}}>
-                        <span className="btn-text-common pointer" style={{paddingTop: 7}} 
-                                onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
-                            + {AppConstants.addGovernmentVoucher}
-                        </span>
-                    </div>  
+                    {isArrayNotEmpty(item.governmentVouchers) && (
+                        <div style={{marginTop: "13px", alignSelf: "center"}}>
+                            <span className="btn-text-common pointer" style={{paddingTop: 7}} 
+                                    onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
+                                + {AppConstants.addGovernmentVoucher}
+                            </span>
+                        </div>  
+                    )}
                     {selectedVouchers && selectedVouchers.length > 0 && 
                     <div style={{paddingTop:'15px'}}>
                         <Button className="open-reg-button"
@@ -711,9 +801,8 @@ class RegistrationProducts extends Component {
                         </Form.Item> 
                         <div className="btn-text-common pointer" style={{marginTop: "20px"}}  
                          onClick={() => {
-                            this.setState({
-                                newYourDetails: true
-                            });
+                            this.setState({newYourDetails: true});
+                            this.updateYourInfo("new");
                         }}>
                         + {AppConstants.addNewDetails}
                         </div>
@@ -826,20 +915,20 @@ class RegistrationProducts extends Component {
                                     }}
                                     >{AppConstants.returnToSelectAddress}</div> */}
                                     <div className="headline-text-common"
-                                    style={{paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                                    style={{paddingBottom: "0px",marginBottom: "-20px",marginTop: "20px"}}>{AppConstants.findAddress}</div>
                                     <div>
                                         <Form.Item name="addressSearch">
-                                            {getFieldDecorator(`yourDetailsAddressSearch`, {
+                                            {/* {getFieldDecorator(`yourDetailsAddressSearch`, {
                                                 rules: [{ required: true, message: ValidationConstants.addressField}],
-                                            })(
+                                            })( */}
                                                 <PlacesAutocomplete
-                                                    setFieldsValue={"yourDetailsAddressSearch"}
+                                                    defaultValue={this.getYourInfoAddress(yourInfo)}
                                                     heading={AppConstants.addressSearch}
                                                     error={this.state.searchAddressError}
                                                     onBlur={() => { this.setState({searchAddressError: ''})}}
                                                     onSetData={(e)=>this.yourInfoAddressSearch(e)}
                                                 />
-                                            )}
+                                            {/* )} */}
                                         </Form.Item>
                                         <div className="btn-text-common pointer" style={{marginTop: "10px"}}
                                         onClick={() => {
@@ -1160,7 +1249,7 @@ class RegistrationProducts extends Component {
                  <Button className="open-reg-button link-text-common" 
                   htmlType="submit"
                   type="primary"
-                 style={{ width:"100%"}}>
+                 style={{ width:"100%",textTransform: "uppercase"}}>
                     {AppConstants.continue}
                 </Button>     
             </div>
@@ -1212,7 +1301,8 @@ function mapDispatchToProps(dispatch)
         getTermsAndConditionsAction,
         getCommonRefData,
         countryReferenceAction,	
-        getRegParticipantUsersAction	 
+        getRegParticipantUsersAction,
+        getRegistrationShopProductAction	 
     }, dispatch);
 
 }

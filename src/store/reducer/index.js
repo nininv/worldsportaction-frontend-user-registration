@@ -17,6 +17,7 @@ import DeRegistrationState from "./registrationReducer/deRegisterReducer";
 import ShopProductState from "./shopReducer/productReducer";
 
 import UserRegistrationState from "./registrationReducer/userRegistrationReducer";
+import TeamRegistrationState from "./registrationReducer/teamRegistrationReducer";
 import RegistrationProductState from "./registrationReducer/registrationProductsReducer";
 
 const rootReducer = combineReducers({
@@ -34,7 +35,8 @@ const rootReducer = combineReducers({
   DeRegistrationState,
   ShopProductState,
   UserRegistrationState,
-  RegistrationProductState
+  RegistrationProductState,
+  TeamRegistrationState
 });
 
 export default rootReducer;

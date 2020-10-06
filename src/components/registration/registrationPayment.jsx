@@ -460,6 +460,21 @@ class RegistrationPayment extends Component {
         }
     }
 
+    back = () => {
+        try{
+            const {registrationReviewList,shopProductList} = this.props.registrationProductState;
+            if(!isArrayNotEmpty(shopProductList)){
+                this.goToRegistrationProducts();
+            }else if(isArrayNotEmpty(registrationReviewList.shopProducts)){
+                this.goToShipping();
+            }else{
+                this.goToShop();
+            }
+        }catch(ex){
+            console.log("Error in back::"+ex);
+        }
+    }
+
     
     contentView = () =>{
         return(
@@ -576,7 +591,7 @@ class RegistrationPayment extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>                               
+                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -638,7 +653,7 @@ class RegistrationPayment extends Component {
                 </div>                  */}
                 <div style={{marginTop:23}}> 
                     <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
-                     onClick={() => isArrayNotEmpty(registrationReviewList.shopProducts) ? this.goToShipping() : this.goToShop()}>
+                     onClick={() => this.back()}>
                         {AppConstants.back}
                     </Button> 
                 </div>     

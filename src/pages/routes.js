@@ -31,6 +31,7 @@ import RegistrationProducts from "../components/registration/registrationProduct
 import RegistrationShop from "../components/registration/registrationShop";
 import RegistrationPayment from "../components/registration/registrationPayment";
 import RegistrationShipping from "../components/registration/registrationShipping";
+import AppTeamRegistrationForm from "../components/registration/appTeamRegistrationForm";
 
 
 const lazyLoad = Component => {
@@ -56,6 +57,10 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/appRegistrationForm"
           component={lazyLoad(AppRegistrationFormNew)}
+        />
+        <PrivateRoute
+          path="/appTeamRegistrationForm"
+          component={lazyLoad(AppTeamRegistrationForm)}
         />
         <PrivateRoute
           path="/login"

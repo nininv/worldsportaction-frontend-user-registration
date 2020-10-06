@@ -37,7 +37,7 @@ function setYourInfo(action,state){
             yourInfo["stateRefId"] = user.stateRefId;
             yourInfo["countryRefId"] = user.countryRefId;
         }else{
-            yourInfo.email = email;
+            yourInfo["email"] = email;
         }
     }catch(ex){
         console.log("Error in setYourInfo"+ex);
@@ -154,7 +154,7 @@ function registrationProductsReducer(state = initialState, action){
                 console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
-                if(action.key == "emailSelection"){
+                if(action.key == "email"){
                     setYourInfo(action,state);
                 }else{
                     reviewData[action.subKey][action.key] = action.value
