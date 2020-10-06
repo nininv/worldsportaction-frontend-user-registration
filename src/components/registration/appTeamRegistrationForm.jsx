@@ -14,7 +14,8 @@ import {
     message, 
     Steps,
     Tag,
-    Pagination
+    Pagination,
+    Carousel
 } from "antd";
 import { connect } from 'react-redux';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
@@ -520,6 +521,26 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    getOrganisationPhotos = (organisationPhotos) => {
+        try{
+            let organisationPhotosTemp = [];
+            for(let i=0;i<organisationPhotos.length;i++){
+                if((i % 2) == 0){
+                    let obj = {
+                        photoUrl1: organisationPhotos[i].photoUrl,
+                        photoType1: organisationPhotos[i].photoType,
+                        photoUrl2: organisationPhotos[i+1].photoUrl,
+                        photoType2: organisationPhotos[i+1].photoType,
+                    }
+                    organisationPhotosTemp.push(obj);
+                }
+            }
+            return organisationPhotosTemp;
+        }catch(ex){
+            console.log("Error in getOrganisationPhotos::"+ex);
+        }
+    }
+
     checkIsPlayer = (membershipProductTypes) => {
         try{
             let exist = false;
@@ -710,6 +731,7 @@ class AppTeamRegistrationForm extends Component{
             let competitionInfo = teamRegistrationObj.competitionInfo;
             let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
                             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
+            let organisationPhotos = this.getOrganisationPhotos(teamRegistrationObj.organisationInfo.organisationPhotos);
             return(
                 <div className="registration-form-view">
                     {competitionInfo.heroImageUrl && (
@@ -786,8 +808,8 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         </div>
     
-                        <div className="row" style={{marginTop: "30px"}}>
-                            <div className="col-xl-6 col-sm-12 col-md-6 col-lg-6">
+                        <div className="row">
+                            <div className="col-sm-12 col-md-4">
                                 <InputWithHead heading={AppConstants.training}/>
                                 <div 
                                 className="inter-medium-font" 
@@ -822,13 +844,27 @@ class AppTeamRegistrationForm extends Component{
                                     AppConstants.noInformationProvided}
                                 </div> 
                             </div>
-                            <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
-                                <InputWithHead heading={AppConstants.venue}/>
-                                <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
-                            </div>
-                            <div className="col-xl-3 col-sm-12 col-md-6 col-lg-6">
-                                <InputWithHead heading={AppConstants.uniform}/>
-                                <img style={{height: "65%"}} src="https://www.googleapis.com/download/storage/v1/b/world-sport-action.appspot.com/o/registration%2Fu0_1593859839913.jpg?generation=1593859840553144&alt=media"/>
+                            <div className="col-sm-12 col-md-8">
+                                <Carousel autoplay
+                                    style={{marginTop: "16px",
+                                    height: "160px",
+                                    borderRadius: "10px",
+                                    display: "flex"}}>
+                                {(organisationPhotos || []).map((photo,photoIndex) => (
+                                        <div>
+                                            <div style={{display: "flex",justifyContent: "flex-end"}}>
+                                                <div>
+                                                    <div style={{textAlign: "center",marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo.photoType1}</div>
+                                                    <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
+                                                </div>
+                                                <div style={{marginLeft: "25px"}}>
+                                                    <div style={{textAlign: "center",marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo?.photoType2}</div>
+                                                    <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Carousel>
                             </div>
                         </div>  
                     </div>

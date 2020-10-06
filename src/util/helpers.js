@@ -56,8 +56,7 @@ const deepCopyFunction = inObject =>
   }
 
   const captializedString = (value) => {
-    console.log("value value"+value)
-    if (value = undefined) {
+    if (value != undefined) {
         let capString = value.charAt(0).toUpperCase() + value.slice(1);
         return capString;
     }
