@@ -808,7 +808,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         </div>
     
-                        <div className="row">
+                        <div className="row" style={{marginTop: "20px"}}>
                             <div className="col-sm-12 col-md-4">
                                 <InputWithHead heading={AppConstants.training}/>
                                 <div 

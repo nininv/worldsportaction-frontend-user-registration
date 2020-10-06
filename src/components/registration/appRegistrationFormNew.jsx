@@ -2004,7 +2004,7 @@ class AppRegistrationFormNew extends Component{
                             </div>
                         )}
 
-                        <div className="row">
+                        <div className="row" style={{marginTop: "20px"}}>
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.totalCasualFees}/>
                                 <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
