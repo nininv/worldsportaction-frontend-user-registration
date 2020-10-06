@@ -1950,7 +1950,7 @@ class AppRegistrationFormNew extends Component{
             <div className="registration-form-view"  key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
                     <div className="map-style">
-                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
+                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px",width: "100%"}} src={competitionInfo.heroImageUrl}/>
                     </div>
                 )}
                 <div>
@@ -2004,7 +2004,7 @@ class AppRegistrationFormNew extends Component{
                             </div>
                         )}
 
-                        <div className="row" style={{marginTop: "20px"}}>
+                        <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.totalCasualFees}/>
                                 <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
@@ -2016,7 +2016,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
 
-                    <div className="row">
+                    <div className="row" style={{marginTop: "20px"}}>
                         <div className="col-sm-12 col-md-4">
                             <InputWithHead heading={AppConstants.training}/>
                             <div 
@@ -2062,11 +2062,11 @@ class AppRegistrationFormNew extends Component{
                                      <div>
                                         <div style={{display: "flex",justifyContent: "flex-end"}}>
                                             <div>
-                                                <div style={{textAlign: "center",marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo.photoType1}</div>
+                                                <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo.photoType1}</div>
                                                 <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
                                             </div>
                                             <div style={{marginLeft: "25px"}}>
-                                                <div style={{textAlign: "center",marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo?.photoType2}</div>
+                                                <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo?.photoType2}</div>
                                                 <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
                                             </div>
                                         </div>
