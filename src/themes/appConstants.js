@@ -1091,7 +1091,7 @@ const AppConstants = {
  members: "Members",
  payingFor: "I am paying for",
  notPayingFor: "I am not paying for",
- ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from the team"
+ ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from your team members."
 };
 
 export default AppConstants;
