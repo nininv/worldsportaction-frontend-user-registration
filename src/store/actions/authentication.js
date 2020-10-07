@@ -10,4 +10,25 @@ function loginAction(payload) {
   return action;
 }
 
-export default loginAction;
+// forgot password
+function forgotPasswordAction(email, resetType) {
+  return {
+    type: ApiConstants.API_FORGOT_PASSWORD_LOAD,
+    email,
+    resetType,
+  };
+}
+
+// clear reducer
+function clearReducerAction(key) {
+  return {
+    type: ApiConstants.ACTION_TO_CLEAR_AUTHENTICATION_REDUCER,
+    key
+  };
+}
+
+export {
+   loginAction,
+   forgotPasswordAction,
+   clearReducerAction,
+}

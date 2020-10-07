@@ -9,13 +9,18 @@ import {
   getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
-  genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga
+  genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
+  identificationReferenceSaga,otherSportsReferenceSaga,accreditationUmpireReferenceSaga,
+  accreditationCoachReferenceSaga,walkingNetballQuesReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
 import * as userSaga from '../saga/userSaga/userSaga';
 // EndUserRegistrationSaga
 import * as endUserRegSaga from '../saga/registrationSaga/endUserRegistrationSaga';
+
+// Registration Products Saga
+import * as regProductsSaga from '../saga/registrationSaga/registrationProductsSaga';
 
 //Live Score
 import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
@@ -29,6 +34,7 @@ import * as deRegisterSaga from '../saga/registrationSaga/deRegisterSaga';
 
 //UserRegistrationSaga
 import * as userRegistrationSaga from '../saga/registrationSaga/userRegistrationSaga';
+import * as teamRegistrationSaga from '../saga/registrationSaga/teamRegistrationSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
@@ -65,17 +71,17 @@ export default function* root_saga() {
   //get particular user organisation 
   yield takeEvery(ApiConstants.API_GET_USER_ORGANISATION_LOAD, userSaga.getUserOrganisationSaga)
 
-  //EndUserRegistration Registration Settings
-  yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, endUserRegSaga.orgRegistrationRegistrationSettings)
+  // //EndUserRegistration Registration Settings
+  // yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, endUserRegSaga.orgRegistrationRegistrationSettings)
 
   //EndUserRegistration Membership Products
-  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, endUserRegSaga.endUserRegistrationMembershipProducts)
+  //yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, endUserRegSaga.endUserRegistrationMembershipProducts)
 
   /// Gender Reference Saga
   yield takeEvery(ApiConstants.API_GENDER_REFERENCE_LOAD, genderReferenceSaga)
 
-  /// Gender Reference Saga
-  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
+
+  // yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, endUserRegSaga.endUserRegistrationUserInfoSaga)
 
   /// Disability Reference Saga
   yield takeEvery(ApiConstants.API_DISABILITY_REFERENCE_LOAD, disabilityReferenceSaga)
@@ -138,7 +144,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_USER_PROFILE_UPDATE_LOAD, userSaga.updateUserProfileSaga)
 
   //Terms and Conditions
-  yield takeEvery(ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD, endUserRegSaga.getTermsAndConditionsSaga)
+  yield takeEvery(ApiConstants.API_GET_TERMS_AND_CONDITION_LOAD, regProductsSaga.getTermsAndConditionsSaga)
 
   //Terms and Conditions
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PRODUCT_FEES_LOAD, endUserRegSaga.getRegistrationProductFeesSaga)
@@ -159,10 +165,10 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SHOP_POST_ADD_TO_CART_LOAD, shopProductSaga.addToCartSaga)
 
   //Get Registration Review
-  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getRegistrationReviewSaga)
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_LOAD, regProductsSaga.getRegistrationReviewSaga)
 
   //Save Registration Revie
-  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveRegistrationReviewSaga)
+  yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD, regProductsSaga.saveRegistrationReviewSaga)
 
   //Get Registration Review Products
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getRegistrationReviewProductsSaga)
@@ -171,7 +177,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.saveRegistrationReviewProductsSaga)
 
   //Get Registration By Id
-  yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, endUserRegSaga.getRegistrationByIdSaga)
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD, regProductsSaga.getRegistrationByIdSaga)
 
   //Validate Discount Code
   yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)
@@ -197,9 +203,60 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_YEAR_LISTING_LOAD, getYearListingSaga);
 
 
-
   //New ragistration design
-  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD_NEW, userRegistrationSaga.endUserRegistrationUserInfoSaga)
+  yield takeEvery(ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD, userRegistrationSaga.endUserRegistrationUserInfoSaga);
 
+  //Get ParticipantDataById
+  yield takeEvery(ApiConstants.API_GET_PARTICIPANT_BY_ID_LOAD, userRegistrationSaga.getParticipantDataById);
+
+  //Save ParticipantData
+  yield takeEvery(ApiConstants.API_SAVE_PARTICIPANT_LOAD, userRegistrationSaga.saveParticipantData);
+
+  //UserRegistration Membership Products
+  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD, userRegistrationSaga.endUserRegistrationMembershipProducts);
+
+  yield takeEvery(ApiConstants.API_IDENTIFICATION_REFERENCE_LOAD, identificationReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_OTHER_SPORTS_REFERENCE_LOAD, otherSportsReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD, accreditationUmpireReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD, accreditationCoachReferenceSaga)
+
+  yield takeEvery(ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD, walkingNetballQuesReferenceSaga)
+
+  //UserRegistration Membership Products Delete
+  yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD, regProductsSaga.deleteRegistrationProductSaga)
+
+  //UserRegistration Membership Products
+  yield takeEvery(ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD, regProductsSaga.deleteRegistrationParticipantSaga)
+
+  //Get Registration Shop Products
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD, regProductsSaga.getRegistrationShopProductsSaga)
+
+  //EndUserRegistration Registration Settings
+  yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, userRegistrationSaga.orgRegistrationRegistrationSettings)
+
+   //Get Registration Participant Users
+   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_LOAD, regProductsSaga.getRegParticipantUsersSaga)
+
+   //Get Registration Shop Pickup address
+   yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD, regProductsSaga.getRegistrationShopPickupAddressSaga)
+
+  //Get Registration Participant Address
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD, regProductsSaga.getRegParticipantAddressSaga)
+
+  //Expired competition check
+  yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
+
+  yield takeEvery(ApiConstants.API_GET_TRANSFER_COMPETITIONS_LOAD, deRegisterSaga.getTransferOrganisationsSaga);
+  
+  //Team registration saga
+  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,teamRegistrationSaga.teamRegistrationMembershipProducts);
+  yield takeEvery(ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD,teamRegistrationSaga.orgTeamRegistrationSettings);
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD,teamRegistrationSaga.saveTeamData);
+  yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD,teamRegistrationSaga.getTeamDataById);
+  yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD,teamRegistrationSaga.getExistingTeamDataById);
+  yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD,teamRegistrationSaga.expiredTeamRegistrationCheck);
 
 }

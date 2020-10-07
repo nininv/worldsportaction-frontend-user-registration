@@ -247,3 +247,88 @@ export function* personRegisteringRoleReferenceSaga(action) {
     }
 }
 
+export function* identificationReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.identifyAs);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_IDENTIFICATION_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* otherSportsReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.otherSports);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_OTHER_SPORTS_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* accreditationUmpireReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.accreditationUmpire);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* accreditationCoachReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.accreditationCoach);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_ACCREDITATION_COACH_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* walkingNetballQuesReferenceSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.walkingNetball);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+

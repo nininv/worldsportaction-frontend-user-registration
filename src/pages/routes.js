@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route, Redirect, HashRouter } from "react-router-dom";
 import { Skeleton } from "antd";
 import PrivateRoute from "../util/protectedRoute";
-import AppRegistrationForm from "../components/registration/appRegistrationForm";
+// import AppRegistrationForm from "../components/registration/appRegistrationForm";
 import AppRegistrationFormNew from "../components/registration/appRegistrationFormNew";
 import NotFound from "./404";
 import UserRegistration from "../components/userRegistration";
@@ -21,12 +21,18 @@ import TeamRegistrationForm from "../components/registration/teamRegistrationFor
 import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
 import UserProfileEdit from "../components/user/userProfileEdit"
 import DeRegistration from "../components/registration/deRegistration";
-import RegistrationReviewForm from '../components/registration/registrationReviewForm';
-import ReviewProducts from '../components/registration/reviewProducts';
+// import RegistrationReviewForm from '../components/registration/registrationReviewForm';
+// import ReviewProducts from '../components/registration/reviewProducts';
 import ListProducts from "../components/shop/listProducts";
 import ProductDetails from "../components/shop/productDetails";
 import TeamRegistrationReview from '../components/registration/teamRegistrationReview';
 import TeamReviewProducts from '../components/registration/teamReviewProducts';
+import RegistrationProducts from "../components/registration/registrationProducts";
+import RegistrationShop from "../components/registration/registrationShop";
+import RegistrationPayment from "../components/registration/registrationPayment";
+import RegistrationShipping from "../components/registration/registrationShipping";
+import AppTeamRegistrationForm from "../components/registration/appTeamRegistrationForm";
+
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -44,13 +50,17 @@ class Routes extends React.Component {
     return (
       <Switch>
         <Route exact path="/" render={() => <Redirect to="/userPersonal" />} />
+        {/* <PrivateRoute
+          path="/appRegistrationFormOld"
+          component={lazyLoad(AppRegistrationForm)}
+        /> */}
         <PrivateRoute
           path="/appRegistrationForm"
-          component={lazyLoad(AppRegistrationForm)}
+          component={lazyLoad(AppRegistrationFormNew)}
         />
         <PrivateRoute
-          path="/appRegistrationFormNew"
-          component={lazyLoad(AppRegistrationFormNew)}
+          path="/appTeamRegistrationForm"
+          component={lazyLoad(AppTeamRegistrationForm)}
         />
         <PrivateRoute
           path="/login"
@@ -114,14 +124,14 @@ class Routes extends React.Component {
           path="/productDetails"
           component={lazyLoad(ProductDetails)}
         />
-        <PrivateRoute
+        {/* <PrivateRoute
           path="/registrationReview"
           component={lazyLoad(RegistrationReviewForm)}
         />
         <PrivateRoute
-          path="/registrationReviewProducts"
+          path="/reviewProducts"
           component={lazyLoad(ReviewProducts)}
-        />
+        /> */}
 
         <PrivateRoute
           path="/teamRegistrationReview"
@@ -130,6 +140,26 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/teamRegistrationReviewProducts"
           component={lazyLoad(TeamReviewProducts)}
+        />
+
+        <PrivateRoute
+          path="/registrationProducts"
+          component={lazyLoad(RegistrationProducts)}
+        />
+
+        <PrivateRoute
+          path="/registrationShop"
+          component={lazyLoad(RegistrationShop)}
+        />
+
+        <PrivateRoute
+          path="/registrationPayment"
+          component={lazyLoad(RegistrationPayment)}
+        />
+
+        <PrivateRoute
+          path="/registrationShipping"
+          component={lazyLoad(RegistrationShipping)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />

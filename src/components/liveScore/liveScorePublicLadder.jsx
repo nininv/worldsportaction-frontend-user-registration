@@ -343,11 +343,16 @@ class LiveScorePublicLadder extends Component {
                 <div className="comp-dash-table-view mt-4 ml-1">
                     <div className="ladder-list-adjustment">
                         {
-                            (adjData || []).map((x, index) => (
-                                <div key={index} style={{ marginBottom: '10px' }}>
-                                    <li className="required-field">{x.teamName + ' deducted ' + x.points + ' points for ' + x.adjustmentReason}</li>
-                                </div>
-                            ))
+                            (adjData || []).map((x, index) => {
+                                let key = x.points >= "0" ? " added " : ' deducted '
+                                let value = x.points >= 0 ? x.points : JSON.stringify(x.points)
+                                let newValue = value >= 0 ? value : value.replace("-", '')
+                                return (
+                                    <div key={index} style={{ marginBottom: '10px' }}>
+                                        <li className="required-field">{x.teamName + key + newValue + ' points for ' + x.adjustmentReason}</li>
+                                    </div>
+                                )
+                            })
                         }
                     </div>
                 </div>

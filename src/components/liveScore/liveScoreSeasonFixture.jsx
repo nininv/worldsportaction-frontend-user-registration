@@ -161,7 +161,7 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <span >{venueCourt ? venueCourt.venue.name + "-" + venueCourt.name : ""}</span>
+                            <span >{venueCourt ? venueCourt.venue.shortName + "-" + venueCourt.name : ""}</span>
                         </div>
                     </div >
 
@@ -169,7 +169,7 @@ const columns2 = [
             } else {
 
                 return (
-                    <span >{venueCourt ? venueCourt.venue.name + "-" + venueCourt.name : ""}</span>
+                    <span >{venueCourt ? venueCourt.venue.shortName + "-" + venueCourt.name : ""}</span>
                 )
             }
         }

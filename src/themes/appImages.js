@@ -42,6 +42,10 @@ const AppImages = {
   printImage: require("../images/print.png"),
   shoppingCart:require("../images/shopping-cart.png"),
   removeIcon: require("../images/remove-icon.jpg"),
+  crossImage: require("../images/close.png"),
+  removeIcon: require("../images/removeIcon.svg"),
+  editIcon: require("../images/editIcon.svg"),
+  shoppingCartIcon: require("../images/shopping_cart_icon.svg")
 };
 
 export default AppImages;

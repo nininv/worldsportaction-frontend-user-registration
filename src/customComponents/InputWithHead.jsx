@@ -10,7 +10,6 @@ class InputWithHead extends React.Component {
                 <span className={`input-heading ${this.props.required}`}>{heading}</span>}
             {placeholder &&
                 <Input
-
                     className="input"
                     placeholder={placeholder}
                     name={name}

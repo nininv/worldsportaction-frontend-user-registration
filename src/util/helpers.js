@@ -55,5 +55,12 @@ const deepCopyFunction = inObject =>
     return typeof checkString === 'string' ? parseFloat(checkString) : checkString;
   }
 
+  const captializedString = (value) => {
+    if (value != undefined) {
+        let capString = value.charAt(0).toUpperCase() + value.slice(1);
+        return capString;
+    }
+};
+
 module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
-  isNullOrUndefined, feeIsNull }
+  isNullOrUndefined, feeIsNull ,captializedString }

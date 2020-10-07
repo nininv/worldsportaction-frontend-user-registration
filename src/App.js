@@ -15,17 +15,10 @@ import history from "./util/history";
 import { Skeleton } from "antd";
 import PrivateRoute from "./util/protectedRoute";
 import Login from "./components/login";
-import TeamRegistrationForm from "./components/registration/teamRegistrationForm";
-import UserModulePersonalDetail from "./components/user/userModulePersonalDetail";
-import AppRegistrationForm from "./components/registration/appRegistrationForm";
-
+import ForgotPassword from "./components/forgotPassword";
 import { getUserId, getAuthToken, getExistingUserRefId, 
         getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration } 
 from "./util/sessionStorage";
-import RegistrationReviewForm from "./components/registration/registrationReviewForm";
-import ReviewProducts from './components/registration/reviewProducts';
-import registrationProducts from "./components/registration/registrationProducts";
-
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -59,12 +52,7 @@ function App() {
             }
           /> 
           <Route path="/login" component={lazyLoad(Login)} />
-          <Route path="/userPersonal" component={lazyLoad(UserModulePersonalDetail)} />
-          <Route path="/registrationReviewForm" component={lazyLoad(RegistrationReviewForm)}/> 
-          <Route path="/registrationProducts" component={lazyLoad(registrationProducts)}/>
-          <Route path="/reviewProducts" component={lazyLoad(ReviewProducts)} />
-
-          {/* <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} /> */}
+          <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} />
           <PrivateRoute path="/" component={lazyLoad(Routes)} />
         </Switch>
       </Router>

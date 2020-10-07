@@ -22,7 +22,12 @@ const initialState = {
     playerPositionList: [],
     genderList: [],
     disabilityList: [],
-    personRegisteringRoleList: []		 
+    personRegisteringRoleList: [],
+    identifyAsList: [],
+    otherSportsList: [],
+    accreditationUmpireList: [],
+    accreditationCoachList: [] ,
+    walkingNetballQuesList: []		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -206,6 +211,72 @@ function commonReducerState(state = initialState, action) {
                 onLoad: false,
                 error: null
             };
+
+        ///////get the identification list
+        case ApiConstants.API_IDENTIFICATION_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_IDENTIFICATION_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                identifyAsList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+         ///////get the other sport list
+         case ApiConstants.API_OTHER_SPORTS_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_OTHER_SPORTS_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                otherSportsList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        ///////get the other accreditation umpire list
+        case ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_ACCREDITATION_UMPIRE_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                accreditationUmpireList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        ///////get the other accreditation coach list
+        case ApiConstants.API_ACCREDITATION_COACH_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_ACCREDITATION_COACH_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                accreditationCoachList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+         ///////get the walingNetball questiion list
+         case ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_WALKING_NETBALL_QUES_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                walkingNetballQuesList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
         default:
             return state;
     }
