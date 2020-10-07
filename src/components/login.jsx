@@ -190,9 +190,10 @@ class Login extends Component {
                                 setFieldValue
                             }) => (
                                     <Form onSubmit={handleSubmit}>
-                                        <div className="login-formView" style={{ zIndex: 15 }}>
+                                        {/* <div className="login-formView" style={{ zIndex: 15 }}>
                                             {this.contentView(values, errors, setFieldValue, touched, handleChange, handleBlur)}
-                                        </div>
+                                        </div> */}
+                                        <div className="comp-warning-info">This feature is not enabled yet</div>
                                         {/* {this.footerView(isSubmitting)} */}
                                     </Form>
                                 )}
