@@ -1,874 +1,750 @@
 import React, { Component } from "react";
 import {
-    Layout,Breadcrumb,Input,Select,Checkbox,Button, Table,DatePicker,Radio, Form, Modal, message
+    Layout,
+    Breadcrumb,
+    Input,
+    Select,
+    Checkbox,
+    Button, 
+    Table,
+    DatePicker,
+    Radio, 
+    Form, 
+    Modal, 
+    message, 
+    Steps,
+    Tag,
+    Pagination,
+    Carousel
 } from "antd";
+import { connect } from 'react-redux';
+import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
+import AppConstants from "../../themes/appConstants";
+import DashboardLayout from "../../pages/dashboardLayout";
+import { bindActionCreators } from "redux";
+import "./product.css";
+import "../user/user.css";
+import '../competition/competition.css';
+import { isEmptyArray } from "formik";
+import Loader from '../../customComponents/loader';
+import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
+import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
+import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
+import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
 import history from "../../util/history";
-import AppConstants from "../../themes/appConstants";
-import "../../pages/layout.css";
-import { getInvitedTeamRegInfoAction, orgRegistrationRegSettingsEndUserRegAction, 
-    updateTeamParentInfoAction,updateTeamRegSettingAction, updateTeamRegistrationInvite } 
-    from '../../store/actions/registrationAction/endUserRegistrationAction';
-import { getCommonRefData, nationalityReferenceAction, heardByReferenceAction,
-    disabilityReferenceAction, countryReferenceAction, firebirdPlayerReferenceAction,
-    favouriteTeamReferenceAction, registrationOtherInfoReferenceAction} 
-    from '../../store/actions/commonAction/commonAction';
-import { connect } from 'react-redux';
-import { bindActionCreators } from "redux";
-import Loader from '../../customComponents/loader';
-import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
-import DashboardLayout from "../../pages/dashboardLayout";
+import { 
+    getTeamRegistrationInviteAction
+} from '../../store/actions/registrationAction/teamRegistrationAction';
+import { 
+    getCommonRefData,  
+    favouriteTeamReferenceAction,
+    firebirdPlayerReferenceAction,
+    registrationOtherInfoReferenceAction,
+    countryReferenceAction,
+    nationalityReferenceAction, 
+    heardByReferenceAction,
+    playerPositionReferenceAction,
+    genderReferenceAction, 
+    disabilityReferenceAction,
+    personRegisteringRoleReferenceAction ,
+    identificationReferenceAction,
+    otherSportsReferenceAction,
+    accreditationUmpireReferenceAction,
+    accreditationCoachReferenceAction,
+    walkingNetballQuesReferenceAction 
+} from '../../store/actions/commonAction/commonAction';
 import ValidationConstants from "../../themes/validationConstant";
-import {getUserId, getUserRegId, getExistingUserRefId, getRegisteringYourselfRefId } 
-from "../../util/sessionStorage";
 
 const { Header, Footer, Content } = Layout;
-const { Option } = Select;
+const { Step } = Steps;
 const { TextArea } = Input;
+const { Option } = Select;
 
-class TeamRegistrationForm extends Component {
-    constructor(props) {
+class TeamRegistrationForm extends Component{
+    constructor(props){
         super(props);
         this.state = {
-            onInvLoad: false,
-            buttonPressed: "",
-            loading: false,
-            userRegId: getUserRegId()
+            currentStep: 0,
+            enabledSteps: [],
+            completedSteps: [],
+            submitButtonText: AppConstants.addDetails,
+            inviteOnLoad: false,
+            searchAddressFlag: true,
+            manualEnterAddressFlag: false,
+            showMoreInformation: true,
         }
-        console.log("*****************************************");
-        this.getReferenceData();
-    }
-
-    componentDidMount() {
-        let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-        if(userRegId == null){
-            userRegId =  getUserRegId();
-        }
-        this.setState({userRegId: userRegId});
-        this.getApiInfo(userRegId);
-    }
-
-    componentDidUpdate(nextProps){
-        let registrationState = this.props.endUserRegistrationState;
-
-        if(registrationState.onLoad == false && this.state.loading === true)
-        {
-                this.setState({ loading: false });
-                if(!registrationState.error)
-                {
-                    if (this.state.buttonPressed == "save" ) {
-                        let registrationId=registrationState.registrationId
-                        console.log("registrationId",registrationId)
-                        history.push("/teamRegistrationReview", {
-                            registrationId: null,
-                            userRegId: this.state.userRegId,
-                            paymentSuccess: false					 
-                        })
-                        // history.push('/appRegistrationSuccess');
-                    }
-                }
-        }
-        if(registrationState.onInvLoad == false && this.state.onInvLoad == true)
-        {
-            this.setState({onInvLoad: false})
-            if(registrationState.invCompetitionDetails!= null)
-            {
-                let compDetail = registrationState.invCompetitionDetails;
-                this.getRegistrationSettings(compDetail.competitionUniqueKey, 
-                                        compDetail.organisationUniqueKey);
-            }
-            if(registrationState.invUserInfo!= null){
-                let existingUserRefId = getExistingUserRefId();
-                let registeringYourselfRefId = getRegisteringYourselfRefId();
-                if(existingUserRefId == 1 && registeringYourselfRefId == 2){
-                    this.setParentFormFields();
-                }
-            }
-        }
-    }
-
-    getApiInfo = (userRegId) => {
-        let existingUserRefId = getExistingUserRefId();
-        let registeringYourselfRefId = getRegisteringYourselfRefId();
-
-        let payload = {
-            userRegId : userRegId,
-            userId: existingUserRefId == 1 ? getUserId() : 0
-        }
-
-        this.props.getInvitedTeamRegInfoAction(payload);
-        this.setState({onInvLoad: true});
-    }
-
-    getRegistrationSettings = (competitionUniqueKey, organisationUniqueKey) => {
-        let payload = {
-            competitionUniqueKey: competitionUniqueKey,
-            organisationUniqueKey: organisationUniqueKey,
-            participantIndex: null,
-            prodIndex: null
-        }
-        this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
-    }
-
-    getReferenceData = () => {
+        this.props.genderReferenceAction();
         this.props.getCommonRefData();
-        this.props.firebirdPlayerReferenceAction();
-        this.props.favouriteTeamReferenceAction();
-        this.props.registrationOtherInfoReferenceAction();
         this.props.countryReferenceAction();
-        this.props.nationalityReferenceAction();
-        this.props.heardByReferenceAction();
-        this.props.disabilityReferenceAction();
-    }
-
-    setParentFormFields = () =>{
-        let registrationState = this.props.endUserRegistrationState;
-        let item = registrationState.invUserInfo != null ? registrationState.invUserInfo : {};
-        
-        this.props.form.setFieldsValue({
-            [`parentFirstName`]: item.firstName,
-            [`parentLastName`]: item.lastName,
-            [`parentContactField`]: item.mobileNumber,
-            [`parentEmail`]: item.email,
-            [`parentReEnterEmail`]: item.email,
-            [`parentStreet1`]: item.street1,
-            [`parentSuburb`]: item.suburb,
-            [`parentStateRefId`]: item.stateRefId,
-            [`parentPostalCode`]: item.postalCode,
-        });
-    }
-
-    onChangeSetParentValue = (value, key) =>{
-        this.props.updateTeamParentInfoAction(value, key);
-    }
-
-    onChangeSetRegSettingValue = (value, key) =>{
-        this.props.updateTeamRegSettingAction(value, key);
-    }
-
-    saveRegistrationForm = (e) =>{
-        e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            console.log("Error: " + err);
-            if(!err)
-            {
-                let registrationState = this.props.endUserRegistrationState;
-                let parentInfo = registrationState.invUserInfo
-                let regSetting = registrationState.invUserRegDetails;
-                let registeringYourselfRefId = getRegisteringYourselfRefId();
-                if(parentInfo.userId == undefined || parentInfo.userId == null){
-                    parentInfo.userId = 0
-                }
-                parentInfo["invUserId"] = regSetting.userId;
-                let obj = {
-                    parentInfo: registeringYourselfRefId == 2 ? parentInfo : null,
-                    userRegistrationSetting: regSetting
-                }
-                console.log("Final Data::" + JSON.stringify(obj));
-                this.props.updateTeamRegistrationInvite(obj);
-                this.setState({ loading: true });
-            }
-        });
-    }
-
-     headerView = () => {
-        return (
-            <div className="header-view">
-                <Header
-                    className="form-header-view"
-                    style={{
-                        backgroundColor: "transparent",
-                        display: "flex",
-                        alignItems: "flex-start"
-                    }}
-                >
-                    <Breadcrumb
-                        style={{ alignItems: "center", alignSelf: "center" }}
-                        separator=">"
-                    >
-                        {/* <NavLink to="/registration">
-                            <Breadcrumb.Item className="breadcrumb-product">Products</Breadcrumb.Item>
-                        </NavLink> */}
-                        <Breadcrumb.Item className="breadcrumb-add">
-                            {AppConstants.netballRegistration}
-                        </Breadcrumb.Item>
-                    </Breadcrumb>
-                </Header>
-
-            </div>
-        );
-    };
-
-    membershipProductView = () => {
-        let compDetails = this.props.endUserRegistrationState.invCompetitionDetails
-        let item = compDetails!= null ? compDetails : {};
-        return (
-            <div className="formView content-view pt-5" style={{backgroundColor: 'var(--app-ebf0f3)'}}>
-             <span className="form-heading"> {AppConstants.competitionMembershipProductDivision}</span>
-               
-               <InputWithHead heading={AppConstants.organisationName} />
-               <div className="applicable-to-text">
-                    {item.organisationName == null || item.organisationName == "" ? AppConstants.noInformationProvided : 
-                    item.organisationName}
-                </div>
- 
-                <InputWithHead heading={AppConstants.competition_name} />
-                <div className="applicable-to-text">
-                    {item.competitionName == null || item.competitionName == "" ? AppConstants.noInformationProvided : 
-                    item.competitionName}
-                </div>
-                
-                {/* <InputWithHead heading={AppConstants.membershipProduct} />
-                <div className="applicable-to-text">
-                    {item.membershipProductName == null || item.membershipProductName == "" ? AppConstants.noInformationProvided : 
-                    item.membershipProductName}
-                </div> */}
-
-                <InputWithHead heading={AppConstants.divisions}/>
-                <div className="applicable-to-text">
-                    {item.divisionName == null || item.divisionName == "" ? AppConstants.noInformationProvided : 
-                    item.divisionName}
-                </div>
-
-                <div>
-                    <div style={{display: 'flex'}}>
-                        <div className="col-sm-6" style={{paddingLeft: '0px'}}> 
-                            <InputWithHead heading={AppConstants.startDate}/>
-                            <div className="applicable-to-text">{item.registrationOpenDate}</div>
-                        </div>
-                        <div className="col-sm-6"> 
-                            <InputWithHead heading={AppConstants.endDate}/>
-                            <div className="applicable-to-text">{item.registrationCloseDate}</div>
-                        </div>
-                    </div>
-                    <InputWithHead heading={AppConstants.venue}/>
-                    {item.venues == null || item.venues.length == 0 ? AppConstants.noInformationProvided :
-                    <span>
-                        {(item.venues || []).map((v, vIndex) =>(
-                            <span>
-                                <span>{v.venueName}</span>
-                                <span>{item.venues.length != (vIndex + 1) ? ', ': ''}</span>
-                            </span>
-                        ))}</span>
-                    }
-                    <InputWithHead heading={AppConstants.specialNotes}/>
-                        <div className="applicable-to-text">
-                            {item.specialNote == null || item.specialNote == "" ? AppConstants.noInformationProvided : 
-                            item.specialNote}
-                        </div>
-                    <InputWithHead heading={AppConstants.training} />
-                        <div className="applicable-to-text">
-                            {item.training == null || item.training == "" ? AppConstants.noInformationProvided : 
-                            item.training}
-                        </div>
-                    <InputWithHead heading={AppConstants.contactDetails}/>
-                        <span className="applicable-to-text">
-                            {item.contactDetails == null || item.contactDetails == "" ? AppConstants.noInformationProvided : 
-                            item.contactDetails}
-                        </span>
-                    <InputWithHead heading={AppConstants.photos}/>
-                    {item.organisationPhotos == null ||  item.organisationPhotos == undefined ? 
-                            AppConstants.noPhotosAvailable :
-                    <div className="org-photos">
-                        {(item.organisationLogoUrl!= null && item.organisationLogoUrl!= undefined) ?(
-                        <div>
-                            <div>
-                                <img src={item.organisationLogoUrl!= null && item.organisationLogoUrl!= undefined &&
-                                             item.organisationLogoUrl} alt=""height= {125} width={125}
-                                    style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
-                                        onError={ev => {ev.target.src = AppImages.circleImage;}}
-                                />
-                            </div>
-                            <div className="photo-type">{AppConstants.logo}</div>
-                        </div>
-                        ) : null 
-                        }
-                        {((item.organisationPhotos!=null && item.organisationPhotos) || [] )
-                        .map((ph, phIndex) => (
-                            <div key={ph.organisationPhotoId}>
-                                <div>
-                                    <img src={ph.photoUrl} alt=""height= {125} width={125}
-                                        style={{ borderRadius:0, marginLeft: 0 }} name={'image'}
-                                            onError={ev => {ev.target.src = AppImages.circleImage;}}
-                                    />
-                                </div>
-                                <div className="photo-type">{ph.photoType}</div>
-                            </div>
-                        ))}
-                    </div>}
-                </div> 
-            </div>
-        )
-    }
-
-    registeredUserView = () => {
-        let userRegDetail = this.props.endUserRegistrationState.invUserRegDetails;
-        let item = (userRegDetail!= null && userRegDetail.resgistererDetails!= null) ? 
-                        userRegDetail.resgistererDetails : {};
-        
-        return (
-            <div className="formView content-view pt-5">
-                <span className="form-heading">
-                    {AppConstants.registeringPerson}
-                </span>
-               <InputWithHead heading={AppConstants.teamName} />
-               <div className="applicable-to-text">
-                    {item.teamName == null || item.teamName == "" ? AppConstants.noInformationProvided : 
-                    item.teamName}
-                </div>
-
-                <InputWithHead heading={AppConstants.personRegisteringRole}/>
-                <div className="applicable-to-text">
-                    {item.personRole == null || item.personRole == "" ? AppConstants.noInformationProvided : 
-                    item.personRole}
-                </div>
-
-                <InputWithHead heading={AppConstants.firstName}/>
-                <div className="applicable-to-text">
-                    {item.firstName == null || item.firstName == "" ? AppConstants.noInformationProvided : 
-                    item.firstName}
-                </div>
-
-                <InputWithHead heading={AppConstants.middleName}/>
-                <div className="applicable-to-text">
-                    {item.middleName == null || item.middleName == "" ? AppConstants.noInformationProvided : 
-                    item.middleName}
-                </div>
-                
-                <InputWithHead heading={AppConstants.lastName}/>
-                <div className="applicable-to-text">
-                    {item.lastName == null || item.lastName == "" ? AppConstants.noInformationProvided : 
-                    item.lastName}
-                </div>
-               
-                <InputWithHead heading={AppConstants.dob} />
-                <div className="applicable-to-text">
-                    {item.dateOfBirth == null || item.dateOfBirth == "" ? AppConstants.noInformationProvided : 
-                    item.dateOfBirth}
-                </div>
-
-                <InputWithHead heading={AppConstants.contactMobile} /> 
-                <div className="applicable-to-text">
-                    {item.mobileNumber == null || item.mobileNumber == "" ? AppConstants.noInformationProvided : 
-                    item.mobileNumber}
-                </div>
-
-                <InputWithHead heading={AppConstants.contactEmail} /> 
-                <div className="applicable-to-text">
-                    {item.email == null || item.email == "" ? AppConstants.noInformationProvided : 
-                    item.email}
-                </div>
-
-                <InputWithHead heading={AppConstants.addressOne} /> 
-                <div className="applicable-to-text">
-                    {item.street1 == null || item.street1 == "" ? AppConstants.noInformationProvided : 
-                    item.street1}
-                </div>
-               
-                <InputWithHead heading={AppConstants.addressTwo} /> 
-                <div className="applicable-to-text">
-                    {item.street2 == null || item.street2 == "" ? AppConstants.noInformationProvided : 
-                    item.street2}
-                </div>
-
-                <InputWithHead heading={AppConstants.suburb} /> 
-                <div className="applicable-to-text">
-                    {item.suburb == null || item.suburb == "" ? AppConstants.noInformationProvided : 
-                    item.suburb}
-                </div>
-
-                <InputWithHead heading={AppConstants.state}/>
-                <div className="applicable-to-text">
-                    {item.state == null || item.state == "" ? AppConstants.noInformationProvided : 
-                    item.state}
-                </div>
-
-                <InputWithHead heading={AppConstants.postcode}/>
-                <div className="applicable-to-text">
-                    {item.postalCode == null || item.postalCode == "" ? AppConstants.noInformationProvided : 
-                    item.postalCode}
-                </div>
-            </div>
-        )
-    }
-
-    invitedUserView = () => {
-        let userRegDetail = this.props.endUserRegistrationState.invUserRegDetails;
-        let item = (userRegDetail!= null) ?  userRegDetail : {};
-        return (
-            <div className="formView content-view pt-5">
-                <span className="form-heading">
-                    {AppConstants.invitedTeamMember}
-                </span>
-                <InputWithHead heading={AppConstants.membershipTypeName} />
-                <div className="applicable-to-text">
-                    {item.membershipProductName == null || item.membershipProductName == "" ? AppConstants.noInformationProvided : 
-                    item.membershipProductName}
-                </div>
-                {/* <InputWithHead heading={AppConstants.firstName}/>
-                <div className="applicable-to-text">
-                    {item.firstName == null || item.firstName == "" ? AppConstants.noInformationProvided : 
-                    item.firstName}
-                </div> */}
-                <InputWithHead heading={AppConstants.firstName}/>
-                <div className="applicable-to-text">
-                    {item.firstName == null || item.firstName == "" ? AppConstants.noInformationProvided : 
-                    item.firstName}
-                </div>
-                
-                <InputWithHead heading={AppConstants.lastName}/>
-                <div className="applicable-to-text">
-                    {item.lastName == null || item.lastName == "" ? AppConstants.noInformationProvided : 
-                    item.lastName}
-                </div>
-               
-                <InputWithHead heading={AppConstants.contactMobile} /> 
-                <div className="applicable-to-text">
-                    {item.mobileNumber == null || item.mobileNumber == "" ? AppConstants.noInformationProvided : 
-                    item.mobileNumber}
-                </div>
-
-                <InputWithHead heading={AppConstants.contactEmail} /> 
-                <div className="applicable-to-text">
-                    {item.email == null || item.email == "" ? AppConstants.noInformationProvided : 
-                    item.email}
-                </div>
-            </div>
-        )
-    }
-
-    parentGuardianView = (getFieldDecorator) => {
-        const { stateList } = this.props.commonReducerState;
-        let registrationState = this.props.endUserRegistrationState;
-        let parent = registrationState.invUserInfo != null ? registrationState.invUserInfo : {};
-        return (
-            <div className="formView content-view pt-5" >
-                <span className="form-heading">
-                    {AppConstants.parents_guardians}
-                </span>
-                
-                <Form.Item>
-                    {getFieldDecorator(`parentFirstName`, {
-                        rules: [{ required: true, message: ValidationConstants.nameField[0] }],
-                    })(
-                    <InputWithHead 
-                    required={"required-field pt-0 pb-0"}
-                    heading={AppConstants.firstName} 
-                    placeholder={AppConstants.firstName} 
-                    onChange={(e) => this.onChangeSetParentValue(e.target.value, "firstName")} 
-                    setFieldsValue={parent.firstName}/>
-                    )}
-                </Form.Item>
-
-                <Form.Item>
-                    {getFieldDecorator(`parentLastName`, {
-                        rules: [{ required: true, message: ValidationConstants.nameField[1] }],
-                    })(
-                    <InputWithHead 
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.lastName} 
-                        placeholder={AppConstants.lastName} 
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "lastName")} 
-                        setFieldsValue={parent.lastName}/>
-                        )}
-                </Form.Item>
-                <Form.Item>
-                    {getFieldDecorator(`parentContactField`, {
-                        rules: [{ required: true, message: ValidationConstants.contactField }],
-                    })(
-                    <InputWithHead 
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.mobile} 
-                        placeholder={AppConstants.mobile} 
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber" )} 
-                        setFieldsValue={parent.mobileNumber}
-                    />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {getFieldDecorator(`parentEmail`, {
-                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                    })(
-                    <InputWithHead 
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.email} 
-                        placeholder={AppConstants.email} 
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "email")} 
-                        setFieldsValue={parent.email}
-                    />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {getFieldDecorator(`parentReEnterEmail`, {
-                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                    })(
-                    <InputWithHead 
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.reenterEmail}
-                        placeholder={AppConstants.reenterEmail} 
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "reEnterEmail")} 
-                        setFieldsValue={parent.reEnterEmail}/>
-                        )}
-                </Form.Item>
-                           
-                <Form.Item>
-                    {getFieldDecorator(`parentStreet1`, {
-                        rules: [{ required: true, message: ValidationConstants.addressField[0] }],
-                    })(
-                    <InputWithHead
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.addressOne}
-                        placeholder={AppConstants.addressOne}
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "street1")} 
-                        setFieldsValue={parent.street1}
-                    />
-                    )}
-                </Form.Item>
-                <InputWithHead
-                    heading={AppConstants.addressTwo}
-                    placeholder={AppConstants.addressTwo}
-                    onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2")} 
-                    value={parent.street2}
-                />
-
-                <Form.Item>
-                    {getFieldDecorator(`parentSuburb`, {
-                        rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
-                    })(
-                    <InputWithHead
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.suburb}
-                        placeholder={AppConstants.suburb}
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "suburb")} 
-                        setFieldsValue={parent.suburb}
-                    />
-                    )}
-                </Form.Item> 
-                            
-                <InputWithHead heading={AppConstants.state}  required={"required-field"}/>
-                <Form.Item>
-                    {getFieldDecorator(`parentStateRefId`, {
-                        rules: [{ required: true, message: ValidationConstants.stateField[0] }],
-                    })(
-                    <Select
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetParentValue(e, "stateRefId")}
-                        setFieldsValue={parent.stateRefId}>
-                        {stateList.length > 0 && stateList.map((item) => (
-                            < Option key={item.id} value={item.id}> {item.name}</Option>
-                        ))
-                        }
-                    </Select>
-                    )}
-                </Form.Item>
-
-                <Form.Item>
-                    {getFieldDecorator(`parentPostalCode`, {
-                        rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
-                    })(
-                    <InputWithHead
-                        required={"required-field pt-0 pb-0"}
-                        heading={AppConstants.postcode}
-                        placeholder={AppConstants.postcode}
-                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "postalCode")} 
-                        setFieldsValue={parent.postalCode}
-                        maxLength={4}
-                    />
-                )}
-                </Form.Item>
-            </div>
-        )
-    }
-
-    otherParticipantReqInfo = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let item = registrationState.invUserRegDetails != null ? registrationState.invUserRegDetails : {};
-        const { countryList, nationalityList} = this.props.commonReducerState;
-        let regSetting = registrationState.registrationSetting;
-        return(
-            <div className="formView content-view pt-5" >
-                <span className="form-heading">
-                    {AppConstants.OtherParticipantReqd}
-                </span>
-                {regSetting.country === 1 && (
-                <div>
-                    <InputWithHead heading={AppConstants.childCountry} />
-                    <Select
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetRegSettingValue(e, "countryRefId" )}
-                        value={item.countryRefId}>
-                        {countryList.length > 0 && countryList.map((country, index) => (
-                            < Option key={country.id} value={country.id}> {country.description}</Option>
-                        ))
-                        }
-                    </Select>
-                </div>
-                 )} 
-
-                {regSetting.nationality === 1 && (
-                    <div>
-                        <InputWithHead heading={AppConstants.childNationality} />
-                        <Select
-                            style={{ width: "100%" }}
-                            placeholder={AppConstants.select}
-                            onChange={(e) =>  this.onChangeSetRegSettingValue(e, "nationalityRefId")}
-                            value={item.nationalityRefId}>
-                            {nationalityList.length > 0 && nationalityList.map((nation, index) => (
-                                < Option key={nation.id} value={nation.id}> {nation.description}</Option>
-                            ))
-                            }
-                        </Select>
-                    </div>
-                )}
-                {regSetting.language === 1 &&(
-                    <InputWithHead heading={AppConstants.childLangSpoken} placeholder={AppConstants.childLangSpoken} 
-                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "languages")}
-                    value={item.languages}/>
-                )}
-            </div>
-        )
-    }
-
-    additionalPersonalInfoView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let regSetting = registrationState.registrationSetting;
-        let item = registrationState.invUserRegDetails != null ? registrationState.invUserRegDetails : {};
-        return(
-            <div className="formView content-view pt-5" >
-                 <span className="form-heading">
-                    {AppConstants.additionalPersonalInfoReqd}
-                </span>
-                {regSetting.last_captain === 1 && (
-                    <div>
-                        <span className="applicable-to-heading">
-                            {" "}
-                            {AppConstants.haveYouEverPlayed}{" "}
-                        </span>
-                        <Radio.Group
-                            className="reg-competition-radio"
-                            onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "playedBefore" )}
-                            value={item.playedBefore}>
-                            <Radio value={1}>{AppConstants.yes}</Radio>
-                            {item.playedBefore == true && (
-                                <div className=" pl-5 pb-5">
-                                    <InputWithHead heading={AppConstants.year} placeholder={AppConstants.year}
-                                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "playedYear" )} 
-                                    value={item.playedYear} 
-                                    maxLength={4}/>
-
-                                    <InputWithHead heading={AppConstants.clubOther} placeholder={AppConstants.clubOther} 
-                                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "playedClub" )} 
-                                    value={item.playedClub}/>
-
-                                    <InputWithHead heading={AppConstants.grade} placeholder={AppConstants.grade} 
-                                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "playedGrade" )} 
-                                    value={item.playedGrade}/>
-
-                                     {regSetting.last_captain === 1 && (
-                                        <div>
-                                            <span className="applicable-to-heading">
-                                                {AppConstants.lastCaptainName}
-                                            </span>
-                                            <InputWithHead heading={AppConstants.fullName} placeholder={AppConstants.lastCaptainName}
-                                                onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "lastCaptainName" )} 
-                                                value={item.lastCaptainName}/>
-                                        </div>
-                                      )}
-                                </div>
-                            )}
-                            <Radio value={0}>{AppConstants.no}</Radio>
-                        </Radio.Group>
-                    </div>
-                )}
-               
-            </div>
-        )
-    }
+    } 
     
-    additionalInfoView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let regSetting = registrationState.registrationSetting;
-        let item = registrationState.invUserRegDetails != null ? registrationState.invUserRegDetails : {};
-        const {favouriteTeamsList, firebirdPlayerList, heardByList, disabilityList} = this.props.commonReducerState;
-        return (
-            <div className="formView content-view pt-5">
-                 <span className="form-heading"> {AppConstants.additionalInfoReqd} </span>   
-                 <InputWithHead heading={AppConstants.existingMedConditions}/>
-                <TextArea
-                    placeholder={AppConstants.existingMedConditions}
-                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "existingMedicalCondition" )} 
-                    value={item.existingMedicalCondition}
-                    allowClear
-                />
-                <InputWithHead heading={AppConstants.redularMedicalConditions}  />
-                <TextArea
-                    placeholder={AppConstants.redularMedicalConditions}
-                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "regularMedication" )} 
-                    value={item.regularMedication}
-                    allowClear/>
-                <InputWithHead heading={AppConstants.hearAbouttheCompition} />
-                <Radio.Group
-                    className="reg-competition-radio"
-                    onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "heardByRefId" )} 
-                    value={item.heardByRefId}>
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                </Radio.Group>
-                {item.heardByRefId == 4 && (
-                    <div className="pl-5 pr-5">
-                        <InputWithHead placeholder={AppConstants.other} 
-                         onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "heardByOther" )}
-                         value={item.heardByOther}/>
+    componentDidMount(){
+        try{
+            let existingUserRefId = getExistingUserRefId();
+            let payload = {
+                userRegId : getUserRegId(),
+                //userRegId : "1eaac181-71b2-416a-97dd-fe9e3777be9e",
+                userId: existingUserRefId == 1 ? getUserId() : 0
+            }
+            this.props.getTeamRegistrationInviteAction(payload);
+            this.setState({inviteOnLoad: true});
+        }catch(ex){
+            console.log("Error in componentDidMount::"+ex);
+        }
+    }
+
+    componentDidUpdate(){
+        try{
+            let teamRegistrationState = this.props.teamRegistrationState;
+            if(!teamRegistrationState.inviteOnLoad && this.state.inviteOnLoad){
+                this.setYourDetailsValue();
+                this.setState({inviteOnLoad: false});
+            }
+        }catch(ex){
+            console.log("Error in componentDidUpdate::"+ex);
+        }
+    }
+
+    setYourDetailsValue = () => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let resgistererDetails = userRegDetails.resgistererDetails;
+            this.props.form.setFieldsValue({
+                [`yourDetailsgenderRefId`]: resgistererDetails.genderRefId,
+                [`yourDetailsFirstName`]: resgistererDetails.firstName,
+                [`yourDetailsMiddleName`]: resgistererDetails.middleName,
+                [`yourDetailsLastName`]: resgistererDetails.lastName,
+                [`yourDetailsdateOfBirth`]: resgistererDetails.dateOfBirth && moment(resgistererDetails.dateOfBirth, "YYYY-MM-DD"),
+                [`yourDetailsMobileNumber`]: resgistererDetails.mobileNumber,
+                [`yourDetailsEmail`]: resgistererDetails.email
+            });
+        }catch(ex){
+            console.log("Error in setYourDetailsValue::"+ex);
+        }
+    }
+
+    onChangeStep = (current) => {
+        try{
+
+        }catch(ex){
+            console.log("Error in onChangeStep::"+ex);
+        }
+    }
+
+    getOrganisationPhotos = (organisationPhotos) => {
+        try{
+            let organisationPhotosTemp = [];
+            if(organisationPhotos){
+                for(let i=0;i<organisationPhotos.length;i++){
+                    if((i % 2) == 0){
+                        let obj = {
+                            photoUrl1: organisationPhotos[i].photoUrl,
+                            photoType1: organisationPhotos[i].photoType,
+                            photoUrl2: organisationPhotos[i+1].photoUrl,
+                            photoType2: organisationPhotos[i+1].photoType,
+                        }
+                        organisationPhotosTemp.push(obj);
+                    }
+                }
+                return organisationPhotosTemp;
+            }
+        }catch(ex){
+            console.log("Error in getOrganisationPhotos::"+ex);
+        }
+    }
+
+    getAddress = (addressObject) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            const state = stateList.length > 0 && addressObject.stateRefId > 0
+                ? stateList.find((state) => state.id === addressObject.stateRefId).name
+                : null;
+            const country = countryList.length > 0 && addressObject.countryRefId > 0
+            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            : null;
+
+            let defaultAddress = '';
+            if(addressObject.street1 && addressObject.suburb && state){
+                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                (state ? state + ', ': '') +
+                (country ? country + '.': '');
+            }
+            return defaultAddress;
+        }catch(ex){
+            console.log("Error in getPartcipantParentAddress"+ex);
+        }
+    }
+
+    handlePlacesAutocomplete = (addressData,key) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            const address = addressData;
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+            if(address){
+                if(key == "yourDetails"){
+                    this.onChangeSetYourDetailsValue(address.addressOne, "street1");
+                    this.onChangeSetYourDetailsValue(address.suburb, "suburb");
+                    this.onChangeSetYourDetailsValue(address.postcode, "postalCode");
+                    this.onChangeSetYourDetailsValue(countryRefId, "countryRefId");
+                    this.onChangeSetYourDetailsValue(stateRefId, "stateRefId");
+                }
+            }
+        }catch(ex){
+            console.log("Error in handlePlacesAutoComplete::"+ex);
+        }
+    }
+
+    onChangeSetYourDetailsValue = (value,key) => {
+        try{
+            
+        }catch(ex){
+            console.log("Error in onChangeSetYourDetailsValue::"+ex);
+        }
+    }
+
+    headerView = () => {
+        try{
+            return (
+                <div className="header-view">
+                    <Header
+                        className="form-header-view"
+                        style={{
+                            backgroundColor: "transparent",
+                            display: "flex",
+                            alignItems: "flex-start"
+                        }}>
+                        <Breadcrumb
+                            style={{ alignItems: "center", alignSelf: "center" }}
+                            separator=">">
+                            <Breadcrumb.Item className="breadcrumb-add">
+                                {AppConstants.netballRegistration}
+                            </Breadcrumb.Item>
+                        </Breadcrumb>
+                    </Header>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in headerView::"+ex);
+        }
+    }
+
+    competitionDetailView = () => {
+        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        let competitionDetails = iniviteMemberInfo?.competitionDetails;
+        let userRegDetails = iniviteMemberInfo?.userRegDetails;
+        let contactDetails = competitionDetails.replyName || competitionDetails.replyPhone || competitionDetails.replyEmail ?
+            competitionDetails.replyName + ' ' + competitionDetails.replyPhone + ' ' + competitionDetails.replyEmail : ''; 
+        let organisationPhotos = this.getOrganisationPhotos(competitionDetails.organisationPhotos);
+        try{
+            return(
+                <div className="registration-form-view">
+                    <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
+                        <div className="col-sm-1.5">
+                            <img style={{height: "60px",borderRadius: "50%"}} src={competitionDetails.compLogoUrl}/> 
+                        </div>
+                        <div className="col">
+                            <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionDetails.organisationName}</div>
+                            <div style={{textAlign: "start",fontWeight: "600"}}>{competitionDetails.stateOrgName} - {competitionDetails.competitionName}</div>
+                            <div style={{display: "flex",marginTop: "15px",alignItems: "center"}}>
+                                <img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> 
+                                <div style={{fontWeight: "600"}}>{competitionDetails.registrationOpenDate} - {competitionDetails.registrationCloseDate}</div>
+                                <img style={{height: "15px",width: "15px",marginRight: "5px",marginLeft: "40px"}} src={AppImages.calendar}/> 
+                                <div style={{fontWeight: "600"}}>{userRegDetails.resgistererDetails.teamName}</div>
+                            </div>
+                        </div>
                     </div>
-                )}
-
-                <InputWithHead heading={AppConstants.favouriteTeam}/>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                        onChange={(e) => this.onChangeSetRegSettingValue(e, "favouriteTeamRefId" )}
-                        value={item.favouriteTeamRefId}>  
-                        {(favouriteTeamsList || []).map((fav, index) => (
-                            <Option key={fav.id} value={fav.id}>{fav.description}</Option>
-                        ))}
-                    </Select>
-
-                {item.favouriteTeamRefId === 6?(
-                    <div>
-                        <InputWithHead heading={AppConstants.who_fav_bird} />
-                        <Select
-                            style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                            onChange={(e) => this.onChangeSetRegSettingValue(e, "favouriteFireBird" )}
-                            value={item.favouriteFireBird}>  
-                            {(firebirdPlayerList || []).map((fire, index) => (
-                                <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                            ))}
-                        </Select>
-                 </div>
-                ) : null}
-
-                {regSetting.photo_consent === 1 && (
-                    <Checkbox
-                        className="single-checkbox pt-3"
-                        onChange={(e) => this.onChangeSetRegSettingValue(e.target.checked, "isConsentPhotosGiven" )}
-                        checked={item.isConsentPhotosGiven}>{AppConstants.consentForPhotos}
-                    </Checkbox>
-                )}
-
-                {regSetting.disability === 1 && (
-                    <div>
-                        <InputWithHead heading={AppConstants.haveDisability} />
-                        <Radio.Group
-                            className="reg-competition-radio"
-                            onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "isDisability" )} 
-                            value={item.isDisability}>
-                            <Radio value={1}>{AppConstants.yes}</Radio>
-                                {item.isDisability == 1 ? 
-                                <div style={{marginLeft: '25px'}}>
-                                    <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
-                                        onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "disabilityCareNumber" )}
-                                        value={item.disabilityCareNumber}/>
-                                    <InputWithHead heading={AppConstants.typeOfDisability} />
-                                    <Radio.Group
-                                        className="reg-competition-radio"
-                                        onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "disabilityTypeRefId" )} 
-                                        value={item.disabilityTypeRefId}>
-                                            {(disabilityList || []).map((dis, disIndex) => (
-                                            <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
-                                        ))}
-                                    </Radio.Group>
+                    {this.state.showMoreInformation ? 
+                        <div className="row" style={{marginTop: "20px"}}>
+                            <div className="col-sm-12 col-md-4">
+                                <InputWithHead heading={AppConstants.divisions}/>
+                                <div 
+                                className="inter-medium-font" 
+                                style={{fontSize: "13px"}}>{competitionDetails.divisionName ? 
+                                    competitionDetails.divisionName : 
+                                    AppConstants.noInformationProvided}
+                                </div>
+                                <InputWithHead heading={AppConstants.organisationName}/>
+                                <div 
+                                className="inter-medium-font" 
+                                style={{fontSize: "13px"}}>{competitionDetails.organisationName ? 
+                                    competitionDetails.organisationName : 
+                                    AppConstants.noInformationProvided}
+                                </div>
+                                <InputWithHead heading={AppConstants.training}/>
+                                <div 
+                                className="inter-medium-font" 
+                                style={{fontSize: "13px"}}>{competitionDetails.training ? 
+                                    competitionDetails.training : 
+                                    AppConstants.noInformationProvided}
+                                </div>
+                                <InputWithHead heading={AppConstants.specialNotes}/>
+                                <div 
+                                className="inter-medium-font" 
+                                style={{fontSize: "13px"}}>{competitionDetails.specialNote ? 
+                                    competitionDetails.specialNote : 
+                                    AppConstants.noInformationProvided}
+                                </div>                                    
+                                <InputWithHead heading={AppConstants.venue}/>
+                                <div 
+                                className="inter-medium-font" 
+                                style={{fontSize: "13px"}}>
+                                    {competitionDetails.venues == null || competitionDetails.venues.length == 0 ? AppConstants.noInformationProvided :
+                                        <span>
+                                            {(competitionDetails.venues || []).map((v, vIndex) =>(
+                                                <span>
+                                                    <span>{v.venueName}</span>
+                                                    <span>{competitionDetails.venues.length != (vIndex + 1) ? ', ': ''}</span>
+                                                </span>
+                                            ))}
+                                        </span>
+                                    }
                                 </div> 
-                                : null
-                                }
-                            <Radio value={0}>{AppConstants.no}</Radio>
-                        </Radio.Group>
+                                <InputWithHead heading={AppConstants.contactDetails}/>
+                                <div  className="inter-medium-font" style={{fontSize: "13px"}}>{contactDetails ? contactDetails : 
+                                    AppConstants.noInformationProvided}
+                                </div> 
+                                <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
+                                onClick={() => {this.setState({showMoreInformation: false})}}>{AppConstants.hide}</div>
+                            </div>
+                            <div className="col-sm-12 col-md-8">
+                                <Carousel autoplay
+                                    style={{marginTop: "16px",
+                                    height: "160px",
+                                    borderRadius: "10px",
+                                    display: "flex"}}>
+                                    {(organisationPhotos || []).map((photo,photoIndex) => (
+                                        <div>
+                                            <div style={{display: "flex",justifyContent: "flex-end"}}>
+                                                <div>
+                                                    <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo.photoType1}</div>
+                                                    <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
+                                                </div>
+                                                <div style={{marginLeft: "25px"}}>
+                                                    <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo?.photoType2}</div>
+                                                    <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Carousel>
+                            </div>
+                        </div> 
+                    : 
+                        <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
+                        onClick={() => {this.setState({showMoreInformation: true})}}>{AppConstants.showMoreInformation}</div>
+                    }
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in competitionDetailView::"+ex);
+        }
+    }
 
+    yourDetailsAddressView = (getFieldDecorator) => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let resgistererDetails = userRegDetails.resgistererDetails;
+            const { stateList,countryList } = this.props.commonReducerState;
+            return(
+                <div>
+                    {/* {teamRegistrationObj.selectAddressFlag && (
+                        <div>
+                            <div className="form-heading" 
+                            style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
+                            <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsSelectAddress`, {
+                                    rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
+                                })(
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.select}
+                                    onChange={(e) => this.onChangeSetTeamValue(e, "addOrRemoveAddressBySelect")}
+                                    setFieldsValue={this.getAddress(user)}>
+                                    {(this.getSelectAddressDropdown(user) || []).map((item) => (
+                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
+                                    ))}
+                                </Select>
+                                )}
+                            </Form.Item> 
+                            <div className="orange-action-txt" style={{marginTop: "10px"}}
+                            onClick={() => {
+                                this.onChangeSetParticipantValue(true,"addNewAddressFlag")
+                                this.onChangeSetParticipantValue(false,"selectAddressFlag");
+                                this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
+                            }}
+                            >+ {AppConstants.addNewAddress}</div>	
+                        </div>
+                    )}  */}
+                        
+                    {this.state.searchAddressFlag && (
+                        <div>
+                            {/* {!newUser && (
+                                <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
+                                onClick={() => {
+                                    this.onChangeSetParticipantValue(true,"selectAddressFlag");
+                                    this.onChangeSetParticipantValue(false,"addNewAddressFlag");
+                                }}
+                                >{AppConstants.returnToSelectAddress}</div>
+                            )} */}
+                            <div className="form-heading" 
+                            style={{paddingBottom: "0px",marginBottom: "-20px",marginTop: "20px"}}>{AppConstants.findAddress}</div>
+                            <div>
+                                <Form.Item name="addressSearch">
+                                    <PlacesAutocomplete
+                                        defaultValue={this.getAddress(resgistererDetails)}
+                                        heading={AppConstants.addressSearch}
+                                        required
+                                        error={this.state.searchAddressError}
+                                        onBlur={() => { this.setState({searchAddressError: ''})}}
+                                        onSetData={(e)=>this.handlePlacesAutocomplete(e,"yourDetails")}
+                                    />
+                                </Form.Item> 
+                                <div className="orange-action-txt" style={{marginTop: "10px"}}
+                                onClick={() => {
+                                    this.setState({manualEnterAddressFlag: true,searchAddressFlag: false});
+                                }}
+                                >{AppConstants.enterAddressManually}</div>	 
+                            </div> 
+                        </div>
+                    )}
+
+                    {this.state.manualEnterAddressFlag && (
+                        <div>
+                            <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
+                            onClick={() => {
+                                this.setState({manualEnterAddressFlag: false,searchAddressFlag: true});
+                            }}
+                            >{AppConstants.returnToAddressSearch}</div>
+                            <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsStreet1`, {
+                                    rules: [{ required: true, message: ValidationConstants.addressField}],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        heading={AppConstants.addressOne}
+                                        placeholder={AppConstants.addressOne}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "street1")} 
+                                        setFieldsValue={resgistererDetails.street1}
+                                    />
+                                )}
+                            </Form.Item>
+                            <InputWithHead
+                                heading={AppConstants.addressTwo}
+                                placeholder={AppConstants.addressTwo}
+                                onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "street2")} 
+                                value={resgistererDetails.street2}
+                            />
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsSuburb`, {
+                                    rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        heading={AppConstants.suburb}
+                                        placeholder={AppConstants.suburb}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "suburb")} 
+                                        setFieldsValue={resgistererDetails.suburb}
+                                    />
+                                )}
+                            </Form.Item>
+                            <div className="row">
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsStateRefId`, {
+                                            rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                        })(
+                                            <Select
+                                                style={{ width: "100%" }}
+                                                placeholder={AppConstants.state}
+                                                onChange={(e) => this.onChangeSetYourDetailsValue(e, "stateRefId")}
+                                                setFieldsValue={resgistererDetails.stateRefId}>
+                                                {stateList.length > 0 && stateList.map((item) => (
+                                                    < Option key={item.id} value={item.id}> {item.name}</Option>
+                                                ))}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead heading={AppConstants.postCode}   required={"required-field"}/>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsPostalCode`, {
+                                            rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                        })(
+                                            <InputWithHead
+                                                required={"required-field pt-0 pb-0"}
+                                                placeholder={AppConstants.postcode}
+                                                maxLength={4}
+                                                onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "postalCode")} 
+                                                setFieldsValue={resgistererDetails.postalCode}
+                                            />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                            <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsCountryRefId`, {
+                                    rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                                })(
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.country}
+                                    onChange={(e) => this.onChangeSetYourDetailsValue(e, "countryRefId")}
+                                    setFieldsValue={resgistererDetails.countryRefId}>
+                                    {countryList.length > 0 && countryList.map((item) => (
+                                        < Option key={item.id} value={item.id}> {item.description}</Option>
+                                    ))}
+                                </Select>
+                                )}
+                            </Form.Item>
+                        </div>
+                    )} 
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in yourDetailsAddressView::"+ex);
+        }
+    }
+
+    yourDetailsView = (getFieldDecorator) => {
+        try{
+            const { genderList } = this.props.commonReducerState;
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let resgistererDetails = userRegDetails.resgistererDetails;
+            return(
+                <div className="registration-form-view">
+                    <div className="form-heading" 
+                    style={{paddingBottom: "0px"}}>{AppConstants.yourDetails}</div>
+                    <InputWithHead heading={AppConstants.personRegisteringRole}/>
+                    <div 
+                    className="inter-medium-font" 
+                    style={{fontSize: "13px"}}>
+                        {resgistererDetails.personRole ? 
+                        resgistererDetails.personRole : 
+                        AppConstants.noInformationProvided}
                     </div>
-                )}
-            </div>
-        )
+                    <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
+                    <Form.Item >
+                        {getFieldDecorator(`yourDetailsgenderRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.genderField }],
+                        })(
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={ (e) => this.onChangeSetYourDetailsValue(e.target.value, "genderRefId")}
+                                setFieldsValue={resgistererDetails.genderRefId}
+                                >
+                                {(genderList || []).map((gender, genderIndex) => (
+                                    <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
+                                ))}
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.firstName} required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsFirstName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        placeholder={AppConstants.firstName}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "firstName")} 
+                                        setFieldsValue={resgistererDetails.firstName}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.middleName}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsMiddleName`, {
+                                    rules: [{ required: false }],
+                                })(
+                                    <InputWithHead
+                                        placeholder={AppConstants.middleName}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "middleName")} 
+                                        setFieldsValue={resgistererDetails.middleName}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.lastName} required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsLastName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        placeholder={AppConstants.lastName}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "lastName")} 
+                                        setFieldsValue={resgistererDetails.lastName}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.dob}   required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsdateOfBirth`, {
+                                    rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+                                })(
+                                    <DatePicker
+                                        size="large"
+                                        placeholder={"dd-mm-yyyy"}
+                                        style={{ width: "100%" }}
+                                        onChange={e => this.onChangeSetYourDetailsValue(e, "dateOfBirth") }
+                                        format={"DD-MM-YYYY"}
+                                        showTime={false}
+                                        name={'dateOfBirth'}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.phone} required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsMobileNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.contactField }],
+                                })(
+                                    <InputWithHead
+                                        placeholder={AppConstants.phone}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "mobileNumber")} 
+                                        setFieldsValue={resgistererDetails.mobileNumber}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <InputWithHead heading={AppConstants.email} required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`yourDetailsEmail`, {
+                                    rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                })(
+                                    <InputWithHead
+                                        placeholder={AppConstants.email}
+                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "email")} 
+                                        setFieldsValue={resgistererDetails.email}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                    <div>{this.yourDetailsAddressView(getFieldDecorator)}</div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in yourDetailsView::"+ex);
+        }
+    }
+
+    yourDetailsStepView = (getFieldDecorator) => {
+        try{
+            return(
+                <div>
+                    <div>{this.competitionDetailView()}</div>
+                    <div>{this.yourDetailsView(getFieldDecorator)}</div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in yourDetailsStepView::"+ex);
+        }
+    }
+
+    userView = () => {
+        try{
+
+        }catch(ex){
+            console.log("Error in userView::"+ex);
+        }
+    }
+
+    additionalInfoView = () => {
+        try{
+
+        }catch(ex){
+            console.log("Error in additionalInfoView::"+ex);
+        }
+    }
+
+    additionalInformationsStepView = () => {
+        try{
+            return(
+                <div>
+                    <div>{this.competitionDetailView()}</div>
+                    <div>{this.userView()}</div>
+                    <div>{this.additionalInfoView()}</div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in additionalInformationsStepView::"+ex);
+        }
+    }
+
+    stepsContentView = (getFieldDecorator) => {
+        try{
+            return(
+                <div>
+                   {this.state.currentStep == 0 && 
+                        <div>{this.yourDetailsStepView(getFieldDecorator)}</div>
+                   } 
+                   {this.state.currentStep == 1 && 
+                        <div>{this.additionalInformationsStepView()}</div>
+                   }
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in stepsContentView::"+ex);
+        }
     }
 
     contentView = (getFieldDecorator) => {
-        let registrationState = this.props.endUserRegistrationState;
-        let regSetting = registrationState.registrationSetting;
-        let existingUserRefId = getExistingUserRefId();
-        let registeringYourselfRefId = getRegisteringYourselfRefId();
-        return (
-            <div>
-               <div style={{marginBottom: "20px"}}>
-                    {this.membershipProductView()}
+        try{
+            return(
+                <div style={{width: "70%",margin: "auto"}}>
+                    <Steps className="registration-steps" current={this.state.currentStep} onChange={this.onChangeStep}>
+                        <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.yourDetails}/>
+                        <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.additionalInformation}/>
+                    </Steps>
+                    {this.stepsContentView(getFieldDecorator)}
                 </div>
-                {registeringYourselfRefId == 2 && 
-                <div style={{marginBottom: "20px"}}>
-                    {this.parentGuardianView(getFieldDecorator)}
-                </div>}
-                <div style={{marginBottom: "20px"}}>
-                    {this.registeredUserView()}
-                </div>
-                <div style={{marginBottom: "20px"}}>
-                    {this.invitedUserView()}
-                </div>
-                <div>
-                    {(regSetting.country === 1 || regSetting.nationality === 1 || regSetting.language === 1) && (
-                        <div style={{marginBottom: "20px"}}>
-                            {this.otherParticipantReqInfo(getFieldDecorator)} 
-                        </div>
-                    )}
-                    {(regSetting.last_captain === 1) && ( 
-                        <div style={{marginBottom: "20px"}}>
-                            {this.additionalPersonalInfoView(getFieldDecorator)}
-                        </div>
-                    )}
-                    <div style={{marginBottom: "20px"}}>
-                        {this.additionalInfoView(getFieldDecorator)}
-                    </div>
-                </div>
-            </div>
-        )
+            )
+        }catch(ex){
+            console.log("Error in contentView::"+ex);
+        }
     }
 
-    footerView = (isSubmitting) => {
-        return (
-            <div className="fluid-width">
-                <div className="footer-view">
-                    <div className="row">
-                        <div className="col-sm">
-                            <div className="reg-add-save-button">
-                                {/* <Button className="save-draft-text" type="save-draft-text"
-                                    onClick={() => this.navigatePaymentScreen()}>
-                                    {AppConstants.pay}
-                                </Button> */}
-                            </div>
-                        </div>
-                        <div className="col-sm">
-                            <div className="comp-buttons-view">
-                                {/* <Button className="save-draft-text" type="save-draft-text"
-                                    onClick={() => this.setState({ buttonPressed: "save" })}>
-                                    {AppConstants.reviewOrder}
-                                </Button> */}
-                                <Button
-                                    className="open-reg-button"
-                                    htmlType="submit"
-                                    type="primary"
-                                    disabled={isSubmitting}
-                                    onClick={() => this.setState({ buttonPressed: "save" })}>
-                                    {AppConstants.reviewOrder}
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
+    footerView = () => {
+        try{
+            return(
+                <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
+                    <Button 
+                        htmlType="submit"
+                        type="primary"
+                        style={{float: "right",color: "white",textTransform: "uppercase"}}
+                        className="open-reg-button">{this.state.submitButtonText}
+                    </Button>
                 </div>
-            </div>
-        );
-    };
+            )
+        }catch(ex){
+            console.log("Error in footerView::"+ex);
+        }    
+    }
 
-    render() {
+    render(){
         const { getFieldDecorator } = this.props.form;
-        return (
+        return(
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
                     menuHeading={""}
@@ -878,43 +754,32 @@ class TeamRegistrationForm extends Component {
                 <Layout>
                     {this.headerView()}
                     <Form
-                        autocomplete="off"
+                        autoComplete="off"
                         scrollToFirstError={true}
-                        onSubmit={this.saveRegistrationForm}
+                        onSubmit={this.save}
                         noValidate="noValidate">
-                        <Content>
-                        <div>
-                            {this.contentView(getFieldDecorator)}
-                        </div>
-                         <Loader visible={this.props.endUserRegistrationState.onInvLoad || 
-                                    this.props.endUserRegistrationState.onLoad } />
-                        </Content>
+                        <Content>{this.contentView(getFieldDecorator)}</Content>
                         <Footer>{this.footerView()}</Footer>
                     </Form>
                 </Layout>
             </div>
-        );
+        )
     }
-
 }
 
-
-function mapDispatchToProps(dispatch)
-{
-    return bindActionCreators({
+function mapDispatchToProps(dispatch){
+    return bindActionCreators({	
+        getTeamRegistrationInviteAction,
+        genderReferenceAction,
         getCommonRefData,
-        nationalityReferenceAction, heardByReferenceAction,
-        disabilityReferenceAction, countryReferenceAction, firebirdPlayerReferenceAction,
-        favouriteTeamReferenceAction, registrationOtherInfoReferenceAction,
-        getInvitedTeamRegInfoAction, orgRegistrationRegSettingsEndUserRegAction,
-        updateTeamParentInfoAction,updateTeamRegSettingAction, updateTeamRegistrationInvite
+        countryReferenceAction
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        endUserRegistrationState: state.EndUserRegistrationState,
+        teamRegistrationState: state.TeamRegistrationState,
         commonReducerState: state.CommonReducerState
     }
 }

@@ -94,6 +94,14 @@ function teamRegistrationExpiryCheckAction(payload){
     return action;
 }
 
+function getTeamRegistrationInviteAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,
+        payload: payload
+    }
+    return action;
+}
+
 
 export{
     selectTeamAction,
@@ -106,5 +114,6 @@ export{
     getTeamInfoById,
     getExistingTeamInfoById,
     membershipProductTeamRegistrationAction,
-    teamRegistrationExpiryCheckAction
+    teamRegistrationExpiryCheckAction,
+    getTeamRegistrationInviteAction
 }

@@ -206,6 +206,13 @@ class AppTeamRegistrationForm extends Component{
                 this.setState({onExpiredRegistrationCheckLoad: false});
                 this.setState({showExpiredRegistrationView: true});
             }
+
+            if(teamRegistrationState.divisionsChanged){
+                this.props.form.setFieldsValue({
+                    [`competitionMembershipProductDivisionId`]: null
+                });
+                this.props.updateTeamRegistrationStateVarAction(false,"divisionsChanged"); 
+            }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
         }
@@ -701,7 +708,7 @@ class AppTeamRegistrationForm extends Component{
                                     borderRadius: "10px 10px 0px 0px",
                                     margin: "-20px -20px -0px -20px",
                                     borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                        <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.heroImageUrl}/>
+                                        <img style={{height: "149px",borderRadius: "10px 10px 0px 0px",overflow: "hidden"}} src={competition.heroImageUrl}/>
                                     </div>
                                     <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
                                     {this.state.organisationId == null && (
@@ -1616,12 +1623,7 @@ class AppTeamRegistrationForm extends Component{
                         )}
                     </div>
 
-                    {teamRegistrationObj.registeringYourself == 2 && (
-                        <InputWithHead heading={AppConstants.childPlayingOtherParticipantSports} />
-                    )}
-                    {teamRegistrationObj.registeringYourself == 1 && (
-                        <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
-                    )}
+                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
                     <Select
                         mode="multiple"
                         showArrow
@@ -1651,11 +1653,6 @@ class AppTeamRegistrationForm extends Component{
                             value={teamRegistrationObj.additionalInfo.heardByOther}/>
                         </div>
                     )}
-                    <Checkbox
-                        className="single-checkbox pt-3"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.checked, "isConsentPhotosGiven")}
-                        checked={teamRegistrationObj.additionalInfo.isConsentPhotosGiven}>{AppConstants.consentForPhotos}
-                    </Checkbox>
 
                     {teamRegistrationObj.regSetting.netball_experience == 1 && (
                         <div>
@@ -1725,7 +1722,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                     )}
 
-                    {(teamRegistrationObj.personRoleRefId == 3) && (
+                    {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
@@ -1751,7 +1748,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                     )}
                     
-                    {(teamRegistrationObj.personRoleRefId == 3) && (
+                    {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
                             <InputWithHead 
                             heading={AppConstants.workingWithChildrenCheckNumber}

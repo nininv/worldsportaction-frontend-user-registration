@@ -165,7 +165,10 @@ const initialState = {
     onExistingTeamInfoByIdLoad: false,
     expiredRegistrationFlag: false,
     expiredRegistration: null,
-    onExpiredRegistrationCheckLoad: false 
+    onExpiredRegistrationCheckLoad: false,
+    divisionsChanged: false,
+    iniviteMemberInfo: null,
+    inviteOnLoad: false 
 }
 
 function setTeamRegistrationObj(state){
@@ -215,7 +218,7 @@ function getUpdatedTeamMemberObj(state){
   try{
     let teamMemberTemp = deepCopyFunction(teamMemberObj);
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
-    let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1);
+    let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){
       let obj = {
         "competitionMembershipProductId": product.competitionMembershipProductId,
@@ -252,6 +255,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
         }
         state.teamRegistrationObj.divisions.push(div);
       }
+      state.divisionsChanged = true;
     }
   }catch(ex){
     console.log("Error in setDivisions::"+ex);
@@ -414,6 +418,18 @@ function teamRegistrationReducer(state = initialState, action){
               onExpiredRegistrationCheckLoad: false,
               expiredRegistration: expiredRegistrationTemp,
               status: action.status
+            };
+
+        case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
+            return {...state,inviteOnLoad: true}
+          
+        case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS:
+            let iniviteMemberInfoTemp = action.result;
+            return {
+              ...state,
+              status: action.status,
+              inviteOnLoad: false,
+              iniviteMemberInfo : iniviteMemberInfoTemp
             };
   
 

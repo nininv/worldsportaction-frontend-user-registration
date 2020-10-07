@@ -101,7 +101,7 @@ const AppConstants = {
   childCountry: "Which country were you born",
   childNationality: "What nationality are you",
   childLangSpoken: "Languages spoken at home",
-  haveDisability: "Do you qualify for NDIS (National Disability Insurance Scheme ) discount?",
+  haveDisability: "Do you qualify for NDIS (National Disability Insurance Scheme)?",
   disabilityCareNumber: "Disability care Number",
   typeOfDisability: "Type of Disability",
   addanotherQuestion: "Add Another question",
@@ -1091,7 +1091,10 @@ const AppConstants = {
  members: "Members",
  payingFor: "I am paying for",
  notPayingFor: "I am not paying for",
- ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from the team"
+ ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from the team",
+ addDetails: "Add Details",
+ showMoreInformation: "Show more Information",
+ hide: "Hide"
 };
 
 export default AppConstants;
