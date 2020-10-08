@@ -168,7 +168,8 @@ const initialState = {
     onExpiredRegistrationCheckLoad: false,
     divisionsChanged: false,
     iniviteMemberInfo: null,
-    inviteOnLoad: false 
+    inviteOnLoad: false,
+    inviteMemberRegSettings: null 
 }
 
 function setTeamRegistrationObj(state){
@@ -353,6 +354,7 @@ function teamRegistrationReducer(state = initialState, action){
             return {
               ...state,
               onLoad: false,
+              inviteMemberRegSettings: registrationSettings,
               status: action.status
             };
         

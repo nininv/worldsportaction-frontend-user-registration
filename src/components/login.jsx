@@ -24,11 +24,14 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loginButton: false
+            loginButton: false,
+            isUserRegistration: null
         }
     }
 
     componentDidMount() {
+        let isUserRegistration = this.props.location.state ? this.props.location.state.isUserRegistration : null;
+        this.setState({isUserRegistration: isUserRegistration});
         if(getUserId() == 0){
             localStorage.removeItem("userId");
             localStorage.removeItem("token");
@@ -47,7 +50,7 @@ class Login extends Component {
                 if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
                     history.push("/teamRegistrationForm");
                 }
-                else if(getIsUserRegistration() == 1){
+                else if(this.state.isUserRegistration == 1){
                     history.push('/appRegistrationForm');
                 }
                 else {
@@ -109,7 +112,7 @@ class Login extends Component {
                     <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
                 </NavLink>
 
-                {getIsUserRegistration() == 1 ?
+                {this.state.isUserRegistration == 1 ?
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div style={{display:'flex'}}>
