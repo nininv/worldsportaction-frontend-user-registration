@@ -1216,7 +1216,7 @@ class AppRegistrationFormNew extends Component{
                                 required={"required-field pt-0 pb-0"}
                                 heading={AppConstants.addressOne}
                                 placeholder={AppConstants.addressOne}
-                                onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "street1")} 
+                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "street1")} 
                                 setFieldsValue={registrationObj.street1}
                             />
                             )}
@@ -1224,7 +1224,7 @@ class AppRegistrationFormNew extends Component{
                         <InputWithHead
                             heading={AppConstants.addressTwo}
                             placeholder={AppConstants.addressTwo}
-                            onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "street2")} 
+                            onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "street2")} 
                             value={registrationObj.street2}
                         />
                         <Form.Item >
@@ -1235,7 +1235,7 @@ class AppRegistrationFormNew extends Component{
                                 required={"required-field pt-0 pb-0"}
                                 heading={AppConstants.suburb}
                                 placeholder={AppConstants.suburb}
-                                onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "suburb")} 
+                                onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "suburb")} 
                                 setFieldsValue={registrationObj.suburb}
                             />
                             )}
@@ -1269,7 +1269,7 @@ class AppRegistrationFormNew extends Component{
                                         required={"required-field pt-0 pb-0"}
                                         placeholder={AppConstants.postcode}
                                         maxLength={4}
-                                        onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "postalCode")} 
+                                        onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "postalCode")} 
                                         setFieldsValue={registrationObj.postalCode}
                                     />
                                     )}
@@ -1333,6 +1333,9 @@ class AppRegistrationFormNew extends Component{
                                     placeholder={AppConstants.participant_firstName}
                                     onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "firstName")} 
                                     setFieldsValue={registrationObj.firstName}
+                                    onBlur={(i) => this.props.form.setFieldsValue({
+                                        'participantFirstName': captializedString(i.target.value)
+                                    })}
                                 />
                             )}
                         </Form.Item>
@@ -1347,6 +1350,9 @@ class AppRegistrationFormNew extends Component{
                                 placeholder={AppConstants.participant_middleName}
                                 onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "middleName")} 
                                 setFieldsValue={registrationObj.middleName}
+                                onBlur={(i) => this.props.form.setFieldsValue({
+                                    'participantMiddleName': captializedString(i.target.value)
+                                })}
                             />
                             )}
                         </Form.Item>
@@ -1361,6 +1367,9 @@ class AppRegistrationFormNew extends Component{
                                 placeholder={AppConstants.participant_lastName}
                                 onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "lastName")} 
                                 setFieldsValue={registrationObj.lastName}
+                                onBlur={(i) => this.props.form.setFieldsValue({
+                                    'participantLastName': captializedString(i.target.value)
+                                })}
                             />
                             )}
                         </Form.Item>
@@ -1391,7 +1400,7 @@ class AppRegistrationFormNew extends Component{
                             })(
                             <InputWithHead
                                 placeholder={AppConstants.contactMobile}
-                                onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "mobileNumber")} 
+                                onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "mobileNumber")} 
                                 setFieldsValue={registrationObj.mobileNumber}
                             />
                             )}
@@ -1409,7 +1418,7 @@ class AppRegistrationFormNew extends Component{
                                         <InputWithHead
                                             disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
-                                            onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "email")} 
+                                            onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "email")} 
                                             setFieldsValue={registrationObj.email}
                                         />
                                     )}
@@ -1560,7 +1569,7 @@ class AppRegistrationFormNew extends Component{
                                     required={"required-field pt-0 pb-0"}
                                     heading={AppConstants.addressOne}
                                     placeholder={AppConstants.addressOne}
-                                    onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "street1", parentIndex  )} 
+                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "street1", parentIndex  )} 
                                     setFieldsValue={parent.street1}
                                 />
                                 )}
@@ -1579,7 +1588,7 @@ class AppRegistrationFormNew extends Component{
                                     required={"required-field pt-0 pb-0"}
                                     heading={AppConstants.suburb}
                                     placeholder={AppConstants.suburb}
-                                    onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "suburb", parentIndex  )} 
+                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "suburb", parentIndex  )} 
                                     setFieldsValue={parent.suburb}
                                 />
                                 )}
@@ -1613,7 +1622,7 @@ class AppRegistrationFormNew extends Component{
                                         <InputWithHead
                                             required={"required-field pt-0 pb-0"}
                                             placeholder={AppConstants.postcode}
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "postalCode", parentIndex  )} 
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "postalCode", parentIndex  )} 
                                             setFieldsValue={parent.postalCode}
                                             maxLength={4}
                                         />
@@ -1690,11 +1699,15 @@ class AppRegistrationFormNew extends Component{
                                             rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                         })(
                                             <InputWithHead 
-                                            required={"required-field pt-0 pb-0"}
-                                            heading={AppConstants.firstName} 
-                                            placeholder={AppConstants.firstName} 
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "firstName", parentIndex )} 
-                                            setFieldsValue={parent.firstName}/>
+                                                required={"required-field pt-0 pb-0"}
+                                                heading={AppConstants.firstName} 
+                                                placeholder={AppConstants.firstName} 
+                                                onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "firstName", parentIndex )} 
+                                                setFieldsValue={parent.firstName}
+                                                onBlur={(i) => this.props.form.setFieldsValue({
+                                                    'parentFirstName': captializedString(i.target.value)
+                                                })}
+                                            />
                                         )}
                                     </Form.Item>
                                 </div>
@@ -1708,7 +1721,11 @@ class AppRegistrationFormNew extends Component{
                                             heading={AppConstants.middleName} 
                                             placeholder={AppConstants.middleName} 
                                             onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "middleName", parentIndex )} 
-                                            setFieldsValue={parent.middleName}/>
+                                            setFieldsValue={parent.middleName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                'parentMiddleName': captializedString(i.target.value)
+                                            })}
+                                        />
                                             )}
                                     </Form.Item>
                                 </div>
@@ -1722,7 +1739,11 @@ class AppRegistrationFormNew extends Component{
                                             heading={AppConstants.lastName} 
                                             placeholder={AppConstants.lastName} 
                                             onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "lastName", parentIndex )} 
-                                            setFieldsValue={parent.lastName}/>
+                                            setFieldsValue={parent.lastName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                'parentLastName': captializedString(i.target.value)
+                                            })}
+                                        />
                                             )}
                                     </Form.Item>
                                 </div>
@@ -1735,7 +1756,7 @@ class AppRegistrationFormNew extends Component{
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.mobile} 
                                             placeholder={AppConstants.mobile} 
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "mobileNumber", parentIndex  )} 
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "mobileNumber", parentIndex  )} 
                                             setFieldsValue={parent.mobileNumber}
                                         />
                                         )}
@@ -1750,7 +1771,7 @@ class AppRegistrationFormNew extends Component{
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.email} 
                                             placeholder={AppConstants.email} 
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "email", parentIndex  )} 
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "email", parentIndex  )} 
                                             setFieldsValue={parent.email}
                                         />
                                         )}
@@ -1872,7 +1893,7 @@ class AppRegistrationFormNew extends Component{
                                 heading={AppConstants.postCode} 
                                 value={this.state.postalCode}
                                 placeholder={AppConstants.postCode} 
-                                onChange={(e) => this.onChangeSetPostalCode( captializedString(e.target.value))} 
+                                onChange={(e) => this.onChangeSetPostalCode( e.target.value)} 
                             />
                         </div>
                         <div className="col" style={{alignSelf: "center"}}>
@@ -2129,8 +2150,8 @@ class AppRegistrationFormNew extends Component{
                                                     heading={AppConstants.firstName} 
                                                     placeholder={AppConstants.firstName} 
                                                     onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"firstName",competitionIndex,friendIndex,"friends")} 
-                                                    value={friend.firstName}
-                                                    />
+                                                    value={friend.firstName}            
+                                                />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead 
@@ -2150,13 +2171,13 @@ class AppRegistrationFormNew extends Component{
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value), "mobileNumber",competitionIndex, friendIndex, "friends")} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
                                                     value={friend.mobileNumber}
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value), "email",competitionIndex, friendIndex, "friends")}  
+                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value, "email",competitionIndex, friendIndex, "friends")}  
                                                     value={friend.email}
                                                 />
                                             </div>
@@ -2207,13 +2228,13 @@ class AppRegistrationFormNew extends Component{
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
                                                     value={referFriend.mobileNumber}
                                                 />
                                             </div>
                                             <div className="col-sm-12 col-md-6">
                                                 <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"email",competitionIndex,referFriendIndex,"referFriends")} 
+                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
                                                     value={referFriend.email}
                                                 />
                                             </div>
@@ -2346,28 +2367,28 @@ class AppRegistrationFormNew extends Component{
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "existingMedicalCondition")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "existingMedicalCondition")} 
                         value={registrationObj.additionalInfo.existingMedicalCondition}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  />
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "regularMedication")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "regularMedication")} 
                         value={registrationObj.additionalInfo.regularMedication}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.injury}/>
                     <TextArea
                         placeholder={AppConstants.anyInjury}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "injuryInfo")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "injuryInfo")} 
                         value={registrationObj.additionalInfo.injuryInfo}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.alergy}/>
                     <TextArea
                         placeholder={AppConstants.anyAlergies}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "allergyInfo")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "allergyInfo")} 
                         value={registrationObj.additionalInfo.allergyInfo}
                         allowClear
                     />
@@ -2385,7 +2406,7 @@ class AppRegistrationFormNew extends Component{
                             <InputWithHead 
                             heading={AppConstants.disabilityCareNumber} 
                             placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "disabilityCareNumber")}
+                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "disabilityCareNumber")}
                             value={registrationObj.additionalInfo.disabilityCareNumber}/>
                             <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
@@ -2464,7 +2485,7 @@ class AppRegistrationFormNew extends Component{
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 
                             placeholder={AppConstants.other} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value), "heardByOther")}
+                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "heardByOther")}
                             value={registrationObj.additionalInfo.heardByOther}/>
                         </div>
                     )}
@@ -2527,7 +2548,7 @@ class AppRegistrationFormNew extends Component{
                                 heading={(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
                                     || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)} 
                                 placeholder={AppConstants.schoolGrade} 
-                                onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value),"schoolGradeInfo")} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"schoolGradeInfo")} 
                                 value={registrationObj.additionalInfo.schoolGradeInfo}
                                 />
                             )}
@@ -2580,7 +2601,7 @@ class AppRegistrationFormNew extends Component{
                                                         <InputWithHead 
                                                         heading={AppConstants.yourAssociationLevel}
                                                         placeholder={AppConstants.associationLevel} 
-                                                        onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value),"associationLevelInfo")} 
+                                                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"associationLevelInfo")} 
                                                         value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
                                                         <DatePicker
@@ -2651,7 +2672,7 @@ class AppRegistrationFormNew extends Component{
                                 <InputWithHead 
                                 heading={AppConstants.workingWithChildrenCheckNumber}
                                 placeholder={AppConstants.childrenNumber} 
-                                onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value),"childrenCheckNumber")} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"childrenCheckNumber")} 
                                 value={registrationObj.additionalInfo.childrenCheckNumber}
                                 />
                                 <DatePicker
@@ -2681,7 +2702,7 @@ class AppRegistrationFormNew extends Component{
                                 {registrationObj.additionalInfo.walkingNetballRefId != null && (
                                     <InputWithHead 
                                     placeholder={AppConstants.walkingNetball} 
-                                    onChange={(e) => this.onChangeSetAdditionalInfo( captializedString(e.target.value),"walkingNetballInfo")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
                                     value={registrationObj.additionalInfo.walkingNetballInfo}
                                     />
                                 )}

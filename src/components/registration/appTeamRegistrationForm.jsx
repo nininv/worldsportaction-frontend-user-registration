@@ -66,6 +66,7 @@ import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import history from "../../util/history";
+import { captializedString } from "../../util/helpers";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -1201,8 +1202,11 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "firstName")} 
+                                        onChange={(e) => this.onChangeSetTeamValue(captializedString(e.target.value), "firstName")} 
                                         setFieldsValue={teamRegistrationObj.firstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            'yourDetailsFirstName': captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -1215,8 +1219,11 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "middleName")} 
+                                        onChange={(e) => this.onChangeSetTeamValue(captializedString(e.target.value), "middleName")} 
                                         setFieldsValue={teamRegistrationObj.middleName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            'yourDetailsMiddleName': captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -1229,8 +1236,11 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "lastName")} 
+                                        onChange={(e) => this.onChangeSetTeamValue(captializedString(e.target.value), "lastName")} 
                                         setFieldsValue={teamRegistrationObj.lastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            'yourDetailsLastName': captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -1350,11 +1360,14 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "firstName", teamMemberIndex)} 
+                                        onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "firstName", teamMemberIndex)} 
                                         setFieldsValue={teamMember.firstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberFirstName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
-                            </Form.Item>
+                            </Form.Item>   
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.middleName}/>
@@ -1364,8 +1377,11 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "middleName", teamMemberIndex)} 
+                                        onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "middleName", teamMemberIndex)} 
                                         setFieldsValue={teamMember.middleName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberMiddleName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -1378,8 +1394,11 @@ class AppTeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "lastName", teamMemberIndex)} 
+                                        onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "lastName", teamMemberIndex)} 
                                         setFieldsValue={teamMember.lastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberLastName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
