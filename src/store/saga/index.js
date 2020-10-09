@@ -114,7 +114,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD, endUserRegSaga.getInvitedTeamRegInfoSaga)
 
   //Update Team Registration Invite
-  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
+  // yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
 
 
   //UserModule Personal Info
@@ -259,5 +259,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD,teamRegistrationSaga.getExistingTeamDataById);
   yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD,teamRegistrationSaga.expiredTeamRegistrationCheck);
   yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamRegistrationSaga.getInvitedTeamRegInfoSaga);
+  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamRegistrationSaga.teamRegistrationInviteUpdateSaga)
 
 }

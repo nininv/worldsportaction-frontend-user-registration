@@ -151,3 +151,21 @@ export function* teamRegistrationMembershipProducts(action) {
     }
   }
 
+export function* teamRegistrationInviteUpdateSaga(action) {
+  try {
+    const result = yield call(AxiosApi.updateTeamRegistrationInvite, 
+          action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+

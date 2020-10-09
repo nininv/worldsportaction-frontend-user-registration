@@ -537,8 +537,8 @@ class AppTeamRegistrationForm extends Component{
                     let obj = {
                         photoUrl1: organisationPhotos[i].photoUrl,
                         photoType1: organisationPhotos[i].photoType,
-                        photoUrl2: organisationPhotos[i+1].photoUrl,
-                        photoType2: organisationPhotos[i+1].photoType,
+                        photoUrl2: organisationPhotos[i+1]?.photoUrl,
+                        photoType2: organisationPhotos[i+1]?.photoType,
                     }
                     organisationPhotosTemp.push(obj);
                 }
@@ -1157,6 +1157,7 @@ class AppTeamRegistrationForm extends Component{
         try{
             const { genderList } = this.props.commonReducerState;
             const { teamRegistrationObj } = this.props.teamRegistrationState;
+            console.log(teamRegistrationObj);
             return(
                 <div className="registration-form-view">
                     <div className="form-heading" 

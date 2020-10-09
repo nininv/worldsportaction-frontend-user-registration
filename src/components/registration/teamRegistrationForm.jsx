@@ -36,7 +36,9 @@ import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceS
 import history from "../../util/history";
 import { 
     getTeamRegistrationInviteAction,
-    orgteamRegistrationRegSettingsAction
+    orgteamRegistrationRegSettingsAction,
+    updateInviteMemberInfoAction,
+    saveInviteMemberInfoAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import { 
     getCommonRefData,  
@@ -57,6 +59,7 @@ import {
     walkingNetballQuesReferenceAction 
 } from '../../store/actions/commonAction/commonAction';
 import ValidationConstants from "../../themes/validationConstant";
+import { captializedString } from "../../util/helpers";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -121,6 +124,27 @@ class TeamRegistrationForm extends Component{
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
         }
+    }
+
+    getParentObj = () => {
+        let parentObj = {
+            "userId": 0,
+            "firstName": null,
+            "middleName": null,
+			"lastName": null,
+			"mobileNumber": null,
+			"email": null,
+			"street1": null,
+			"street2": null,
+			"suburb": null,
+            "stateRefId": null,
+            "countryRefId": 1,
+            "postalCode": null,
+            "isSameAddress": false,
+            "searchAddressFlag": true,
+            "manualEnterAddressFlag": false
+        }
+        return parentObj;
     }
 
     setYourDetailsValue = () => {
@@ -218,11 +242,11 @@ class TeamRegistrationForm extends Component{
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
             if(address){
                 if(key == "yourDetails"){
-                    this.onChangeSetYourDetailsValue(address.addressOne, "street1");
-                    this.onChangeSetYourDetailsValue(address.suburb, "suburb");
-                    this.onChangeSetYourDetailsValue(address.postcode, "postalCode");
-                    this.onChangeSetYourDetailsValue(countryRefId, "countryRefId");
-                    this.onChangeSetYourDetailsValue(stateRefId, "stateRefId");
+                    this.onChangeSetMemberInfoValue(address.addressOne, "street1","resgistererDetails");
+                    this.onChangeSetMemberInfoValue(address.suburb, "suburb","resgistererDetails");
+                    this.onChangeSetMemberInfoValue(address.postcode, "postalCode","resgistererDetails");
+                    this.onChangeSetMemberInfoValue(countryRefId, "countryRefId","resgistererDetails");
+                    this.onChangeSetMemberInfoValue(stateRefId, "stateRefId","resgistererDetails");
                 }
             }
         }catch(ex){
@@ -230,21 +254,88 @@ class TeamRegistrationForm extends Component{
         }
     }
 
-    onChangeSetYourDetailsValue = (value,key) => {
+    onChangeSetMemberInfoValue = (value,key,subKey) => {
         try{
-            
+            this.props.updateInviteMemberInfoAction(value,key,subKey,null);
+            if(key == "dateOfBirth"){
+                if(getAge(value) < 18){
+                    this.addParent("add");
+                }else{
+                    this.addParent("removeAllParent")
+                }
+            }
         }catch(ex){
-            console.log("Error in onChangeSetYourDetailsValue::"+ex);
+            console.log("Error in onChangeSetMemberInfoValue::"+ex);
         }
+    }
+
+    onChangeSetParentValue = (value,key,parentIndex) => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let resgistererDetails = userRegDetails.resgistererDetails;
+            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+            if(key == "isSameAddress"){
+                parentOrGuardians[parentIndex][key] = value;
+                if(value){
+                    parentOrGuardians[parentIndex]["street1"] = resgistererDetails.street1;
+                    parentOrGuardians[parentIndex]["street2"] = resgistererDetails.street2;
+                    parentOrGuardians[parentIndex]["suburb"] = resgistererDetails.suburb;
+                    parentOrGuardians[parentIndex]["stateRefId"] = resgistererDetails.stateRefId;
+                    parentOrGuardians[parentIndex]["countryRefId"] = resgistererDetails.countryRefId;
+                    parentOrGuardians[parentIndex]["postalCode"] = resgistererDetails.postalCode;
+                    this.props.updateInviteMemberInfoAction(iniviteMemberInfo,"iniviteMemberInfo",null,null)
+                }else{
+                    this.clearParentAddress(parentOrGuardians,parentIndex);
+                }
+            }else{
+                this.props.updateInviteMemberInfoAction(value,key,"parentOrGaurdianDetails",parentIndex);
+            }
+        }catch(ex){
+            console.log("Error in onChangeSetParentValue::"+ex);
+        }
+    } 
+
+    clearParentAddress = (parentOrGuardians,parentIndex) => {
+        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        parentOrGuardians[parentIndex]["street1"] = null;
+        parentOrGuardians[parentIndex]["street2"] = null;
+        parentOrGuardians[parentIndex]["suburb"] = null;
+        parentOrGuardians[parentIndex]["stateRefId"] = null;
+        parentOrGuardians[parentIndex]["countryRefId"] = null;
+        parentOrGuardians[parentIndex]["postalCode"] = null;
+        this.props.updateInviteMemberInfoAction(iniviteMemberInfo,"iniviteMemberInfo",null,null)
     }
 
     scrollToTop = () => {
         window.scrollTo(0, 0);
     }
 
+    addParent = (key,parentIndex) => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+            if(key == "add"){
+                let parentObj = deepCopyFunction(this.getParentObj()); 
+                parentOrGuardians.push(parentObj);
+            }
+            if(key == "remove"){
+                parentOrGuardians.splice(parentIndex,1);
+            }
+            if(key == "removeAllParent"){
+                parentOrGuardians = [];
+            }
+            this.props.updateInviteMemberInfoAction(iniviteMemberInfo,"iniviteMemberInfo",null,null)
+        }catch(ex){
+            console.log("Exception occured in addParent"+ex);
+        }
+    }
+
     saveReviewOrder = (e) => {
         try{
             e.preventDefault();
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep != 1){
@@ -259,11 +350,15 @@ class TeamRegistrationForm extends Component{
                         enabledSteps: this.state.enabledSteps,
                         completedSteps: this.state.completedSteps});
                         this.setState({submitButtonText: AppConstants.reviewOrder});
+
+                        if(this.state.currentStep == 1){
+                            this.props.saveInviteMemberInfoAction(iniviteMemberInfo.userRegDetails);
+                        }
                     }
                 }
             });
         }catch(ex){
-
+            console.log("Error in saveReviewOrder::"+ex);
         }
     }
 
@@ -491,7 +586,7 @@ class TeamRegistrationForm extends Component{
                                         required={"required-field pt-0 pb-0"}
                                         heading={AppConstants.addressOne}
                                         placeholder={AppConstants.addressOne}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "street1")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street1","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.street1}
                                     />
                                 )}
@@ -499,7 +594,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead
                                 heading={AppConstants.addressTwo}
                                 placeholder={AppConstants.addressTwo}
-                                onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "street2")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street2","resgistererDetails")} 
                                 value={resgistererDetails.street2}
                             />
                             <Form.Item >
@@ -510,7 +605,7 @@ class TeamRegistrationForm extends Component{
                                         required={"required-field pt-0 pb-0"}
                                         heading={AppConstants.suburb}
                                         placeholder={AppConstants.suburb}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "suburb")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "suburb","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.suburb}
                                     />
                                 )}
@@ -525,7 +620,7 @@ class TeamRegistrationForm extends Component{
                                             <Select
                                                 style={{ width: "100%" }}
                                                 placeholder={AppConstants.state}
-                                                onChange={(e) => this.onChangeSetYourDetailsValue(e, "stateRefId")}
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "stateRefId","resgistererDetails")}
                                                 setFieldsValue={resgistererDetails.stateRefId}>
                                                 {stateList.length > 0 && stateList.map((item) => (
                                                     < Option key={item.id} value={item.id}> {item.name}</Option>
@@ -544,7 +639,7 @@ class TeamRegistrationForm extends Component{
                                                 required={"required-field pt-0 pb-0"}
                                                 placeholder={AppConstants.postcode}
                                                 maxLength={4}
-                                                onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "postalCode")} 
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "postalCode","resgistererDetails")} 
                                                 setFieldsValue={resgistererDetails.postalCode}
                                             />
                                         )}
@@ -559,7 +654,7 @@ class TeamRegistrationForm extends Component{
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.country}
-                                    onChange={(e) => this.onChangeSetYourDetailsValue(e, "countryRefId")}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "countryRefId","resgistererDetails")}
                                     setFieldsValue={resgistererDetails.countryRefId}>
                                     {countryList.length > 0 && countryList.map((item) => (
                                         < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -601,7 +696,7 @@ class TeamRegistrationForm extends Component{
                         })(
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={ (e) => this.onChangeSetYourDetailsValue(e.target.value, "genderRefId")}
+                                onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "genderRefId","resgistererDetails")}
                                 setFieldsValue={resgistererDetails.genderRefId}
                                 >
                                 {(genderList || []).map((gender, genderIndex) => (
@@ -619,7 +714,7 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "firstName")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "firstName","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.firstName}
                                     />
                                 )}
@@ -633,7 +728,7 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "middleName")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "middleName","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.middleName}
                                     />
                                 )}
@@ -647,7 +742,7 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "lastName")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "lastName","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.lastName}
                                     />
                                 )}
@@ -663,7 +758,7 @@ class TeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetYourDetailsValue(e, "dateOfBirth") }
+                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","resgistererDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -679,25 +774,38 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.phone}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "mobileNumber")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "mobileNumber","resgistererDetails")} 
                                         setFieldsValue={resgistererDetails.mobileNumber}
                                     />
                                 )}
                             </Form.Item>
                         </div>
-                        <div className="col-sm-12 col-md-6">
-                            <InputWithHead heading={AppConstants.email} required={"required-field"}/>
-                            <Form.Item >
-                                {getFieldDecorator(`yourDetailsEmail`, {
-                                    rules: [{ required: true, message: ValidationConstants.emailField[0] }],
-                                })(
-                                    <InputWithHead
-                                        placeholder={AppConstants.email}
-                                        onChange={(e) => this.onChangeSetYourDetailsValue(e.target.value, "email")} 
-                                        setFieldsValue={resgistererDetails.email}
-                                    />
-                                )}
-                            </Form.Item>
+                        <div className="col-sm-12 col-md-6"
+                         style={userRegDetails.referParentEmail ? {alignSelf: "center",marginTop: "25px"} : {}}>
+                            {!userRegDetails.referParentEmail && (
+                                <div>
+                                    <InputWithHead heading={AppConstants.email} required={"required-field"}/>
+                                    <Form.Item >
+                                        {getFieldDecorator(`yourDetailsEmail`, {
+                                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                        })(
+                                            <InputWithHead
+                                                placeholder={AppConstants.email}
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "email","resgistererDetails")} 
+                                                setFieldsValue={resgistererDetails.email}
+                                            />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            )}
+                            {getAge(resgistererDetails.dateOfBirth) < 18 && (
+                                <Checkbox
+                                    className="single-checkbox"
+                                    checked={resgistererDetails.referParentEmail}
+                                    onChange={e => this.onChangeSetMemberInfoValue(e.target.checked, "referParentEmail","additionalInfo")} >
+                                    {AppConstants.useParentsEmailAddress}
+                                </Checkbox> 
+                            )}
                         </div>
                     </div>
                     <div>{this.yourDetailsAddressView(getFieldDecorator)}</div>
@@ -708,12 +816,281 @@ class TeamRegistrationForm extends Component{
         }
     }
 
+    parentOrGuardianAddressView = (parent, parentIndex,getFieldDecorator) => {
+        try{
+            const { stateList,countryList } = this.props.commonReducerState;
+            return(
+                <div>
+                    {parent.searchAddressFlag && (
+                        <div>
+                            <div className="form-heading" 
+                            style={{marginTop: "20px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                            <Form.Item name="addressSearch">
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(parent)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => {
+                                        this.setState({
+                                            searchAddressError: ''
+                                        })
+                                    }}
+                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"parent",parentIndex)}
+                                />
+                            </Form.Item>
+                            <div className="orange-action-txt" style={{marginTop: "10px"}}
+                            onClick={() => {
+                                this.onChangeSetParentValue(true,"manualEnterAddressFlag",parentIndex);
+                                this.onChangeSetParentValue(false,"searchAddressFlag",parentIndex);
+                            }}
+                            >{AppConstants.enterAddressManually}</div>
+                        </div>
+                    )}
+                    {parent.manualEnterAddressFlag && (
+                        <div>
+                            <div className="orange-action-txt" 
+                            style={{marginTop: "20px",marginBottom: "10px"}}
+                            onClick={() => {
+                                this.onChangeSetParentValue(false,"manualEnterAddressFlag",parentIndex);
+                                this.onChangeSetParentValue(true,"searchAddressFlag",parentIndex);
+                            }}
+                            >{AppConstants.returnToAddressSearch}</div>
+                            <div className="form-heading" 
+                            style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
+                            <Form.Item>
+                                {getFieldDecorator(`parentStreet1${parentIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.addressField[0] }],
+                                })(
+                                <InputWithHead
+                                    required={"required-field pt-0 pb-0"}
+                                    heading={AppConstants.addressOne}
+                                    placeholder={AppConstants.addressOne}
+                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "street1", parentIndex  )} 
+                                    setFieldsValue={parent.street1}
+                                />
+                                )}
+                            </Form.Item>
+                            <InputWithHead
+                                heading={AppConstants.addressTwo}
+                                placeholder={AppConstants.addressTwo}
+                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", parentIndex  )} 
+                                value={parent.street2}
+                            />
+                            <Form.Item>
+                                {getFieldDecorator(`parentSuburb${parentIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                                })(
+                                <InputWithHead
+                                    required={"required-field pt-0 pb-0"}
+                                    heading={AppConstants.suburb}
+                                    placeholder={AppConstants.suburb}
+                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "suburb", parentIndex  )} 
+                                    setFieldsValue={parent.suburb}
+                                />
+                                )}
+                            </Form.Item> 
+                            <div className="row">
+                                <div className="col-sm-12 col-lg-6">
+                                    <InputWithHead heading={AppConstants.state}  required={"required-field"}/>
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentStateRefId${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                        })(
+                                        <Select
+                                            style={{ width: "100%" }}
+                                            placeholder={AppConstants.state}
+                                            onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", parentIndex  )}
+                                            setFieldsValue={parent.stateRefId}>
+                                            {stateList.length > 0 && stateList.map((item) => (
+                                                < Option key={item.id} value={item.id}> {item.name}</Option>
+                                            ))
+                                            }
+                                        </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-12 col-lg-6">
+                                    <InputWithHead heading={AppConstants.postCode}  required={"required-field"}/>
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentPostalCode${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                        })(
+                                        <InputWithHead
+                                            required={"required-field pt-0 pb-0"}
+                                            placeholder={AppConstants.postcode}
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "postalCode", parentIndex  )} 
+                                            setFieldsValue={parent.postalCode}
+                                            maxLength={4}
+                                        />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                            <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
+                            <Form.Item >
+                                {getFieldDecorator(`parentCountryRefId${parentIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                                })(
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.country}
+                                    onChange={(e) => this.onChangeSetParentValue(e, "countryRefId", parentIndex)}
+                                    setFieldsValue={parent.countryRefId}>
+                                    {countryList.length > 0 && countryList.map((item) => (
+                                        < Option key={item.id} value={item.id}> {item.description}</Option>
+                                    ))}
+                                </Select>
+                                )}
+                            </Form.Item>
+                        </div>
+                    )}	
+                </div>
+            )
+
+        }catch(ex){
+            console.log("Error in parentOrGuardianAddressView"+ex);
+        }
+    }
+
+    parentOrGuardianView = (getFieldDecorator) => {
+        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        let userRegDetails = iniviteMemberInfo?.userRegDetails;
+        let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+        return(
+            <div className="registration-form-view">
+                <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.parentOrGuardianDetail}</div>
+
+                {(parentOrGuardians || []).map((parent, parentIndex) => {
+                    return(
+                        <div key={"parent"+parentIndex} className="light-grey-border-box">
+                            {(parentOrGuardians.length != 1) && (
+                                <div className="orange-action-txt" style={{marginTop: "30px"}}
+                                    onClick={() => {this.addParent("remove",parentIndex)}}
+                                    >{AppConstants.cancel}
+                                </div>
+                            )}
+                            <div className="form-heading" 
+                            style={(parentOrGuardians.length != 1) ? {paddingBottom: "0px",marginTop: "10px"} : {paddingBottom: "0px",marginTop: "30px"}}>
+                                {AppConstants.newParentOrGuardian}
+                            </div>
+                            <div className="row">
+                                <div className="col-sm-12 col-md-6">
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentFirstName${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                        })(
+                                            <InputWithHead 
+                                                required={"required-field pt-0 pb-0"}
+                                                heading={AppConstants.firstName} 
+                                                placeholder={AppConstants.firstName} 
+                                                onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "firstName", parentIndex )} 
+                                                setFieldsValue={parent.firstName}
+                                                onBlur={(i) => this.props.form.setFieldsValue({
+                                                    'parentFirstName': captializedString(i.target.value)
+                                                })}
+                                            />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-12 col-md-6">
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentMiddleName${parentIndex}`, {
+                                            rules: [{ required: false }],
+                                        })(
+                                        <InputWithHead 
+                                            required={"pt-0 pb-0"}
+                                            heading={AppConstants.middleName} 
+                                            placeholder={AppConstants.middleName} 
+                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "middleName", parentIndex )} 
+                                            setFieldsValue={parent.middleName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                'parentMiddleName': captializedString(i.target.value)
+                                            })}
+                                        />
+                                            )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-12 col-md-12">
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentLastName${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                        })(
+                                        <InputWithHead 
+                                            required={"required-field pt-0 pb-0"}
+                                            heading={AppConstants.lastName} 
+                                            placeholder={AppConstants.lastName} 
+                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "lastName", parentIndex )} 
+                                            setFieldsValue={parent.lastName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                'parentLastName': captializedString(i.target.value)
+                                            })}
+                                        />
+                                            )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentMobileNumber${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.contactField }],
+                                        })(
+                                        <InputWithHead 
+                                            required={"required-field pt-0 pb-0"}
+                                            heading={AppConstants.mobile} 
+                                            placeholder={AppConstants.mobile} 
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "mobileNumber", parentIndex  )} 
+                                            setFieldsValue={parent.mobileNumber}
+                                        />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item>
+                                        {getFieldDecorator(`parentEmail${parentIndex}`, {
+                                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                        })(
+                                        <InputWithHead 
+                                            required={"required-field pt-0 pb-0"}
+                                            heading={AppConstants.email} 
+                                            placeholder={AppConstants.email} 
+                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "email", parentIndex  )} 
+                                            setFieldsValue={parent.email}
+                                        />
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                            <Checkbox
+                                className="single-checkbox"
+                                checked={parent.isSameAddress}
+                                onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", parentIndex  )} >
+                                {AppConstants.sameAddress}
+                            </Checkbox>
+                            {!parent.isSameAddress && (
+                                <div>{this.parentOrGuardianAddressView(parent,parentIndex,getFieldDecorator)}</div>
+                            )}
+                        </div>
+                    );
+                })}
+                <div className="orange-action-txt" style={{marginTop: "10px"}}
+                onClick={() => {this.addParent("add")}}
+                >+ {AppConstants.addNewParentGaurdian}</div>	
+            </div>
+        )
+    }
+
     yourDetailsStepView = (getFieldDecorator) => {
         try{
+            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let resgistererDetails = userRegDetails.resgistererDetails;
             return(
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
+                    {getAge(resgistererDetails.dateOfBirth) < 18 && (
+                        <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
+                    )}
                 </div>
             )
         }catch(ex){
@@ -759,7 +1136,7 @@ class TeamRegistrationForm extends Component{
                     <Select
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","additionalInfo")}
                         value={userRegDetails.countryRefId}>
                         {countryList.length > 0 && countryList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -768,7 +1145,7 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"identifyRefId","additionalInfo")}
                         value={userRegDetails.identifyRefId}
                         >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
@@ -778,35 +1155,35 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "existingMedicalCondition")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","additionalInfo")} 
                         value={userRegDetails.existingMedicalCondition}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  />
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "regularMedication")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","additionalInfo")} 
                         value={userRegDetails.regularMedication}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.injury}/>
                     <TextArea
                         placeholder={AppConstants.anyInjury}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "injuryInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","additionalInfo")} 
                         value={userRegDetails.injuryInfo}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.alergy}/>
                     <TextArea
                         placeholder={AppConstants.anyAlergies}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","additionalInfo")} 
                         value={userRegDetails.allergyInfo}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.haveDisability} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","additionalInfo")} 
                         value={userRegDetails.isDisability}
                         >
                         <Radio value={1}>{AppConstants.yes}</Radio>
@@ -817,12 +1194,12 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead 
                             heading={AppConstants.disabilityCareNumber} 
                             placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityCareNumber")}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","additionalInfo")}
                             value={userRegDetails.disabilityCareNumber}/>
                             <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
                                 className="reg-competition-radio"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","additionalInfo")} 
                                 value={userRegDetails.disabilityTypeRefId}>
                                     {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
@@ -836,7 +1213,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.teamYouFollow}/>
                             <Select
                                 style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteTeamRefId")}
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","additionalInfo")}
                                 value={userRegDetails.favouriteTeamRefId}
                                 >  
                                 {(favouriteTeamsList || []).map((fav, index) => (
@@ -849,7 +1226,7 @@ class TeamRegistrationForm extends Component{
                                 <InputWithHead heading={AppConstants.who_fav_bird} />
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","additionalInfo")}
                                     value={userRegDetails.favouriteFireBird}
                                     >  
                                     {(firebirdPlayerList || []).map((fire, index) => (
@@ -866,7 +1243,7 @@ class TeamRegistrationForm extends Component{
                         showArrow
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","additionalInfo")}
                         defaultValue={userRegDetails.otherSportsInfo}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -875,7 +1252,7 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","additionalInfo")} 
                         value={userRegDetails.heardByRefId}
                         >
                         {(heardByList || []).map((heard, index) => (
@@ -886,7 +1263,7 @@ class TeamRegistrationForm extends Component{
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 
                             placeholder={AppConstants.other} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByOther")}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByOther","additionalInfo")}
                             value={userRegDetails.heardByOther}/>
                         </div>
                     )}
@@ -896,7 +1273,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "yearsPlayed")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "yearsPlayed","additionalInfo")} 
                                 value={userRegDetails.yearsPlayed}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
@@ -906,7 +1283,7 @@ class TeamRegistrationForm extends Component{
                                 <Select
                                     placeholder={AppConstants.yearsOfPlaying}
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","additionalInfo")}
                                     value={userRegDetails.yearsPlayed}
                                     >  
                                     {(yearsOfPlayingList || []).map((years, index) => (
@@ -924,7 +1301,7 @@ class TeamRegistrationForm extends Component{
                                     <InputWithHead heading={AppConstants.schoolYouAttend} />
                                     <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","additionalInfo")}
                                         value={userRegDetails.schoolId}
                                         >  
                                         {/* {(yearsOfPlayingList || []).map((years, index) => (
@@ -938,7 +1315,7 @@ class TeamRegistrationForm extends Component{
                                 <InputWithHead 
                                 heading={(AppConstants.yourSchoolGrade)} 
                                 placeholder={AppConstants.schoolGrade} 
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"schoolGradeInfo")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"schoolGradeInfo","additionalInfo")} 
                                 value={userRegDetails.schoolGradeInfo}
                                 />
                             )}
@@ -948,7 +1325,7 @@ class TeamRegistrationForm extends Component{
                                     <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
                                     <Radio.Group
                                         className="registration-radio-group"
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isParticipatedInSSP","additionalInfo")} 
                                         value={userRegDetails.isParticipatedInSSP}
                                         >
                                         <Radio value={1}>{AppConstants.yes}</Radio>
@@ -964,7 +1341,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelCoachRefId")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "accreditationLevelCoachRefId","additionalInfo")} 
                                 value={userRegDetails.accreditationLevelCoachRefId}
                                 >
                                 {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
@@ -976,7 +1353,7 @@ class TeamRegistrationForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.checkExpiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
+                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","additionalInfo") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -990,14 +1367,14 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead 
                             heading={AppConstants.workingWithChildrenCheckNumber}
                             placeholder={AppConstants.childrenNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"childrenCheckNumber")} 
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"childrenCheckNumber","additionalInfo")} 
                             value={userRegDetails.childrenCheckNumber}
                             />
                             <DatePicker
                                 size="large"
                                 placeholder={AppConstants.checkExpiryDate}
                                 style={{ width: "100%",marginTop: "20px" }}
-                                onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
+                                onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","additionalInfo") }
                                 format={"DD-MM-YYYY"}
                                 showTime={false}
                                 value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}
@@ -1116,7 +1493,9 @@ function mapDispatchToProps(dispatch){
         accreditationUmpireReferenceAction,
         accreditationCoachReferenceAction,
         walkingNetballQuesReferenceAction,
-        orgteamRegistrationRegSettingsAction
+        orgteamRegistrationRegSettingsAction,
+        updateInviteMemberInfoAction,
+        saveInviteMemberInfoAction
     }, dispatch);
 
 }

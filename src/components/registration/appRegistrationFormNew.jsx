@@ -503,8 +503,8 @@ class AppRegistrationFormNew extends Component{
         try{
             const { registrationObj,userInfo } = this.props.userRegistrationState;
             if(key == "isSameAddress"){
+                registrationObj.parentOrGuardian[parentIndex][key] = value;
                 if(value){
-                    registrationObj.parentOrGuardian[parentIndex][key] = value;
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
                     registrationObj.parentOrGuardian[parentIndex]["street2"] = registrationObj.street2;
                     registrationObj.parentOrGuardian[parentIndex]["suburb"] = registrationObj.suburb;
@@ -705,8 +705,8 @@ class AppRegistrationFormNew extends Component{
                     let obj = {
                         photoUrl1: organisationPhotos[i].photoUrl,
                         photoType1: organisationPhotos[i].photoType,
-                        photoUrl2: organisationPhotos[i+1].photoUrl,
-                        photoType2: organisationPhotos[i+1].photoType,
+                        photoUrl2: organisationPhotos[i+1]?.photoUrl,
+                        photoType2: organisationPhotos[i+1]?.photoType,
                     }
                     organisationPhotosTemp.push(obj);
                 }
