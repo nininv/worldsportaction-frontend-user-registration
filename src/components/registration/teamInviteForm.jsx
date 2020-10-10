@@ -36,10 +36,10 @@ import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceS
 import history from "../../util/history";
 import { 
     getTeamRegistrationInviteAction,
-    orgteamRegistrationRegSettingsAction,
+    teamInviteRegSettingsAction,
     updateInviteMemberInfoAction,
     saveInviteMemberInfoAction
-} from '../../store/actions/registrationAction/teamRegistrationAction';
+} from '../../store/actions/registrationAction/teamInviteAction';
 import { 
     getCommonRefData,  
     favouriteTeamReferenceAction,
@@ -66,7 +66,7 @@ const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
 
-class TeamRegistrationForm extends Component{
+class TeamInivteForm extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -78,6 +78,7 @@ class TeamRegistrationForm extends Component{
             searchAddressFlag: true,
             manualEnterAddressFlag: false,
             showMoreInformation: true,
+            buttonSaveOnLoad: false
         }
         this.props.genderReferenceAction();
         this.props.getCommonRefData();
@@ -111,15 +112,18 @@ class TeamRegistrationForm extends Component{
 
     componentDidUpdate(){
         try{
-            let teamRegistrationState = this.props.teamRegistrationState;
-            if(!teamRegistrationState.inviteOnLoad && this.state.inviteOnLoad){
+            let teamInviteState = this.props.teamInviteState;
+            if(!teamInviteState.inviteOnLoad && this.state.inviteOnLoad){
                 let payload = {
-                    "organisationUniqueKey": teamRegistrationState.iniviteMemberInfo.competitionDetails.organisationUniqueKey,
-                    "competitionUniqueKey": teamRegistrationState.iniviteMemberInfo.competitionDetails.competitionUniqueKey
+                    "organisationUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.organisationUniqueKey,
+                    "competitionUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.competitionUniqueKey
                 }
-                this.props.orgteamRegistrationRegSettingsAction(payload);
+                this.props.teamInviteRegSettingsAction(payload);
                 this.setYourDetailsValue();
                 this.setState({inviteOnLoad: false});
+            }
+            if(!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad){
+                history.push({pathname: "/teamRegistrationReviewProducts",state: {userRegId: getUserRegId()}})
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -149,17 +153,16 @@ class TeamRegistrationForm extends Component{
 
     setYourDetailsValue = () => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
             this.props.form.setFieldsValue({
-                [`yourDetailsgenderRefId`]: resgistererDetails.genderRefId,
-                [`yourDetailsFirstName`]: resgistererDetails.firstName,
-                [`yourDetailsMiddleName`]: resgistererDetails.middleName,
-                [`yourDetailsLastName`]: resgistererDetails.lastName,
-                [`yourDetailsdateOfBirth`]: resgistererDetails.dateOfBirth && moment(resgistererDetails.dateOfBirth, "YYYY-MM-DD"),
-                [`yourDetailsMobileNumber`]: resgistererDetails.mobileNumber,
-                [`yourDetailsEmail`]: resgistererDetails.email
+                [`yourDetailsgenderRefId`]: userRegDetails.genderRefId,
+                [`yourDetailsFirstName`]: userRegDetails.firstName,
+                [`yourDetailsMiddleName`]: userRegDetails.middleName,
+                [`yourDetailsLastName`]: userRegDetails.lastName,
+                [`yourDetailsdateOfBirth`]: userRegDetails.dateOfBirth && moment(userRegDetails.dateOfBirth, "YYYY-MM-DD"),
+                [`yourDetailsMobileNumber`]: userRegDetails.mobileNumber,
+                [`yourDetailsEmail`]: userRegDetails.email
             });
         }catch(ex){
             console.log("Error in setYourDetailsValue::"+ex);
@@ -242,11 +245,11 @@ class TeamRegistrationForm extends Component{
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
             if(address){
                 if(key == "yourDetails"){
-                    this.onChangeSetMemberInfoValue(address.addressOne, "street1","resgistererDetails");
-                    this.onChangeSetMemberInfoValue(address.suburb, "suburb","resgistererDetails");
-                    this.onChangeSetMemberInfoValue(address.postcode, "postalCode","resgistererDetails");
-                    this.onChangeSetMemberInfoValue(countryRefId, "countryRefId","resgistererDetails");
-                    this.onChangeSetMemberInfoValue(stateRefId, "stateRefId","resgistererDetails");
+                    this.onChangeSetMemberInfoValue(address.addressOne, "street1","userRegDetails");
+                    this.onChangeSetMemberInfoValue(address.suburb, "suburb","userRegDetails");
+                    this.onChangeSetMemberInfoValue(address.postcode, "postalCode","userRegDetails");
+                    this.onChangeSetMemberInfoValue(countryRefId, "countryRefId","userRegDetails");
+                    this.onChangeSetMemberInfoValue(stateRefId, "stateRefId","userRegDetails");
                 }
             }
         }catch(ex){
@@ -256,12 +259,23 @@ class TeamRegistrationForm extends Component{
 
     onChangeSetMemberInfoValue = (value,key,subKey) => {
         try{
+            const { iniviteMemberInfo } = this.props.teamInviteState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
             this.props.updateInviteMemberInfoAction(value,key,subKey,null);
             if(key == "dateOfBirth"){
                 if(getAge(value) < 18){
                     this.addParent("add");
                 }else{
                     this.addParent("removeAllParent")
+                }
+            }
+            if(key == "referParentEmail"){
+                if(!value){
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`yourDetailsEmail`]: userRegDetails.email ? userRegDetails.email : null
+                        });
+                    });
                 }
             }
         }catch(ex){
@@ -271,19 +285,18 @@ class TeamRegistrationForm extends Component{
 
     onChangeSetParentValue = (value,key,parentIndex) => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
             let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
             if(key == "isSameAddress"){
                 parentOrGuardians[parentIndex][key] = value;
                 if(value){
-                    parentOrGuardians[parentIndex]["street1"] = resgistererDetails.street1;
-                    parentOrGuardians[parentIndex]["street2"] = resgistererDetails.street2;
-                    parentOrGuardians[parentIndex]["suburb"] = resgistererDetails.suburb;
-                    parentOrGuardians[parentIndex]["stateRefId"] = resgistererDetails.stateRefId;
-                    parentOrGuardians[parentIndex]["countryRefId"] = resgistererDetails.countryRefId;
-                    parentOrGuardians[parentIndex]["postalCode"] = resgistererDetails.postalCode;
+                    parentOrGuardians[parentIndex]["street1"] = userRegDetails.street1;
+                    parentOrGuardians[parentIndex]["street2"] = userRegDetails.street2;
+                    parentOrGuardians[parentIndex]["suburb"] = userRegDetails.suburb;
+                    parentOrGuardians[parentIndex]["stateRefId"] = userRegDetails.stateRefId;
+                    parentOrGuardians[parentIndex]["countryRefId"] = userRegDetails.countryRefId;
+                    parentOrGuardians[parentIndex]["postalCode"] = userRegDetails.postalCode;
                     this.props.updateInviteMemberInfoAction(iniviteMemberInfo,"iniviteMemberInfo",null,null)
                 }else{
                     this.clearParentAddress(parentOrGuardians,parentIndex);
@@ -297,7 +310,7 @@ class TeamRegistrationForm extends Component{
     } 
 
     clearParentAddress = (parentOrGuardians,parentIndex) => {
-        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        const { iniviteMemberInfo } = this.props.teamInviteState;
         parentOrGuardians[parentIndex]["street1"] = null;
         parentOrGuardians[parentIndex]["street2"] = null;
         parentOrGuardians[parentIndex]["suburb"] = null;
@@ -313,18 +326,17 @@ class TeamRegistrationForm extends Component{
 
     addParent = (key,parentIndex) => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
             if(key == "add"){
                 let parentObj = deepCopyFunction(this.getParentObj()); 
-                parentOrGuardians.push(parentObj);
+                userRegDetails.parentOrGaurdianDetails.push(parentObj);
             }
             if(key == "remove"){
-                parentOrGuardians.splice(parentIndex,1);
+                userRegDetails.parentOrGaurdianDetails.splice(parentIndex,1);
             }
             if(key == "removeAllParent"){
-                parentOrGuardians = [];
+                userRegDetails.parentOrGaurdianDetails = [];
             }
             this.props.updateInviteMemberInfoAction(iniviteMemberInfo,"iniviteMemberInfo",null,null)
         }catch(ex){
@@ -335,12 +347,11 @@ class TeamRegistrationForm extends Component{
     saveReviewOrder = (e) => {
         try{
             e.preventDefault();
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep != 1){
                         let nextStep = this.state.currentStep + 1;
-                        this.scrollToTop();
                         if(nextStep == 1){
                             this.state.enabledSteps.push(0,nextStep);
                             this.setState({showMoreInformation: false});
@@ -349,11 +360,12 @@ class TeamRegistrationForm extends Component{
                         this.setState({currentStep: nextStep,
                         enabledSteps: this.state.enabledSteps,
                         completedSteps: this.state.completedSteps});
+                        this.scrollToTop();
                         this.setState({submitButtonText: AppConstants.reviewOrder});
-
-                        if(this.state.currentStep == 1){
-                            this.props.saveInviteMemberInfoAction(iniviteMemberInfo.userRegDetails);
-                        }
+                    }
+                    if(this.state.currentStep == 1){
+                        this.setState({buttonSaveOnLoad: true});
+                        this.props.saveInviteMemberInfoAction(iniviteMemberInfo.userRegDetails);
                     }
                 }
             });
@@ -389,7 +401,7 @@ class TeamRegistrationForm extends Component{
     }
 
     competitionDetailView = () => {
-        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        const { iniviteMemberInfo } = this.props.teamInviteState;
         let competitionDetails = iniviteMemberInfo?.competitionDetails;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
         let contactDetails = competitionDetails.replyName || competitionDetails.replyPhone || competitionDetails.replyEmail ?
@@ -502,9 +514,8 @@ class TeamRegistrationForm extends Component{
 
     yourDetailsAddressView = (getFieldDecorator) => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
             const { stateList,countryList } = this.props.commonReducerState;
             return(
                 <div>
@@ -553,7 +564,7 @@ class TeamRegistrationForm extends Component{
                             <div>
                                 <Form.Item name="addressSearch">
                                     <PlacesAutocomplete
-                                        defaultValue={this.getAddress(resgistererDetails)}
+                                        defaultValue={this.getAddress(userRegDetails)}
                                         heading={AppConstants.addressSearch}
                                         required
                                         error={this.state.searchAddressError}
@@ -586,16 +597,16 @@ class TeamRegistrationForm extends Component{
                                         required={"required-field pt-0 pb-0"}
                                         heading={AppConstants.addressOne}
                                         placeholder={AppConstants.addressOne}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street1","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.street1}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street1","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.street1}
                                     />
                                 )}
                             </Form.Item>
                             <InputWithHead
                                 heading={AppConstants.addressTwo}
                                 placeholder={AppConstants.addressTwo}
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street2","resgistererDetails")} 
-                                value={resgistererDetails.street2}
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street2","userRegDetails")} 
+                                value={userRegDetails.street2}
                             />
                             <Form.Item >
                                 {getFieldDecorator(`yourDetailsSuburb`, {
@@ -605,8 +616,8 @@ class TeamRegistrationForm extends Component{
                                         required={"required-field pt-0 pb-0"}
                                         heading={AppConstants.suburb}
                                         placeholder={AppConstants.suburb}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "suburb","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.suburb}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "suburb","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.suburb}
                                     />
                                 )}
                             </Form.Item>
@@ -620,8 +631,8 @@ class TeamRegistrationForm extends Component{
                                             <Select
                                                 style={{ width: "100%" }}
                                                 placeholder={AppConstants.state}
-                                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "stateRefId","resgistererDetails")}
-                                                setFieldsValue={resgistererDetails.stateRefId}>
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "stateRefId","userRegDetails")}
+                                                setFieldsValue={userRegDetails.stateRefId}>
                                                 {stateList.length > 0 && stateList.map((item) => (
                                                     < Option key={item.id} value={item.id}> {item.name}</Option>
                                                 ))}
@@ -639,8 +650,8 @@ class TeamRegistrationForm extends Component{
                                                 required={"required-field pt-0 pb-0"}
                                                 placeholder={AppConstants.postcode}
                                                 maxLength={4}
-                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "postalCode","resgistererDetails")} 
-                                                setFieldsValue={resgistererDetails.postalCode}
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "postalCode","userRegDetails")} 
+                                                setFieldsValue={userRegDetails.postalCode}
                                             />
                                         )}
                                     </Form.Item>
@@ -654,8 +665,8 @@ class TeamRegistrationForm extends Component{
                                 <Select
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.country}
-                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "countryRefId","resgistererDetails")}
-                                    setFieldsValue={resgistererDetails.countryRefId}>
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "countryRefId","userRegDetails")}
+                                    setFieldsValue={userRegDetails.countryRefId}>
                                     {countryList.length > 0 && countryList.map((item) => (
                                         < Option key={item.id} value={item.id}> {item.description}</Option>
                                     ))}
@@ -674,7 +685,7 @@ class TeamRegistrationForm extends Component{
     yourDetailsView = (getFieldDecorator) => {
         try{
             const { genderList } = this.props.commonReducerState;
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             let resgistererDetails = userRegDetails.resgistererDetails;
             return(
@@ -696,8 +707,8 @@ class TeamRegistrationForm extends Component{
                         })(
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "genderRefId","resgistererDetails")}
-                                setFieldsValue={resgistererDetails.genderRefId}
+                                onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "genderRefId","userRegDetails")}
+                                setFieldsValue={userRegDetails.genderRefId}
                                 >
                                 {(genderList || []).map((gender, genderIndex) => (
                                     <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
@@ -714,8 +725,8 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "firstName","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.firstName}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "firstName","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.firstName}
                                     />
                                 )}
                             </Form.Item>
@@ -728,8 +739,8 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "middleName","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.middleName}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "middleName","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.middleName}
                                     />
                                 )}
                             </Form.Item>
@@ -742,8 +753,8 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "lastName","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.lastName}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "lastName","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.lastName}
                                     />
                                 )}
                             </Form.Item>
@@ -758,7 +769,7 @@ class TeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","resgistererDetails") }
+                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -774,8 +785,8 @@ class TeamRegistrationForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.phone}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "mobileNumber","resgistererDetails")} 
-                                        setFieldsValue={resgistererDetails.mobileNumber}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "mobileNumber","userRegDetails")} 
+                                        setFieldsValue={userRegDetails.mobileNumber}
                                     />
                                 )}
                             </Form.Item>
@@ -791,18 +802,18 @@ class TeamRegistrationForm extends Component{
                                         })(
                                             <InputWithHead
                                                 placeholder={AppConstants.email}
-                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "email","resgistererDetails")} 
-                                                setFieldsValue={resgistererDetails.email}
+                                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "email","userRegDetails")} 
+                                                setFieldsValue={userRegDetails.email}
                                             />
                                         )}
                                     </Form.Item>
                                 </div>
                             )}
-                            {getAge(resgistererDetails.dateOfBirth) < 18 && (
+                            {getAge(userRegDetails.dateOfBirth) < 18 && (
                                 <Checkbox
                                     className="single-checkbox"
-                                    checked={resgistererDetails.referParentEmail}
-                                    onChange={e => this.onChangeSetMemberInfoValue(e.target.checked, "referParentEmail","additionalInfo")} >
+                                    checked={userRegDetails.referParentEmail}
+                                    onChange={e => this.onChangeSetMemberInfoValue(e.target.checked, "referParentEmail","userRegDetails")} >
                                     {AppConstants.useParentsEmailAddress}
                                 </Checkbox> 
                             )}
@@ -954,7 +965,7 @@ class TeamRegistrationForm extends Component{
     }
 
     parentOrGuardianView = (getFieldDecorator) => {
-        const { iniviteMemberInfo } = this.props.teamRegistrationState;
+        const { iniviteMemberInfo } = this.props.teamInviteState;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
         let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
         return(
@@ -1081,14 +1092,13 @@ class TeamRegistrationForm extends Component{
 
     yourDetailsStepView = (getFieldDecorator) => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
             return(
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {getAge(resgistererDetails.dateOfBirth) < 18 && (
+                    {getAge(userRegDetails.dateOfBirth) < 18 && (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     )}
                 </div>
@@ -1100,20 +1110,18 @@ class TeamRegistrationForm extends Component{
 
     userView = () => {
         try{
-            const { iniviteMemberInfo } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
             return(
                 <div className="registration-form-view">
                     <div style={{display: "flex",alignItems:"center"}}>
                         <div className="form-heading" 
-                            style={{paddingBottom: "0px"}}>{resgistererDetails.firstName} {resgistererDetails.middleName} {resgistererDetails.lastName}</div>
+                            style={{paddingBottom: "0px"}}>{userRegDetails.firstName} {userRegDetails.middleName} {userRegDetails.lastName}</div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}
                             onClick={() => this.onChangeStep(0)}>{AppConstants.edit}</div>
                     </div>
                     <div className="inter-medium-font" style={{fontSize: "13px"}}>
-                        {resgistererDetails.personRole ? resgistererDetails.personRole : 
-                        AppConstants.noInformationProvided}
+                        {userRegDetails.role}
                     </div>
                 </div>
             )
@@ -1124,7 +1132,7 @@ class TeamRegistrationForm extends Component{
 
     additionalInfoView = () => {
         try{
-            const { iniviteMemberInfo,inviteMemberRegSettings } = this.props.teamRegistrationState;
+            const { iniviteMemberInfo,inviteMemberRegSettings } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             const {  countryList, identifyAsList,disabilityList,favouriteTeamsList,
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
@@ -1136,7 +1144,7 @@ class TeamRegistrationForm extends Component{
                     <Select
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","additionalInfo")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","userRegDetails")}
                         value={userRegDetails.countryRefId}>
                         {countryList.length > 0 && countryList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -1145,7 +1153,7 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"identifyRefId","additionalInfo")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"identifyRefId","userRegDetails")}
                         value={userRegDetails.identifyRefId}
                         >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
@@ -1155,35 +1163,35 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","userRegDetails")} 
                         value={userRegDetails.existingMedicalCondition}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  />
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","userRegDetails")} 
                         value={userRegDetails.regularMedication}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.injury}/>
                     <TextArea
                         placeholder={AppConstants.anyInjury}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","userRegDetails")} 
                         value={userRegDetails.injuryInfo}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.alergy}/>
                     <TextArea
                         placeholder={AppConstants.anyAlergies}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
                         value={userRegDetails.allergyInfo}
                         allowClear
                     />
                     <InputWithHead heading={AppConstants.haveDisability} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","userRegDetails")} 
                         value={userRegDetails.isDisability}
                         >
                         <Radio value={1}>{AppConstants.yes}</Radio>
@@ -1194,12 +1202,12 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead 
                             heading={AppConstants.disabilityCareNumber} 
                             placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","additionalInfo")}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","userRegDetails")}
                             value={userRegDetails.disabilityCareNumber}/>
                             <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
                                 className="reg-competition-radio"
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","additionalInfo")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","userRegDetails")} 
                                 value={userRegDetails.disabilityTypeRefId}>
                                     {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
@@ -1213,7 +1221,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.teamYouFollow}/>
                             <Select
                                 style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","additionalInfo")}
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","userRegDetails")}
                                 value={userRegDetails.favouriteTeamRefId}
                                 >  
                                 {(favouriteTeamsList || []).map((fav, index) => (
@@ -1226,7 +1234,7 @@ class TeamRegistrationForm extends Component{
                                 <InputWithHead heading={AppConstants.who_fav_bird} />
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","additionalInfo")}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","userRegDetails")}
                                     value={userRegDetails.favouriteFireBird}
                                     >  
                                     {(firebirdPlayerList || []).map((fire, index) => (
@@ -1243,7 +1251,7 @@ class TeamRegistrationForm extends Component{
                         showArrow
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","additionalInfo")}
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","userRegDetails")}
                         defaultValue={userRegDetails.otherSportsInfo}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -1252,7 +1260,7 @@ class TeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","additionalInfo")} 
+                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","userRegDetails")} 
                         value={userRegDetails.heardByRefId}
                         >
                         {(heardByList || []).map((heard, index) => (
@@ -1263,7 +1271,7 @@ class TeamRegistrationForm extends Component{
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 
                             placeholder={AppConstants.other} 
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByOther","additionalInfo")}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByOther","userRegDetails")}
                             value={userRegDetails.heardByOther}/>
                         </div>
                     )}
@@ -1273,7 +1281,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "yearsPlayed","additionalInfo")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "yearsPlayed","userRegDetails")} 
                                 value={userRegDetails.yearsPlayed}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
@@ -1283,7 +1291,7 @@ class TeamRegistrationForm extends Component{
                                 <Select
                                     placeholder={AppConstants.yearsOfPlaying}
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","additionalInfo")}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
                                     value={userRegDetails.yearsPlayed}
                                     >  
                                     {(yearsOfPlayingList || []).map((years, index) => (
@@ -1294,14 +1302,14 @@ class TeamRegistrationForm extends Component{
                         </div>
                     )}
 
-                    {(getAge(userRegDetails.resgistererDetails.dateOfBirth) < 18) && (
+                    {(getAge(userRegDetails.dateOfBirth) < 18) && (
                         <div>
                             {inviteMemberRegSettings.school_standard == 1 && (
                                 <div>
                                     <InputWithHead heading={AppConstants.schoolYouAttend} />
                                     <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","additionalInfo")}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","userRegDetails")}
                                         value={userRegDetails.schoolId}
                                         >  
                                         {/* {(yearsOfPlayingList || []).map((years, index) => (
@@ -1315,7 +1323,7 @@ class TeamRegistrationForm extends Component{
                                 <InputWithHead 
                                 heading={(AppConstants.yourSchoolGrade)} 
                                 placeholder={AppConstants.schoolGrade} 
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"schoolGradeInfo","additionalInfo")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"schoolGradeInfo","userRegDetails")} 
                                 value={userRegDetails.schoolGradeInfo}
                                 />
                             )}
@@ -1325,7 +1333,7 @@ class TeamRegistrationForm extends Component{
                                     <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
                                     <Radio.Group
                                         className="registration-radio-group"
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isParticipatedInSSP","additionalInfo")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isParticipatedInSSP","userRegDetails")} 
                                         value={userRegDetails.isParticipatedInSSP}
                                         >
                                         <Radio value={1}>{AppConstants.yes}</Radio>
@@ -1341,7 +1349,7 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "accreditationLevelCoachRefId","additionalInfo")} 
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "accreditationLevelCoachRefId","userRegDetails")} 
                                 value={userRegDetails.accreditationLevelCoachRefId}
                                 >
                                 {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
@@ -1353,7 +1361,7 @@ class TeamRegistrationForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.checkExpiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","additionalInfo") }
+                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","userRegDetails") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -1367,14 +1375,14 @@ class TeamRegistrationForm extends Component{
                             <InputWithHead 
                             heading={AppConstants.workingWithChildrenCheckNumber}
                             placeholder={AppConstants.childrenNumber} 
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"childrenCheckNumber","additionalInfo")} 
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"childrenCheckNumber","userRegDetails")} 
                             value={userRegDetails.childrenCheckNumber}
                             />
                             <DatePicker
                                 size="large"
                                 placeholder={AppConstants.checkExpiryDate}
                                 style={{ width: "100%",marginTop: "20px" }}
-                                onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","additionalInfo") }
+                                onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
                                 format={"DD-MM-YYYY"}
                                 showTime={false}
                                 value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}
@@ -1470,6 +1478,8 @@ class TeamRegistrationForm extends Component{
                         noValidate="noValidate">
                         <Content>{this.contentView(getFieldDecorator)}</Content>
                         <Footer>{this.footerView()}</Footer>
+                        <Loader visible={this.props.teamInviteState.inviteMemberSaveOnLoad ||
+                        this.props.teamInviteState.inviteOnLoad } />
                     </Form>
                 </Layout>
             </div>
@@ -1493,7 +1503,7 @@ function mapDispatchToProps(dispatch){
         accreditationUmpireReferenceAction,
         accreditationCoachReferenceAction,
         walkingNetballQuesReferenceAction,
-        orgteamRegistrationRegSettingsAction,
+        teamInviteRegSettingsAction,
         updateInviteMemberInfoAction,
         saveInviteMemberInfoAction
     }, dispatch);
@@ -1502,9 +1512,9 @@ function mapDispatchToProps(dispatch){
 
 function mapStatetoProps(state){
     return {
-        teamRegistrationState: state.TeamRegistrationState,
+        teamInviteState: state.TeamInviteState,
         commonReducerState: state.CommonReducerState
     }
 }
 
-export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(TeamRegistrationForm));
+export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(TeamInivteForm));

@@ -904,7 +904,7 @@ const AppConstants = {
   whatRegistrationChange: "what registration change do you",
   takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
   reasonRegisterTitle: "Why would you like to de-register?",
-  reasonForTransfer: "Reasons(s) for wanting to transfer.",
+  reasonForTransfer: "Reason for Transfer",
   directDebit: "Direct Debit",
   creditCard: "Credit/Debit Card",
   cash: "Cash",
