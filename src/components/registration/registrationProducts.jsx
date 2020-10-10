@@ -204,7 +204,7 @@ class RegistrationProducts extends Component {
         registrationReview["registrationId"] = this.state.registrationUniqueKey;
         registrationReview["index"] = index;
         this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
-        if(key == "paymentOptionRefId" || key == "discount"){
+        if(key == "paymentOptionRefId" || key == "discount" || key =="nominationPayOptionRefId"){
            this.callSaveRegistrationProducts(key, registrationReview)
         }
         else if(key == "removeDiscount"){
@@ -496,7 +496,7 @@ class RegistrationProducts extends Component {
                 {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
                         <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
-                        <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px",marginTop: "20px"}}>
+                        <div className="product-line">
                             {isArrayNotEmpty(item.teamMembers.payingForList) && (
                                 <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
                             )}
@@ -513,6 +513,14 @@ class RegistrationProducts extends Component {
                                     {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
                                 </div>
                             ))}
+                        </div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
+                            </Radio.Group>  
                         </div>
                     </div>
                 : 

@@ -1096,7 +1096,9 @@ const AppConstants = {
  showMoreInformation: "Show more Information",
  hide: "Hide",
  transactionFeeApplies: "A transaction fee of 2.25% applies.",
- transactionFee: "Transaction Fee"
+ transactionFee: "Transaction Fee",
+ payInFull: "Pay in full",
+ splitAmoingTeamMember: "Split amongst team members"
 };
 
 export default AppConstants;
