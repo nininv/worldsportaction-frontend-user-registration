@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {useState, Component } from "react";
 import {
     Layout,
     Breadcrumb,
@@ -8,42 +8,87 @@ import {
     Button, 
     Table,
     DatePicker,
-    Radio, 
-    Form, 
-    Modal, 
-    message, 
-    Steps,
-    Tag,
-    Pagination,
-    Carousel
+    Radio, Form, Modal, InputNumber, message
 } from "antd";
-import { connect } from 'react-redux';
-import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
-import AppConstants from "../../themes/appConstants";
-import DashboardLayout from "../../pages/dashboardLayout";
-import { bindActionCreators } from "redux";
-import "./product.css";
-import "../user/user.css";
-import '../competition/competition.css';
-import { isEmptyArray } from "formik";
-import Loader from '../../customComponents/loader';
-import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
-import moment from 'moment';
+import {
+    CardElement,
+    Elements,
+    useElements,
+    useStripe, AuBankAccountElement,
+} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+ import "./product.css";
+ import "../user/user.css";
+ import '../competition/competition.css';
+ import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
+import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
+import DashboardLayout from "../../pages/dashboardLayout";
+import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
-import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
+import { connect } from 'react-redux';
+import {isArrayNotEmpty} from '../../util/helpers';
+import { bindActionCreators } from "redux";
 import history from "../../util/history";
-import ValidationConstants from "../../themes/validationConstant";
-import { captializedString } from "../../util/helpers";
-import { 
-    getInviteTeamReviewProductAction
-} from '../../store/actions/registrationAction/teamInviteAction';
+import Loader from '../../customComponents/loader';
+import {getRegistrationByIdAction, deleteRegistrationProductAction, 
+    updateReviewInfoAction} from 
+            '../../store/actions/registrationAction/registrationProductsAction';
+            import StripeKeys from "../stripe/stripeKeys";
 
 const { Header, Footer, Content } = Layout;
-const { Step } = Steps;
-const { TextArea } = Input;
 const { Option } = Select;
+const { TextArea } = Input;
+const { confirm } = Modal;
+let this_Obj = null;
+
+
+const stripePromise = loadStripe(StripeKeys.publicKey);
+
+var screenProps = null;
+
+const CARD_ELEMENT_OPTIONS = {
+    style: {
+        base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    }
+};
+const AU_BANK_ACCOUNT_STYLE = {
+    base: {
+        color: '#32325d',
+        fontSize: '16px',
+        '::placeholder': {
+            color: '#aab7c4'
+        },
+        ':-webkit-autofill': {
+            color: '#32325d',
+        },
+    },
+    invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+        ':-webkit-autofill': {
+            color: '#fa755a',
+        },
+    }
+};
+const AU_BANK_ACCOUNT_ELEMENT_OPTIONS = {
+    style: AU_BANK_ACCOUNT_STYLE,
+    disabled: false,
+    hideIcon: false,
+    iconStyle: "default", // or "solid"
+};
 
 const CheckoutForm = (props) => {
     const [error, setError] = useState(null);
@@ -557,6 +602,113 @@ function mapStatetoProps(state){
     return {
         teamInviteState: state.teamInviteState
     }
+}
+
+// POST the token ID to your backend.
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey) {
+    console.log(token, props, screenProps)
+    let paymentType = selectedOption;
+    //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
+   // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
+   //console.log("Payload::" + JSON.stringify(payload));
+  
+    let body;
+    if (paymentType === "card") {
+        let stripeToken = token.id
+        body = {
+            registrationId: registrationUniqueKey,
+           // invoiceId: invoiceId,
+            paymentType: paymentType,
+            payload: payload,
+            token: {
+                id: stripeToken
+            }
+        }
+    }
+    else if(paymentType === "direct_debit"){
+        body = {
+            registrationId: registrationUniqueKey,
+            //invoiceId: invoiceId,
+            payload: payload,
+            paymentType: paymentType,
+        }
+    }
+    else if(props.isSchoolRegistration || props.isHardshipEnabled){
+        body = {
+            registrationId: registrationUniqueKey,
+            //invoiceId: invoiceId,
+            payload: payload,
+            paymentType: null,
+            isSchoolRegistration: 1,
+            isHardshipEnabled: 1
+        }
+    }
+    console.log("payload" + JSON.stringify(payload));
+    return await new Promise((resolve, reject) => {
+        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": localStorage.token,
+            },
+            body: JSON.stringify(body)
+        })
+            .then((response) => {
+                props.onLoad(false)
+                let resp = response.json()
+                console.log(response.status, "status", paymentType)
+                resp.then((Response) => {
+                    if (response.status === 200) {
+                        if (paymentType == "card") {
+                            message.success(Response.message);
+                            
+                            console.log("registrationUniqueKey"+ registrationUniqueKey);
+                            history.push("/invoice", {
+                                registrationId: registrationUniqueKey,
+                                userRegId: null,
+                                paymentSuccess: true
+                            })
+                        }
+                        else if(paymentType =="direct_debit") {
+                            if(Response.clientSecret == null && Response.totalFee == 0){
+                                history.push("/invoice", {
+                                    registrationId: registrationUniqueKey,
+                                    userRegId: null,
+                                    paymentSuccess: true
+                                })
+                            }
+                            else{
+                                setClientKey(Response.clientSecret)
+                                setRegId(registrationUniqueKey)
+                            }
+                           // message.success(Response.message);
+                        }
+                        else{
+                            history.push("/invoice", {
+                                registrationId: registrationUniqueKey,
+                                userRegId: null,
+                                paymentSuccess: true
+                            })
+                        }
+                    }
+                    else if (response.status === 212) {
+                        message.error(Response.message);
+                    }
+                    else if (response.status === 400) {
+                        message.error(Response.message);
+                    }
+                    else {
+                        message.error("Something went wrong.")
+                    }
+
+                })
+
+            })
+            .catch((error) => {
+                props.onLoad(false)
+                console.error(error);
+            });
+    })
 }
 
 export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(TeamInvitePayment));

@@ -1094,7 +1094,9 @@ const AppConstants = {
  ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from your team members.",
  addDetails: "Add Details",
  showMoreInformation: "Show more Information",
- hide: "Hide"
+ hide: "Hide",
+ transactionFeeApplies: "A transaction fee of 2.25% applies.",
+ transactionFee: "Transaction Fee"
 };
 
 export default AppConstants;
