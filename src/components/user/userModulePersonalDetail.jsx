@@ -1551,15 +1551,15 @@ class UserModulePersonalDetail extends Component {
                         <div className="col-row" style={{ display: 'flex', alignItems: 'flex-end' }}>
                             <div className="col-sm">
                                 <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='primary-add-comp-form' type='primary'>
+                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{paddingRight: "69px"}}>
                                         {AppConstants.register}
                                     </Button>
                                 </div>
                             </div>
-                            <div className="col-sm">
-                                <div className="col-sm">
+                            <div className="col-sm" style={{padding:0}}>
+                                <div className="col-sm" style={{padding:0}}>
                                     <Menu
-                                        className="action-triple-dot-submenu"
+                                        className="action-triple-dot-submenu menu-align-text"
                                         theme="light"
                                         mode="horizontal"
                                         style={{ lineHeight: "25px" }}
@@ -1568,7 +1568,7 @@ class UserModulePersonalDetail extends Component {
                                             key="sub1"
                                             style={{ borderBottomStyle: "solid", borderBottom: 0 }}
                                             title={
-                                                <Button className="primary-add-comp-form" type="primary">
+                                                <Button className="other-info-edit-btn" type="primary">
                                                     {AppConstants.edit}
                                                 </Button>
                                             }

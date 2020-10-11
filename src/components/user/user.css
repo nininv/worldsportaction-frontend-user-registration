@@ -292,4 +292,7 @@
   padding:30px;
   align-self: center;
 }
+.menu-align-text .ant-menu-submenu-title {
+  padding: 0px;
+}
 
