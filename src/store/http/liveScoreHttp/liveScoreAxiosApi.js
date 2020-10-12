@@ -55,7 +55,16 @@ let LiveScoreAxiosApi = {
     getFixtureCompList(orgId, yearId) {
         let url = `/competitions/list?organisationUniqueKey=${orgId}&yearRefId=${yearId}`
         return Method.dataGet(url, localStorage.token);
-    }
+    },
+
+    getUmpireActivityList(payload, roleId, userId, sortBy, sortOrder) {
+        let url = `roster/umpireActivity?roleIds=${roleId}&userId=${userId}`;
+        if (sortBy && sortOrder) {
+            url += `&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+        }
+        return Method.dataPost(url, token, payload);
+    },
+
 };
 
 
@@ -71,8 +80,7 @@ const Method = {
                     headers: {
                         "Content-Type": "application/json",
                         "Access-Control-Allow-Origin": "*",
-                        Authorization: "BWSA " + authorization,
-                        "SourceSystem": "WebAdmin"
+                        Authorization: "BWSA " + authorization
                     }
                 })
 
