@@ -1,6 +1,7 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import userHttpApi from "../../http/userHttp/userAxiosApi";
+import livescoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
 
 function* failSaga(result) {
     yield put({ type: ApiConstants.API_USER_FAIL });
@@ -265,3 +266,59 @@ export function* getUserHistorySaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+// Get the User Role 
+export function* getUserRole(action) {
+    try {
+      const result = yield call(userHttpApi.getUserRoleData, action.userId);
+  
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_USER_ROLE_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
+
+  // Get the Scorer Activity Data
+  export function* getScorerActivitySaga(action) {
+    try {
+      const result = yield call(userHttpApi.getScorerActivityData, action.payload, action.roleId, action.matchStatus);
+  
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_SCORER_ACTIVITY_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
+
+  // Get the umpire Activity Data
+export function* getUmpireActivityListSaga(action) {
+    try {
+      const result = yield call(livescoreAxiosApi.getUmpireActivityList, action.payload, action.roleId, action.userId, action.sortBy, action.sortOrder);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }

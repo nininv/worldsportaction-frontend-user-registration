@@ -1252,7 +1252,7 @@ class TeamInivteForm extends Component{
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
                         onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","userRegDetails")}
-                        defaultValue={userRegDetails.otherSportsInfo}>
+                        value={userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: []}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
@@ -1281,13 +1281,13 @@ class TeamInivteForm extends Component{
                             <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "yearsPlayed","userRegDetails")} 
-                                value={userRegDetails.yearsPlayed}
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isYearsPlayed","userRegDetails")} 
+                                value={userRegDetails.isYearsPlayed}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
-                            {userRegDetails.yearsPlayed == 0 && (
+                            {userRegDetails.isYearsPlayed == 0 && (
                                 <Select
                                     placeholder={AppConstants.yearsOfPlaying}
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}

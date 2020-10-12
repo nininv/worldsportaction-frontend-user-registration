@@ -1091,6 +1091,12 @@ const AppConstants = {
  members: "Members",
  payingFor: "I am paying for",
  notPayingFor: "I am not paying for",
+ umpireActivity:"Umpire Activity",
+ uploadBankAccnt: "Upload Bank Account",
+ editBankAccount: "Edit Bank Account",
+ playerHeading: 'Player',
+ managerHeading: 'Manager',
+ scorerHeading: 'Scorer',
  ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from your team members.",
  addDetails: "Add Details",
  showMoreInformation: "Show more Information",
@@ -1098,7 +1104,8 @@ const AppConstants = {
  transactionFeeApplies: "A transaction fee of 2.25% applies.",
  transactionFee: "Transaction Fee",
  payInFull: "Pay in full",
- splitAmoingTeamMember: "Split amongst team members"
+ splitAmoingTeamMember: "Split amongst team members",
+ liveScoreSeasonFixture:"LiveScore Season Fixture",
 };
 
 export default AppConstants;
