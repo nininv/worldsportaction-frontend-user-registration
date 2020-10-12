@@ -206,7 +206,6 @@ class DashboardLayout extends React.Component {
 
   render() {
     let menuName = this.props.menuName;
-    let logoDisable = (menuName === AppConstants.liveScoreSeasonFixture || menuName === AppConstants.competitionladders) ? true : false
     return (
       <header className="site-header">
         <div className="header-wrap">
@@ -214,12 +213,12 @@ class DashboardLayout extends React.Component {
             <div className="col-sm-12 d-flex">
               <div className="logo-box">
                 {/* <NavLink to="/" className="site-brand"> */}
-                 {!logoDisable && <img src={AppImages.netballLogo1} alt="" />}
+                 <img src={AppImages.netballLogo1} alt="" />
                 {/* </NavLink> */}
                 <div className="col-sm dashboard-layout-menu-heading-view">
-                {!logoDisable && <span className="dashboard-layout-menu-heading">
+                <span className="dashboard-layout-menu-heading">
                     {this.props.menuHeading}
-                </span>}
+                </span>
                 </div>
                 {/* <div className="col-sm width_200 mt-1">
                   <div

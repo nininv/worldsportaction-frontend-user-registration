@@ -367,7 +367,7 @@ class LiveScorePublicLadder extends Component {
                 <DashboardLayout
                     menuHeading={AppConstants.liveScores}
                     isManuNotVisible={true}
-                    menuName={AppConstants.competitionladders}
+                    menuName={AppConstants.liveScores}
                 />
                 <Layout>
                     {this.headerView()}

@@ -507,7 +507,7 @@ class LiveScoreSeasonFixture extends Component {
 
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
-                <DashboardLayout menuHeading={AppConstants.liveScores} menuName={AppConstants.liveScoreSeasonFixture} />
+                <DashboardLayout menuHeading={AppConstants.liveScores} menuName={AppConstants.liveScores} />
                 {/* <Loader visible={this.props.liveScoreFixturCompState.onLoad || this.props.liveScoreMatchState.onLoad} /> */}
                 <Layout>
                     {this.headerView()}
