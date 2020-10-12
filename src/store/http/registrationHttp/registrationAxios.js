@@ -166,7 +166,7 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getTeamRegistrationReviewProducts(payload) {
-        var url = `/api/teamregistration/review/products?userRegId=${payload.userRegId}`;
+        var url = `/api/teaminvite/review/products?userRegId=${payload.userRegId}`;
         return Method.dataGet(url, token);
     },
     getDeRegisterData(userId) {

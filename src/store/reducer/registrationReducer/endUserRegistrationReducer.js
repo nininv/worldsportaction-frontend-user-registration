@@ -928,17 +928,17 @@ function endUserRegistrationReducer(state = initialState, action) {
                 onLoad: false,                
             };
         
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
-            return { ...state, onRegReviewLoad: true };
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
+        //     return { ...state, onRegReviewLoad: true };
 
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS:
-            let regTeamReviewData = action.result;
-            return {
-                ...state,
-                onRegReviewLoad: false,
-                status: action.status,
-                regTeamReviewData: regTeamReviewData
-            };
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS:
+        //     let regTeamReviewData = action.result;
+        //     return {
+        //         ...state,
+        //         onRegReviewLoad: false,
+        //         status: action.status,
+        //         regTeamReviewData: regTeamReviewData
+        //     };
 
         case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD:
             return { ...state, onRegReviewLoad: true };

@@ -231,14 +231,14 @@ function teamNameValidationAction(payload,index){
     return action;
 }
 
-function getTeamRegistrationReviewAction(payload){
-    const action = {
-        type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD,
-        payload: payload
-    }
+// function getTeamRegistrationReviewAction(payload){
+//     const action = {
+//         type: ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD,
+//         payload: payload
+//     }
 
-    return action;
-}
+//     return action;
+// }
 
 function saveTeamRegistrationReview(payload){
     const action = {
@@ -302,7 +302,7 @@ export {
     //getRegistrationByIdAction,
     validateDiscountCode,
     teamNameValidationAction,
-    getTeamRegistrationReviewAction,
+    //getTeamRegistrationReviewAction,
     saveTeamRegistrationReview,
     getTeamRegistrationReviewProductAction,
     updateTeamReviewInfoAction,
