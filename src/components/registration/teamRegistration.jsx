@@ -37,6 +37,9 @@ class TeamRegistration extends Component {
         if(userRegUniqueKey!= undefined)
         {
             await setUserRegId(userRegUniqueKey);
+            await localStorage.removeItem("userId");
+            await localStorage.removeItem("token");
+            history.push({pathname: "/login",state: {userRegId: userRegUniqueKey}})
         }
 
         if(userId!= undefined && token!= undefined){
@@ -160,16 +163,16 @@ class TeamRegistration extends Component {
                  {this.headerView()}
                 <Layout >
                     <Content className="container">
-                        {this.state.existingUserRefId == null &&
+                        {/* {this.state.existingUserRefId == null &&
                             <div className="formView">
                                 {this.contentView()}
                             </div>
-                        }
-                        { this.state.existingUserRefId != null &&
+                        } */}
+                        {/* { this.state.existingUserRefId != null &&
                             <div className="formView">
                                 {this.registeringYourselfView()}
                             </div>
-                        }
+                        } */}
                     </Content>
                 </Layout>
             </div>

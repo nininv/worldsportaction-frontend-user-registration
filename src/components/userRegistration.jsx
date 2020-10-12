@@ -7,7 +7,7 @@ import AppConstants from "../themes/appConstants";
 import "../pages/layout.css";
 import { setAuthToken, setUserId, setOrganistaionId, 
     setCompetitionID, getAuthToken, getUserId,
-    setIsUserRegistration, setSourceSystemFlag } from '../util/sessionStorage'
+    setIsUserRegistration, setSourceSystemFlag, getIsUserRegistration } from '../util/sessionStorage'
 import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
@@ -72,7 +72,7 @@ class UserRegistration extends Component {
             }
             else{
                 await setIsUserRegistration(1);
-                history.push("/login");
+                history.push({pathname: "/login",state: {isUserRegistration: 1}});
             }
     }
 

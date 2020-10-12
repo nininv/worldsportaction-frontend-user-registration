@@ -165,7 +165,12 @@ const initialState = {
     onExistingTeamInfoByIdLoad: false,
     expiredRegistrationFlag: false,
     expiredRegistration: null,
-    onExpiredRegistrationCheckLoad: false 
+    onExpiredRegistrationCheckLoad: false,
+    divisionsChanged: false,
+    // iniviteMemberInfo: null,
+    // inviteOnLoad: false,
+    // inviteMemberRegSettings: null,
+    // inviteMemberSaveOnLoad: false 
 }
 
 function setTeamRegistrationObj(state){
@@ -215,7 +220,7 @@ function getUpdatedTeamMemberObj(state){
   try{
     let teamMemberTemp = deepCopyFunction(teamMemberObj);
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
-    let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1);
+    let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){
       let obj = {
         "competitionMembershipProductId": product.competitionMembershipProductId,
@@ -252,6 +257,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
         }
         state.teamRegistrationObj.divisions.push(div);
       }
+      state.divisionsChanged = true;
     }
   }catch(ex){
     console.log("Error in setDivisions::"+ex);
@@ -260,13 +266,15 @@ function setDivisions(state,competitionMembershipProductTypeId){
 
 function setTeamRegistrationSetting(state,settings){
 	try{
-		let teamRegistrationObj = state.teamRegistrationObj;
-		let settingKeys = Object.keys(settings);
-		for(let key of settingKeys){
-			if(teamRegistrationObj.regSetting[key] == 0){
-				teamRegistrationObj.regSetting[key] = settings[key];
-			}
-		}
+    let teamRegistrationObj = state.teamRegistrationObj;
+    if(teamRegistrationObj){
+      let settingKeys = Object.keys(settings);
+      for(let key of settingKeys){
+        if(teamRegistrationObj.regSetting[key] == 0){
+          teamRegistrationObj.regSetting[key] = settings[key];
+        }
+      }
+    }
 	}catch(ex){
 		console.log("Error in setTeamRegistrationSetting in teamRegistrationReducer"+ex);
 	}
@@ -349,6 +357,7 @@ function teamRegistrationReducer(state = initialState, action){
             return {
               ...state,
               onLoad: false,
+              //inviteMemberRegSettings: registrationSettings,
               status: action.status
             };
         
@@ -415,7 +424,44 @@ function teamRegistrationReducer(state = initialState, action){
               expiredRegistration: expiredRegistrationTemp,
               status: action.status
             };
+
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
+        //     return {...state,inviteOnLoad: true}
+          
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS:
+        //     let iniviteMemberInfoTemp = action.result;
+        //     return {
+        //       ...state,
+        //       status: action.status,
+        //       inviteOnLoad: false,
+        //       iniviteMemberInfo : iniviteMemberInfoTemp
+        //     };
+
+        // case ApiConstants.UPDATE_INVITE_MEMBER_INFO_ACTION:
+        //     let inviteMemberInfoData = action.data;
+        //     let inviteMemberInfoKey = action.key;
+        //     let inviteMemberInfoSubKey= action.subKey;
+        //     let inviteMemberInfoParentIndex = action.parentIndex;
+        //     if(inviteMemberInfoSubKey == "userRegDetails"){
+        //       state.iniviteMemberInfo.userRegDetails[inviteMemberInfoKey] = inviteMemberInfoData;
+        //     }else if(inviteMemberInfoSubKey == "parentOrGaurdianDetails"){
+        //       state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoParentIndex][inviteMemberInfoKey] = inviteMemberInfoData;
+        //     }else if(inviteMemberInfoKey == "inviteMemberInfo"){
+        //       state.iniviteMemberInfo = inviteMemberInfoData;
+        //     }
+        //     return{
+        //       ...state
+        //     }
+
+        // case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD:
+        //     return { ...state, inviteMemberSaveOnLoad: true };
   
+        // case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
+        //     return {
+        //         ...state,
+        //         inviteMemberSaveOnLoad: false,
+        //         status: action.status
+        //     };   
 
         default:
             return state;

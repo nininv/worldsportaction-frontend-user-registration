@@ -132,3 +132,40 @@ export function* teamRegistrationMembershipProducts(action) {
     }
   }
 
+//   export function* getInvitedTeamRegInfoSaga(action) {
+//     try {
+//       const result = yield call(AxiosApi.getInvitedTeamRegInfo, 
+//             action.payload);
+//       if (result.status === 1) {
+//         console.log("saga",result.result.data);
+//         yield put({
+//           type: ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS,
+//           result: result.result.data,
+//           status: result.status
+//         });
+//       } else {
+//         yield call(failSaga, result)
+//       }
+//     } catch (error) {
+//       yield call(errorSaga, error)
+//     }
+//   }
+
+// export function* teamRegistrationInviteUpdateSaga(action) {
+//   try {
+//     const result = yield call(AxiosApi.updateTeamRegistrationInvite, 
+//           action.payload);
+//     if (result.status === 1) {
+//       yield put({
+//         type: ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS,
+//         result: result.result.data,
+//         status: result.status
+//       });
+//     } else {
+//       yield call(failSaga, result)
+//     }
+//   } catch (error) {
+//     yield call(errorSaga, error)
+//   }
+// }
+

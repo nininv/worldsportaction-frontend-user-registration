@@ -16,7 +16,6 @@ import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder
 import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
 
 import TeamRegistration from "../components/registration/teamRegistration";
-import TeamRegistrationForm from "../components/registration/teamRegistrationForm";
 
 import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
 import UserProfileEdit from "../components/user/userProfileEdit"
@@ -32,6 +31,10 @@ import RegistrationShop from "../components/registration/registrationShop";
 import RegistrationPayment from "../components/registration/registrationPayment";
 import RegistrationShipping from "../components/registration/registrationShipping";
 import AppTeamRegistrationForm from "../components/registration/appTeamRegistrationForm";
+import TeamInviteForm from "../components/registration/teamInviteForm";
+import TeamInviteProducts from "../components/registration/teamInviteProducts";
+import TeamInviteShop from "../components/registration/teamInviteShop";
+import TeamInvitePayment from "../components/registration/teamInvitePayment";
 
 
 const lazyLoad = Component => {
@@ -101,7 +104,7 @@ class Routes extends React.Component {
 
         <PrivateRoute
           path="/teamRegistrationForm"
-          component={lazyLoad(TeamRegistrationForm)}
+          component={lazyLoad(TeamInviteForm)}
         />
 
         <PrivateRoute
@@ -133,14 +136,25 @@ class Routes extends React.Component {
           component={lazyLoad(ReviewProducts)}
         /> */}
 
-        <PrivateRoute
+        {/* <PrivateRoute
           path="/teamRegistrationReview"
           component={lazyLoad(TeamRegistrationReview)}
+        /> */}
+
+        <PrivateRoute
+          path="/teamRegistrationReview"
+          component={lazyLoad(TeamInvitePayment)}
         />
+
         <PrivateRoute
           path="/teamRegistrationReviewProducts"
-          component={lazyLoad(TeamReviewProducts)}
-        />
+          component={lazyLoad(TeamInviteProducts)}
+        /> 
+
+        <PrivateRoute
+          path="/teamRegistrationShop"
+          component={lazyLoad(TeamInviteShop)}
+        /> 
 
         <PrivateRoute
           path="/registrationProducts"
