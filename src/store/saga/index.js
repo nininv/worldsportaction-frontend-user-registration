@@ -35,6 +35,7 @@ import * as deRegisterSaga from '../saga/registrationSaga/deRegisterSaga';
 //UserRegistrationSaga
 import * as userRegistrationSaga from '../saga/registrationSaga/userRegistrationSaga';
 import * as teamRegistrationSaga from '../saga/registrationSaga/teamRegistrationSaga';
+import * as teamInviteSaga from './registrationSaga/teamInviteSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
@@ -114,7 +115,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_INVITED_TEAM_REG_INFO_LOAD, endUserRegSaga.getInvitedTeamRegInfoSaga)
 
   //Update Team Registration Invite
-  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
+  // yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
 
 
   //UserModule Personal Info
@@ -263,4 +264,9 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_SCORER_ACTIVITY_LOAD, userSaga.getScorerActivitySaga);
   yield takeEvery(ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD, userSaga.getUmpireActivityListSaga);
 
+  //Team invite saga
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamInviteSaga.getInvitedTeamRegInfoSaga);
+  yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD,teamInviteSaga.orgTeamInviteRegistrationSettings);
+  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga)
+  yield takeEvery(ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_LOAD, teamInviteSaga.getInviteTeamProductsSaga)
 }

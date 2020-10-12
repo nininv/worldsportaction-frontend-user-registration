@@ -19,6 +19,7 @@ import ShopProductState from "./shopReducer/productReducer";
 import UserRegistrationState from "./registrationReducer/userRegistrationReducer";
 import TeamRegistrationState from "./registrationReducer/teamRegistrationReducer";
 import RegistrationProductState from "./registrationReducer/registrationProductsReducer";
+import TeamInviteState from "./registrationReducer/teamInviteReducer";
 
 const rootReducer = combineReducers({
   LoginState,
@@ -36,7 +37,8 @@ const rootReducer = combineReducers({
   ShopProductState,
   UserRegistrationState,
   RegistrationProductState,
-  TeamRegistrationState
+  TeamRegistrationState,
+  TeamInviteState
 });
 
 export default rootReducer;

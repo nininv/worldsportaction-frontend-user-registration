@@ -24,11 +24,16 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loginButton: false
+            loginButton: false,
+            isUserRegistration: null,
+            userRegId: null
         }
     }
 
     componentDidMount() {
+        let isUserRegistration = this.props.location.state ? this.props.location.state.isUserRegistration : null;
+        let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+        this.setState({isUserRegistration: isUserRegistration,userRegId: userRegId});
         if(getUserId() == 0){
             localStorage.removeItem("userId");
             localStorage.removeItem("token");
@@ -44,10 +49,13 @@ class Login extends Component {
         let loginstate = this.props.loginstate;
         if (loginstate.onLoad == false && this.state.loginButton == false) {
             if(loginstate.status == 1){
-                if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
+                // if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
+                //     history.push("/teamRegistrationForm");
+                // }
+                if(this.state.userRegId){
                     history.push("/teamRegistrationForm");
                 }
-                else if(getIsUserRegistration() == 1){
+                else if(this.state.isUserRegistration == 1){
                     history.push('/appRegistrationForm');
                 }
                 else {
@@ -60,7 +68,11 @@ class Login extends Component {
     redirect = async() =>{
         setUserId(userId);
         setAuthToken(token);
-        history.push('/appRegistrationForm');
+        if(this.state.userRegId){
+            history.push('/teamRegistrationForm');
+        }else{
+            history.push('/appRegistrationForm');
+        }
     }
 
     ///////view for breadcrumb
@@ -109,7 +121,7 @@ class Login extends Component {
                     <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
                 </NavLink>
 
-                {getIsUserRegistration() == 1 ?
+                {this.state.isUserRegistration == 1 || this.state.userRegId ?
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div style={{display:'flex'}}>

@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "05cf99ab-0609-479c-83b6-182a800c48ef";
+        //let registrationUniqueKey = "fa7066f7-6b49-4a2b-9331-b0ba020549a1";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -115,6 +115,22 @@ class RegistrationProducts extends Component {
             },
         }
         this.props.getRegistrationShopProductAction(payload);
+    }
+
+    getOrdinalString = (position) => {
+        try{
+            if((position % 10) == 1){
+                return 'st';
+            }else if((position % 10) == 2 && position != 12){
+                return 'nd';
+            }else if((position % 10) == 3 && position != 13){
+                return 'rd';
+            }else{
+                return 'th';
+            }
+        }catch(ex){
+            console.log("Error in getOrdinalString::"+ex);
+        }
     }
 
 
@@ -188,7 +204,7 @@ class RegistrationProducts extends Component {
         registrationReview["registrationId"] = this.state.registrationUniqueKey;
         registrationReview["index"] = index;
         this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
-        if(key == "paymentOptionRefId" || key == "discount"){
+        if(key == "paymentOptionRefId" || key == "discount" || key =="nominationPayOptionRefId"){
            this.callSaveRegistrationProducts(key, registrationReview)
         }
         else if(key == "removeDiscount"){
@@ -477,22 +493,34 @@ class RegistrationProducts extends Component {
     productsView = (item, index) =>{
         return(
             <div className="innerview-outline">
-                {item.isTeamRegistration == 1 ? 
+                {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
                         <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
-                        <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px",marginTop: "20px"}}>
-                            <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
+                        <div className="product-line">
+                            {isArrayNotEmpty(item.teamMembers.payingForList) && (
+                                <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
+                            )}
                             {(item.teamMembers.payingForList || []).map((payingFor,payigForIndex) => (
                                 <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
                                     {payingFor.membershipProductTypeName + ' ' + payingFor.name}
                                 </div>
                             ))}
-                            <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
+                            {isArrayNotEmpty(item.teamMembers.notPayingForList) && (
+                                <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
+                            )}
                             {(item.teamMembers.notPayingForList || []).map((notPlayingFor,notPayigForIndex) => (
                                 <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
                                     {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
                                 </div>
                             ))}
+                        </div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
+                            </Radio.Group>  
                         </div>
                     </div>
                 : 
@@ -538,8 +566,8 @@ class RegistrationProducts extends Component {
                 {item.selectedOptions.paymentOptionRefId == 4 && 
                 <div className="row" style={{marginTop: '20px'}}>
                     {(item.instalmentDates || []).map((i, iIndex) => (
-                        <div className="col-sm-2" key={iIndex}>
-                        <div>{(iIndex + 1) + " instalment"}</div>
+                        <div className="col-sm-3" key={iIndex}>
+                        <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
                         <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
                     </div>
                     )) }

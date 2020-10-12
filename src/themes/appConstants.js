@@ -101,7 +101,7 @@ const AppConstants = {
   childCountry: "Which country were you born",
   childNationality: "What nationality are you",
   childLangSpoken: "Languages spoken at home",
-  haveDisability: "Do you qualify for NDIS (National Disability Insurance Scheme ) discount?",
+  haveDisability: "Do you qualify for NDIS (National Disability Insurance Scheme)?",
   disabilityCareNumber: "Disability care Number",
   typeOfDisability: "Type of Disability",
   addanotherQuestion: "Add Another question",
@@ -904,7 +904,7 @@ const AppConstants = {
   whatRegistrationChange: "what registration change do you",
   takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
   reasonRegisterTitle: "Why would you like to de-register?",
-  reasonForTransfer: "Reasons(s) for wanting to transfer.",
+  reasonForTransfer: "Reason for Transfer",
   directDebit: "Direct Debit",
   creditCard: "Credit/Debit Card",
   cash: "Cash",
@@ -1091,14 +1091,20 @@ const AppConstants = {
  members: "Members",
  payingFor: "I am paying for",
  notPayingFor: "I am not paying for",
- ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from the team",
  umpireActivity:"Umpire Activity",
  uploadBankAccnt: "Upload Bank Account",
  editBankAccount: "Edit Bank Account",
  playerHeading: 'Player',
  managerHeading: 'Manager',
  scorerHeading: 'Scorer',
-
+ ifAllTeamMemberHaveNotRegistered: "If all Team Members have not registered by the Competition start date, you will be charged any outstanding monies and it will be your responsibility to recoup that from your team members.",
+ addDetails: "Add Details",
+ showMoreInformation: "Show more Information",
+ hide: "Hide",
+ transactionFeeApplies: "A transaction fee of 2.25% applies.",
+ transactionFee: "Transaction Fee",
+ payInFull: "Pay in full",
+ splitAmoingTeamMember: "Split amongst team members"
 };
 
 export default AppConstants;

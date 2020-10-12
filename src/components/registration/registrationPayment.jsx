@@ -261,94 +261,99 @@ const CheckoutForm = (props) => {
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
                         {pay.securePaymentOptionRefId == 2 && 
-                        <div className="row">
-                            <div className='col-sm'>
-                                <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
-                                    checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                {selectedPaymentOption.credit == true &&
-                                    <div className="pt-5">
-                                        <CardElement
-                                            id="card-element"
-                                            options={CARD_ELEMENT_OPTIONS}
-                                            onChange={handleChange}
-                                            className='StripeElement'
-                                        />
-                                        <div className="card-errors" role="alert">{error}</div>
-                                    </div>
-                                }
+                            <div className="row">
+                                <div className='col-sm'>
+                                    <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                        checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                    {selectedPaymentOption.credit == true && 
+                                        <div className="pt-5">
+                                            <CardElement
+                                                id="card-element"
+                                                options={CARD_ELEMENT_OPTIONS}
+                                                onChange={handleChange}
+                                                className='StripeElement'
+                                            />
+                                            <div className="card-errors" role="alert">{error}</div>
+                                            <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                        </div>   
+                                    }
+                                </div>
                             </div>
-                        </div>}
+                        }
                         {pay.securePaymentOptionRefId == 1 && 
                         <div className="row">
                             <div className='col-sm'>
                                 <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
-                                    <div class="sr-root">
-                                        <div class="sr-main">
-                                            {/* <div class="sr-combo-inputs-row">
-                                                <div class="col">
-                                                    <label htmlFor="name">
-                                                        Name
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="name"
-                                                        name="name"
-                                                        placeholder="John Smith"
-                                                        onChange={e => setName(e.target.value)}
-                                                        value={name}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div class="col">
-                                                    <label htmlFor="email">
-                                                        Email Address
-                                                    </label>
-                                                    <input
-                                                        id="email"
-                                                        name="email"
-                                                        type="email"
-                                                        onChange={e => setEmail(e.target.value)}
-                                                        value={email}
-                                                        placeholder="john.smith@example.com"
-                                                        required
-                                                    />
-                                                </div>
-                                            </div> */}
-                                            <div class="sr-combo-inputs-row">
-                                                <div class="col">
-                                                    <label htmlFor="au-bank-account-element">
-                                                        Bank Account
-                                                </label>
-                                                    <div id="au-bank-account-element">
-                                                        <AuBankAccountElement
-                                                            id="au-bank-account-element"
-                                                            options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
-                                                            className='StripeElement'
+                                    <div>
+                                        <div class="sr-root">
+                                            <div class="sr-main">
+                                                {/* <div class="sr-combo-inputs-row">
+                                                    <div class="col">
+                                                        <label htmlFor="name">
+                                                            Name
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="name"
+                                                            name="name"
+                                                            placeholder="John Smith"
+                                                            onChange={e => setName(e.target.value)}
+                                                            value={name}
+                                                            required
                                                         />
                                                     </div>
+                                                    <div class="col">
+                                                        <label htmlFor="email">
+                                                            Email Address
+                                                        </label>
+                                                        <input
+                                                            id="email"
+                                                            name="email"
+                                                            type="email"
+                                                            onChange={e => setEmail(e.target.value)}
+                                                            value={email}
+                                                            placeholder="john.smith@example.com"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div> */}
+                                                <div class="sr-combo-inputs-row">
+                                                    <div class="col">
+                                                        <label htmlFor="au-bank-account-element">
+                                                            Bank Account
+                                                    </label>
+                                                        <div id="au-bank-account-element">
+                                                            <AuBankAccountElement
+                                                                id="au-bank-account-element"
+                                                                options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
+                                                                className='StripeElement'
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <div id="bank-name"></div>
+                                                <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
+                                                <div class="col pt-3" id="mandate-acceptance">
+                                                    {AppConstants.stripeMandate1} <a> </a>
+                                                    <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        Direct Debit Request service agreement
+                                                    </a>
+                                                    {AppConstants.stripeMandate2}
+                                                </div>
+                                                {/* </form> */}
+                                                {/* <div class="sr-result hidden">
+                                                    <p>Response<br /></p>
+                                                    <pre>
+                                                        <code></code>
+                                                    </pre>
+                                                </div> */}
                                             </div>
-                                            <div id="bank-name"></div>
-                                            <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
-                                            <div class="col pt-3" id="mandate-acceptance">
-                                                {AppConstants.stripeMandate1} <a> </a>
-                                                <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    Direct Debit Request service agreement
-                                                </a>
-                                                {AppConstants.stripeMandate2}
-                                            </div>
-                                            {/* </form> */}
-                                            {/* <div class="sr-result hidden">
-                                                <p>Response<br /></p>
-                                                <pre>
-                                                    <code></code>
-                                                </pre>
-                                            </div> */}
                                         </div>
+                                        <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
                                     </div>
                                 }
                             </div>
@@ -616,6 +621,17 @@ class RegistrationPayment extends Component {
                     <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
+                    </div>
+                </div>
+
+                <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
+                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                    </div>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
+                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
                 </div>
                 
