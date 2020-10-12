@@ -1679,13 +1679,13 @@ class AppTeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "yearsPlayed")} 
-                                value={teamRegistrationObj.additionalInfo.yearsPlayed}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
+                                value={teamRegistrationObj.additionalInfo.isYearsPlayed}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
-                            {teamRegistrationObj.additionalInfo.yearsPlayed == 0 && (
+                            {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
                                 <Select
                                     placeholder={AppConstants.yearsOfPlaying}
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}

@@ -95,6 +95,7 @@ const teamObj = {
     "schoolId": null,
     "injuryInfo": null,
     "allergyInfo": null,
+    "isYearsPlayed": null,
     "yearsPlayed": null,
     "countryRefId": 1,
     "heardByOther": null,
