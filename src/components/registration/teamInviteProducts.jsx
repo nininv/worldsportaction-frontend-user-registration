@@ -1,21 +1,8 @@
 import React, { Component } from "react";
 import {
     Layout,
-    Breadcrumb,
-    Input,
-    Select,
-    Checkbox,
     Button, 
-    Table,
-    DatePicker,
-    Radio, 
     Form, 
-    Modal, 
-    message, 
-    Steps,
-    Tag,
-    Pagination,
-    Carousel
 } from "antd";
 import { connect } from 'react-redux';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
@@ -25,31 +12,25 @@ import { bindActionCreators } from "redux";
 import "./product.css";
 import "../user/user.css";
 import '../competition/competition.css';
-import { isEmptyArray } from "formik";
 import Loader from '../../customComponents/loader';
-import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
-import moment from 'moment';
-import InputWithHead from "../../customComponents/InputWithHead";
+import {isArrayNotEmpty} from '../../util/helpers';
 import AppImages from "../../themes/appImages";
-import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
 import history from "../../util/history";
-import ValidationConstants from "../../themes/validationConstant";
-import { captializedString } from "../../util/helpers";
+
 import { 
-    getInviteTeamReviewProductAction
+    getTeamInviteReviewAction,saveTeamInviteReviewAction,
+    updateTeamInviteAction, deleteTeamInivteProductAction
 } from '../../store/actions/registrationAction/teamInviteAction';
 
 const { Header, Footer, Content } = Layout;
-const { Step } = Steps;
-const { TextArea } = Input;
-const { Option } = Select;
 
 class TeamInviteProducts extends Component{
     constructor(props){
         super(props);
         this.state = {
-            userRegId: null
+            userRegId: null,
+            productModalVisible: false,
+            loading: false,
         }
     }
 
@@ -57,10 +38,7 @@ class TeamInviteProducts extends Component{
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             this.setState({userRegId: userRegId});
-            let payload = {
-                userRegId: userRegId
-            }
-            this.props.getInviteTeamReviewProductAction(payload);
+            this.getApiInfo(userRegId);
         }catch(ex){
             console.log("Error in componentDidMount::"+ex);
         }
@@ -68,11 +46,121 @@ class TeamInviteProducts extends Component{
 
     componentDidUpdate(){
         try{
-            
+            let teamInviteState = this.props.teamInviteState
+            if(this.state.loading == true && teamInviteState.onTeamInviteReviewLoad == false){
+                if(this.state.buttonPressed == "save"){
+                    if(isArrayNotEmpty(teamInviteState.shopProductList)){
+                        this.goToShop();
+                    }else{
+                        this.goToRegistrationPayments();
+                    } 
+                }
+            }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
         }
     }
+
+     
+    getApiInfo = (userRegId) => {
+        this.setState({onLoading: true});
+        let payload = {
+            userRegId: "bb881a03-6292-405a-8e49-d57f9e9ec9ce"
+        }
+        this.props.getTeamInviteReviewAction(payload);
+        //this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+    }
+
+    goToRegistrationPayments = () =>{
+        history.push({pathname: '/registrationPayment', state: {userRegId: this.state.userRegId}})
+    }
+
+    
+    getShopProducts = (userRegId, page, typeId) =>{
+        let {registrationId} = this.props.teamInviteState;
+        let payload = {
+            registrationId: registrationId,
+            typeId: typeId,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+       // this.props.getRegistrationShopProductAction(payload);
+    }
+
+    getOrdinalString = (position) => {
+        try{
+            if((position % 10) == 1){
+                return 'st';
+            }else if((position % 10) == 2 && position != 12){
+                return 'nd';
+            }else if((position % 10) == 3 && position != 13){
+                return 'rd';
+            }else{
+                return 'th';
+            }
+        }catch(ex){
+            console.log("Error in getOrdinalString::"+ex);
+        }
+    }
+
+    getPaymentOptionText = (paymentOptionRefId) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
+
+        return paymentOptionTxt;
+    }
+
+    setReviewInfo = (value, key, index, subkey, subIndex) => {
+        let teamInviteReview = this.props.teamInviteState.teamInviteReviewList;
+        teamInviteReview["registrationId"] = this.state.registrationUniqueKey;
+        teamInviteReview["index"] = index;
+        this.props.updateReviewInfoAction(value,key, index, subkey,subIndex);
+        if(key == "paymentOptionRefId"){
+           this.callSaveRegistrationProducts(key, teamInviteReview)
+        }
+        else if(key == "voucher"){
+            this.callSaveRegistrationProducts(key, teamInviteReview)
+        }
+        else if(key == "removeVoucher"){
+            this.callSaveRegistrationProducts("voucher", teamInviteReview);
+        }
+    }
+
+    callSaveRegistrationProducts = (key, teamInviteReview) =>{
+        try{
+            teamInviteReview["key"] = key;
+            console.log("teamInviteReview" , teamInviteReview);
+            this.props.saveTeamInviteReviewAction(teamInviteReview);
+            this.setState({loading: true, buttonPressed: key});
+        }catch(ex){
+            console.log("Error in callSaveRegistrationProducts::"+ex);
+        }
+    }
+
+    removeProductModal = (key, id) =>{
+        if(key == "show"){
+            this.setState({productModalVisible: true, id: id});
+        }
+        else if(key == "ok"){
+            this.setState({productModalVisible: false});
+            let payload = {
+                userRegId : this.state.userRegId,
+                orgRegParticipantId: this.state.id
+            }
+            this.props.deleteTeamInivteProductAction(payload);
+            this.setState({loading: true});
+        }
+        else if(key == "cancel"){
+            this.setState({productModalVisible: false});
+        }
+    }
+
+
 
     teamInviteProductSave = (e) => {
         try{
@@ -86,6 +174,7 @@ class TeamInviteProducts extends Component{
             console.log("Error in ");
         }
     }
+    
 
     headerView = () => {
         try{
@@ -432,7 +521,10 @@ class TeamInviteProducts extends Component{
 
 function mapDispatchToProps(dispatch){
     return bindActionCreators({	
-        getInviteTeamReviewProductAction
+        getTeamInviteReviewAction,
+        saveTeamInviteReviewAction,
+        updateTeamInviteAction,
+        deleteTeamInivteProductAction
     }, dispatch);
 
 }

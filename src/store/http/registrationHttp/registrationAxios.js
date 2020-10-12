@@ -157,18 +157,18 @@ let AxiosApi = {
         var url = `/api/registration/team/validate`;
         return Method.dataPost(url, token, payload);
     },
-    getTeamRegistrationReview(payload) {
-        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+    getTeamInviteReview(payload) {
+        var url = `/api/teaminvite/review?userRegId=${payload.userRegId}`;
         return Method.dataGet(url, token);
     },
-    saveTeamRegistrationReview(payload) {
-        var url = `/api/teamregistration/review?userRegId=${payload.userRegId}`;
+    saveTeamInviteReview(payload) {
+        var url = `/api/teaminvite/review?userRegId=${payload.userRegId}`;
         return Method.dataPost(url, token, payload);
     },
-    getTeamRegistrationReviewProducts(payload) {
-        var url = `/api/teaminvite/review/products?userRegId=${payload.userRegId}`;
-        return Method.dataGet(url, token);
-    },
+    // getTeamRegistrationReviewProducts(payload) {
+    //     var url = `/api/teaminvite/review/products?userRegId=${payload.userRegId}`;
+    //     return Method.dataGet(url, token);
+    // },
     getDeRegisterData(userId) {
         var url = `/api/deregister?userId=${userId}`;
         return Method.dataGet(url, token);
@@ -214,7 +214,11 @@ let AxiosApi = {
     getExistingTeamDataById(participantId){
         var url = `/api/registration/teamparticipant?participantId=${participantId}`;
         return Method.dataGet(url, token);
-    }
+    },
+    deleteTeamInviteProduct(payload) {
+        var url = `/api/registration/teaminvite/product/delete?registrationId=${payload.userRegId}&orgRegParticipantId=${payload.orgRegParticipantId}`;
+        return Method.dataDelete(url, token);
+    },
 };
 
 const Method = {

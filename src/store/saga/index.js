@@ -186,15 +186,6 @@ export default function* root_saga() {
   //validation result code
   yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
 
-  // //Get Team Registration Review
-  // yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getTeamRegistrationReviewSaga)
-
-  //Save Team Registration Revie
-  yield takeEvery(ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveTeamRegistrationReviewSaga)
-
-  //Get Team Registration Review Products
-  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
-
   //Save DeRegister
   yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
 
@@ -268,5 +259,10 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamInviteSaga.getInvitedTeamRegInfoSaga);
   yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD,teamInviteSaga.orgTeamInviteRegistrationSettings);
   yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga)
-  yield takeEvery(ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_LOAD, teamInviteSaga.getInviteTeamProductsSaga)
+  yield takeEvery(ApiConstants.API_GET_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.getTeamInviteReviewSaga)
+
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.saveTeamInviteReviewSaga)
+  yield takeEvery(ApiConstants.API_DELETE_TEAM_INVITE_PRODUCT_SUCCESS, teamInviteSaga.deleteRegistrationProductSaga)
+
+  
 }

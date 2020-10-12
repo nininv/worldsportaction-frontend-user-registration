@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
+import { feeIsNull } from "../../../util/helpers";
 
 const initialState = {
     iniviteMemberInfo: null,
@@ -8,7 +8,10 @@ const initialState = {
     inviteMemberSaveOnLoad: false, 
     teamInviteProductsInfo: null,
     teamInviteProductsOnLoad: false,
+    onTeamInviteReviewLoad: false,
+    teamInviteReviewList: null,
     status: null,
+    registrationId: null
 }
 
 function teamInviteReducer(state = initialState, action){
@@ -63,17 +66,140 @@ function teamInviteReducer(state = initialState, action){
                 status: action.status
             };
 
-        case ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_LOAD:
+        case ApiConstants.API_GET_TEAM_INVITE_REVIEW_LOAD:
             return { ...state, teamInviteProductsOnLoad: true };
 
-        case ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_SUCCESS:
-            let teamInviteProductsInfoTemp = action.result;
+        case ApiConstants.API_GET_TEAM_INVITE_REVIEW_SUCCESS:
+            let teamInviteReviewList = action.result;
+            state.registrationId = teamInviteReviewList ? teamInviteReviewList.registrationId : null;
             return {
                 ...state,
                 teamInviteProductsOnLoad: false,
                 status: action.status,
-                teamInviteProductsInfo: teamInviteProductsInfoTemp
+                teamInviteReviewList: teamInviteReviewList
             };
+            
+        case ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD:
+            return { ...state, onTeamInviteReviewLoad: true };
+
+        case ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_SUCCESS:
+            let teamInviteSaveData = action.result.response;
+            return {
+                ...state,
+                onTeamInviteReviewLoad: false,
+                status: action.status,
+                teamInviteReviewList: teamInviteSaveData
+            };
+    
+
+        case ApiConstants.API_DELETE_TEAM_INVITE_PRODUCT_LOAD:
+            return { ...state, onTeamInviteReviewLoad: true };
+
+        case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS:
+            let teamInviteDeleteData = action.result;
+            return {
+                ...state,
+                onTeamInviteReviewLoad: false,
+                status: action.status,
+                teamInviteReviewList: teamInviteDeleteData
+            };
+            
+        case ApiConstants.UPDATE_TEAM_REVIEW_INFO:
+            let reviewData = state.teamInviteReviewList;
+            if(action.subKey == "charity"){
+                reviewData[action.key] = action.value;
+            }
+            else if(action.subKey == "selectedOptions"){
+                if(action.key == "paymentOptionRefId"){
+                    reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
+                }
+                else if(action.key =="addVoucher"){
+                    let obj = {
+                        governmentVoucherRefId: null,
+                        voucherCode: null,
+                        balance: 0,
+                        redeemAmount: 0,
+                        remainingAmount: 0,
+                        isValid: null,
+                        message: null
+                    }
+
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"].push(obj);
+                }
+                else if(action.key == "voucherCode" || action.key == "governmentVoucherRefId"){
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"][action.subIndex][action.key] = action.value;
+                }
+                else if (action.key == "removeVoucher"){
+                    reviewData["compParticipants"][action.index][action.subKey]["vouchers"].splice(action.subIndex, 1);
+                }
+                else {
+                    reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
+                }
+                
+            }
+            else if(action.subKey == "shopProducts"){
+                if(action.key == "addShopProduct"){
+                    console.log("action.value", action.value);
+                    let sameProduct = reviewData[action.subKey].find(x => x.productId == action.value.productId && x.variantOptionId == action.value.variantOptionId);
+                    if(sameProduct){
+                        let index = reviewData[action.subKey].indexOf(sameProduct);
+                        reviewData[action.subKey].splice(index,1);
+                    }
+                    reviewData[action.subKey].push(action.value);
+                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
+                                            feeIsNull(action.value.amount);
+                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
+                                            feeIsNull(action.value.tax);
+                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) +
+                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+
+                                            
+                }
+                else if(action.key == "removeShopProduct"){
+                    let shopData = reviewData[action.subKey][action.index];
+                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) -
+                                                feeIsNull(shopData.amount);
+                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) -
+                                        feeIsNull(shopData.tax);
+                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
+                    
+                    reviewData[action.subKey].splice(action.index,1);
+                }
+                
+                console.log("reviewData", reviewData);
+            }
+            // else if(action.subKey == "yourInfo"){
+            //     if(action.key == "email"){
+            //         setYourInfo(action,state);
+            //     }else{
+            //         reviewData[action.subKey][action.key] = action.value
+            //     }   
+            // }
+            else if(action.subKey == "shippingOptions"){
+                let organisationId = action.value;
+                reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
+                let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
+                if(action.key == "add"){
+                    reviewData.shippingOptions.push(pickupAddress);
+                }else if(action.key == "remove"){
+                    let index = reviewData.shippingOptions.indexOf(pickupAddress);
+                    reviewData.shippingOptions.splice(index,1);
+                }
+            }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
+                let index = action.index;
+                reviewData[action.subKey]["street1"] = state.participantAddresses[index].street1;
+                reviewData[action.subKey]["street2"] = state.participantAddresses[index].steet2;
+                reviewData[action.subKey]["suburb"] = state.participantAddresses[index].suburb;
+                reviewData[action.subKey]["postalCode"] = state.participantAddresses[index].postalCode;
+                reviewData[action.subKey]["stateRefId"] = state.participantAddresses[index].stateRefId;
+                reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
+                state.deliveryOrBillingAddressSelected = true;
+            }
+            return {
+                ...state,
+                error: null
+            }
 
         default:
             return state;
