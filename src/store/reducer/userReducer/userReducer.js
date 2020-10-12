@@ -37,13 +37,37 @@ const initialState = {
     userRegistrationPage: 1,
     userRegistrationTotalCount: 1,
     userRegistrationOnLoad: false,
-    onMedicalLoad:false,
-    onPersonLoad:false,
+    onMedicalLoad: false,
+    onPersonLoad: false,
     userHistoryLoad: false,
     userHistoryList: [],
     userHistoryPage: 1,
-    userHistoryTotalCount: 1
+    userHistoryTotalCount: 1,
+    userRole: [],
+    scorerActivityRoster: [],
+    scorerCurrentPage: null,
+    scorerTotalCount: null,
+    activityScorerOnLoad: false,
+    umpireActivityOnLoad: false,
+    umpireActivityList: [],
+    umpireActivityCurrentPage: 1,
+    umpireActivityTotalCount: 0,
 };
+
+//get User Role
+function getUserRole(userRoleData) {
+
+    let userRole = false
+
+    for (let i in userRoleData) {
+        if (userRoleData[i].roleId == 15 || userRoleData[i].roleId == 20) {
+
+            userRole = true
+            break;
+        }
+    }
+    return userRole
+}
 
 function userReducer(state = initialState, action) {
     switch (action.type) {
@@ -52,7 +76,8 @@ function userReducer(state = initialState, action) {
                 ...state,
                 onLoad: false,
                 error: action.error,
-                status: action.status
+                status: action.status,
+                umpireActivityOnLoad:false,
             };
 
         case ApiConstants.API_USER_ERROR:
@@ -60,7 +85,8 @@ function userReducer(state = initialState, action) {
                 ...state,
                 onLoad: false,
                 error: action.error,
-                status: action.status
+                status: action.status,
+                umpireActivityOnLoad:false,
             };
         // get Role Entity List for current  user
         case ApiConstants.API_ROLE_LOAD:
@@ -219,7 +245,7 @@ function userReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.API_USER_PROFILE_UPDATE_LOAD:  
+        case ApiConstants.API_USER_PROFILE_UPDATE_LOAD:
             return { ...state, onUpUpdateLoad: true };
 
         case ApiConstants.API_USER_PROFILE_UPDATE_SUCCESS:
@@ -242,6 +268,45 @@ function userReducer(state = initialState, action) {
                 userHistoryTotalCount: userHistoryData.page.totalCount,
                 status: action.status
             };
+
+        case ApiConstants.API_GET_USER_ROLE_LOAD:
+            return { ...state, };
+
+        case ApiConstants.API_GET_USER_ROLE_SUCCESS:
+            let userRole = getUserRole(action.result)
+            state.userRole = userRole
+            return {
+                ...state,
+            };
+
+        ////Scorer
+        case ApiConstants.API_GET_SCORER_ACTIVITY_LOAD:
+            return { ...state, activityScorerOnLoad: true };
+
+        case ApiConstants.API_GET_SCORER_ACTIVITY_SUCCESS:
+            return {
+                ...state,
+                activityScorerOnLoad: false,
+                scorerActivityRoster: action.result.activityRoster,
+                scorerCurrentPage: action.result.page.currentPage,
+                scorerTotalCount: action.result.page.totalCount,
+            };
+
+        ////umpire activity list
+        case ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD:
+            return { ...state, umpireActivityOnLoad: true };
+
+        case ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_SUCCESS:
+            console.log("action***", action.result)
+            let umpireActivityData = action.result
+            return {
+                ...state,
+                umpireActivityOnLoad: false,
+                umpireActivityList: isArrayNotEmpty(umpireActivityData.results) ? umpireActivityData.results : [],
+                umpireActivityCurrentPage: umpireActivityData.page.currentPage,
+                umpireActivityTotalCount: umpireActivityData.page.totalCount,
+            };
+
         default:
             return state;
     }
