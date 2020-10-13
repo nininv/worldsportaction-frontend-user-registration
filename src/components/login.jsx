@@ -11,7 +11,7 @@ import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
 import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId, 
-    getIsUserRegistration, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
+    getAuthToken, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9578a18b0605ead797aee4263a4cb6a10dc5dfc60170e2b10a37eade9f7dc86a3298ba7e5642cdb5a4b88b4e7b932851f80b9a5389c362e6f939711875d92f76015583478e9a57cd4fba380d411583d0925262a49c34e783650864c4ad81d90af2a4cac53ea7a31136e1943de8fdfd1378dcf58a08abcc5a90d4b54b94c6a419797ae6408f65828b09d2b479827f37374c508e0461ab9c8daae6736a0d950cbb3e';
@@ -48,7 +48,9 @@ class Login extends Component {
     componentDidUpdate(nextProps) {
         let loginstate = this.props.loginstate;
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            if(loginstate.status == 1){
+            
+            if(loginstate.status == 1 && getAuthToken()){
+                //this.setState({loginButton: true});
                 // if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
                 //     history.push("/teamRegistrationForm");
                 // }

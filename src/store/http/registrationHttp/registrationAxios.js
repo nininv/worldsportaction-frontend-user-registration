@@ -146,7 +146,15 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getRegistrationById(payload) {
-        var url = `/api/registration?registrationId=${payload.registrationId}`;
+        console.log("payload", payload);
+        var url;
+        if(payload.userRegId){
+            url = `/api/registration?registrationId=${payload.registrationId}&userRegId=${payload.userRegId}`;
+        }
+        else{
+            url = `/api/registration?registrationId=${payload.registrationId}`;
+        }
+        
         return Method.dataGet(url, token);
     },
     // validateDiscountCode(payload) {
@@ -214,11 +222,7 @@ let AxiosApi = {
     getExistingTeamDataById(participantId){
         var url = `/api/registration/teamparticipant?participantId=${participantId}`;
         return Method.dataGet(url, token);
-    },
-    deleteTeamInviteProduct(payload) {
-        var url = `/api/registration/teaminvite/product/delete?registrationId=${payload.userRegId}&orgRegParticipantId=${payload.orgRegParticipantId}`;
-        return Method.dataDelete(url, token);
-    },
+    }
 };
 
 const Method = {

@@ -115,22 +115,3 @@ export function* saveTeamInviteReviewSaga(action) {
       yield call(errorSaga, error)
     }
   }
-
-  
-////// Delete Registration Product
-export function* deleteRegistrationProductSaga(action) {
-    try {
-      const result = yield call(AxiosApi.deleteTeamInviteProduct, action.payload);
-      if (result.status === 1) {
-        yield put({
-          type: ApiConstants.API_DELETE_TEAM_INVITE_PRODUCT_SUCCESS,
-          result: result.result.data,
-          status: result.status
-        });
-      } else {
-        yield call(failSaga, result)
-      }
-    } catch (error) {
-      yield call(errorSaga, error)
-    }
-  }

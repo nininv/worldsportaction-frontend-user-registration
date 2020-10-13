@@ -67,16 +67,6 @@ function updateTeamInviteAction(value, key, index, subkey, subIndex){
     return action;
 }
 
-function deleteTeamInivteProductAction(payload){
-    const action = {
-        type: ApiConstants.API_DELETE_TEAM_INVITE_PRODUCT_LOAD,
-        payload: payload
-    }
-
-    return action;
-}
-
-
 export{
     getTeamRegistrationInviteAction,
     updateInviteMemberInfoAction,
@@ -84,6 +74,5 @@ export{
     teamInviteRegSettingsAction,
     getTeamInviteReviewAction,
     saveTeamInviteReviewAction,
-    updateTeamInviteAction,
-    deleteTeamInivteProductAction
+    updateTeamInviteAction
 }

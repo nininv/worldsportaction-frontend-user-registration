@@ -72,6 +72,7 @@ function teamInviteReducer(state = initialState, action){
         case ApiConstants.API_GET_TEAM_INVITE_REVIEW_SUCCESS:
             let teamInviteReviewList = action.result;
             state.registrationId = teamInviteReviewList ? teamInviteReviewList.registrationId : null;
+            console.log("state.registrationId ",state.registrationId )
             return {
                 ...state,
                 teamInviteProductsOnLoad: false,
@@ -89,19 +90,6 @@ function teamInviteReducer(state = initialState, action){
                 onTeamInviteReviewLoad: false,
                 status: action.status,
                 teamInviteReviewList: teamInviteSaveData
-            };
-    
-
-        case ApiConstants.API_DELETE_TEAM_INVITE_PRODUCT_LOAD:
-            return { ...state, onTeamInviteReviewLoad: true };
-
-        case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS:
-            let teamInviteDeleteData = action.result;
-            return {
-                ...state,
-                onTeamInviteReviewLoad: false,
-                status: action.status,
-                teamInviteReviewList: teamInviteDeleteData
             };
             
         case ApiConstants.UPDATE_TEAM_REVIEW_INFO:

@@ -32,13 +32,12 @@ import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
 import history from "../../util/history";
-import ValidationConstants from "../../themes/validationConstant";
-import { captializedString } from "../../util/helpers";
-import { 
-    getInviteTeamReviewProductAction
-} from '../../store/actions/registrationAction/teamInviteAction';
+import { updateTeamInviteAction, saveTeamInviteReviewAction} from 
+            '../../store/actions/registrationAction/teamInviteAction';
+import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction} 
+        from '../../store/actions/registrationAction/registrationProductsAction';
+import { getCommonRefData, countryReferenceAction} from '../../store/actions/commonAction/commonAction';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -49,13 +48,27 @@ class TeamInviteShipping extends Component{
     constructor(props){
         super(props);
         this.state = {
-            userRegId: null
+            userRegId: null,
+            registrationUniqueKey: null, 
+            productModalVisible: false ,
+            id: null,
+            loading: false ,
+            apiOnLoad: false ,
+            shippingOptions: null,
+            useDiffDeliveryAddressFlag: false,
+            userDiffBillingAddressFlag: false,
+            deliveryOrBillingAddressSelected: false    
         }
+
+        this.props.getCommonRefData();
+        this.props.countryReferenceAction();
     }
 
     componentDidMount(){
         try{
-
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            this.setState({userRegId: userRegId});
+            this.getApiInfo(userRegId);
         }catch(ex){
             console.log("Error in componentDidMount::"+ex);
         }
@@ -69,17 +82,160 @@ class TeamInviteShipping extends Component{
         }
     }
 
-    shippingSave = (e) => {
-        try{
-            e.preventDefault();
-            this.props.form.validateFieldsAndScroll((err, values) => {
-                if(!err){
-
-                }
-            });
-        }catch(ex){
-            console.log("Error in ");
+    getApiInfo = (userRegId) => {
+        let registrationId = this.props.teamInviteState.registrationId;
+        let payload = {
+            registrationId: registrationId,
+            userRegId: userRegId
         }
+        console.log("payload",payload);
+        this.props.getRegistrationByIdAction(payload);
+        this.props.getRegistrationShopPickupAddressAction(payload);
+        this.setState({apiOnLoad: true});
+    }
+
+    removeFromCart = (index, key, subKey) =>{
+        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+    }
+
+    getAddress = (addressObject) => {
+        try{
+            if(addressObject){
+                const { stateList,countryList } = this.props.commonReducerState;
+                const state = stateList.length > 0 && addressObject.stateRefId > 0
+                    ? stateList.find((state) => state.id === addressObject.stateRefId).name
+                    : null;
+                const country = countryList.length > 0 && addressObject.countryRefId > 0
+                ? countryList.find((country) => country.id === addressObject.countryRefId).name
+                : null;
+    
+                let defaultAddress = '';
+                if(addressObject.street1 && addressObject.suburb && state){
+                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                    (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                    (state ? state + ', ': '') +
+                    (country ? country + '.': '');
+                }
+                return defaultAddress;
+            }
+        }catch(ex){
+            console.log("Error in getAddress"+ex);
+        }
+    }
+
+
+    setShippingOptions = () => {
+        try{
+            const {teamInviteReviewList} = this.props.teamInviteState;
+            const { shopPickupAddresses } = this.props.registrationProductState;
+            let shopProducts = teamInviteReviewList != null ? isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
+                                                                deepCopyFunction(teamInviteReviewList.shopProducts) : [] : [];
+            let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
+            for(let address of filteredShippingProductsAddresses){
+                address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+            }
+            this.setState({shippingOptions: filteredShippingProductsAddresses})
+        }catch(ex){
+            console.log("Error in setShippingOptions"+ex);
+        }
+    }
+
+    getShippingOptionValue = (organisationId) => {
+        try{
+            const {teamInviteReviewList} = this.props.teamInviteState;
+            let value;
+            if(teamInviteReviewList.shippingOptions){
+                let shippingOption = teamInviteReviewList.shippingOptions.find(x => x.organisationId == organisationId);
+                if(shippingOption != undefined){
+                    value = 1;
+                }else{
+                    value = 2;
+                }
+            }else{
+                value = 2;
+            }
+            return value;
+        }catch(ex){
+            console.log("Error in getShippingOptionValue"+ex);
+        }
+    }
+
+    onChangeSetShippingOptions = (value,index) => {
+        try{
+            let shippingOptions = [...this.state.shippingOptions];
+            shippingOptions[index]["pickupOrDelivery"] = value;
+            this.setState({shippingOptions: shippingOptions});
+            console.log(shippingOptions[index].organisationId)
+            if(value == 1){
+                this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"add", null, "shippingOptions",null);
+            }else{
+                this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"remove", null, "shippingOptions",null);
+            }
+        }catch(ex){
+            console.log("Error in onChangeSetShippingOptions"+ex);
+        }
+    }
+
+    addAddress = (index,subKey) => {
+        this.setState({deliveryOrBillingAddressSelected: true});
+        this.props.updateTeamInviteAction(null,null, index, subKey,null);
+    }
+
+    checkAnyDeliveryAddress = () => {
+        try{
+            if(isArrayNotEmpty(this.state.shippingOptions)){
+                let shippingOptions = [...this.state.shippingOptions];
+                console.log(shippingOptions);
+                let deliveryAddress = shippingOptions.find(x => x.pickupOrDelivery == 2);
+                if(deliveryAddress != undefined){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }catch(ex){
+            console.log("Error in checkAnyDeliveryAddress"+ex);
+        }
+    }
+
+
+    saveBilling = (e) =>{
+        e.preventDefault();
+
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if(!err){
+                const {teamInviteReviewList} = this.props.teamInviteState;
+                teamInviteReviewList["registrationId"] = this.state.registrationUniqueKey;
+                teamInviteReviewList["key"] = "save";
+                console.log("teamInviteReviewList" + JSON.stringify(teamInviteReviewList));
+                this.props.saveTeamInviteReviewAction(teamInviteReviewList);
+                this.setState({loading: true, buttonPressed: "continue"});
+            }
+        });
+    }
+      
+
+    goToShop = () =>{
+        history.push({pathname: '/registrationShop', state: {userRegId: this.state.userRegId}})
+    }
+
+    goToTeamInvitePayments = () =>{
+        history.push({pathname: '/teamInvitePayment', state: {registrationId: this.state.userRegId}})
+    }
+
+    goToTeamInviteProducts = () =>{
+        history.push({pathname: '/teamInviteProductsReview', state: {registrationId: this.state.userRegId}})
+    }
+
+    getPaymentOptionText = (paymentOptionRefId) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
+
+        return paymentOptionTxt;
     }
 
     headerView = () => {
@@ -98,7 +254,7 @@ class TeamInviteShipping extends Component{
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.shippingOptions}</div>
-                {/* {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
+                {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
                     <div>
                         <div className="subtitle-text-common"
                         style={{marginTop: "20px"}}>{item.organisationName}</div>
@@ -123,7 +279,7 @@ class TeamInviteShipping extends Component{
                             </div>    
                         )}
                     </div>
-                ))} */}
+                ))}
             </div>
         );
 
@@ -146,10 +302,13 @@ class TeamInviteShipping extends Component{
     }
 
     deliveryAndBillingView = () =>{
+        const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
+        let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
+        let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
-                {/* {this.state.useDiffDeliveryAddressFlag && (
+                {this.state.useDiffDeliveryAddressFlag && (
                     <div style={{marginTop: "10px"}}>
                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
                         <div className="row">
@@ -214,7 +373,7 @@ class TeamInviteShipping extends Component{
                             )}   
                         </div>  
                     )}
-                </div> */}
+                </div>
             </div>
         )
     } 
@@ -379,14 +538,21 @@ class TeamInviteShipping extends Component{
 
 function mapDispatchToProps(dispatch){
     return bindActionCreators({	
-        
+        saveTeamInviteReviewAction,
+        updateTeamInviteAction,
+        getRegistrationByIdAction,
+        getRegistrationShopPickupAddressAction,
+        getCommonRefData,
+        countryReferenceAction
     }, dispatch);
 
 }
 
 function mapStatetoProps(state){
     return {
-        teamInviteState: state.teamInviteState
+        teamInviteState: state.teamInviteState,
+        registrationProductState: state.RegistrationProductState,
+        commonReducerState: state.CommonReducerState
     }
 }
 
