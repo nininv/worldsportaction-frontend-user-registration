@@ -1098,7 +1098,8 @@ const AppConstants = {
  transactionFeeApplies: "A transaction fee of 2.25% applies.",
  transactionFee: "Transaction Fee",
  payInFull: "Pay in full",
- splitAmoingTeamMember: "Split amongst team members"
+ splitAmoingTeamMember: "Split amongst team members",
+ liveScoreSeasonFixture:"LiveScore Season Fixture",
 };
 
 export default AppConstants;
