@@ -143,7 +143,7 @@ class Routes extends React.Component {
         /> */}
 
         <PrivateRoute
-          path="/teamRegistrationReview"
+          path="/teamInvitePayment"
           component={lazyLoad(TeamInvitePayment)}
         />
 

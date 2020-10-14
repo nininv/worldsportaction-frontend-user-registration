@@ -123,7 +123,7 @@ class TeamInivteForm extends Component{
                 this.setState({inviteOnLoad: false});
             }
             if(!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad){
-                history.push({pathname: "/teamRegistrationReviewProducts",state: {userRegId: getUserRegId()}})
+                history.push({pathname: "/teamInviteProductsReview",state: {userRegId: getUserRegId()}})
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -164,6 +164,9 @@ class TeamInivteForm extends Component{
                 [`yourDetailsMobileNumber`]: userRegDetails.mobileNumber,
                 [`yourDetailsEmail`]: userRegDetails.email
             });
+            if(getAge(userRegDetails.dateOfBirth)){
+                this.addParent("add");
+            }
         }catch(ex){
             console.log("Error in setYourDetailsValue::"+ex);
         }

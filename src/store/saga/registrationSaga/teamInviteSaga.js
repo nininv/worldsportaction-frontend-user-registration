@@ -80,12 +80,12 @@ export function* orgTeamInviteRegistrationSettings(action) {
     }
 }
 
-export function* getInviteTeamProductsSaga(action) {
+export function* getTeamInviteReviewSaga(action) {
     try {
-        const result = yield call(AxiosApi.getTeamRegistrationReviewProducts, action.payload);
+        const result = yield call(AxiosApi.getTeamInviteReview, action.payload);
         if (result.status === 1) {
             yield put({
-                type: ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_SUCCESS,
+                type: ApiConstants.API_GET_TEAM_INVITE_REVIEW_SUCCESS,
                 result: result.result.data,
                 status: result.status
             });
@@ -96,3 +96,22 @@ export function* getInviteTeamProductsSaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+
+////// Save Team Invite Review
+export function* saveTeamInviteReviewSaga(action) {
+    try {
+      const result = yield call(AxiosApi.saveTeamInviteReview, action.payload);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_SUCCESS,
+          result: result.result.data,
+          status: result.status
+        });
+      } else {
+        yield call(failSaga, result)
+      }
+    } catch (error) {
+      yield call(errorSaga, error)
+    }
+  }

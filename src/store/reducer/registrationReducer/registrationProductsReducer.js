@@ -1,5 +1,4 @@
 import ApiConstants from "../../../themes/apiConstants";
-import AppConstants from "../../../themes/appConstants";
 import { feeIsNull } from "../../../util/helpers";
 
 
