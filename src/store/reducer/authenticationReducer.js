@@ -2,7 +2,7 @@ import ApiConstants from "../../themes/apiConstants";
 import { Encrypt, Decrypt } from "../../util/encryption";
 import { JwtEncrypt, JwtDecrypt } from "../../util/jwt";
 import history from "../../util/history";
-import { setAuthToken, setUserId, setName, setPhotoUrl } from '../../util/sessionStorage'
+import { setAuthToken, setUserId, setName, setPhotoUrl, setStripeAccountId } from '../../util/sessionStorage'
 
 const initialState = {
   onLoad: false,
@@ -23,13 +23,14 @@ function login(state = initialState, action) {
       let name = action.result.user.firstName + ' ' + action.result.user.lastName;
       setName(name);
       setPhotoUrl(action.result.user.photoUrl);
+      setStripeAccountId(action.result.user.stripeCustomerAccountId)
       // localStorage.setItem("token", action.result.authToken);
       // let jwtEncrypt = JwtEncrypt(action.result.result.data.user_data)
       // let encryptText = Encrypt(jwtEncrypt)
       // let decryptText = Decrypt(encryptText)
       // let jwtDecrypt = JwtDecrypt(decryptText)
       // history.push("/");
-     // window.location.reload();
+      // window.location.reload();
       return {
         ...state,
         onLoad: false,

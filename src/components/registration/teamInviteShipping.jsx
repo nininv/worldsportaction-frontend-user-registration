@@ -76,8 +76,29 @@ class TeamInviteShipping extends Component{
 
     componentDidUpdate(){
         try{
-            
-        }catch(ex){
+            let teamInviteState = this.props.teamInviteState;
+            let teamInviteReviewList = teamInviteState.teamInviteReviewList;
+            let registrationProductState = this.props.registrationProductState
+            if(this.state.loading == true && teamInviteState.onTeamInviteReviewLoad == false){
+                if(this.state.buttonPressed == "continue"){
+                    this.goToTeamInvitePayments();
+                }
+            }
+            if(teamInviteState.onTeamInviteReviewLoad == false && 
+                registrationProductState.pickupAddressLoad == false && this.state.apiOnLoad){
+                this.setShippingOptions();
+                this.setState({apiOnLoad: false});
+            }
+            if(registrationProductState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
+                if(this.state.useDiffDeliveryAddressFlag){
+                    this.setState({useDiffDeliveryAddressFlag: false});
+                }else if(this.state.useDiffBillingAddressFlag){
+                    this.setState({useDiffBillingAddressFlag: false});
+                }
+                this.setState({deliveryOrBillingAddressSelected: false});
+            }
+        }
+        catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
         }
     }
@@ -217,7 +238,7 @@ class TeamInviteShipping extends Component{
       
 
     goToShop = () =>{
-        history.push({pathname: '/registrationShop', state: {userRegId: this.state.userRegId}})
+        history.push({pathname: '/teamInviteShop', state: {userRegId: this.state.userRegId}})
     }
 
     goToTeamInvitePayments = () =>{
@@ -390,12 +411,20 @@ class TeamInviteShipping extends Component{
     }
 
     yourOrderView = () =>{
+        const {teamInviteReviewList} = this.props.teamInviteState;
+        let compParticipants = teamInviteReviewList!= null ? 
+                    isArrayNotEmpty(teamInviteReviewList.compParticipants) ?
+                    teamInviteReviewList.compParticipants : [] : [];
+        let total = teamInviteReviewList!= null ? teamInviteReviewList.total : null;
+        let shopProducts = teamInviteReviewList!= null ? 
+                isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
+                teamInviteReviewList.shopProducts : [] : [];
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
                 <div className="headline-text-common">
                     {AppConstants.yourOrder}
                 </div>
-                {/* {(compParticipants || []).map((item, index) => {
+                {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
@@ -407,23 +436,12 @@ class TeamInviteShipping extends Component{
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer">
-                                            <img class="marginIcon" src={AppImages.removeIcon} />
-                                        </span>
-                                    </div>
                                 </div>
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
+                                <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
-                                </div>
-                                }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="body-text-common mr-4" style={{display:"flex"}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
                                 </div>
                                 }
                             </div>
@@ -431,7 +449,7 @@ class TeamInviteShipping extends Component{
                         <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
-                            onClick={() => this.goToRegistrationProducts()}
+                            onClick={() => this.goToTeamInviteProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
@@ -445,13 +463,13 @@ class TeamInviteShipping extends Component{
                     </div> 
                     )}
                 )}
-                 {(shopProducts).map((shop, index) =>(
+                {(shopProducts).map((shop, index) =>(
                     <div  className="subtitle-text-common shop-detail-text-common">
                         <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                            <div style={{marginLeft:"6px"}}>
                                 <div>
                                     {shop.productName}
                                 </div>
@@ -460,16 +478,17 @@ class TeamInviteShipping extends Component{
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer">
-                                <img class="marginIcon" src={AppImages.removeIcon}/>
+                            <span className="user-remove-btn pointer" >
+                                <img  class="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>
                     </div>
                 ))}
+                 
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
-                </div> */}
+                </div>
             </div>
         )
     }
@@ -485,7 +504,8 @@ class TeamInviteShipping extends Component{
                     </Button>
                 </div>                 
                 <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text btn-inner-view">
+                    <Button className="back-btn-text btn-inner-view" 
+                            onClick={() => this.goToShop()}>
                         {AppConstants.back}
                     </Button> 
                 </div>     
@@ -550,7 +570,7 @@ function mapDispatchToProps(dispatch){
 
 function mapStatetoProps(state){
     return {
-        teamInviteState: state.teamInviteState,
+        teamInviteState: state.TeamInviteState,
         registrationProductState: state.RegistrationProductState,
         commonReducerState: state.CommonReducerState
     }

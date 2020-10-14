@@ -39,6 +39,15 @@ let AxiosApi = {
         return Method.dataPost(url, token, body)
     },
 
+    //////Save stripe account
+    saveStripeAccount(code, userId) {
+        let body = {
+            code: code,
+            userId: userId
+        }
+        let url = `/api/payments/saveStripeForUser`
+        return Method.dataPost(url, token, body)
+    },
 };
 
 const Method = {
