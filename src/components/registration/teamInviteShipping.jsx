@@ -35,7 +35,7 @@ import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import history from "../../util/history";
 import { updateTeamInviteAction, saveTeamInviteReviewAction} from 
             '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction} 
+import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction, getRegParticipantAddressAction} 
         from '../../store/actions/registrationAction/registrationProductsAction';
 import { getCommonRefData, countryReferenceAction} from '../../store/actions/commonAction/commonAction';
 
@@ -90,7 +90,7 @@ class TeamInviteShipping extends Component{
                 this.setShippingOptions();
                 this.setState({apiOnLoad: false});
             }
-            if(registrationProductState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
+            if(teamInviteState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
                 if(this.state.useDiffDeliveryAddressFlag){
                     this.setState({useDiffDeliveryAddressFlag: false});
                 }else if(this.state.useDiffBillingAddressFlag){
@@ -113,6 +113,7 @@ class TeamInviteShipping extends Component{
         console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
         this.props.getRegistrationShopPickupAddressAction(payload);
+        this.props.getRegParticipantAddressAction(payload);
         this.setState({apiOnLoad: true});
     }
 
@@ -307,22 +308,6 @@ class TeamInviteShipping extends Component{
             </div>
         );
 
-    }
-
-    checkAnyDeliveryAddress = () => {
-        try{
-            // if(isArrayNotEmpty(this.state.shippingOptions)){
-            //     let shippingOptions = [...this.state.shippingOptions];
-            //     let deliveryAddress = shippingOptions.find(x => x.pickupOrDelivery == 2);
-            //     if(deliveryAddress != undefined){
-            //         return true;
-            //     }else{
-            //         return false;
-            //     }
-            // }
-        }catch(ex){
-            console.log("Error in checkAnyDeliveryAddress"+ex);
-        }
     }
 
     deliveryAndBillingView = () =>{
@@ -566,7 +551,8 @@ function mapDispatchToProps(dispatch){
         getRegistrationByIdAction,
         getRegistrationShopPickupAddressAction,
         getCommonRefData,
-        countryReferenceAction
+        countryReferenceAction,
+        getRegParticipantAddressAction
     }, dispatch);
 
 }

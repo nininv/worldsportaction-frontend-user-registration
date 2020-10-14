@@ -209,7 +209,17 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
     getRegParticipantAddress(payload) {
-        var url = `/api/registration/participant/address?registrationId=${payload.registrationId}`;
+        var url;
+        if(payload.userRegId && payload.registrationId){
+            url = `/api/registration/participant/address?registrationId=${payload.registrationId}&userRegId=${payload.userRegId}`;
+        }
+        else if(payload.userRegId){
+            url = `/api/registration/participant/address?userRegId=${payload.userRegId}`;
+        }
+        else{
+            url = `/api/registration/participant/address?registrationId=${payload.registrationId}`;
+        }
+
         return Method.dataGet(url, token);
     },
     //check expired registration from appRegistrationForm
