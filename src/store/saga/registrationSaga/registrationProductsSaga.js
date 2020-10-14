@@ -207,6 +207,11 @@ export function* getRegistrationShopPickupAddressSaga(action) {
         result: result.result.data,
         status: result.status
       });
+      yield put({
+        type: ApiConstants.API_GET_TEAM_INVITE_SHOP_PICKUP_ADDRESS_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
     } else {
       yield call(failSaga, result)
     }

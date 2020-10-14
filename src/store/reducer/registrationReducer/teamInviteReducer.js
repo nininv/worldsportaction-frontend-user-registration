@@ -11,7 +11,8 @@ const initialState = {
     onTeamInviteReviewLoad: false,
     teamInviteReviewList: null,
     status: null,
-    registrationId: null
+    registrationId: null,
+    shopPickupAddresses: null
 }
 
 function teamInviteReducer(state = initialState, action){
@@ -78,6 +79,14 @@ function teamInviteReducer(state = initialState, action){
                 teamInviteProductsOnLoad: false,
                 status: action.status,
                 teamInviteReviewList: teamInviteReviewList
+            };
+
+        case ApiConstants.API_GET_TEAM_INVITE_SHOP_PICKUP_ADDRESS_SUCCESS:
+            let shopPickupAddresses = action.result;
+            return {
+                ...state,
+                status: action.status,
+                shopPickupAddresses: shopPickupAddresses
             };
             
         case ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD:
