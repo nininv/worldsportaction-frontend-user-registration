@@ -39,9 +39,19 @@ function getInvoiceStatusAction(registrationid, userRegId) {
     return action
 }
 
+///save stripe account
+function saveStripeAccountAction(code, userId) {
+    const action = {
+        type: ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_LOAD,
+        code, userId
+    };
+    return action
+}
+
 export {
     getInvoice,
     onChangeCharityAction,
     saveInvoiceAction,
     getInvoiceStatusAction,
+    saveStripeAccountAction,
 }
