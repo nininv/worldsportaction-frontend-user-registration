@@ -81,7 +81,7 @@ function teamInviteReducer(state = initialState, action){
                 teamInviteReviewList: teamInviteReviewList
             };
 
-        case ApiConstants.API_GET_TEAM_INVITE_SHOP_PICKUP_ADDRESS_SUCCESS:
+        case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_SUCCESS:
             let shopPickupAddresses = action.result;
             return {
                 ...state,
