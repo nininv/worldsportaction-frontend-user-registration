@@ -65,7 +65,7 @@ class TeamInviteShop extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            console.log("Shop userRegId" + userRegId);
+            console.log("Shop::(((((((((((((((" + userRegId)
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){

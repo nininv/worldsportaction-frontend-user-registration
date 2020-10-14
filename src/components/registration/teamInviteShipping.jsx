@@ -67,6 +67,7 @@ class TeamInviteShipping extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            console.log("Shipping::(((((((((((((((" + userRegId)
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -221,13 +222,15 @@ class TeamInviteShipping extends Component{
     }
 
 
-    saveBilling = (e) =>{
+    shippingSave = (e) =>{
+        console.log("*****************");
         e.preventDefault();
 
         this.props.form.validateFieldsAndScroll((err, values) => {
             if(!err){
-                const {teamInviteReviewList} = this.props.teamInviteState;
-                teamInviteReviewList["registrationId"] = this.state.registrationUniqueKey;
+                let {teamInviteReviewList, registrationId} = this.props.teamInviteState;
+                teamInviteReviewList["registrationId"] = registrationId;
+                teamInviteReviewList["userRegId"] = this.state.userRegId;
                 teamInviteReviewList["key"] = "save";
                 console.log("teamInviteReviewList" + JSON.stringify(teamInviteReviewList));
                 this.props.saveTeamInviteReviewAction(teamInviteReviewList);
@@ -242,11 +245,11 @@ class TeamInviteShipping extends Component{
     }
 
     goToTeamInvitePayments = () =>{
-        history.push({pathname: '/teamInvitePayment', state: {registrationId: this.state.userRegId}})
+        history.push({pathname: '/teamInvitePayment', state: {userRegId: this.state.userRegId}})
     }
 
     goToTeamInviteProducts = () =>{
-        history.push({pathname: '/teamInviteProductsReview', state: {registrationId: this.state.userRegId}})
+        history.push({pathname: '/teamInviteProductsReview', state: {userRegId: this.state.userRegId}})
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
