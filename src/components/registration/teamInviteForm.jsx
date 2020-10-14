@@ -123,7 +123,7 @@ class TeamInivteForm extends Component{
                 this.setState({inviteOnLoad: false});
             }
             if(!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad){
-                history.push({pathname: "/teamRegistrationReviewProducts",state: {userRegId: getUserRegId()}})
+                history.push({pathname: "/teamInviteProductsReview",state: {userRegId: getUserRegId()}})
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -164,6 +164,9 @@ class TeamInivteForm extends Component{
                 [`yourDetailsMobileNumber`]: userRegDetails.mobileNumber,
                 [`yourDetailsEmail`]: userRegDetails.email
             });
+            if(getAge(userRegDetails.dateOfBirth)){
+                this.addParent("add");
+            }
         }catch(ex){
             console.log("Error in setYourDetailsValue::"+ex);
         }
@@ -725,8 +728,11 @@ class TeamInivteForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "firstName","userRegDetails")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "firstName","userRegDetails")} 
                                         setFieldsValue={userRegDetails.firstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`yourDetailsFirstName`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -739,8 +745,11 @@ class TeamInivteForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "middleName","userRegDetails")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "middleName","userRegDetails")} 
                                         setFieldsValue={userRegDetails.middleName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`yourDetailsMiddleName`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -753,8 +762,11 @@ class TeamInivteForm extends Component{
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "lastName","userRegDetails")} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "lastName","userRegDetails")} 
                                         setFieldsValue={userRegDetails.lastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`yourDetailsLastName`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>

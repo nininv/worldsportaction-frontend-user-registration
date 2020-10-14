@@ -18,15 +18,14 @@ import {
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId, setUserId, getTempUserId, setTempUserId } from "../../util/sessionStorage";
+import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate, getTime } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
 import Loader from '../../customComponents/loader';
 import StripeKeys from "../stripe/stripeKeys";
-import { getStripeLoginLinkAction } from "../../store/actions/stripeAction/stripeAction";
-import { getOrganisationData } from "../../util/sessionStorage";
+import { saveStripeAccountAction } from '../../store/actions/stripeAction/stripeAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -853,6 +852,14 @@ class UserModulePersonalDetail extends Component {
             let tabKey = this.props.location.state.tabKey != undefined ? this.props.location.state.tabKey : '1';
             await this.setState({ tabKey: tabKey });
         }
+        // let urlSplit = this.props.location.search.split("?code=")
+        //  if (urlSplit[1]) {
+        //      console.log("called1")
+        //     let codeSplit = urlSplit[1].split("&state=")
+        //     let code = codeSplit[0]
+
+        //     this.props.saveStripeAccountAction(code, Number(userId))
+        // }
         this.apiCalls(userId);
     }
 
@@ -1713,13 +1720,13 @@ class UserModulePersonalDetail extends Component {
                         <div className="col-row" style={{ display: 'flex', alignItems: 'flex-end' }}>
                             <div className="col-sm">
                                 <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{paddingRight: "69px"}}>
+                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{ paddingRight: "69px" }}>
                                         {AppConstants.register}
                                     </Button>
                                 </div>
                             </div>
-                            <div className="col-sm" style={{padding:0}}>
-                                <div className="col-sm" style={{padding:0}}>
+                            <div className="col-sm" style={{ padding: 0 }}>
+                                <div className="col-sm" style={{ padding: 0 }}>
                                     <Menu
                                         className="action-triple-dot-submenu menu-align-text"
                                         theme="light"
@@ -1778,28 +1785,21 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
-    stripeConnected = () => {
-        let orgData = getOrganisationData()
-        let stripeAccountID = orgData ? orgData.stripeAccountID : null
-        return stripeAccountID
-    }
-
     userEmail = () => {
         let orgData = getOrganisationData()
         let email = orgData && orgData.email ? encodeURIComponent(orgData.email) : ""
         return email
     }
 
-    stripeDashboardLoginUrl = () => {
-
-        this.setState({ stripeDashBoardLoad: true })
-        this.props.getStripeLoginLinkAction()
-    }
+    // stripeDashboardLoginUrl = () => {
+    //     this.setState({ stripeDashBoardLoad: true })
+    //     this.props.getStripeLoginLinkAction()
+    // }
 
     umpireActivityView = () => {
-        let stripeConnected = this.stripeConnected()
+        let stripeConnected = getStripeAccountId()
         let userEmail = this.userEmail()
-        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?redirect_uri=https://connect.stripe.com/connect/default/oauth/test&client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}/registrationPayments`
+        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`
         let { umpireActivityOnLoad, umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
         return (
             <div
@@ -1830,7 +1830,7 @@ class UserModulePersonalDetail extends Component {
                         <Button
                             type="primary"
                             className="open-reg-button"
-                            // onClick={() => this.stripeDashboardLoginUrl()}
+                        // onClick={() => this.stripeDashboardLoginUrl()}
                         >
                             {AppConstants.editBankAccount}
                         </Button>
@@ -1839,11 +1839,11 @@ class UserModulePersonalDetail extends Component {
                             type="primary"
                             className="open-reg-button"
                         >
-                            {/* <a href={stripeConnectURL} class="stripe-connect"> */}
+                            <a href={stripeConnectURL} className="stripe-connect">
                                 <span>
                                     {AppConstants.uploadBankAccnt}
                                 </span>
-                            {/* </a> */}
+                            </a>
 
                         </Button>
                     }
@@ -1966,6 +1966,7 @@ function mapDispatchToProps(dispatch) {
         getUserRole,
         getScorerData,
         getUmpireActivityListAction,
+        saveStripeAccountAction,
     }, dispatch);
 
 }

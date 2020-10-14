@@ -1373,7 +1373,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.middleName}/>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberMiddleName`, {
+                                {getFieldDecorator(`teamMemberMiddleName${teamMemberIndex}`, {
                                     rules: [{ required: false }],
                                 })(
                                     <InputWithHead

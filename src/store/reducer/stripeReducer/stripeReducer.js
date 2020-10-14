@@ -48,7 +48,7 @@ function getCharityRoundUpArray(allData) {
             if (competitionIdIndex === -1) {
                 getCharityRoundUpArray.push(charityObj)
             }
-    
+
         }
         let charityNoneObject = {
             competitionId: 0,
@@ -63,7 +63,7 @@ function getCharityRoundUpArray(allData) {
     } catch (error) {
         console.log("**********" + error);
     }
-    
+
     return getCharityRoundUpArray
 }
 
@@ -74,7 +74,7 @@ function calculateSubTotal(allData) {
         invoiceSubtotal: 0,
         invoiceGstTotal: 0
     }
-    console.log("fees_All_Data::" ,fees_All_Data);
+    console.log("fees_All_Data::", fees_All_Data);
     for (let i in fees_All_Data) {
 
         if (fees_All_Data[i].totalAmount.affiliateFees && fees_All_Data[i].totalAmount.affiliateGst) {
@@ -159,11 +159,11 @@ function makeCharitySuccessData(charitySelected, charityRoundUpFilter) {
 function getAffiliteDetailArray(allData) {
     let getAffiliteDetailArray = []
     let orgMap = new Map();
-    allData.compParticipants.map((item) =>{
-        item.membershipProducts.map((mem) =>{
-            if(isNullOrUndefined(mem.fees.membershipFee)){
+    allData.compParticipants.map((item) => {
+        item.membershipProducts.map((mem) => {
+            if (isNullOrUndefined(mem.fees.membershipFee)) {
                 let key = mem.fees.membershipFee.organisationId;
-                if(orgMap.get(key) == undefined ){
+                if (orgMap.get(key) == undefined) {
                     let obj = {
                         organisationId: mem.fees.membershipFee.organisationId,
                         organisationName: mem.fees.membershipFee.name,
@@ -174,9 +174,9 @@ function getAffiliteDetailArray(allData) {
                     orgMap.set(key, obj);
                 }
             }
-            if(isNullOrUndefined(mem.fees.affiliateFee)){
+            if (isNullOrUndefined(mem.fees.affiliateFee)) {
                 let key = mem.fees.affiliateFee.organisationId;
-                if(orgMap.get(key) == undefined ){
+                if (orgMap.get(key) == undefined) {
                     let obj = {
                         organisationId: mem.fees.affiliateFee.organisationId,
                         organisationName: mem.fees.affiliateFee.name,
@@ -187,9 +187,9 @@ function getAffiliteDetailArray(allData) {
                     orgMap.set(key, obj);
                 }
             }
-            if(isNullOrUndefined(mem.fees.competitionOrganisorFee)){
+            if (isNullOrUndefined(mem.fees.competitionOrganisorFee)) {
                 let key = mem.fees.competitionOrganisorFee.organisationId;
-                if(orgMap.get(key) == undefined ){
+                if (orgMap.get(key) == undefined) {
                     let obj = {
                         organisationId: mem.fees.competitionOrganisorFee.organisationId,
                         organisationName: mem.fees.competitionOrganisorFee.name,
@@ -343,6 +343,20 @@ function stripe(state = initialState, action) {
                 onLoad: false,
                 error: null,
             }
+
+        ///////save stripe account
+        case ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_SUCCESS:
+            console.log("a**", action.result)
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                error: null
+            };
+            
         default:
             return state;
     }

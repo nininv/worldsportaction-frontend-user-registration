@@ -49,8 +49,8 @@ class TeamInviteProducts extends Component{
 
     componentDidMount(){
         try{
-            //let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            let userRegId = "bb881a03-6292-405a-8e49-d57f9e9ec9ce"
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            //let userRegId = "bb881a03-6292-405a-8e49-d57f9e9ec9ce"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -135,6 +135,10 @@ class TeamInviteProducts extends Component{
         return paymentOptionTxt;
     }
 
+    gotoTeamInviteForm = () => {
+        history.push({pathname: "/teamRegistrationForm"})
+    }
+
     setReviewInfo = (value, key, index, subkey, subIndex) => {
         let teamInviteReview = this.props.teamInviteState.teamInviteReviewList;
         let registrationId = this.props.teamInviteState.registrationId;
@@ -216,7 +220,7 @@ class TeamInviteProducts extends Component{
                             </div>
                         </div>
                     
-                        <div className="transfer-image-view pointer" style={{paddingRight:"15px"}}>                   
+                        <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.gotoTeamInviteForm()}>                   
                             <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
