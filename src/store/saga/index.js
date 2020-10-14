@@ -259,7 +259,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamInviteSaga.getInvitedTeamRegInfoSaga);
   yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD,teamInviteSaga.orgTeamInviteRegistrationSettings);
   yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga);
-  yield takeEvery(ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_LOAD, teamInviteSaga.getInviteTeamProductsSaga);
 
   ////////// Save stripe account
   yield takeEvery(ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_LOAD, stripeSaga.saveStripeAccountSaga);
