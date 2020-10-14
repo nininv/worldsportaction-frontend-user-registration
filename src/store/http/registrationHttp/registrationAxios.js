@@ -148,8 +148,11 @@ let AxiosApi = {
     getRegistrationById(payload) {
         console.log("payload", payload);
         var url;
-        if(payload.userRegId){
+        if(payload.userRegId && payload.registrationId){
             url = `/api/registration?registrationId=${payload.registrationId}&userRegId=${payload.userRegId}`;
+        }
+        else if(payload.userRegId){
+            url = `/api/registration?userRegId=${payload.userRegId}`;
         }
         else{
             url = `/api/registration?registrationId=${payload.registrationId}`;
