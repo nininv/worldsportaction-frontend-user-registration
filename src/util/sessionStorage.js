@@ -157,11 +157,11 @@ const getSourceSystemFlag= key => {
 
 // Set stripe acount id
 const setStripeAccountId = stripeCustomerAccountId => {
-    localStorage.setItem("stripeCustomerAccountId",JSON.stringify( stripeCustomerAccountId))
+    localStorage.setItem("stripeCustomerAccountId", stripeCustomerAccountId)
 }
 /// Set stripe acount id
 const getStripeAccountId = () => {
-    return JSON.parse(localStorage.stripeCustomerAccountId)
+    return localStorage.stripeCustomerAccountId
 }
 
 module.exports = {
