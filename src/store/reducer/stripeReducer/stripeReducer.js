@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString, isNullOrUndefined } from "../../../util/helpers";
-import { setOrganisationData, getOrganisationData } from "../../../util/sessionStorage";
+import { setStripeAccountId } from "../../../util/sessionStorage";
 
 const initialState = {
     onLoad: false,
@@ -25,7 +25,8 @@ const initialState = {
     transactionId: 0,
     showCharitySuccessData: null,
     getAffiliteDetailData: [],
-    invoiceData: null
+    invoiceData: null,
+    stripeLoginLink: null,
 }
 
 
@@ -350,13 +351,27 @@ function stripe(state = initialState, action) {
 
         case ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_SUCCESS:
             console.log("a**", action.result)
+            setStripeAccountId(action.result.userStripeAccountId)
             return {
                 ...state,
                 onLoad: false,
                 status: action.status,
                 error: null
             };
-            
+
+        //////stripe login link
+        case ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_SUCCESS:
+            return {
+                ...state,
+                stripeLoginLink: action.result,
+                onLoad: false,
+                status: action.status,
+                error: null
+            };
+
         default:
             return state;
     }

@@ -25,7 +25,7 @@ import { liveScore_formateDate, getTime } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
 import Loader from '../../customComponents/loader';
 import StripeKeys from "../stripe/stripeKeys";
-import { saveStripeAccountAction } from '../../store/actions/stripeAction/stripeAction';
+import { saveStripeAccountAction, getStripeLoginLinkAction } from '../../store/actions/stripeAction/stripeAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -829,7 +829,8 @@ class UserModulePersonalDetail extends Component {
             tempUserId: getTempUserId(),
             umpireActivityOffset: 0,
             UmpireActivityListSortBy: null,
-            UmpireActivityListSortOrder: null
+            UmpireActivityListSortOrder: null,
+            stripeDashBoardLoad: false,
         }
     }
 
@@ -852,14 +853,18 @@ class UserModulePersonalDetail extends Component {
             let tabKey = this.props.location.state.tabKey != undefined ? this.props.location.state.tabKey : '1';
             await this.setState({ tabKey: tabKey });
         }
-        // let urlSplit = this.props.location.search.split("?code=")
-        //  if (urlSplit[1]) {
-        //      console.log("called1")
-        //     let codeSplit = urlSplit[1].split("&state=")
-        //     let code = codeSplit[0]
+        let urlSplit = this.props.location.search.split("?code=")
+        let stripeConnected = getStripeAccountId() == "null" ? false : true
+        if (stripeConnected) {
+            console.log("stripe connected")
+        }
+        else if (urlSplit[1]) {
+            console.log("called1")
+            let codeSplit = urlSplit[1].split("&state=")
+            let code = codeSplit[0]
 
-        //     this.props.saveStripeAccountAction(code, Number(userId))
-        // }
+            this.props.saveStripeAccountAction(code, Number(userId))
+        }
         this.apiCalls(userId);
     }
 
@@ -896,6 +901,13 @@ class UserModulePersonalDetail extends Component {
                 this.generateCompInfo(competitions, yearRefId);
                 // this.setState({competitions: competitions, competition: this.getEmptyCompObj()});
                 // this.tabApiCalls(this.state.tabKey, this.getEmptyCompObj(), this.state.userId);
+            }
+        }
+        if (this.props.stripeState.onLoad === false && this.state.stripeDashBoardLoad === true) {
+            this.setState({ stripeDashBoardLoad: false })
+            let stripeDashboardUrl = this.props.stripeState.stripeLoginLink
+            if (stripeDashboardUrl) {
+                window.open(stripeDashboardUrl, '_newtab');
             }
         }
     }
@@ -1791,13 +1803,13 @@ class UserModulePersonalDetail extends Component {
         return email
     }
 
-    // stripeDashboardLoginUrl = () => {
-    //     this.setState({ stripeDashBoardLoad: true })
-    //     this.props.getStripeLoginLinkAction()
-    // }
+    stripeDashboardLoginUrl = () => {
+        this.setState({ stripeDashBoardLoad: true })
+        this.props.getStripeLoginLinkAction(this.state.userId)
+    }
 
     umpireActivityView = () => {
-        let stripeConnected = getStripeAccountId()
+        let stripeConnected = getStripeAccountId() == "null" ? false : true
         let userEmail = this.userEmail()
         let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`
         let { umpireActivityOnLoad, umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
@@ -1830,7 +1842,7 @@ class UserModulePersonalDetail extends Component {
                         <Button
                             type="primary"
                             className="open-reg-button"
-                        // onClick={() => this.stripeDashboardLoginUrl()}
+                            onClick={() => this.stripeDashboardLoginUrl()}
                         >
                             {AppConstants.editBankAccount}
                         </Button>
@@ -1967,6 +1979,7 @@ function mapDispatchToProps(dispatch) {
         getScorerData,
         getUmpireActivityListAction,
         saveStripeAccountAction,
+        getStripeLoginLinkAction,
     }, dispatch);
 
 }
@@ -1976,6 +1989,7 @@ function mapStatetoProps(state) {
         userState: state.UserState,
         appState: state.AppState,
         endUserRegistrationState: state.EndUserRegistrationState,
+        stripeState: state.StripeState,
     }
 }
 

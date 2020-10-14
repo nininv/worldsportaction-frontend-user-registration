@@ -108,3 +108,22 @@ export function* saveStripeAccountSaga(action) {
         yield call(errorSaga, error);
     }
 }
+
+// Stripe login link
+export function* getStripeLoginLinkSaga(action) {
+    try {
+      const result = yield call(AxiosApi.getStripeLoginLink, action.userId);
+  
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
