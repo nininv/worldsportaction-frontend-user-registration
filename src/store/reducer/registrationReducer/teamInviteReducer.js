@@ -12,7 +12,9 @@ const initialState = {
     teamInviteReviewList: null,
     status: null,
     registrationId: null,
-    shopPickupAddresses: null
+    shopPickupAddresses: null,
+    participantAddresses: [],
+    deliveryOrBillingAddressSelected: false
 }
 
 function teamInviteReducer(state = initialState, action){
@@ -99,6 +101,15 @@ function teamInviteReducer(state = initialState, action){
                 onTeamInviteReviewLoad: false,
                 status: action.status,
                 teamInviteReviewList: teamInviteSaveData
+            };
+
+        case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_SUCCESS:
+            let participantAddresses = action.result;
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                participantAddresses: participantAddresses
             };
             
         case ApiConstants.UPDATE_TEAM_REVIEW_INFO:

@@ -383,7 +383,6 @@ class RegistrationShipping extends Component {
         );
     }
     shippingLeftView = ()=>{
-        console.log("reutnr",this.checkAnyDeliveryAddress());
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
