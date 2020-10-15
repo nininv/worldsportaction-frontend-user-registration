@@ -37,6 +37,7 @@ import {
     countryReferenceAction
 } from '../../store/actions/commonAction/commonAction';
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
+import { captializedString } from "../../util/helpers";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -151,11 +152,11 @@ class RegistrationProducts extends Component {
             console.log("Error: " + err);
             if(!err)
             {
-                console.log(this.state.searchAddressFlag,yourInfo.street1,yourInfo.postalCode);
-                if(this.state.searchAddressFlag && !isNullOrEmptyString(yourInfo.street1) && !isNullOrEmptyString(yourInfo.postalCode)){
-                    message.error(ValidationConstants.addressDetailsIsRequired);
-                    return;
-                }
+                // console.log(this.state.searchAddressFlag,yourInfo.street1,yourInfo.postalCode);
+                // if(this.state.searchAddressFlag && !isNullOrEmptyString(yourInfo.street1) && !isNullOrEmptyString(yourInfo.postalCode)){
+                //     message.error(ValidationConstants.addressDetailsIsRequired);
+                //     return;
+                // }
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
                 console.log("registrationReview", registrationReview);
@@ -854,8 +855,11 @@ class RegistrationProducts extends Component {
                                     })(
                                         <InputWithHead
                                             placeholder={AppConstants.firstName}
-                                            onChange={(e) => this.setReviewInfo(e.target.value, "firstName", null,"yourInfo", null)}
+                                            onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null,"yourInfo", null)}
                                             setFieldsValue={yourInfo.firstName }
+                                            onBlur={(i) =>this.props.form.setFieldsValue({
+                                                ['yourDetailsFirstName']: captializedString(i.target.value)
+                                            })}
                                         />
                                     )}
                                 </Form.Item>
@@ -870,6 +874,9 @@ class RegistrationProducts extends Component {
                                             placeholder={AppConstants.lastName}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null,"yourInfo", null)}
                                             setFieldsValue={yourInfo.lastName }
+                                            onBlur={(i) =>this.props.form.setFieldsValue({
+                                                ['yourDetailsLastName']: captializedString(i.target.value)
+                                            })}
                                         />
                                     )}
                                 </Form.Item>
