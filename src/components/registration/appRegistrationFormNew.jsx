@@ -747,14 +747,12 @@ class AppRegistrationFormNew extends Component{
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
             if(registrationObj.addNewAddressFlag && 
-                !isNullOrEmptyString(registrationObj.street1) && 
-                !isNullOrEmptyString(registrationObj.postalCode)){
+                registrationObj.stateRefId == null){
                 error = true;
             }
             if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
                 let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag ==  true && 
-                    !isNullOrEmptyString(x.street1) && 
-                    !isNullOrEmptyString(x.postalCode));
+                    x.stateRefId == null);
                 if(parent != undefined){
                     error = true;
                 }
@@ -1705,7 +1703,7 @@ class AppRegistrationFormNew extends Component{
                                                 onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "firstName", parentIndex )} 
                                                 setFieldsValue={parent.firstName}
                                                 onBlur={(i) => this.props.form.setFieldsValue({
-                                                    'parentFirstName': captializedString(i.target.value)
+                                                    [`parentFirstName${parentIndex}`]: captializedString(i.target.value)
                                                 })}
                                             />
                                         )}
@@ -1723,7 +1721,7 @@ class AppRegistrationFormNew extends Component{
                                             onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "middleName", parentIndex )} 
                                             setFieldsValue={parent.middleName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                'parentMiddleName': captializedString(i.target.value)
+                                                [`parentMiddleName${parentIndex}`]: captializedString(i.target.value)
                                             })}
                                         />
                                             )}
@@ -1741,7 +1739,7 @@ class AppRegistrationFormNew extends Component{
                                             onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "lastName", parentIndex )} 
                                             setFieldsValue={parent.lastName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                'parentLastName': captializedString(i.target.value)
+                                                [`parentLastName${parentIndex}`]: captializedString(i.target.value)
                                             })}
                                         />
                                             )}
