@@ -747,14 +747,12 @@ class AppRegistrationFormNew extends Component{
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
             if(registrationObj.addNewAddressFlag && 
-                !isNullOrEmptyString(registrationObj.street1) && 
-                !isNullOrEmptyString(registrationObj.postalCode)){
+                registrationObj.stateRefId == null){
                 error = true;
             }
             if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
                 let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag ==  true && 
-                    !isNullOrEmptyString(x.street1) && 
-                    !isNullOrEmptyString(x.postalCode));
+                    x.stateRefId == null);
                 if(parent != undefined){
                     error = true;
                 }
@@ -931,13 +929,13 @@ class AppRegistrationFormNew extends Component{
                     //     message.error(ValidationConstants.userPhotoIsRequired);
                     //     return;
                     // }
-                    // if(this.state.currentStep == 0){
-                    //     let addressSearchError = this.addressSearchValidation();
-                    //     if(addressSearchError){
-                    //         message.error(ValidationConstants.addressDetailsIsRequired);
-                    //         return;
-                    //     }
-                    // }
+                    if(this.state.currentStep == 0){
+                        let addressSearchError = this.addressSearchValidation();
+                        if(addressSearchError){
+                            message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
+                    }
                     if(this.state.currentStep == 1){
                         if(registrationObj.competitions.length == 0){
                             message.error(ValidationConstants.competitionField);
