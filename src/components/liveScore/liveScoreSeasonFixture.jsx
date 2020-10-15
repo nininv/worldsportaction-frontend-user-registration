@@ -5,6 +5,7 @@ import AppConstants from "../../themes/appConstants";
 import { NavLink } from "react-router-dom";
 import { liveScore_MatchFormate } from '../../themes/dateformate'
 import { connect } from 'react-redux';
+import InputWithHead from "../../customComponents/InputWithHead"
 import { bindActionCreators } from 'redux';
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
 import { liveScoreRoundListAction, clearRoundData } from '../../store/actions/LiveScoreAction/liveScoreRoundAction'
@@ -261,7 +262,7 @@ class LiveScoreSeasonFixture extends Component {
 
         }
     }
-    async  componentDidMount() {
+    async componentDidMount() {
 
         this.props.getYearListing(this.props.appState)
         this.setState({ yearLoading: true })
@@ -380,12 +381,65 @@ class LiveScoreSeasonFixture extends Component {
         let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
         const { yearListing } = this.props.appState
         return (
-            <div className="comp-player-grades-header-drop-down-view">
-                <div className="row" >
+            <>
+                <div className="comp-player-grades-header-drop-down-view tableViewHide">
+                    <div className="row" >
 
-                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
-                        <span className="year-select-heading">
-                            {AppConstants.year}:</span>
+                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                            <span className="year-select-heading">
+                                {AppConstants.year}:</span>
+                            <Select
+                                className="year-select reg-filter-select-year ml-2"
+                                style={{ width: 90 }}
+                                onChange={yearId => this.setYearId(yearId)}
+                                value={this.state.yearId}
+                            >
+                                {yearListing.length > 0 && yearListing.map((item, yearIndex) => (
+                                    < Option key={"yearlist" + yearIndex} value={item.id} > {item.name}</Option>
+                                ))
+                                }
+                            </Select>
+                        </div>
+
+                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                            <span className='year-select-heading'>{AppConstants.competition}:</span>
+                            <Select
+                                className="year-select reg-filter-select-competition ml-2"
+                                style={{ minWidth: 160 }}
+                                onChange={(comp) => this.onChangeComp({ comp })}
+                                value={this.state.selectedComp}
+                            >{
+                                    competition.map((item) => {
+                                        return <Option value={item.id}>{item.longName}</Option>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
+                            <span className='year-select-heading'>{AppConstants.division}:</span>
+                            <Select
+                                className="year-select reg-filter-select-competition ml-2"
+                                style={{ minWidth: 100 }}
+                                onChange={(division) => this.changeDivision({ division })}
+                                value={this.state.division}
+                            >{
+                                    division.map((item) => {
+                                        return <Option value={item.id}>{item.name}</Option>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                        <div className="col-sm-6">
+                        </div>
+                    </div>
+                </div>
+                <div className="comp-player-grades-header-drop-down-view tableViewShow">
+
+                    <div className="col-sm pl-0" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className="year-select-heading pl-3">
+                            {AppConstants.year}</span>
+                    </div>
+                    <div className="col-sm pl-0 pt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <Select
                             className="year-select reg-filter-select-year ml-2"
                             style={{ width: 90 }}
@@ -398,9 +452,10 @@ class LiveScoreSeasonFixture extends Component {
                             }
                         </Select>
                     </div>
-
-                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
-                        <span className='year-select-heading'>{AppConstants.competition}:</span>
+                    <div className="col-sm pl-0" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading pl-3 pt-2'>{AppConstants.competition}</span>
+                    </div>
+                    <div className="col-sm pl-0 pt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <Select
                             className="year-select reg-filter-select-competition ml-2"
                             style={{ minWidth: 160 }}
@@ -413,8 +468,10 @@ class LiveScoreSeasonFixture extends Component {
                             }
                         </Select>
                     </div>
-                    <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
-                        <span className='year-select-heading'>{AppConstants.division}:</span>
+                    <div className="col-sm pl-0" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading pl-3 pt-2'>{AppConstants.division}</span>
+                    </div>
+                    <div className="col-sm pl-0 pt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                         <Select
                             className="year-select reg-filter-select-competition ml-2"
                             style={{ minWidth: 100 }}
@@ -427,10 +484,8 @@ class LiveScoreSeasonFixture extends Component {
                             }
                         </Select>
                     </div>
-                    <div className="col-sm-6">
-                    </div>
                 </div>
-            </div>
+            </>
         )
     }
     createRoundsArray(array) {
@@ -459,9 +514,10 @@ class LiveScoreSeasonFixture extends Component {
 
         let roundsArray = this.props.liveScoreRoundState.roundList
         let newArray = this.createRoundsArray(roundsArray)
+        console.log()
         return (
             <div className="comp-dash-table-view mt-4">
-                <div className="table-responsive home-dash-table-view">
+                <div className="table-responsive home-dash-table-view tableViewHide">
 
                     <Table
                         className="livescore-seasonfixture-table"
@@ -473,7 +529,68 @@ class LiveScoreSeasonFixture extends Component {
                     />
 
                 </div>
-            </div>
+                <div className="tableViewShow">
+                    {newArray.length > 0 && newArray.map((item, index) => {
+                        return (
+                            <>
+                                <>
+                                    {item.isRoundChnage &&
+                                        <span className="inner-table-row-heading-text">{item.roundName}</span>
+                                    }
+                                </>
+                                <div className="table-responsive" style={{ backgroundColor: "#ffffff" }}>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Date/Time"} /></div>
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.startTime ? liveScore_MatchFormate(item.startTime) : ""}>
+                                            </InputWithHead>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Home Team"} /></div>
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.team1 ? item.team1.name : ""}>
+                                            </InputWithHead>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Away Team"} /></div>
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.team2 ? item.team2.name : ""}>
+                                            </InputWithHead>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Venue"} /></div>
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.venueCourt ? item.venueCourt?.venue?.shortName + "-" + item.venueCourt?.name : ""}>
+                                            </InputWithHead>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Match Result"} /></div>
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.team1Score + " : " + item.team2Score}>
+                                            </InputWithHead>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={"Match Status"} /></div>
+                                        <div style={{ width: '50%', display: 'flex', alignItems: 'center' }}>
+
+                                            <img className="dot-image"
+                                                src={matchResultImag(item.resultStatus)}
+                                                alt="" width="12" height="12" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )
+                    })}
+
+                </div>
+            </div >
+
         )
     }
 
