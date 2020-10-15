@@ -140,6 +140,8 @@ class RegistrationProducts extends Component {
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
         let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
+
+        let participantUsers = this.props.registrationProductState.participantUsers;
         if(incompletePaymentMessage != ''){
             incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
             message.error(incompletePaymentMessage);
@@ -152,7 +154,7 @@ class RegistrationProducts extends Component {
             if(!err)
             {
                 console.log(this.state.searchAddressFlag,yourInfo.stateRefId);
-                if(this.state.searchAddressFlag && yourInfo.stateRefId == null){
+                if(isArrayNotEmpty(participantUsers) && this.state.searchAddressFlag && yourInfo.stateRefId == null){
                     message.error(ValidationConstants.addressDetailsIsRequired);
                     return;
                 }
@@ -1205,7 +1207,7 @@ class RegistrationProducts extends Component {
                 ))} 
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )
