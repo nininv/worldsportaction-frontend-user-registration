@@ -151,11 +151,11 @@ class RegistrationProducts extends Component {
             console.log("Error: " + err);
             if(!err)
             {
-                // console.log(this.state.searchAddressFlag,yourInfo.street1,yourInfo.postalCode);
-                // if(this.state.searchAddressFlag && !isNullOrEmptyString(yourInfo.street1) && !isNullOrEmptyString(yourInfo.postalCode)){
-                //     message.error(ValidationConstants.addressDetailsIsRequired);
-                //     return;
-                // }
+                console.log(this.state.searchAddressFlag,yourInfo.stateRefId);
+                if(this.state.searchAddressFlag && yourInfo.stateRefId == null){
+                    message.error(ValidationConstants.addressDetailsIsRequired);
+                    return;
+                }
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
                 registrationReview["registrationId"] = this.state.registrationUniqueKey;
                 console.log("registrationReview", registrationReview);
