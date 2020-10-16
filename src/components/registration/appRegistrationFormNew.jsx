@@ -773,7 +773,7 @@ class AppRegistrationFormNew extends Component{
                 if(isArrayNotEmpty(competition.products)){
                     for(let product of competition.products){
                         if(product.isPlayer == 1){
-                            let divisionsTemp = competition.divisions.find(x => x.competitionMembershipProductTypeId == product.competitionMembershipProductTypeId);
+                            let divisionsTemp = competition.divisions.find(x => x.competitionMembershipProductId == product.competitionMembershipProductId);
                             if(divisionsTemp == undefined){
                                 check = false;
                                 break;

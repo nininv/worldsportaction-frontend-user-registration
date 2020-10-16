@@ -315,6 +315,7 @@ function getFilteredDivisions(divisions,state){
 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
 				if(division.genderRefId == genderRefId || genderRefId == 3){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -326,6 +327,7 @@ function getFilteredDivisions(divisions,state){
 				var endDate = moment(division.toDate, "YYYY-MM-DD");
 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -338,6 +340,7 @@ function getFilteredDivisions(divisions,state){
 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
 						let div = {
+							"competitionMembershipProductId": division.competitionMembershipProductId,
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 							"divisionName": division.divisionName
@@ -346,6 +349,7 @@ function getFilteredDivisions(divisions,state){
 				}
 			}else{
 				let div = {
+					"competitionMembershipProductId": division.competitionMembershipProductId,
 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 					"divisionName": division.divisionName
