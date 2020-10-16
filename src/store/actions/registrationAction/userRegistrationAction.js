@@ -72,11 +72,12 @@ function updateUserRegistrationStateVarAction(key,data){
     return action;
 }
 
-function updateParticipantAdditionalInfoAction(key,data){
+function updateParticipantAdditionalInfoAction(data,key,subKey){
     const action = {
         type: ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO,
         key: key,
-        data: data
+        data: data,
+        subKey: subKey
     };
     return action;
 }

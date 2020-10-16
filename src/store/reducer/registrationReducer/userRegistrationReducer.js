@@ -1,7 +1,19 @@
 import ApiConstants from "../../../themes/apiConstants";
+import AppConstants from "../../../themes/appConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
+
+let walkingNetballObj = {
+	"haveHeartTrouble" : null,
+	"havePainInHeartOrChest" : null,
+	"haveSpellsOfServerDizziness" : null,
+	"hasBloodPressureHigh" : null,
+	"hasBoneProblems" : null,
+	"whyShouldNotTakePhysicalActivity" : null,
+	"pregnentInLastSixMonths" : null,
+	"sufferAnyProblems" : null
+}
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -70,8 +82,9 @@ let registrationObjTemp = {
 		"injuryInfo": null,
 		"allergyInfo": null,
 		"otherSportsInfo": [],
+		"otherSports": null,
 		"isYearsPlayed": null,
-		"yearsPlayed": null,
+		"yearsPlayed": '2',
 		"schoolId": null,
 		"schoolGradeInfo": null,
 		"isParticipatedInSSP": null,
@@ -82,7 +95,8 @@ let registrationObjTemp = {
 		"accreditationUmpireExpiryDate": null,
 		"accreditationCoachExpiryDate": null,
 		"isPrerequestTrainingComplete": null,
-		"walkingNetballRefId": null,
+		//"walkingNetballRefId": null,
+		"walkingNetball": walkingNetballObj,
 		"walkingNetballInfo": null
 	}
 }
@@ -137,6 +151,8 @@ let friendObj = {
 	"mobileNumber": null,
 	"email": null
 }
+
+
 
 const initialState = {
 	onLoad:false,
@@ -608,12 +624,17 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
-			if(additionalInfoKey == "isYearsPlayed"){
-				if(additionalInfoData == 1){
-					state.registrationObj.additionalInfo.yearsPlayed = additionalInfoData;
+			let additionalInfoSubKey = action.subKey;
+			if(additionalInfoSubKey == "walkingNetball"){
+				state.registrationObj.additionalInfo.walkingNetball[additionalInfoKey] = additionalInfoData;
+			}else{
+				if(additionalInfoKey == "isYearsPlayed"){
+					if(additionalInfoData == 1){
+						state.registrationObj.additionalInfo.yearsPlayed = '2';
+					}
 				}
+				state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			}
-			state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			return {
 				...state
 			};

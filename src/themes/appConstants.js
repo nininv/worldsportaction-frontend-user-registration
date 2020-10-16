@@ -1106,6 +1106,20 @@ const AppConstants = {
  payInFull: "Pay in full",
  splitAmoingTeamMember: "Split amongst team members",
  liveScoreSeasonFixture:"LiveScore Season Fixture",
+
+ //Netball questions,
+ haveHeartTrouble: "Has your doctor ever said you have heart trouble?",
+ havePainInHeartOrChest: "Do you frequently have pains in your heart or chest?",
+ haveSpellsOfServerDizziness: "Do you often feel faint or have spells of server dizziness?",
+ hasBloodPressureHigh: "Has your doctor ever said your blood pressure is too high?",
+ hasBoneProblems: "Do you have any joint or bone problem(s) that may be worsened with exercise?",
+ whyShouldNotTakePhysicalActivity: "Do you know of any reason why you should not take part in physical activity?",
+ pregnentInLastSixMonths: "Are you or have you been pregnant in the last 6 months?",
+ sufferAnyProblems: "Do you suffer from any problems of the lower back?",
+
+ provideFurtherDetails: "Please provide further details",
+ walkingNetball2: "Walking Netball",
+ pleaseSpecify: "Please Specify"
 };
 
 export default AppConstants;

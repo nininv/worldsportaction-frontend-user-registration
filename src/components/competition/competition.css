@@ -577,3 +577,14 @@
   border-color: white;
   color: black;
 }
+
+.input-style{
+  display: flex;
+  align-content: flex-start;
+  padding-top: 30px;
+  padding-bottom: 11px;
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
