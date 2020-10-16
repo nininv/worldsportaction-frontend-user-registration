@@ -1148,7 +1148,8 @@ class TeamInivteForm extends Component{
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             const {  countryList, identifyAsList,disabilityList,favouriteTeamsList,
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
-            let yearsOfPlayingList = ['1','2','3','4','5','6','7','8','9','10+'];
+            let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
+            let hasOtherParticipantSports = userRegDetails.otherSportsInfo.find(x => x == "14");
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -1269,6 +1270,15 @@ class TeamInivteForm extends Component{
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
+                    {hasOtherParticipantSports && (
+                        <div style={{marginTop: "20px"}}>
+                            <InputWithHead 
+                                placeholder={AppConstants.pleaseSpecify} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"otherSports","userRegDetails")} 
+                                value={userRegDetails.otherSports ? userRegDetails.otherSports : null}
+                            />
+                        </div>
+                    )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
@@ -1306,8 +1316,8 @@ class TeamInivteForm extends Component{
                                     onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
                                     value={userRegDetails.yearsPlayed}
                                     >  
-                                    {(yearsOfPlayingList || []).map((years, index) => (
-                                        <Option key={years} value={years}>{years}</Option>
+                                    {(yearsOfPlayingList || []).map((item, index) => (
+                                        <Option key={item.years} value={item.years}>{item.years}</Option>
                                     ))}
                                 </Select> 
                             )}
@@ -1361,11 +1371,12 @@ class TeamInivteForm extends Component{
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
+                                style={{flexDirection: "column"}}
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "accreditationLevelCoachRefId","userRegDetails")} 
                                 value={userRegDetails.accreditationLevelCoachRefId}
                                 >
                                 {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
-                                <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                    <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
                             {(userRegDetails.accreditationLevelCoachRefId != null) && (

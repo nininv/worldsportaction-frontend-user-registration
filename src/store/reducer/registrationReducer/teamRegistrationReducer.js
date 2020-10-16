@@ -2,6 +2,17 @@ import ApiConstants from "../../../themes/apiConstants";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 
+let walkingNetballObj = {
+	"haveHeartTrouble" : null,
+	"havePainInHeartOrChest" : null,
+	"haveSpellsOfServerDizziness" : null,
+	"hasBloodPressureHigh" : null,
+	"hasBoneProblems" : null,
+	"whyShouldNotTakePhysicalActivity" : null,
+	"pregnentInLastSixMonths" : null,
+	"sufferAnyProblems" : null
+}
+
 const teamObj = {
   "registrationId": null,
   "participantId": null,
@@ -14,6 +25,7 @@ const teamObj = {
   "competitionMembershipProductId": null,
   "competitionMembershipProductTypeId": null,
   "competitionMembershipProductDivisionId": null,
+  "walkingNetballFlag": 0,
   "membershipProductList": [
     // {
     //   "competitionMembershipProductId": null,
@@ -105,6 +117,7 @@ const teamObj = {
     "newToUmpiring": null,
     "lastCaptainName": null,
     "otherSportsInfo": [],
+    "otherSports": null,
     "schoolGradeInfo": null,
     "hasDivisionError": null,
     "favouriteFireBird": null,
@@ -114,7 +127,8 @@ const teamObj = {
     "childrenCheckNumber": null,
     "disabilityTypeRefId": null,
     "isParticipatedInSSP": null,
-    "walkingNetballRefId": null,
+    //"walkingNetballRefId": null,
+    "walkingNetball": deepCopyFunction(walkingNetballObj),
     "associationLevelInfo": null,
     "disabilityCareNumber": null,
     "emergencyContactName": null,
@@ -243,6 +257,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
     state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
     let membershipProduct = state.teamRegistrationObj.membershipProductList.find(x => x.competitionMembershipProductTypeId == competitionMembershipProductTypeId);
     if(membershipProduct){
+      state.teamRegistrationObj.walkingNetballFlag = membershipProduct.shortName == "Walking Netball" ? 1 : 0;
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
       if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
@@ -379,7 +394,17 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO: 
             let additionalInfoKey = action.key;
             let additionalInfoData = action.data;
-            state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+            let additionalInfoSubKey = action.subKey;
+            if(additionalInfoSubKey == "walkingNetball"){
+              state.teamRegistrationObj.additionalInfo.walkingNetball[additionalInfoKey] = additionalInfoData;
+            }else{
+              if(additionalInfoKey == "isYearsPlayed"){
+                if(additionalInfoData == 1){
+                  state.registrationObj.additionalInfo.yearsPlayed = '2';
+                }
+              }
+              state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+            }
             return {
               ...state
             };

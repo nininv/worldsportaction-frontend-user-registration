@@ -96,7 +96,7 @@ let registrationObjTemp = {
 		"accreditationCoachExpiryDate": null,
 		"isPrerequestTrainingComplete": null,
 		//"walkingNetballRefId": null,
-		"walkingNetball": walkingNetballObj,
+		"walkingNetball": deepCopyFunction(walkingNetballObj),
 		"walkingNetballInfo": null
 	}
 }

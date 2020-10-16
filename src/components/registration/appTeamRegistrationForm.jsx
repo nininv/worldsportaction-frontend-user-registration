@@ -478,8 +478,8 @@ class AppTeamRegistrationForm extends Component{
         this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
     }
 
-    onChangeSetAdditionalInfo = (value,key) => {
-        this.props.updateTeamAdditionalInfoAction(key,value);
+    onChangeSetAdditionalInfo = (value,key,subKey) => {
+        this.props.updateTeamAdditionalInfoAction(key,value,subKey);
     }
 
     getFilteredTeamRegisrationObj = (teamRegistrationObj) => {
@@ -1529,12 +1529,101 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    walkingNetballQuestions = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            return(
+                <div>
+                    <InputWithHead
+                    required={"pt-0"}
+                    heading={AppConstants.haveHeartTrouble}/>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"haveHeartTrouble","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.haveHeartTrouble}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.havePainInHeartOrChest}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "havePainInHeartOrChest","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.havePainInHeartOrChest}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.haveSpellsOfServerDizziness}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveSpellsOfServerDizziness","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.haveSpellsOfServerDizziness}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.hasBloodPressureHigh}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBloodPressureHigh","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.hasBloodPressureHigh}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.hasBoneProblems}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBoneProblems","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.hasBoneProblems}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.whyShouldNotTakePhysicalActivity}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "whyShouldNotTakePhysicalActivity","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.whyShouldNotTakePhysicalActivity}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.pregnentInLastSixMonths}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnentInLastSixMonths","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.pregnentInLastSixMonths}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.sufferAnyProblems}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "sufferAnyProblems","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.sufferAnyProblems}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in walkingNetballQuestions::"+ex);
+        }
+    }
+
     additionalPersonalInfoView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
-            let yearsOfPlayingList = ['1','2','3','4','5','6','7','8','9','10+'];
+            let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
+            let hasOtherParticipantSports = teamRegistrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
+            let walkingNetballQuesKeys = Object.keys(teamRegistrationObj.additionalInfo.walkingNetball);
+            let hasAnyOneYes = walkingNetballQuesKeys.find(key => teamRegistrationObj.additionalInfo.walkingNetball[key] == 1);
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -1655,6 +1744,15 @@ class AppTeamRegistrationForm extends Component{
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
+                    {hasOtherParticipantSports && (
+                        <div style={{marginTop: "20px"}}>
+                            <InputWithHead 
+                                placeholder={AppConstants.pleaseSpecify} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"otherSports")} 
+                                value={teamRegistrationObj.additionalInfo.otherSports}
+                            />
+                        </div>
+                    )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
@@ -1692,8 +1790,8 @@ class AppTeamRegistrationForm extends Component{
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
                                     value={teamRegistrationObj.additionalInfo.yearsPlayed}
                                     >  
-                                    {(yearsOfPlayingList || []).map((years, index) => (
-                                        <Option key={years} value={years}>{years}</Option>
+                                    {(yearsOfPlayingList || []).map((item, index) => (
+                                        <Option key={item.years} value={item.years}>{item.years}</Option>
                                     ))}
                                 </Select> 
                             )}
@@ -1747,11 +1845,12 @@ class AppTeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
+                                style={{flexDirection: "column"}}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelCoachRefId")} 
                                 value={teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId}
                                 >
                                 {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
-                                <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                    <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
                             {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
@@ -1785,6 +1884,23 @@ class AppTeamRegistrationForm extends Component{
                                 showTime={false}
                                 value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
                             />
+                        </div>
+                    )}
+
+                    {teamRegistrationObj.walkingNetballFlag == 1 && (
+                        <div>
+                            <div className="form-heading" style={{marginTop: "40px",paddingBottom: "20px"}}>{AppConstants.walkingNetball2}</div>
+                            {this.walkingNetballQuestions()}
+                            {hasAnyOneYes && (
+                                <div>
+                                    <div className="input-style">{AppConstants.provideFurtherDetails}</div>
+                                    <InputWithHead 
+                                        placeholder={AppConstants.walkingNetball2} 
+                                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
+                                        value={teamRegistrationObj.additionalInfo.walkingNetballInfo}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

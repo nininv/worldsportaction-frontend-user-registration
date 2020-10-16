@@ -2422,7 +2422,6 @@ class AppRegistrationFormNew extends Component{
     additionalPersonalInfoView = (getFieldDecorator) => {
         try{
             const { registrationObj } = this.props.userRegistrationState;
-            console.log("regis",registrationObj);
             const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
             let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
@@ -2444,13 +2443,12 @@ class AppRegistrationFormNew extends Component{
                     </Select>
                     <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                     <Radio.Group
-                        style={{flexDirection: "column"}}
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
                         value={registrationObj.additionalInfo.identifyRefId}
                         >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
-                            <Radio style={{marginBottom: "10px"}} key={identification.id} value={identification.id}>{identification.description}</Radio>
+                            <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
@@ -2574,7 +2572,6 @@ class AppRegistrationFormNew extends Component{
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
-                        style={{flexDirection: "column"}}
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
                         value={registrationObj.additionalInfo.heardByRefId}
                         >

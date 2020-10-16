@@ -52,11 +52,12 @@ function saveTeamInfoAction(payload) {
     return action;
 }
 
-function updateTeamAdditionalInfoAction(key,data){
+function updateTeamAdditionalInfoAction(key,data,subKey){
     const action = {
         type: ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO,
         key: key,
-        data: data
+        data: data,
+        subKey: subKey
     };
     return action;
 }
