@@ -574,36 +574,36 @@ class TeamInvitePayment extends Component{
                     </div>
                 ))} 
                 <div style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
                 <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
                 </div>
                 
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
