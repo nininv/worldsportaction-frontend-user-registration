@@ -266,7 +266,7 @@ class AppRegistrationFormNew extends Component{
             if(registrationObj){
                 this.props.form.setFieldsValue({
                     [`genderRefId`]: registrationObj.genderRefId,
-                    [`dateOfBirth`]: moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`dateOfBirth`]: registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
                     [`participantFirstName`]: registrationObj.firstName,
                     [`participantMiddleName`]: registrationObj.middleName,
                     [`participantLastName`]: registrationObj.lastName,
@@ -287,8 +287,8 @@ class AppRegistrationFormNew extends Component{
                         [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
                         [`parentEmail${pIndex}`]: parent.email,
                     });
-                    if(parent.addNewAddressFlag){
-                        this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,pIndex);
+                    if(parent.selectAddressFlag){
+                        this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag",parent,pIndex); 
                     }
                 })}
             }      
@@ -301,11 +301,14 @@ class AppRegistrationFormNew extends Component{
         try{
             const { registrationObj,userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            let selectAddressDropDownList = this.getSelectAddressDropdown(user);
+            let selectAddressDropDownUserAddress = selectAddressDropDownList?.find(x => x.userId == registrationObj.userId)
             if(key == "selectAddressFlag"){
-                if(isArrayNotEmpty(userInfo) && this.getSelectAddressDropdown(user).length == 1){
+                if(isArrayNotEmpty(userInfo)){
                     this.props.form.setFieldsValue({
-                        [`participantSelectAddress`]: this.getAddress(user)
+                        [`participantSelectAddress`]: this.getAddress(selectAddressDropDownUserAddress)
                     });
+                    this.onChangeSetParticipantValue(selectAddressDropDownUserAddress.userId, "addOrRemoveAddressBySelect")
                 }
             }else if(key == "manualEnterAddressFlag"){
                 this.props.form.setFieldsValue({
@@ -325,14 +328,16 @@ class AppRegistrationFormNew extends Component{
         try{
             const { registrationObj,userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            let selectAddressDropDownList = this.getSelectAddressDropdown(user);
+            let selectAddressDropDownParentAddress = selectAddressDropDownList?.find(x => x.userId == parent.userId);
             if(key == "selectAddressFlag"){
-                if(isArrayNotEmpty(userInfo) && this.getSelectAddressDropdown(user).length == 1){
+                if(isArrayNotEmpty(userInfo)){
                     this.props.form.setFieldsValue({
-                        [`parentSelectAddress${pIndex}`]: this.getAddress(user),
+                        [`parentSelectAddress${pIndex}`]: this.getAddress(selectAddressDropDownParentAddress),
                     });
+                    this.onChangeSetParentValue(selectAddressDropDownParentAddress.userId, "addOrRemoveAddressBySelect",pIndex)
                 }
             }else if(key == "manualEnterAddressFlag"){
-                console.log("country",parent.countryRefId);
                 this.props.form.setFieldsValue({
                     [`parentStreet1${pIndex}`]: parent.street1,
                     [`parentSuburb${pIndex}`]: parent.suburb,
@@ -1128,7 +1133,7 @@ class AppRegistrationFormNew extends Component{
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList,countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
-        let hasAddressForExistingUserFlag = (user.stateRefId) ? true : false;
+        let hasAddressForExistingUserFlag = (user?.stateRefId) ? true : false;
         return(
             <div>
                 {registrationObj.selectAddressFlag && (
@@ -1168,6 +1173,9 @@ class AppRegistrationFormNew extends Component{
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"selectAddressFlag");
                                 this.onChangeSetParticipantValue(false,"addNewAddressFlag");
+                                setTimeout(() => {
+                                    this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
+                                },300)
                             }}
                             >{AppConstants.returnToSelectAddress}</div>
                         )}
@@ -1479,8 +1487,10 @@ class AppRegistrationFormNew extends Component{
             const { stateList,countryList } = this.props.commonReducerState;
             const { userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            let selectAddressDropDownList = this.getSelectAddressDropdown(user);
+            let selectAddressDropDownUser = selectAddressDropDownList.find(x => x.userId == parent.userId);
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
-            let hasAddressForExistingUserFlag = (parent.stateRefId) ? true : false;
+            let hasAddressForExistingUserFlag = (selectAddressDropDownUser.stateRefId) ? true : false;
             return(
                 <div>
                     {parent.selectAddressFlag && (
@@ -1489,7 +1499,7 @@ class AppRegistrationFormNew extends Component{
                             style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
                             <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`parentSelectAddress`, {
+                                {getFieldDecorator(`parentSelectAddress${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
                                 })(
                                 <Select
@@ -1497,7 +1507,7 @@ class AppRegistrationFormNew extends Component{
                                     placeholder={AppConstants.select}
                                     onChange={(e) => this.onChangeSetParentValue(e, "addOrRemoveAddressBySelect",parentIndex)}
                                     setFieldsValue={this.getAddress(user)}>
-                                    {(this.getSelectAddressDropdown(user)).map((item) => (
+                                    {(selectAddressDropDownList || []).map((item) => (
                                         <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
                                     ))}
                                 </Select>
@@ -1519,6 +1529,9 @@ class AppRegistrationFormNew extends Component{
                                 onClick={() => {
                                     this.onChangeSetParentValue(true,"selectAddressFlag",parentIndex);
                                     this.onChangeSetParentValue(false,"addNewAddressFlag",parentIndex);
+                                    setTimeout(() => {
+                                        this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag",parent,parentIndex); 
+                                    },300)
                                 }}
                                 >{AppConstants.returnToSelectAddress}</div>
                             )}

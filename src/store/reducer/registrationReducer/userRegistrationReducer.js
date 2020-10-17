@@ -171,6 +171,7 @@ const initialState = {
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
 	parents: [],
+	registeredParents: [],
 	expiredRegistrationFlag: false,
 	expiredRegistration: null 
 }
@@ -185,7 +186,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.email = selectedUser.email;
 			registrationObj.genderRefId = selectedUser.genderRefId;
 			registrationObj.photoUrl = selectedUser.photoUrl;
-			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
+			registrationObj.dateOfBirth = selectedUser.dateOfBirth ? moment(selectedUser.dateOfBirth).format("DD/MM/YYYY") : null;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
@@ -561,6 +562,7 @@ function userRegistrationReducer(state = initialState, action){
 				}else{
 					//Link previous participant parents for next participant 
 					state.parents = responseData.parents;
+					state.registeredParents = responseData.registeredParents;
 				}
 				return {
 					...state,
