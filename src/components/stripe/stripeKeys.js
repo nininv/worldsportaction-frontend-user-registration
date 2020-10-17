@@ -12,7 +12,13 @@ let stgStripeKeys = {
     apiURL: "https://netball-api-stg.worldsportaction.com/registration",
 };
 
+let stripeKeys = {
+    publicKey: "pk_live_SExd4Lw0a6mOviFX2Sp5b6Pz004KYZzDm6",
+    clientId: "ca_HT5y66oz3TeQAQ5Z5efjziFRcmRsYqny",
+    url: "https://netball-comp-admin.worldsportaction.com",////production server
+};
+
 //const StripeKeys = devStripeKeys  ////dev server
- const StripeKeys = stgStripeKeys   ///staging server
+ const StripeKeys = stripeKeys   ///staging server
 
 export default StripeKeys;
