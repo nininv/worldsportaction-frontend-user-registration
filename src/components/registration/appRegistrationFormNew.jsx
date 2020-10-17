@@ -1948,13 +1948,21 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     ))}
                 </div>
-                <Pagination 
-                    onChange={(e) => this.pagingCompetitions(e)}
-                    pageSize={this.state.competitionsCountPerPage}
-                    current={this.state.currentCompetitions}
-                    style={{textAlign: "center"}} 
-                    total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
-                    itemRender={this.paginationItems}/>
+                {this.state.competitions?.length > 0 ? 
+                    (
+                        <Pagination 
+                        onChange={(e) => this.pagingCompetitions(e)}
+                        pageSize={this.state.competitionsCountPerPage}
+                        current={this.state.currentCompetitions}
+                        style={{textAlign: "center"}} 
+                        total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                        itemRender={this.paginationItems}/>
+                    ) 
+                    :
+                    (
+                        <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                    )
+                }
             </div>
         )
     }
@@ -2003,12 +2011,19 @@ class AppRegistrationFormNew extends Component{
                                 <div
                                 style={{marginBottom: "10px"}}>
                                     {(competition.divisions || []).map((division,divisionIndex) => (
-                                        <Tag 
-                                        key={division.competitionMembershipProductDivisionId + divisionIndex} 
-                                        style={{marginBottom: "10px"}}
-                                        closable 
-                                        color="volcano"
-                                        onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
+                                        // <Tag 
+                                        // key={division.competitionMembershipProductDivisionId + divisionIndex} 
+                                        // style={{marginBottom: "10px"}}
+                                        // closable 
+                                        // color="volcano"
+                                        // onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
+                                        <span style={{
+                                            padding: "3px 5px",
+                                            borderRadius: "5px",
+                                            backgroundColor: "white",
+                                            border: "1px solid var(--app-d9d9d9)",
+                                            margin: "0px 10px 10px 0px"
+                                        }}>{division.divisionName} <span style={{cursor: "pointer",marginLeft: "5px",color: "var(--app-color)"}} onClick={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>&#10005;</span></span>
                                     ))}
                                 </div>
                                 <Select
@@ -2605,16 +2620,19 @@ class AppRegistrationFormNew extends Component{
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
                             {registrationObj.additionalInfo.isYearsPlayed == 0 && (
-                                <Select
-                                    placeholder={AppConstants.yearsOfPlaying}
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                    defaultValue={registrationObj.additionalInfo.yearsPlayed ? registrationObj.additionalInfo.yearsPlayed : '2'}
-                                    >  
-                                    {(yearsOfPlayingList || []).map((item, index) => (
-                                        <Option key={item.years} value={item.years}>{item.years}</Option>
-                                    ))}
-                                </Select> 
+                                <div>
+                                    <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <Select
+                                        placeholder={AppConstants.yearsOfPlaying}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                        defaultValue={registrationObj.additionalInfo.yearsPlayed ? registrationObj.additionalInfo.yearsPlayed : '2'}
+                                        >  
+                                        {(yearsOfPlayingList || []).map((item, index) => (
+                                            <Option key={item.years} value={item.years}>{item.years}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
                             )}
                         </div>
                     )}
@@ -2869,10 +2887,11 @@ class AppRegistrationFormNew extends Component{
     footerView = () => {
         let { registrationObj,expiredRegistration } = this.props.userRegistrationState;
         let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
+        let showAddAnotherCompetitionViewTemp = (this.state.currentStep == 1 && this.state.showAddAnotherCompetitionView) ? true : false;
         return(
             <div>
                 {registrationObj != null && registrationObj.registeringYourself && 
-                !this.state.showAddAnotherCompetitionView && !expiredRegistrationExist && (
+                !showAddAnotherCompetitionViewTemp && !expiredRegistrationExist && (
                     <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
                         <Button 
                         htmlType="submit"

@@ -264,6 +264,7 @@ const CheckoutForm = (props) => {
                             <div className="row">
                                 <div className='col-sm'>
                                     <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                        style={{fontWeight:500 ,fontSize: "17px",fontFamily: "inter-medium",color: "rgba(0, 0, 0, 0.65)"}}
                                         checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
                                     {selectedPaymentOption.credit == true && 
                                         <div className="pt-5">
@@ -283,7 +284,9 @@ const CheckoutForm = (props) => {
                         {pay.securePaymentOptionRefId == 1 && 
                         <div className="row">
                             <div className='col-sm'>
-                                <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                <Radio key={"2"} 
+                                style={{fontWeight:500 ,fontSize: "17px",fontFamily: "inter-medium",color: "rgba(0, 0, 0, 0.65)"}}
+                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
                                     <div>
                                         <div class="sr-root">
@@ -361,7 +364,9 @@ const CheckoutForm = (props) => {
                         {pay.securePaymentOptionRefId == 3 && 
                         <div className="row">
                             <div className='col-sm'>
-                                <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                                <Radio key={"3"} 
+                                style={{fontWeight:500 ,fontSize: "17px",fontFamily: "inter-medium",color: "rgba(0, 0, 0, 0.65)"}}
+                                onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
                             </div>
                         </div>}
                     </div>
@@ -376,6 +381,7 @@ const CheckoutForm = (props) => {
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
                             {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ?
                                 <Button
+                                    style={{textTransform: "uppercase"}}
                                     className="open-reg-button"
                                     htmlType="submit"
                                     type="primary">
@@ -538,7 +544,7 @@ class RegistrationPayment extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                        <div style={{fontWeight:500 ,fontSize: "17px", marginTop: "17px",fontFamily: "inter-medium"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
@@ -569,9 +575,10 @@ class RegistrationPayment extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)"}}>
+                        <div style={{color: "var(--app-bbbbc6)",fontSize: "17px",marginTop: "10px"}}>
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
+                            style={{fontSize: "17px"}}
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
@@ -605,37 +612,37 @@ class RegistrationPayment extends Component {
                         </div>
                     </div>
                 ))} 
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                <div style={{borderBottom:"1px solid var(--app-e1e1f5)",marginTop: "-5px"}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
                 <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
                 </div>
                 
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 100}}>
+                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17,fontWeight: 600}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>

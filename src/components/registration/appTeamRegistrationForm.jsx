@@ -720,13 +720,20 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         ))}
                     </div>
-                    <Pagination 
-                        onChange={(e) => this.pagingCompetitions(e)}
-                        pageSize={this.state.competitionsCountPerPage}
-                        current={this.state.competitionsCurrentPage}
-                        style={{textAlign: "center"}} 
-                        total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
-                        itemRender={this.paginationItems}/>
+                    {this.state.competitions?.length > 0 ? 
+                        (
+                            <Pagination 
+                            onChange={(e) => this.pagingCompetitions(e)}
+                            pageSize={this.state.competitionsCountPerPage}
+                            current={this.state.competitionsCurrentPage}
+                            style={{textAlign: "center"}} 
+                            total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                            itemRender={this.paginationItems}/>
+                        ) : 
+                        (
+                            <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                        )
+                    }
                 </div>
             )
         }catch(ex){
@@ -1784,16 +1791,19 @@ class AppTeamRegistrationForm extends Component{
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
                             {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
-                                <Select
-                                    placeholder={AppConstants.yearsOfPlaying}
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                    value={teamRegistrationObj.additionalInfo.yearsPlayed}
-                                    >  
-                                    {(yearsOfPlayingList || []).map((item, index) => (
-                                        <Option key={item.years} value={item.years}>{item.years}</Option>
-                                    ))}
-                                </Select> 
+                                <div>
+                                     <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <Select
+                                        placeholder={AppConstants.yearsOfPlaying}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                        value={teamRegistrationObj.additionalInfo.yearsPlayed}
+                                        >  
+                                        {(yearsOfPlayingList || []).map((item, index) => (
+                                            <Option key={item.years} value={item.years}>{item.years}</Option>
+                                        ))}
+                                    </Select> 
+                                </div>
                             )}
                         </div>
                     )}

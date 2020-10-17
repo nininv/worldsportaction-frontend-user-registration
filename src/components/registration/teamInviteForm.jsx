@@ -1399,16 +1399,19 @@ class TeamInivteForm extends Component{
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
                             {userRegDetails.isYearsPlayed == 0 && (
-                                <Select
-                                    placeholder={AppConstants.yearsOfPlaying}
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
-                                    value={userRegDetails.yearsPlayed}
-                                    >  
-                                    {(yearsOfPlayingList || []).map((item, index) => (
-                                        <Option key={item.years} value={item.years}>{item.years}</Option>
-                                    ))}
-                                </Select> 
+                                <div>
+                                    <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <Select
+                                        placeholder={AppConstants.yearsOfPlaying}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
+                                        value={userRegDetails.yearsPlayed}
+                                        >  
+                                        {(yearsOfPlayingList || []).map((item, index) => (
+                                            <Option key={item.years} value={item.years}>{item.years}</Option>
+                                        ))}
+                                    </Select> 
+                                </div>
                             )}
                         </div>
                     )}
