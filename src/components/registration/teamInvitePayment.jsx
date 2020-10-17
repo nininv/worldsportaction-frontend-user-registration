@@ -525,16 +525,7 @@ class TeamInvitePayment extends Component{
                                     <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
                                 </div>
                                 }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
-                                </div>
-                                }
-                                {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
-                                </div>  */}
+                              
                             </div>
                         ))}
                         <div style={{color: "var(--app-bbbbc6)"}}>
