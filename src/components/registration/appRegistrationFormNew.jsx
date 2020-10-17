@@ -479,12 +479,13 @@ class AppRegistrationFormNew extends Component{
 
     addParent = (key,parentIndex) => {
         try{
-            const { registrationObj } = this.props.userRegistrationState;
+            const { registrationObj,userInfo } = this.props.userRegistrationState;
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             if(key == "add"){
                 let parentObj = deepCopyFunction(this.getParentObj());
-                parentObj.selectAddressFlag = newUser ? false : true;
-                parentObj.addNewAddressFlag = newUser ? true : false;
+                parentObj.selectAddressFlag = (newUser || user.parentOrGuardian == null) ? false : true;
+                parentObj.addNewAddressFlag = (newUser || user.parentOrGuardian == null) ? true : false;
                 parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1; 
                 registrationObj.parentOrGuardian.push(parentObj);
             }
@@ -1127,6 +1128,7 @@ class AppRegistrationFormNew extends Component{
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList,countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
+        let hasAddressForExistingUserFlag = (user.stateRefId) ? true : false;
         return(
             <div>
                 {registrationObj.selectAddressFlag && (
@@ -1161,7 +1163,7 @@ class AppRegistrationFormNew extends Component{
                     
                 {registrationObj.addNewAddressFlag && (
                     <div>
-                        {!newUser && (
+                        {!newUser && hasAddressForExistingUserFlag && (
                             <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"selectAddressFlag");
@@ -1170,7 +1172,7 @@ class AppRegistrationFormNew extends Component{
                             >{AppConstants.returnToSelectAddress}</div>
                         )}
                         <div className="form-heading" 
-                        style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                        style={(newUser || !hasAddressForExistingUserFlag) ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                         <div>
                             <Form.Item name="addressSearch">
                                 <PlacesAutocomplete
@@ -1478,6 +1480,7 @@ class AppRegistrationFormNew extends Component{
             const { userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
+            let hasAddressForExistingUserFlag = (parent.stateRefId) ? true : false;
             return(
                 <div>
                     {parent.selectAddressFlag && (
@@ -1511,7 +1514,7 @@ class AppRegistrationFormNew extends Component{
                     )} 
                     {parent.addNewAddressFlag && (
                         <div>
-                            {!newUser && (
+                            {!newUser && hasAddressForExistingUserFlag && (
                                 <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
                                 onClick={() => {
                                     this.onChangeSetParentValue(true,"selectAddressFlag",parentIndex);
@@ -1520,7 +1523,7 @@ class AppRegistrationFormNew extends Component{
                                 >{AppConstants.returnToSelectAddress}</div>
                             )}
                             <div className="form-heading" 
-                            style={newUser ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                            style={(newUser || !hasAddressForExistingUserFlag) ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
                             <Form.Item name="addressSearch">
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(parent)}
