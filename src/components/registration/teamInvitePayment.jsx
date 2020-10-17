@@ -131,25 +131,57 @@ const CheckoutForm = (props) => {
                 "direct": true,
                 "cash": false,
                 "credit": false,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
             stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
-        } else if (key === 'cash') {
+        } 
+        else if (key === 'cash') {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
                 "direct": false,
                 "cash": true,
                 "credit": false,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": ""
             });
-        } else {
+        }
+        else if(key == "cash_direct_debit"){
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": true,
+                "credit": false,
+                "cashDirect": true,
+                "cashCredit": false,
+                "selectedOption": "cash_direct_debit"
+            });
+        }
+        else if(key == "cash_card"){
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": true,
+                "credit": false,
+                "cashDirect": false,
+                "cashCredit": true,
+                "selectedOption": "cash_card"
+            });
+        }
+        else {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
                 "direct": false,
                 "cash": false,
                 "credit": true,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": "card"
             });
         }
@@ -347,11 +379,81 @@ const CheckoutForm = (props) => {
                             </div>
                         </div>}
                         {pay.securePaymentOptionRefId == 3 && 
-                        <div className="row">
-                            <div className='col-sm'>
-                                <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                       <div>
+                            <div className="row">
+                                <div className='col-sm'>
+                                    <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                                </div>
                             </div>
-                        </div>}
+                            <div className="row pl-4">
+                                <div className='col-sm'>
+                                    {selectedPaymentOption.cash == true && 
+                                        <div className="pt-0">
+                                            <Radio key={"4"} onChange={(e) => changePaymentOption(e, "cash_direct_debit")} 
+                                                    checked={selectedPaymentOption.cashDirect}>{AppConstants.directDebit}</Radio>
+                                            {selectedPaymentOption.cashDirect == true &&
+                                                <div>
+                                                    <div class="sr-root">
+                                                        <div class="sr-main">
+                                                            <div class="sr-combo-inputs-row">
+                                                                <div class="col">
+                                                                    <label htmlFor="au-bank-account-element">
+                                                                        Bank Account
+                                                                </label>
+                                                                    <div id="au-bank-account-element">
+                                                                        <AuBankAccountElement
+                                                                            id="au-bank-account-element"
+                                                                            options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
+                                                                            className='StripeElement'
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="bank-name"></div>
+                                                            <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
+                                                            <div class="col pt-3" id="mandate-acceptance">
+                                                                {AppConstants.stripeMandate1} <a> </a>
+                                                                <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    Direct Debit Request service agreement
+                                                                </a>
+                                                                {AppConstants.stripeMandate2}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                </div>
+                                            }
+                                        </div>   
+                                    }
+                                </div>
+                            </div>
+                            <div className="row pl-4">
+                                <div className='col-sm'>
+                                    {selectedPaymentOption.cash == true && 
+                                        <div className="pt-0">
+                                            <Radio key={"5"} onChange={(e) => changePaymentOption(e, "cash_card")}
+                                                    checked={selectedPaymentOption.cashCredit}>{AppConstants.creditCard}</Radio>
+                                                {selectedPaymentOption.cashCredit == true && 
+                                                <div className="pt-4">
+                                                    <CardElement
+                                                        id="card-element"
+                                                        options={CARD_ELEMENT_OPTIONS}
+                                                        onChange={handleChange}
+                                                        className='StripeElement'
+                                                    />
+                                                    <div className="card-errors" role="alert">{error}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                </div>   
+                                                }
+                                        </div>   
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        }
                     </div>
                     ))}
                 </div> : 
