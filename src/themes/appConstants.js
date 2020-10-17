@@ -1119,7 +1119,9 @@ const AppConstants = {
 
  provideFurtherDetails: "Please provide further details",
  walkingNetball2: "Walking Netball",
- pleaseSpecify: "Please Specify"
+ pleaseSpecify: "Please Specify",
+ yearsOfPlayingNetball: "How many years have you played Netball?",
+ noCompetitionsForOrganisations: "There are no open competitions for this organisation"
 };
 
 export default AppConstants;

@@ -881,7 +881,7 @@ img.bg {
   align-content: flex-start;
   color: var(--app-1b1b34);
   font-weight: 600;
-  font-family: sans-serif;
+  font-family: inter;
 }
 .btn-text-common {
   font-size: 14px;

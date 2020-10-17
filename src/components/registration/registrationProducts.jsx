@@ -59,7 +59,7 @@ class RegistrationProducts extends Component {
            newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
-           onLoading: false
+           onLoading: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "2a38fe4d-1e29-4350-8d0b-7767c70b693e";
+        //let registrationUniqueKey = "7287d837-a57f-42ad-b47d-82db5b5b4aeb";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -279,6 +279,10 @@ class RegistrationProducts extends Component {
         } 
     }
 
+    clickAddAnotherParticipant = (participantId,registrationId) => {
+        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+    }
+
     goToShop = () =>{
         history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
     }
@@ -399,7 +403,7 @@ class RegistrationProducts extends Component {
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
                 <div>
                     <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.redirect(null,this.state.registrationUniqueKey)}>
+                    onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                         + {AppConstants.addAnotherParticipant}
                     </div>
                 </div>

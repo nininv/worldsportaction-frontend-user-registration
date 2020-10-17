@@ -171,6 +171,7 @@ const initialState = {
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
 	parents: [],
+	registeredParents: [],
 	expiredRegistrationFlag: false,
 	expiredRegistration: null 
 }
@@ -187,7 +188,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
-			if(selectedUser.street1 && selectedUser.suburb && selectedUser.postalCode){
+			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.street1 = selectedUser.street1;
 				registrationObj.street2 = selectedUser.street2;
@@ -195,6 +196,9 @@ function getUserUpdatedRegistrationObj(state,action){
 				registrationObj.postalCode = selectedUser.postalCode;	
 				registrationObj.stateRefId = selectedUser.stateRefId;
 				registrationObj.countryRefId = selectedUser.countryRefId;
+			}else{
+				registrationObj.selectAddressFlag = false;
+				registrationObj.addNewAddressFlag = true;
 			}
 			if(selectedUser.parentOrGuardian != null && selectedUser.parentOrGuardian.length > 0){
 				let i = 0;
@@ -212,8 +216,8 @@ function getUserUpdatedRegistrationObj(state,action){
 						"stateRefId": parent.stateRefId,
 						"countryRefId": parent.countryRefId,
 						"postalCode": parent.postalCode,
-						"selectAddressFlag": true,
-						"addNewAddressFlag": false,
+						"selectAddressFlag": (parent.stateRefId) ? true : false,
+						"addNewAddressFlag": (parent.stateRefId) ? false : true,
 						"manualEnterAddressFlag": false
 					}
 					registrationObj.parentOrGuardian.push(parentObj);
@@ -558,6 +562,7 @@ function userRegistrationReducer(state = initialState, action){
 				}else{
 					//Link previous participant parents for next participant 
 					state.parents = responseData.parents;
+					state.registeredParents = responseData.registeredParents;
 				}
 				return {
 					...state,
