@@ -482,9 +482,47 @@ class AppRegistrationFormNew extends Component{
         this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
     }
 
+    getUpdatedParentObj  = (parent) => {
+        try{
+            const {registeredParents } = this.props.userRegistrationState;
+            if(isArrayNotEmpty(registeredParents)){
+                parent.firstName = registeredParents[0].firstName;
+                parent.lastName = registeredParents[0].lastName;
+                parent.email = registeredParents[0].email;
+                parent.mobileNumber = registeredParents[0].mobileNumber;
+                parent.street1 = registeredParents[0].street1;
+                parent.street2 = registeredParents[0].street2;
+                parent.suburb = registeredParents[0].suburb;
+                parent.stateRefId = registeredParents[0].stateRefId;
+                parent.postalCode = registeredParents[0].postalCode;
+                parent.countryRefId = registeredParents[0].countryRefId;
+                parent.addNewAddressFlag = false;
+                parent.manualEnterAddressFlag = true;
+
+                setTimeout(() => {
+                    this.props.form.setFieldsValue({
+                        [`parentFirstName${0}`]: parent.firstName,
+                        [`parentMiddleName${0}`]: parent.middleName,
+                        [`parentLastName${0}`]: parent.lastName,
+                        [`parentMobileNumber${0}`]: parent.mobileNumber,
+                        [`parentEmail${0}`]: parent.email,
+                        [`parentStreet1${0}`]: parent.street1,
+                        [`parentSuburb${0}`]: parent.suburb,
+                        [`parentStateRefId${0}`]: parent.stateRefId,
+                        [`parentCountryRefId${0}`]: parent.countryRefId,
+                        [`parentPostalCode${0}`]: parent.postalCode,
+                    });
+                },300);
+            }
+            return parent;
+        }catch(ex){
+            console.log("Error in getUpdatedParentObj::"+ex);
+        }
+    } 
+
     addParent = (key,parentIndex) => {
         try{
-            const { registrationObj,userInfo } = this.props.userRegistrationState;
+            const { registrationObj,userInfo,registeredParents } = this.props.userRegistrationState;
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             if(key == "add"){
@@ -492,7 +530,14 @@ class AppRegistrationFormNew extends Component{
                 parentObj.selectAddressFlag = (newUser || user.parentOrGuardian == null) ? false : true;
                 parentObj.addNewAddressFlag = (newUser || user.parentOrGuardian == null) ? true : false;
                 parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1; 
-                registrationObj.parentOrGuardian.push(parentObj);
+
+                //Do for second user when he is a child for first user
+                if(registrationObj.registeringYourself == 2){
+                    let parentObjTemp = this.getUpdatedParentObj(parentObj);
+                    registrationObj.parentOrGuardian.push(parentObjTemp);
+                }else{
+                    registrationObj.parentOrGuardian.push(parentObj);
+                }
             }
             if(key == "remove"){
                 registrationObj.parentOrGuardian.splice(parentIndex,1);
@@ -1487,10 +1532,10 @@ class AppRegistrationFormNew extends Component{
             const { stateList,countryList } = this.props.commonReducerState;
             const { userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
-            let selectAddressDropDownList = this.getSelectAddressDropdown(user);
-            let selectAddressDropDownUser = selectAddressDropDownList.find(x => x.userId == parent.userId);
+            let selectAddressDropDownList = user && this.getSelectAddressDropdown(user);
+            let selectAddressDropDownUser = selectAddressDropDownList && selectAddressDropDownList.find(x => x.userId == parent.userId);
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
-            let hasAddressForExistingUserFlag = (selectAddressDropDownUser.stateRefId) ? true : false;
+            let hasAddressForExistingUserFlag = (selectAddressDropDownUser?.stateRefId) ? true : false;
             return(
                 <div>
                     {parent.selectAddressFlag && (

@@ -186,7 +186,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.email = selectedUser.email;
 			registrationObj.genderRefId = selectedUser.genderRefId;
 			registrationObj.photoUrl = selectedUser.photoUrl;
-			registrationObj.dateOfBirth = selectedUser.dateOfBirth ? moment(selectedUser.dateOfBirth).format("DD/MM/YYYY") : null;
+			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
