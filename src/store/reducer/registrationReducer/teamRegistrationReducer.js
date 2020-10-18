@@ -108,7 +108,7 @@ const teamObj = {
     "injuryInfo": null,
     "allergyInfo": null,
     "isYearsPlayed": null,
-    "yearsPlayed": null,
+    "yearsPlayed": '2',
     "countryRefId": 1,
     "heardByOther": null,
     "heardByRefId": null,
@@ -400,7 +400,7 @@ function teamRegistrationReducer(state = initialState, action){
             }else{
               if(additionalInfoKey == "isYearsPlayed"){
                 if(additionalInfoData == 1){
-                  state.registrationObj.additionalInfo.yearsPlayed = '2';
+                  state.teamRegistrationObj.additionalInfo.yearsPlayed = '2';
                 }
               }
               state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;

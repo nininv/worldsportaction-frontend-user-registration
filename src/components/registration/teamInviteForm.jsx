@@ -1405,7 +1405,7 @@ class TeamInivteForm extends Component{
                                         placeholder={AppConstants.yearsOfPlaying}
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
-                                        value={userRegDetails.yearsPlayed}
+                                        value={userRegDetails.yearsPlayed ? userRegDetails.yearsPlayed : '2'}
                                         >  
                                         {(yearsOfPlayingList || []).map((item, index) => (
                                             <Option key={item.years} value={item.years}>{item.years}</Option>
