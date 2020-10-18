@@ -1036,3 +1036,23 @@ input:focus, .StripeElement--focus {
   max-width: 100%;
   box-shadow: 0px 0px;
 }
+
+.inter-medium-w500{
+  font-weight:500 ;
+  font-family: "inter-medium";
+}
+
+.font-17{
+  font-size: 17px;
+}
+
+.font-w600{
+  font-weight: 600;
+}
+
+.payment-type-radio-style{
+  font-weight:500 ;
+  font-size: 17px !important;
+  font-family: "inter-medium";
+  color: rgba(0, 0, 0, 0.65);
+}
