@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "7287d837-a57f-42ad-b47d-82db5b5b4aeb";
+        //let registrationUniqueKey = "f4280d8a-bd89-4a5f-98f6-f6bec356ec39";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -438,31 +438,47 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div style={{display:"flex",flexWrap:'wrap'}}>
-                    <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
-                        {
-                            item.photoUrl ? (
-                                <img src={item.photoUrl}/>
-                            ):
-                            (
-                                <img src={AppImages.userIcon} alt=""/>     
-                            )
-                        }
-                    </div>
+                   
                     {item.isTeamRegistration == 1 ?
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.teamName}</div>
-                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
-                        </div>
-                    :
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                            <div className="body-text-common">{item.gender + ', ' + 
-                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                <div className="defualt-team-logo-style">
+                                    <img src={AppImages.teamLoadDefualtWhite}/>
+                                </div>
+                                <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.teamName}</div>
+                                    <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                </div>
                             </div>
-                        </div>
+                        )
+                        
+                    :
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                 <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
+                                        {
+                                            item.photoUrl ? (
+                                                <img src={item.photoUrl}/>
+                                            ):
+                                            (
+                                                <div className="profile-default-img">
+                                                    {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
+                                                </div>     
+                                            )
+                                        }
+                                    </div>
+                                    <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                                    <div className="body-text-common">{item.gender + ', ' + 
+                                        liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                        
                     }
                    
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>

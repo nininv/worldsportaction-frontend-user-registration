@@ -691,7 +691,7 @@ class AppTeamRegistrationForm extends Component{
                                 <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
                                 <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
-                                    <div style={{marginLeft: "20px"}}><img style={{height: "20px",width: "20px",marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                                    <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
                                 )}
                             </div>
                         )}
@@ -715,7 +715,7 @@ class AppTeamRegistrationForm extends Component{
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
-                                    <div style={{fontWeight: "600"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    <div style={{fontWeight: "600"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
                         ))}
@@ -766,7 +766,7 @@ class AppTeamRegistrationForm extends Component{
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                     onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
                         </div>
                         <div className="light-grey-border-box">
@@ -910,7 +910,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col">
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                             <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                            <div style={{fontWeight: "600",marginTop: "5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -977,7 +977,7 @@ class AppTeamRegistrationForm extends Component{
                                 onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
-                                <img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> 
+                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate} 
                             </div>
                         </div>
@@ -1622,6 +1622,32 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    teamInfoView = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            return(
+                <div className="registration-form-view">
+                    <div style={{display: "flex",alignItems:"center"}}>
+                        <div className="defualt-team-logo-style">
+                            <img src={AppImages.teamLoadDefualtWhite}/>
+                        </div> 
+                        <div style={{marginLeft: "20px"}}>
+                            <div className="form-heading"  style={{paddingBottom: "0px"}}>{teamRegistrationObj.teamName}</div>
+                            <div className="inter-medium-font" 
+                            style={{fontSize: "13px"}}>
+                                {AppConstants.team},{teamRegistrationObj.teamMembers.length} {AppConstants.members}
+                            </div>
+                        </div>
+                        <div className="orange-action-txt" style={{marginLeft: "auto"}}
+                            onClick={() => this.onChangeStep(1)}>{AppConstants.selectAnother}</div>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in teamInfoView::"+ex);
+        }
+    }
+
     additionalPersonalInfoView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
@@ -1931,6 +1957,7 @@ class AppTeamRegistrationForm extends Component{
             return(
                 <div>
                     <div>{this.addedCompetitionView()}</div>
+                    <div>{this.teamInfoView()}</div>
                     <div>{this.additionalPersonalInfoView(getFieldDecorator)}</div>
                 </div>
             )

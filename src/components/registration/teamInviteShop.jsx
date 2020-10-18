@@ -145,7 +145,7 @@ class TeamInviteShop extends Component{
 
     enableExpandView = (key, item) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item}); 
+            this.setState({showCardView:true, expandObj: item,quantity: 1}); 
         } 
         else {
             this.setState({showCardView:false, expandObj: null, variantOptionId: null,

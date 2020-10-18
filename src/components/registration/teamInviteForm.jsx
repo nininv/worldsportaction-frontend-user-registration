@@ -421,9 +421,9 @@ class TeamInivteForm extends Component{
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionDetails.organisationName}</div>
                             <div style={{textAlign: "start",fontWeight: "600"}}>{competitionDetails.stateOrgName} - {competitionDetails.competitionName}</div>
                             <div style={{display: "flex",marginTop: "15px",alignItems: "center"}}>
-                                <img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> 
+                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 <div style={{fontWeight: "600"}}>{competitionDetails.registrationOpenDate} - {competitionDetails.registrationCloseDate}</div>
-                                <img style={{height: "15px",width: "15px",marginRight: "5px",marginLeft: "40px"}} src={AppImages.calendar}/> 
+                                <img className="icon-size-15" style={{marginRight: "5px",marginLeft: "25px"}} src={AppImages.teamLoadDefualtGrey}/> 
                                 <div style={{fontWeight: "600"}}>{userRegDetails.resgistererDetails.teamName}</div>
                             </div>
                         </div>

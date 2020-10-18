@@ -1980,7 +1980,7 @@ class AppRegistrationFormNew extends Component{
                             <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
                             <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                             {organisationInfo.mobileNumber && (
-                                <div style={{marginLeft: "20px"}}><img style={{height: "20px",width: "20px",marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                                <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
                             )}
                         </div>
                     )}
@@ -2004,7 +2004,7 @@ class AppRegistrationFormNew extends Component{
                                 {this.state.organisationId == null && (
                                     <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                 )}
-                                <div style={{fontWeight: "600"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                             </div>
                         </div>
                     ))}
@@ -2053,7 +2053,7 @@ class AppRegistrationFormNew extends Component{
                                 <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                 onClick={() => this.findAnotherCompetition(competitionIndex)}>{competitionIndex == 0 ? AppConstants.findAnotherCompetition : AppConstants.cancel}</div>
                             </div>
-                            <div style={{fontWeight: "600",marginTop: "-5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box">
@@ -2346,7 +2346,7 @@ class AppRegistrationFormNew extends Component{
                     <div className="col">
                         <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                         <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                        <div style={{fontWeight: "600",marginTop: "5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                        <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                     </div>
                 </div>
                 <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -2391,9 +2391,9 @@ class AppRegistrationFormNew extends Component{
                             onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                         </div>
                         <div style={{fontWeight: "600",marginTop: "-5px",
-                        display: "flex",alignItems: "center"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate} 
+                        display: "flex",alignItems: "center"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate} 
                             <div >
-                                <img style={{height: "15px",width: "15px",marginRight: "5px",marginLeft: "25px"}} src={AppImages.umpireIcon}/>
+                                <img className="icon-size-15" style={{marginRight: "5px",marginLeft: "25px"}} src={AppImages.participant}/>
                                 {(competition.products || []).map((product,productIndex) => (
                                     <span>
                                         <span>{product.membershipTypeName}</span>
@@ -2930,7 +2930,7 @@ class AppRegistrationFormNew extends Component{
                     <div className="orange-action-txt"
                     onClick={() => this.goToRegistrationProducts()}
                     style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart}
-                    <img style={{height: "20px",width: "20px",marginLeft: "7px"}} src={AppImages.shoppingCartIcon}/>
+                    <img className="icon-size-20" style={{marginLeft: "7px"}} src={AppImages.shoppingCartIcon}/>
                     </div>
                 )}
                 {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
