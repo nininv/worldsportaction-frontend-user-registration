@@ -419,12 +419,12 @@ class RegistrationShipping extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500 font-17" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
+                                <div  className="subtitle-text-common mt-10 font-17" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -452,9 +452,9 @@ class RegistrationShipping extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="font-17" style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer font-17" 
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
@@ -470,7 +470,7 @@ class RegistrationShipping extends Component {
                     )}
                 )}
                  {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common shop-detail-text-common">
+                    <div  className="subtitle-text-common shop-detail-text-common inter-medium-w500 font-17">
                         <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -491,8 +491,8 @@ class RegistrationShipping extends Component {
                     </div>
                 ))}
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )
