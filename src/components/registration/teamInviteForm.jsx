@@ -1487,22 +1487,28 @@ class TeamInivteForm extends Component{
                     
                     {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead 
-                            heading={AppConstants.workingWithChildrenCheckNumber}
-                            placeholder={AppConstants.childrenNumber} 
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"childrenCheckNumber","userRegDetails")} 
-                            value={userRegDetails.childrenCheckNumber}
-                            />
-                            <DatePicker
-                                size="large"
-                                placeholder={AppConstants.checkExpiryDate}
-                                style={{ width: "100%",marginTop: "20px" }}
-                                onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
-                                format={"DD-MM-YYYY"}
-                                showTime={false}
-                                value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}
-                            />
-                        </div>
+                            <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
+                            <div className="row">
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead 
+                                    placeholder={AppConstants.childrenNumber} 
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"childrenCheckNumber","userRegDetails")} 
+                                    value={userRegDetails.childrenCheckNumber}
+                                    />
+                                </div>
+                                <div className="col-sm-12 col-md-6">
+                                    <DatePicker
+                                        size="large"
+                                        placeholder={AppConstants.expiryDate}
+                                        style={{ width: "100%"}}
+                                        onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
+                                        format={"DD-MM-YYYY"}
+                                        showTime={false}
+                                        value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                    />
+                                </div>
+                            </div>
+                        </div>  
                     )}
 
                     {userRegDetails.membershipProductTypeName == "Walking Netball" && (
