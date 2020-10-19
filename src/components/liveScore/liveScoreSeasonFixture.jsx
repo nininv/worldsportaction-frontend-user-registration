@@ -550,7 +550,7 @@ class LiveScoreSeasonFixture extends Component {
                                     <div className='tableViewSeasonFixture'>
                                         <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.homeTeam} /></div>
                                         <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.team1 ? "A1-state Long Long Team Name" : ""}>
+                                            <InputWithHead className="input-inside-table-fees" heading={item.team1 ? item.team1.name : ""}>
                                             </InputWithHead>
                                         </div>
                                     </div>
