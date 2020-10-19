@@ -179,8 +179,8 @@ class RegistrationShop extends Component {
                 let registrationReview = this.props.registrationProductState.registrationReviewList;
                 //if(isArrayNotEmpty(registrationReview.shopProducts)){
                     registrationReview["registrationId"] = this.state.registrationUniqueKey;
-                    registrationReview["key"] = "shop";
-                    this.callSaveRegistrationProducts("shop", registrationReview);
+                    registrationReview["key"] = "continue";
+                    this.callSaveRegistrationProducts("continue", registrationReview);
                 // }
                 // else{
                 //     this.goToRegistrationPayments();
@@ -199,7 +199,7 @@ class RegistrationShop extends Component {
 
     enableExpandView = (key, item) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item}); 
+            this.setState({showCardView:true, expandObj: item,quantity: 1}); 
         } 
         else {
             this.setState({showCardView:false, expandObj: null, variantOptionId: null,
@@ -393,12 +393,12 @@ class RegistrationShop extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500 font-17" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
+                                <div  className="subtitle-text-common mt-10 font-17" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -426,9 +426,9 @@ class RegistrationShop extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="font-17" style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer font-17" 
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
@@ -444,8 +444,8 @@ class RegistrationShop extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common shop-detail-text-common">
-                        <div className="alignself-center pt-2 image-text-view">
+                    <div  className="inter-medium-w500 font-17"  style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
@@ -456,7 +456,7 @@ class RegistrationShop extends Component {
                                 <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 font-17 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" >
                                 <img  class="marginIcon" src={AppImages.removeIcon} />
@@ -466,8 +466,8 @@ class RegistrationShop extends Component {
                 ))}
                  
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )

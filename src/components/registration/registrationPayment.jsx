@@ -132,25 +132,57 @@ const CheckoutForm = (props) => {
                 "direct": true,
                 "cash": false,
                 "credit": false,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
             stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey);
-        } else if (key === 'cash') {
+        } 
+        else if (key === 'cash') {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
                 "direct": false,
                 "cash": true,
                 "credit": false,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": ""
             });
-        } else {
+        }
+        else if(key == "cash_direct_debit"){
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": true,
+                "credit": false,
+                "cashDirect": true,
+                "cashCredit": false,
+                "selectedOption": "cash_direct_debit"
+            });
+        }
+        else if(key == "cash_card"){
+            setClientKey("")
+            setUser({
+                ...selectedPaymentOption,
+                "direct": false,
+                "cash": true,
+                "credit": false,
+                "cashDirect": false,
+                "cashCredit": true,
+                "selectedOption": "cash_card"
+            });
+        }
+         else {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
                 "direct": false,
                 "cash": false,
                 "credit": true,
+                "cashDirect": false,
+                "cashCredit": false,
                 "selectedOption": "card"
             });
         }
@@ -264,26 +296,29 @@ const CheckoutForm = (props) => {
                             <div className="row">
                                 <div className='col-sm'>
                                     <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                        className="payment-type-radio-style"
                                         checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                    {selectedPaymentOption.credit == true && 
-                                        <div className="pt-5">
-                                            <CardElement
-                                                id="card-element"
-                                                options={CARD_ELEMENT_OPTIONS}
-                                                onChange={handleChange}
-                                                className='StripeElement'
-                                            />
-                                            <div className="card-errors" role="alert">{error}</div>
-                                            <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
-                                        </div>   
-                                    }
+                                        {selectedPaymentOption.credit == true && 
+                                            <div className="pt-5">
+                                                <CardElement
+                                                    id="card-element"
+                                                    options={CARD_ELEMENT_OPTIONS}
+                                                    onChange={handleChange}
+                                                    className='StripeElement'
+                                                />
+                                                <div className="card-errors" role="alert">{error}</div>
+                                                <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                            </div>   
+                                        }
                                 </div>
                             </div>
                         }
                         {pay.securePaymentOptionRefId == 1 && 
                         <div className="row">
                             <div className='col-sm'>
-                                <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                <Radio key={"2"} 
+                                className="payment-type-radio-style"
+                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
                                     <div>
                                         <div class="sr-root">
@@ -359,11 +394,87 @@ const CheckoutForm = (props) => {
                             </div>
                         </div>}
                         {pay.securePaymentOptionRefId == 3 && 
-                        <div className="row">
-                            <div className='col-sm'>
-                                <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                        <div>
+                            <div className="row">
+                                <div className='col-sm'>
+                                    <Radio key={"3"} 
+                                className="payment-type-radio-style"
+                                onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
+                                </div>
                             </div>
-                        </div>}
+                            <div className="row pl-4">
+                                <div className='col-sm'>
+                                    {selectedPaymentOption.cash == true && 
+                                        <div className="pt-0">
+                                            <Radio key={"4"} 
+                                            className="payment-type-radio-style"                                            
+                                            onChange={(e) => changePaymentOption(e, "cash_direct_debit")} 
+                                                    checked={selectedPaymentOption.cashDirect}>{AppConstants.directDebit}</Radio>
+                                            {selectedPaymentOption.cashDirect == true &&
+                                                <div>
+                                                    <div class="sr-root">
+                                                        <div class="sr-main">
+                                                            <div class="sr-combo-inputs-row">
+                                                                <div class="col">
+                                                                    <label htmlFor="au-bank-account-element">
+                                                                        Bank Account
+                                                                </label>
+                                                                    <div id="au-bank-account-element">
+                                                                        <AuBankAccountElement
+                                                                            id="au-bank-account-element"
+                                                                            options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
+                                                                            className='StripeElement'
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="bank-name"></div>
+                                                            <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
+                                                            <div class="col pt-3" id="mandate-acceptance">
+                                                                {AppConstants.stripeMandate1} <a> </a>
+                                                                <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    Direct Debit Request service agreement
+                                                                </a>
+                                                                {AppConstants.stripeMandate2}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                </div>
+                                            }
+                                        </div>   
+                                    }
+                                </div>
+                            </div>
+                            <div className="row pl-4">
+                                <div className='col-sm'>
+                                    {selectedPaymentOption.cash == true && 
+                                        <div className="pt-0">
+                                            <Radio key={"5"} 
+                                            className="payment-type-radio-style"
+                                            onChange={(e) => changePaymentOption(e, "cash_card")}
+                                                    checked={selectedPaymentOption.cashCredit}>{AppConstants.creditCard}</Radio>
+                                                {selectedPaymentOption.cashCredit == true && 
+                                                <div className="pt-4">
+                                                    <CardElement
+                                                        id="card-element"
+                                                        options={CARD_ELEMENT_OPTIONS}
+                                                        onChange={handleChange}
+                                                        className='StripeElement'
+                                                    />
+                                                    <div className="card-errors" role="alert">{error}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                </div>   
+                                                }
+                                        </div>   
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        }
                     </div>
                     ))}
                 </div> : 
@@ -376,6 +487,7 @@ const CheckoutForm = (props) => {
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
                             {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ?
                                 <Button
+                                    style={{textTransform: "uppercase"}}
                                     className="open-reg-button"
                                     htmlType="submit"
                                     type="primary">
@@ -538,12 +650,12 @@ class RegistrationPayment extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "product-text-common" style={{fontWeight:500 , marginTop: "17px"}}>
+                        <div className="inter-medium-w500 font-17" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                <div  className="product-text-common mt-10 font-17" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -569,9 +681,9 @@ class RegistrationPayment extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)"}}>
+                        <div className="font-17" style={{color: "var(--app-bbbbc6)",marginTop: "10px"}}>
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer font-17" 
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
@@ -605,37 +717,37 @@ class RegistrationPayment extends Component {
                         </div>
                     </div>
                 ))} 
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div style={{borderBottom:"1px solid var(--app-e1e1f5)",marginTop: "-5px"}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex" }}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
                 <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
                 </div>
                 
-                <div  className="product-text-common mt-10 mr-4" style={{display:"flex" , fontSize:17}}>
+                <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>
@@ -734,7 +846,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
    //console.log("Payload::" + JSON.stringify(payload));
   
     let body;
-    if (paymentType === "card") {
+    if (paymentType === "card" || paymentType == "cash_card") {
         let stripeToken = token.id
         body = {
             registrationId: registrationUniqueKey,
@@ -746,7 +858,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
         }
     }
-    else if(paymentType === "direct_debit"){
+    else if(paymentType === "direct_debit" || paymentType == "cash_direct_debit"){
         body = {
             registrationId: registrationUniqueKey,
             //invoiceId: invoiceId,
@@ -764,7 +876,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             isHardshipEnabled: 1
         }
     }
-    console.log("payload" + JSON.stringify(payload));
+    //console.log("body" + JSON.stringify(body));
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
             method: 'POST',
@@ -780,7 +892,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                 console.log(response.status, "status", paymentType)
                 resp.then((Response) => {
                     if (response.status === 200) {
-                        if (paymentType == "card") {
+                        if (paymentType == "card" || paymentType == "cash_card") {
                             message.success(Response.message);
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
@@ -790,7 +902,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 paymentSuccess: true
                             })
                         }
-                        else if(paymentType =="direct_debit") {
+                        else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
                             if(Response.clientSecret == null && Response.totalFee == 0){
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
@@ -829,6 +941,6 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                 props.onLoad(false)
                 console.error(error);
             });
-    })
+    }) 
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);

@@ -478,8 +478,8 @@ class AppTeamRegistrationForm extends Component{
         this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
     }
 
-    onChangeSetAdditionalInfo = (value,key) => {
-        this.props.updateTeamAdditionalInfoAction(key,value);
+    onChangeSetAdditionalInfo = (value,key,subKey) => {
+        this.props.updateTeamAdditionalInfoAction(key,value,subKey);
     }
 
     getFilteredTeamRegisrationObj = (teamRegistrationObj) => {
@@ -691,7 +691,7 @@ class AppTeamRegistrationForm extends Component{
                                 <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
                                 <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
-                                    <div style={{marginLeft: "20px"}}><img style={{height: "20px",width: "20px",marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                                    <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
                                 )}
                             </div>
                         )}
@@ -715,18 +715,25 @@ class AppTeamRegistrationForm extends Component{
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
-                                    <div style={{fontWeight: "600"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    <div style={{fontWeight: "600"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <Pagination 
-                        onChange={(e) => this.pagingCompetitions(e)}
-                        pageSize={this.state.competitionsCountPerPage}
-                        current={this.state.competitionsCurrentPage}
-                        style={{textAlign: "center"}} 
-                        total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
-                        itemRender={this.paginationItems}/>
+                    {this.state.competitions?.length > 0 ? 
+                        (
+                            <Pagination 
+                            onChange={(e) => this.pagingCompetitions(e)}
+                            pageSize={this.state.competitionsCountPerPage}
+                            current={this.state.competitionsCurrentPage}
+                            style={{textAlign: "center"}} 
+                            total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                            itemRender={this.paginationItems}/>
+                        ) : 
+                        (
+                            <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                        )
+                    }
                 </div>
             )
         }catch(ex){
@@ -759,7 +766,7 @@ class AppTeamRegistrationForm extends Component{
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                     onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
                         </div>
                         <div className="light-grey-border-box">
@@ -903,7 +910,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col">
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                             <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                            <div style={{fontWeight: "600",marginTop: "5px"}}><img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -970,7 +977,7 @@ class AppTeamRegistrationForm extends Component{
                                 onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
-                                <img style={{height: "15px",width: "15px",marginRight: "5px"}} src={AppImages.calendar}/> 
+                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate} 
                             </div>
                         </div>
@@ -1529,12 +1536,127 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    walkingNetballQuestions = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            return(
+                <div>
+                    <InputWithHead
+                    required={"pt-0"}
+                    heading={AppConstants.haveHeartTrouble}/>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"haveHeartTrouble","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.haveHeartTrouble}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.havePainInHeartOrChest}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "havePainInHeartOrChest","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.havePainInHeartOrChest}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.haveSpellsOfServerDizziness}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveSpellsOfServerDizziness","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.haveSpellsOfServerDizziness}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.hasBloodPressureHigh}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBloodPressureHigh","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.hasBloodPressureHigh}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.hasBoneProblems}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBoneProblems","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.hasBoneProblems}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.whyShouldNotTakePhysicalActivity}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "whyShouldNotTakePhysicalActivity","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.whyShouldNotTakePhysicalActivity}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.pregnentInLastSixMonths}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnentInLastSixMonths","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.pregnentInLastSixMonths}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                    <div className="input-style">{AppConstants.sufferAnyProblems}</div>
+                    <Radio.Group
+                        className="registration-radio-group"
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "sufferAnyProblems","walkingNetball")} 
+                        value={teamRegistrationObj.additionalInfo.walkingNetball.sufferAnyProblems}
+                        >
+                        <Radio value={1}>{AppConstants.yes}</Radio>
+                        <Radio value={0}>{AppConstants.no}</Radio>
+                    </Radio.Group>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in walkingNetballQuestions::"+ex);
+        }
+    }
+
+    teamInfoView = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            return(
+                <div className="registration-form-view">
+                    <div style={{display: "flex",alignItems:"center"}}>
+                        <div className="defualt-team-logo-style">
+                            <img src={AppImages.teamLoadDefualtWhite}/>
+                        </div> 
+                        <div style={{marginLeft: "20px"}}>
+                            <div className="form-heading"  style={{paddingBottom: "0px"}}>{teamRegistrationObj.teamName}</div>
+                            <div className="inter-medium-font" 
+                            style={{fontSize: "13px"}}>
+                                {AppConstants.team},{teamRegistrationObj.teamMembers.length} {AppConstants.members}
+                            </div>
+                        </div>
+                        <div className="orange-action-txt" style={{marginLeft: "auto"}}
+                            onClick={() => this.onChangeStep(1)}>{AppConstants.selectAnother}</div>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in teamInfoView::"+ex);
+        }
+    }
+
     additionalPersonalInfoView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
                 firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
-            let yearsOfPlayingList = ['1','2','3','4','5','6','7','8','9','10+'];
+            let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
+            let hasOtherParticipantSports = teamRegistrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
+            let walkingNetballQuesKeys = Object.keys(teamRegistrationObj.additionalInfo.walkingNetball);
+            let hasAnyOneYes = walkingNetballQuesKeys.find(key => teamRegistrationObj.additionalInfo.walkingNetball[key] == 1);
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -1655,6 +1777,15 @@ class AppTeamRegistrationForm extends Component{
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
+                    {hasOtherParticipantSports && (
+                        <div style={{marginTop: "20px"}}>
+                            <InputWithHead 
+                                placeholder={AppConstants.pleaseSpecify} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"otherSports")} 
+                                value={teamRegistrationObj.additionalInfo.otherSports}
+                            />
+                        </div>
+                    )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} />
                     <Radio.Group
                         className="registration-radio-group"
@@ -1686,16 +1817,19 @@ class AppTeamRegistrationForm extends Component{
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
                             {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
-                                <Select
-                                    placeholder={AppConstants.yearsOfPlaying}
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                    value={teamRegistrationObj.additionalInfo.yearsPlayed}
-                                    >  
-                                    {(yearsOfPlayingList || []).map((years, index) => (
-                                        <Option key={years} value={years}>{years}</Option>
-                                    ))}
-                                </Select> 
+                                <div>
+                                     <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <Select
+                                        placeholder={AppConstants.yearsOfPlaying}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                        value={teamRegistrationObj.additionalInfo.yearsPlayed ? teamRegistrationObj.additionalInfo.yearsPlayed : '2'}
+                                        >  
+                                        {(yearsOfPlayingList || []).map((item, index) => (
+                                            <Option key={item.years} value={item.years}>{item.years}</Option>
+                                        ))}
+                                    </Select> 
+                                </div>
                             )}
                         </div>
                     )}
@@ -1747,11 +1881,12 @@ class AppTeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
+                                style={{flexDirection: "column"}}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelCoachRefId")} 
                                 value={teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId}
                                 >
                                 {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
-                                <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                    <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
                             {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
@@ -1770,21 +1905,44 @@ class AppTeamRegistrationForm extends Component{
                     
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead 
-                            heading={AppConstants.workingWithChildrenCheckNumber}
-                            placeholder={AppConstants.childrenNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"childrenCheckNumber")} 
-                            value={teamRegistrationObj.additionalInfo.childrenCheckNumber}
-                            />
-                            <DatePicker
-                                size="large"
-                                placeholder={AppConstants.checkExpiryDate}
-                                style={{ width: "100%",marginTop: "20px" }}
-                                onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
-                                format={"DD-MM-YYYY"}
-                                showTime={false}
-                                value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
-                            />
+                            <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
+                            <div className="row">
+                                <div className="col-sm-12 col-md-6">
+                                    <InputWithHead 
+                                    placeholder={AppConstants.childrenNumber} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"childrenCheckNumber")} 
+                                    value={teamRegistrationObj.additionalInfo.childrenCheckNumber}
+                                    />
+                                </div>
+                                <div className="col-sm-12 col-md-6">
+                                    <DatePicker
+                                        size="large"
+                                        placeholder={AppConstants.expiryDate}
+                                        style={{ width: "100%"}}
+                                        onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
+                                        format={"DD-MM-YYYY"}
+                                        showTime={false}
+                                        value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {teamRegistrationObj.walkingNetballFlag == 1 && (
+                        <div>
+                            <div className="form-heading" style={{marginTop: "40px",paddingBottom: "20px"}}>{AppConstants.walkingNetball2}</div>
+                            {this.walkingNetballQuestions()}
+                            {hasAnyOneYes && (
+                                <div>
+                                    <div className="input-style">{AppConstants.provideFurtherDetails}</div>
+                                    <InputWithHead 
+                                        placeholder={AppConstants.walkingNetball2} 
+                                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
+                                        value={teamRegistrationObj.additionalInfo.walkingNetballInfo}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -1799,6 +1957,7 @@ class AppTeamRegistrationForm extends Component{
             return(
                 <div>
                     <div>{this.addedCompetitionView()}</div>
+                    <div>{this.teamInfoView()}</div>
                     <div>{this.additionalPersonalInfoView(getFieldDecorator)}</div>
                 </div>
             )

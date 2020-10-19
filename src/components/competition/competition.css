@@ -577,3 +577,34 @@
   border-color: white;
   color: black;
 }
+
+.input-style{
+  display: flex;
+  align-content: flex-start;
+  padding-top: 30px;
+  padding-bottom: 11px;
+  font-size: 13px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.icon-size-15{
+  height: 15px;
+  width: 15px;
+}
+
+.icon-size-20{
+  height: 20px;
+  width: 20px;
+}
+
+.defualt-team-logo-style{
+  height: 67px ;
+  width: 67px;
+  background-color: var(--app-77778f);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

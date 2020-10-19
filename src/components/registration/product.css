@@ -881,7 +881,7 @@ img.bg {
   align-content: flex-start;
   color: var(--app-1b1b34);
   font-weight: 600;
-  font-family: sans-serif;
+  font-family: inter;
 }
 .btn-text-common {
   font-size: 14px;
@@ -1035,4 +1035,24 @@ input:focus, .StripeElement--focus {
   width: 0.75em;
   max-width: 100%;
   box-shadow: 0px 0px;
+}
+
+.inter-medium-w500{
+  font-weight:500 ;
+  font-family: "inter-medium";
+}
+
+.font-17{
+  font-size: 17px;
+}
+
+.font-w600{
+  font-weight: 600;
+}
+
+.payment-type-radio-style{
+  font-weight:500 ;
+  font-size: 17px !important;
+  font-family: "inter-medium";
+  color: rgba(0, 0, 0, 0.65);
 }

@@ -133,8 +133,10 @@ function registrationProductsReducer(state = initialState, action){
                                             feeIsNull(action.value.amount);
                     reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
                                             feeIsNull(action.value.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) +
+                    console.log("total amount",reviewData["total"]["total"],action.value.amount,action.value.tax)
+                    let total = feeIsNull(reviewData["total"]["total"]) +
                     feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+                    reviewData["total"]["total"] = total.toFixed(2);
 
                                             
                 }

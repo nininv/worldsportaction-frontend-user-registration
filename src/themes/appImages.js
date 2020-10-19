@@ -45,7 +45,11 @@ const AppImages = {
   crossImage: require("../images/close.png"),
   removeIcon: require("../images/removeIcon.svg"),
   editIcon: require("../images/editIcon.svg"),
-  shoppingCartIcon: require("../images/shopping_cart_icon.svg")
+  shoppingCartIcon: require("../images/shopping_cart_icon.svg"),
+  calendarGrey: require("../images/calendar-grey.svg"),
+  participant: require("../images/participant.svg"),
+  teamLoadDefualtGrey: require("../images/team-logo-default-gray.svg"),
+  teamLoadDefualtWhite: require("../images/team-logo-default-white.svg")
 };
 
 export default AppImages;

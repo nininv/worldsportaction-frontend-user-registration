@@ -123,7 +123,7 @@ class Login extends Component {
                     <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
                 </NavLink>
 
-                {this.state.isUserRegistration == 1 || this.state.userRegId ?
+                {/* {this.state.isUserRegistration == 1 || this.state.userRegId ? */}
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div style={{display:'flex'}}>
@@ -138,14 +138,15 @@ class Login extends Component {
                             <Button className="ant-btn-proceed-text login-btn-proceed" onClick={() => this.redirect()} type="primary" disabled={this.state.loginButton}>{AppConstants.proceedToRegistration}</Button>
                         </div>
                     </div>
-                </div> :
+                </div>
+                 {/* :
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div className="comp-finals-button-view">
                             <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
                         </div>
                     </div>
-                </div> }
+                </div> } */}
             </div>
         )
     }

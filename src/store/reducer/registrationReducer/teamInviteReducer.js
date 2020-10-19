@@ -37,11 +37,18 @@ function teamInviteReducer(state = initialState, action){
             let inviteMemberInfoSubKey= action.subKey;
             let inviteMemberInfoParentIndex = action.parentIndex;
             if(inviteMemberInfoSubKey == "userRegDetails"){
-              state.iniviteMemberInfo.userRegDetails[inviteMemberInfoKey] = inviteMemberInfoData;
+                if(inviteMemberInfoKey == "isYearsPlayed"){
+                    if(inviteMemberInfoData == 1){
+                        state.iniviteMemberInfo.userRegDetails.yearsPlayed = '2';
+                    }
+                }
+                state.iniviteMemberInfo.userRegDetails[inviteMemberInfoKey] = inviteMemberInfoData;
             }else if(inviteMemberInfoSubKey == "parentOrGaurdianDetails"){
-              state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoParentIndex][inviteMemberInfoKey] = inviteMemberInfoData;
+                state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoParentIndex][inviteMemberInfoKey] = inviteMemberInfoData;
             }else if(inviteMemberInfoKey == "inviteMemberInfo"){
-              state.iniviteMemberInfo = inviteMemberInfoData;
+                state.iniviteMemberInfo = inviteMemberInfoData;
+            }else if(inviteMemberInfoSubKey == "walkingNetball"){
+                state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoKey] = inviteMemberInfoData;
             }
             return{
               ...state

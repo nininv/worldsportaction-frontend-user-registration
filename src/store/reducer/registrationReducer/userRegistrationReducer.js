@@ -1,7 +1,19 @@
 import ApiConstants from "../../../themes/apiConstants";
+import AppConstants from "../../../themes/appConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
+
+let walkingNetballObj = {
+	"haveHeartTrouble" : null,
+	"havePainInHeartOrChest" : null,
+	"haveSpellsOfServerDizziness" : null,
+	"hasBloodPressureHigh" : null,
+	"hasBoneProblems" : null,
+	"whyShouldNotTakePhysicalActivity" : null,
+	"pregnentInLastSixMonths" : null,
+	"sufferAnyProblems" : null
+}
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -70,8 +82,9 @@ let registrationObjTemp = {
 		"injuryInfo": null,
 		"allergyInfo": null,
 		"otherSportsInfo": [],
+		"otherSports": null,
 		"isYearsPlayed": null,
-		"yearsPlayed": null,
+		"yearsPlayed": '2',
 		"schoolId": null,
 		"schoolGradeInfo": null,
 		"isParticipatedInSSP": null,
@@ -82,7 +95,8 @@ let registrationObjTemp = {
 		"accreditationUmpireExpiryDate": null,
 		"accreditationCoachExpiryDate": null,
 		"isPrerequestTrainingComplete": null,
-		"walkingNetballRefId": null,
+		//"walkingNetballRefId": null,
+		"walkingNetball": deepCopyFunction(walkingNetballObj),
 		"walkingNetballInfo": null
 	}
 }
@@ -138,6 +152,8 @@ let friendObj = {
 	"email": null
 }
 
+
+
 const initialState = {
 	onLoad:false,
     registrationObj: null,
@@ -155,6 +171,7 @@ const initialState = {
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
 	parents: [],
+	registeredParents: [],
 	expiredRegistrationFlag: false,
 	expiredRegistration: null 
 }
@@ -171,7 +188,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
-			if(selectedUser.street1 && selectedUser.suburb && selectedUser.postalCode){
+			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.street1 = selectedUser.street1;
 				registrationObj.street2 = selectedUser.street2;
@@ -179,6 +196,9 @@ function getUserUpdatedRegistrationObj(state,action){
 				registrationObj.postalCode = selectedUser.postalCode;	
 				registrationObj.stateRefId = selectedUser.stateRefId;
 				registrationObj.countryRefId = selectedUser.countryRefId;
+			}else{
+				registrationObj.selectAddressFlag = false;
+				registrationObj.addNewAddressFlag = true;
 			}
 			if(selectedUser.parentOrGuardian != null && selectedUser.parentOrGuardian.length > 0){
 				let i = 0;
@@ -196,8 +216,8 @@ function getUserUpdatedRegistrationObj(state,action){
 						"stateRefId": parent.stateRefId,
 						"countryRefId": parent.countryRefId,
 						"postalCode": parent.postalCode,
-						"selectAddressFlag": true,
-						"addNewAddressFlag": false,
+						"selectAddressFlag": (parent.stateRefId) ? true : false,
+						"addNewAddressFlag": (parent.stateRefId) ? false : true,
 						"manualEnterAddressFlag": false
 					}
 					registrationObj.parentOrGuardian.push(parentObj);
@@ -299,6 +319,7 @@ function getFilteredDivisions(divisions,state){
 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
 				if(division.genderRefId == genderRefId || genderRefId == 3){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -310,6 +331,7 @@ function getFilteredDivisions(divisions,state){
 				var endDate = moment(division.toDate, "YYYY-MM-DD");
 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -322,6 +344,7 @@ function getFilteredDivisions(divisions,state){
 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
 						let div = {
+							"competitionMembershipProductId": division.competitionMembershipProductId,
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 							"divisionName": division.divisionName
@@ -330,6 +353,7 @@ function getFilteredDivisions(divisions,state){
 				}
 			}else{
 				let div = {
+					"competitionMembershipProductId": division.competitionMembershipProductId,
 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 					"divisionName": division.divisionName
@@ -538,6 +562,7 @@ function userRegistrationReducer(state = initialState, action){
 				}else{
 					//Link previous participant parents for next participant 
 					state.parents = responseData.parents;
+					state.registeredParents = responseData.registeredParents;
 				}
 				return {
 					...state,
@@ -608,12 +633,17 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
-			if(additionalInfoKey == "isYearsPlayed"){
-				if(additionalInfoData == 1){
-					state.registrationObj.additionalInfo.yearsPlayed = additionalInfoData;
+			let additionalInfoSubKey = action.subKey;
+			if(additionalInfoSubKey == "walkingNetball"){
+				state.registrationObj.additionalInfo.walkingNetball[additionalInfoKey] = additionalInfoData;
+			}else{
+				if(additionalInfoKey == "isYearsPlayed"){
+					if(additionalInfoData == 1){
+						state.registrationObj.additionalInfo.yearsPlayed = '2';
+					}
 				}
+				state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			}
-			state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			return {
 				...state
 			};

@@ -59,7 +59,7 @@ class RegistrationProducts extends Component {
            newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
-           onLoading: false
+           onLoading: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "fa7066f7-6b49-4a2b-9331-b0ba020549a1";
+        //let registrationUniqueKey = "f4280d8a-bd89-4a5f-98f6-f6bec356ec39";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -140,6 +140,8 @@ class RegistrationProducts extends Component {
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
         let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
+
+        let participantUsers = this.props.registrationProductState.participantUsers;
         if(incompletePaymentMessage != ''){
             incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
             message.error(incompletePaymentMessage);
@@ -152,7 +154,7 @@ class RegistrationProducts extends Component {
             if(!err)
             {
                 console.log(this.state.searchAddressFlag,yourInfo.stateRefId);
-                if(this.state.searchAddressFlag && yourInfo.stateRefId == null){
+                if(isArrayNotEmpty(participantUsers) && this.state.searchAddressFlag && yourInfo.stateRefId == null){
                     message.error(ValidationConstants.addressDetailsIsRequired);
                     return;
                 }
@@ -277,6 +279,10 @@ class RegistrationProducts extends Component {
         } 
     }
 
+    clickAddAnotherParticipant = (participantId,registrationId) => {
+        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
+    }
+
     goToShop = () =>{
         history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
     }
@@ -397,7 +403,7 @@ class RegistrationProducts extends Component {
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
                 <div>
                     <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.redirect(null,this.state.registrationUniqueKey)}>
+                    onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                         + {AppConstants.addAnotherParticipant}
                     </div>
                 </div>
@@ -432,31 +438,47 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div style={{display:"flex",flexWrap:'wrap'}}>
-                    <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
-                        {
-                            item.photoUrl ? (
-                                <img src={item.photoUrl}/>
-                            ):
-                            (
-                                <img src={AppImages.userIcon} alt=""/>     
-                            )
-                        }
-                    </div>
+                   
                     {item.isTeamRegistration == 1 ?
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.teamName}</div>
-                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
-                        </div>
-                    :
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                            <div className="body-text-common">{item.gender + ', ' + 
-                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                <div className="defualt-team-logo-style">
+                                    <img src={AppImages.teamLoadDefualtWhite}/>
+                                </div>
+                                <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.teamName}</div>
+                                    <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                </div>
                             </div>
-                        </div>
+                        )
+                        
+                    :
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                 <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
+                                        {
+                                            item.photoUrl ? (
+                                                <img src={item.photoUrl}/>
+                                            ):
+                                            (
+                                                <div className="profile-default-img">
+                                                    {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
+                                                </div>     
+                                            )
+                                        }
+                                    </div>
+                                    <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                                    <div className="body-text-common">{item.gender + ', ' + 
+                                        liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                        
                     }
                    
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>
@@ -1143,12 +1165,12 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500 font-17" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
+                                <div  className="subtitle-text-common mt-10 font-17" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -1172,7 +1194,7 @@ class RegistrationProducts extends Component {
                             </div>
                         ))}
                          
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="font-17" style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
@@ -1185,7 +1207,7 @@ class RegistrationProducts extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="inter-medium-w500 font-17" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -1197,15 +1219,15 @@ class RegistrationProducts extends Component {
                                 <div>({shop.optionName})</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 font-17 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
                 ))} 
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )

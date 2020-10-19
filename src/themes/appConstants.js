@@ -1051,7 +1051,7 @@ const AppConstants = {
  otherSports: "otherSports",
  playingOtherParticipantSports: "Are you playing any other participation sport?",
  childPlayingOtherParticipantSports: "Is your child playing any other participation sport?",
- firstYearPlayingNetball: "If this your first year playing netball",
+ firstYearPlayingNetball: "If this your first year playing netball?",
  yearsOfPlaying: "Years of playing",
  schoolYouAttend: "Which school do you attend?",
  schoolYourChildAttend: "Which school does your child attend?",
@@ -1066,7 +1066,7 @@ const AppConstants = {
  newToUmpiring: "Are you new to Umpiring?",
  yourAssociationLevel: "What is your Association Level?",
  associationLevel: "Association Level",
- workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number?",
+ workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number? You are required to have a Working with Children Check Number or BlueCard. If you don't you will need to apply for one.",
  haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
  walkingNetball: "WalkingNetball",
  useParentsEmailAddress: "Use parent's email address",
@@ -1080,7 +1080,7 @@ const AppConstants = {
  selectParentOrGuardian: "Select Parent/Guardian",
  returnToShoppingCart: "Return to Shopping Cart",
  anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies or illnesses. Please detail a Management Plan (if applicable)",
- anyRedularMedicalConditions: "Any Regular Medications",
+ anyRedularMedicalConditions: "Any Regular Medications?",
  registeringAs:  " Registering as?",
  search: "Search",
  admin: "Admin",
@@ -1108,7 +1108,23 @@ const AppConstants = {
  liveScoreSeasonFixture:"LiveScore Season Fixture",
  dateTime:"Date/Time",
  matchResult:"Match Result",
- matchStatus:"Match Status"
+ matchStatus:"Match Status",
+
+ //Netball questions,
+ haveHeartTrouble: "Has your doctor ever said you have heart trouble?",
+ havePainInHeartOrChest: "Do you frequently have pains in your heart or chest?",
+ haveSpellsOfServerDizziness: "Do you often feel faint or have spells of server dizziness?",
+ hasBloodPressureHigh: "Has your doctor ever said your blood pressure is too high?",
+ hasBoneProblems: "Do you have any joint or bone problem(s) that may be worsened with exercise?",
+ whyShouldNotTakePhysicalActivity: "Do you know of any reason why you should not take part in physical activity?",
+ pregnentInLastSixMonths: "Are you or have you been pregnant in the last 6 months?",
+ sufferAnyProblems: "Do you suffer from any problems of the lower back?",
+
+ provideFurtherDetails: "Please provide further details",
+ walkingNetball2: "Walking Netball",
+ pleaseSpecify: "Please Specify",
+ yearsOfPlayingNetball: "How many years have you played Netball?",
+ noCompetitionsForOrganisations: "There are no open competitions for this organisation"
 };
 
 export default AppConstants;
