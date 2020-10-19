@@ -1106,6 +1106,9 @@ const AppConstants = {
  payInFull: "Pay in full",
  splitAmoingTeamMember: "Split amongst team members",
  liveScoreSeasonFixture:"LiveScore Season Fixture",
+ dateTime:"Date/Time",
+ matchResult:"Match Result",
+ matchStatus:"Match Status"
 };
 
 export default AppConstants;

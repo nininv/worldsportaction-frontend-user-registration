@@ -4,7 +4,6 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import InputWithHead from "../../customComponents/InputWithHead"
 import { liveScoreLaddersListAction, clearLadderList } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
 import history from "../../util/history";
 // import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
@@ -133,13 +132,17 @@ const columns2 = [
         key: 'rank',
         fixed: 'left',
         sorter: (a, b) => tableSort(a, b, "rank"),
+        render: (rank, record) => (
+            <div className='stickytableData'>
+                <span >{rank}</span>
+            </div >
+        )
     },
 
     {
         title: 'Team',
         dataIndex: 'name',
         key: 'name',
-        fixed: 'left',
         sorter: (a, b) => tableSort(a, b, "name"),
         render: (data, record) => (
             <div className='stickytableData'>
@@ -499,110 +502,6 @@ class LiveScorePublicLadder extends Component {
                     <Table loading={this.props.liveScoreLadderState.onLoad == true ? true : false} scroll={{ x: 1500, }} className="home-dashboard-table" columns={columns2} dataSource={DATA} pagination={false}
                     />
                 </div>
-                {/* <div className=" tableViewShow ">
-                    {DATA.length > 0 && DATA.map((item, index) => {
-                        return (
-                            <>
-
-                                <div className="table-responsive">
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Rank"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.rank ? item.rank : ""}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Team"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.name}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"P"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.P}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"W"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.W}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"L"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.L}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"D"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.D}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"B"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.B}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"FW"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.FW}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"FL"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.FL}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"F"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.F}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"A"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.A}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"PTS"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.PTS}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"%"} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={(JSON.parse(item.SMR) * 100).toFixed(2) + "%"}>
-                                            </InputWithHead>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )
-                    })
-                    }
-
-                </div > */}
                 <div className="comp-dash-table-view mt-4 ml-1">
                     <div className="ladder-list-adjustment ">
                         {
