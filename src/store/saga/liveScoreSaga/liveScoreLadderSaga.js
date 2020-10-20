@@ -88,3 +88,21 @@ export function* liveScoreLaddersListSaga(action) {
         yield call(errorSaga, error)
     }
 }
+
+export function* liveScoreTeamSaga(action) {
+    try {
+        const result = yield call(LiveScoreAxiosApi.liveScoreTeam, action.competitionID, action.divisionId);
+
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_LIVE_SCORE_TEAM_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}

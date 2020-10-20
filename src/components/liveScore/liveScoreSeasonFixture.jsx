@@ -17,6 +17,7 @@ import { isArrayNotEmpty } from "../../util/helpers";
 import history from "../../util/history";
 import './liveScore.css'
 import { getYearListing } from "../../store/actions/appAction";
+import { getliveScoreTeams } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -30,7 +31,6 @@ function tableSort(a, b, key) {
 
 
 function matchResultImag(result) {
-    console.log(result, "resultresult")
     if (result == "FINAL") {
         return AppImages.greenDot
     } else if (result == "UNCONFIRMED") {
@@ -258,7 +258,9 @@ class LiveScoreSeasonFixture extends Component {
             onDivisionLoad: false,
             selectedComp: null,
             yearId: null,
-            yearLoading: false
+            yearLoading: false,
+            team: "All",
+            onTeamLoad: false
 
         }
     }
@@ -319,7 +321,8 @@ class LiveScoreSeasonFixture extends Component {
                 if (this.props.liveScoreLadderState.liveScoreLadderDivisionData.length > 0) {
                     let division = this.props.liveScoreLadderState.liveScoreLadderDivisionData[0].id
                     this.setState({ onDivisionLoad: false, division })
-                    this.props.liveScoreRoundListAction(this.state.selectedComp, division)
+                    this.props.getliveScoreTeams(this.state.selectedComp, division)
+                    this.props.liveScoreRoundListAction(this.state.selectedComp, division, this.state.team)
                     // this.props.liveScoreLaddersListAction(this.state.selectedComp, division, this.state.competitionUniqueKey)
                 }
             }
@@ -333,15 +336,23 @@ class LiveScoreSeasonFixture extends Component {
         let selectedComp = compID.comp
         this.props.clearRoundData("all")
         this.props.getLiveScoreDivisionList(selectedComp)
-        this.setState({ selectedComp, onDivisionLoad: true, division: null })
+        this.setState({ selectedComp, onDivisionLoad: true, division: null, team: "All" })
 
     }
 
     changeDivision(divisionId) {
         let division = divisionId.division
-        this.props.liveScoreRoundListAction(this.state.selectedComp, division)
+        this.props.liveScoreRoundListAction(this.state.selectedComp, division, this.state.team)
+        this.props.getliveScoreTeams(this.state.selectedComp, division)
         this.props.clearRoundData("round")
-        this.setState({ division })
+        this.setState({ division, team: "All" })
+    }
+
+    changeTeam(teamId) {
+        let team = teamId
+        this.props.liveScoreRoundListAction(this.state.selectedComp, this.state.division, team)
+        this.props.clearRoundData("round")
+        this.setState({ team })
     }
 
     ///////view for breadcrumb
@@ -361,7 +372,7 @@ class LiveScoreSeasonFixture extends Component {
     }
 
     async setYearId(yearId) {
-        this.setState({ yearId, onCompLoad: true, selectedComp: null, division: null })
+        this.setState({ yearId, onCompLoad: true, selectedComp: null, division: null, team: "All" })
         this.props.clearRoundData("all")
         let organisationId = await getliveScoreOrgID()
         if (organisationId != undefined) {
@@ -377,8 +388,8 @@ class LiveScoreSeasonFixture extends Component {
     dropdownView = () => {
         const { liveScoreLadderState } = this.props;
         let competition = this.props.liveScoreFixturCompState.comptitionList ? this.props.liveScoreFixturCompState.comptitionList : []
-        // let division = this.props.liveScoreMatchState.divisionList ? this.props.liveScoreMatchState.divisionList : []
         let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
+        let teamList = isArrayNotEmpty(liveScoreLadderState.teamResult) ? liveScoreLadderState.teamResult : []
         const { yearListing } = this.props.appState
         return (
             <>
@@ -429,6 +440,24 @@ class LiveScoreSeasonFixture extends Component {
                                 }
                             </Select>
                         </div>
+
+                        {/* Team List */}
+                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
+                            <span className='year-select-heading'>{AppConstants.team}:</span>
+                            <Select
+                                className="year-select reg-filter-select-competition ml-2"
+                                onChange={(team) => this.changeTeam([team])}
+                                value={this.state.team}
+                            >
+                                <Option value={"All"}>{"All"}</Option>
+                                {
+                                    teamList.map((item) => {
+                                        return <Option value={item.id}>{item.name}</Option>
+                                    })
+                                }
+                            </Select>
+                        </div>
+
                         <div className="col-sm-6">
                         </div>
                     </div>
@@ -484,6 +513,27 @@ class LiveScoreSeasonFixture extends Component {
                             }
                         </Select>
                     </div>
+
+                    {/* Team List */}
+
+                    <div className="col-sm pl-0" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading pl-3 pt-2'>{AppConstants.team}</span>
+                    </div>
+                    <div className="col-sm pl-0 pt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <Select
+                            className="year-select reg-filter-select-competition ml-2"
+                            onChange={(team) => this.changeTeam([team])}
+                            value={this.state.team}
+
+                        >
+                            <Option value={"All"}>{"All"}</Option>
+                            {
+                                teamList.map((item) => {
+                                    return <Option value={item.id}>{item.name}</Option>
+                                })
+                            }
+                        </Select>
+                    </div>
                 </div>
             </>
         )
@@ -514,7 +564,6 @@ class LiveScoreSeasonFixture extends Component {
 
         let roundsArray = this.props.liveScoreRoundState.roundList
         let newArray = this.createRoundsArray(roundsArray)
-        console.log()
         return (
             <div className="comp-dash-table-view mt-4">
                 <div className="table-responsive home-dash-table-view tableViewHide">
@@ -645,7 +694,8 @@ function mapDispatchToProps(dispatch) {
         liveScoreRoundListAction,
         clearRoundData,
         fixtureCompetitionListAction,
-        getYearListing
+        getYearListing,
+        getliveScoreTeams,
     }, dispatch)
 }
 
