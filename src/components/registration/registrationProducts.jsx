@@ -245,6 +245,7 @@ class RegistrationProducts extends Component {
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
             this.setState({loading: true});
         }
         else if(key == "cancel"){
@@ -843,8 +844,8 @@ class RegistrationProducts extends Component {
                                     placeholder={AppConstants.select}
                                     setFieldsValue={yourInfo ? yourInfo.email : null}
                                     onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
-                                    {(participantUsers || []).map((item) => (
-                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                    {(participantUsers || []).map((item, index) => (
+                                        < Option key={item.email + "#" + index} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
                                     ))}
                                 </Select>
                             )}
@@ -1121,12 +1122,13 @@ class RegistrationProducts extends Component {
     productLeftView = (getFieldDecorator)=>{
         const {registrationReviewList, participantUsers} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
+        let hasClubVolunteer = registrationReviewList!= null ? registrationReviewList.hasClubVolunteer : 0;
         return(
             <div className="col-sm-12 col-md-8 col-lg-8 ">
                 <div className="product-left-view outline-style">
                     {this.participantDetailView()}
                     {isSchoolRegistration == 0 && this.charityView()}
-                    {this.otherinfoView()}
+                    {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
                 {participantUsers && participantUsers.length > 0 ? 
                 <div className="product-left-view outline-style">
