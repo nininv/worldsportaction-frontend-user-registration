@@ -122,6 +122,16 @@ function liveScoreLaddersReducer(state = initialState, action) {
                 teamResult: action.result,
             };
 
+        case ApiConstants.API_CLEAR_ROUND_DATA:
+            console.log(action, 'API_CLEAR_ROUND_DATA')
+            if (action.key == 'all') {
+                state.teamResult = []
+                state.liveScoreLadderDivisionData = []
+            }
+            return {
+                ...state,
+            }
+
         default:
             return state;
     };
