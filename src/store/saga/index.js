@@ -24,7 +24,7 @@ import * as regProductsSaga from '../saga/registrationSaga/registrationProductsS
 
 //Live Score
 import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
-import { liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
+import { liveScoreLaddersListSaga, liveScoreTeamSaga } from './liveScoreSaga/liveScoreLadderSaga';
 import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
 import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
 import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
@@ -256,8 +256,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD, userSaga.getUmpireActivityListSaga);
 
   //Team invite saga
-  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamInviteSaga.getInvitedTeamRegInfoSaga);
-  yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD,teamInviteSaga.orgTeamInviteRegistrationSettings);
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD, teamInviteSaga.getInvitedTeamRegInfoSaga);
+  yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD, teamInviteSaga.orgTeamInviteRegistrationSettings);
   yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga);
 
   ////////// Save stripe account
@@ -266,5 +266,7 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.saveTeamInviteReviewSaga);
   yield takeEvery(ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_LOAD, stripeSaga.getStripeLoginLinkSaga);
-  
+
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_TEAM_LOAD, liveScoreTeamSaga)
+
 }

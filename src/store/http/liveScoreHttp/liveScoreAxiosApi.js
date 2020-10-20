@@ -46,8 +46,14 @@ let LiveScoreAxiosApi = {
     },
 
 
-    liveScoreRound(competitionID, division) {
-        var url = `/round?competitionId=${competitionID}&divisionId=${division}`;
+    liveScoreRound(competitionID, division, teamId) {
+        let url = null
+        if (teamId == "All") {
+            url = `/round?competitionId=${competitionID}&divisionId=${division}`;
+        } else {
+            let team = JSON.stringify(teamId)
+            url = `/round?competitionId=${competitionID}&divisionId=${division}&teamIds=${team}`;
+        }
         return Method.dataGet(url, localStorage.token)
     },
 
@@ -63,6 +69,16 @@ let LiveScoreAxiosApi = {
             url += `&sortBy=${sortBy}&sortOrder=${sortOrder}`;
         }
         return Method.dataPost(url, token, payload);
+    },
+
+    liveScoreTeam(competitionID, divisionId) {
+        let url;
+        if (divisionId) {
+            url = `/teams/list?competitionId=${competitionID}&divisionId=${divisionId}&includeBye=0`;
+        } else {
+            url = `/teams/list?competitionId=${competitionID}`;
+        }
+        return Method.dataGet(url, localStorage.token)
     },
 
 };
