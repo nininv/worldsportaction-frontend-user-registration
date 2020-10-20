@@ -334,10 +334,18 @@
     .tableViewShow{
         display: block;
     }
-   .stickytableData{
-       text-overflow: ellipsis;
-       white-space: nowrap;
-       overflow: hidden;
-       width: 70px;
-   }
+    .stickytableData{
+        width: 80px;
+        max-width: fit-content;
+        max-height: fit-content;
+       height: 100px;
+       display: flex;
+       align-items: center;
+     }
+     .tableViewSeasonFixture{
+         width: 100%;
+         display: flex;
+         flex-wrap: wrap;
+         padding: 0px 10px;
+     }
 }

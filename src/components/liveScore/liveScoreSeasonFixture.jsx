@@ -539,45 +539,45 @@ class LiveScoreSeasonFixture extends Component {
                                     }
                                 </>
                                 <div className="table-responsive" style={{ backgroundColor: "#ffffff" }}>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Date/Time"} /></div>
+                                    <div className="tableViewSeasonFixture">
+                                        <div style={{ width: '50%' }}>
+                                            <InputWithHead heading={AppConstants.dateTime} /></div>
                                         <div style={{ width: '50%' }}>
                                             <InputWithHead className="input-inside-table-fees" heading={item.startTime ? liveScore_MatchFormate(item.startTime) : ""}>
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Home Team"} /></div>
+                                    <div className='tableViewSeasonFixture'>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.homeTeam} /></div>
                                         <div style={{ width: '50%' }}>
                                             <InputWithHead className="input-inside-table-fees" heading={item.team1 ? item.team1.name : ""}>
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Away Team"} /></div>
+                                    <div className='tableViewSeasonFixture'>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.awayTeam} /></div>
                                         <div style={{ width: '50%' }}>
                                             <InputWithHead className="input-inside-table-fees" heading={item.team2 ? item.team2.name : ""}>
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Venue"} /></div>
+                                    <div className='tableViewSeasonFixture'>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.venue} /></div>
                                         <div style={{ width: '50%' }}>
                                             <InputWithHead className="input-inside-table-fees" heading={item.venueCourt ? item.venueCourt?.venue?.shortName + "-" + item.venueCourt?.name : ""}>
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Match Result"} /></div>
+                                    <div className='tableViewSeasonFixture'>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.matchResult} /></div>
                                         <div style={{ width: '50%' }}>
                                             <InputWithHead className="input-inside-table-fees" heading={item.team1Score + " : " + item.team2Score}>
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', paddingLeft: '10px' }}>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={"Match Status"} /></div>
+                                    <div className='tableViewSeasonFixture'>
+                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.matchStatus} /></div>
                                         <div style={{ width: '50%', display: 'flex', alignItems: 'center' }}>
-
                                             <img className="dot-image"
                                                 src={matchResultImag(item.resultStatus)}
                                                 alt="" width="12" height="12" />
