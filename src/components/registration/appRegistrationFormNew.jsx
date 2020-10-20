@@ -1440,7 +1440,7 @@ class AppRegistrationFormNew extends Component{
                                     size="large"
                                     placeholder={"dd-mm-yyyy"}
                                     style={{ width: "100%" }}
-                                    onChange={e => this.onChangeSetParticipantValue(e, "dateOfBirth") }
+                                    onChange={(e,f) => this.onChangeSetParticipantValue(f, "dateOfBirth") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     name={'dateOfBirth'}
@@ -2819,7 +2819,7 @@ class AppRegistrationFormNew extends Component{
                                                             size="large"
                                                             placeholder={AppConstants.expiryDate}
                                                             style={{ width: "100%",marginTop: "20px" }}
-                                                            onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
+                                                            onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate") }
                                                             format={"DD-MM-YYYY"}
                                                             showTime={false}
                                                             value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}/>
@@ -2833,7 +2833,7 @@ class AppRegistrationFormNew extends Component{
                                                 size="large"
                                                 placeholder={AppConstants.expiryDate}
                                                 style={{ width: "100%",marginTop: "20px" }}
-                                                onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
+                                                onChange={(e,f) =>  this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate") }
                                                 format={"DD-MM-YYYY"}
                                                 showTime={false}
                                                 value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
@@ -2873,7 +2873,7 @@ class AppRegistrationFormNew extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%",marginTop: "20px" }}
-                                        onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
+                                        onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationCoachExpiryDate") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -2898,7 +2898,7 @@ class AppRegistrationFormNew extends Component{
                                             size="large"
                                             placeholder={AppConstants.expiryDate}
                                             style={{ width: "100%"}}
-                                            onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
+                                            onChange={(e,f) =>  this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate") }
                                             format={"DD-MM-YYYY"}
                                             showTime={false}
                                             value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}

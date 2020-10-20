@@ -781,7 +781,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","userRegDetails") }
+                                        onChange={(e,f) =>  this.onChangeSetMemberInfoValue(f, "dateOfBirth","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1496,7 +1496,7 @@ class TeamInivteForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","userRegDetails") }
+                                    onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "accreditationCoachExpiryDate","userRegDetails") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -1521,7 +1521,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%"}}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
+                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "childrenCheckExpiryDate","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}
