@@ -1242,7 +1242,8 @@ class TeamInivteForm extends Component{
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
-                    <InputWithHead heading={AppConstants.whichCountryWereBorn}/>
+                    <div className="input-style">{AppConstants.whichCountryWereBorn}</div>
+                    {/* <InputWithHead heading={AppConstants.whichCountryWereBorn}/> */}
                     <Select
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
@@ -1252,7 +1253,8 @@ class TeamInivteForm extends Component{
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
+                    <div className="input-style">{AppConstants.doYouIdentifyAs}</div>
+                    {/* <InputWithHead heading={AppConstants.doYouIdentifyAs}/> */}
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"identifyRefId","userRegDetails")}
@@ -1262,35 +1264,40 @@ class TeamInivteForm extends Component{
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
-                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/>
+                    <div className="input-style">{AppConstants.anyExistingMedicalCondition}</div>
+                    {/* <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/> */}
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","userRegDetails")} 
                         value={userRegDetails.existingMedicalCondition}
                         allowClear
                     />
-                    <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  />
+                    <div className="input-style">{AppConstants.anyRedularMedicalConditions}</div>
+                    {/* <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  /> */}
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","userRegDetails")} 
                         value={userRegDetails.regularMedication}
                         allowClear
                     />
-                    <InputWithHead heading={AppConstants.injury}/>
+                    <div className="input-style">{AppConstants.injury}</div>
+                    {/* <InputWithHead heading={AppConstants.injury}/> */}
                     <TextArea
                         placeholder={AppConstants.anyInjury}
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","userRegDetails")} 
                         value={userRegDetails.injuryInfo}
                         allowClear
                     />
-                    <InputWithHead heading={AppConstants.alergy}/>
+                    <div className="input-style">{AppConstants.alergy}</div>
+                    {/* <InputWithHead heading={AppConstants.alergy}/> */}
                     <TextArea
                         placeholder={AppConstants.anyAlergies}
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
                         value={userRegDetails.allergyInfo}
                         allowClear
                     />
-                    <InputWithHead heading={AppConstants.haveDisability} />
+                    <div className="input-style">{AppConstants.haveDisability}</div>
+                    {/* <InputWithHead heading={AppConstants.haveDisability} /> */}
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","userRegDetails")} 
@@ -1301,12 +1308,14 @@ class TeamInivteForm extends Component{
                     </Radio.Group>
                     {userRegDetails.isDisability == 1 ? 
                         <div>
+                            <div className="input-style">{AppConstants.disabilityCareNumber}</div>
                             <InputWithHead 
-                            heading={AppConstants.disabilityCareNumber} 
+                            // heading={AppConstants.disabilityCareNumber} 
                             placeholder={AppConstants.disabilityCareNumber} 
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","userRegDetails")}
                             value={userRegDetails.disabilityCareNumber}/>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <div className="input-style">{AppConstants.typeOfDisability}</div>
+                            {/* <InputWithHead heading={AppConstants.typeOfDisability} /> */}
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","userRegDetails")} 
@@ -1320,7 +1329,8 @@ class TeamInivteForm extends Component{
                     }
                     <div className="row">
                         <div className="col-md-6 col-sm-12">
-                            <InputWithHead heading={AppConstants.teamYouFollow}/>
+                            <div className="input-style">{AppConstants.teamYouFollow}</div>
+                            {/* <InputWithHead heading={AppConstants.teamYouFollow}/> */}
                             <Select
                                 style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","userRegDetails")}
@@ -1333,7 +1343,8 @@ class TeamInivteForm extends Component{
                         </div>
                         {userRegDetails.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <div className="input-style">{AppConstants.who_fav_bird}</div>  
+                                {/* <InputWithHead heading={AppConstants.who_fav_bird} /> */}
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                     onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","userRegDetails")}
@@ -1347,7 +1358,8 @@ class TeamInivteForm extends Component{
                         )}
                     </div>
 
-                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    <div className="input-style">{AppConstants.playingOtherParticipantSports}</div>                   
+                    {/* <InputWithHead heading={AppConstants.playingOtherParticipantSports} /> */}
                     <Select
                         mode="multiple"
                         showArrow
@@ -1368,7 +1380,8 @@ class TeamInivteForm extends Component{
                             />
                         </div>
                     )}
-                    <InputWithHead heading={AppConstants.hearAbouttheCompition} />
+                    <div className="input-style">{AppConstants.hearAbouttheCompition}</div>
+                    {/* <InputWithHead heading={AppConstants.hearAbouttheCompition} /> */}
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","userRegDetails")} 
@@ -1389,7 +1402,8 @@ class TeamInivteForm extends Component{
 
                     {inviteMemberRegSettings.netball_experience == 1 && (
                         <div>
-                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
+                            <div className="input-style">{AppConstants.firstYearPlayingNetball}</div>
+                            {/* <InputWithHead heading={AppConstants.firstYearPlayingNetball} /> */}
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isYearsPlayed","userRegDetails")} 
@@ -1420,7 +1434,8 @@ class TeamInivteForm extends Component{
                         <div>
                             {inviteMemberRegSettings.school_standard == 1 && (
                                 <div>
-                                    <InputWithHead heading={AppConstants.schoolYouAttend} />
+                                    <div className="input-style">{AppConstants.schoolYouAttend}</div>
+                                    {/* <InputWithHead heading={AppConstants.schoolYouAttend} /> */}
                                     <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","userRegDetails")}
@@ -1434,17 +1449,21 @@ class TeamInivteForm extends Component{
                             )}
 
                             {inviteMemberRegSettings.school_grade == 1 && (
-                                <InputWithHead 
-                                heading={(AppConstants.yourSchoolGrade)} 
-                                placeholder={AppConstants.schoolGrade} 
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"schoolGradeInfo","userRegDetails")} 
-                                value={userRegDetails.schoolGradeInfo}
-                                />
+                                <div>
+                                    <div className="input-style">{AppConstants.yourSchoolGrade}</div>
+                                    <InputWithHead 
+                                        // heading={(AppConstants.yourSchoolGrade)} 
+                                        placeholder={AppConstants.schoolGrade} 
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"schoolGradeInfo","userRegDetails")} 
+                                        value={userRegDetails.schoolGradeInfo}
+                                    />
+                                </div>
                             )}
 
                             {inviteMemberRegSettings.school_program == 1 && (
                                 <div>
-                                    <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
+                                     <div className="input-style">{AppConstants.participatedSchoolProgram}</div>
+                                    {/* <InputWithHead heading={AppConstants.participatedSchoolProgram}/> */}
                                     <Radio.Group
                                         className="registration-radio-group"
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isParticipatedInSSP","userRegDetails")} 
@@ -1460,7 +1479,8 @@ class TeamInivteForm extends Component{
 
                     {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
+                            <div className="input-style">{AppConstants.nationalAccreditationLevelCoach}</div>
+                            {/* <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/> */}
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{flexDirection: "column"}}
