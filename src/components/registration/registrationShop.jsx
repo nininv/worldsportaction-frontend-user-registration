@@ -467,7 +467,7 @@ class RegistrationShop extends Component {
                  
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total.toFixed(2)}</div>
                 </div>
             </div>
         )
