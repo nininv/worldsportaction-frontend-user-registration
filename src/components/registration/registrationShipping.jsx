@@ -108,7 +108,7 @@ class RegistrationShipping extends Component {
             for(let address of filteredShippingProductsAddresses){
                 address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
             }
-            this.setState({shippingOptions: filteredShippingProductsAddresses})
+            this.setState({shippingOptions: filteredShippingProductsAddresses});
         }catch(ex){
             console.log("Error in setShippingOptions"+ex);
         }

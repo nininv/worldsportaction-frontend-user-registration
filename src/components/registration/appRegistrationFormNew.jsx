@@ -2808,22 +2808,24 @@ class AppRegistrationFormNew extends Component{
                                                         onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"associationLevelInfo")} 
                                                         value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
-                                                        <DatePicker
+                                                        {(registrationObj.additionalInfo.associationLevelInfo != null && registrationObj.additionalInfo.associationLevelInfo.length > 0) && (
+                                                            <DatePicker
                                                             size="large"
-                                                            placeholder={AppConstants.checkExpiryDate}
+                                                            placeholder={AppConstants.expiryDate}
                                                             style={{ width: "100%",marginTop: "20px" }}
                                                             onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
                                                             format={"DD-MM-YYYY"}
                                                             showTime={false}
-                                                            value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
-                                                        />
+                                                            value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}/>
+                                                        )}
+                                                       
                                                     </div>
                                                 )}
                                             </div>
                                         : 
                                             <DatePicker
                                                 size="large"
-                                                placeholder={AppConstants.checkExpiryDate}
+                                                placeholder={AppConstants.expiryDate}
                                                 style={{ width: "100%",marginTop: "20px" }}
                                                 onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationUmpireExpiryDate") }
                                                 format={"DD-MM-YYYY"}
@@ -2860,10 +2862,10 @@ class AppRegistrationFormNew extends Component{
                                         <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
-                                {(registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
+                                {(registrationObj.additionalInfo.accreditationLevelCoachRefId != 1) && (
                                     <DatePicker
                                         size="large"
-                                        placeholder={AppConstants.checkExpiryDate}
+                                        placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%",marginTop: "20px" }}
                                         onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
                                         format={"DD-MM-YYYY"}

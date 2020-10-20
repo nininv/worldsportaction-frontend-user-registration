@@ -1911,10 +1911,10 @@ class AppTeamRegistrationForm extends Component{
                                     <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
-                            {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
+                            {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != 1) && (
                                 <DatePicker
                                     size="large"
-                                    placeholder={AppConstants.checkExpiryDate}
+                                    placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
                                     onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
                                     format={"DD-MM-YYYY"}

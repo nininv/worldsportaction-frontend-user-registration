@@ -20,9 +20,10 @@ const initialState = {
 
 function setYourInfo(action,state){
     try{
-        let email = action.value;
+        //let email = action.value;
         let yourInfo = state.registrationReviewList.yourInfo;
-        let user = state.participantUsers.find(x => x.email === email);
+        //let user = state.participantUsers.find(x => x.email === email);
+        let user = state.participantUsers[action.value]
         if(user != undefined){
             yourInfo["userId"] = user.id;
             yourInfo["firstName"] = user.firstName;
@@ -36,7 +37,7 @@ function setYourInfo(action,state){
             yourInfo["stateRefId"] = user.stateRefId;
             yourInfo["countryRefId"] = user.countryRefId;
         }else{
-            yourInfo["email"] = email;
+            //yourInfo["email"] = action.value;
         }
     }catch(ex){
         console.log("Error in setYourInfo"+ex);
@@ -155,7 +156,7 @@ function registrationProductsReducer(state = initialState, action){
                 console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
-                if(action.key == "email"){
+                if(action.key == "emailSelection"){
                     setYourInfo(action,state);
                 }else{
                     reviewData[action.subKey][action.key] = action.value

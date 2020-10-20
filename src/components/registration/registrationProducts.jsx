@@ -462,7 +462,7 @@ class RegistrationProducts extends Component {
                                                 <img src={item.photoUrl}/>
                                             ):
                                             (
-                                                <div className="profile-default-img">
+                                                <div className="profile-default-img" style={{height: "67px" , width: "67px"}}>
                                                     {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
                                                 </div>     
                                             )
@@ -843,9 +843,9 @@ class RegistrationProducts extends Component {
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
                                     setFieldsValue={yourInfo ? yourInfo.email : null}
-                                    onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
+                                    onChange = {(e) => this.setReviewInfo(e, "emailSelection", null,"yourInfo", null)}>
                                     {(participantUsers || []).map((item, index) => (
-                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                        < Option key={"ParticipantUser"+index} value={index}> {item.firstName + ' ' + item.lastName}</Option>
                                     ))}
                                 </Select>
                             )}

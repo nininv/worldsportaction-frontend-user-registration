@@ -485,7 +485,7 @@ class TeamInviteProducts extends Component{
                     ))} 
                     <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
                 </div>
             )
