@@ -22,9 +22,10 @@ function liveScoreCreateRoundAction(roundName, sequence, competitionID, division
     return action;
 }
 
-function clearRoundData() {
+function clearRoundData(key) {
     const action = {
-        type: ApiConstants.API_CLEAR_ROUND_DATA
+        type: ApiConstants.API_CLEAR_ROUND_DATA,
+        key
     }
     return action
 }
