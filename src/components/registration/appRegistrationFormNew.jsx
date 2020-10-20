@@ -1116,7 +1116,9 @@ class AppRegistrationFormNew extends Component{
                                 <div 
                                 onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey)}
                                 className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
-                                    <div className="profile-default-img"></div>
+                                    <div className="defualt-team-logo-style" style={{height: "80px",width: "80px"}}>
+                                        <img src={AppImages.teamLoadDefualtWhite}/>
+                                    </div> 
                                     <div style={{width: "75%",paddingLeft: "15px"}}>
                                         <div>{user.teamName}</div>
                                         <div>{user.totalMembers} {AppConstants.members}</div>
@@ -2171,7 +2173,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     
-                    {competition.regSetting.nominate_positions == 1 && (
+                    {competition.regSetting.nominate_positions == 1 && this.isPlayerActive(competition) && (
                         <div>
                             <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
                             <div className="row">
@@ -2203,7 +2205,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     )}
 
-                    {competition.regSetting.play_friend == 1 && (
+                    {competition.regSetting.play_friend == 1 && this.isPlayerActive(competition) && (
                         <div>
                             <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
                             <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
@@ -2266,7 +2268,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     )}
 
-                    {competition.regSetting.refer_friend == 1 && (
+                    {competition.regSetting.refer_friend == 1 && this.isPlayerActive(competition) && (
                         <div>
                             <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
                             <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
@@ -2609,7 +2611,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                         {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <div className="input-style">{AppConstants.teamYouFollow}</div>
+                                <div className="input-style">{AppConstants.who_fav_bird}</div>
                                 {/* <InputWithHead heading={AppConstants.who_fav_bird} /> */}
                                 <Select
                                     placeholder={AppConstants.select}

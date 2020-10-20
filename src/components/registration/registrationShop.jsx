@@ -260,7 +260,7 @@ class RegistrationShop extends Component {
                                 <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
                             <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                         </div>
                     </div>
                 ))}
