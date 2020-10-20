@@ -609,3 +609,22 @@
   justify-content: center;
 }
 
+.input-style-bold{
+  display: flex;
+  align-content: flex-start;
+  padding-top: 30px;
+  padding-bottom: 11px;
+  font-size: 15px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}
+
+.font-bold-carosal{
+  display: flex;
+  align-content: flex-start;
+  font-size: 15px;
+  color: var(--app-4c4c6d);
+  font-weight: 500;
+  font-family: inter-medium;
+}

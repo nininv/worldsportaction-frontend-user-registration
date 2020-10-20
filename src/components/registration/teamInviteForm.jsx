@@ -1491,7 +1491,7 @@ class TeamInivteForm extends Component{
                                     <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
-                            {(userRegDetails.accreditationLevelCoachRefId != 1) && (
+                            {(userRegDetails.accreditationLevelCoachRefId != 1 && userRegDetails.accreditationLevelCoachRefId != null) && (
                                 <DatePicker
                                     size="large"
                                     placeholder={AppConstants.expiryDate}

@@ -825,21 +825,24 @@ class AppTeamRegistrationForm extends Component{
     
                         <div className="row" style={{marginTop: "20px"}}>
                             <div className="col-sm-12 col-md-4">
-                                <InputWithHead heading={AppConstants.training}/>
+                                {/* <InputWithHead heading={AppConstants.training}/> */}
+                                <div className="input-style-bold">{AppConstants.training}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>{competitionInfo.training ? 
                                     competitionInfo.training : 
                                     AppConstants.noInformationProvided}
                                 </div>
-                                <InputWithHead heading={AppConstants.specialNotes}/>
+                                {/* <InputWithHead heading={AppConstants.specialNotes}/> */}
+                                <div className="input-style-bold">{AppConstants.specialNotes}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>{competitionInfo.specialNote ? 
                                     competitionInfo.specialNote : 
                                     AppConstants.noInformationProvided}
                                 </div>                                    
-                                <InputWithHead heading={AppConstants.venue}/>
+                                {/* <InputWithHead heading={AppConstants.venue}/> */}
+                                <div className="input-style-bold">{AppConstants.venue}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>
@@ -854,7 +857,8 @@ class AppTeamRegistrationForm extends Component{
                                         </span>
                                     }
                                 </div> 
-                                <InputWithHead heading={AppConstants.contactDetails}/>
+                                {/* <InputWithHead heading={AppConstants.contactDetails}/> */}
+                                <div className="input-style-bold">{AppConstants.contactDetails}</div>
                                 <div  className="inter-medium-font" style={{fontSize: "13px"}}>{contactDetails ? contactDetails : 
                                     AppConstants.noInformationProvided}
                                 </div> 
@@ -869,11 +873,11 @@ class AppTeamRegistrationForm extends Component{
                                         <div>
                                             <div style={{display: "flex",justifyContent: "flex-end"}}>
                                                 <div>
-                                                    <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo.photoType1}</div>
+                                                    <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo.photoType1}</div>
                                                     <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
                                                 </div>
                                                 <div style={{marginLeft: "25px"}}>
-                                                    <div style={{marginTop: "-21px",fontWeight: "500",fontFamily: "inter-medium",marginBottom: "10px"}}>{photo?.photoType2}</div>
+                                                    <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo?.photoType2}</div>
                                                     <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
                                                 </div>
                                             </div>
@@ -1911,7 +1915,7 @@ class AppTeamRegistrationForm extends Component{
                                     <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                 ))}
                             </Radio.Group>
-                            {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != 1) && (
+                            {(teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != 1 && teamRegistrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
                                 <DatePicker
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
