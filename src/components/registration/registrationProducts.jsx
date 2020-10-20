@@ -69,7 +69,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "f4280d8a-bd89-4a5f-98f6-f6bec356ec39";
+        //let registrationUniqueKey = "4b89fcf1-946e-45d4-9c4a-923283ea78e8";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -845,7 +845,7 @@ class RegistrationProducts extends Component {
                                     setFieldsValue={yourInfo ? yourInfo.email : null}
                                     onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
                                     {(participantUsers || []).map((item, index) => (
-                                        < Option key={item.email + "#" + index} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
                                     ))}
                                 </Select>
                             )}
