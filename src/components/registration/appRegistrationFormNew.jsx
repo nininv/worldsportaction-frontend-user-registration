@@ -2044,8 +2044,8 @@ class AppRegistrationFormNew extends Component{
         return(
             <div className="registration-form-view"  key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
-                    <div className="map-style">
-                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px",width: "100%"}} src={competitionInfo.heroImageUrl}/>
+                    <div className="map-style" style={{overflow: "hidden"}}>
+                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
                     </div>
                 )}
                 <div>

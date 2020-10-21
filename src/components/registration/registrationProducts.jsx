@@ -478,8 +478,8 @@ class RegistrationProducts extends Component {
                                     </div>
                                     <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
                                     <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                                    <div className="body-text-common">{item.gender + ', ' + 
-                                        liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                                    <div className="body-text-common">{item.gender} 
+                                        {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
                                     </div>
                                 </div>
                             </div>
@@ -1175,12 +1175,12 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "inter-medium-w500 font-17" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10 font-17" style={{display:"flex"}}>
+                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -1204,7 +1204,7 @@ class RegistrationProducts extends Component {
                             </div>
                         ))}
                          
-                        <div className="font-17" style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
@@ -1217,7 +1217,7 @@ class RegistrationProducts extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="inter-medium-w500 font-17" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="inter-medium-w500" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -1229,15 +1229,15 @@ class RegistrationProducts extends Component {
                                 <div>({shop.optionName})</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5 font-17 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
                 ))} 
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )

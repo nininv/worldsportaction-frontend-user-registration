@@ -15,6 +15,12 @@ let walkingNetballObj = {
 	"sufferAnyProblems" : null
 }
 
+let seasionalAndCasualFeesInputObj = {
+	"organisationId" : "",
+	"competitionId": "",
+	"competitionMembershipProducts": []
+}
+
 let registrationObjTemp = {
     "registrationId": null,
     "participantId": null,
@@ -173,7 +179,8 @@ const initialState = {
 	parents: [],
 	registeredParents: [],
 	expiredRegistrationFlag: false,
-	expiredRegistration: null 
+	expiredRegistration: null,
+	seasionalAndCasualFeesInputObj : null
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -367,6 +374,26 @@ function getFilteredDivisions(divisions,state){
 	}
 }
 
+function setSeasonalFeeAndCasualFeeInput(state,competitionIndex){
+	try{
+		let registrationObjTemp = deepCopyFunction(state.registrationObj);
+		let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
+		seasionalAndCasualFeesInputObjTemp.organisationId = registrationObjTemp.competitions[competitionIndex].organisationId;
+		seasionalAndCasualFeesInputObjTemp.competitionId = registrationObjTemp.competitions[competitionIndex].competitionId;
+		let products = registrationObjTemp.competitions[competitionIndex].products;
+		// for(let product of products){
+		// 	let competitionMembershipProducts = seasionalAndCasualFeesInputObjTemp.competitionMembershipProducts;
+		// 	if(competitionMembershipProducts.competitionMembershipProductId == product.competitionMembershipProductId){
+
+		// 	}
+			
+		// }
+		console.log("products",products);
+	}catch(ex){
+		console.log("Error in setSeasonalFeeAndCasualFeeInput::"+ex);
+	}
+}
+
 function setMembershipProductsAndDivisionInfo(state,competitionData,competitionIndex,competitionSubIndex){
 	try{
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
@@ -382,10 +409,10 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			}
 			state.registrationObj.competitions[competitionIndex].products.push(product);
 			if(membershipProductInfo.isPlayer == 1){
-				console.log("inside");
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
+			//setSeasonalFeeAndCasualFeeInput(state,competitionIndex)
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
@@ -595,7 +622,7 @@ function userRegistrationReducer(state = initialState, action){
 			let competitionSubKey = action.subKey;
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
-					competitionIndex,competitionSubIndex);;
+					competitionIndex,competitionSubIndex);
 				updateUmpireCoachWalkingNetball(state);
 			}
 			else if(competitionKey == "divisionInfo"){

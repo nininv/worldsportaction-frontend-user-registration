@@ -1052,7 +1052,6 @@ input:focus, .StripeElement--focus {
 
 .payment-type-radio-style{
   font-weight:500 ;
-  font-size: 17px !important;
   font-family: "inter-medium";
   color: rgba(0, 0, 0, 0.65);
 }

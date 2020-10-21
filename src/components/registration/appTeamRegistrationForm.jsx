@@ -352,7 +352,7 @@ class AppTeamRegistrationForm extends Component{
                 },300);
             }else if(current == 1){
                 if(this.state.enabledSteps.includes(1)){
-                    this.setState({submitButtonText: AppConstants.addPariticipant});
+                    this.setState({submitButtonText: AppConstants.next});
                     setTimeout(() => {
                         this.setParticipantDetailStepFormFields();
                     },300);
@@ -602,7 +602,7 @@ class AppTeamRegistrationForm extends Component{
                         enabledSteps: this.state.enabledSteps,
                         completedSteps: this.state.completedSteps});
                         this.setState({submitButtonText: nextStep == 1 ? 
-                            AppConstants.addPariticipant : AppConstants.signupToCompetition});
+                            AppConstants.next : AppConstants.signupToCompetition});
                     }
 
                     if(this.state.currentStep == 2){
