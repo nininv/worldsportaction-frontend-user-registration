@@ -724,7 +724,7 @@ class AppTeamRegistrationForm extends Component{
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
-                                    <div style={{fontWeight: "600"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    <div style={{fontWeight: "600"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
                         ))}
@@ -775,7 +775,7 @@ class AppTeamRegistrationForm extends Component{
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                     onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
                         </div>
                         <div className="light-grey-border-box">
@@ -923,7 +923,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col">
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                             <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -990,7 +990,7 @@ class AppTeamRegistrationForm extends Component{
                                 onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
-                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
+                                <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate} 
                             </div>
                         </div>

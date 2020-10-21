@@ -1,3 +1,4 @@
+var moment = require('moment') ;
 const isArrayNotEmpty = array => {
     if (array !== null && Array.isArray(array) && array.length > 0) {
         return true
@@ -23,7 +24,8 @@ const feeIsNull = (fee) => {
 }
 
 const getAge = (birthDate) => {
-    return  (Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10))
+  let dob = moment(birthDate,"DD-MM-YYYY").format("YYYY-MM-DD")
+  return moment().diff(dob, 'years',false)
 }
 
 const deepCopyFunction = inObject => 
