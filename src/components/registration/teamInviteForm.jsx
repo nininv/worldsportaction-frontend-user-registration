@@ -347,10 +347,23 @@ class TeamInivteForm extends Component{
         }
     }
 
+    getUpdatedUserRegDetailObj = (userRegDetails) => {
+        try{
+            userRegDetails.dateOfBirth = userRegDetails.dateOfBirth ? moment(userRegDetails.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            userRegDetails.accreditationCoachExpiryDate = userRegDetails.accreditationCoachExpiryDate ? moment(userRegDetails.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            userRegDetails.childrenCheckExpiryDate = userRegDetails.childrenCheckExpiryDate ? moment(userRegDetails.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            return userRegDetails;
+        }catch(ex){
+            console.log("Error in getUpdatedUserRegDetailObj::"+ex);
+        }
+    }
+
     saveReviewOrder = (e) => {
         try{
             e.preventDefault();
             const { iniviteMemberInfo } = this.props.teamInviteState;
+            let inviteMemberInfoTemp = JSON.parse(JSON.stringify(iniviteMemberInfo));
+            let userRegDetails = this.getUpdatedUserRegDetailObj(inviteMemberInfoTemp.userRegDetails);
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep != 1){
@@ -368,7 +381,7 @@ class TeamInivteForm extends Component{
                     }
                     if(this.state.currentStep == 1){
                         this.setState({buttonSaveOnLoad: true});
-                        this.props.saveInviteMemberInfoAction(iniviteMemberInfo.userRegDetails);
+                        this.props.saveInviteMemberInfoAction(userRegDetails);
                     }
                 }
             });
@@ -781,7 +794,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","userRegDetails") }
+                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "dateOfBirth","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1496,7 +1509,7 @@ class TeamInivteForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","userRegDetails") }
+                                    onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "accreditationCoachExpiryDate","userRegDetails") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -1521,7 +1534,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%"}}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
+                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "childrenCheckExpiryDate","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}

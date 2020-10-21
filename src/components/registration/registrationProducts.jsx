@@ -60,6 +60,7 @@ class RegistrationProducts extends Component {
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
            onLoading: false,
+           deleteOnLoad: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -69,7 +70,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "4b89fcf1-946e-45d4-9c4a-923283ea78e8";
+        //let registrationUniqueKey = "99df8404-5850-4c52-958c-f25726a5446d";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -87,6 +88,11 @@ class RegistrationProducts extends Component {
         if(this.state.onLoading == true && registrationProductState.onRegReviewLoad == false){
             this.setYourInfoFormFields()
             this.setState({onLoading: false});
+        }
+        if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            this.setState({loading: true});
+            this.setState({deleteOnLoad: false})
         }
     }  
 
@@ -245,8 +251,9 @@ class RegistrationProducts extends Component {
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
-            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true})
+            // this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({productModalVisible: false});
@@ -265,7 +272,8 @@ class RegistrationProducts extends Component {
             }
 
             this.props.deleteRegistrationParticipantAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true});
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({participantModalVisible: false});
@@ -422,7 +430,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 {(compParticipants || []).map((item, index) =>(
-                    <div key={item.participantId + "#" + index}>
+                    <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
@@ -1333,7 +1341,8 @@ class RegistrationProducts extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
-                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad || 
+                        this.props.registrationProductState.deleteOnLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteParticiantModalView()}

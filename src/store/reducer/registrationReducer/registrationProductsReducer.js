@@ -15,7 +15,8 @@ const initialState = {
     participantAddresses: [],
     shopPickupAddresses: [],
     pickupAddressLoad: false,
-    deliveryOrBillingAddressSelected: false
+    deliveryOrBillingAddressSelected: false,
+    deleteOnLoad: false
 }
 
 function setYourInfo(action,state){
@@ -187,25 +188,25 @@ function registrationProductsReducer(state = initialState, action){
             }
 
         case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD:
-            return { ...state, onRegReviewLoad: true };
+            return { ...state, deleteOnLoad: true };
 
         case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS:
             let regReviewDeleteData = action.result;
             return {
                 ...state,
-                onRegReviewLoad: false,
+                deleteOnLoad: false,
                 status: action.status,
                 registrationReviewList: regReviewDeleteData
             };
 
         case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD:
-            return { ...state, onRegReviewLoad: true };
+            return { ...state, deleteOnLoad: true };
 
         case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_SUCCESS:
             let regReviewUpdatedData = action.result;
             return {
                 ...state,
-                onRegReviewLoad: false,
+                deleteOnLoad: false,
                 status: action.status,
                 registrationReviewList: regReviewUpdatedData
             };
