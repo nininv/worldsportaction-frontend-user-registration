@@ -409,7 +409,7 @@ const CheckoutForm = (props) => {
                                                 </div> */}
                                             </div>
                                         </div>
-                                        <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                        <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -463,7 +463,7 @@ const CheckoutForm = (props) => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                    <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
                                                 </div>
                                             }
                                         </div>   
@@ -487,7 +487,7 @@ const CheckoutForm = (props) => {
                                                         className='StripeElement'
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.cardTransFeeMsg}</div>
                                                 </div>   
                                                 }
                                         </div>   

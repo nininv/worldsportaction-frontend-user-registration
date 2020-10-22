@@ -105,6 +105,8 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
+    const [cardTransFeeMsg, setCardTransFeeMsg] = useState(null);
+    let mainProps = props.mainProps;
     
     const stripe = useStripe();
     const elements = useElements();
@@ -116,13 +118,34 @@ const CheckoutForm = (props) => {
     console.log(selectedPaymentOption)
     // Handle real-time validation errors from the card Element.
 
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         if (event.error) {
+            setCardTransFeeMsg(null);
             setError(event.error.message);
         } else {
+            setCardTransFeeMsg(null);
+            if(event.complete){
+                if(elements){
+                    const card = elements.getElement(CardElement);
+                    if(card){
+                        const cardToken = await stripe.createToken(card);
+                        console.log("cardToken", cardToken.token.card.country);
+                        const country = cardToken.token.card.country;
+                        if(country!= "AU"){
+                            mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
+                            setCardTransFeeMsg(AppConstants.internationalCCMsg)
+                        }
+                        else{
+                            mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
+                            setCardTransFeeMsg(AppConstants.domesticCCMsg) 
+                        }
+                    }
+                }
+            }
             setError(null);
         }
     }
+
     const changePaymentOption = (e, key) => {
         if (key === 'direct') {
             props.onLoad(true)
@@ -135,7 +158,11 @@ const CheckoutForm = (props) => {
                 "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
-            stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
+            mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+            setTimeout(() =>{
+                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
+            },100);
+            
         } 
         else if (key === 'cash') {
             setClientKey("")
@@ -187,13 +214,6 @@ const CheckoutForm = (props) => {
         }
     }
 
-    
-
-    const previousCall = () =>{
-        history.push("/registrationReview", {
-            userRegId: userRegId
-        })
-    }
 
     // Handle form submission.
     const handleSubmit = async (event) => {
@@ -300,7 +320,8 @@ const CheckoutForm = (props) => {
                                             onChange={handleChange}
                                             className='StripeElement'
                                         />
-                                        <div className="card-errors" role="alert">{error}</div>
+                                       <div className="card-errors" role="alert">{error}</div>
+                                        <div style={{marginTop: "-10px"}}>{cardTransFeeMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -312,6 +333,7 @@ const CheckoutForm = (props) => {
                                 className="payment-type-radio-style"
                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
+                                <div>
                                     <div class="sr-root">
                                         <div class="sr-main">
                                             {/* <div class="sr-combo-inputs-row">
@@ -379,6 +401,8 @@ const CheckoutForm = (props) => {
                                             </div> */}
                                         </div>
                                     </div>
+                                    <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
+                                </div>
                                 }
                             </div>
                         </div>}
@@ -431,7 +455,7 @@ const CheckoutForm = (props) => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div style={{marginTop: "10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                    <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
                                                 </div>
                                             }
                                         </div>   
@@ -455,7 +479,7 @@ const CheckoutForm = (props) => {
                                                         className='StripeElement'
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.cardTransFeeMsg}</div>
                                                 </div>   
                                                 }
                                         </div>   
