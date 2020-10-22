@@ -197,7 +197,7 @@ function registrationProductsReducer(state = initialState, action){
                         transactionVal = (totalVal * 2.25/100)  + 0.30;
                     }
                     else if(type == "direct_debit"){
-                        transactionVal = (totalVal * 1.5/100);
+                        transactionVal = (totalVal * 1.5/100) + 0.30;
                         console.log("transactionVal DD" + transactionVal);
                         if(transactionVal > 3.50){
                             transactionVal = 3.50;
