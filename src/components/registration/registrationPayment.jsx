@@ -898,71 +898,71 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             isHardshipEnabled: 1
         }
     }
-    //console.log("body" + JSON.stringify(body));
-    // return await new Promise((resolve, reject) => {
-    //     fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             "Authorization": localStorage.token,
-    //         },
-    //         body: JSON.stringify(body)
-    //     })
-    //         .then((response) => {
-    //             props.onLoad(false)
-    //             let resp = response.json()
-    //             console.log(response.status, "status", paymentType)
-    //             resp.then((Response) => {
-    //                 if (response.status === 200) {
-    //                     if (paymentType == "card" || paymentType == "cash_card") {
-    //                         message.success(Response.message);
+    console.log("body" + JSON.stringify(body));
+    return await new Promise((resolve, reject) => {
+        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": localStorage.token,
+            },
+            body: JSON.stringify(body)
+        })
+            .then((response) => {
+                props.onLoad(false)
+                let resp = response.json()
+                console.log(response.status, "status", paymentType)
+                resp.then((Response) => {
+                    if (response.status === 200) {
+                        if (paymentType == "card" || paymentType == "cash_card") {
+                            message.success(Response.message);
                             
-    //                         console.log("registrationUniqueKey"+ registrationUniqueKey);
-    //                         history.push("/invoice", {
-    //                             registrationId: registrationUniqueKey,
-    //                             userRegId: null,
-    //                             paymentSuccess: true
-    //                         })
-    //                     }
-    //                     else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
-    //                         if(Response.clientSecret == null && Response.totalFee == 0){
-    //                             history.push("/invoice", {
-    //                                 registrationId: registrationUniqueKey,
-    //                                 userRegId: null,
-    //                                 paymentSuccess: true
-    //                             })
-    //                         }
-    //                         else{
-    //                             setClientKey(Response.clientSecret)
-    //                             setRegId(registrationUniqueKey)
-    //                         }
-    //                        // message.success(Response.message);
-    //                     }
-    //                     else{
-    //                         history.push("/invoice", {
-    //                             registrationId: registrationUniqueKey,
-    //                             userRegId: null,
-    //                             paymentSuccess: true
-    //                         })
-    //                     }
-    //                 }
-    //                 else if (response.status === 212) {
-    //                     message.error(Response.message);
-    //                 }
-    //                 else if (response.status === 400) {
-    //                     message.error(Response.message);
-    //                 }
-    //                 else {
-    //                     message.error("Something went wrong.")
-    //                 }
+                            console.log("registrationUniqueKey"+ registrationUniqueKey);
+                            history.push("/invoice", {
+                                registrationId: registrationUniqueKey,
+                                userRegId: null,
+                                paymentSuccess: true
+                            })
+                        }
+                        else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
+                            if(Response.clientSecret == null && Response.totalFee == 0){
+                                history.push("/invoice", {
+                                    registrationId: registrationUniqueKey,
+                                    userRegId: null,
+                                    paymentSuccess: true
+                                })
+                            }
+                            else{
+                                setClientKey(Response.clientSecret)
+                                setRegId(registrationUniqueKey)
+                            }
+                           // message.success(Response.message);
+                        }
+                        else{
+                            history.push("/invoice", {
+                                registrationId: registrationUniqueKey,
+                                userRegId: null,
+                                paymentSuccess: true
+                            })
+                        }
+                    }
+                    else if (response.status === 212) {
+                        message.error(Response.message);
+                    }
+                    else if (response.status === 400) {
+                        message.error(Response.message);
+                    }
+                    else {
+                        message.error("Something went wrong.")
+                    }
 
-    //             })
+                })
 
-    //         })
-    //         .catch((error) => {
-    //             props.onLoad(false)
-    //             console.error(error);
-    //         });
-    // }) 
+            })
+            .catch((error) => {
+                props.onLoad(false)
+                console.error(error);
+            });
+    }) 
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);
