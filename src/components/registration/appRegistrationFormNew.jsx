@@ -5,13 +5,13 @@ import {
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
-    Radio, 
-    Form, 
-    Modal, 
-    message, 
+    Radio,
+    Form,
+    Modal,
+    message,
     Steps,
     Tag,
     Pagination,
@@ -28,27 +28,27 @@ import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
-import {getUreAction} from "../../store/actions/userAction/userAction";
+import { getUreAction } from "../../store/actions/userAction/userAction";
 import ValidationConstants from "../../themes/validationConstant";
-import { 
-    getCommonRefData,  
+import {
+    getCommonRefData,
     favouriteTeamReferenceAction,
     firebirdPlayerReferenceAction,
     registrationOtherInfoReferenceAction,
     countryReferenceAction,
-    nationalityReferenceAction, 
+    nationalityReferenceAction,
     heardByReferenceAction,
     playerPositionReferenceAction,
-    genderReferenceAction, 
+    genderReferenceAction,
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction ,
+    personRegisteringRoleReferenceAction,
     identificationReferenceAction,
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction
 } from '../../store/actions/commonAction/commonAction';
-import { 
+import {
     getUserRegistrationUserInfoAction,
     updateUserRegistrationObjectAction,
     selectParticipantAction,
@@ -61,11 +61,11 @@ import {
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction
 } from '../../store/actions/registrationAction/userRegistrationAction';
-import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
+import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
+import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { isEmptyArray } from "formik";
@@ -365,15 +365,15 @@ class AppRegistrationFormNew extends Component {
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).description
-            : null;
+                ? countryList.find((country) => country.id === addressObject.countryRefId).description
+                : null;
 
             let defaultAddress = '';
-            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
-                (addressObject.suburb ? addressObject.suburb + ', ': '') +
-                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
-                (state ? state + ', ': '') +
-                (country ? country + '.': '');
+            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ' : '') +
+                (addressObject.suburb ? addressObject.suburb + ', ' : '') +
+                (addressObject.postalCode ? addressObject.postalCode + ', ' : '') +
+                (state ? state + ', ' : '') +
+                (country ? country + '.' : '');
             return defaultAddress;
         } catch (ex) {
             console.log("Error in getPartcipantParentAddress" + ex);
@@ -455,12 +455,12 @@ class AppRegistrationFormNew extends Component {
             } else {
                 this.clearParticipantAddress(registrationObj);
             }
-        }else{
-            this.props.updateUserRegistrationObjectAction(value,key);
-            console.log("update field",registrationObj);
+        } else {
+            this.props.updateUserRegistrationObjectAction(value, key);
+            console.log("update field", registrationObj);
         }
 
-        if(key == "dateOfBirth" || key == "referParentEmail"){
+        if (key == "dateOfBirth" || key == "referParentEmail") {
             setTimeout(() => {
                 this.props.form.setFieldsValue({
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
@@ -610,17 +610,17 @@ class AppRegistrationFormNew extends Component {
         const { registrationObj } = this.props.userRegistrationState;
         const { stateList, countryList } = this.props.commonReducerState;
         const address = addressData;
-        console.log("address",address)
-        console.log("key",key);
+        console.log("address", address)
+        console.log("key", key);
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
-        if(address){
+        if (address) {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
-            if(key == "parent"){
+            if (key == "parent") {
                 this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
@@ -638,9 +638,9 @@ class AppRegistrationFormNew extends Component {
                         parent.isSameAddress = false;
                     }
                 }
-                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");           
-            } 
-        }  
+                this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+            }
+        }
     };
 
     onChangeSetCompetitionValue = (value, key, index, subIndex, subKey) => {
@@ -809,9 +809,9 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            console.log("registrarion obj",registrationObj);
-            if(registrationObj.addNewAddressFlag && 
-                registrationObj.stateRefId == null){
+            console.log("registrarion obj", registrationObj);
+            if (registrationObj.addNewAddressFlag &&
+                registrationObj.stateRefId == null) {
                 error = true;
             }
             if (isArrayNotEmpty(registrationObj.parentOrGuardian)) {
@@ -2064,8 +2064,8 @@ class AppRegistrationFormNew extends Component {
         return (
             <div className="registration-form-view" key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
-                    <div className="map-style" style={{overflow: "hidden"}}>
-                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
+                    <div className="map-style" style={{ overflow: "hidden" }}>
+                        <img style={{ height: "249px", borderRadius: "10px 10px 0px 0px" }} src={competitionInfo.heroImageUrl} />
                     </div>
                 )}
                 <div>
@@ -2084,8 +2084,9 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <InputWithHead heading={AppConstants.registeringAs} />
-                        <span className="roles-text">{AppConstants.multpleRolesSelected}</span>
+                        <div className="d-flex">
+                            <span className="input-heading">{AppConstants.registeringAs}<span className="roles-text">{AppConstants.multpleRolesSelected}</span></span>
+                        </div>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 checked={membershipProduct.isChecked}
@@ -3099,9 +3100,8 @@ class AppRegistrationFormNew extends Component {
     }
 }
 
-function mapDispatchToProps(dispatch)
-{
-    return bindActionCreators({	
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
         getUserRegistrationUserInfoAction,
         selectParticipantAction,
         updateUserRegistrationObjectAction,
@@ -3122,19 +3122,19 @@ function mapDispatchToProps(dispatch)
         accreditationUmpireReferenceAction,
         accreditationCoachReferenceAction,
         walkingNetballQuesReferenceAction,
-        saveParticipantInfo	,
+        saveParticipantInfo,
         getParticipantInfoById,
         orgRegistrationRegSettingsEndUserRegAction,
-        registrationExpiryCheckAction				 
+        registrationExpiryCheckAction
     }, dispatch);
 
 }
 
-function mapStatetoProps(state){
+function mapStatetoProps(state) {
     return {
         userRegistrationState: state.UserRegistrationState,
         commonReducerState: state.CommonReducerState
     }
 }
 
-export default connect(mapStatetoProps,mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
+export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
