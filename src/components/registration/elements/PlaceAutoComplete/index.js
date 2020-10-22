@@ -12,14 +12,14 @@ import AppConstants from '../../../../themes/appConstants';
 
 const mapAddressInfo = (addressComponents) => {
   console.log("addressComponents",addressComponents);
-  if (addressComponents.length > 4) {
+  if (addressComponents.length > 0) {
 
-    let streetNumber;
-    let address;
-    let suburb;
-    let postCode;
-    let state;
-    let country;
+    let streetNumber = null;
+    let address  = null;
+    let suburb  = null;
+    let postCode  = null;
+    let state  = null;
+    let country  = null;
     for (let i = 0; i < addressComponents.length; i++) {
       if (addressComponents[i].types.includes('street_number')) {
         streetNumber = addressComponents[i].short_name;

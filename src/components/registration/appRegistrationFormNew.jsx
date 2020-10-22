@@ -611,11 +611,11 @@ class AppRegistrationFormNew extends Component{
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
-        const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-        const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
         if(address){
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if(key == "parent"){
-                this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
+                this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
