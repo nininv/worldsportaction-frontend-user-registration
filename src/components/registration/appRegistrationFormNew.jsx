@@ -453,7 +453,9 @@ class AppRegistrationFormNew extends Component{
             }
         }else{
             this.props.updateUserRegistrationObjectAction(value,key);
+            console.log("update field",registrationObj);
         }
+
         if(key == "dateOfBirth" || key == "referParentEmail"){
             setTimeout(() => {
                 this.props.form.setFieldsValue({
@@ -604,6 +606,8 @@ class AppRegistrationFormNew extends Component{
         const { registrationObj } = this.props.userRegistrationState;
         const { stateList,countryList } = this.props.commonReducerState;
         const address = addressData;
+        console.log("address",address)
+        console.log("key",key);
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
         // }else {
@@ -632,14 +636,6 @@ class AppRegistrationFormNew extends Component{
                 }
                 this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");           
             } 
-            // if(key == "team"){
-            //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
-            //     this.onChangeSetTeam(address.addressOne, "street1", index, "team")
-            //     this.onChangeSetTeam(address.suburb, "suburb", index, "team")
-            //     this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
-            //     this.onChangeSetTeam(address.lat, "lat", index, "team")
-            //     this.onChangeSetTeam(address.lng, "lng", index, "team");
-            // }  
         }  
     };
 
@@ -803,6 +799,7 @@ class AppRegistrationFormNew extends Component{
         try{
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
+            console.log("registrarion obj",registrationObj);
             if(registrationObj.addNewAddressFlag && 
                 registrationObj.stateRefId == null){
                 error = true;
