@@ -223,17 +223,15 @@ class TeamInivteForm extends Component{
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            ? countryList.find((country) => country.id === addressObject.countryRefId).description
             : null;
 
             let defaultAddress = '';
-            if(addressObject.street1 && addressObject.suburb && state){
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
                 (addressObject.suburb ? addressObject.suburb + ', ': '') +
                 (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
                 (state ? state + ', ': '') +
                 (country ? country + '.': '');
-            }
             return defaultAddress;
         }catch(ex){
             console.log("Error in getPartcipantParentAddress"+ex);
@@ -244,15 +242,15 @@ class TeamInivteForm extends Component{
         try{
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if(address){
                 if(key == "yourDetails"){
                     this.onChangeSetMemberInfoValue(address.addressOne, "street1","userRegDetails");
                     this.onChangeSetMemberInfoValue(address.suburb, "suburb","userRegDetails");
                     this.onChangeSetMemberInfoValue(address.postcode, "postalCode","userRegDetails");
-                    this.onChangeSetMemberInfoValue(countryRefId, "countryRefId","userRegDetails");
-                    this.onChangeSetMemberInfoValue(stateRefId, "stateRefId","userRegDetails");
+                    this.onChangeSetMemberInfoValue(countryRefId ? countryRefId : null, "countryRefId","userRegDetails");
+                    this.onChangeSetMemberInfoValue(stateRefId ? stateRefId : null, "stateRefId","userRegDetails");
                 }
             }
         }catch(ex){

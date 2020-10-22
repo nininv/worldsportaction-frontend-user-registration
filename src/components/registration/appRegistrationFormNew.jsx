@@ -365,17 +365,15 @@ class AppRegistrationFormNew extends Component {
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-                ? countryList.find((country) => country.id === addressObject.countryRefId).name
-                : null;
+            ? countryList.find((country) => country.id === addressObject.countryRefId).description
+            : null;
 
             let defaultAddress = '';
-            if (addressObject.street1 && addressObject.suburb && state) {
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ' : '') +
-                    (addressObject.suburb ? addressObject.suburb + ', ' : '') +
-                    (addressObject.postalCode ? addressObject.postalCode + ', ' : '') +
-                    (state ? state + ', ' : '') +
-                    (country ? country + '.' : '');
-            }
+            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                (state ? state + ', ': '') +
+                (country ? country + '.': '');
             return defaultAddress;
         } catch (ex) {
             console.log("Error in getPartcipantParentAddress" + ex);
@@ -457,10 +455,12 @@ class AppRegistrationFormNew extends Component {
             } else {
                 this.clearParticipantAddress(registrationObj);
             }
-        } else {
-            this.props.updateUserRegistrationObjectAction(value, key);
+        }else{
+            this.props.updateUserRegistrationObjectAction(value,key);
+            console.log("update field",registrationObj);
         }
-        if (key == "dateOfBirth" || key == "referParentEmail") {
+
+        if(key == "dateOfBirth" || key == "referParentEmail"){
             setTimeout(() => {
                 this.props.form.setFieldsValue({
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
@@ -610,20 +610,22 @@ class AppRegistrationFormNew extends Component {
         const { registrationObj } = this.props.userRegistrationState;
         const { stateList, countryList } = this.props.commonReducerState;
         const address = addressData;
+        console.log("address",address)
+        console.log("key",key);
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
-        const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-        const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
-        if (address) {
-            if (key == "parent") {
-                this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
+        if(address){
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
+            if(key == "parent"){
+                this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
-                this.onChangeSetParentValue(countryRefId, "countryRefId", parentIndex);
+                this.onChangeSetParentValue(countryRefId ? countryRefId : null, "countryRefId", parentIndex);
             }
             if (key == "participant") {
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
@@ -636,17 +638,9 @@ class AppRegistrationFormNew extends Component {
                         parent.isSameAddress = false;
                     }
                 }
-                this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
-            }
-            // if(key == "team"){
-            //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
-            //     this.onChangeSetTeam(address.addressOne, "street1", index, "team")
-            //     this.onChangeSetTeam(address.suburb, "suburb", index, "team")
-            //     this.onChangeSetTeam(address.postcode, "postalCode", index, "team")
-            //     this.onChangeSetTeam(address.lat, "lat", index, "team")
-            //     this.onChangeSetTeam(address.lng, "lng", index, "team");
-            // }  
-        }
+                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");           
+            } 
+        }  
     };
 
     onChangeSetCompetitionValue = (value, key, index, subIndex, subKey) => {
@@ -815,8 +809,9 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            if (registrationObj.addNewAddressFlag &&
-                registrationObj.stateRefId == null) {
+            console.log("registrarion obj",registrationObj);
+            if(registrationObj.addNewAddressFlag && 
+                registrationObj.stateRefId == null){
                 error = true;
             }
             if (isArrayNotEmpty(registrationObj.parentOrGuardian)) {
@@ -2069,8 +2064,8 @@ class AppRegistrationFormNew extends Component {
         return (
             <div className="registration-form-view" key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
-                    <div className="map-style">
-                        <img style={{ height: "249px", borderRadius: "10px 10px 0px 0px", width: "100%" }} src={competitionInfo.heroImageUrl} />
+                    <div className="map-style" style={{overflow: "hidden"}}>
+                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
                     </div>
                 )}
                 <div>
