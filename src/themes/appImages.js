@@ -49,7 +49,8 @@ const AppImages = {
   calendarGrey: require("../images/calendar-grey.svg"),
   participant: require("../images/participant.svg"),
   teamLoadDefualtGrey: require("../images/team-logo-default-gray.svg"),
-  teamLoadDefualtWhite: require("../images/team-logo-default-white.svg")
+  teamLoadDefualtWhite: require("../images/team-logo-default-white.svg"),
+  wentWrong: require("../images/went_wrong.jpg"),
 };
 
 export default AppImages;

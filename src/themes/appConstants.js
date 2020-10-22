@@ -1125,7 +1125,8 @@ const AppConstants = {
  pleaseSpecify: "Please Specify",
  yearsOfPlayingNetball: "How many years have you played Netball?",
  noCompetitionsForOrganisations: "There are no open competitions for this organisation",
- multpleRolesSelected:"(multiple roles can be selected)"
+ multpleRolesSelected:"(multiple roles can be selected)",
+ backToHome: "Back to home",
 };
 
 export default AppConstants;
