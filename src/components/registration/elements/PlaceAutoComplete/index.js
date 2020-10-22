@@ -17,6 +17,9 @@ const mapAddressInfo = (addressComponents) => {
     let streetNumber;
     let address;
     let suburb;
+    let postCode;
+    let state;
+    let country;
     for (let i = 0; i < addressComponents.length; i++) {
       if (addressComponents[i].types.includes('street_number')) {
         streetNumber = addressComponents[i].short_name;
@@ -27,12 +30,22 @@ const mapAddressInfo = (addressComponents) => {
       if (addressComponents[i].types.includes('locality')) {
         suburb = addressComponents[i].short_name;
       }
+      if(addressComponents[i].types.includes('postal_code')){
+        postCode = addressComponents[i].short_name;
+      }
+      if(addressComponents[i].types.includes('administrative_area_level_1')){
+        state = addressComponents[i].short_name;
+      }
+      if(addressComponents[i].types.includes('country')){
+        country = addressComponents[i].short_name;
+      }
     }
     return {
       addressOne: streetNumber ? streetNumber + ' ' + address : address,
       suburb: suburb,
-      state: addressComponents[addressComponents.length - 3].short_name,
-      postcode: addressComponents[addressComponents.length - 1].short_name,
+      state: state,
+      postcode: postCode,
+      country: country
     }
   }
   return null;
