@@ -50,12 +50,16 @@ const deepCopyFunction = inObject =>
   }
 
   const formatValue = (val) => {
-    return  val === null ? "0.00" : stringTOFloatNumber(val).toFixed(2)
+    return  val === null ? "0.00" : stringTOFloatNumberReg(val).toFixed(2)
   }
 
   const stringTOFloatNumber = (checkString) => {
     return typeof checkString === 'string' ? parseFloat(checkString) : checkString;
   }
+
+  const stringTOFloatNumberReg = (checkString) => {
+    return typeof checkString === 'string' ? Number(Number(checkString).toFixed(2)) : Number(Number(checkString).toFixed(2));
+}
 
   const captializedString = (value) => {
     if (value != undefined) {

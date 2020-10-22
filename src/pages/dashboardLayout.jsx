@@ -137,7 +137,7 @@ class DashboardLayout extends React.Component {
    
     return (
       <div className="dropdown">
-        <button
+        {this.props.isUserTabNotVisible !== true && (<button
           className="dropdown-toggle"
           type="button"
           data-toggle="dropdown"
@@ -145,7 +145,7 @@ class DashboardLayout extends React.Component {
           <img
             src={userImage}
             alt="" />
-        </button>
+        </button>)}
         <ul className="dropdown-menu">
           <li style={{paddingBottom: '0px'}}>
             <div className="media">
