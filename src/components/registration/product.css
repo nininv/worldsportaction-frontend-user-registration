@@ -51,6 +51,12 @@
   height: 15px;
   width: 15px;
 }
+.roles-text{
+    align-self: center;
+    padding-left: 6px;
+    color: var(--app-color);
+    font-size: 13px
+}
 
 .Content_Container__xhjD8 {
   position: fixed;
@@ -1052,7 +1058,6 @@ input:focus, .StripeElement--focus {
 
 .payment-type-radio-style{
   font-weight:500 ;
-  font-size: 17px !important;
   font-family: "inter-medium";
   color: rgba(0, 0, 0, 0.65);
 }

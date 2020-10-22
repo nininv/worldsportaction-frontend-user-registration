@@ -19,6 +19,7 @@ import ForgotPassword from "./components/forgotPassword";
 import { getUserId, getAuthToken, getExistingUserRefId, 
         getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration } 
 from "./util/sessionStorage";
+import ErrorBoundary from "./components/emptyComponent/errorBoundary";
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -36,6 +37,7 @@ function App() {
 
   return (
     <div className="App">
+      <ErrorBoundary>
       {/* <MemoryRouter> */}
       <Router history={history} >
         <Switch>
@@ -57,6 +59,7 @@ function App() {
         </Switch>
       </Router>
       {/* </MemoryRouter> */}
+      </ErrorBoundary>
     </div>
   );
 }

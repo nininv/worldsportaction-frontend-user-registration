@@ -60,6 +60,7 @@ class RegistrationProducts extends Component {
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
            onLoading: false,
+           deleteOnLoad: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -67,9 +68,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        // console.log("registrationUniqueKey"+registrationUniqueKey);
-        let registrationUniqueKey = "99df8404-5850-4c52-958c-f25726a5446d";
+        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        console.log("registrationUniqueKey"+registrationUniqueKey);
+        //let registrationUniqueKey = "99df8404-5850-4c52-958c-f25726a5446d";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -87,6 +88,11 @@ class RegistrationProducts extends Component {
         if(this.state.onLoading == true && registrationProductState.onRegReviewLoad == false){
             this.setYourInfoFormFields()
             this.setState({onLoading: false});
+        }
+        if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            this.setState({loading: true});
+            this.setState({deleteOnLoad: false})
         }
     }  
 
@@ -245,8 +251,9 @@ class RegistrationProducts extends Component {
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
-            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true})
+            // this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({productModalVisible: false});
@@ -265,7 +272,8 @@ class RegistrationProducts extends Component {
             }
 
             this.props.deleteRegistrationParticipantAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true});
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({participantModalVisible: false});
@@ -422,7 +430,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 {(compParticipants || []).map((item, index) =>(
-                    <div key={item.participantId + "#" + index}>
+                    <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
@@ -470,8 +478,8 @@ class RegistrationProducts extends Component {
                                     </div>
                                     <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
                                     <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                                    <div className="body-text-common">{item.gender + ', ' + 
-                                        liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                                    <div className="body-text-common">{item.gender} 
+                                        {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
                                     </div>
                                 </div>
                             </div>
@@ -1167,12 +1175,12 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "inter-medium-w500 font-17" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10 font-17" style={{display:"flex"}}>
+                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
@@ -1196,7 +1204,7 @@ class RegistrationProducts extends Component {
                             </div>
                         ))}
                          
-                        <div className="font-17" style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
@@ -1209,7 +1217,7 @@ class RegistrationProducts extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="inter-medium-w500 font-17" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="inter-medium-w500" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -1221,15 +1229,15 @@ class RegistrationProducts extends Component {
                                 <div>({shop.optionName})</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5 font-17 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
                 ))} 
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2 font-17" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2 font-17" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )
@@ -1333,7 +1341,8 @@ class RegistrationProducts extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
-                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad || 
+                        this.props.registrationProductState.deleteOnLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteParticiantModalView()}

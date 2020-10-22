@@ -223,17 +223,15 @@ class TeamInivteForm extends Component{
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            ? countryList.find((country) => country.id === addressObject.countryRefId).description
             : null;
 
             let defaultAddress = '';
-            if(addressObject.street1 && addressObject.suburb && state){
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
                 (addressObject.suburb ? addressObject.suburb + ', ': '') +
                 (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
                 (state ? state + ', ': '') +
                 (country ? country + '.': '');
-            }
             return defaultAddress;
         }catch(ex){
             console.log("Error in getPartcipantParentAddress"+ex);
@@ -244,15 +242,15 @@ class TeamInivteForm extends Component{
         try{
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if(address){
                 if(key == "yourDetails"){
                     this.onChangeSetMemberInfoValue(address.addressOne, "street1","userRegDetails");
                     this.onChangeSetMemberInfoValue(address.suburb, "suburb","userRegDetails");
                     this.onChangeSetMemberInfoValue(address.postcode, "postalCode","userRegDetails");
-                    this.onChangeSetMemberInfoValue(countryRefId, "countryRefId","userRegDetails");
-                    this.onChangeSetMemberInfoValue(stateRefId, "stateRefId","userRegDetails");
+                    this.onChangeSetMemberInfoValue(countryRefId ? countryRefId : null, "countryRefId","userRegDetails");
+                    this.onChangeSetMemberInfoValue(stateRefId ? stateRefId : null, "stateRefId","userRegDetails");
                 }
             }
         }catch(ex){
@@ -347,10 +345,23 @@ class TeamInivteForm extends Component{
         }
     }
 
+    getUpdatedUserRegDetailObj = (userRegDetails) => {
+        try{
+            userRegDetails.dateOfBirth = userRegDetails.dateOfBirth ? moment(userRegDetails.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            userRegDetails.accreditationCoachExpiryDate = userRegDetails.accreditationCoachExpiryDate ? moment(userRegDetails.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            userRegDetails.childrenCheckExpiryDate = userRegDetails.childrenCheckExpiryDate ? moment(userRegDetails.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            return userRegDetails;
+        }catch(ex){
+            console.log("Error in getUpdatedUserRegDetailObj::"+ex);
+        }
+    }
+
     saveReviewOrder = (e) => {
         try{
             e.preventDefault();
             const { iniviteMemberInfo } = this.props.teamInviteState;
+            let inviteMemberInfoTemp = JSON.parse(JSON.stringify(iniviteMemberInfo));
+            let userRegDetails = this.getUpdatedUserRegDetailObj(inviteMemberInfoTemp.userRegDetails);
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep != 1){
@@ -368,7 +379,7 @@ class TeamInivteForm extends Component{
                     }
                     if(this.state.currentStep == 1){
                         this.setState({buttonSaveOnLoad: true});
-                        this.props.saveInviteMemberInfoAction(iniviteMemberInfo.userRegDetails);
+                        this.props.saveInviteMemberInfoAction(userRegDetails);
                     }
                 }
             });
@@ -421,9 +432,9 @@ class TeamInivteForm extends Component{
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionDetails.organisationName}</div>
                             <div style={{textAlign: "start",fontWeight: "600"}}>{competitionDetails.stateOrgName} - {competitionDetails.competitionName}</div>
                             <div style={{display: "flex",marginTop: "15px",alignItems: "center"}}>
-                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
+                                <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 <div style={{fontWeight: "600"}}>{competitionDetails.registrationOpenDate} - {competitionDetails.registrationCloseDate}</div>
-                                <img className="icon-size-15" style={{marginRight: "5px",marginLeft: "25px"}} src={AppImages.teamLoadDefualtGrey}/> 
+                                <img className="icon-size-25" style={{marginRight: "5px",marginLeft: "25px"}} src={AppImages.teamLoadDefualtGrey}/> 
                                 <div style={{fontWeight: "600"}}>{userRegDetails.resgistererDetails.teamName}</div>
                             </div>
                         </div>
@@ -781,7 +792,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "dateOfBirth","userRegDetails") }
+                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "dateOfBirth","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1496,7 +1507,7 @@ class TeamInivteForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetMemberInfoValue(e, "accreditationCoachExpiryDate","userRegDetails") }
+                                    onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "accreditationCoachExpiryDate","userRegDetails") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -1521,7 +1532,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%"}}
-                                        onChange={e => this.onChangeSetMemberInfoValue(e, "childrenCheckExpiryDate","userRegDetails") }
+                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "childrenCheckExpiryDate","userRegDetails") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate,"YYYY-MM-DD")}

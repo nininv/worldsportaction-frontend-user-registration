@@ -67,7 +67,7 @@ class TeamInviteProducts extends Component{
                     if(isArrayNotEmpty(registrationProductState.shopProductList)){
                         this.goToShop();
                     }else{
-                        this.goToRegistrationPayments();
+                        this.goToTeamInvitePayments();
                     } 
                 }
             }
@@ -90,8 +90,8 @@ class TeamInviteProducts extends Component{
         this.getShopProducts(userRegId, 1, -1);
     }
 
-    goToRegistrationPayments = () =>{
-        history.push({pathname: '/registrationPayment', state: {userRegId: this.state.userRegId}})
+    goToTeamInvitePayments = () =>{
+        history.push({pathname: '/teamInvitePayment', state: {userRegId: this.state.userRegId}})
     }
 
     

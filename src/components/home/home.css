@@ -154,3 +154,24 @@
   font-size: 13px;
   color: var(--app-color);
 }
+
+.error-boundry-main-div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.went-wrong-img{
+  height: 385px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media screen and (max-width: 1024px) {
+  .went-wrong-img{
+    height: 285px;
+    width: auto;
+    object-fit: cover;
+  }
+}

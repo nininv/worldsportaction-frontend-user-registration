@@ -254,17 +254,15 @@ class AppTeamRegistrationForm extends Component{
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            ? countryList.find((country) => country.id === addressObject.countryRefId).description
             : null;
 
             let defaultAddress = '';
-            if(addressObject.street1 && addressObject.suburb && state){
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
                 (addressObject.suburb ? addressObject.suburb + ', ': '') +
                 (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
                 (state ? state + ', ': '') +
                 (country ? country + '.': '');
-            }
             return defaultAddress;
         }catch(ex){
             console.log("Error in getPartcipantParentAddress"+ex);
@@ -352,7 +350,7 @@ class AppTeamRegistrationForm extends Component{
                 },300);
             }else if(current == 1){
                 if(this.state.enabledSteps.includes(1)){
-                    this.setState({submitButtonText: AppConstants.addPariticipant});
+                    this.setState({submitButtonText: AppConstants.next});
                     setTimeout(() => {
                         this.setParticipantDetailStepFormFields();
                     },300);
@@ -488,6 +486,15 @@ class AppTeamRegistrationForm extends Component{
             teamRegistrationObj.registeringYourself = 4;
             teamRegistrationObj.participantId = this.state.participantId != null ? this.state.participantId : null;
             teamRegistrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null; 
+            teamRegistrationObj.dateOfBirth = teamRegistrationObj.dateOfBirth ? moment(teamRegistrationObj.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            for(let teamMember of teamRegistrationObj.teamMembers){
+                teamMember.dateOfBirth = teamMember.dateOfBirth ? moment(teamMember.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            }
+            teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ? 
+                                        moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            teamRegistrationObj.additionalInfo.childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ? 
+                                        moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+
             let memArr = [];
             (teamRegistrationObj.competitionInfo.membershipProducts).map((i, ind) => {
                 if(i.allowTeamRegistrationTypeRefId != null && teamRegistrationObj.competitionMembershipProductId == 
@@ -513,15 +520,15 @@ class AppTeamRegistrationForm extends Component{
         try{
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if(address){
                 if(key == "yourDetails"){
                     this.onChangeSetTeamValue(address.addressOne, "street1");
                     this.onChangeSetTeamValue(address.suburb, "suburb");
                     this.onChangeSetTeamValue(address.postcode, "postalCode");
-                    this.onChangeSetTeamValue(countryRefId, "countryRefId");
-                    this.onChangeSetTeamValue(stateRefId, "stateRefId");
+                    this.onChangeSetTeamValue(countryRefId ? countryRefId : null, "countryRefId");
+                    this.onChangeSetTeamValue(stateRefId ? stateRefId : null, "stateRefId");
                 }
             }
         }catch(ex){
@@ -593,7 +600,7 @@ class AppTeamRegistrationForm extends Component{
                         enabledSteps: this.state.enabledSteps,
                         completedSteps: this.state.completedSteps});
                         this.setState({submitButtonText: nextStep == 1 ? 
-                            AppConstants.addPariticipant : AppConstants.signupToCompetition});
+                            AppConstants.next : AppConstants.signupToCompetition});
                     }
 
                     if(this.state.currentStep == 2){
@@ -715,7 +722,7 @@ class AppTeamRegistrationForm extends Component{
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
-                                    <div style={{fontWeight: "600"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    <div style={{fontWeight: "600"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
                         ))}
@@ -766,7 +773,7 @@ class AppTeamRegistrationForm extends Component{
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
                                     onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
                         </div>
                         <div className="light-grey-border-box">
@@ -914,7 +921,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col">
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                             <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -981,7 +988,7 @@ class AppTeamRegistrationForm extends Component{
                                 onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
-                                <img className="icon-size-15" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
+                                <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
                                 {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate} 
                             </div>
                         </div>
@@ -1267,7 +1274,7 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeSetTeamValue(e, "dateOfBirth") }
+                                        onChange={(e,f) => this.onChangeSetTeamValue(f, "dateOfBirth") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1425,7 +1432,7 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={e => this.onChangeTeamMemberValue(e, "dateOfBirth", teamMemberIndex) }
+                                        onChange={(e,f) => this.onChangeTeamMemberValue(f, "dateOfBirth", teamMemberIndex) }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1920,7 +1927,7 @@ class AppTeamRegistrationForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={e => this.onChangeSetAdditionalInfo(e, "accreditationCoachExpiryDate") }
+                                    onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationCoachExpiryDate") }
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate && moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
@@ -1945,7 +1952,7 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%"}}
-                                        onChange={e => this.onChangeSetAdditionalInfo(e, "childrenCheckExpiryDate") }
+                                        onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
