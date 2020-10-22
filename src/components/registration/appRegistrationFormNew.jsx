@@ -619,7 +619,7 @@ class AppRegistrationFormNew extends Component{
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
-                this.onChangeSetParentValue(countryRefId, "countryRefId", parentIndex);
+                this.onChangeSetParentValue(countryRefId ? countryRefId : null, "countryRefId", parentIndex);
             }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
