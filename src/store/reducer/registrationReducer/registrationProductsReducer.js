@@ -191,7 +191,10 @@ function registrationProductsReducer(state = initialState, action){
                 let targetVal = 0;
                 if(action.value == 1){
                     if(type == "International_CC"){
-                        transactionVal = (totalVal * 3.4/100) + 0.30;
+                        transactionVal = (totalVal * 3.0/100) + 0.30;
+                    }
+                    if(type == "International_AE"){
+                        transactionVal = (totalVal * 2.7/100) + 0.30;
                     }
                     else if(type == "DOMESTIC_CC"){
                         transactionVal = (totalVal * 2.25/100)  + 0.30;

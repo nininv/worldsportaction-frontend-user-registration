@@ -129,15 +129,22 @@ const CheckoutForm = (props) => {
                     const card = elements.getElement(CardElement);
                     if(card){
                         const cardToken = await stripe.createToken(card);
-                        console.log("cardToken", cardToken.token.card.country);
+                        console.log("cardToken", cardToken.token);
                         const country = cardToken.token.card.country;
+                        const brand = cardToken.token.card.brand;
                         if(country!= "AU"){
-                            mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
-                            setCardTransFeeMsg(AppConstants.internationalCCMsg)
+                            if(brand == "American Express"){
+                                mainProps.updateReviewInfoAction(1, "International_AE", 0, "total",null);
+                            }
+                            else{
+                                mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
+                            }
+                            
+                            setCardTransFeeMsg(AppConstants.creditCardMsg)
                         }
                         else{
                             mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
-                            setCardTransFeeMsg(AppConstants.domesticCCMsg) 
+                            setCardTransFeeMsg(AppConstants.creditCardMsg) 
                         }
                     }
                 }
