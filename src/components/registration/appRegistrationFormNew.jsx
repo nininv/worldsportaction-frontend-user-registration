@@ -358,7 +358,7 @@ class AppRegistrationFormNew extends Component{
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).name
+            ? countryList.find((country) => country.id === addressObject.countryRefId).description
             : null;
 
             let defaultAddress = '';
