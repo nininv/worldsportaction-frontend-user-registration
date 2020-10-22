@@ -98,6 +98,14 @@ function registrationExpiryCheckAction(payload){
     return action;
 }
 
+function getSeasonalAndCasualFees(payload){
+    const action = {
+        type: ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,
+        payload
+    }
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -109,5 +117,6 @@ export{
     updateUserRegistrationStateVarAction,
     updateParticipantAdditionalInfoAction,
     orgRegistrationRegSettingsEndUserRegAction,
-    registrationExpiryCheckAction
+    registrationExpiryCheckAction,
+    getSeasonalAndCasualFees
 }

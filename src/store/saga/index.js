@@ -267,6 +267,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.saveTeamInviteReviewSaga);
   yield takeEvery(ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_LOAD, stripeSaga.getStripeLoginLinkSaga);
 
-  yield takeEvery(ApiConstants.API_LIVE_SCORE_TEAM_LOAD, liveScoreTeamSaga)
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_TEAM_LOAD, liveScoreTeamSaga);
+
+  yield takeEvery(ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,userRegistrationSaga.getSeasonalCasualFeesSaga);
 
 }

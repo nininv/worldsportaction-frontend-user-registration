@@ -141,3 +141,21 @@ export function* expiredRegistrationCheck(action) {
     yield call(errorSaga, error)
   }
 }
+
+export function* getSeasonalCasualFeesSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getSeasonalCasualFees,action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_SEASONAL_CASUAL_FEES_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
