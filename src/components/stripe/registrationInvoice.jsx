@@ -587,14 +587,14 @@ class RegistrationInvoice extends Component {
                             <div className="invoice-amount-border col-sm-5">
                                 <InputWithHead
                                     required={"pr-4 pt-3"}
-                                    heading={"Amount Due"}
+                                    heading={!this.state.invoiceDisabled ? "Amount Due" : "Amount Pay"}
                                 />
                             </div>
                             <div className="invoice-amount-border">
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ?  total.targetValue : '0.00')}
+                                    heading={(total && total != null ? total.targetValue : '0.00')}
                                 />
                             </div>
                         </div>

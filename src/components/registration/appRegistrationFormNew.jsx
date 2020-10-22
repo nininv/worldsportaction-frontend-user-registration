@@ -79,7 +79,7 @@ const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
 
-class AppRegistrationFormNew extends Component{
+class AppRegistrationFormNew extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -104,7 +104,7 @@ class AppRegistrationFormNew extends Component{
             currentCompetitions: 1,
             organisations: [],
             postalCode: null,
-        } 
+        }
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
         this.props.countryReferenceAction();
@@ -120,138 +120,143 @@ class AppRegistrationFormNew extends Component{
         this.props.walkingNetballQuesReferenceAction();
     }
 
-    componentDidUpdate(nextProps){
+    componentDidUpdate(nextProps) {
         let registrationState = this.props.userRegistrationState;
-        if(!registrationState.onMembershipLoad && this.state.getMembershipLoad){
-            this.setState({organisations: registrationState.membershipProductInfo});
+        if (!registrationState.onMembershipLoad && this.state.getMembershipLoad) {
+            this.setState({ organisations: registrationState.membershipProductInfo });
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            this.setState({participantId: participantId,registrationId: registrationId});
-            if(participantId && registrationId){
-                this.props.getParticipantInfoById(participantId,'');
-                this.setState({getParticipantByIdLoad: true})
-            }else{
-                if(registrationId){
-                    this.props.updateUserRegistrationStateVarAction("registrationId",registrationId);
-                    this.props.getParticipantInfoById('',registrationId);
-                    this.setState({getParticipantByIdLoad: true})
-                } 
+            this.setState({ participantId: participantId, registrationId: registrationId });
+            if (participantId && registrationId) {
+                this.props.getParticipantInfoById(participantId, '');
+                this.setState({ getParticipantByIdLoad: true })
+            } else {
+                if (registrationId) {
+                    this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
+                    this.props.getParticipantInfoById('', registrationId);
+                    this.setState({ getParticipantByIdLoad: true })
+                }
             }
             //Set all competitins of all organisation
             this.setAllCompetitions(registrationState.membershipProductInfo);
-            this.setState({getMembershipLoad: false});
+            this.setState({ getMembershipLoad: false });
         }
 
-        if(!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad){
-            if(this.state.participantId != null){
-                this.state.completedSteps = [0,1,2];
-                this.state.enabledSteps = [0,1,2];
-                this.setState({getParticipantByIdLoad: false,
+        if (!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad) {
+            if (this.state.participantId != null) {
+                this.state.completedSteps = [0, 1, 2];
+                this.state.enabledSteps = [0, 1, 2];
+                this.setState({
+                    getParticipantByIdLoad: false,
                     completedSteps: this.state.completedSteps,
-                    enabledSteps: this.state.enabledSteps});
+                    enabledSteps: this.state.enabledSteps
+                });
                 setTimeout(() => {
                     this.setParticipantDetailStepFormFields();
-                },300);
-            }else{
-                this.setState({getParticipantByIdLoad: false});
+                }, 300);
+            } else {
+                this.setState({ getParticipantByIdLoad: false });
                 this.selectAnotherParticipant();
-            } 
+            }
         }
 
-        if(registrationState.addCompetitionFlag){
-            console.log(this.state.organisationId,this.state.competitionId)
+        if (registrationState.addCompetitionFlag) {
+            console.log(this.state.organisationId, this.state.competitionId)
             //calling setting service after added competition
             let payload = {
                 "organisationUniqueKey": this.state.organisationId,
                 "competitionUniqueKey": this.state.competitionId
             }
             this.props.orgRegistrationRegSettingsEndUserRegAction(payload);
-            this.setState({showAddAnotherCompetitionView: false,
+            this.setState({
+                showAddAnotherCompetitionView: false,
                 organisationId: null,
                 competitionId: null
             });
-            if(this.state.findAnotherCompetitionFlag){
-                this.setState({findAnotherCompetitionFlag: false})
+            if (this.state.findAnotherCompetitionFlag) {
+                this.setState({ findAnotherCompetitionFlag: false })
             }
-            this.props.updateUserRegistrationStateVarAction("addCompetitionFlag",false);
-            if(registrationState.expiredRegistration != null){
-                this.props.updateUserRegistrationStateVarAction("expiredRegistration",null);
+            this.props.updateUserRegistrationStateVarAction("addCompetitionFlag", false);
+            if (registrationState.expiredRegistration != null) {
+                this.props.updateUserRegistrationStateVarAction("expiredRegistration", null);
             }
         }
 
-        if(registrationState.isSavedParticipant){
-            this.props.updateUserRegistrationStateVarAction("isSavedParticipant",false);
-            if(registrationState.saveValidationErrorMsg!= null && registrationState.saveValidationErrorMsg.length > 0){
-                this.setState({singleCompModalVisible: true});
-            }else{
+        if (registrationState.isSavedParticipant) {
+            this.props.updateUserRegistrationStateVarAction("isSavedParticipant", false);
+            if (registrationState.saveValidationErrorMsg != null && registrationState.saveValidationErrorMsg.length > 0) {
+                this.setState({ singleCompModalVisible: true });
+            } else {
                 history.push("/registrationProducts", {
                     registrationId: this.props.userRegistrationState.registrationId,
-                    paymentSuccess: false					 
+                    paymentSuccess: false
                 })
             }
         }
 
-        if(registrationState.updateExistingUserOnLoad){
+        if (registrationState.updateExistingUserOnLoad) {
             setTimeout(() => {
                 this.setParticipantDetailStepFormFields();
-            },300);
-            this.props.updateUserRegistrationStateVarAction("updateExistingUserOnLoad",false);
+            }, 300);
+            this.props.updateUserRegistrationStateVarAction("updateExistingUserOnLoad", false);
         }
 
-        if(registrationState.expiredRegistrationFlag){
-            if(getOrganisationId() && getCompetitonId()){
+        if (registrationState.expiredRegistrationFlag) {
+            if (getOrganisationId() && getCompetitonId()) {
                 let payload = {
                     organisationId: getOrganisationId(),
                     competitionId: getCompetitonId()
                 }
                 this.props.registrationExpiryCheckAction(payload);
             }
-            this.props.updateUserRegistrationStateVarAction("expiredRegistrationFlag",false);
+            this.props.updateUserRegistrationStateVarAction("expiredRegistrationFlag", false);
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
-        this.setState({getMembershipLoad: true});
-        console.log(getOrganisationId(),getCompetitonId());
-        if(getOrganisationId() != null && getCompetitonId() != null){
-            this.setState({showAddAnotherCompetitionView: false,
-            organisationId: getOrganisationId(),
-            competitionId: getCompetitonId()})
+        this.setState({ getMembershipLoad: true });
+        console.log(getOrganisationId(), getCompetitonId());
+        if (getOrganisationId() != null && getCompetitonId() != null) {
+            this.setState({
+                showAddAnotherCompetitionView: false,
+                organisationId: getOrganisationId(),
+                competitionId: getCompetitonId()
+            })
         }
     }
 
     setAllCompetitions = (membershipProductInfo) => {
-        try{
+        try {
             let allCompetitionsTemp = [];
-            for(let org of membershipProductInfo){
-                allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
+            for (let org of membershipProductInfo) {
+                allCompetitionsTemp.push.apply(allCompetitionsTemp, org.competitions);
             }
-            this.setState({allCompetitions: allCompetitionsTemp});
-            this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
-        }catch(ex){
-            console.log("Error in setAllCompetitions"+ex);
+            this.setState({ allCompetitions: allCompetitionsTemp });
+            this.setState({ competitions: allCompetitionsTemp.slice(0, this.state.competitionsCountPerPage) });
+        } catch (ex) {
+            console.log("Error in setAllCompetitions" + ex);
         }
     }
 
     changeStep = (current) => {
-        if(this.state.enabledSteps.includes(current)){
-            this.setState({currentStep: current});
+        if (this.state.enabledSteps.includes(current)) {
+            this.setState({ currentStep: current });
             this.scrollToTop();
         }
-        if(current == 0){
-            this.setState({submitButtonText: AppConstants.addPariticipant})
+        if (current == 0) {
+            this.setState({ submitButtonText: AppConstants.addPariticipant })
             setTimeout(() => {
                 this.setParticipantDetailStepFormFields();
-            },300);
-        }else if(current == 1){
-            if(this.state.enabledSteps.includes(1)){
-                this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
+            }, 300);
+        } else if (current == 1) {
+            if (this.state.enabledSteps.includes(1)) {
+                this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
             }
-        }else{
-            if(this.state.enabledSteps.includes(2)){
-                this.setState({submitButtonText: AppConstants.signupToCompetition});
+        } else {
+            if (this.state.enabledSteps.includes(2)) {
+                this.setState({ submitButtonText: AppConstants.signupToCompetition });
             }
         }
     }
@@ -260,10 +265,10 @@ class AppRegistrationFormNew extends Component{
         window.scrollTo(0, 0);
     }
 
-    setParticipantDetailStepFormFields(){
+    setParticipantDetailStepFormFields() {
         const { registrationObj } = this.props.userRegistrationState;
-        try{
-            if(registrationObj){
+        try {
+            if (registrationObj) {
                 this.props.form.setFieldsValue({
                     [`genderRefId`]: registrationObj.genderRefId,
                     [`dateOfBirth`]: registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
@@ -273,117 +278,118 @@ class AppRegistrationFormNew extends Component{
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
                     [`participantEmail`]: registrationObj.email
                 });
-                if(registrationObj.selectAddressFlag){
+                if (registrationObj.selectAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
                 }
-                if(registrationObj.manualEnterAddressFlag){
+                if (registrationObj.manualEnterAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
                 }
-                {(registrationObj.parentOrGuardian || []).map((parent,pIndex) =>{
-                    this.props.form.setFieldsValue({
-                        [`parentFirstName${pIndex}`]: parent.firstName,
-                        [`parentMiddleName${pIndex}`]: parent.middleName,
-                        [`parentLastName${pIndex}`]: parent.lastName,
-                        [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
-                        [`parentEmail${pIndex}`]: parent.email,
-                    });
-                    if(parent.selectAddressFlag){
-                        this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag",parent,pIndex); 
-                    }
-                })}
-            }      
-        }catch(ex){
-            console.log("Error in setParticipantDetailStepFormFields"+ex);
+                {
+                    (registrationObj.parentOrGuardian || []).map((parent, pIndex) => {
+                        this.props.form.setFieldsValue({
+                            [`parentFirstName${pIndex}`]: parent.firstName,
+                            [`parentMiddleName${pIndex}`]: parent.middleName,
+                            [`parentLastName${pIndex}`]: parent.lastName,
+                            [`parentMobileNumber${pIndex}`]: parent.mobileNumber,
+                            [`parentEmail${pIndex}`]: parent.email,
+                        });
+                        if (parent.selectAddressFlag) {
+                            this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag", parent, pIndex);
+                        }
+                    })
+                }
+            }
+        } catch (ex) {
+            console.log("Error in setParticipantDetailStepFormFields" + ex);
         }
     }
 
     setParticipantDetailStepAddressFormFields = (key) => {
-        try{
-            const { registrationObj,userInfo } = this.props.userRegistrationState;
+        try {
+            const { registrationObj, userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             let selectAddressDropDownList = this.getSelectAddressDropdown(user);
             let selectAddressDropDownUserAddress = selectAddressDropDownList?.find(x => x.userId == registrationObj.userId)
-            if(key == "selectAddressFlag"){
-                if(isArrayNotEmpty(userInfo)){
+            if (key == "selectAddressFlag") {
+                if (isArrayNotEmpty(userInfo)) {
                     this.props.form.setFieldsValue({
                         [`participantSelectAddress`]: this.getAddress(selectAddressDropDownUserAddress)
                     });
                     this.onChangeSetParticipantValue(selectAddressDropDownUserAddress.userId, "addOrRemoveAddressBySelect")
                 }
-            }else if(key == "manualEnterAddressFlag"){
+            } else if (key == "manualEnterAddressFlag") {
                 this.props.form.setFieldsValue({
                     [`participantStreet1`]: registrationObj.street1,
                     [`participantSuburb`]: registrationObj.suburb,
                     [`participantStateRefId`]: registrationObj.stateRefId,
                     [`participantPostalCode`]: registrationObj.postalCode,
                     [`participantCountryRefId`]: registrationObj.countryRefId
-                }); 
+                });
             }
-        }catch(ex){
-            console.log("Error in setParticipantDetailStepAddressFormFields"+ex);
+        } catch (ex) {
+            console.log("Error in setParticipantDetailStepAddressFormFields" + ex);
         }
     }
 
-    setParticipantDetailStepParentAddressFormFields = (key,parent,pIndex) => {
-        try{
-            const { registrationObj,userInfo } = this.props.userRegistrationState;
+    setParticipantDetailStepParentAddressFormFields = (key, parent, pIndex) => {
+        try {
+            const { registrationObj, userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             let selectAddressDropDownList = this.getSelectAddressDropdown(user);
             let selectAddressDropDownParentAddress = selectAddressDropDownList?.find(x => x.userId == parent.userId);
-            if(key == "selectAddressFlag"){
-                if(isArrayNotEmpty(userInfo)){
+            if (key == "selectAddressFlag") {
+                if (isArrayNotEmpty(userInfo)) {
                     this.props.form.setFieldsValue({
                         [`parentSelectAddress${pIndex}`]: this.getAddress(selectAddressDropDownParentAddress),
                     });
-                    this.onChangeSetParentValue(selectAddressDropDownParentAddress.userId, "addOrRemoveAddressBySelect",pIndex)
+                    this.onChangeSetParentValue(selectAddressDropDownParentAddress.userId, "addOrRemoveAddressBySelect", pIndex)
                 }
-            }else if(key == "manualEnterAddressFlag"){
+            } else if (key == "manualEnterAddressFlag") {
                 this.props.form.setFieldsValue({
                     [`parentStreet1${pIndex}`]: parent.street1,
                     [`parentSuburb${pIndex}`]: parent.suburb,
                     [`parentStateRefId${pIndex}`]: parent.stateRefId,
                     [`parentCountryRefId${pIndex}`]: parent.countryRefId,
                     [`parentPostalCode${pIndex}`]: parent.postalCode,
-                }); 
+                });
             }
-        }catch(ex){
-            console.log("Error in setParticipantDetailStepParentAddressFormFields"+ex);
+        } catch (ex) {
+            console.log("Error in setParticipantDetailStepParentAddressFormFields" + ex);
         }
     }
 
     getAddress = (addressObject) => {
-        try{
-            const { stateList,countryList } = this.props.commonReducerState;
+        try {
+            const { stateList, countryList } = this.props.commonReducerState;
             const state = stateList.length > 0 && addressObject.stateRefId > 0
                 ? stateList.find((state) => state.id === addressObject.stateRefId).name
                 : null;
             const country = countryList.length > 0 && addressObject.countryRefId > 0
-            ? countryList.find((country) => country.id === addressObject.countryRefId).name
-            : null;
+                ? countryList.find((country) => country.id === addressObject.countryRefId).name
+                : null;
 
             let defaultAddress = '';
-            if(addressObject.street1 && addressObject.suburb && state){
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
-                (addressObject.suburb ? addressObject.suburb + ', ': '') +
-                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
-                (state ? state + ', ': '') +
-                (country ? country + '.': '');
+            if (addressObject.street1 && addressObject.suburb && state) {
+                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ' : '') +
+                    (addressObject.suburb ? addressObject.suburb + ', ' : '') +
+                    (addressObject.postalCode ? addressObject.postalCode + ', ' : '') +
+                    (state ? state + ', ' : '') +
+                    (country ? country + '.' : '');
             }
             return defaultAddress;
-        }catch(ex){
-            console.log("Error in getPartcipantParentAddress"+ex);
+        } catch (ex) {
+            console.log("Error in getPartcipantParentAddress" + ex);
         }
     }
 
     getUserInfo = () => {
-        if(getUserId() != 0)
-        {
+        if (getUserId() != 0) {
             let payload = {
                 competitionUniqueKey: getCompetitonId(),
                 organisationId: getOrganisationId(),
                 userId: getUserId()
             }
-            this.setState({getUserLoad: true});
+            this.setState({ getUserLoad: true });
             this.props.getUserRegistrationUserInfoAction(payload);
         }
     }
@@ -397,9 +403,9 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
-    setImage = (data,key) => {
-        if(data.files[0] !== undefined){
-            if(key == "participantPhoto"){
+    setImage = (data, key) => {
+        if (data.files[0] !== undefined) {
+            if (key == "participantPhoto") {
                 let photoUrl = URL.createObjectURL(data.files[0]);
                 this.props.updateUserRegistrationObjectAction(photoUrl, "photoUrl");
                 let particpantPhoto = data.files[0];
@@ -409,7 +415,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     addOrSelectParticipant = (userId) => {
-        this.props.selectParticipantAction(userId,"userId");
+        this.props.selectParticipantAction(userId, "userId");
     }
 
     getParentObj = () => {
@@ -418,12 +424,12 @@ class AppRegistrationFormNew extends Component{
             "userId": 0,
             "firstName": null,
             "middleName": null,
-			"lastName": null,
-			"mobileNumber": null,
-			"email": null,
-			"street1": null,
-			"street2": null,
-			"suburb": null,
+            "lastName": null,
+            "mobileNumber": null,
+            "email": null,
+            "street1": null,
+            "street2": null,
+            "suburb": null,
             "stateRefId": null,
             "countryRefId": 1,
             "postalCode": null,
@@ -435,10 +441,10 @@ class AppRegistrationFormNew extends Component{
         return parentObj;
     }
 
-    onChangeSetParticipantValue = (value,key) => {
-        const { registrationObj,parents,userInfo } = this.props.userRegistrationState;
-        if(key == "addOrRemoveAddressBySelect"){
-            if(value){
+    onChangeSetParticipantValue = (value, key) => {
+        const { registrationObj, parents, userInfo } = this.props.userRegistrationState;
+        if (key == "addOrRemoveAddressBySelect") {
+            if (value) {
                 let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
                 let participantAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
                 registrationObj.street1 = participantAddress.street1;
@@ -447,25 +453,25 @@ class AppRegistrationFormNew extends Component{
                 registrationObj.suburb = participantAddress.suburb;
                 registrationObj.stateRefId = participantAddress.stateRefId;
                 registrationObj.countryRefId = participantAddress.countryRefId;
-                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
-            }else{
+                this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+            } else {
                 this.clearParticipantAddress(registrationObj);
             }
-        }else{
-            this.props.updateUserRegistrationObjectAction(value,key);
+        } else {
+            this.props.updateUserRegistrationObjectAction(value, key);
         }
-        if(key == "dateOfBirth" || key == "referParentEmail"){
+        if (key == "dateOfBirth" || key == "referParentEmail") {
             setTimeout(() => {
                 this.props.form.setFieldsValue({
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
                 });
             });
-            if(key == "dateOfBirth"){
-                if(getAge(value) < 18){
-                    if(isEmptyArray(parents)){
+            if (key == "dateOfBirth") {
+                if (getAge(value) < 18) {
+                    if (isEmptyArray(parents)) {
                         this.addParent("add");
                     }
-                }else{
+                } else {
                     this.addParent("removeAllParent")
                 }
             }
@@ -479,13 +485,13 @@ class AppRegistrationFormNew extends Component{
         registrationObj.suburb = null;
         registrationObj.stateRefId = null;
         registrationObj.countryRefId = null;
-        this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
+        this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
     }
 
-    getUpdatedParentObj  = (parent) => {
-        try{
-            const {registeredParents } = this.props.userRegistrationState;
-            if(isArrayNotEmpty(registeredParents)){
+    getUpdatedParentObj = (parent) => {
+        try {
+            const { registeredParents } = this.props.userRegistrationState;
+            if (isArrayNotEmpty(registeredParents)) {
                 parent.firstName = registeredParents[0].firstName;
                 parent.lastName = registeredParents[0].lastName;
                 parent.email = registeredParents[0].email;
@@ -512,63 +518,63 @@ class AppRegistrationFormNew extends Component{
                         [`parentCountryRefId${0}`]: parent.countryRefId,
                         [`parentPostalCode${0}`]: parent.postalCode,
                     });
-                },300);
+                }, 300);
             }
             return parent;
-        }catch(ex){
-            console.log("Error in getUpdatedParentObj::"+ex);
-        }
-    } 
-
-    addParent = (key,parentIndex) => {
-        try{
-            const { registrationObj,userInfo,registeredParents } = this.props.userRegistrationState;
-            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
-            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
-            if(key == "add"){
-                let parentObj = deepCopyFunction(this.getParentObj());
-                parentObj.selectAddressFlag = (newUser || user.parentOrGuardian == null) ? false : true;
-                parentObj.addNewAddressFlag = (newUser || user.parentOrGuardian == null) ? true : false;
-                parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1; 
-
-                //Do for second user when he is a child for first user
-                if(registrationObj.registeringYourself == 2){
-                    let parentObjTemp = this.getUpdatedParentObj(parentObj);
-                    registrationObj.parentOrGuardian.push(parentObjTemp);
-                }else{
-                    registrationObj.parentOrGuardian.push(parentObj);
-                }
-            }
-            if(key == "remove"){
-                registrationObj.parentOrGuardian.splice(parentIndex,1);
-            }
-            if(key == "removeAllParent"){
-                registrationObj.parentOrGuardian = [];
-            }
-            this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj")
-        }catch(ex){
-            console.log("Exception occured in addParent"+ex);
+        } catch (ex) {
+            console.log("Error in getUpdatedParentObj::" + ex);
         }
     }
 
-    onChangeSetParentValue = (value,key,parentIndex) => {
-        try{
-            const { registrationObj,userInfo } = this.props.userRegistrationState;
-            if(key == "isSameAddress"){
+    addParent = (key, parentIndex) => {
+        try {
+            const { registrationObj, userInfo, registeredParents } = this.props.userRegistrationState;
+            let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            if (key == "add") {
+                let parentObj = deepCopyFunction(this.getParentObj());
+                parentObj.selectAddressFlag = (newUser || user.parentOrGuardian == null) ? false : true;
+                parentObj.addNewAddressFlag = (newUser || user.parentOrGuardian == null) ? true : false;
+                parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1;
+
+                //Do for second user when he is a child for first user
+                if (registrationObj.registeringYourself == 2) {
+                    let parentObjTemp = this.getUpdatedParentObj(parentObj);
+                    registrationObj.parentOrGuardian.push(parentObjTemp);
+                } else {
+                    registrationObj.parentOrGuardian.push(parentObj);
+                }
+            }
+            if (key == "remove") {
+                registrationObj.parentOrGuardian.splice(parentIndex, 1);
+            }
+            if (key == "removeAllParent") {
+                registrationObj.parentOrGuardian = [];
+            }
+            this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj")
+        } catch (ex) {
+            console.log("Exception occured in addParent" + ex);
+        }
+    }
+
+    onChangeSetParentValue = (value, key, parentIndex) => {
+        try {
+            const { registrationObj, userInfo } = this.props.userRegistrationState;
+            if (key == "isSameAddress") {
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
-                if(value){
+                if (value) {
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
                     registrationObj.parentOrGuardian[parentIndex]["street2"] = registrationObj.street2;
                     registrationObj.parentOrGuardian[parentIndex]["suburb"] = registrationObj.suburb;
                     registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = registrationObj.stateRefId;
                     registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = registrationObj.countryRefId;
                     registrationObj.parentOrGuardian[parentIndex]["postalCode"] = registrationObj.postalCode;
-                    this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
-                }else{
-                    this.clearParentAddress(registrationObj,parentIndex);
+                    this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+                } else {
+                    this.clearParentAddress(registrationObj, parentIndex);
                 }
-            }else if(key == "addOrRemoveAddressBySelect"){
-                if(value){
+            } else if (key == "addOrRemoveAddressBySelect") {
+                if (value) {
                     let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
                     let parentAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = parentAddress.street1;
@@ -577,32 +583,32 @@ class AppRegistrationFormNew extends Component{
                     registrationObj.parentOrGuardian[parentIndex]["suburb"] = parentAddress.suburb;
                     registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = parentAddress.stateRefId;
                     registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = parentAddress.countryRefId;
-                    this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
-                }else{
-                   this.clearParentAddress(registrationObj,parentIndex);
+                    this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+                } else {
+                    this.clearParentAddress(registrationObj, parentIndex);
                 }
-            }else{
+            } else {
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
-                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
+                this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
             }
-        }catch(ex){
-            console.log("Exception occured in onChangeSetParentValue"+ex);
+        } catch (ex) {
+            console.log("Exception occured in onChangeSetParentValue" + ex);
         }
     }
 
-    clearParentAddress = (registrationObj,parentIndex) => {
+    clearParentAddress = (registrationObj, parentIndex) => {
         registrationObj.parentOrGuardian[parentIndex]["street1"] = null;
         registrationObj.parentOrGuardian[parentIndex]["street2"] = null;
         registrationObj.parentOrGuardian[parentIndex]["suburb"] = null;
         registrationObj.parentOrGuardian[parentIndex]["stateRefId"] = null;
         registrationObj.parentOrGuardian[parentIndex]["countryRefId"] = null;
         registrationObj.parentOrGuardian[parentIndex]["postalCode"] = null;
-        this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");
+        this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
     }
 
-    handlePlacesAutocomplete = (addressData,key,parentIndex) => {
+    handlePlacesAutocomplete = (addressData, key, parentIndex) => {
         const { registrationObj } = this.props.userRegistrationState;
-        const { stateList,countryList } = this.props.commonReducerState;
+        const { stateList, countryList } = this.props.commonReducerState;
         const address = addressData;
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
@@ -611,27 +617,27 @@ class AppRegistrationFormNew extends Component{
         // }
         const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
         const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
-        if(address){
-            if(key == "parent"){
+        if (address) {
+            if (key == "parent") {
                 this.onChangeSetParentValue(stateRefId, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                 this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
                 this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
                 this.onChangeSetParentValue(countryRefId, "countryRefId", parentIndex);
             }
-            if (key == "participant"){
+            if (key == "participant") {
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");
-                this.onChangeSetParticipantValue(countryRefId, "countryRefId"); 
-                if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
-                    for(let parent of registrationObj.parentOrGuardian){
+                this.onChangeSetParticipantValue(countryRefId, "countryRefId");
+                if (isArrayNotEmpty(registrationObj.parentOrGuardian)) {
+                    for (let parent of registrationObj.parentOrGuardian) {
                         parent.isSameAddress = false;
                     }
                 }
-                this.props.updateUserRegistrationObjectAction(registrationObj,"registrationObj");           
-            } 
+                this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+            }
             // if(key == "team"){
             //     this.onChangeSetTeam(stateRefId, "stateRefId", index, "team")
             //     this.onChangeSetTeam(address.addressOne, "street1", index, "team")
@@ -640,18 +646,18 @@ class AppRegistrationFormNew extends Component{
             //     this.onChangeSetTeam(address.lat, "lat", index, "team")
             //     this.onChangeSetTeam(address.lng, "lng", index, "team");
             // }  
-        }  
+        }
     };
 
-    onChangeSetCompetitionValue = (value,key,index,subIndex,subKey) =>{
-        this.props.updateParticipantCompetitionAction(value,key,index,subIndex,subKey);
+    onChangeSetCompetitionValue = (value, key, index, subIndex, subKey) => {
+        this.props.updateParticipantCompetitionAction(value, key, index, subIndex, subKey);
     }
 
-    addFriend = (removeOrAdd,competitionIndex,friendIndex) => {
-        try{
+    addFriend = (removeOrAdd, competitionIndex, friendIndex) => {
+        try {
             const { registrationObj } = this.props.userRegistrationState;
             let friends = registrationObj.competitions[competitionIndex].friends;
-            if(removeOrAdd == "add"){
+            if (removeOrAdd == "add") {
                 let friend = {
                     "firstName": null,
                     "lastName": null,
@@ -660,20 +666,20 @@ class AppRegistrationFormNew extends Component{
                     "email": null
                 }
                 friends.push(friend);
-            }else{
-                friends.splice(friendIndex,1);
+            } else {
+                friends.splice(friendIndex, 1);
             }
-            this.onChangeSetCompetitionValue(friends,"friends",competitionIndex);
-        }catch(ex){
-            console.log("Error in addFriend"+ex);
+            this.onChangeSetCompetitionValue(friends, "friends", competitionIndex);
+        } catch (ex) {
+            console.log("Error in addFriend" + ex);
         }
     }
 
-    addReferFriend = (removeOrAdd,competitionIndex,referFriendIndex) => {
-        try{
+    addReferFriend = (removeOrAdd, competitionIndex, referFriendIndex) => {
+        try {
             const { registrationObj } = this.props.userRegistrationState;
             let referFriends = registrationObj.competitions[competitionIndex].referFriends;
-            if(removeOrAdd == "add"){
+            if (removeOrAdd == "add") {
                 let friend = {
                     "firstName": null,
                     "lastName": null,
@@ -682,46 +688,46 @@ class AppRegistrationFormNew extends Component{
                     "email": null
                 }
                 referFriends.push(friend);
-            }else{
-                referFriends.splice(referFriendIndex,1);
+            } else {
+                referFriends.splice(referFriendIndex, 1);
             }
-            this.onChangeSetCompetitionValue(referFriends,"referFriends",competitionIndex);
-        }catch(ex){
-            console.log("Error in addReferFriends"+ex);
+            this.onChangeSetCompetitionValue(referFriends, "referFriends", competitionIndex);
+        } catch (ex) {
+            console.log("Error in addReferFriends" + ex);
         }
     }
 
     addAnotherCompetition = (competition) => {
-        this.setState({competitionId: competition.competitionUniqueKey});
+        this.setState({ competitionId: competition.competitionUniqueKey });
         let { membershipProductInfo } = this.props.userRegistrationState;
         let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == competition.organisationUniqueKey);
-        this.setState({organisationId: organisationInfo.organisationUniqueKey});
-        if(organisationInfo){
+        this.setState({ organisationId: organisationInfo.organisationUniqueKey });
+        if (organisationInfo) {
             let organisation = {
-                organisationInfo : organisationInfo,
+                organisationInfo: organisationInfo,
                 competitionInfo: competition,
                 findAnotherCompetition: this.state.findAnotherCompetitionFlag
             }
-            this.props.updateUserRegistrationObjectAction(organisation,"competitions");
+            this.props.updateUserRegistrationObjectAction(organisation, "competitions");
         }
     }
 
-    onChangeSetAdditionalInfo = (value,key,subKey) => {
-        this.props.updateParticipantAdditionalInfoAction(value,key,subKey);
+    onChangeSetAdditionalInfo = (value, key, subKey) => {
+        this.props.updateParticipantAdditionalInfoAction(value, key, subKey);
     }
 
     getFilteredRegisrationObj = (registrationObj) => {
         registrationObj["existingUserId"] = getUserId() ? Number(getUserId()) : null;
         registrationObj.participantId = this.state.participantId != null ? this.state.participantId : null;
-        registrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null; 
+        registrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null;
         registrationObj.userId = registrationObj.userId == -1 || registrationObj.userId == -2 ? null : registrationObj.userId;
-        registrationObj.dateOfBirth = registrationObj.dateOfBirth ? moment(registrationObj.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-        registrationObj.additionalInfo.associationLevelInfo = registrationObj.additionalInfo.associationLevelInfo ? moment(registrationObj.additionalInfo.associationLevelInfo ,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-        registrationObj.additionalInfo.accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate ,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-        registrationObj.additionalInfo.accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate ,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-        registrationObj.additionalInfo.childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate ,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+        registrationObj.dateOfBirth = registrationObj.dateOfBirth ? moment(registrationObj.dateOfBirth, "DD-MM-YYYY").format("MM-DD-YYYY") : null;
+        registrationObj.additionalInfo.associationLevelInfo = registrationObj.additionalInfo.associationLevelInfo ? moment(registrationObj.additionalInfo.associationLevelInfo, "DD-MM-YYYY").format("MM-DD-YYYY") : null;
+        registrationObj.additionalInfo.accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "DD-MM-YYYY").format("MM-DD-YYYY") : null;
+        registrationObj.additionalInfo.accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "DD-MM-YYYY").format("MM-DD-YYYY") : null;
+        registrationObj.additionalInfo.childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "DD-MM-YYYY").format("MM-DD-YYYY") : null;
         let competitions = registrationObj.competitions;
-        for(let competition of competitions){
+        for (let competition of competitions) {
             competition.organisationInfo = null;
             competition.competitionInfo = null;
         }
@@ -729,48 +735,50 @@ class AppRegistrationFormNew extends Component{
     }
 
     getParticipantType = () => {
-        try{
+        try {
             const { registrationObj } = this.props.userRegistrationState;
             let participantType;
-            if(registrationObj.registeringYourself == 1){
+            if (registrationObj.registeringYourself == 1) {
                 participantType = "Myself";
-            }else if(registrationObj.registeringYourself == 2){
+            } else if (registrationObj.registeringYourself == 2) {
                 participantType = "Child";
-            }else{
+            } else {
                 participantType = "Registering someone else"
             }
             return participantType;
-        }catch(ex){
-            console.log("Error in getParticipantType"+ex);
+        } catch (ex) {
+            console.log("Error in getParticipantType" + ex);
         }
     }
 
     findAnotherCompetition = (competitionIndex) => {
-        if(competitionIndex == 0){
-            this.setState({showAddAnotherCompetitionView: true,
-            findAnotherCompetitionFlag: true});
-        }else{
-            this.onChangeSetCompetitionValue(null,"competition",competitionIndex,null,null)
-        }  
+        if (competitionIndex == 0) {
+            this.setState({
+                showAddAnotherCompetitionView: true,
+                findAnotherCompetitionFlag: true
+            });
+        } else {
+            this.onChangeSetCompetitionValue(null, "competition", competitionIndex, null, null)
+        }
     }
 
     getOrganisationPhotos = (organisationPhotos) => {
-        try{
+        try {
             let organisationPhotosTemp = [];
-            for(let i=0;i<organisationPhotos.length;i++){
-                if((i % 2) == 0){
+            for (let i = 0; i < organisationPhotos.length; i++) {
+                if ((i % 2) == 0) {
                     let obj = {
                         photoUrl1: organisationPhotos[i].photoUrl,
                         photoType1: organisationPhotos[i].photoType,
-                        photoUrl2: organisationPhotos[i+1]?.photoUrl,
-                        photoType2: organisationPhotos[i+1]?.photoType,
+                        photoUrl2: organisationPhotos[i + 1]?.photoUrl,
+                        photoType2: organisationPhotos[i + 1]?.photoType,
                     }
                     organisationPhotosTemp.push(obj);
                 }
             }
             return organisationPhotosTemp;
-        }catch(ex){
-            console.log("Error in getOrganisationPhotos::"+ex);
+        } catch (ex) {
+            console.log("Error in getOrganisationPhotos::" + ex);
         }
     }
 
@@ -785,163 +793,171 @@ class AppRegistrationFormNew extends Component{
 
     selectAnotherParticipant = () => {
         let empty = [];
-        this.setState({enabledSteps: empty,
+        this.setState({
+            enabledSteps: empty,
             completedSteps: empty,
-            currentStep: 0});
-        
+            currentStep: 0
+        });
+
         //For retain competition in the url for a another participant
-        if(getOrganisationId() != null && getCompetitonId() != null){
-            this.setState({showAddAnotherCompetitionView: false,
-            organisationId: getOrganisationId(),
-            competitionId: getCompetitonId()})
+        if (getOrganisationId() != null && getCompetitonId() != null) {
+            this.setState({
+                showAddAnotherCompetitionView: false,
+                organisationId: getOrganisationId(),
+                competitionId: getCompetitonId()
+            })
         }
 
-        this.props.updateUserRegistrationStateVarAction("registrationObj",null);
+        this.props.updateUserRegistrationStateVarAction("registrationObj", null);
     }
 
     addressSearchValidation = () => {
-        try{
+        try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            if(registrationObj.addNewAddressFlag && 
-                registrationObj.stateRefId == null){
+            if (registrationObj.addNewAddressFlag &&
+                registrationObj.stateRefId == null) {
                 error = true;
             }
-            if(isArrayNotEmpty(registrationObj.parentOrGuardian)){
-                let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag ==  true && 
+            if (isArrayNotEmpty(registrationObj.parentOrGuardian)) {
+                let parent = registrationObj.parentOrGuardian.find(x => x.addNewAddressFlag == true &&
                     x.stateRefId == null);
-                if(parent != undefined){
+                if (parent != undefined) {
                     error = true;
                 }
             }
             return error;
-        }catch(ex){
-            console.log("Error in addressSearchValidation"+ex);
+        } catch (ex) {
+            console.log("Error in addressSearchValidation" + ex);
         }
     }
 
     productValidation = () => {
-        try{
+        try {
             const { registrationObj } = this.props.userRegistrationState;
             let competitions = registrationObj.competitions;
             let check = true;
-            for(let competition of competitions){
-                if(isArrayNotEmpty(competition.products)){
-                    for(let product of competition.products){
-                        if(product.isPlayer == 1){
+            for (let competition of competitions) {
+                if (isArrayNotEmpty(competition.products)) {
+                    for (let product of competition.products) {
+                        if (product.isPlayer == 1) {
                             let divisionsTemp = competition.divisions.find(x => x.competitionMembershipProductId == product.competitionMembershipProductId);
-                            if(divisionsTemp == undefined){
+                            if (divisionsTemp == undefined) {
                                 check = false;
                                 break;
                             }
                         }
                     }
-                }else{
+                } else {
                     check = false;
-                } 
+                }
             }
             return check;
-        }catch(ex){
-            console.log("Error in checkProductEitherAddOrNot"+ex);
+        } catch (ex) {
+            console.log("Error in checkProductEitherAddOrNot" + ex);
         }
     }
 
     isPlayerActive = (competition) => {
-        try{
+        try {
             let value = true;
-            if(isArrayNotEmpty(competition.products)){
+            if (isArrayNotEmpty(competition.products)) {
                 let checkedPlayerProduct = competition.products.find(x => x.isChecked == true && x.isPlayer == 1);
-                if(checkedPlayerProduct == undefined){
+                if (checkedPlayerProduct == undefined) {
                     value = false;
                 }
-            }else{
+            } else {
                 value = false;
             }
             return value;
-        }catch(ex){
-            console.log("Error in isPlayerActive"+ex);
+        } catch (ex) {
+            console.log("Error in isPlayerActive" + ex);
         }
     }
 
     onChangeSetOrganisation = (organisationId) => {
-        try{
+        try {
             let { membershipProductInfo } = this.props.userRegistrationState;
-            this.setState({organisationId : organisationId,
-            currentCompetitions: 1});
+            this.setState({
+                organisationId: organisationId,
+                currentCompetitions: 1
+            });
             let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == organisationId);
-            if(organisationInfo){
-                this.setState({allCompetitionsByOrgId: organisationInfo.competitions,
-                    competitions: organisationInfo.competitions.slice(0,this.state.competitionsCountPerPage)});
+            if (organisationInfo) {
+                this.setState({
+                    allCompetitionsByOrgId: organisationInfo.competitions,
+                    competitions: organisationInfo.competitions.slice(0, this.state.competitionsCountPerPage)
+                });
             }
-        }catch(ex){
-            console.log("Error in onChangeSetOrganisation"+ex);
+        } catch (ex) {
+            console.log("Error in onChangeSetOrganisation" + ex);
         }
     }
 
     paginationItems = (current, type, originalElement) => {
         if (type === 'prev') {
-          return <a style={{color: "var(--app-color)",fontWeight: "700"}}>Prev</a>;
+            return <a style={{ color: "var(--app-color)", fontWeight: "700" }}>Prev</a>;
         }
         if (type === 'next') {
-          return <a style={{color: "var(--app-color)",fontWeight: "700"}}>Next</a>;
+            return <a style={{ color: "var(--app-color)", fontWeight: "700" }}>Next</a>;
         }
         return originalElement;
     }
 
     pagingCompetitions = (current) => {
-        let startIndex = (current - 1 ) * this.state.competitionsCountPerPage;
+        let startIndex = (current - 1) * this.state.competitionsCountPerPage;
         let endIndex = current * this.state.competitionsCountPerPage;
-        this.setState({currentCompetitions: current});
-        if(this.state.organisationId == null){
-            this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
-        }else{
-            this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
+        this.setState({ currentCompetitions: current });
+        if (this.state.organisationId == null) {
+            this.setState({ competitions: this.state.allCompetitions.slice(startIndex, endIndex) });
+        } else {
+            this.setState({ competitions: this.state.allCompetitionsByOrgId.slice(startIndex, endIndex) });
         }
     }
 
-    goToRegistrationProducts = () =>{
-        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationId}})
+    goToRegistrationProducts = () => {
+        history.push({ pathname: '/registrationProducts', state: { registrationId: this.state.registrationId } })
     }
 
     goToTeamRegistrationForm = (uniqueKey) => {
-        if(uniqueKey){
-            history.push({pathname: '/appTeamRegistrationForm',state: {existingTeamParticipantId: uniqueKey}});
-        }else{
-            history.push({pathname: '/appTeamRegistrationForm'});
-        } 
+        if (uniqueKey) {
+            history.push({ pathname: '/appTeamRegistrationForm', state: { existingTeamParticipantId: uniqueKey } });
+        } else {
+            history.push({ pathname: '/appTeamRegistrationForm' });
+        }
     }
 
     onChangeSetPostalCode = (postalCode) => {
-        try{
-            this.setState({postalCode: postalCode});
+        try {
+            this.setState({ postalCode: postalCode });
             setTimeout(() => {
-                if(postalCode == ''){
+                if (postalCode == '') {
                     this.searchOrganisationByPostalCode();
-                } 
-            },300);
-        }catch(ex){
-            console.log("Error in searchOrganisationByPostalCode"+ex);
+                }
+            }, 300);
+        } catch (ex) {
+            console.log("Error in searchOrganisationByPostalCode" + ex);
         }
     }
 
     searchOrganisationByPostalCode = () => {
-        try{
+        try {
             let { membershipProductInfo } = this.props.userRegistrationState;
-            if(this.state.postalCode){
+            if (this.state.postalCode) {
                 let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode?.toLowerCase().indexOf(this.state.postalCode) > -1);
-                this.setState({organisations: filteredOrganisation});
+                this.setState({ organisations: filteredOrganisation });
                 this.setAllCompetitions(filteredOrganisation);
-            }else{
-                this.setState({organisations: membershipProductInfo});
+            } else {
+                this.setState({ organisations: membershipProductInfo });
                 this.setAllCompetitions(membershipProductInfo);
             }
-        }catch(ex){
-            console.log("Error in searchOrganisationByPostalCode"+ex);
+        } catch (ex) {
+            console.log("Error in searchOrganisationByPostalCode" + ex);
         }
     }
 
     getSelectAddressDropdown = (user) => {
-        try{
+        try {
             let addresses = [];
             let address = {
                 "userId": user.id,
@@ -950,11 +966,11 @@ class AppRegistrationFormNew extends Component{
                 "suburb": user.suburb,
                 "postalCode": user.postalCode,
                 "stateRefId": user.stateRefId,
-                "countryRefId": user.countryRefId 
+                "countryRefId": user.countryRefId
             }
             addresses.push(address);
-            if(isArrayNotEmpty(user.parentOrGuardian)){
-                for(let parent of user.parentOrGuardian){
+            if (isArrayNotEmpty(user.parentOrGuardian)) {
+                for (let parent of user.parentOrGuardian) {
                     let parentAddress = {
                         "userId": parent.userId,
                         "street1": parent.street1,
@@ -962,73 +978,76 @@ class AppRegistrationFormNew extends Component{
                         "suburb": parent.suburb,
                         "postalCode": parent.postalCode,
                         "stateRefId": parent.stateRefId,
-                        "countryRefId": parent.countryRefId 
+                        "countryRefId": parent.countryRefId
                     }
                     addresses.push(parentAddress);
                 }
             }
             return addresses;
-        }catch(ex){
-            console.log("Error in getSelectAddressDropdown"+ex);
+        } catch (ex) {
+            console.log("Error in getSelectAddressDropdown" + ex);
         }
     }
-    
+
     saveRegistrationForm = (e) => {
-        try{
+        try {
             e.preventDefault();
-            const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
-            console.log("final obj"+JSON.stringify(filteredSaveRegistrationObj));
+            console.log("final obj" + JSON.stringify(filteredSaveRegistrationObj));
             this.props.form.validateFieldsAndScroll((err, values) => {
-                if(!err){
+                if (!err) {
                     // if(registrationObj.photoUrl == null){
                     //     message.error(ValidationConstants.userPhotoIsRequired);
                     //     return;
                     // }
-                    if(this.state.currentStep == 0){
+                    if (this.state.currentStep == 0) {
                         let addressSearchError = this.addressSearchValidation();
-                        if(addressSearchError){
+                        if (addressSearchError) {
                             message.error(ValidationConstants.addressDetailsIsRequired);
                             return;
                         }
                     }
-                    if(this.state.currentStep == 1){
-                        if(registrationObj.competitions.length == 0){
+                    if (this.state.currentStep == 1) {
+                        if (registrationObj.competitions.length == 0) {
                             message.error(ValidationConstants.competitionField);
                             return;
-                        }else{
+                        } else {
                             let productAdded = this.productValidation();
-                            if(!productAdded){
-                                message.error(ValidationConstants.fillMembershipProductInformation);
+                            if (!productAdded) {
+                                message.error(ValidationConstants.fillMembershipProductDivisionInformation);
                                 return;
                             }
                         }
                     }
-                    if(this.state.currentStep != 2){
+                    if (this.state.currentStep != 2) {
                         let nextStep = this.state.currentStep + 1;
                         this.scrollToTop();
-                        if(nextStep == 1){
-                            if(registrationObj.competitions.length == 0 && 
-                                expiredRegistration == null){
-                                this.setState({showAddAnotherCompetitionView: true});
+                        if (nextStep == 1) {
+                            if (registrationObj.competitions.length == 0 &&
+                                expiredRegistration == null) {
+                                this.setState({ showAddAnotherCompetitionView: true });
                             }
-                            this.state.enabledSteps.push(0,nextStep);
-                        }else{
+                            this.state.enabledSteps.push(0, nextStep);
+                        } else {
                             this.state.enabledSteps.push(nextStep);
                         }
                         this.state.completedSteps.push(this.state.currentStep);
-                        this.setState({currentStep: nextStep,
-                        enabledSteps: this.state.enabledSteps,
-                        completedSteps: this.state.completedSteps});
+                        this.setState({
+                            currentStep: nextStep,
+                            enabledSteps: this.state.enabledSteps,
+                            completedSteps: this.state.completedSteps
+                        });
                     }
                     setTimeout(() => {
                         this.setState({
-                            submitButtonText: this.state.currentStep == 1 ? 
-                            AppConstants.addCompetitionAndMembership : 
-                            AppConstants.signupToCompetition});
-                    },100);
-                    if(this.state.currentStep == 2){
+                            submitButtonText: this.state.currentStep == 1 ?
+                                AppConstants.addCompetitionAndMembership :
+                                AppConstants.signupToCompetition
+                        });
+                    }, 100);
+                    if (this.state.currentStep == 2) {
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
                         formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
@@ -1036,8 +1055,8 @@ class AppRegistrationFormNew extends Component{
                     }
                 }
             });
-        }catch(ex){
-            console.log("Exception occured in saveRegistrationForm"+ex);
+        } catch (ex) {
+            console.log("Exception occured in saveRegistrationForm" + ex);
         }
     }
 
@@ -1065,11 +1084,11 @@ class AppRegistrationFormNew extends Component{
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
-        return(
+        return (
             <div>
-                {registrationObj.userId == -1 || registrationObj.userId == -2 ? 
+                {registrationObj.userId == -1 || registrationObj.userId == -2 ?
                     <div>{this.addedParticipantView()}</div>
-                : 
+                    :
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
@@ -1084,65 +1103,67 @@ class AppRegistrationFormNew extends Component{
         let userRegistrationstate = this.props.userRegistrationState;
         let userInfo = userRegistrationstate.userInfo;
         let registrationObj = userRegistrationstate.registrationObj;
-        return(
-            <div style={{marginTop: "0px !important",
-            margin: "auto",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            padding: "40px"}}>
-                <div className="form-heading" 
-                style={{paddingBottom: "0px"}}>
+        return (
+            <div style={{
+                marginTop: "0px !important",
+                margin: "auto",
+                backgroundColor: "white",
+                borderRadius: "10px",
+                padding: "40px"
+            }}>
+                <div className="form-heading"
+                    style={{ paddingBottom: "0px" }}>
                     {userInfo.length == 0 ? AppConstants.addPariticipant : AppConstants.selectOrAddParticipant}
                 </div>
                 <div className="row">
-                    {(userInfo || []).map((user,index) => (
+                    {(userInfo || []).map((user, index) => (
                         <div className='col-sm-12 col-md-6' key={index}>
-                            {!user.isTeamRegistration ? 
-                                <div 
-                                onClick={() => this.addOrSelectParticipant(user.id)}
-                                className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
-                                    {user.photoUrl ? 
-                                        <img className="profile-img" src={user.photoUrl}/> 
-                                    : 
+                            {!user.isTeamRegistration ?
+                                <div
+                                    onClick={() => this.addOrSelectParticipant(user.id)}
+                                    className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
+                                    {user.photoUrl ?
+                                        <img className="profile-img" src={user.photoUrl} />
+                                        :
                                         <div className="profile-default-img">
-                                            {user.firstName.slice(0,1)}{user.lastName.slice(0,1)}
+                                            {user.firstName.slice(0, 1)}{user.lastName.slice(0, 1)}
                                         </div>
                                     }
-                                    <div style={{width: "75%",paddingLeft: "15px"}}>
+                                    <div style={{ width: "75%", paddingLeft: "15px" }}>
                                         <div>{user.firstName} {user.lastName}</div>
                                         {(user.genderRefId != 0 || user.dateOfBirth != null) && (
-                                            <div style={{fontSize: "15px"}}>
+                                            <div style={{ fontSize: "15px" }}>
                                                 {user.genderRefId != 0 && (user.genderRefId == 1 ? 'Female' : 'Male')}, {user.dateOfBirth != null && moment(user.dateOfBirth).format("DD/MM/YYYY")}
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                            : 
-                                <div 
-                                onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey)}
-                                className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
-                                    <div className="defualt-team-logo-style" style={{height: "80px",width: "80px"}}>
-                                        <img src={AppImages.teamLoadDefualtWhite}/>
-                                    </div> 
-                                    <div style={{width: "75%",paddingLeft: "15px"}}>
+                                :
+                                <div
+                                    onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey)}
+                                    className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
+                                    <div className="defualt-team-logo-style" style={{ height: "80px", width: "80px" }}>
+                                        <img src={AppImages.teamLoadDefualtWhite} />
+                                    </div>
+                                    <div style={{ width: "75%", paddingLeft: "15px" }}>
                                         <div>{user.teamName}</div>
                                         <div>{user.totalMembers} {AppConstants.members}</div>
                                     </div>
                                 </div>
                             }
-                        </div>    
+                        </div>
                     ))}
                     <div className='col-sm-12 col-md-6'>
-                        <div 
-                        onClick={() => this.addOrSelectParticipant(-1)}
-                        className={registrationObj != null && registrationObj.userId == -1 ? 'new-participant-button-active' : 'new-participant-button-inactive'} 
-                        style={{textAlign: "center",padding: "0px 40px"}}>+ {AppConstants.newParticipantRegistration}</div>
+                        <div
+                            onClick={() => this.addOrSelectParticipant(-1)}
+                            className={registrationObj != null && registrationObj.userId == -1 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
+                            style={{ textAlign: "center", padding: "0px 40px" }}>+ {AppConstants.newParticipantRegistration}</div>
                     </div>
                     <div className='col-sm-12 col-md-6'>
-                        <div 
-                        onClick={() => this.goToTeamRegistrationForm(null)}
-                        className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
-                        style={{textAlign: "center",padding: "0px 70px"}}>+ {AppConstants.newTeamRegistration}</div>
+                        <div
+                            onClick={() => this.goToTeamRegistrationForm(null)}
+                            className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
+                            style={{ textAlign: "center", padding: "0px 70px" }}>+ {AppConstants.newTeamRegistration}</div>
                     </div>
                 </div>
 
@@ -1153,27 +1174,27 @@ class AppRegistrationFormNew extends Component{
                             className="registration-radio-group"
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "registeringYourself")}
                             value={registrationObj.registeringYourself}
-                            >
+                        >
                             <Radio value={1}>{AppConstants.yes}</Radio>
                             <Radio value={2}>{AppConstants.noRegisteringMyChild}</Radio>
                             <Radio value={3}>{AppConstants.noRegisteringSomeoneElse}</Radio>
                         </Radio.Group>
                     </div>
-                : null}
+                    : null}
             </div>
         )
     }
 
     addedParticipantView = () => {
-        return(
+        return (
             <div className="registration-form-view">
-                <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
-                <div style={{display: "flex",flexWrap: "wrap"}}>
-                    <div className="form-heading" style={{textAlign: "start"}}>{AppConstants.addNewParticipant}</div>
-                    <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
-                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                <div style={{ fontWeight: "600", marginBottom: "5px" }}>{AppConstants.participant}</div>
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    <div className="form-heading" style={{ textAlign: "start" }}>{AppConstants.addNewParticipant}</div>
+                    <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
+                        onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
                 </div>
-                <div style={{fontWeight: "600",marginTop: "-5px"}}>{this.getParticipantType()}</div>
+                <div style={{ fontWeight: "600", marginTop: "-5px" }}>{this.getParticipantType()}</div>
             </div>
         )
     }
@@ -1183,56 +1204,56 @@ class AppRegistrationFormNew extends Component{
         let registrationObj = userRegistrationstate.registrationObj;
         let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
         let user = userInfo.find(x => x.id == registrationObj.userId);
-        const { stateList,countryList } = this.props.commonReducerState;
+        const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         let hasAddressForExistingUserFlag = (user?.stateRefId) ? true : false;
-        return(
+        return (
             <div>
                 {registrationObj.selectAddressFlag && (
                     <div>
-                        <div className="form-heading" 
-                        style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
-                        <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
+                        <div className="form-heading"
+                            style={{ paddingBottom: "0px", marginTop: "30px" }}>{AppConstants.address}</div>
+                        <InputWithHead heading={AppConstants.selectAddress} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`participantSelectAddress`, {
-                                rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
+                                rules: [{ required: true, message: ValidationConstants.selectAddressRequired }],
                             })(
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetParticipantValue(e, "addOrRemoveAddressBySelect")}
-                                setFieldsValue={this.getAddress(user)}>
-                                {(this.getSelectAddressDropdown(user) || []).map((item) => (
-                                    <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
-                                ))}
-                            </Select>
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.select}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e, "addOrRemoveAddressBySelect")}
+                                    setFieldsValue={this.getAddress(user)}>
+                                    {(this.getSelectAddressDropdown(user) || []).map((item) => (
+                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
+                                    ))}
+                                </Select>
                             )}
-                        </Form.Item> 
-                        <div className="orange-action-txt" style={{marginTop: "10px"}}
-                        onClick={() => {
-                            this.onChangeSetParticipantValue(true,"addNewAddressFlag")
-                            this.onChangeSetParticipantValue(false,"selectAddressFlag");
-                            this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
-                        }}
-                        >+ {AppConstants.addNewAddress}</div>	
+                        </Form.Item>
+                        <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                            onClick={() => {
+                                this.onChangeSetParticipantValue(true, "addNewAddressFlag")
+                                this.onChangeSetParticipantValue(false, "selectAddressFlag");
+                                this.onChangeSetParticipantValue(null, "addOrRemoveAddressBySelect");
+                            }}
+                        >+ {AppConstants.addNewAddress}</div>
                     </div>
-                )} 
-                    
+                )}
+
                 {registrationObj.addNewAddressFlag && (
                     <div>
                         {!newUser && hasAddressForExistingUserFlag && (
-                            <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParticipantValue(true,"selectAddressFlag");
-                                this.onChangeSetParticipantValue(false,"addNewAddressFlag");
-                                setTimeout(() => {
-                                    this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
-                                },300)
-                            }}
+                            <div className="orange-action-txt" style={{ marginTop: "20px", marginBottom: "10px" }}
+                                onClick={() => {
+                                    this.onChangeSetParticipantValue(true, "selectAddressFlag");
+                                    this.onChangeSetParticipantValue(false, "addNewAddressFlag");
+                                    setTimeout(() => {
+                                        this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
+                                    }, 300)
+                                }}
                             >{AppConstants.returnToSelectAddress}</div>
                         )}
-                        <div className="form-heading" 
-                        style={(newUser || !hasAddressForExistingUserFlag) ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                        <div className="form-heading"
+                            style={(newUser || !hasAddressForExistingUserFlag) ? { marginTop: "20px", marginBottom: "-20px" } : { paddingBottom: "0px", marginBottom: "-20px" }}>{AppConstants.findAddress}</div>
                         <div>
                             <Form.Item name="addressSearch">
                                 <PlacesAutocomplete
@@ -1240,121 +1261,121 @@ class AppRegistrationFormNew extends Component{
                                     heading={AppConstants.addressSearch}
                                     required
                                     error={this.state.searchAddressError}
-                                    onBlur={() => { this.setState({searchAddressError: ''})}}
-                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"participant")}
+                                    onBlur={() => { this.setState({ searchAddressError: '' }) }}
+                                    onSetData={(e) => this.handlePlacesAutocomplete(e, "participant")}
                                 />
-                            </Form.Item> 
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParticipantValue(true,"manualEnterAddressFlag");
-                                this.onChangeSetParticipantValue(false,"addNewAddressFlag");
-                                setTimeout(() => {
-                                    this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
-                                },300);
-                            }}
-                            >{AppConstants.enterAddressManually}</div>	 
-                        </div> 
+                            </Form.Item>
+                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                                onClick={() => {
+                                    this.onChangeSetParticipantValue(true, "manualEnterAddressFlag");
+                                    this.onChangeSetParticipantValue(false, "addNewAddressFlag");
+                                    setTimeout(() => {
+                                        this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
+                                    }, 300);
+                                }}
+                            >{AppConstants.enterAddressManually}</div>
+                        </div>
                     </div>
                 )}
 
                 {registrationObj.manualEnterAddressFlag && (
                     <div>
-                        <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
-                        onClick={() => {
-                            this.onChangeSetParticipantValue(false,"manualEnterAddressFlag");
-                            this.onChangeSetParticipantValue(true,"addNewAddressFlag");
-                            setTimeout(() => {
-                                this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
-                            },300);
-                        }}
+                        <div className="orange-action-txt" style={{ marginTop: "20px", marginBottom: "10px" }}
+                            onClick={() => {
+                                this.onChangeSetParticipantValue(false, "manualEnterAddressFlag");
+                                this.onChangeSetParticipantValue(true, "addNewAddressFlag");
+                                setTimeout(() => {
+                                    this.setParticipantDetailStepAddressFormFields("addNewAddressFlag");
+                                }, 300);
+                            }}
                         >{AppConstants.returnToAddressSearch}</div>
-                        <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
+                        <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.enterAddress}</div>
                         <Form.Item >
                             {getFieldDecorator(`participantStreet1`, {
-                                rules: [{ required: true, message: ValidationConstants.addressField}],
+                                rules: [{ required: true, message: ValidationConstants.addressField }],
                             })(
-                            <InputWithHead
-                                required={"required-field pt-0 pb-0"}
-                                heading={AppConstants.addressOne}
-                                placeholder={AppConstants.addressOne}
-                                onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "street1")} 
-                                setFieldsValue={registrationObj.street1}
-                            />
+                                <InputWithHead
+                                    required={"required-field pt-0 pb-0"}
+                                    heading={AppConstants.addressOne}
+                                    placeholder={AppConstants.addressOne}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "street1")}
+                                    setFieldsValue={registrationObj.street1}
+                                />
                             )}
                         </Form.Item>
                         <InputWithHead
                             heading={AppConstants.addressTwo}
                             placeholder={AppConstants.addressTwo}
-                            onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "street2")} 
+                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "street2")}
                             value={registrationObj.street2}
                         />
                         <Form.Item >
                             {getFieldDecorator(`participantSuburb`, {
                                 rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                             })(
-                            <InputWithHead
-                                required={"required-field pt-0 pb-0"}
-                                heading={AppConstants.suburb}
-                                placeholder={AppConstants.suburb}
-                                onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "suburb")} 
-                                setFieldsValue={registrationObj.suburb}
-                            />
+                                <InputWithHead
+                                    required={"required-field pt-0 pb-0"}
+                                    heading={AppConstants.suburb}
+                                    placeholder={AppConstants.suburb}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "suburb")}
+                                    setFieldsValue={registrationObj.suburb}
+                                />
                             )}
                         </Form.Item>
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
+                                <InputWithHead heading={AppConstants.state} required={"required-field"} />
                                 <Form.Item >
                                     {getFieldDecorator(`participantStateRefId`, {
                                         rules: [{ required: true, message: ValidationConstants.stateField[0] }],
                                     })(
-                                    <Select
-                                        style={{ width: "100%" }}
-                                        placeholder={AppConstants.state}
-                                        onChange={(e) => this.onChangeSetParticipantValue(e, "stateRefId")}
-                                        setFieldsValue={registrationObj.stateRefId}>
-                                        {stateList.length > 0 && stateList.map((item) => (
-                                            < Option key={item.id} value={item.id}> {item.name}</Option>
-                                        ))}
-                                    </Select>
+                                        <Select
+                                            style={{ width: "100%" }}
+                                            placeholder={AppConstants.state}
+                                            onChange={(e) => this.onChangeSetParticipantValue(e, "stateRefId")}
+                                            setFieldsValue={registrationObj.stateRefId}>
+                                            {stateList.length > 0 && stateList.map((item) => (
+                                                < Option key={item.id} value={item.id}> {item.name}</Option>
+                                            ))}
+                                        </Select>
                                     )}
                                 </Form.Item>
                             </div>
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.postCode}   required={"required-field"}/>
+                                <InputWithHead heading={AppConstants.postCode} required={"required-field"} />
                                 <Form.Item >
                                     {getFieldDecorator(`participantPostalCode`, {
                                         rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                     })(
-                                    <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        placeholder={AppConstants.postcode}
-                                        maxLength={4}
-                                        onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "postalCode")} 
-                                        setFieldsValue={registrationObj.postalCode}
-                                    />
+                                        <InputWithHead
+                                            required={"required-field pt-0 pb-0"}
+                                            placeholder={AppConstants.postcode}
+                                            maxLength={4}
+                                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "postalCode")}
+                                            setFieldsValue={registrationObj.postalCode}
+                                        />
                                     )}
                                 </Form.Item>
                             </div>
                         </div>
-                        <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
+                        <InputWithHead heading={AppConstants.country} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`participantCountryRefId`, {
                                 rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                             })(
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={AppConstants.country}
-                                onChange={(e) => this.onChangeSetParticipantValue(e, "countryRefId")}
-                                setFieldsValue={registrationObj.countryRefId}>
-                                {countryList.length > 0 && countryList.map((item) => (
-                                    < Option key={item.id} value={item.id}> {item.description}</Option>
-                                ))}
-                            </Select>
+                                <Select
+                                    style={{ width: "100%" }}
+                                    placeholder={AppConstants.country}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e, "countryRefId")}
+                                    setFieldsValue={registrationObj.countryRefId}>
+                                    {countryList.length > 0 && countryList.map((item) => (
+                                        < Option key={item.id} value={item.id}> {item.description}</Option>
+                                    ))}
+                                </Select>
                             )}
                         </Form.Item>
                     </div>
-                )} 
+                )}
             </div>
         )
     }
@@ -1362,10 +1383,10 @@ class AppRegistrationFormNew extends Component{
     participantDetailView = (getFieldDecorator) => {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
-        const { genderList,stateList,countryList } = this.props.commonReducerState;
-        return(
+        const { genderList, stateList, countryList } = this.props.commonReducerState;
+        return (
             <div className="registration-form-view">
-                <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.participantDetails}</div>
+                <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.participantDetails}</div>
                 <InputWithHead heading={AppConstants.gender} required={"required-field"}></InputWithHead>
                 <Form.Item >
                     {getFieldDecorator(`genderRefId`, {
@@ -1373,26 +1394,26 @@ class AppRegistrationFormNew extends Component{
                     })(
                         <Radio.Group
                             className="registration-radio-group"
-                            onChange={ (e) => this.onChangeSetParticipantValue(e.target.value, "genderRefId")}
+                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "genderRefId")}
                             setFieldsValue={registrationObj.genderRefId}
-                            >
+                        >
                             {(genderList || []).map((gender, genderIndex) => (
                                 <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
                             ))}
                         </Radio.Group>
                     )}
                 </Form.Item>
-            
+
                 <div className="row">
                     <div className="col-sm-12 col-md-6">
-                        <InputWithHead heading={AppConstants.participant_firstName} required={"required-field"}/>
+                        <InputWithHead heading={AppConstants.participant_firstName} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`participantFirstName`, {
                                 rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                             })(
                                 <InputWithHead
                                     placeholder={AppConstants.participant_firstName}
-                                    onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "firstName")} 
+                                    onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "firstName")}
                                     setFieldsValue={registrationObj.firstName}
                                     onBlur={(i) => this.props.form.setFieldsValue({
                                         'participantFirstName': captializedString(i.target.value)
@@ -1402,50 +1423,50 @@ class AppRegistrationFormNew extends Component{
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6">
-                        <InputWithHead heading={AppConstants.participant_middleName}/>
+                        <InputWithHead heading={AppConstants.participant_middleName} />
                         <Form.Item >
                             {getFieldDecorator(`participantMiddleName`, {
                                 rules: [{ required: false }],
                             })(
-                            <InputWithHead
-                                placeholder={AppConstants.participant_middleName}
-                                onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "middleName")} 
-                                setFieldsValue={registrationObj.middleName}
-                                onBlur={(i) => this.props.form.setFieldsValue({
-                                    'participantMiddleName': captializedString(i.target.value)
-                                })}
-                            />
+                                <InputWithHead
+                                    placeholder={AppConstants.participant_middleName}
+                                    onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "middleName")}
+                                    setFieldsValue={registrationObj.middleName}
+                                    onBlur={(i) => this.props.form.setFieldsValue({
+                                        'participantMiddleName': captializedString(i.target.value)
+                                    })}
+                                />
                             )}
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6">
-                        <InputWithHead heading={AppConstants.participant_lastName} required={"required-field"}/>
+                        <InputWithHead heading={AppConstants.participant_lastName} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`participantLastName`, {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                             })(
-                            <InputWithHead
-                                placeholder={AppConstants.participant_lastName}
-                                onChange={(e) => this.onChangeSetParticipantValue( captializedString(e.target.value), "lastName")} 
-                                setFieldsValue={registrationObj.lastName}
-                                onBlur={(i) => this.props.form.setFieldsValue({
-                                    'participantLastName': captializedString(i.target.value)
-                                })}
-                            />
+                                <InputWithHead
+                                    placeholder={AppConstants.participant_lastName}
+                                    onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "lastName")}
+                                    setFieldsValue={registrationObj.lastName}
+                                    onBlur={(i) => this.props.form.setFieldsValue({
+                                        'participantLastName': captializedString(i.target.value)
+                                    })}
+                                />
                             )}
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6">
-                        <InputWithHead heading={AppConstants.dob}   required={"required-field"}/>
+                        <InputWithHead heading={AppConstants.dob} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`dateOfBirth`, {
-                                rules: [{ required: true, message: ValidationConstants.dateOfBirth}],
+                                rules: [{ required: true, message: ValidationConstants.dateOfBirth }],
                             })(
                                 <DatePicker
                                     size="large"
                                     placeholder={"dd-mm-yyyy"}
                                     style={{ width: "100%" }}
-                                    onChange={(e,f) => this.onChangeSetParticipantValue(f, "dateOfBirth") }
+                                    onChange={(e, f) => this.onChangeSetParticipantValue(f, "dateOfBirth")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     name={'dateOfBirth'}
@@ -1454,24 +1475,24 @@ class AppRegistrationFormNew extends Component{
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6">
-                        <InputWithHead heading={AppConstants.contactMobile} required={"required-field"}/>
+                        <InputWithHead heading={AppConstants.contactMobile} required={"required-field"} />
                         <Form.Item >
                             {getFieldDecorator(`participantMobileNumber`, {
                                 rules: [{ required: true, message: ValidationConstants.contactField }],
                             })(
-                            <InputWithHead
-                                placeholder={AppConstants.contactMobile}
-                                onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "mobileNumber")} 
-                                setFieldsValue={registrationObj.mobileNumber}
-                            />
+                                <InputWithHead
+                                    placeholder={AppConstants.contactMobile}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "mobileNumber")}
+                                    setFieldsValue={registrationObj.mobileNumber}
+                                />
                             )}
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6"
-                    style={registrationObj.referParentEmail ? {alignSelf: "center",marginTop: "25px"} : {}}>
+                        style={registrationObj.referParentEmail ? { alignSelf: "center", marginTop: "25px" } : {}}>
                         {!registrationObj.referParentEmail && (
                             <div>
-                                <InputWithHead heading={AppConstants.contactEmail} required={"required-field"}/>
+                                <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
                                 <Form.Item >
                                     {getFieldDecorator(`participantEmail`, {
                                         rules: [{ required: true, message: ValidationConstants.emailField[0] }],
@@ -1479,7 +1500,7 @@ class AppRegistrationFormNew extends Component{
                                         <InputWithHead
                                             disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
-                                            onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "email")} 
+                                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.email}
                                         />
                                     )}
@@ -1492,25 +1513,25 @@ class AppRegistrationFormNew extends Component{
                                 checked={registrationObj.referParentEmail}
                                 onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
                                 {AppConstants.useParentsEmailAddress}
-                            </Checkbox> 
+                            </Checkbox>
                         )}
                     </div>
                 </div>
 
-                <InputWithHead heading={AppConstants.photo}/>
-                {registrationObj.photoUrl == null ?  
-                        <div className = "img-upload-target" onClick={ () => this.selectImage()}>
-                            <div style={{fontSize:"22px"}}>
-                                +
+                <InputWithHead heading={AppConstants.photo} />
+                {registrationObj.photoUrl == null ?
+                    <div className="img-upload-target" onClick={() => this.selectImage()}>
+                        <div style={{ fontSize: "22px" }}>
+                            +
                             </div>
-                            <div style={{marginTop: "-7px"}}>
-                                {AppConstants.upload}
-                            </div>                    
-                        </div>:null
+                        <div style={{ marginTop: "-7px" }}>
+                            {AppConstants.upload}
+                        </div>
+                    </div> : null
                 }
-                 {registrationObj.photoUrl ? 
+                {registrationObj.photoUrl ?
                     <img
-                        src={registrationObj.photoUrl}  
+                        src={registrationObj.photoUrl}
                         alt=""
                         height="80"
                         width="80"
@@ -1519,76 +1540,76 @@ class AppRegistrationFormNew extends Component{
                         onError={ev => {
                             ev.target.src = AppImages.circleImage;
                         }}
-                        onClick={ () => this.selectImage()}
-                    />:null
+                        onClick={() => this.selectImage()}
+                    /> : null
                 }
                 <input
                     type="file"
-                    id= {"user-pic"} 
+                    id={"user-pic"}
                     style={{ display: 'none' }}
-                    onChange={(evt) => this.setImage(evt.target,"participantPhoto")} 
+                    onChange={(evt) => this.setImage(evt.target, "participantPhoto")}
                 />
-                <div>{this.participantAddressView(getFieldDecorator)}</div>	
+                <div>{this.participantAddressView(getFieldDecorator)}</div>
             </div>
         )
-    } 
+    }
 
-    parentOrGuardianAddressView = (parent, parentIndex,getFieldDecorator) => {
-        try{
+    parentOrGuardianAddressView = (parent, parentIndex, getFieldDecorator) => {
+        try {
             const { registrationObj } = this.props.userRegistrationState;
-            const { stateList,countryList } = this.props.commonReducerState;
+            const { stateList, countryList } = this.props.commonReducerState;
             const { userInfo } = this.props.userRegistrationState;
             let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
             let selectAddressDropDownList = user && this.getSelectAddressDropdown(user);
             let selectAddressDropDownUser = selectAddressDropDownList && selectAddressDropDownList.find(x => x.userId == parent.userId);
             let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
             let hasAddressForExistingUserFlag = (selectAddressDropDownUser?.stateRefId) ? true : false;
-            return(
+            return (
                 <div>
                     {parent.selectAddressFlag && (
                         <div>
-                            <div className="form-heading" 
-                            style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
-                            <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
+                            <div className="form-heading"
+                                style={{ paddingBottom: "0px", marginTop: "30px" }}>{AppConstants.address}</div>
+                            <InputWithHead heading={AppConstants.selectAddress} required={"required-field"} />
                             <Form.Item >
                                 {getFieldDecorator(`parentSelectAddress${parentIndex}`, {
-                                    rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
+                                    rules: [{ required: true, message: ValidationConstants.selectAddressRequired }],
                                 })(
-                                <Select
-                                    style={{ width: "100%" }}
-                                    placeholder={AppConstants.select}
-                                    onChange={(e) => this.onChangeSetParentValue(e, "addOrRemoveAddressBySelect",parentIndex)}
-                                    setFieldsValue={this.getAddress(user)}>
-                                    {(selectAddressDropDownList || []).map((item) => (
-                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
-                                    ))}
-                                </Select>
+                                    <Select
+                                        style={{ width: "100%" }}
+                                        placeholder={AppConstants.select}
+                                        onChange={(e) => this.onChangeSetParentValue(e, "addOrRemoveAddressBySelect", parentIndex)}
+                                        setFieldsValue={this.getAddress(user)}>
+                                        {(selectAddressDropDownList || []).map((item) => (
+                                            <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
+                                        ))}
+                                    </Select>
                                 )}
-                            </Form.Item> 
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParentValue(true,"addNewAddressFlag",parentIndex)
-                                this.onChangeSetParentValue(false,"selectAddressFlag",parentIndex);
-                                this.onChangeSetParentValue(null, "addOrRemoveAddressBySelect",parentIndex)
-                            }}
-                            >+ {AppConstants.addNewAddress}</div>	
+                            </Form.Item>
+                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                                onClick={() => {
+                                    this.onChangeSetParentValue(true, "addNewAddressFlag", parentIndex)
+                                    this.onChangeSetParentValue(false, "selectAddressFlag", parentIndex);
+                                    this.onChangeSetParentValue(null, "addOrRemoveAddressBySelect", parentIndex)
+                                }}
+                            >+ {AppConstants.addNewAddress}</div>
                         </div>
-                    )} 
+                    )}
                     {parent.addNewAddressFlag && (
                         <div>
                             {!newUser && hasAddressForExistingUserFlag && (
-                                <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
-                                onClick={() => {
-                                    this.onChangeSetParentValue(true,"selectAddressFlag",parentIndex);
-                                    this.onChangeSetParentValue(false,"addNewAddressFlag",parentIndex);
-                                    setTimeout(() => {
-                                        this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag",parent,parentIndex); 
-                                    },300)
-                                }}
+                                <div className="orange-action-txt" style={{ marginTop: "20px", marginBottom: "10px" }}
+                                    onClick={() => {
+                                        this.onChangeSetParentValue(true, "selectAddressFlag", parentIndex);
+                                        this.onChangeSetParentValue(false, "addNewAddressFlag", parentIndex);
+                                        setTimeout(() => {
+                                            this.setParticipantDetailStepParentAddressFormFields("selectAddressFlag", parent, parentIndex);
+                                        }, 300)
+                                    }}
                                 >{AppConstants.returnToSelectAddress}</div>
                             )}
-                            <div className="form-heading" 
-                            style={(newUser || !hasAddressForExistingUserFlag) ? {marginTop: "20px",marginBottom: "-20px"} : {paddingBottom: "0px",marginBottom: "-20px"}}>{AppConstants.findAddress}</div>
+                            <div className="form-heading"
+                                style={(newUser || !hasAddressForExistingUserFlag) ? { marginTop: "20px", marginBottom: "-20px" } : { paddingBottom: "0px", marginBottom: "-20px" }}>{AppConstants.findAddress}</div>
                             <Form.Item name="addressSearch">
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(parent)}
@@ -1600,163 +1621,163 @@ class AppRegistrationFormNew extends Component{
                                             searchAddressError: ''
                                         })
                                     }}
-                                    onSetData={(e)=>this.handlePlacesAutocomplete(e,"parent",parentIndex)}
+                                    onSetData={(e) => this.handlePlacesAutocomplete(e, "parent", parentIndex)}
                                 />
                             </Form.Item>
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParentValue(true,"manualEnterAddressFlag",parentIndex);
-                                this.onChangeSetParentValue(false,"addNewAddressFlag",parentIndex);
-                                setTimeout(() => {
-                                    this.setParticipantDetailStepParentAddressFormFields("manualEnterAddressFlag",parent,parentIndex)
-                                },300);
-                            }}
+                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                                onClick={() => {
+                                    this.onChangeSetParentValue(true, "manualEnterAddressFlag", parentIndex);
+                                    this.onChangeSetParentValue(false, "addNewAddressFlag", parentIndex);
+                                    setTimeout(() => {
+                                        this.setParticipantDetailStepParentAddressFormFields("manualEnterAddressFlag", parent, parentIndex)
+                                    }, 300);
+                                }}
                             >{AppConstants.enterAddressManually}</div>
                         </div>
                     )}
                     {parent.manualEnterAddressFlag && (
                         <div>
-                            <div className="orange-action-txt" 
-                            style={{marginTop: "20px",marginBottom: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParentValue(false,"manualEnterAddressFlag",parentIndex);
-                                this.onChangeSetParentValue(true,"addNewAddressFlag",parentIndex);
-                                setTimeout(() => {
-                                    this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag",parent,parentIndex)
-                                },300);
-                            }}
+                            <div className="orange-action-txt"
+                                style={{ marginTop: "20px", marginBottom: "10px" }}
+                                onClick={() => {
+                                    this.onChangeSetParentValue(false, "manualEnterAddressFlag", parentIndex);
+                                    this.onChangeSetParentValue(true, "addNewAddressFlag", parentIndex);
+                                    setTimeout(() => {
+                                        this.setParticipantDetailStepParentAddressFormFields("addNewAddressFlag", parent, parentIndex)
+                                    }, 300);
+                                }}
                             >{AppConstants.returnToAddressSearch}</div>
-                            <div className="form-heading" 
-                            style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
+                            <div className="form-heading"
+                                style={{ paddingBottom: "0px" }}>{AppConstants.enterAddress}</div>
                             <Form.Item>
                                 {getFieldDecorator(`parentStreet1${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.addressField[0] }],
                                 })(
-                                <InputWithHead
-                                    required={"required-field pt-0 pb-0"}
-                                    heading={AppConstants.addressOne}
-                                    placeholder={AppConstants.addressOne}
-                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "street1", parentIndex  )} 
-                                    setFieldsValue={parent.street1}
-                                />
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        heading={AppConstants.addressOne}
+                                        placeholder={AppConstants.addressOne}
+                                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "street1", parentIndex)}
+                                        setFieldsValue={parent.street1}
+                                    />
                                 )}
                             </Form.Item>
                             <InputWithHead
                                 heading={AppConstants.addressTwo}
                                 placeholder={AppConstants.addressTwo}
-                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", parentIndex  )} 
+                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", parentIndex)}
                                 value={parent.street2}
                             />
                             <Form.Item>
                                 {getFieldDecorator(`parentSuburb${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
-                                <InputWithHead
-                                    required={"required-field pt-0 pb-0"}
-                                    heading={AppConstants.suburb}
-                                    placeholder={AppConstants.suburb}
-                                    onChange={(e) => this.onChangeSetParentValue( e.target.value, "suburb", parentIndex  )} 
-                                    setFieldsValue={parent.suburb}
-                                />
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        heading={AppConstants.suburb}
+                                        placeholder={AppConstants.suburb}
+                                        onChange={(e) => this.onChangeSetParentValue(e.target.value, "suburb", parentIndex)}
+                                        setFieldsValue={parent.suburb}
+                                    />
                                 )}
-                            </Form.Item> 
+                            </Form.Item>
                             <div className="row">
                                 <div className="col-sm-12 col-lg-6">
-                                    <InputWithHead heading={AppConstants.state}  required={"required-field"}/>
+                                    <InputWithHead heading={AppConstants.state} required={"required-field"} />
                                     <Form.Item>
                                         {getFieldDecorator(`parentStateRefId${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.stateField[0] }],
                                         })(
-                                        <Select
-                                            style={{ width: "100%" }}
-                                            placeholder={AppConstants.state}
-                                            onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", parentIndex  )}
-                                            setFieldsValue={parent.stateRefId}>
-                                            {stateList.length > 0 && stateList.map((item) => (
-                                                < Option key={item.id} value={item.id}> {item.name}</Option>
-                                            ))
-                                            }
-                                        </Select>
+                                            <Select
+                                                style={{ width: "100%" }}
+                                                placeholder={AppConstants.state}
+                                                onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", parentIndex)}
+                                                setFieldsValue={parent.stateRefId}>
+                                                {stateList.length > 0 && stateList.map((item) => (
+                                                    < Option key={item.id} value={item.id}> {item.name}</Option>
+                                                ))
+                                                }
+                                            </Select>
                                         )}
                                     </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-lg-6">
-                                    <InputWithHead heading={AppConstants.postCode}  required={"required-field"}/>
+                                    <InputWithHead heading={AppConstants.postCode} required={"required-field"} />
                                     <Form.Item>
                                         {getFieldDecorator(`parentPostalCode${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                         })(
-                                        <InputWithHead
-                                            required={"required-field pt-0 pb-0"}
-                                            placeholder={AppConstants.postcode}
-                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "postalCode", parentIndex  )} 
-                                            setFieldsValue={parent.postalCode}
-                                            maxLength={4}
-                                        />
+                                            <InputWithHead
+                                                required={"required-field pt-0 pb-0"}
+                                                placeholder={AppConstants.postcode}
+                                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "postalCode", parentIndex)}
+                                                setFieldsValue={parent.postalCode}
+                                                maxLength={4}
+                                            />
                                         )}
                                     </Form.Item>
                                 </div>
                             </div>
-                            <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
+                            <InputWithHead heading={AppConstants.country} required={"required-field"} />
                             <Form.Item >
                                 {getFieldDecorator(`parentCountryRefId${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                                 })(
-                                <Select
-                                    style={{ width: "100%" }}
-                                    placeholder={AppConstants.country}
-                                    onChange={(e) => this.onChangeSetParentValue(e, "countryRefId", parentIndex)}
-                                    setFieldsValue={parent.countryRefId}>
-                                    {countryList.length > 0 && countryList.map((item) => (
-                                        < Option key={item.id} value={item.id}> {item.description}</Option>
-                                    ))}
-                                </Select>
+                                    <Select
+                                        style={{ width: "100%" }}
+                                        placeholder={AppConstants.country}
+                                        onChange={(e) => this.onChangeSetParentValue(e, "countryRefId", parentIndex)}
+                                        setFieldsValue={parent.countryRefId}>
+                                        {countryList.length > 0 && countryList.map((item) => (
+                                            < Option key={item.id} value={item.id}> {item.description}</Option>
+                                        ))}
+                                    </Select>
                                 )}
                             </Form.Item>
                         </div>
-                    )}	
+                    )}
                 </div>
             )
 
-        }catch(ex){
-            console.log("Error in parentOrGuardianAddressView"+ex);
+        } catch (ex) {
+            console.log("Error in parentOrGuardianAddressView" + ex);
         }
     }
 
     parentOrGuardianView = (getFieldDecorator) => {
-        const { registrationObj,parents } = this.props.userRegistrationState;
-        return(
+        const { registrationObj, parents } = this.props.userRegistrationState;
+        return (
             <div className="registration-form-view">
-                <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.parentOrGuardianDetail}</div>
+                <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
                 {isArrayNotEmpty(parents) && (
                     <div>
-                        <InputWithHead heading={AppConstants.selectParentOrGuardian}/>
+                        <InputWithHead heading={AppConstants.selectParentOrGuardian} />
                         <Select
                             mode="multiple"
                             style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                            onChange={(e) => this.onChangeSetParticipantValue(e,"tempParents")} >
-                                {parents.length > 0 && parents.map((tParent, tpIndex) => (
-                                    <Option key={tParent.email} value={tParent.email}>
-                                        {tParent.firstName + " " + tParent.lastName} 
-                                    </Option>
-                                ))}
+                            onChange={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
+                            {parents.length > 0 && parents.map((tParent, tpIndex) => (
+                                <Option key={tParent.email} value={tParent.email}>
+                                    {tParent.firstName + " " + tParent.lastName}
+                                </Option>
+                            ))}
                         </Select>
                     </div>
                 )}
 
                 {(registrationObj.parentOrGuardian || []).map((parent, parentIndex) => {
-                    return(
-                        <div key={"parent"+parentIndex} className="light-grey-border-box">
+                    return (
+                        <div key={"parent" + parentIndex} className="light-grey-border-box">
                             {(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) && (
-                                <div className="orange-action-txt" style={{marginTop: "30px"}}
-                                    onClick={() => {this.addParent("remove",parentIndex)}}
-                                    >{AppConstants.cancel}
+                                <div className="orange-action-txt" style={{ marginTop: "30px" }}
+                                    onClick={() => { this.addParent("remove", parentIndex) }}
+                                >{AppConstants.cancel}
                                 </div>
                             )}
-                            <div className="form-heading" 
-                            style={(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) ? 
-                            {paddingBottom: "0px",marginTop: "10px"} : 
-                            {paddingBottom: "0px",marginTop: "30px"}}>
+                            <div className="form-heading"
+                                style={(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) ?
+                                    { paddingBottom: "0px", marginTop: "10px" } :
+                                    { paddingBottom: "0px", marginTop: "30px" }}>
                                 {AppConstants.newParentOrGuardian}
                             </div>
                             <div className="row">
@@ -1765,11 +1786,11 @@ class AppRegistrationFormNew extends Component{
                                         {getFieldDecorator(`parentFirstName${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                         })(
-                                            <InputWithHead 
+                                            <InputWithHead
                                                 required={"required-field pt-0 pb-0"}
-                                                heading={AppConstants.firstName} 
-                                                placeholder={AppConstants.firstName} 
-                                                onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "firstName", parentIndex )} 
+                                                heading={AppConstants.firstName}
+                                                placeholder={AppConstants.firstName}
+                                                onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "firstName", parentIndex)}
                                                 setFieldsValue={parent.firstName}
                                                 onBlur={(i) => this.props.form.setFieldsValue({
                                                     [`parentFirstName${parentIndex}`]: captializedString(i.target.value)
@@ -1783,17 +1804,17 @@ class AppRegistrationFormNew extends Component{
                                         {getFieldDecorator(`parentMiddleName${parentIndex}`, {
                                             rules: [{ required: false }],
                                         })(
-                                        <InputWithHead 
-                                            required={"pt-0 pb-0"}
-                                            heading={AppConstants.middleName} 
-                                            placeholder={AppConstants.middleName} 
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "middleName", parentIndex )} 
-                                            setFieldsValue={parent.middleName}
-                                            onBlur={(i) => this.props.form.setFieldsValue({
-                                                [`parentMiddleName${parentIndex}`]: captializedString(i.target.value)
-                                            })}
-                                        />
-                                            )}
+                                            <InputWithHead
+                                                required={"pt-0 pb-0"}
+                                                heading={AppConstants.middleName}
+                                                placeholder={AppConstants.middleName}
+                                                onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "middleName", parentIndex)}
+                                                setFieldsValue={parent.middleName}
+                                                onBlur={(i) => this.props.form.setFieldsValue({
+                                                    [`parentMiddleName${parentIndex}`]: captializedString(i.target.value)
+                                                })}
+                                            />
+                                        )}
                                     </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-12">
@@ -1801,17 +1822,17 @@ class AppRegistrationFormNew extends Component{
                                         {getFieldDecorator(`parentLastName${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                         })(
-                                        <InputWithHead 
-                                            required={"required-field pt-0 pb-0"}
-                                            heading={AppConstants.lastName} 
-                                            placeholder={AppConstants.lastName} 
-                                            onChange={(e) => this.onChangeSetParentValue( captializedString(e.target.value), "lastName", parentIndex )} 
-                                            setFieldsValue={parent.lastName}
-                                            onBlur={(i) => this.props.form.setFieldsValue({
-                                                [`parentLastName${parentIndex}`]: captializedString(i.target.value)
-                                            })}
-                                        />
-                                            )}
+                                            <InputWithHead
+                                                required={"required-field pt-0 pb-0"}
+                                                heading={AppConstants.lastName}
+                                                placeholder={AppConstants.lastName}
+                                                onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "lastName", parentIndex)}
+                                                setFieldsValue={parent.lastName}
+                                                onBlur={(i) => this.props.form.setFieldsValue({
+                                                    [`parentLastName${parentIndex}`]: captializedString(i.target.value)
+                                                })}
+                                            />
+                                        )}
                                     </Form.Item>
                                 </div>
                                 <div className="col-sm-6">
@@ -1819,13 +1840,13 @@ class AppRegistrationFormNew extends Component{
                                         {getFieldDecorator(`parentMobileNumber${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.contactField }],
                                         })(
-                                        <InputWithHead 
-                                            required={"required-field pt-0 pb-0"}
-                                            heading={AppConstants.mobile} 
-                                            placeholder={AppConstants.mobile} 
-                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "mobileNumber", parentIndex  )} 
-                                            setFieldsValue={parent.mobileNumber}
-                                        />
+                                            <InputWithHead
+                                                required={"required-field pt-0 pb-0"}
+                                                heading={AppConstants.mobile}
+                                                placeholder={AppConstants.mobile}
+                                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber", parentIndex)}
+                                                setFieldsValue={parent.mobileNumber}
+                                            />
                                         )}
                                     </Form.Item>
                                 </div>
@@ -1834,13 +1855,13 @@ class AppRegistrationFormNew extends Component{
                                         {getFieldDecorator(`parentEmail${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                                         })(
-                                        <InputWithHead 
-                                            required={"required-field pt-0 pb-0"}
-                                            heading={AppConstants.email} 
-                                            placeholder={AppConstants.email} 
-                                            onChange={(e) => this.onChangeSetParentValue( e.target.value, "email", parentIndex  )} 
-                                            setFieldsValue={parent.email}
-                                        />
+                                            <InputWithHead
+                                                required={"required-field pt-0 pb-0"}
+                                                heading={AppConstants.email}
+                                                placeholder={AppConstants.email}
+                                                onChange={(e) => this.onChangeSetParentValue(e.target.value, "email", parentIndex)}
+                                                setFieldsValue={parent.email}
+                                            />
                                         )}
                                     </Form.Item>
                                 </div>
@@ -1848,48 +1869,48 @@ class AppRegistrationFormNew extends Component{
                             <Checkbox
                                 className="single-checkbox"
                                 checked={parent.isSameAddress}
-                                onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", parentIndex  )} >
+                                onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", parentIndex)} >
                                 {AppConstants.sameAddress}
                             </Checkbox>
                             {!parent.isSameAddress && (
-                                <div>{this.parentOrGuardianAddressView(parent,parentIndex,getFieldDecorator)}</div>
+                                <div>{this.parentOrGuardianAddressView(parent, parentIndex, getFieldDecorator)}</div>
                             )}
                         </div>
                     );
                 })}
-                <div className="orange-action-txt" style={{marginTop: "10px"}}
-                onClick={() => {this.addParent("add")}}
-                >+ {AppConstants.addNewParentGaurdian}</div>	
+                <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                    onClick={() => { this.addParent("add") }}
+                >+ {AppConstants.addNewParentGaurdian}</div>
             </div>
         )
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
-        const { registrationObj,expiredRegistration } = this.props.userRegistrationState;
-        return(
+        const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+        return (
             <div>
-                <div>{this.addedParticipantWithProfileView()}</div> 
+                <div>{this.addedParticipantWithProfileView()}</div>
                 {!this.state.showAddAnotherCompetitionView && (
                     <div>
-                        {expiredRegistration == null ? 
+                        {expiredRegistration == null ?
                             <div>
                                 {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                                    <div>{this.competitionDetailView(competition,competitionIndex,getFieldDecorator)}</div>
+                                    <div>{this.competitionDetailView(competition, competitionIndex, getFieldDecorator)}</div>
                                 ))}
                             </div>
-                        : 
+                            :
                             <div>{this.expiredRegistrationView()}</div>
                         }
                     </div>
                 )}
-                {this.state.showAddAnotherCompetitionView ? 
+                {this.state.showAddAnotherCompetitionView ?
                     <div>{this.findAnotherCompetitionView()}</div>
-                    : 
+                    :
                     <div>
                         {expiredRegistration == null && (
                             <div className="orange-action-txt"
-                            style={{marginTop: "20px"}}
-                            onClick={() => this.setState({showAddAnotherCompetitionView: true,organisationId: null})}>+ {AppConstants.addAnotherCompetition}</div>
+                                style={{ marginTop: "20px" }}
+                                onClick={() => this.setState({ showAddAnotherCompetitionView: true, organisationId: null })}>+ {AppConstants.addAnotherCompetition}</div>
                         )}
                     </div>
                 }
@@ -1898,81 +1919,83 @@ class AppRegistrationFormNew extends Component{
     }
 
     addedParticipantWithProfileView = () => {
-        try{
+        try {
             let userRegistrationstate = this.props.userRegistrationState;
             let registrationObj = userRegistrationstate.registrationObj;
-            return(
+            return (
                 <div className="registration-form-view">
-                    <div className="row" style={{alignItems: "center"}}>
+                    <div className="row" style={{ alignItems: "center" }}>
                         {registrationObj.photoUrl ?
                             <div className="col-sm-1.5">
-                                <img 
-                                height="80px"
-                                width="80px"
-                                style={{borderRadius: "50%"}} 
-                                src={registrationObj.photoUrl}/> 
+                                <img
+                                    height="80px"
+                                    width="80px"
+                                    style={{ borderRadius: "50%" }}
+                                    src={registrationObj.photoUrl} />
                             </div>
-                        : 
+                            :
                             <div className="profile-default-img">
-                                {registrationObj.firstName.slice(0,1)}{registrationObj.lastName.slice(0,1)}
+                                {registrationObj.firstName.slice(0, 1)}{registrationObj.lastName.slice(0, 1)}
                             </div>
                         }
                         <div className="col">
-                            <div style={{fontWeight: "600",marginBottom: "5px"}}>{AppConstants.participant}</div>
-                            <div style={{display: "flex",flexWrap: "wrap"}}>
-                                <div className="form-heading" style={{textAlign: "start"}}>{registrationObj.firstName} {registrationObj.lastName}</div>
-                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "5px"}}
-                                onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                            <div style={{ fontWeight: "600", marginBottom: "5px" }}>{AppConstants.participant}</div>
+                            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                                <div className="form-heading" style={{ textAlign: "start" }}>{registrationObj.firstName} {registrationObj.lastName}</div>
+                                <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
+                                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}>
-                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"DD-MM-YYYY").format("DD/MM/YYYY")}
+                                <div style={{ fontWeight: "600", marginTop: "-5px" }}>
+                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "DD-MM-YYYY").format("DD/MM/YYYY")}
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
             )
-        }catch(ex){
-            console.log("Error in addedParticipantWithProfileView::"+ex);
+        } catch (ex) {
+            console.log("Error in addedParticipantWithProfileView::" + ex);
         }
     }
 
     findAnotherCompetitionView = () => {
         let { membershipProductInfo } = this.props.userRegistrationState;
         let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
-       
-        return(
+
+        return (
             <div className="registration-form-view">
-                <div style={{display: "flex",alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                     <div className="form-heading">{AppConstants.findACompetition}</div>
-                    <div className="orange-action-txt" 
-                    style={{marginLeft: "auto",paddingBottom: "7.5px"}}
-                    onClick={() => this.setState({showAddAnotherCompetitionView: false,organisationId: null})}>{AppConstants.cancel}</div>
+                    <div className="orange-action-txt"
+                        style={{ marginLeft: "auto", paddingBottom: "7.5px" }}
+                        onClick={() => this.setState({ showAddAnotherCompetitionView: false, organisationId: null })}>{AppConstants.cancel}</div>
                 </div>
 
                 <div className="light-grey-border-box">
                     <div className="row">
                         <div className="col">
-                            <InputWithHead 
-                                allowClear 
-                                heading={AppConstants.postCode} 
+                            <InputWithHead
+                                allowClear
+                                heading={AppConstants.postCode}
                                 value={this.state.postalCode}
-                                placeholder={AppConstants.postCode} 
-                                onChange={(e) => this.onChangeSetPostalCode( e.target.value)} 
+                                placeholder={AppConstants.postCode}
+                                onChange={(e) => this.onChangeSetPostalCode(e.target.value)}
                             />
                         </div>
-                        <div className="col" style={{alignSelf: "center"}}>
-                            <Button 
+                        <div className="col" style={{ alignSelf: "center" }}>
+                            <Button
                                 type="primary"
-                                style={{color: "white",textTransform: "uppercase",
-                                marginTop: "45px",float: "right",
-                                paddingLeft: "50px",paddingRight: "50px"}}
+                                style={{
+                                    color: "white", textTransform: "uppercase",
+                                    marginTop: "45px", float: "right",
+                                    paddingLeft: "50px", paddingRight: "50px"
+                                }}
                                 onClick={() => this.searchOrganisationByPostalCode()}
                                 className="open-reg-button">{AppConstants.search}</Button>
                         </div>
                     </div>
-                    <InputWithHead heading={AppConstants.organisationName}/>
+                    <InputWithHead heading={AppConstants.organisationName} />
                     <Select
                         showSearch
                         optionFilterProp="children"
@@ -1983,102 +2006,105 @@ class AppRegistrationFormNew extends Component{
                         ))}
                     </Select>
                     {organisationInfo && (
-                        <div style={{display: "flex",alignItems: "center",marginTop: "20px"}}>
-                            <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
-                            <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
+                        <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+                            <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
+                            <div style={{ width: "170px", marginLeft: "20px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                             {organisationInfo.mobileNumber && (
-                                <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                                <div style={{ marginLeft: "20px" }}><img className="icon-size-20" style={{ marginRight: "15px" }} src={AppImages.callAnswer} />{organisationInfo.mobileNumber}</div>
                             )}
                         </div>
                     )}
                 </div>
-                <div className="row" style={{marginTop: "30px"}}>
-                    {(this.state.competitions || []).map((competition,competitionIndex) => (
+                <div className="row" style={{ marginTop: "30px" }}>
+                    {(this.state.competitions || []).map((competition, competitionIndex) => (
                         <div className="col-md-6 col-sm-12 pointer"
-                        onClick={() => this.addAnotherCompetition(competition)}
-                        key={competition.competitionUniqueKey} 
-                        style={{marginBottom: "20px"}}>
-                            <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                                <div style={{height: "150px",
-                                display: "flex",
-                                justifyContent: "center",
-                                borderRadius: "10px 10px 0px 0px",
-                                margin: "-20px -20px -0px -20px",
-                                borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                    <img style={{height: "149px",borderRadius: "10px 10px 0px 0px"}} src={competition.heroImageUrl}/>
+                            onClick={() => this.addAnotherCompetition(competition)}
+                            key={competition.competitionUniqueKey}
+                            style={{ marginBottom: "20px" }}>
+                            <div style={{ border: "1px solid var(--app-f0f0f2)", borderRadius: "10px", padding: "20px" }}>
+                                <div style={{
+                                    height: "150px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    borderRadius: "10px 10px 0px 0px",
+                                    margin: "-20px -20px -0px -20px",
+                                    borderBottom: "1px solid var(--app-f0f0f2)"
+                                }}>
+                                    <img style={{ height: "149px", borderRadius: "10px 10px 0px 0px" }} src={competition.heroImageUrl} />
                                 </div>
-                                <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
+                                <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
                                 {this.state.organisationId == null && (
-                                    <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
+                                    <div style={{ fontWeight: "600", marginBottom: "5px" }}>{competition.organisationName}</div>
                                 )}
-                                <div style={{fontWeight: "600"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                <div style={{ fontWeight: "600" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                             </div>
                         </div>
                     ))}
                 </div>
-                {this.state.competitions?.length > 0 ? 
+                {this.state.competitions?.length > 0 ?
                     (
-                        <Pagination 
-                        onChange={(e) => this.pagingCompetitions(e)}
-                        pageSize={this.state.competitionsCountPerPage}
-                        current={this.state.currentCompetitions}
-                        style={{textAlign: "center"}} 
-                        total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
-                        itemRender={this.paginationItems}/>
-                    ) 
+                        <Pagination
+                            onChange={(e) => this.pagingCompetitions(e)}
+                            pageSize={this.state.competitionsCountPerPage}
+                            current={this.state.currentCompetitions}
+                            style={{ textAlign: "center" }}
+                            total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length}
+                            itemRender={this.paginationItems} />
+                    )
                     :
                     (
-                        <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                        <div className="form-heading" style={{ fontSize: "20px", justifyContent: "center" }}>{AppConstants.noCompetitionsForOrganisations}</div>
                     )
                 }
             </div>
         )
     }
 
-    competitionDetailView = (competition,competitionIndex,getFieldDecorator) => {
-        const {playerPositionList} = this.props.commonReducerState;
+    competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
+        const { playerPositionList } = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
-                            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
+            competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
         let organisationPhotos = this.getOrganisationPhotos(competition.organisationInfo.organisationPhotos);
-        return(
-            <div className="registration-form-view"  key={competitionIndex}>
+        return (
+            <div className="registration-form-view" key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
                     <div className="map-style">
-                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px",width: "100%"}} src={competitionInfo.heroImageUrl}/>
+                        <img style={{ height: "249px", borderRadius: "10px 10px 0px 0px", width: "100%" }} src={competitionInfo.heroImageUrl} />
                     </div>
                 )}
                 <div>
-                    <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
+                    <div className="row" style={competitionInfo.heroImageUrl ? { marginTop: "30px", marginLeft: "0px", marginRight: "0px" } : { marginLeft: "0px", marginRight: "0px" }}>
                         <div className="col-sm-1.5">
-                            <img className="profile-img" src={competitionInfo.compLogoUrl}/> 
+                            <img className="profile-img" src={competitionInfo.compLogoUrl} />
                         </div>
                         <div className="col">
-                            <div className="form-heading" style={{paddingBottom: "0px"}}>{competition.competitionInfo.organisationName}</div>
-                            <div style={{display: "flex",flexWrap: "wrap"}}>
-                                <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
-                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                onClick={() => this.findAnotherCompetition(competitionIndex)}>{competitionIndex == 0 ? AppConstants.findAnotherCompetition : AppConstants.cancel}</div>
+                            <div className="form-heading" style={{ paddingBottom: "0px" }}>{competition.competitionInfo.organisationName}</div>
+                            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                                <div style={{ textAlign: "start", fontWeight: "600", marginTop: "-5px" }}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
+                                <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "8px" }}
+                                    onClick={() => this.findAnotherCompetition(competitionIndex)}>{competitionIndex == 0 ? AppConstants.findAnotherCompetition : AppConstants.cancel}</div>
                             </div>
-                            <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
+                            <div style={{ fontWeight: "600", marginTop: "-5px" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <InputWithHead heading={AppConstants.registeringAs}/>
+                        <InputWithHead heading={AppConstants.registeringAs} />
+                        <span className="roles-text">{AppConstants.multpleRolesSelected}</span>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
-                            <Checkbox 
-                            checked={membershipProduct.isChecked}
-                            key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
-                            onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked,"products",competitionIndex,membershipProductIndex)}>
+                            <Checkbox
+                                checked={membershipProduct.isChecked}
+                                key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
+                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked, "products", competitionIndex, membershipProductIndex)}>
                                 {membershipProduct.shortName}</Checkbox>
                         ))}
 
                         {this.isPlayerActive(competition) && (
                             <div>
-                                <InputWithHead heading={AppConstants.registrationDivisions}/>
+                                <InputWithHead heading={AppConstants.registrationDivisions} />
                                 <div
-                                style={{marginBottom: "10px"}}>
-                                    {(competition.divisions || []).map((division,divisionIndex) => (
+                                    style={{ marginBottom: "10px" }}>
+                                    {(competition.divisions || []).map((division, divisionIndex) => (
                                         // <Tag 
                                         // key={division.competitionMembershipProductDivisionId + divisionIndex} 
                                         // style={{marginBottom: "10px"}}
@@ -2091,16 +2117,16 @@ class AppRegistrationFormNew extends Component{
                                             backgroundColor: "white",
                                             border: "1px solid var(--app-d9d9d9)",
                                             margin: "0px 10px 10px 0px"
-                                        }}>{division.divisionName} <span style={{cursor: "pointer",marginLeft: "5px",color: "var(--app-color)"}} onClick={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>&#10005;</span></span>
+                                        }}>{division.divisionName} <span style={{ cursor: "pointer", marginLeft: "5px", color: "var(--app-color)" }} onClick={(e) => this.onChangeSetCompetitionValue(e, "divisions", competitionIndex, divisionIndex)}>&#10005;</span></span>
                                     ))}
                                 </div>
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
-                                    onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex )}
-                                    >
+                                    onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex)}
+                                >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
-                                        <Option key={divisionInfo.competitionMembershipProductDivisionId + divisionInfoIndex} 
-                                        value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
+                                        <Option key={divisionInfo.competitionMembershipProductDivisionId + divisionInfoIndex}
+                                            value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
                                     ))}
                                 </Select>
                             </div>
@@ -2108,91 +2134,93 @@ class AppRegistrationFormNew extends Component{
 
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.totalCasualFees}/>
-                                <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                <InputWithHead heading={AppConstants.totalCasualFees} />
+                                <div className="form-heading">$60.00<span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span></div>
                             </div>
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.totalSeasonalFees}/>
-                                <div className="form-heading">$120.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                <InputWithHead heading={AppConstants.totalSeasonalFees} />
+                                <div className="form-heading">$120.00<span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span></div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="row" style={{marginTop: "20px"}}>
+                    <div className="row" style={{ marginTop: "20px" }}>
                         <div className="col-sm-12 col-md-4">
                             {/* <InputWithHead heading={AppConstants.training}/> */}
                             <div className="input-style-bold">{AppConstants.training}</div>
-                            <div 
-                            className="inter-medium-font" 
-                            style={{fontSize: "13px"}}>{competition.competitionInfo.training ? 
-                                competition.competitionInfo.training : 
-                                AppConstants.noInformationProvided}
+                            <div
+                                className="inter-medium-font"
+                                style={{ fontSize: "13px" }}>{competition.competitionInfo.training ?
+                                    competition.competitionInfo.training :
+                                    AppConstants.noInformationProvided}
                             </div>
                             {/* <InputWithHead heading={AppConstants.specialNotes}/> */}
                             <div className="input-style-bold">{AppConstants.specialNotes}</div>
-                            <div 
-                            className="inter-medium-font" 
-                            style={{fontSize: "13px"}}>{competition.competitionInfo.specialNote ? 
-                                competition.competitionInfo.specialNote : 
-                                AppConstants.noInformationProvided}
-                            </div>                                    
+                            <div
+                                className="inter-medium-font"
+                                style={{ fontSize: "13px" }}>{competition.competitionInfo.specialNote ?
+                                    competition.competitionInfo.specialNote :
+                                    AppConstants.noInformationProvided}
+                            </div>
                             {/* <InputWithHead heading={AppConstants.venue}/> */}
                             <div className="input-style-bold">{AppConstants.venue}</div>
-                            <div 
-                            className="inter-medium-font" 
-                            style={{fontSize: "13px"}}>
+                            <div
+                                className="inter-medium-font"
+                                style={{ fontSize: "13px" }}>
                                 {competitionInfo.venues == null || competitionInfo.venues.length == 0 ? AppConstants.noInformationProvided :
                                     <span>
-                                        {(competitionInfo.venues || []).map((v, vIndex) =>(
+                                        {(competitionInfo.venues || []).map((v, vIndex) => (
                                             <span>
                                                 <span>{v.venueName}</span>
-                                                <span>{competitionInfo.venues.length != (vIndex + 1) ? ', ': ''}</span>
+                                                <span>{competitionInfo.venues.length != (vIndex + 1) ? ', ' : ''}</span>
                                             </span>
                                         ))}
                                     </span>
                                 }
-                            </div> 
+                            </div>
                             {/* <InputWithHead heading={AppConstants.contactDetails}/> */}
                             <div className="input-style-bold">{AppConstants.contactDetails}</div>
-                            <div  className="inter-medium-font" style={{fontSize: "13px"}}>{contactDetails ? contactDetails : 
+                            <div className="inter-medium-font" style={{ fontSize: "13px" }}>{contactDetails ? contactDetails :
                                 AppConstants.noInformationProvided}
-                            </div> 
+                            </div>
                         </div>
                         <div className="col-sm-12 col-md-8">
                             <Carousel autoplay
-                                style={{marginTop: "16px",
-                                height: "160px",
-                                borderRadius: "10px",
-                                display: "flex"}}>
-                               {(organisationPhotos || []).map((photo,photoIndex) => (
-                                     <div>
-                                        <div style={{display: "flex",justifyContent: "flex-end"}}>
+                                style={{
+                                    marginTop: "16px",
+                                    height: "160px",
+                                    borderRadius: "10px",
+                                    display: "flex"
+                                }}>
+                                {(organisationPhotos || []).map((photo, photoIndex) => (
+                                    <div>
+                                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
                                             <div>
-                                                <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo.photoType1}</div>
-                                                <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
+                                                <div className="font-bold-carosal" style={{ marginTop: "-21px", marginBottom: "10px" }}>{photo.photoType1}</div>
+                                                <img style={{ height: "158px", margin: "auto", fontWeight: "500" }} src={photo.photoUrl1} />
                                             </div>
-                                            <div style={{marginLeft: "25px"}}>
-                                                <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo?.photoType2}</div>
-                                                <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
+                                            <div style={{ marginLeft: "25px" }}>
+                                                <div className="font-bold-carosal" style={{ marginTop: "-21px", marginBottom: "10px" }}>{photo?.photoType2}</div>
+                                                <img style={{ height: "158px", margin: "auto", fontWeight: "500" }} src={photo?.photoUrl2} />
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                            </Carousel> 
+                            </Carousel>
                         </div>
                     </div>
-                    
+
                     {competition.regSetting.nominate_positions == 1 && this.isPlayerActive(competition) && (
                         <div>
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.indicatePreferredPlayerPosition}</div>
+                            <div className="form-heading" style={{ marginTop: "30px" }}>{AppConstants.indicatePreferredPlayerPosition}</div>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead heading={AppConstants.position1} />
                                     <Select
                                         style={{ width: "100%", paddingRight: 1 }}
-                                        onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId1", competitionIndex)}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e, "positionId1", competitionIndex)}
                                         value={competition.positionId1}
-                                        >
+                                    >
                                         {(playerPositionList || []).map((play1, index) => (
                                             <Option key={play1.id} value={play1.id}>{play1.name}</Option>
                                         ))}
@@ -2202,9 +2230,9 @@ class AppRegistrationFormNew extends Component{
                                     <InputWithHead heading={AppConstants.position2} />
                                     <Select
                                         style={{ width: "100%", paddingRight: 1 }}
-                                        onChange={(e) => this.onChangeSetCompetitionValue(e,"positionId2", competitionIndex)}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e, "positionId2", competitionIndex)}
                                         value={competition.positionId2}
-                                        >
+                                    >
                                         {(playerPositionList || []).map((play2, index) => (
                                             <Option key={play2.id} value={play2.id}>{play2.name}</Option>
                                         ))}
@@ -2216,122 +2244,122 @@ class AppRegistrationFormNew extends Component{
 
                     {competition.regSetting.play_friend == 1 && this.isPlayerActive(competition) && (
                         <div>
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.playWithFriend}</div>
+                            <div className="form-heading" style={{ marginTop: "30px" }}>{AppConstants.playWithFriend}</div>
                             <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
-                                {(competition.friends || []).map((friend,friendIndex) => (
-                                    <div className="light-grey-border-box">
-                                        {competition.friends.length != 1 && (
-                                            <div 
-                                                className="orange-action-txt" 
-                                                style={{marginTop: "20px"}}
-                                                onClick={e => this.addFriend("remove",competitionIndex,friendIndex)}>
-                                                    {AppConstants.cancel}
-                                            </div>
-                                        )}
-                                        <div className="form-heading" style={{marginTop: "20px"}}>{AppConstants.friend} {friendIndex + 1}</div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead 
-                                                    heading={AppConstants.firstName} 
-                                                    placeholder={AppConstants.firstName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"firstName",competitionIndex,friendIndex,"friends")} 
-                                                    value={friend.firstName}            
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead 
-                                                    heading={AppConstants.middleName} 
-                                                    placeholder={AppConstants.middleName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue(e.target.value,"middleName",competitionIndex,friendIndex,"friends")} 
-                                                    value={friend.middleName}
-                                                />
-                                            </div>
-                                            <div className="col-md-12">
-                                                <InputWithHead 
-                                                    heading={AppConstants.lastName} 
-                                                    placeholder={AppConstants.lastName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value), "lastName",competitionIndex, friendIndex, "friends")} 
-                                                    value={friend.lastName}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value, "mobileNumber",competitionIndex, friendIndex, "friends")} 
-                                                    value={friend.mobileNumber}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value, "email",competitionIndex, friendIndex, "friends")}  
-                                                    value={friend.email}
-                                                />
-                                            </div>
-                                        </div> 
+                            {(competition.friends || []).map((friend, friendIndex) => (
+                                <div className="light-grey-border-box">
+                                    {competition.friends.length != 1 && (
+                                        <div
+                                            className="orange-action-txt"
+                                            style={{ marginTop: "20px" }}
+                                            onClick={e => this.addFriend("remove", competitionIndex, friendIndex)}>
+                                            {AppConstants.cancel}
+                                        </div>
+                                    )}
+                                    <div className="form-heading" style={{ marginTop: "20px" }}>{AppConstants.friend} {friendIndex + 1}</div>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead
+                                                heading={AppConstants.firstName}
+                                                placeholder={AppConstants.firstName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(captializedString(e.target.value), "firstName", competitionIndex, friendIndex, "friends")}
+                                                value={friend.firstName}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead
+                                                heading={AppConstants.middleName}
+                                                placeholder={AppConstants.middleName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "middleName", competitionIndex, friendIndex, "friends")}
+                                                value={friend.middleName}
+                                            />
+                                        </div>
+                                        <div className="col-md-12">
+                                            <InputWithHead
+                                                heading={AppConstants.lastName}
+                                                placeholder={AppConstants.lastName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(captializedString(e.target.value), "lastName", competitionIndex, friendIndex, "friends")}
+                                                value={friend.lastName}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber", competitionIndex, friendIndex, "friends")}
+                                                value={friend.mobileNumber}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email", competitionIndex, friendIndex, "friends")}
+                                                value={friend.email}
+                                            />
+                                        </div>
                                     </div>
-                                ))}
-                            <div 
-                                className="orange-action-txt" 
-                                style={{marginTop: "15px"}}
-                                onClick={e => this.addFriend("add",competitionIndex)}>+ {AppConstants.addfriend}
+                                </div>
+                            ))}
+                            <div
+                                className="orange-action-txt"
+                                style={{ marginTop: "15px" }}
+                                onClick={e => this.addFriend("add", competitionIndex)}>+ {AppConstants.addfriend}
                             </div>
                         </div>
                     )}
 
                     {competition.regSetting.refer_friend == 1 && this.isPlayerActive(competition) && (
                         <div>
-                            <div className="form-heading" style={{marginTop: "30px"}}>{AppConstants.referfriend}</div>
+                            <div className="form-heading" style={{ marginTop: "30px" }}>{AppConstants.referfriend}</div>
                             <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
-                                {(competition.referFriends || []).map((referFriend,referFriendIndex) => (
-                                    <div className="light-grey-border-box">
-                                        {competition.referFriends.length != 1 && (
-                                            <div 
-                                                className="orange-action-txt" 
-                                                style={{marginTop: "20px"}}
-                                                onClick={e => this.addReferFriend("remove",competitionIndex,referFriendIndex)}>
-                                                    {AppConstants.cancel}
-                                            </div>
-                                        )}
-                                        <div className="form-heading" style={{marginTop: "20px"}}>{AppConstants.friend} {referFriendIndex + 1}</div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"firstName",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.firstName}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.middleName} placeholder={AppConstants.middleName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"middleName",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.middleName}
-                                                />
-                                            </div>
-                                            <div className="col-md-12">
-                                                <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( captializedString(e.target.value),"lastName",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.lastName}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value,"mobileNumber",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.mobileNumber}
-                                                />
-                                            </div>
-                                            <div className="col-sm-12 col-md-6">
-                                                <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email} 
-                                                    onChange={(e) => this.onChangeSetCompetitionValue( e.target.value,"email",competitionIndex,referFriendIndex,"referFriends")} 
-                                                    value={referFriend.email}
-                                                />
-                                            </div>
-                                        </div> 
+                            {(competition.referFriends || []).map((referFriend, referFriendIndex) => (
+                                <div className="light-grey-border-box">
+                                    {competition.referFriends.length != 1 && (
+                                        <div
+                                            className="orange-action-txt"
+                                            style={{ marginTop: "20px" }}
+                                            onClick={e => this.addReferFriend("remove", competitionIndex, referFriendIndex)}>
+                                            {AppConstants.cancel}
+                                        </div>
+                                    )}
+                                    <div className="form-heading" style={{ marginTop: "20px" }}>{AppConstants.friend} {referFriendIndex + 1}</div>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.firstName} placeholder={AppConstants.firstName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(captializedString(e.target.value), "firstName", competitionIndex, referFriendIndex, "referFriends")}
+                                                value={referFriend.firstName}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.middleName} placeholder={AppConstants.middleName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(captializedString(e.target.value), "middleName", competitionIndex, referFriendIndex, "referFriends")}
+                                                value={referFriend.middleName}
+                                            />
+                                        </div>
+                                        <div className="col-md-12">
+                                            <InputWithHead heading={AppConstants.lastName} placeholder={AppConstants.lastName}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(captializedString(e.target.value), "lastName", competitionIndex, referFriendIndex, "referFriends")}
+                                                value={referFriend.lastName}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.phone} placeholder={AppConstants.phone}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "mobileNumber", competitionIndex, referFriendIndex, "referFriends")}
+                                                value={referFriend.mobileNumber}
+                                            />
+                                        </div>
+                                        <div className="col-sm-12 col-md-6">
+                                            <InputWithHead heading={AppConstants.email} placeholder={AppConstants.email}
+                                                onChange={(e) => this.onChangeSetCompetitionValue(e.target.value, "email", competitionIndex, referFriendIndex, "referFriends")}
+                                                value={referFriend.email}
+                                            />
+                                        </div>
                                     </div>
-                                ))}
-                            <div 
-                            className="orange-action-txt" 
-                            style={{marginTop: "15px"}}
-                            onClick={e => this.addReferFriend("add",competitionIndex)}>+ {AppConstants.addfriend}</div>
+                                </div>
+                            ))}
+                            <div
+                                className="orange-action-txt"
+                                style={{ marginTop: "15px" }}
+                                onClick={e => this.addReferFriend("add", competitionIndex)}>+ {AppConstants.addfriend}</div>
                         </div>
-                    )}	 
+                    )}
                 </div>
             </div>
         )
@@ -2340,34 +2368,34 @@ class AppRegistrationFormNew extends Component{
     expiredRegistrationView = () => {
         const { expiredRegistration } = this.props.userRegistrationState;
         console.log(expiredRegistration);
-        return(
+        return (
             <div className="registration-form-view">
                 {expiredRegistration.heroImageUrl && (
                     <div className="map-style">
-                        <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={expiredRegistration.heroImageUrl}/>
+                        <img style={{ height: "249px", borderRadius: "10px 10px 0px 0px" }} src={expiredRegistration.heroImageUrl} />
                     </div>
                 )}
-                <div className="row" style={expiredRegistration.heroImageUrl ? 
-                {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : 
-                {marginLeft: "0px",marginRight: "0px"}}>
+                <div className="row" style={expiredRegistration.heroImageUrl ?
+                    { marginTop: "30px", marginLeft: "0px", marginRight: "0px" } :
+                    { marginLeft: "0px", marginRight: "0px" }}>
                     <div className="col-sm-1.5">
-                        <img style={{height: "60px",width: "60px",borderRadius: "50%"}} 
-                        src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser}/> 
+                        <img style={{ height: "60px", width: "60px", borderRadius: "50%" }}
+                            src={expiredRegistration.compLogoUrl ? expiredRegistration.compLogoUrl : AppImages.defaultUser} />
                     </div>
                     <div className="col">
-                        <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
-                        <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                        <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                        <div className="form-heading" style={{ paddingBottom: "0px" }}>{expiredRegistration.organisationName}</div>
+                        <div style={{ fontWeight: "600", color: "black" }}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
+                        <div style={{ fontWeight: "600", marginTop: "5px" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                     </div>
                 </div>
-                <div className="light-grey-border-box" style={{textAlign: "center"}}>
-                    <div className="form-heading" 
-                    style={{marginTop: "30px",justifyContent:"center",marginBottom: "5px"}}>{expiredRegistration.validateMessage}</div>
-                    <Button 
-                    type="primary"
-                    style={{color: "white",textTransform: "uppercase"}}
-                    onClick={() => this.findAnotherCompetition(0)}
-                    className="open-reg-button">{AppConstants.findAnotherCompetition}</Button>
+                <div className="light-grey-border-box" style={{ textAlign: "center" }}>
+                    <div className="form-heading"
+                        style={{ marginTop: "30px", justifyContent: "center", marginBottom: "5px" }}>{expiredRegistration.validateMessage}</div>
+                    <Button
+                        type="primary"
+                        style={{ color: "white", textTransform: "uppercase" }}
+                        onClick={() => this.findAnotherCompetition(0)}
+                        className="open-reg-button">{AppConstants.findAnotherCompetition}</Button>
                 </div>
             </div>
         )
@@ -2375,37 +2403,39 @@ class AppRegistrationFormNew extends Component{
 
     additionalInfoStepView = (getFieldDecorator) => {
         const { registrationObj } = this.props.userRegistrationState;
-        return(
+        return (
             <div>
-                {registrationObj != null && (<div>{this.addedParticipantWithProfileView()}</div> )}
-                
-                {(registrationObj != null && registrationObj.competitions || []).map((competition,competitionIndex) => (
-                    <div>{this.additionalInfoAddCompetitionView(competition,competitionIndex)}</div>
+                {registrationObj != null && (<div>{this.addedParticipantWithProfileView()}</div>)}
+
+                {(registrationObj != null && registrationObj.competitions || []).map((competition, competitionIndex) => (
+                    <div>{this.additionalInfoAddCompetitionView(competition, competitionIndex)}</div>
                 ))}
                 <div>{this.additionalPersonalInfoView(getFieldDecorator)}</div>
             </div>
         )
     }
 
-    additionalInfoAddCompetitionView = (competition,competitionIndex) => {
-        return(
+    additionalInfoAddCompetitionView = (competition, competitionIndex) => {
+        return (
             <div className="registration-form-view">
-                <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
+                <div className="row" style={{ marginLeft: "0px", marginRight: "0px" }}>
                     <div className="col-sm-1.5">
-                        <img style={{height: "60px",borderRadius: "50%"}} src={competition.competitionInfo.compLogoUrl}/> 
+                        <img style={{ height: "60px", borderRadius: "50%" }} src={competition.competitionInfo.compLogoUrl} />
                     </div>
                     <div className="col">
-                        <div className="form-heading" style={{paddingBottom: "0px"}}>{competition.competitionInfo.organisationName}</div>
-                        <div style={{display: "flex",flexWrap: "wrap"}}>
-                            <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
-                            <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                            onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
+                        <div className="form-heading" style={{ paddingBottom: "0px" }}>{competition.competitionInfo.organisationName}</div>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                            <div style={{ textAlign: "start", fontWeight: "600", marginTop: "-5px" }}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
+                            <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "8px" }}
+                                onClick={() => this.setState({ currentStep: 1 })}>{AppConstants.edit}</div>
                         </div>
-                        <div style={{fontWeight: "600",marginTop: "-5px",
-                        display: "flex",alignItems: "center"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate} 
+                        <div style={{
+                            fontWeight: "600", marginTop: "-5px",
+                            display: "flex", alignItems: "center"
+                        }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}
                             <div >
-                                <img className="icon-size-25" style={{marginRight: "5px",marginLeft: "25px"}} src={AppImages.participant}/>
-                                {(competition.products || []).map((product,productIndex) => (
+                                <img className="icon-size-25" style={{ marginRight: "5px", marginLeft: "25px" }} src={AppImages.participant} />
+                                {(competition.products || []).map((product, productIndex) => (
                                     <span>
                                         <span>{product.membershipTypeName}</span>
                                         <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
@@ -2413,7 +2443,7 @@ class AppRegistrationFormNew extends Component{
                                 ))}
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -2421,109 +2451,109 @@ class AppRegistrationFormNew extends Component{
     }
 
     walkingNetballQuestions = () => {
-        try{
+        try {
             const { registrationObj } = this.props.userRegistrationState;
-            return(
+            return (
                 <div>
                     <InputWithHead
-                    required={"pt-0"}
-                    heading={AppConstants.haveHeartTrouble}/>
+                        required={"pt-0"}
+                        heading={AppConstants.haveHeartTrouble} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"haveHeartTrouble","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveHeartTrouble", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.haveHeartTrouble}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.havePainInHeartOrChest}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "havePainInHeartOrChest","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "havePainInHeartOrChest", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.havePainInHeartOrChest}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.haveSpellsOfServerDizziness}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveSpellsOfServerDizziness","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveSpellsOfServerDizziness", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.haveSpellsOfServerDizziness}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.hasBloodPressureHigh}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBloodPressureHigh","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBloodPressureHigh", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.hasBloodPressureHigh}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.hasBoneProblems}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBoneProblems","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBoneProblems", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.hasBoneProblems}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.whyShouldNotTakePhysicalActivity}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "whyShouldNotTakePhysicalActivity","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "whyShouldNotTakePhysicalActivity", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.whyShouldNotTakePhysicalActivity}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.pregnentInLastSixMonths}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnentInLastSixMonths","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnentInLastSixMonths", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.pregnentInLastSixMonths}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     <div className="input-style">{AppConstants.sufferAnyProblems}</div>
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "sufferAnyProblems","walkingNetball")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "sufferAnyProblems", "walkingNetball")}
                         value={registrationObj.additionalInfo.walkingNetball.sufferAnyProblems}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                 </div>
             )
-        }catch(ex){
-            console.log("Error in walkingNetballQuestions::"+ex);
+        } catch (ex) {
+            console.log("Error in walkingNetballQuestions::" + ex);
         }
     }
 
     additionalPersonalInfoView = (getFieldDecorator) => {
-        try{
+        try {
             const { registrationObj } = this.props.userRegistrationState;
-            const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
-                firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
-            let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
+            const { countryList, identifyAsList, disabilityList, favouriteTeamsList,
+                firebirdPlayerList, otherSportsList, heardByList, accreditationUmpireList, accreditationCoachList, walkingNetballQuesList } = this.props.commonReducerState;
+            let yearsOfPlayingList = [{ years: '2' }, { years: '3' }, { years: '4' }, { years: '5' }, { years: '6' }, { years: '7' }, { years: '8' }, { years: '9' }, { years: '10+' }];
             let walkingNetballQuesKeys = Object.keys(registrationObj.additionalInfo.walkingNetball);
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => registrationObj.additionalInfo.walkingNetball[key] == 1);
             let hasOtherParticipantSports = registrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
-            return(
-                <div className="registration-form-view"> 
+            return (
+                <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
                     <div className="input-style">{AppConstants.whichCountryWereBorn}</div>
                     {/* <InputWithHead heading={AppConstants.whichCountryWereBorn}/> */}
                     <Select
                         style={{ width: "100%" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "countryRefId")}
                         value={registrationObj.additionalInfo.countryRefId}>
                         {countryList.length > 0 && countryList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
@@ -2533,9 +2563,9 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.doYouIdentifyAs}/> */}
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
                         value={registrationObj.additionalInfo.identifyRefId}
-                        >
+                    >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
@@ -2544,7 +2574,7 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/> */}
                     <TextArea
                         placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "existingMedicalCondition")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "existingMedicalCondition")}
                         value={registrationObj.additionalInfo.existingMedicalCondition}
                         allowClear
                     />
@@ -2552,7 +2582,7 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  /> */}
                     <TextArea
                         placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "regularMedication")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "regularMedication")}
                         value={registrationObj.additionalInfo.regularMedication}
                         allowClear
                     />
@@ -2560,7 +2590,7 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.injury}/> */}
                     <TextArea
                         placeholder={AppConstants.anyInjury}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "injuryInfo")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "injuryInfo")}
                         value={registrationObj.additionalInfo.injuryInfo}
                         allowClear
                     />
@@ -2568,7 +2598,7 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.alergy}/> */}
                     <TextArea
                         placeholder={AppConstants.anyAlergies}
-                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "allergyInfo")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
                         value={registrationObj.additionalInfo.allergyInfo}
                         allowClear
                     />
@@ -2576,31 +2606,31 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.haveDisability} /> */}
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
                         value={registrationObj.additionalInfo.isDisability}
-                        >
+                    >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    {registrationObj.additionalInfo.isDisability == 1 ? 
+                    {registrationObj.additionalInfo.isDisability == 1 ?
                         <div>
                             <div className="input-style">{AppConstants.disabilityCareNumber}</div>
-                            <InputWithHead 
-                            // heading={AppConstants.disabilityCareNumber} 
-                            placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "disabilityCareNumber")}
-                            value={registrationObj.additionalInfo.disabilityCareNumber}/>
+                            <InputWithHead
+                                // heading={AppConstants.disabilityCareNumber} 
+                                placeholder={AppConstants.disabilityCareNumber}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityCareNumber")}
+                                value={registrationObj.additionalInfo.disabilityCareNumber} />
                             <div className="input-style">{AppConstants.typeOfDisability}</div>
                             {/* <InputWithHead heading={AppConstants.typeOfDisability} /> */}
                             <Radio.Group
                                 className="reg-competition-radio"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
                                 value={registrationObj.additionalInfo.disabilityTypeRefId}>
-                                    {(disabilityList || []).map((dis, disIndex) => (
+                                {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
                                 ))}
                             </Radio.Group>
-                        </div> 
+                        </div>
                         : null
                     }
                     <div className="row">
@@ -2612,7 +2642,7 @@ class AppRegistrationFormNew extends Component{
                                 style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteTeamRefId")}
                                 value={registrationObj.additionalInfo.favouriteTeamRefId}
-                                >  
+                            >
                                 {(favouriteTeamsList || []).map((fav, index) => (
                                     <Option key={fav.id} value={fav.id}>{fav.description}</Option>
                                 ))}
@@ -2627,7 +2657,7 @@ class AppRegistrationFormNew extends Component{
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
                                     value={registrationObj.additionalInfo.favouriteFireBird}
-                                    >  
+                                >
                                     {(firebirdPlayerList || []).map((fire, index) => (
                                         <Option key={fire.id} value={fire.id}>{fire.description}</Option>
                                     ))}
@@ -2642,24 +2672,24 @@ class AppRegistrationFormNew extends Component{
                     )}
                     {(registrationObj.registeringYourself == 1 && (getAge(registrationObj.dateOfBirth) >= 18)) && (
                         <div className="input-style">{AppConstants.playingOtherParticipantSports}</div>
-                                        // <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                        // <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
                     )}
                     <Select
                         mode="multiple"
                         showArrow
-                        style={{ width: "100%",paddingTop: "-20px"}}
+                        style={{ width: "100%", paddingTop: "-20px" }}
                         placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "otherSportsInfo")}
                         value={registrationObj.additionalInfo.otherSportsInfo}>
                         {otherSportsList.length > 0 && otherSportsList.map((item) => (
                             < Option key={item.id} value={item.id}> {item.description}</Option>
                         ))}
                     </Select>
                     {hasOtherParticipantSports && (
-                        <div style={{marginTop: "20px"}}>
-                            <InputWithHead 
-                                placeholder={AppConstants.pleaseSpecify} 
-                                onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"otherSports")} 
+                        <div style={{ marginTop: "20px" }}>
+                            <InputWithHead
+                                placeholder={AppConstants.pleaseSpecify}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "otherSports")}
                                 value={registrationObj.additionalInfo.otherSports}
                             />
                         </div>
@@ -2673,19 +2703,19 @@ class AppRegistrationFormNew extends Component{
                     {/* <InputWithHead heading={AppConstants.hearAbouttheCompition} /> */}
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
                         value={registrationObj.additionalInfo.heardByRefId}
-                        >
+                    >
                         {(heardByList || []).map((heard, index) => (
-                            <Radio style={{marginBottom: "10px"}} key={heard.id} value={heard.id}>{heard.description}</Radio>
+                            <Radio style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
                         ))}
                     </Radio.Group>
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
-                        <div style={{marginTop: "10px"}}>
-                            <InputWithHead 
-                            placeholder={AppConstants.pleaseSpecify} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value, "heardByOther")}
-                            value={registrationObj.additionalInfo.heardByOther}/>
+                        <div style={{ marginTop: "10px" }}>
+                            <InputWithHead
+                                placeholder={AppConstants.pleaseSpecify}
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByOther")}
+                                value={registrationObj.additionalInfo.heardByOther} />
                         </div>
                     )}
                     {/* <Checkbox
@@ -2696,13 +2726,13 @@ class AppRegistrationFormNew extends Component{
 
                     {registrationObj.regSetting.netball_experience == 1 && (
                         <div>
-                            <div className="input-style" style={{marginTop:"-8px"}}>{AppConstants.firstYearPlayingNetball}</div>
+                            <div className="input-style" style={{ marginTop: "-8px" }}>{AppConstants.firstYearPlayingNetball}</div>
                             {/* <InputWithHead heading={AppConstants.firstYearPlayingNetball} /> */}
                             <Radio.Group
                                 className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")}
                                 value={registrationObj.additionalInfo.isYearsPlayed}
-                                >
+                            >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
@@ -2711,10 +2741,10 @@ class AppRegistrationFormNew extends Component{
                                     <div className="input-style">{AppConstants.yearsOfPlayingNetball}</div>
                                     <Select
                                         placeholder={AppConstants.yearsOfPlaying}
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
                                         defaultValue={registrationObj.additionalInfo.yearsPlayed ? registrationObj.additionalInfo.yearsPlayed : '2'}
-                                        >  
+                                    >
                                         {(yearsOfPlayingList || []).map((item, index) => (
                                             <Option key={item.years} value={item.years}>{item.years}</Option>
                                         ))}
@@ -2737,31 +2767,31 @@ class AppRegistrationFormNew extends Component{
                                         // <InputWithHead heading={AppConstants.schoolYouAttend} />
                                     )}
                                     <Select
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
                                         value={registrationObj.additionalInfo.schoolId}
-                                        >  
+                                    >
                                         {/* {(yearsOfPlayingList || []).map((years, index) => (
                                             <Option key={years} value={years}>{years}</Option>
                                         ))} */}
-                                    </Select> 
+                                    </Select>
                                 </div>
                             )}
 
                             {registrationObj.regSetting.school_grade == 1 && (
                                 <div>
-                                  <div className="input-style">{(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
-                                      || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)}
+                                    <div className="input-style">{(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade)
+                                        || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)}
                                     </div>
-                                    <InputWithHead 
+                                    <InputWithHead
                                         // heading={(registrationObj.registeringYourself == 2 && AppConstants.yourChildSchoolGrade) 
                                         //     || (registrationObj.registeringYourself == 1 && AppConstants.yourSchoolGrade)} 
-                                        placeholder={AppConstants.schoolGrade} 
-                                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"schoolGradeInfo")} 
+                                        placeholder={AppConstants.schoolGrade}
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "schoolGradeInfo")}
                                         value={registrationObj.additionalInfo.schoolGradeInfo}
                                     />
                                 </div>
-                              
+
                             )}
 
                             {registrationObj.regSetting.school_program == 1 && (
@@ -2770,9 +2800,9 @@ class AppRegistrationFormNew extends Component{
                                     {/* <InputWithHead heading={AppConstants.participatedSchoolProgram}/> */}
                                     <Radio.Group
                                         className="registration-radio-group"
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")} 
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")}
                                         value={registrationObj.additionalInfo.isParticipatedInSSP}
-                                        >
+                                    >
                                         <Radio value={1}>{AppConstants.yes}</Radio>
                                         <Radio value={0}>{AppConstants.no}</Radio>
                                     </Radio.Group>
@@ -2789,70 +2819,70 @@ class AppRegistrationFormNew extends Component{
                                 {/* <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire}/> */}
                                 <Radio.Group
                                     className="registration-radio-group"
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")}
                                     value={registrationObj.additionalInfo.accreditationLevelUmpireRefId}
-                                    >
-                                    {(accreditationUmpireList || []).map((accreditaiton,accreditationIndex) => (
+                                >
+                                    {(accreditationUmpireList || []).map((accreditaiton, accreditationIndex) => (
                                         <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
                                 {(registrationObj.additionalInfo.accreditationLevelUmpireRefId != null) && (
                                     <div>
-                                        {registrationObj.additionalInfo.accreditationLevelUmpireRefId == 1 ? 
+                                        {registrationObj.additionalInfo.accreditationLevelUmpireRefId == 1 ?
                                             <div>
                                                 <div className="input-style">{AppConstants.newToUmpiring}</div>
                                                 {/* <InputWithHead heading={AppConstants.newToUmpiring}/> */}
                                                 <Radio.Group
                                                     className="registration-radio-group"
-                                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "newToUmpiring")} 
+                                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "newToUmpiring")}
                                                     value={registrationObj.additionalInfo.newToUmpiring}
-                                                    >
+                                                >
                                                     <Radio value={1}>{AppConstants.yes}</Radio>
                                                     <Radio value={0}>{AppConstants.no}</Radio>
                                                 </Radio.Group>
                                                 {(registrationObj.additionalInfo.newToUmpiring == 0) && (
                                                     <div>
                                                         <div className="input-style">{AppConstants.yourAssociationLevel}</div>
-                                                        <InputWithHead 
-                                                        // heading={AppConstants.yourAssociationLevel}
-                                                        placeholder={AppConstants.associationLevel} 
-                                                        onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"associationLevelInfo")} 
-                                                        value={registrationObj.additionalInfo.associationLevelInfo}
+                                                        <InputWithHead
+                                                            // heading={AppConstants.yourAssociationLevel}
+                                                            placeholder={AppConstants.associationLevel}
+                                                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "associationLevelInfo")}
+                                                            value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
                                                         {(registrationObj.additionalInfo.associationLevelInfo != null && registrationObj.additionalInfo.associationLevelInfo.length > 0) && (
                                                             <DatePicker
-                                                            size="large"
-                                                            placeholder={AppConstants.expiryDate}
-                                                            style={{ width: "100%",marginTop: "20px" }}
-                                                            onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate") }
-                                                            format={"DD-MM-YYYY"}
-                                                            showTime={false}
-                                                            value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}/>
+                                                                size="large"
+                                                                placeholder={AppConstants.expiryDate}
+                                                                style={{ width: "100%", marginTop: "20px" }}
+                                                                onChange={(e, f) => this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate")}
+                                                                format={"DD-MM-YYYY"}
+                                                                showTime={false}
+                                                                value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "YYYY-MM-DD")} />
                                                         )}
-                                                       
+
                                                     </div>
                                                 )}
                                             </div>
-                                        : 
+                                            :
                                             <DatePicker
                                                 size="large"
                                                 placeholder={AppConstants.expiryDate}
-                                                style={{ width: "100%",marginTop: "20px" }}
-                                                onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate") }
+                                                style={{ width: "100%", marginTop: "20px" }}
+                                                onChange={(e, f) => this.onChangeSetAdditionalInfo(f, "accreditationUmpireExpiryDate")}
                                                 format={"DD-MM-YYYY"}
                                                 showTime={false}
-                                                value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate,"YYYY-MM-DD")}
+                                                value={registrationObj.additionalInfo.accreditationUmpireExpiryDate && moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "YYYY-MM-DD")}
                                             />
                                         }
-                                    </div> 
+                                    </div>
                                 )}
                                 <div className="input-style">{AppConstants.haveCompletedPrerequisites}</div>
                                 {/* <InputWithHead heading={AppConstants.haveCompletedPrerequisites}/> */}
                                 <Radio.Group
                                     className="registration-radio-group"
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")}
                                     value={registrationObj.additionalInfo.isPrerequestTrainingComplete}
-                                    >
+                                >
                                     <Radio value={1}>{AppConstants.yes}</Radio>
                                     <Radio value={0}>{AppConstants.no}</Radio>
                                 </Radio.Group>
@@ -2864,49 +2894,49 @@ class AppRegistrationFormNew extends Component{
                                 <div className="input-style">{AppConstants.nationalAccreditationLevelCoach}</div>
                                 {/* <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/> */}
                                 <Radio.Group
-                                    style={{flexDirection: "column"}}
+                                    style={{ flexDirection: "column" }}
                                     className="registration-radio-group"
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelCoachRefId")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelCoachRefId")}
                                     value={registrationObj.additionalInfo.accreditationLevelCoachRefId}
-                                    >
-                                    {(accreditationCoachList || []).map((accreditaiton,accreditationIndex) => (
-                                        <Radio style={{marginBottom: "10px"}} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                >
+                                    {(accreditationCoachList || []).map((accreditaiton, accreditationIndex) => (
+                                        <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
                                 {(registrationObj.additionalInfo.accreditationLevelCoachRefId != 1 && registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
-                                        style={{ width: "100%",marginTop: "20px" }}
-                                        onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationCoachExpiryDate") }
+                                        style={{ width: "100%", marginTop: "20px" }}
+                                        onChange={(e, f) => this.onChangeSetAdditionalInfo(f, "accreditationCoachExpiryDate")}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
-                                        value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
+                                        value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "YYYY-MM-DD")}
                                     />
                                 )}
                             </div>
                         )}
-                        
+
                         {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
                                 <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6">
-                                        <InputWithHead 
-                                            placeholder={AppConstants.childrenNumber} 
-                                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"childrenCheckNumber")} 
+                                        <InputWithHead
+                                            placeholder={AppConstants.childrenNumber}
+                                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                             value={registrationObj.additionalInfo.childrenCheckNumber}
-                                            />
+                                        />
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <DatePicker
                                             size="large"
                                             placeholder={AppConstants.expiryDate}
-                                            style={{ width: "100%"}}
-                                            onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate") }
+                                            style={{ width: "100%" }}
+                                            onChange={(e, f) => this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate")}
                                             format={"DD-MM-YYYY"}
                                             showTime={false}
-                                            value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                            value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "YYYY-MM-DD")}
                                         />
                                     </div>
                                 </div>
@@ -2915,7 +2945,7 @@ class AppRegistrationFormNew extends Component{
 
                         {registrationObj.walkingNetballFlag == 1 && (
                             <div>
-                                <div className="form-heading" style={{marginTop: "40px",paddingBottom: "20px"}}>{AppConstants.walkingNetball2}</div>
+                                <div className="form-heading" style={{ marginTop: "40px", paddingBottom: "20px" }}>{AppConstants.walkingNetball2}</div>
                                 {/* <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballRefId")} 
@@ -2926,14 +2956,14 @@ class AppRegistrationFormNew extends Component{
                                     ))}
                                 </Radio.Group> */}
                                 {this.walkingNetballQuestions()}
-                                
+
 
                                 {hasAnyOneYes && (
                                     <div>
                                         <div className="input-style">{AppConstants.provideFurtherDetails}</div>
-                                        <InputWithHead 
-                                            placeholder={AppConstants.walkingNetball2} 
-                                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
+                                        <InputWithHead
+                                            placeholder={AppConstants.walkingNetball2}
+                                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballInfo")}
                                             value={registrationObj.additionalInfo.walkingNetballInfo}
                                         />
                                     </div>
@@ -2943,36 +2973,36 @@ class AppRegistrationFormNew extends Component{
                     </div>
                 </div>
             )
-        }catch(ex){
-            console.log("Error in additionalPersonalInfoView"+ex);
+        } catch (ex) {
+            console.log("Error in additionalPersonalInfoView" + ex);
         }
     }
 
     stepsContentView = (getFieldDecorator) => {
-        return(
+        return (
             <div>
-               {this.state.currentStep == 0 && 
+                {this.state.currentStep == 0 &&
                     <div>{this.participantDetailsStepView(getFieldDecorator)}</div>
-               } 
-               {this.state.currentStep == 1 && 
+                }
+                {this.state.currentStep == 1 &&
                     <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
-               }
-               {this.state.currentStep == 2 && 
+                }
+                {this.state.currentStep == 2 &&
                     <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
-               }
+                }
             </div>
         )
     }
 
     contentView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
-        return(
-            <div className="pt-0" style={{width: "70%",margin: "auto"}}>
+        return (
+            <div className="pt-0" style={{ width: "70%", margin: "auto" }}>
                 {this.state.registrationId && (
                     <div className="orange-action-txt"
-                    onClick={() => this.goToRegistrationProducts()}
-                    style={{marginBottom: "20px"}}>{AppConstants.returnToShoppingCart}
-                    <img className="icon-size-20" style={{marginLeft: "7px"}} src={AppImages.shoppingCartIcon}/>
+                        onClick={() => this.goToRegistrationProducts()}
+                        style={{ marginBottom: "20px" }}>{AppConstants.returnToShoppingCart}
+                        <img className="icon-size-20" style={{ marginLeft: "7px" }} src={AppImages.shoppingCartIcon} />
                     </div>
                 )}
                 {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
@@ -2981,9 +3011,9 @@ class AppRegistrationFormNew extends Component{
                 {registrationObj != null && registrationObj.registeringYourself && (
                     <div>
                         <Steps className="registration-steps" current={this.state.currentStep} onChange={this.changeStep}>
-                            <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.participantDetails}/>
-                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.selectCompetition}/>
-                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
+                            <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.participantDetails} />
+                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.selectCompetition} />
+                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) && "finish"} title={AppConstants.additionalInformation} />
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
                         {this.singleCompModalView()}
@@ -2994,55 +3024,55 @@ class AppRegistrationFormNew extends Component{
     }
 
     footerView = () => {
-        let { registrationObj,expiredRegistration } = this.props.userRegistrationState;
+        let { registrationObj, expiredRegistration } = this.props.userRegistrationState;
         let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
         let showAddAnotherCompetitionViewTemp = (this.state.currentStep == 1 && this.state.showAddAnotherCompetitionView) ? true : false;
-        return(
+        return (
             <div>
-                {registrationObj != null && registrationObj.registeringYourself && 
-                !showAddAnotherCompetitionViewTemp && !expiredRegistrationExist && (
-                    <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
-                        <Button 
-                        htmlType="submit"
-                        type="primary"
-                        style={{float: "right",color: "white",textTransform: "uppercase"}}
-                        disabled={this.disabledOrNot()} 
-                        className="open-reg-button">{this.state.submitButtonText}</Button>
-                    </div>
-                )}
+                {registrationObj != null && registrationObj.registeringYourself &&
+                    !showAddAnotherCompetitionViewTemp && !expiredRegistrationExist && (
+                        <div style={{ width: "75%", margin: "auto", paddingBottom: "50px" }}>
+                            <Button
+                                htmlType="submit"
+                                type="primary"
+                                style={{ float: "right", color: "white", textTransform: "uppercase" }}
+                                disabled={this.disabledOrNot()}
+                                className="open-reg-button">{this.state.submitButtonText}</Button>
+                        </div>
+                    )}
             </div>
         )
     }
 
-    singleCompModalView = () =>{
-        let {saveValidationErrorMsg} = this.props.userRegistrationState;
-        let {saveValidationErrorCode} = this.props.userRegistrationState;
-        let errorMsg = saveValidationErrorMsg!=  null ? saveValidationErrorMsg : [];
+    singleCompModalView = () => {
+        let { saveValidationErrorMsg } = this.props.userRegistrationState;
+        let { saveValidationErrorCode } = this.props.userRegistrationState;
+        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
         let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
         return (
             <div>
-              <Modal
-                className="add-membership-type-modal"
-                title={title}
-                visible={this.state.singleCompModalVisible}
-                onCancel={() => this.setState({singleCompModalVisible: false})}
-                footer={[
-                    <Button onClick={() => this.setState({singleCompModalVisible: false})}>
-                        {AppConstants.ok}                          
-                    </Button>
-                ]}
+                <Modal
+                    className="add-membership-type-modal"
+                    title={title}
+                    visible={this.state.singleCompModalVisible}
+                    onCancel={() => this.setState({ singleCompModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
                 >
-                {(errorMsg || []).map((item, index) =>(
-                    <p key= {index}> {item}</p>
-                ))}
-              </Modal>
+                    {(errorMsg || []).map((item, index) => (
+                        <p key={index}> {item}</p>
+                    ))}
+                </Modal>
             </div>
-          )
+        )
     }
 
-    render(){
+    render() {
         const { getFieldDecorator } = this.props.form;
-        return(
+        return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
                     menuHeading={""}
@@ -3058,15 +3088,15 @@ class AppRegistrationFormNew extends Component{
                         onSubmit={this.saveRegistrationForm}
                         noValidate="noValidate">
                         <Content>
-                        <div>
-                            {this.contentView(getFieldDecorator)}
-                        </div>
+                            <div>
+                                {this.contentView(getFieldDecorator)}
+                            </div>
                         </Content>
                         <Footer>{this.footerView()}</Footer>
-                        <Loader visible={this.props.userRegistrationState.onMembershipLoad || 
-                                            this.props.userRegistrationState.onParticipantByIdLoad ||
-                                            this.props.userRegistrationState.onSaveLoad
-                                        } />
+                        <Loader visible={this.props.userRegistrationState.onMembershipLoad ||
+                            this.props.userRegistrationState.onParticipantByIdLoad ||
+                            this.props.userRegistrationState.onSaveLoad
+                        } />
                     </Form>
                 </Layout>
             </div>
