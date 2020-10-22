@@ -11,6 +11,7 @@ import './style.css';
 import AppConstants from '../../../../themes/appConstants';
 
 const mapAddressInfo = (addressComponents) => {
+  console.log("addressComponents",addressComponents);
   if (addressComponents.length > 4) {
 
     let streetNumber;
