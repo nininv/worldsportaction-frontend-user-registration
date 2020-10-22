@@ -18,7 +18,7 @@ let walkingNetballObj = {
 let seasionalAndCasualFeesInputObj = {
 	"organisationId" : "",
 	"competitionId": "",
-	"competitionMembershipProducts": []
+	"competitionMembershipProductTypes": []
 }
 
 let registrationObjTemp = {
@@ -180,7 +180,10 @@ const initialState = {
 	registeredParents: [],
 	expiredRegistrationFlag: false,
 	expiredRegistration: null,
-	seasionalAndCasualFeesInputObj : null
+	seasionalAndCasualFeesInputObj : null,
+	enableSeasonalAndCasualService: false,
+	getSeasonalCasualFeesOnLoad: false,
+	seasonalAndCasualFeesCompetitionIndex: null
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -377,18 +380,42 @@ function getFilteredDivisions(divisions,state){
 function setSeasonalFeeAndCasualFeeInput(state,competitionIndex){
 	try{
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
-		let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
-		seasionalAndCasualFeesInputObjTemp.organisationId = registrationObjTemp.competitions[competitionIndex].organisationId;
-		seasionalAndCasualFeesInputObjTemp.competitionId = registrationObjTemp.competitions[competitionIndex].competitionId;
-		let products = registrationObjTemp.competitions[competitionIndex].products;
-		// for(let product of products){
-		// 	let competitionMembershipProducts = seasionalAndCasualFeesInputObjTemp.competitionMembershipProducts;
-		// 	if(competitionMembershipProducts.competitionMembershipProductId == product.competitionMembershipProductId){
-
-		// 	}
-			
-		// }
-		console.log("products",products);
+		let competition = registrationObjTemp.competitions[competitionIndex];
+		let checkedBySameCompetition = state.seasionalAndCasualFeesInputObj ? 
+					(state.seasionalAndCasualFeesInputObj.organisationId == competition.organsiationId) && (state.seasionalAndCasualFeesInputObj.competitionId == competition.competitionId) : false;
+		if(checkedBySameCompetition){
+			let products = registrationObjTemp.competitions[competitionIndex].products;
+			for(let product of products){
+				if(product.isPlayer == 0){
+					let obj = {
+						"competitionMembershipProductId": product.competitionMembershipProductId,
+						"isPlayer": product.isPlayer,
+						"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": null
+					}
+					state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.push(obj);
+				}
+			}
+		}else{
+			let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
+			seasionalAndCasualFeesInputObjTemp.organisationId = competition.organisationId;
+			seasionalAndCasualFeesInputObjTemp.competitionId = competition.competitionId;
+			let products = registrationObjTemp.competitions[competitionIndex].products;
+			for(let product of products){
+				if(product.isPlayer == 0){
+					let obj = {
+						"competitionMembershipProductId": product.competitionMembershipProductId,
+						"isPlayer": product.isPlayer,
+						"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": null
+					}
+					seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes.push(obj);
+				}
+			}
+			state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+		}
+		state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+		state.enableSeasonalAndCasualService = true;
 	}catch(ex){
 		console.log("Error in setSeasonalFeeAndCasualFeeInput::"+ex);
 	}
@@ -412,7 +439,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
-			//setSeasonalFeeAndCasualFeeInput(state,competitionIndex)
+			setSeasonalFeeAndCasualFeeInput(state,competitionIndex)
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
@@ -713,6 +740,24 @@ function userRegistrationReducer(state = initialState, action){
 					expiredRegistration: expiredRegistrationTemp,
 					status: action.status
 				};
+
+			case ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD:
+				return {...state,getSeasonalCasualFeesOnLoad: true }
+
+			case ApiConstants.API_GET_SEASONAL_CASUAL_FEES_SUCCESS:
+				try{
+					let feesTemp = action.result;
+					let index = state.seasonalAndCasualFeesCompetitionIndex;
+					state.registrationObj.competitions[index].fees.totalCasualFee = feesTemp.totalCasualFees;
+					state.registrationObj.competitions[index].fees.totalSeasonalFee = feesTemp.totalSeasonalFees;
+					return {
+						...state,
+						getSeasonalCasualFeesOnLoad: false,
+						seasonalAndCasualFeesCompetitionIndex: null
+					}
+				}catch(ex){
+					console.log("Error in API_GET_SEASONAL_CASUAL_FEES_SUCCESS::"+ex);
+				}
 
         default:
             return state;

@@ -15,7 +15,8 @@ import {
     Steps,
     Tag,
     Pagination,
-    Carousel
+    Carousel,
+    Spin
 } from "antd";
 import "./product.css";
 import "../user/user.css";
@@ -59,7 +60,8 @@ import {
     saveParticipantInfo,
     getParticipantInfoById,
     orgRegistrationRegSettingsEndUserRegAction,
-    registrationExpiryCheckAction
+    registrationExpiryCheckAction,
+    getSeasonalAndCasualFees
 } from '../../store/actions/registrationAction/userRegistrationAction';
 import { getAge,deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
@@ -207,6 +209,11 @@ class AppRegistrationFormNew extends Component{
                 this.props.registrationExpiryCheckAction(payload);
             }
             this.props.updateUserRegistrationStateVarAction("expiredRegistrationFlag",false);
+        }
+
+        if(registrationState.enableSeasonalAndCasualService){
+            this.props.getSeasonalAndCasualFees(registrationState.seasionalAndCasualFeesInputObj);
+            this.props.updateUserRegistrationStateVarAction("enableSeasonalAndCasualService",false);
         }
     }
 
@@ -2101,14 +2108,28 @@ class AppRegistrationFormNew extends Component{
                             </div>
                         )}
 
-                        <div className="row">
+                        <div className="row" style={{marginTop: "20px"}}>
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.totalCasualFees}/>
-                                <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                {competition.fees.totalCasualFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
+                                    <div>
+                                        <InputWithHead heading={AppConstants.totalCasualFees}/>
+                                        <div className="form-heading">{competition.fees.totalCasualFee}<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                    </div>
+                                )}
+                                {this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
+                                    <div style={{marginTop: "25px",textAlign: "center"}}><Spin /></div>
+                                )}
                             </div>
                             <div className="col-sm-12 col-md-6">
-                                <InputWithHead heading={AppConstants.totalSeasonalFees}/>
-                                <div className="form-heading">$120.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                {competition.fees.totalSeasonalFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
+                                    <div>
+                                        <InputWithHead heading={AppConstants.totalSeasonalFees}/>
+                                        <div className="form-heading">{competition.fees.totalSeasonalFee}<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                    </div>
+                                )}
+                                 {this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
+                                    <div style={{marginTop: "25px",textAlign: "center"}}><Spin /></div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -3095,7 +3116,8 @@ function mapDispatchToProps(dispatch)
         saveParticipantInfo	,
         getParticipantInfoById,
         orgRegistrationRegSettingsEndUserRegAction,
-        registrationExpiryCheckAction				 
+        registrationExpiryCheckAction,
+        getSeasonalAndCasualFees				 
     }, dispatch);
 
 }

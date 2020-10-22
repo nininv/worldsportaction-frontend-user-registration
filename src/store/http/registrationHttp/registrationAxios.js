@@ -235,6 +235,11 @@ let AxiosApi = {
     getExistingTeamDataById(participantId){
         var url = `/api/registration/teamparticipant?participantId=${participantId}`;
         return Method.dataGet(url, token);
+    },
+
+    getSeasonalCasualFees(payload){
+        var url = `api/registration/productfees`;
+        return Method.dataPost(url,token,payload)
     }
 };
 

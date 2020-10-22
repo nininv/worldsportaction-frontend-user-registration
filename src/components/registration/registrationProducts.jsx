@@ -374,12 +374,12 @@ class RegistrationProducts extends Component {
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
             if(address){
-                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
                 this.setReviewInfo(address.addressOne, "street1", null,"yourInfo", null);
                 this.setReviewInfo(address.suburb, "suburb", null,"yourInfo", null);
-                this.setReviewInfo(stateRefId, "stateRefId", null,"yourInfo", null);
-                this.setReviewInfo(countryRefId, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(stateRefId ? stateRefId : null, "stateRefId", null,"yourInfo", null);
+                this.setReviewInfo(countryRefId ? countryRefId : null, "countryRefId", null,"yourInfo", null);
                 this.setReviewInfo(address.postcode, "postalCode", null,"yourInfo", null);
             }
         }catch(ex){
