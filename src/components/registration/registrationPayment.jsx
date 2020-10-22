@@ -104,6 +104,7 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
+    const [cardTransFeeMsg, setCardTransFeeMsg] = useState(null);
     
     const stripe = useStripe();
     const elements = useElements();
@@ -112,18 +113,39 @@ const CheckoutForm = (props) => {
     let isHardshipEnabled = props.isHardshipEnabled;
     let payload = props.payload;
     let registrationUniqueKey = props.registrationUniqueKey;
+    let mainProps = props.mainProps;
     
-    console.log("PaymentOptions" ,props.paymentOptions);
-    console.log(selectedPaymentOption)
     // Handle real-time validation errors from the card Element.
+    
 
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         if (event.error) {
+            setCardTransFeeMsg(null);
             setError(event.error.message);
         } else {
+            setCardTransFeeMsg(null);
+            if(event.complete){
+                if(elements){
+                    const card = elements.getElement(CardElement);
+                    if(card){
+                        const cardToken = await stripe.createToken(card);
+                        console.log("cardToken", cardToken.token.card.country);
+                        const country = cardToken.token.card.country;
+                        if(country!= "AU"){
+                            mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
+                            setCardTransFeeMsg(AppConstants.internationalCCMsg)
+                        }
+                        else{
+                            mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
+                            setCardTransFeeMsg(AppConstants.domesticCCMsg) 
+                        }
+                    }
+                }
+            }
             setError(null);
         }
     }
+
     const changePaymentOption = (e, key) => {
         if (key === 'direct') {
             props.onLoad(true)
@@ -136,7 +158,11 @@ const CheckoutForm = (props) => {
                 "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
-            stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey);
+            mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+            setTimeout(() =>{
+                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey);
+            },100);
+           
         } 
         else if (key === 'cash') {
             setClientKey("")
@@ -175,6 +201,7 @@ const CheckoutForm = (props) => {
             });
         }
          else {
+           
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
@@ -188,13 +215,7 @@ const CheckoutForm = (props) => {
         }
     }
 
-    
 
-    const previousCall = () =>{
-        history.push("/registrationReview", {
-            registrationId: registrationUniqueKey
-        })
-    }
 
     // Handle form submission.
     const handleSubmit = async (event) => {
@@ -222,7 +243,7 @@ const CheckoutForm = (props) => {
                 } else {
                     setError(null);
                     // Send the token to your server.
-
+                    console.log("Result", result);
                     stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
                 }
 
@@ -307,7 +328,7 @@ const CheckoutForm = (props) => {
                                                     className='StripeElement'
                                                 />
                                                 <div className="card-errors" role="alert">{error}</div>
-                                                <div style={{marginTop: "-10px"}}>{AppConstants.transactionFeeApplies}</div>
+                                                <div style={{marginTop: "-10px"}}>{cardTransFeeMsg}</div>
                                             </div>   
                                         }
                                 </div>
@@ -616,7 +637,8 @@ class RegistrationPayment extends Component {
                     <Elements stripe={stripePromise} >
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
                         payload={registrationReviewList} registrationUniqueKey = {this.state.registrationUniqueKey}
-                        isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}/>
+                        isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}
+                        mainProps={this.props}/>
                     </Elements>
                </div>              
             </div>
@@ -843,7 +865,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
-   //console.log("Payload::" + JSON.stringify(payload));
+   console.log("Payload::" + JSON.stringify(payload.total));
   
     let body;
     if (paymentType === "card" || paymentType == "cash_card") {
@@ -877,70 +899,70 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         }
     }
     //console.log("body" + JSON.stringify(body));
-    return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                "Authorization": localStorage.token,
-            },
-            body: JSON.stringify(body)
-        })
-            .then((response) => {
-                props.onLoad(false)
-                let resp = response.json()
-                console.log(response.status, "status", paymentType)
-                resp.then((Response) => {
-                    if (response.status === 200) {
-                        if (paymentType == "card" || paymentType == "cash_card") {
-                            message.success(Response.message);
+    // return await new Promise((resolve, reject) => {
+    //     fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             "Authorization": localStorage.token,
+    //         },
+    //         body: JSON.stringify(body)
+    //     })
+    //         .then((response) => {
+    //             props.onLoad(false)
+    //             let resp = response.json()
+    //             console.log(response.status, "status", paymentType)
+    //             resp.then((Response) => {
+    //                 if (response.status === 200) {
+    //                     if (paymentType == "card" || paymentType == "cash_card") {
+    //                         message.success(Response.message);
                             
-                            console.log("registrationUniqueKey"+ registrationUniqueKey);
-                            history.push("/invoice", {
-                                registrationId: registrationUniqueKey,
-                                userRegId: null,
-                                paymentSuccess: true
-                            })
-                        }
-                        else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
-                            if(Response.clientSecret == null && Response.totalFee == 0){
-                                history.push("/invoice", {
-                                    registrationId: registrationUniqueKey,
-                                    userRegId: null,
-                                    paymentSuccess: true
-                                })
-                            }
-                            else{
-                                setClientKey(Response.clientSecret)
-                                setRegId(registrationUniqueKey)
-                            }
-                           // message.success(Response.message);
-                        }
-                        else{
-                            history.push("/invoice", {
-                                registrationId: registrationUniqueKey,
-                                userRegId: null,
-                                paymentSuccess: true
-                            })
-                        }
-                    }
-                    else if (response.status === 212) {
-                        message.error(Response.message);
-                    }
-                    else if (response.status === 400) {
-                        message.error(Response.message);
-                    }
-                    else {
-                        message.error("Something went wrong.")
-                    }
+    //                         console.log("registrationUniqueKey"+ registrationUniqueKey);
+    //                         history.push("/invoice", {
+    //                             registrationId: registrationUniqueKey,
+    //                             userRegId: null,
+    //                             paymentSuccess: true
+    //                         })
+    //                     }
+    //                     else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
+    //                         if(Response.clientSecret == null && Response.totalFee == 0){
+    //                             history.push("/invoice", {
+    //                                 registrationId: registrationUniqueKey,
+    //                                 userRegId: null,
+    //                                 paymentSuccess: true
+    //                             })
+    //                         }
+    //                         else{
+    //                             setClientKey(Response.clientSecret)
+    //                             setRegId(registrationUniqueKey)
+    //                         }
+    //                        // message.success(Response.message);
+    //                     }
+    //                     else{
+    //                         history.push("/invoice", {
+    //                             registrationId: registrationUniqueKey,
+    //                             userRegId: null,
+    //                             paymentSuccess: true
+    //                         })
+    //                     }
+    //                 }
+    //                 else if (response.status === 212) {
+    //                     message.error(Response.message);
+    //                 }
+    //                 else if (response.status === 400) {
+    //                     message.error(Response.message);
+    //                 }
+    //                 else {
+    //                     message.error("Something went wrong.")
+    //                 }
 
-                })
+    //             })
 
-            })
-            .catch((error) => {
-                props.onLoad(false)
-                console.error(error);
-            });
-    }) 
+    //         })
+    //         .catch((error) => {
+    //             props.onLoad(false)
+    //             console.error(error);
+    //         });
+    // }) 
 }
 export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);

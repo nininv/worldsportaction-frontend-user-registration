@@ -1124,7 +1124,10 @@ const AppConstants = {
  walkingNetball2: "Walking Netball",
  pleaseSpecify: "Please Specify",
  yearsOfPlayingNetball: "How many years have you played Netball?",
- noCompetitionsForOrganisations: "There are no open competitions for this organisation"
+ noCompetitionsForOrganisations: "There are no open competitions for this organisation",
+ internationalCCMsg: "A Transaction fee of 3.4%+ 30c applies",
+ domesticCCMsg: "A Transaction fee of 2.25%+ 30c applies",
+ directDebitMsg: "A transaction fee of 1.5% + 30c ($3.50 cap) applies"
 };
 
 export default AppConstants;
