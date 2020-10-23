@@ -122,6 +122,14 @@ function teamRegistrationExpiryCheckAction(payload){
 //     return action;
 // }
 
+function getSeasonalAndCasualFees(payload){
+    const action = {
+        type: ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD,
+        payload
+    }
+    return action;
+}
+
 
 export{
     selectTeamAction,
@@ -137,5 +145,6 @@ export{
     teamRegistrationExpiryCheckAction,
     // getTeamRegistrationInviteAction,
     // updateInviteMemberInfoAction,
-    // saveInviteMemberInfoAction
+    // saveInviteMemberInfoAction,
+    getSeasonalAndCasualFees
 }
