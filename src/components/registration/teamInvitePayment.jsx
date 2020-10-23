@@ -105,7 +105,6 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
-    const [cardTransFeeMsg, setCardTransFeeMsg] = useState(null);
     let mainProps = props.mainProps;
     
     const stripe = useStripe();
@@ -120,10 +119,8 @@ const CheckoutForm = (props) => {
 
     const handleChange = async (event) => {
         if (event.error) {
-            setCardTransFeeMsg(null);
             setError(event.error.message);
         } else {
-            setCardTransFeeMsg(null);
             if(event.complete){
                 if(elements){
                     const card = elements.getElement(CardElement);
@@ -139,11 +136,9 @@ const CheckoutForm = (props) => {
                             else{
                                 mainProps.updateTeamInviteAction(1, "International_CC", 0, "total",null);
                             }
-                            setCardTransFeeMsg(AppConstants.creditCardMsg)
                         }
                         else{
                             mainProps.updateTeamInviteAction(1, "DOMESTIC_CC", 0, "total",null);
-                            setCardTransFeeMsg(AppConstants.creditCardMsg) 
                         }
                     }
                 }
@@ -327,7 +322,7 @@ const CheckoutForm = (props) => {
                                             className='StripeElement'
                                         />
                                        <div className="card-errors" role="alert">{error}</div>
-                                        <div style={{marginTop: "-10px"}}>{cardTransFeeMsg}</div>
+                                        <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -485,7 +480,7 @@ const CheckoutForm = (props) => {
                                                         className='StripeElement'
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{marginTop: "-10px"}}>{AppConstants.cardTransFeeMsg}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                                 </div>   
                                                 }
                                         </div>   

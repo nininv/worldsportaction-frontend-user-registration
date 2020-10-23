@@ -1128,7 +1128,7 @@ const AppConstants = {
  internationalCCMsg: "A Transaction fee of 3.0%+ 30c applies",
  backToHome: "Back to home",
  domesticCCMsg: "A Transaction fee of 2.25%+ 30c applies",
- directDebitMsg: "A transaction fee of 1.5% +30c applies ($3.50).",
+ directDebitMsg: "A transaction fee of 1.5% +30c applies (capped at $3.50).",
  creditCardMsg: "A transaction fee of 2.25% + 30c is charged for domestic credit cards and 3.0% + 30c for International. For American express cards a fee of 2.7% + 30c applies."
 
 };
