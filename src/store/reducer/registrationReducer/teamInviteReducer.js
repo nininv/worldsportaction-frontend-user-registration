@@ -211,6 +211,41 @@ function teamInviteReducer(state = initialState, action){
                 reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
                 state.deliveryOrBillingAddressSelected = true;
             }
+            else if(action.subKey == "total"){
+                console.log("***********************************" + action.key)
+                let type = action.key;
+                let totalVal = reviewData.total.total; 
+                console.log("totalVal" + totalVal);
+                let transactionVal = 0;
+                let targetVal = 0;
+                if(action.value == 1){
+                    if(type == "International_CC"){
+                        transactionVal = (totalVal * 3.0/100) + 0.30;
+                    }
+                    if(type == "International_AE"){
+                        transactionVal = (totalVal * 2.7/100) + 0.30;
+                    }
+                    else if(type == "DOMESTIC_CC"){
+                        transactionVal = (totalVal * 2.25/100)  + 0.30;
+                    }
+                    else if(type == "direct_debit"){
+                        transactionVal = (totalVal * 1.5/100) + 0.30;
+                        console.log("transactionVal DD" + transactionVal);
+                        if(transactionVal > 3.50){
+                            transactionVal = 3.50;
+                        }
+                    }
+                    console.log("TransVal" + transactionVal);
+                    targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
+                    reviewData["total"]["targetValue"] = formatValue(targetVal);
+                    reviewData["total"]["transactionFee"] = formatValue(transactionVal);
+                }
+                else{
+                    reviewData["total"]["targetValue"] = "0.00";
+                    reviewData["total"]["transactionFee"] = "0.00";
+                }
+               
+            }
             return {
                 ...state,
                 error: null

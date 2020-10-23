@@ -134,15 +134,15 @@ const CheckoutForm = (props) => {
                         const brand = cardToken.token.card.brand;
                         if(country!= "AU"){
                             if(brand == "American Express"){
-                                mainProps.updateReviewInfoAction(1, "International_AE", 0, "total",null);
+                                mainProps.updateTeamInviteAction(1, "International_AE", 0, "total",null);
                             }
                             else{
-                                mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
+                                mainProps.updateTeamInviteAction(1, "International_CC", 0, "total",null);
                             }
                             setCardTransFeeMsg(AppConstants.creditCardMsg)
                         }
                         else{
-                            mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
+                            mainProps.updateTeamInviteAction(1, "DOMESTIC_CC", 0, "total",null);
                             setCardTransFeeMsg(AppConstants.creditCardMsg) 
                         }
                     }
@@ -164,7 +164,7 @@ const CheckoutForm = (props) => {
                 "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
-            mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+            mainProps.updateTeamInviteAction(1, "direct_debit", 0, "total",null);
             setTimeout(() =>{
                 stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
             },100);
@@ -586,7 +586,7 @@ class TeamInvitePayment extends Component{
     }
 
     removeFromCart = (index, key, subKey) =>{
-        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+        this.props.updateTeamInviteAction(null,key, index, subKey,null);
     }
 
     back = () => {
