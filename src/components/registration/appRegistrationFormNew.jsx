@@ -369,12 +369,14 @@ class AppRegistrationFormNew extends Component{
             : null;
 
             let defaultAddress = '';
-            defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
-                (addressObject.suburb ? addressObject.suburb + ', ': '') +
-                (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
-                (state ? state + ', ': '') +
-                (country ? country + '.': '');
-            return defaultAddress;
+            if(state){
+                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                    (addressObject.suburb ? addressObject.suburb + ', ': '') +
+                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                    (state ? state + ', ': '') +
+                    (country ? country + '.': '');
+                return defaultAddress;
+            }
         }catch(ex){
             console.log("Error in getPartcipantParentAddress"+ex);
         }
