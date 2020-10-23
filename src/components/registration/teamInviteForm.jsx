@@ -358,6 +358,27 @@ class TeamInivteForm extends Component{
         }
     }
 
+    addressSearchValidation = () => {
+        try{
+            let error = false;
+            const { iniviteMemberInfo } = this.props.teamInviteState;
+            if(this.state.searchAddressFlag && 
+                iniviteMemberInfo.userRegDetails.stateRefId == null){
+                error = true;
+            }
+            if(isArrayNotEmpty(iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails)){
+                let parent = iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails.find(x => x.searchAddressFlag ==  true && 
+                    x.stateRefId == null);
+                if(parent != undefined){
+                    error = true;
+                }
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
     saveReviewOrder = (e) => {
         try{
             e.preventDefault();
@@ -366,6 +387,13 @@ class TeamInivteForm extends Component{
             let userRegDetails = this.getUpdatedUserRegDetailObj(inviteMemberInfoTemp.userRegDetails);
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
+                    if(this.state.currentStep == 0){
+                        let addressSearchError = this.addressSearchValidation();
+                        if(addressSearchError){
+                            message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
+                    }
                     if(this.state.currentStep != 1){
                         let nextStep = this.state.currentStep + 1;
                         if(nextStep == 1){

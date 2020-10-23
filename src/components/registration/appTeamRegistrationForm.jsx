@@ -571,6 +571,20 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    addressSearchValidation = () => {
+        try{
+            let error = false;
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            if(teamRegistrationObj.addNewAddressFlag && 
+                teamRegistrationObj.stateRefId == null){
+                error = true;
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
@@ -585,6 +599,13 @@ class AppTeamRegistrationForm extends Component{
                         //     message.error(ValidationConstants.fillMembershipProductInformation);
                         //     return;
                         // } 
+                    }
+                    if(this.state.currentStep == 1){
+                        let addressSearchError = this.addressSearchValidation();
+                        if(addressSearchError){
+                            message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
                     }
                     if(this.state.currentStep != 2){
                         let nextStep = this.state.currentStep + 1;
@@ -760,7 +781,7 @@ class AppTeamRegistrationForm extends Component{
                 <div className="registration-form-view">
                     {competitionInfo.heroImageUrl && (
                         <div className="map-style">
-                            <img style={{height: "249px",borderRadius: "10px 10px 0px 0px",width: "100%"}} src={competitionInfo.heroImageUrl}/>
+                            <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
                         </div>
                     )}
                     <div>
