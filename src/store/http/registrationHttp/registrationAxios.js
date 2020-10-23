@@ -106,6 +106,7 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getEndUserRegMembershipProducts(payload) {
+        payload["currentDate"] = new Date();
         var url = `/api/registration/membershipproducts`;
         return Method.dataPost(url, token, payload);
     },

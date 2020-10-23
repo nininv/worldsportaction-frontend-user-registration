@@ -141,8 +141,8 @@ const competitionObj = {
 		// }
 	],
 	"fees": {
-		"totalCasualFee": null,
-		"totalSeasonalFee": null
+		"totalCasualFee": "0.00",
+		"totalSeasonalFee": "0.00"
 	},
 	"positionId1": null,
 	"positionId2": null,
@@ -371,51 +371,91 @@ function getFilteredDivisions(divisions,state){
 				filteredDivisions.push(div); 
 			}
 		}
+		console.log("filtered division",filteredDivisions)
 		return filteredDivisions;
 	}catch(ex){
 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
 	}
 }
 
-function setSeasonalFeeAndCasualFeeInput(state,competitionIndex){
+function setSeasonalFeeAndCasualFeeInput(state,competitionIndex,fromNonProductsOrDivisions,actionCheckBoxProduct){
 	try{
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
 		let competition = registrationObjTemp.competitions[competitionIndex];
-		let checkedBySameCompetition = state.seasionalAndCasualFeesInputObj ? 
-					(state.seasionalAndCasualFeesInputObj.organisationId == competition.organsiationId) && (state.seasionalAndCasualFeesInputObj.competitionId == competition.competitionId) : false;
-		if(checkedBySameCompetition){
-			let products = registrationObjTemp.competitions[competitionIndex].products;
-			for(let product of products){
-				if(product.isPlayer == 0){
+		let selectedInSameCompetition = state.seasionalAndCasualFeesInputObj ? 
+					(state.seasionalAndCasualFeesInputObj.organisationId == competition.organisationId) && (state.seasionalAndCasualFeesInputObj.competitionId == competition.competitionId) : false;
+		if(selectedInSameCompetition){
+			if(fromNonProductsOrDivisions == 1){
+				state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes = state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.filter(x => x.isPlayer != 0);
+				let products = registrationObjTemp.competitions[competitionIndex].products;
+				for(let product of products){
+					if(product.isPlayer == 0){
+						let obj = {
+							"competitionMembershipProductId": product.competitionMembershipProductId,
+							"isPlayer": product.isPlayer,
+							"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+							"competitionMembershipProductDivisionId": null
+						}
+						state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.push(obj);
+					}
+				}
+				if(actionCheckBoxProduct.isPlayer != 1){
+					state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+					state.enableSeasonalAndCasualService = true;
+				}
+			}else if(fromNonProductsOrDivisions == 2){
+				state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes = state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.filter(x => x.isPlayer != 1);
+				let divisions = registrationObjTemp.competitions[competitionIndex].divisions;
+				for(let division of divisions){
 					let obj = {
-						"competitionMembershipProductId": product.competitionMembershipProductId,
-						"isPlayer": product.isPlayer,
-						"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
-						"competitionMembershipProductDivisionId": null
+						"competitionMembershipProductId": division.competitionMembershipProductId,
+						"isPlayer": 1,
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
 					}
 					state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.push(obj);
 				}
+				state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+				state.enableSeasonalAndCasualService = true;
 			}
 		}else{
 			let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
 			seasionalAndCasualFeesInputObjTemp.organisationId = competition.organisationId;
 			seasionalAndCasualFeesInputObjTemp.competitionId = competition.competitionId;
 			let products = registrationObjTemp.competitions[competitionIndex].products;
-			for(let product of products){
-				if(product.isPlayer == 0){
+			if(fromNonProductsOrDivisions == 1){
+				for(let product of products){
+					if(product.isPlayer == 0){
+						let obj = {
+							"competitionMembershipProductId": product.competitionMembershipProductId,
+							"isPlayer": product.isPlayer,
+							"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+							"competitionMembershipProductDivisionId": null
+						}
+						seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes.push(obj);
+					}
+				}
+				state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+				if(actionCheckBoxProduct.isPlayer != 1){
+					state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+					state.enableSeasonalAndCasualService = true;
+				}
+			}else if(fromNonProductsOrDivisions == 2){
+				let divisions = registrationObjTemp.competitions[competitionIndex].divisions;
+				for(let division of divisions){
 					let obj = {
-						"competitionMembershipProductId": product.competitionMembershipProductId,
-						"isPlayer": product.isPlayer,
-						"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
-						"competitionMembershipProductDivisionId": null
+						"competitionMembershipProductId": division.competitionMembershipProductId,
+						"isPlayer": 1,
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
 					}
 					seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes.push(obj);
 				}
+				state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+				state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+				state.enableSeasonalAndCasualService = true;
 			}
-			state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
 		}
-		state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
-		state.enableSeasonalAndCasualService = true;
 	}catch(ex){
 		console.log("Error in setSeasonalFeeAndCasualFeeInput::"+ex);
 	}
@@ -426,6 +466,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
 		membershipProductInfo.isChecked = competitionData;
+		let actionCheckBoxProduct;
 		if(competitionData){
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
@@ -434,17 +475,22 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"isChecked": competitionData,
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
+			actionCheckBoxProduct = product;
 			state.registrationObj.competitions[competitionIndex].products.push(product);
 			if(membershipProductInfo.isPlayer == 1){
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
-			setSeasonalFeeAndCasualFeeInput(state,competitionIndex)
+
+			setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
 			let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
-			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);	
+
+			//for prevent loading in fees
+			actionCheckBoxProduct = registrationObjProducts.find(product => product.competitionMembershipProductTypeId == membershipProductInfo.competitionMembershipProductTypeId);	
+			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
 			if(filteredProducts != undefined){
 				state.registrationObj.competitions[competitionIndex].products = filteredProducts;
 			}	
@@ -456,7 +502,15 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			if(filteredDivisions != undefined){
 				state.registrationObj.competitions[competitionIndex].divisions = filteredDivisions;
 			}
+
+			if(actionCheckBoxProduct.isPlayer == 0){
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
+			}else{
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2,actionCheckBoxProduct)
+			}
 		}
+		
+		
 	}catch(ex){
 		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
 	}
@@ -647,6 +701,7 @@ function userRegistrationReducer(state = initialState, action){
 			let competitionIndex = action.index;
 			let competitionSubIndex = action.subIndex;
 			let competitionSubKey = action.subKey;
+			let competitionSubData = action.subData;
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
 					competitionIndex,competitionSubIndex);
@@ -654,11 +709,13 @@ function userRegistrationReducer(state = initialState, action){
 			}
 			else if(competitionKey == "divisionInfo"){
 				let divisionInfoTemp = state.registrationObj.competitions[competitionIndex].divisionInfo;
-				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData);
+				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData && x.competitionMembershipProductTypeId == competitionSubData);
 				state.registrationObj.competitions[competitionIndex].divisions.push(divisionInfo);
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
 			else if(competitionKey == "divisions"){
 				state.registrationObj.competitions[competitionIndex].divisions.splice(competitionSubIndex,1);
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
 			else if(competitionSubKey == "friends"){
 				state.registrationObj.competitions[competitionIndex].friends[competitionSubIndex][competitionKey] = competitionData;
