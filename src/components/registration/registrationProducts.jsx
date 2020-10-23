@@ -356,7 +356,7 @@ class RegistrationProducts extends Component {
             : null;
 
             let defaultAddress = '';
-            if(yourInfo.street1 && yourInfo.suburb && state && country){
+            if(state){
                 defaultAddress = (yourInfo.street1 ? yourInfo.street1 + ',': '') + 
                 (yourInfo.suburb ? yourInfo.suburb + ',': '') +
                 (state ? state + ',': '') +
