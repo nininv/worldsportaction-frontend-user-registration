@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { feeIsNull } from "../../../util/helpers";
+import { feeIsNull, formatValue } from "../../../util/helpers";
 
 const initialState = {
     iniviteMemberInfo: null,
