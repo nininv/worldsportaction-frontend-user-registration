@@ -620,7 +620,8 @@ class TeamInvitePayment extends Component{
                             onLoad={(status)=>this.setState({onLoad: status})} 
                             paymentOptions={securePaymentOptions}
                             payload={teamInviteReviewList} 
-                            userRegId = {this.state.userRegId}/>
+                            userRegId = {this.state.userRegId}
+                            mainProps={this.props}/>
                         </Elements>
                    </div>              
                 </div>
