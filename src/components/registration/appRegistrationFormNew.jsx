@@ -2068,7 +2068,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <InputWithHead heading={AppConstants.registeringAs}/>
+                        <div className="input-style-bold">{AppConstants.registeringAs}</div>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox 
                             checked={membershipProduct.isChecked}
@@ -2079,7 +2079,7 @@ class AppRegistrationFormNew extends Component{
 
                         {this.isPlayerActive(competition) && (
                             <div>
-                                <InputWithHead heading={AppConstants.registrationDivisions}/>
+                                <div className="input-style-bold">{AppConstants.registrationDivisions}</div>
                                 <div
                                 style={{marginBottom: "10px"}}>
                                     {(competition.divisions || []).map((division,divisionIndex) => (
@@ -2114,7 +2114,7 @@ class AppRegistrationFormNew extends Component{
                             <div className="col-sm-12 col-md-6">
                                 {competition.fees.totalCasualFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
                                     <div>
-                                        <InputWithHead heading={AppConstants.totalCasualFees}/>
+                                        <div className="input-style-bold">{AppConstants.totalCasualFees}</div>
                                         <div className="form-heading">{competition.fees.totalCasualFee}<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
                                     </div>
                                 )}
@@ -2125,7 +2125,7 @@ class AppRegistrationFormNew extends Component{
                             <div className="col-sm-12 col-md-6">
                                 {competition.fees.totalSeasonalFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
                                     <div>
-                                        <InputWithHead heading={AppConstants.totalSeasonalFees}/>
+                                        <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
                                         <div className="form-heading">{competition.fees.totalSeasonalFee}<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
                                     </div>
                                 )}
