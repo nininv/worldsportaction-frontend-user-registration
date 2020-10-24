@@ -2136,13 +2136,13 @@ class AppRegistrationFormNew extends Component{
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <div className="input-style-bold">{AppConstants.totalCasualFees}</div>
-                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? (competition.fees.totalCasualFee) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(competition.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                     <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                 </div>
                             </div>
                             <div className="col-sm-12 col-md-6">
                                 <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
-                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? (competition.fees.totalSeasonalFee) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(competition.fees.totalSeasonalFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                     <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                 </div>
                             </div>
