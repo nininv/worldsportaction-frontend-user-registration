@@ -528,8 +528,8 @@ function teamRegistrationReducer(state = initialState, action){
 
 			case ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_SUCCESS:
         let feesTemp = action.result;
-        state.teamRegistrationObj.fees.totalCasualFee = feesTemp.totalSeasonalTeamFees;
-        state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalCasualTeamFees;
+        state.teamRegistrationObj.fees.totalCasualFee = feesTemp.totalCasualTeamFees;
+        state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
         return {
           ...state,
           getSeasonalCasualFeesOnLoad: false

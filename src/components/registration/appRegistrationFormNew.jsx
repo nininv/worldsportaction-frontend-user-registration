@@ -651,7 +651,8 @@ class AppRegistrationFormNew extends Component{
     }
 
     onChangeDivisionInfo = (divisionIndex,competitionIndex,divisionInfoList) => {
-        let divisionInfo = divisionInfoList[divisionIndex]
+        this.onChangeSetCompetitionValue(divisionIndex,"divisionInfoIndex",competitionIndex);
+        let divisionInfo = divisionInfoList[divisionIndex];
         this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex,null,null,divisionInfo.competitionMembershipProductTypeId)
     }
 
@@ -2121,6 +2122,7 @@ class AppRegistrationFormNew extends Component{
                                 </Select> */}
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
+                                    value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
                                     onChange={(index) => this.onChangeDivisionInfo(index,competitionIndex,competition.divisionInfo) }
                                 >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (

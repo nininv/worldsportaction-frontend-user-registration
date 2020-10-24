@@ -113,6 +113,7 @@ const competitionObj = {
 	"organisationInfo": null,
 	"competitionInfo": null,
 	"registrationRestrictionTypeRefId": null,
+	"divisionInfoIndex": null,
 	"regSetting": {
 		"nominate_positions": 0,
 		"play_friend": 0,
@@ -617,6 +618,25 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
+function removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,state){
+	try{
+		let division = state.registrationObj.competitions[competitionIndex].divisions[competitionSubIndex];
+		let divisionInfoIndex = state.registrationObj.competitions[competitionIndex].divisionInfoIndex;
+		if(divisionInfoIndex){
+			let divisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo[divisionInfoIndex];
+			let sameTypeId = division.competitionMembershipProductTypeId == divisionInfo.competitionMembershipProductTypeId ? true : false;
+			let sameDivisonId = division.competitionMembershipProductDivisionId == divisionInfo.competitionMembershipProductDivisionId ? true : false;
+			if(sameTypeId && sameDivisonId){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}catch(ex){
+		console.log("Error in removeDivisionInfoIndexIfItHas::"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -714,6 +734,9 @@ function userRegistrationReducer(state = initialState, action){
 				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
 			else if(competitionKey == "divisions"){
+				if(removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,state)){
+					state.registrationObj.competitions[competitionIndex].divisionInfoIndex = null
+				}
 				state.registrationObj.competitions[competitionIndex].divisions.splice(competitionSubIndex,1);
 				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
