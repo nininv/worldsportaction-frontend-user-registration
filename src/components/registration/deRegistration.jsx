@@ -111,6 +111,7 @@ class DeRegistration extends Component {
                     message.error(ValidationConstants.deRegisterReasonRequired);
                 }
                 else{
+                    console.log("SaveData" + JSON.stringify(saveData));
                     this.props.saveDeRegisterDataAction(saveData);
                     this.setState({saveLoad: true});
                 }
@@ -342,7 +343,7 @@ class DeRegistration extends Component {
 
     ////////form content view
     contentView = (getFieldDecorator) => {
-        const { saveData, registrationSelection,deRegisterData, organisations, competitions, membershipTypes, teams, divisions } = this.props.deRegistrationState;
+        const { saveData, registrationSelection,deRegisterData, organisations, competitions, membershipTypes, teamMembers, divisions } = this.props.deRegistrationState;
         let divisionList = divisions!= null ? divisions : [];
         return (
             <div className="content-view pt-5">
@@ -362,7 +363,7 @@ class DeRegistration extends Component {
                             placeholder={'User Name'}>
                         {(deRegisterData || []).map((user, cIndex) => (
                                 <Option key={user.userId} 
-                                value={user.userId} >{user.userName}</Option>
+                                value={user.userId} >{user.isTeam == 0 ? user.userName : user.userName + '(Team)'}</Option>
                             ))
                             }
                         
@@ -462,36 +463,34 @@ class DeRegistration extends Component {
                         </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.teamName} />
-                {/* <Form.Item >
-                    {getFieldDecorator(`teamId`, {
-                        rules: [{ required: true, message: ValidationConstants.teamRequired }],
-                    })( */}
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "teamId", "deRegister")}
-                            value={saveData.teamId}
-                            placeholder={AppConstants.membershipTypes}>
-                        {(teams || []).map((team, mIndex) => (
-                                <Option key={team.teamId} 
-                                value={team.teamId} >{team.teamName}</Option>
-                            ))
-                            }
-                        
-                        </Select>
-                {/* //     )}
-                // </Form.Item> */}
+                {saveData.isTeam == 1 &&
+                <div>
+                    <InputWithHead heading={AppConstants.teamMember} style={{paddingBottom: '0px'}}/>
+                    <Select
+                        showSearch
+                        mode="multiple"
+                        optionFilterProp="children"
+                        style={{ width: "100%", paddingRight: 1 }}
+                        required={"required-field pt-0 pb-0"}
+                        className="input-inside-table-venue-court team-mem_prod_type"
+                        onChange={(e) => this.updateDeregistrationData(e, "teamMembers", "deRegister")}
+                        value={saveData.teamMembers}
+                        placeholder={AppConstants.teamMember}>
+                        {(teamMembers || []).map((user, mIndex) => (
+                            <Option key={user.userId} 
+                            value={user.userId} >{user.firstName + ' ' + user.lastName}</Option>
+                        ))
+                        }
+                    
+                    </Select>
+                </div>
+                }
 
-
-
+                
                 <Form.Item  >
-                    {getFieldDecorator('mobileNumber', { rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }] })(
+                    {getFieldDecorator('mobileNumber', { rules: [{ required: false, message: ValidationConstants.pleaseEnterMobileNumber }] })(
                         <InputWithHead
-                            required={"pt-0"}
+                            required={"pt-0  pb-0"}
                             disabled = {true}
                             heading={AppConstants.mobileNumber}
                             placeholder={AppConstants.mobileNumber}
@@ -501,9 +500,9 @@ class DeRegistration extends Component {
                     )}
                 </Form.Item>
                 <Form.Item  >
-                    {getFieldDecorator('email', { rules: [{ required: true, message: ValidationConstants.emailField[0] }] })(
+                    {getFieldDecorator('email', { rules: [{ required: false, message: ValidationConstants.emailField[0] }] })(
                         <InputWithHead
-                            required={"pt-0"}
+                            required={"pt-0 pb-0"}
                             disabled = {true}
                             heading={AppConstants.emailAdd}
                             placeholder={AppConstants.emailAdd}

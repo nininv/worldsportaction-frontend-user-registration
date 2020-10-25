@@ -36,16 +36,16 @@ const initialState = {
     organisations: [],
     competitions: [],
     membershipTypes: [],
-    teams: [],
+    teamMembers: [],
     divisions: [],
     saveData : {
         userId: null,
+        isTeam: null,
         email: null,
         mobileNumber: null,
         competitionId: null,
         organisationId: null,
         membershipMappingId: null,
-        teamId: null,
         divisionId: null,
         regChangeTypeRefId: 0,         // DeRegister/ Transfer
         deRegistrationOptionId: 0,   /// Yes/No
@@ -53,6 +53,7 @@ const initialState = {
         deRegisterOther: null,
         isAdmin: 0,
         registrationId: null,
+        teamMembers: [],
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 
@@ -78,8 +79,15 @@ function deRegistrationReducer(state = initialState, action) {
                     state.saveData.competitionId = null;
                     state.membershipTypes = [];
                     state.saveData.membershipMappingId = null;
-                    state.teams = [];
-                    state.saveData.teamId = null;
+                    state.saveData.teamMembers = [];
+                    if(userData.isTeam == 1){
+                        state.teamMembers = userData.teamMembers;
+                        state.saveData.isTeam = 1;
+                    }
+                    else{
+                        state.teamMembers = [];
+                        state.saveData.isTeam = 0;
+                    }
                     state.divisions = [];
                     state.saveData.divisionId = null;
                     state.saveData.registrationId = null;
@@ -94,8 +102,6 @@ function deRegistrationReducer(state = initialState, action) {
                     state.competitions = competitions;
                     state.membershipTypes = [];
                     state.saveData.membershipMappingId = null;
-                    state.teams = [];
-                    state.saveData.teamId = null;
                     state.divisions = [];
                     state.saveData.divisionId = null;
                     state.saveData.registrationId = null;
@@ -106,7 +112,6 @@ function deRegistrationReducer(state = initialState, action) {
                     //console.log("************" + action.value);
                     state.saveData.teamId = null;
                     state.saveData.membershipMappingId = null;
-                    state.teams = [];
                     state.divisions = [];
                     state.saveData.divisionId = null;
                     state.saveData.registrationId = null;
@@ -119,9 +124,6 @@ function deRegistrationReducer(state = initialState, action) {
                 else if(action.key == "membershipMappingId"){
                     state.saveData.teamId = null;
                     state.saveData.divisionId = null;
-                    state.teams = [];
-                    let teams = setTeams(action.value, state.membershipTypes);
-                    state.teams = teams;
                     state.divisions = [];
                     let divisions = setDivisions(action.value, state.membershipTypes);
                     state.divisions = divisions;
@@ -131,9 +133,7 @@ function deRegistrationReducer(state = initialState, action) {
                     let memObj = state.membershipTypes.find(x=>x.membershipMappingId == action.value);
                     state.saveData.registrationId = memObj.registrationId;
                 }
-                else if(action.key == "teamId"){
-                    let teamObj = state.teams.find(x=>x.teamId == action.value);
-                    state.saveData.registrationId = teamObj.registrationId;
+                else if(action.key == "teamMembers"){
                     state.saveData[action.key] = action.value;
                 }
                 else if(action.key == "divisionId"){
@@ -177,7 +177,7 @@ function deRegistrationReducer(state = initialState, action) {
             state.organisations = [];
             state.competitions = [];
             state.membershipTypes = [];
-            state.teams = [];
+            state.teamMembers = [];
             state.deRegisterData = deRegisterData;
             if(isArrayNotEmpty(deRegisterData)){
                 try {
@@ -185,6 +185,11 @@ function deRegistrationReducer(state = initialState, action) {
                     state.saveData.email = userData.email;
                     state.saveData.mobileNumber = userData.mobileNumber;
                     state.saveData.userId = userData.userId;
+                    state.saveData.isTeam = userData.isTeam;
+                    if(userData.isTeam == 1){
+                        state.teamMembers = userData.teamMembers;
+                    }
+                   
                     let organisations = setOrganisations(userData.userId, deRegisterData);
                     state.organisations = organisations;
                 } catch (error) {
@@ -335,6 +340,7 @@ function setDivisions(membershipMappingId, membershipTypes){
 function clearSaveData(){
     let saveData =  {
         userId: 0,
+        isTeam: null,
         email: null,
         mobileNumber: null,
         competitionId: null,
@@ -346,6 +352,7 @@ function clearSaveData(){
         reasonTypeRefId: 0,      
         deRegisterOther: null,
         isAdmin:0,
+        teamMembers: [],
         transfer: {
             transferOther: null,
             reasonTypeRefId: 0, 
