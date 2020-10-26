@@ -23,6 +23,7 @@ class DeRegistration extends Component {
         this_Obj = this;
         this.state = {
             registrationOption: 0,
+            regChangeTypeRefId: 0,
             userId: 0,
             loading: false,
             saveLoad: false
@@ -31,7 +32,9 @@ class DeRegistration extends Component {
 
     componentDidMount(){
         let userId = this.props.location.state ? this.props.location.state.userId : null;
-        this.setState({userId});
+        let regChangeTypeRefId = this.props.location.state ? this.props.location.state.regChangeTypeRefId : null;
+        console.log("regChangeTypeRefId::", regChangeTypeRefId)
+        this.setState({userId, regChangeTypeRefId});
         this.apiCall(userId);
     }
 
@@ -40,7 +43,9 @@ class DeRegistration extends Component {
         let deRegisterState = this.props.deRegistrationState;
         if(this.state.loading == true && deRegisterState.onDeRegisterLoad == false){
             this.setState({loading:false});
+            this.updateDeregistrationData(this.state.regChangeTypeRefId, "regChangeTypeRefId","deRegister");
             this.setFormFields();
+
         }
         if(deRegisterState.reloadFormData == 1){
           //  console.log("$$$$$$$$$$$$$4");
@@ -79,8 +84,14 @@ class DeRegistration extends Component {
     }
 
     updateDeregistrationData = (value, key, subKey) =>{
+        const {saveData} = this.props.deRegistrationState;
         if(key == "regChangeTypeRefId"){
             if(value == 2){
+                this.getTransferOrgData();
+            }
+        }
+        if(key == "membershipMappingId"){
+            if(saveData.regChangeTypeRefId == 2){
                 this.getTransferOrgData();
             }
         }
@@ -89,11 +100,13 @@ class DeRegistration extends Component {
 
     getTransferOrgData = () =>{
         const {saveData} = this.props.deRegistrationState;
-        let payload = {
-            competitionId: saveData.competitionId,
-            membershipMappingId: saveData.membershipMappingId
+        if(saveData.competitionId && saveData.membershipMappingId){
+            let payload = {
+                competitionId: saveData.competitionId,
+                membershipMappingId: saveData.membershipMappingId
+            }
+            this.props.getTransferCompetitionsAction(payload);
         }
-        this.props.getTransferCompetitionsAction(payload);
     }
 
     saveAPIsActionCall = (e) => {
@@ -111,6 +124,11 @@ class DeRegistration extends Component {
                     message.error(ValidationConstants.deRegisterReasonRequired);
                 }
                 else{
+                    if(saveData.isTeam == 1){
+                        if(saveData.teamMembers.length == 0){
+                            saveData.teamMembers = deRegisterState.teamMembers;
+                        }
+                    }
                     console.log("SaveData" + JSON.stringify(saveData));
                     this.props.saveDeRegisterDataAction(saveData);
                     this.setState({saveLoad: true});
@@ -155,10 +173,11 @@ class DeRegistration extends Component {
     checkMainRegistrationOption = (subItem, selectedOption) => {
         console.log(subItem, selectedOption)
         const {saveData, deRegistionOption } = this.props.deRegistrationState
-        if (subItem.id == 1 && selectedOption == 1) {
-        } else if (subItem.id == 2 && selectedOption == 2) {
+        // if (subItem.id == 1 && selectedOption == 1) {
+        // } 
+         if ((subItem.id == 1 && selectedOption == 1) || (subItem.id == 2 && selectedOption == 2)) {
             return (
-                <div className="ml-5">
+                <div className="ml-5 pt-3">
                     <InputWithHead
                         required={"pt-0"}
                         heading={AppConstants.reasonRegisterTitle}

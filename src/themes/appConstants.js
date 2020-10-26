@@ -901,7 +901,7 @@ const AppConstants = {
   history: "History",
   registrationChange: "Registration Change",
   mobileNumber: "Mobile Number",
-  whatRegistrationChange: "what registration change do you",
+  whatRegistrationChange: "What registration change do you",
   takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
   reasonRegisterTitle: "Why would you like to de-register?",
   reasonForTransfer: "Reason for Transfer",
