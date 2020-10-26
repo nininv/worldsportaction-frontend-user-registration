@@ -902,7 +902,7 @@ const AppConstants = {
   registrationChange: "Registration Change",
   mobileNumber: "Mobile Number",
   whatRegistrationChange: "What registration change do you",
-  takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
+  takenCourtforTraining: "Have you taken the court for training, grading or a competition game",
   reasonRegisterTitle: "Why would you like to de-register?",
   reasonForTransfer: "Reason for Transfer",
   directDebit: "Direct Debit",
