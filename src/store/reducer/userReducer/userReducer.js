@@ -52,6 +52,7 @@ const initialState = {
     umpireActivityList: [],
     umpireActivityCurrentPage: 1,
     umpireActivityTotalCount: 0,
+    allOrganisationList: [],
 };
 
 //get User Role
@@ -77,7 +78,7 @@ function userReducer(state = initialState, action) {
                 onLoad: false,
                 error: action.error,
                 status: action.status,
-                umpireActivityOnLoad:false,
+                umpireActivityOnLoad: false,
             };
 
         case ApiConstants.API_USER_ERROR:
@@ -86,7 +87,7 @@ function userReducer(state = initialState, action) {
                 onLoad: false,
                 error: action.error,
                 status: action.status,
-                umpireActivityOnLoad:false,
+                umpireActivityOnLoad: false,
             };
         // get Role Entity List for current  user
         case ApiConstants.API_ROLE_LOAD:
@@ -297,7 +298,6 @@ function userReducer(state = initialState, action) {
             return { ...state, umpireActivityOnLoad: true };
 
         case ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_SUCCESS:
-            console.log("action***", action.result)
             let umpireActivityData = action.result
             return {
                 ...state,
@@ -305,6 +305,18 @@ function userReducer(state = initialState, action) {
                 umpireActivityList: isArrayNotEmpty(umpireActivityData.results) ? umpireActivityData.results : [],
                 umpireActivityCurrentPage: umpireActivityData.page.currentPage,
                 umpireActivityTotalCount: umpireActivityData.page.totalCount,
+            };
+
+        /////////get all the organisations without authentication and userId
+        case ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD:
+            return { ...state, onLoad: true };
+
+        case ApiConstants.API_GET_ALL_ORGANISATION_LIST_SUCCESS:
+            state.allOrganisationList = action.result
+            return {
+                ...state,
+                allOrganisationList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
             };
 
         default:

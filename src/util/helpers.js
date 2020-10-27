@@ -68,5 +68,34 @@ const deepCopyFunction = inObject =>
     }
 };
 
+const getCurrentYear = (yearArr) => {
+  let currentYear = moment().year()
+  let currentYearIndex = yearArr.findIndex((x) => x.name == currentYear)
+  if (currentYearIndex === -1) {
+    let getfirstIndexId = yearArr[0].id
+    return getfirstIndexId
+  } else {
+    let getCurrentYearId = yearArr[currentYearIndex].id
+    return getCurrentYearId
+  }
+};
+
+const compare = (a, b) => {
+  const bandA = a.sortOrder;
+  const bandB = b.sortOrder;
+  let comparison = 0;
+  if (bandA < bandB) {
+    comparison = 1;
+  } else if (bandA > bandB) {
+    comparison = -1;
+  }
+  return comparison;
+}
+
+const reverseArray = (array) => {
+  let isSortedArray = []
+  isSortedArray = array.sort(compare)
+  return isSortedArray
+};
 module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
-  isNullOrUndefined, feeIsNull ,captializedString }
+  isNullOrUndefined, feeIsNull , captializedString, getCurrentYear, reverseArray }
