@@ -26,14 +26,15 @@ function updateUserRegistrationObjectAction(data,key){
     return action;
 }
 
-function updateParticipantCompetitionAction(data,key,index,subIndex,subKey){
+function updateParticipantCompetitionAction(data,key,index,subIndex,subKey,subData){
     const action = {
         type: ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT,
         data: data,
         key: key,
         index: index,
         subIndex: subIndex,
-        subKey: subKey
+        subKey: subKey,
+        subData: subData
     }
     return action;
 }

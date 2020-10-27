@@ -15,7 +15,8 @@ import {
     Steps,
     Tag,
     Pagination,
-    Carousel
+    Carousel,
+    Spin
 } from "antd";
 import { connect } from 'react-redux';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
@@ -36,7 +37,8 @@ import {
     getTeamInfoById,
     getExistingTeamInfoById,
     membershipProductTeamRegistrationAction,
-    teamRegistrationExpiryCheckAction
+    teamRegistrationExpiryCheckAction,
+    getSeasonalAndCasualFees
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -213,6 +215,11 @@ class AppTeamRegistrationForm extends Component{
                     [`competitionMembershipProductDivisionId`]: null
                 });
                 this.props.updateTeamRegistrationStateVarAction(false,"divisionsChanged"); 
+            }
+
+            if(teamRegistrationState.enableSeasonalAndCasualService){
+                this.props.getSeasonalAndCasualFees(teamRegistrationState.seasionalAndCasualFeesInputObj);
+                this.props.updateTeamRegistrationStateVarAction(false,"enableSeasonalAndCasualService");
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -843,12 +850,16 @@ class AppTeamRegistrationForm extends Component{
     
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
-                                    <InputWithHead heading={AppConstants.totalCasualFees}/>
-                                    <div className="form-heading">$60.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                    <div className="input-style-bold">{AppConstants.totalCasualFees}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                        <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
+                                    </div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
-                                    <InputWithHead heading={AppConstants.totalSeasonalFees}/>
-                                    <div className="form-heading">$120.00<span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span></div>
+                                    <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalSeasonalFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                        <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2130,7 +2141,8 @@ function mapDispatchToProps(dispatch){
         getTeamInfoById,
         getExistingTeamInfoById,
         membershipProductTeamRegistrationAction,
-        teamRegistrationExpiryCheckAction
+        teamRegistrationExpiryCheckAction,
+        getSeasonalAndCasualFees
     }, dispatch);
 
 }

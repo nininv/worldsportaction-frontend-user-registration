@@ -271,5 +271,7 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,userRegistrationSaga.getSeasonalCasualFeesSaga);
   yield takeEvery(ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD, userSaga.getAllOrganisationListSaga);
+  yield takeEvery(ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD,teamRegistrationSaga.getTeamSeasonalCasualFeesSaga);
+  
 
 }

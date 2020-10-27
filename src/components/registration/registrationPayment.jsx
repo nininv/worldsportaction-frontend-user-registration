@@ -104,7 +104,7 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
-    const [cardTransFeeMsg, setCardTransFeeMsg] = useState(null);
+
     
     const stripe = useStripe();
     const elements = useElements();
@@ -120,10 +120,8 @@ const CheckoutForm = (props) => {
 
     const handleChange = async (event) => {
         if (event.error) {
-            setCardTransFeeMsg(null);
             setError(event.error.message);
         } else {
-            setCardTransFeeMsg(null);
             if(event.complete){
                 if(elements){
                     const card = elements.getElement(CardElement);
@@ -139,12 +137,9 @@ const CheckoutForm = (props) => {
                             else{
                                 mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
                             }
-                            
-                            setCardTransFeeMsg(AppConstants.creditCardMsg)
                         }
                         else{
                             mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
-                            setCardTransFeeMsg(AppConstants.creditCardMsg) 
                         }
                     }
                 }
@@ -167,7 +162,7 @@ const CheckoutForm = (props) => {
             });
             mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
             setTimeout(() =>{
-                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey);
+                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
             },100);
            
         } 
@@ -251,7 +246,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result", result);
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
                 }
 
             }
@@ -288,18 +283,19 @@ const CheckoutForm = (props) => {
                 } else {
                     setBankError(null)
                     setClientKey("")
-                    props.onLoad(false)
-                    message.success("Payment status is " + result.paymentIntent.status)
-                    history.push("/invoice", {
-                        registrationId: regId,
-                        userRegId: null,
-                        paymentSuccess: true
-                    })
+                    props.onLoad(true)
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
+                    // message.success("Payment status is " + result.paymentIntent.status)
+                    // history.push("/invoice", {
+                    //     registrationId: regId,
+                    //     userRegId: null,
+                    //     paymentSuccess: true
+                    // })
                 }
             }
             else if(isSchoolRegistration || isHardshipEnabled){
                 props.onLoad(true)
-                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
+                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
             }
         }
         else {
@@ -335,7 +331,7 @@ const CheckoutForm = (props) => {
                                                     className='StripeElement'
                                                 />
                                                 <div className="card-errors" role="alert">{error}</div>
-                                                <div style={{marginTop: "-10px"}}>{cardTransFeeMsg}</div>
+                                                <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                             </div>   
                                         }
                                 </div>
@@ -494,7 +490,7 @@ const CheckoutForm = (props) => {
                                                         className='StripeElement'
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{marginTop: "-10px"}}>{AppConstants.cardTransFeeMsg}</div>
+                                                    <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                                 </div>   
                                                 }
                                         </div>   
@@ -867,12 +863,20 @@ function mapStatetoProps(state){
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
    console.log("Payload::" + JSON.stringify(payload.total));
+
+   let url;
+   if(urlFlag == 1){
+       url =  "/api/payments/createpayments";
+   }
+   else{
+       url =  "/api/payments/createpayments/directdebit";
+   }
   
     let body;
     if (paymentType === "card" || paymentType == "cash_card") {
@@ -907,7 +911,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     }
     console.log("body" + JSON.stringify(body));
     return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createpayments`, {
+        fetch(`${StripeKeys.apiURL + url}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

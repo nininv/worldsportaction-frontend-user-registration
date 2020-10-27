@@ -901,8 +901,8 @@ const AppConstants = {
   history: "History",
   registrationChange: "Registration Change",
   mobileNumber: "Mobile Number",
-  whatRegistrationChange: "what registration change do you",
-  takenCourtforTraining: "Have you taken the court for training, grading or a compitition game",
+  whatRegistrationChange: "What registration change do you",
+  takenCourtforTraining: "Have you taken the court for training, grading or a competition game",
   reasonRegisterTitle: "Why would you like to de-register?",
   reasonForTransfer: "Reason for Transfer",
   directDebit: "Direct Debit",
@@ -1128,7 +1128,7 @@ const AppConstants = {
  internationalCCMsg: "A Transaction fee of 3.0%+ 30c applies",
  backToHome: "Back to home",
  domesticCCMsg: "A Transaction fee of 2.25%+ 30c applies",
- directDebitMsg: "A transaction fee of 1.5% +30c applies ($3.50).",
+ directDebitMsg: "A transaction fee of 1.5% +30c applies (capped at $3.50).",
  creditCardMsg: "A transaction fee of 2.25% + 30c is charged for domestic credit cards and 3.0% + 30c for International. For American express cards a fee of 2.7% + 30c applies.",
  multpleRolesSelected:"(multiple roles can be selected)"
 

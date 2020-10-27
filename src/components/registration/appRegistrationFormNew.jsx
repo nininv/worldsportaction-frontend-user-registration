@@ -646,8 +646,14 @@ class AppRegistrationFormNew extends Component{
         }  
     };
 
-    onChangeSetCompetitionValue = (value,key,index,subIndex,subKey) =>{
-        this.props.updateParticipantCompetitionAction(value,key,index,subIndex,subKey);
+    onChangeSetCompetitionValue = (value,key,index,subIndex,subKey,subValue) =>{
+        this.props.updateParticipantCompetitionAction(value,key,index,subIndex,subKey,subValue);
+    }
+
+    onChangeDivisionInfo = (divisionIndex,competitionIndex,divisionInfoList) => {
+        this.onChangeSetCompetitionValue(divisionIndex,"divisionInfoIndex",competitionIndex);
+        let divisionInfo = divisionInfoList[divisionIndex];
+        this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex,null,null,divisionInfo.competitionMembershipProductTypeId)
     }
 
     addFriend = (removeOrAdd,competitionIndex,friendIndex) => {
@@ -2075,9 +2081,7 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <div className="d-flex">
-                            <span className="input-heading">{AppConstants.registeringAs}<span className="roles-text">{AppConstants.multpleRolesSelected}</span></span>
-                        </div>
+                        <div className="input-style-bold">{AppConstants.registeringAs}</div>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 checked={membershipProduct.isChecked}
@@ -2088,7 +2092,7 @@ class AppRegistrationFormNew extends Component{
 
                         {this.isPlayerActive(competition) && (
                             <div>
-                                <InputWithHead heading={AppConstants.registrationDivisions} />
+                                <div className="input-style-bold">{AppConstants.registrationDivisions}</div>
                                 <div
                                     style={{ marginBottom: "10px" }}>
                                     {(competition.divisions || []).map((division, divisionIndex) => (
@@ -2107,7 +2111,7 @@ class AppRegistrationFormNew extends Component{
                                         }}>{division.divisionName} <span style={{ cursor: "pointer", marginLeft: "5px", color: "var(--app-color)" }} onClick={(e) => this.onChangeSetCompetitionValue(e, "divisions", competitionIndex, divisionIndex)}>&#10005;</span></span>
                                     ))}
                                 </div>
-                                <Select
+                                {/* <Select
                                     style={{ width: "100%", paddingRight: 1 }}
                                     onChange={(e) => this.onChangeSetCompetitionValue(e, "divisionInfo", competitionIndex)}
                                 >
@@ -2115,32 +2119,32 @@ class AppRegistrationFormNew extends Component{
                                         <Option key={divisionInfo.competitionMembershipProductDivisionId + divisionInfoIndex}
                                             value={divisionInfo.competitionMembershipProductDivisionId}>{divisionInfo.divisionName}</Option>
                                     ))}
+                                </Select> */}
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1 }}
+                                    value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
+                                    onChange={(index) => this.onChangeDivisionInfo(index,competitionIndex,competition.divisionInfo) }
+                                >
+                                    {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
+                                        <Option key={"division"+divisionInfoIndex}
+                                            value={divisionInfoIndex}>{divisionInfo.divisionName}</Option>
+                                    ))}
                                 </Select>
                             </div>
                         )}
 
-                        <div className="row" style={{ marginTop: "20px" }}>
+                        <div className="row">
                             <div className="col-sm-12 col-md-6">
-                                {competition.fees.totalCasualFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
-                                    <div>
-                                        <InputWithHead heading={AppConstants.totalCasualFees} />
-                                        <div className="form-heading">{competition.fees.totalCasualFee}<span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span></div>
-                                    </div>
-                                )}
-                                {this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
-                                    <div style={{ marginTop: "25px", textAlign: "center" }}><Spin /></div>
-                                )}
+                                <div className="input-style-bold">{AppConstants.totalCasualFees}</div>
+                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(competition.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                    <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
+                                </div>
                             </div>
                             <div className="col-sm-12 col-md-6">
-                                {competition.fees.totalSeasonalFee && !this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
-                                    <div>
-                                        <InputWithHead heading={AppConstants.totalSeasonalFees} />
-                                        <div className="form-heading">{competition.fees.totalSeasonalFee}<span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span></div>
-                                    </div>
-                                )}
-                                {this.props.userRegistrationState.getSeasonalCasualFeesOnLoad && (
-                                    <div style={{ marginTop: "25px", textAlign: "center" }}><Spin /></div>
-                                )}
+                                <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
+                                <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(competition.fees.totalSeasonalFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                    <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
+                                </div>
                             </div>
                         </div>
                     </div>
