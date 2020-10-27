@@ -936,7 +936,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             })
                         }
                         else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
-                            if(Response.clientSecret == null && Response.totalFee == 0){
+                            if(Response.clientSecret == null){
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
                                     userRegId: null,
