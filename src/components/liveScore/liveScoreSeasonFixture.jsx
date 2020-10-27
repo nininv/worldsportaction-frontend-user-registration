@@ -13,11 +13,12 @@ import { liveScoreRoundListAction, clearRoundData } from '../../store/actions/Li
 import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID } from '../../util/sessionStorage'
 import AppImages from "../../themes/appImages";
 import { fixtureCompetitionListAction } from "../../store/actions/LiveScoreAction/LiveScoreFixtureAction"
-import { isArrayNotEmpty } from "../../util/helpers";
+import { isArrayNotEmpty, getCurrentYear } from "../../util/helpers";
 import history from "../../util/history";
 import './liveScore.css'
 import { getYearListing } from "../../store/actions/appAction";
 import { getliveScoreTeams } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
+import { getAllOrganisationListAction } from "../../store/actions/userAction/userAction";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -260,48 +261,49 @@ class LiveScoreSeasonFixture extends Component {
             yearId: null,
             yearLoading: false,
             team: "All",
-            onTeamLoad: false
-
+            onTeamLoad: false,
+            filterOrganisationUniqueKey: null,
+            orgLoading: false,
+        }
+        let orgParam = this.props.location.search.split("?organisationKey=")
+        let orgId = orgParam[1]
+        if (orgId != undefined) {
+            setliveScoreOrgID(orgId)
+            history.push('/liveScoreSeasonFixture')
         }
     }
     async componentDidMount() {
-
         this.props.getYearListing(this.props.appState)
-        this.setState({ yearLoading: true })
-
+        this.props.getAllOrganisationListAction()
+        this.setState({ yearLoading: true, orgLoading: true })
         setUserId(userId);
         setAuthToken(token);
-
-
-        let orgParam = this.props.location.search.split("?organisationKey=")
-        let orgId = orgParam[1]
-        setliveScoreOrgID(orgId)
-        // let organisationId = await getliveScoreOrgID()
-
-        // if (organisationId != undefined) {
-        //     this.setState({ onCompLoad: true })
-        //     this.props.fixtureCompetitionListAction(organisationId)
-        // } else {
-        //     history.push('/liveScoreSeasonFixture')
-        // }
-
     }
 
     async componentDidUpdate(nextProps) {
 
         if (nextProps.appState !== this.props.appState) {
             if (this.props.appState.onLoad === false && this.state.yearLoading === true) {
-                let yearId = this.props.appState.yearListing[0].id
-                let organisationId = await getliveScoreOrgID()
-                if (organisationId != undefined) {
-                    this.props.fixtureCompetitionListAction(organisationId, yearId)
-                    this.setState({ onCompLoad: true, yearLoading: false, yearId })
-                } else {
+                let yearId = await getCurrentYear(this.props.appState.yearListing)
+                this.setState({ yearLoading: false, yearId })
+            }
+        }
 
+        if (nextProps.userState !== this.props.userState) {
+            if (this.props.userState.onLoad === false && this.state.orgLoading === true) {
+                let filterOrganisationUniqueKey = this.props.userState.allOrganisationList[0].organisationUniqueKey
+                let orgId = await getliveScoreOrgID()
+                filterOrganisationUniqueKey = orgId !== undefined ? orgId : filterOrganisationUniqueKey
+                setliveScoreOrgID(filterOrganisationUniqueKey)
+                if (filterOrganisationUniqueKey != undefined) {
+                    this.props.fixtureCompetitionListAction(filterOrganisationUniqueKey, this.state.yearId)
+                    this.setState({ onCompLoad: true, orgLoading: false, filterOrganisationUniqueKey })
+                } else {
                     history.push('/liveScoreSeasonFixture')
                 }
             }
         }
+
 
         if (nextProps.liveScoreFixturCompState !== this.props.liveScoreFixturCompState) {
             if (this.state.onCompLoad == true && this.props.liveScoreFixturCompState.onLoad == false) {
@@ -329,7 +331,13 @@ class LiveScoreSeasonFixture extends Component {
         }
     }
 
+    onChangeOrg(filterOrganisationUniqueKey) {
+        setliveScoreOrgID(filterOrganisationUniqueKey)
+        this.props.clearRoundData("all")
+        this.props.fixtureCompetitionListAction(filterOrganisationUniqueKey, this.state.yearId)
+        this.setState({ filterOrganisationUniqueKey, division: null, competitionUniqueKey: null, onCompLoad: true, selectedComp: null })
 
+    }
 
 
     onChangeComp(compID) {
@@ -391,12 +399,13 @@ class LiveScoreSeasonFixture extends Component {
         let division = isArrayNotEmpty(liveScoreLadderState.liveScoreLadderDivisionData) ? liveScoreLadderState.liveScoreLadderDivisionData : []
         let teamList = isArrayNotEmpty(liveScoreLadderState.teamResult) ? liveScoreLadderState.teamResult : []
         const { yearListing } = this.props.appState
+        const { allOrganisationList } = this.props.userState
         return (
             <>
                 <div className="comp-player-grades-header-drop-down-view tableViewHide">
                     <div className="row" >
 
-                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <div className="col-sm-2 mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
                             <span className="year-select-heading">
                                 {AppConstants.year}:</span>
                             <Select
@@ -407,6 +416,22 @@ class LiveScoreSeasonFixture extends Component {
                             >
                                 {yearListing.length > 0 && yearListing.map((item, yearIndex) => (
                                     < Option key={"yearlist" + yearIndex} value={item.id} > {item.name}</Option>
+                                ))
+                                }
+                            </Select>
+                        </div>
+
+                        <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                            <span className="year-select-heading">
+                                {AppConstants.organisation}:</span>
+                            <Select
+                                className="year-select reg-filter-select-competition ml-2"
+                                style={{ width: 160 }}
+                                onChange={organisationUniqueKey => this.onChangeOrg(organisationUniqueKey)}
+                                value={this.state.filterOrganisationUniqueKey}
+                            >
+                                {allOrganisationList.length > 0 && allOrganisationList.map((item, index) => (
+                                    < Option key={"allOrganisation_List" + index} value={item.organisationUniqueKey} > {item.name}</Option>
                                 ))
                                 }
                             </Select>
@@ -440,6 +465,8 @@ class LiveScoreSeasonFixture extends Component {
                                 }
                             </Select>
                         </div>
+                    </div>
+                    <div className="row mt-2" >
 
                         {/* Team List */}
                         <div className="col-sm mt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }}>
@@ -458,8 +485,7 @@ class LiveScoreSeasonFixture extends Component {
                             </Select>
                         </div>
 
-                        <div className="col-sm-6">
-                        </div>
+
                     </div>
                 </div>
                 <div className="comp-player-grades-header-drop-down-view tableViewShow">
@@ -477,6 +503,22 @@ class LiveScoreSeasonFixture extends Component {
                         >
                             {yearListing.length > 0 && yearListing.map((item, yearIndex) => (
                                 < Option key={"yearlist" + yearIndex} value={item.id} > {item.name}</Option>
+                            ))
+                            }
+                        </Select>
+                    </div>
+                    <div className="col-sm pl-0" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <span className='year-select-heading pl-3 pt-2'>{AppConstants.organisation}</span>
+                    </div>
+                    <div className="col-sm pl-0 pt-2" style={{ width: "fit-content", display: "flex", alignItems: "center" }} >
+                        <Select
+                            className="year-select reg-filter-select-competition ml-2"
+                            style={{ minWidth: 160 }}
+                            onChange={organisationUniqueKey => this.onChangeOrg(organisationUniqueKey)}
+                            value={this.state.filterOrganisationUniqueKey}
+                        >
+                            {allOrganisationList.length > 0 && allOrganisationList.map((item, index) => (
+                                < Option key={"allOrganisation_List" + index} value={item.organisationUniqueKey} > {item.name}</Option>
                             ))
                             }
                         </Select>
@@ -696,6 +738,7 @@ function mapDispatchToProps(dispatch) {
         fixtureCompetitionListAction,
         getYearListing,
         getliveScoreTeams,
+        getAllOrganisationListAction,
     }, dispatch)
 }
 
@@ -706,6 +749,7 @@ function mapStatetoProps(state) {
         liveScoreCompetition: state.liveScoreCompetition,
         liveScoreRoundState: state.LiveScoreRoundState,
         appState: state.AppState,
+        userState: state.UserState,
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(LiveScoreSeasonFixture));

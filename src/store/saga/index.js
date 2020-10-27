@@ -270,5 +270,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LIVE_SCORE_TEAM_LOAD, liveScoreTeamSaga);
 
   yield takeEvery(ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,userRegistrationSaga.getSeasonalCasualFeesSaga);
+  yield takeEvery(ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD, userSaga.getAllOrganisationListSaga);
 
 }
