@@ -312,6 +312,7 @@ class AppTeamRegistrationForm extends Component{
     setParticipantDetailStepFormFields = () => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
+            console.log("date",teamRegistrationObj.dateOfBirth);
             if(teamRegistrationObj){
                 this.props.form.setFieldsValue({
                     [`yourDetailsPersonRoleRefId`]: teamRegistrationObj.personRoleRefId,
@@ -319,7 +320,7 @@ class AppTeamRegistrationForm extends Component{
                     [`yourDetailsFirstName`]: teamRegistrationObj.firstName,
                     [`yourDetailsMiddleName`]: teamRegistrationObj.middleName,
                     [`yourDetailsLastName`]: teamRegistrationObj.lastName,
-                    [`yourDetailsdateOfBirth`]: teamRegistrationObj.dateOfBirth && moment(teamRegistrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`yourDetailsdateOfBirth`]: teamRegistrationObj.dateOfBirth ? moment(teamRegistrationObj.dateOfBirth, "MM-DD-YYYY") : null,
                     [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
                     [`yourDetailsEmail`]: teamRegistrationObj.email,
                     [`teamName`]: teamRegistrationObj.teamName
@@ -334,7 +335,7 @@ class AppTeamRegistrationForm extends Component{
                             [`teamMemberFirstName${mIndex}`]: member.firstName,
                             [`teamMemberMiddleName${mIndex}`]: member.middleName,
                             [`teamMemberLastName${mIndex}`]: member.lastName,
-                            [`teamMemberDateOfBirth${mIndex}`]: member.dateOfBirth && moment(member.dateOfBirth, "YYYY-MM-DD"),
+                            [`teamMemberDateOfBirth${mIndex}`]: member.dateOfBirth ? moment(member.dateOfBirth, "MM-DD-YYYY") : null,
                             [`teamMemberMobileNumber${mIndex}`]:  member.mobileNumber,
                             [`teamMemberEmail${mIndex}`]:  member.email,
                         });
@@ -1239,7 +1240,6 @@ class AppTeamRegistrationForm extends Component{
         try{
             const { genderList } = this.props.commonReducerState;
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            console.log(teamRegistrationObj);
             return(
                 <div className="registration-form-view">
                     <div className="form-heading" 

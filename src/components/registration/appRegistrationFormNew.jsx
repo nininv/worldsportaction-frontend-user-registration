@@ -278,7 +278,7 @@ class AppRegistrationFormNew extends Component{
             if(registrationObj){
                 this.props.form.setFieldsValue({
                     [`genderRefId`]: registrationObj.genderRefId,
-                    [`dateOfBirth`]: registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "YYYY-MM-DD"),
+                    [`dateOfBirth`]: registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "DD-MM-YYYY"),
                     [`participantFirstName`]: registrationObj.firstName,
                     [`participantMiddleName`]: registrationObj.middleName,
                     [`participantLastName`]: registrationObj.lastName,
