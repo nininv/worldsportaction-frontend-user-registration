@@ -1270,7 +1270,7 @@ class TeamInivteForm extends Component{
         }
     }
 
-    additionalInfoView = () => {
+    additionalInfoView = (getFieldDecorator) => {
         try{
             const { iniviteMemberInfo,inviteMemberRegSettings } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
@@ -1283,80 +1283,106 @@ class TeamInivteForm extends Component{
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
-                    <div className="input-style">{AppConstants.whichCountryWereBorn}</div>
-                    {/* <InputWithHead heading={AppConstants.whichCountryWereBorn}/> */}
-                    <Select
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","userRegDetails")}
-                        value={userRegDetails.countryRefId}>
-                        {countryList.length > 0 && countryList.map((item) => (
-                            < Option key={item.id} value={item.id}> {item.description}</Option>
-                        ))}
-                    </Select>
-                    <div className="input-style">{AppConstants.doYouIdentifyAs}</div>
-                    {/* <InputWithHead heading={AppConstants.doYouIdentifyAs}/> */}
+                    <InputWithHead heading={AppConstants.whichCountryWereBorn} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoCountryRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.countryField }],
+                        })(
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder={AppConstants.select}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","userRegDetails")}
+                            value={userRegDetails.countryRefId}>
+                            {countryList.length > 0 && countryList.map((item) => (
+                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                            ))}
+                        </Select>
+                         )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value,"identifyRefId","userRegDetails")}
-                        value={userRegDetails.identifyRefId}
+                        value={userRegDetails.identifyRefId ? userRegDetails.identifyRefId : 3}
                         >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.anyExistingMedicalCondition}</div>
-                    {/* <InputWithHead heading={AppConstants.anyExistingMedicalCondition}/> */}
-                    <TextArea
-                        placeholder={AppConstants.existingMedConditions}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","userRegDetails")} 
-                        value={userRegDetails.existingMedicalCondition}
-                        allowClear
-                    />
-                    <div className="input-style">{AppConstants.anyRedularMedicalConditions}</div>
-                    {/* <InputWithHead heading={AppConstants.anyRedularMedicalConditions}  /> */}
-                    <TextArea
-                        placeholder={AppConstants.redularMedicalConditions}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","userRegDetails")} 
-                        value={userRegDetails.regularMedication}
-                        allowClear
-                    />
-                    <div className="input-style">{AppConstants.injury}</div>
-                    {/* <InputWithHead heading={AppConstants.injury}/> */}
-                    <TextArea
-                        placeholder={AppConstants.anyInjury}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","userRegDetails")} 
-                        value={userRegDetails.injuryInfo}
-                        allowClear
-                    />
-                    <div className="input-style">{AppConstants.alergy}</div>
-                    {/* <InputWithHead heading={AppConstants.alergy}/> */}
-                    <TextArea
-                        placeholder={AppConstants.anyAlergies}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
-                        value={userRegDetails.allergyInfo}
-                        allowClear
-                    />
-                    <div className="input-style">{AppConstants.haveDisability}</div>
-                    {/* <InputWithHead heading={AppConstants.haveDisability} /> */}
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","userRegDetails")} 
-                        value={userRegDetails.isDisability}
-                        >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
+                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoAnyExistingMedialCondition`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[1] }],
+                        })(
+                        <TextArea
+                            placeholder={AppConstants.existingMedConditions}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","userRegDetails")} 
+                            value={userRegDetails.existingMedicalCondition}
+                            allowClear
+                        />
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.anyRedularMedicalConditions} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoAnyRedularMedicalConditions`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[2] }],
+                        })(
+                        <TextArea
+                            placeholder={AppConstants.redularMedicalConditions}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","userRegDetails")} 
+                            value={userRegDetails.regularMedication}
+                            allowClear
+                        />
+                        )}
+                    </Form.Item>   
+                    <InputWithHead heading={AppConstants.injury} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoInjury`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[3] }],
+                        })( 
+                            <TextArea
+                                placeholder={AppConstants.anyInjury}
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","userRegDetails")} 
+                                value={userRegDetails.injuryInfo}
+                                allowClear
+                            />
+                        )}
+                    </Form.Item>  
+                    <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoAlergies`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
+                        })( 
+                        <TextArea
+                            placeholder={AppConstants.anyAlergies}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
+                            value={userRegDetails.allergyInfo}
+                            allowClear
+                        />
+                        )}
+                    </Form.Item>   
+                    <Form.Item>
+                        {getFieldDecorator(`AdditionalInfoHaveDisablity`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
+                        })( 
+                        <Radio.Group
+                            className="registration-radio-group"
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","userRegDetails")} 
+                            value={userRegDetails.isDisability}
+                            >
+                            <Radio value={1}>{AppConstants.yes}</Radio>
+                            <Radio value={0}>{AppConstants.no}</Radio>
+                        </Radio.Group>
+                        )}
+                    </Form.Item>  
                     {userRegDetails.isDisability == 1 ? 
                         <div>
-                            <div className="input-style">{AppConstants.disabilityCareNumber}</div>
+                            <InputWithHead heading={AppConstants.disabilityCareNumber}/>
                             <InputWithHead 
-                            // heading={AppConstants.disabilityCareNumber} 
                             placeholder={AppConstants.disabilityCareNumber} 
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","userRegDetails")}
                             value={userRegDetails.disabilityCareNumber}/>
-                            <div className="input-style">{AppConstants.typeOfDisability}</div>
-                            {/* <InputWithHead heading={AppConstants.typeOfDisability} /> */}
+                            <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","userRegDetails")} 
@@ -1370,22 +1396,25 @@ class TeamInivteForm extends Component{
                     }
                     <div className="row">
                         <div className="col-md-6 col-sm-12">
-                            <div className="input-style">{AppConstants.teamYouFollow}</div>
-                            {/* <InputWithHead heading={AppConstants.teamYouFollow}/> */}
-                            <Select
-                                style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","userRegDetails")}
-                                value={userRegDetails.favouriteTeamRefId}
-                                >  
-                                {(favouriteTeamsList || []).map((fav, index) => (
-                                    <Option key={fav.id} value={fav.id}>{fav.description}</Option>
-                                ))}
-                            </Select>
+                            <Form.Item>
+                                {getFieldDecorator(`AdditionalInfoTeamYouFollow`, {
+                                    rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                })(  
+                                <Select
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","userRegDetails")}
+                                    value={userRegDetails.favouriteTeamRefId}
+                                    >  
+                                    {(favouriteTeamsList || []).map((fav, index) => (
+                                        <Option key={fav.id} value={fav.id}>{fav.description}</Option>
+                                    ))}
+                                </Select>
+                                )}
+                            </Form.Item>
                         </div>
                         {userRegDetails.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <div className="input-style">{AppConstants.who_fav_bird}</div>  
-                                {/* <InputWithHead heading={AppConstants.who_fav_bird} /> */}
+                                <InputWithHead heading={AppConstants.who_fav_bird} />
                                 <Select
                                     style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                     onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","userRegDetails")}
@@ -1595,13 +1624,13 @@ class TeamInivteForm extends Component{
         }
     }
 
-    additionalInformationsStepView = () => {
+    additionalInformationsStepView = (getFieldDecorator) => {
         try{
             return(
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.userView()}</div>
-                    <div>{this.additionalInfoView()}</div>
+                    <div>{this.additionalInfoView(getFieldDecorator)}</div>
                 </div>
             )
         }catch(ex){
@@ -1617,7 +1646,7 @@ class TeamInivteForm extends Component{
                         <div>{this.yourDetailsStepView(getFieldDecorator)}</div>
                    } 
                    {this.state.currentStep == 1 && 
-                        <div>{this.additionalInformationsStepView()}</div>
+                        <div>{this.additionalInformationsStepView(getFieldDecorator)}</div>
                    }
                 </div>
             )

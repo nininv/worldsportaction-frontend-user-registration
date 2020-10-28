@@ -104,6 +104,18 @@ const ValidationConstants = {
     selectAddressRequired: "Select address required",
     fillMembershipProductInformation: "Please fill Membership product information",
     fillMembershipProductDivisionInformation:"Please choose Registration Divisions.",
+
+    additionalInfoQuestions: [
+        "Please select Do you identify as",
+        "Any existing medical condition field is required",
+        "Any regular medication field is required",
+        "Injury field is required",
+        "Alergies field is required",
+        "Please select that you have disablity or not",
+        "Which sucorp super netball team do you follow field is required",
+        "Other participants field is required",
+        "Heard about the competition field is required"
+    ]
 };
 
 export default ValidationConstants;

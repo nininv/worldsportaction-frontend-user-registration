@@ -84,7 +84,7 @@ let registrationObjTemp = {
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
 		"countryRefId": 1,
-		"identifyRefId": null,
+		"identifyRefId": 3,
 		"injuryInfo": null,
 		"allergyInfo": null,
 		"otherSportsInfo": [],
