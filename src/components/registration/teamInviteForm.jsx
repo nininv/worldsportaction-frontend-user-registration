@@ -172,6 +172,28 @@ class TeamInivteForm extends Component{
         }
     }
 
+    setParticipantAdditionalInfoStepFormFields = () => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamInviteState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            if(iniviteMemberInfo){
+                this.props.form.setFieldsValue({
+                    [`additionalInfoCountryRefId`]: userRegDetails.countryRefId,
+                    [`additionalInfoAnyExistingMedialCondition`]: userRegDetails.existingMedicalCondition,
+                    [`additionalInfoAnyRedularMedicalConditions`]: userRegDetails.regularMedication,
+                    [`additionalInfoInjury`]: userRegDetails.injuryInfo,
+                    [`additionalInfoAlergies`]: userRegDetails.allergyInfo,
+                    [`additionalInfoHaveDisablity`]: userRegDetails.isDisability,
+                    [`additionalInfoTeamYouFollow`]: userRegDetails.favouriteTeamRefId,
+                    [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: [],
+                    [`additionalInfoHeardAboutTheCompition`]: userRegDetails.heardByRefId,
+                });
+            }
+        }catch(ex){
+            console.log("Error in setParticipantAdditionalInfoStepFormFields::"+ex);
+        }
+    }
+
     onChangeStep = (current) => {
         try{
             if(this.state.enabledSteps.includes(current)){
@@ -187,6 +209,9 @@ class TeamInivteForm extends Component{
             }else if(current == 1){
                 if(this.state.enabledSteps.includes(1)){
                     this.setState({submitButtonText: AppConstants.reviewOrder});
+                    setTimeout(() => {
+                        this.setParticipantAdditionalInfoStepFormFields();
+                    },300);
                 }
             }
         }catch(ex){
@@ -399,6 +424,9 @@ class TeamInivteForm extends Component{
                         if(nextStep == 1){
                             this.state.enabledSteps.push(0,nextStep);
                             this.setState({showMoreInformation: false});
+                            setTimeout(() => {
+                                this.setParticipantAdditionalInfoStepFormFields();
+                            },300);
                         }
                         this.state.completedSteps.push(this.state.currentStep);
                         this.setState({currentStep: nextStep,
@@ -1285,7 +1313,7 @@ class TeamInivteForm extends Component{
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
                     <InputWithHead heading={AppConstants.whichCountryWereBorn} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoCountryRefId`, {
+                        {getFieldDecorator(`additionalInfoCountryRefId`, {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
                         <Select
@@ -1311,7 +1339,7 @@ class TeamInivteForm extends Component{
                     </Radio.Group>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAnyExistingMedialCondition`, {
+                        {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[1] }],
                         })(
                         <TextArea
@@ -1324,7 +1352,7 @@ class TeamInivteForm extends Component{
                     </Form.Item>
                     <InputWithHead heading={AppConstants.anyRedularMedicalConditions} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAnyRedularMedicalConditions`, {
+                        {getFieldDecorator(`additionalInfoAnyRedularMedicalConditions`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[2] }],
                         })(
                         <TextArea
@@ -1337,7 +1365,7 @@ class TeamInivteForm extends Component{
                     </Form.Item>   
                     <InputWithHead heading={AppConstants.injury} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoInjury`, {
+                        {getFieldDecorator(`additionalInfoInjury`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[3] }],
                         })( 
                             <TextArea
@@ -1350,7 +1378,7 @@ class TeamInivteForm extends Component{
                     </Form.Item>  
                     <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAlergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                         <TextArea
@@ -1360,9 +1388,10 @@ class TeamInivteForm extends Component{
                             allowClear
                         />
                         )}
-                    </Form.Item>   
+                    </Form.Item>  
+                    <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/> 
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoHaveDisablity`, {
+                        {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
                         })( 
                         <Radio.Group
@@ -1396,8 +1425,9 @@ class TeamInivteForm extends Component{
                     }
                     <div className="row">
                         <div className="col-md-6 col-sm-12">
+                            <InputWithHead heading={AppConstants.teamYouFollow} required={"required-field"}/>
                             <Form.Item>
-                                {getFieldDecorator(`AdditionalInfoTeamYouFollow`, {
+                                {getFieldDecorator(`additionalInfoTeamYouFollow`, {
                                     rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                 })(  
                                 <Select
@@ -1427,20 +1457,25 @@ class TeamInivteForm extends Component{
                             </div>
                         )}
                     </div>
-
-                    <div className="input-style">{AppConstants.playingOtherParticipantSports}</div>                   
-                    {/* <InputWithHead heading={AppConstants.playingOtherParticipantSports} /> */}
-                    <Select
-                        mode="multiple"
-                        showArrow
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","userRegDetails")}
-                        value={userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: []}>
-                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
-                            < Option key={item.id} value={item.id}> {item.description}</Option>
-                        ))}
-                    </Select>
+                  
+                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoPlayingOtherParticipantSports`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
+                        })(
+                        <Select
+                            mode="multiple"
+                            showArrow
+                            style={{ width: "100%" }}
+                            placeholder={AppConstants.select}
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","userRegDetails")}
+                            value={userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: []}>
+                            {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                            ))}
+                        </Select>
+                        )}
+                     </Form.Item> 
                     {hasOtherParticipantSports && (
                         <div style={{marginTop: "20px"}}>
                             <InputWithHead 
@@ -1450,17 +1485,22 @@ class TeamInivteForm extends Component{
                             />
                         </div>
                     )}
-                    <div className="input-style">{AppConstants.hearAbouttheCompition}</div>
-                    {/* <InputWithHead heading={AppConstants.hearAbouttheCompition} /> */}
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","userRegDetails")} 
-                        value={userRegDetails.heardByRefId}
-                        >
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                    </Radio.Group>
+                    <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
+                        })( 
+                        <Radio.Group
+                            className="registration-radio-group"
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","userRegDetails")} 
+                            value={userRegDetails.heardByRefId}
+                            >
+                            {(heardByList || []).map((heard, index) => (
+                                <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                            ))}
+                        </Radio.Group>
+                        )}
+                    </Form.Item> 
                     {userRegDetails.heardByRefId == 6 && (
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 
@@ -1472,8 +1512,7 @@ class TeamInivteForm extends Component{
 
                     {inviteMemberRegSettings.netball_experience == 1 && (
                         <div>
-                            <div className="input-style">{AppConstants.firstYearPlayingNetball}</div>
-                            {/* <InputWithHead heading={AppConstants.firstYearPlayingNetball} /> */}
+                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isYearsPlayed","userRegDetails")} 
@@ -1484,7 +1523,7 @@ class TeamInivteForm extends Component{
                             </Radio.Group>
                             {userRegDetails.isYearsPlayed == 0 && (
                                 <div>
-                                    <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
                                     <Select
                                         placeholder={AppConstants.yearsOfPlaying}
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
@@ -1504,8 +1543,7 @@ class TeamInivteForm extends Component{
                         <div>
                             {inviteMemberRegSettings.school_standard == 1 && (
                                 <div>
-                                    <div className="input-style">{AppConstants.schoolYouAttend}</div>
-                                    {/* <InputWithHead heading={AppConstants.schoolYouAttend} /> */}
+                                    <InputWithHead heading={AppConstants.schoolYouAttend} />
                                     <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","userRegDetails")}
@@ -1520,7 +1558,7 @@ class TeamInivteForm extends Component{
 
                             {inviteMemberRegSettings.school_grade == 1 && (
                                 <div>
-                                    <div className="input-style">{AppConstants.yourSchoolGrade}</div>
+                                    <InputWithHead heading={AppConstants.yourSchoolGrade} />
                                     <InputWithHead 
                                         // heading={(AppConstants.yourSchoolGrade)} 
                                         placeholder={AppConstants.schoolGrade} 
@@ -1532,8 +1570,7 @@ class TeamInivteForm extends Component{
 
                             {inviteMemberRegSettings.school_program == 1 && (
                                 <div>
-                                     <div className="input-style">{AppConstants.participatedSchoolProgram}</div>
-                                    {/* <InputWithHead heading={AppConstants.participatedSchoolProgram}/> */}
+                                    <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
                                     <Radio.Group
                                         className="registration-radio-group"
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isParticipatedInSSP","userRegDetails")} 
@@ -1549,8 +1586,7 @@ class TeamInivteForm extends Component{
 
                     {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
                         <div>
-                            <div className="input-style">{AppConstants.nationalAccreditationLevelCoach}</div>
-                            {/* <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/> */}
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{flexDirection: "column"}}

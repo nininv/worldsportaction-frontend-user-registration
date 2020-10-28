@@ -1053,6 +1053,11 @@ class AppRegistrationFormNew extends Component{
                             this.state.enabledSteps.push(0, nextStep);
                         } else {
                             this.state.enabledSteps.push(nextStep);
+                            if(nextStep == 2){
+                                setTimeout(() => {
+                                    this.setParticipantAdditionalInfoStepFormFields();
+                                },300);
+                            }
                         }
                         this.state.completedSteps.push(this.state.currentStep);
                         this.setState({
@@ -1328,13 +1333,14 @@ class AppRegistrationFormNew extends Component{
                             onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "street2")} 
                             value={registrationObj.street2}
                         />
+                        <InputWithHead heading={AppConstants.suburb}   required={"required-field"}/>
                         <Form.Item >
                             {getFieldDecorator(`participantSuburb`, {
                                 rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                             })(
                             <InputWithHead
-                                required={"required-field pt-0 pb-0"}
-                                heading={AppConstants.suburb}
+                                // required={"required-field"}
+                                // heading={AppConstants.suburb}
                                 placeholder={AppConstants.suburb}
                                 onChange={(e) => this.onChangeSetParticipantValue( e.target.value, "suburb")} 
                                 setFieldsValue={registrationObj.suburb}
@@ -2792,8 +2798,7 @@ class AppRegistrationFormNew extends Component{
 
                     {registrationObj.regSetting.netball_experience == 1 && (
                         <div>
-                            <div className="input-style" style={{ marginTop: "-8px" }}>{AppConstants.firstYearPlayingNetball}</div>
-                            {/* <InputWithHead heading={AppConstants.firstYearPlayingNetball} /> */}
+                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")}
@@ -2804,7 +2809,7 @@ class AppRegistrationFormNew extends Component{
                             </Radio.Group>
                             {registrationObj.additionalInfo.isYearsPlayed == 0 && (
                                 <div>
-                                    <div className="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
                                     <Select
                                         placeholder={AppConstants.yearsOfPlaying}
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182 }}

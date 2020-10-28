@@ -346,6 +346,28 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    setParticipantAdditionalInfoStepFormFields = () => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            let additionalInfo = teamRegistrationObj.additionalInfo;
+            if(teamRegistrationObj){
+                this.props.form.setFieldsValue({
+                    [`additionalInfoCountryRefId`]: additionalInfo.countryRefId,
+                    [`additionalInfoAnyExistingMedialCondition`]: additionalInfo.existingMedicalCondition,
+                    [`additionalInfoAnyRedularMedicalConditions`]: additionalInfo.regularMedication,
+                    [`additionalInfoInjury`]: additionalInfo.injuryInfo,
+                    [`additionalInfoAlergies`]: additionalInfo.allergyInfo,
+                    [`additionalInfoHaveDisablity`]: additionalInfo.isDisability,
+                    [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
+                    [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo,
+                    [`additionalInfoHeardAboutTheCompition`]: additionalInfo.heardByRefId,
+                });
+            }
+        }catch(ex){
+            console.log("Error in setParticipantAdditionalInfoStepFormFields::"+ex);
+        }
+    }
+
     onChangeStep = (current) => {
         try{
             if(this.state.enabledSteps.includes(current)){
@@ -367,6 +389,9 @@ class AppTeamRegistrationForm extends Component{
             }else{
                 if(this.state.enabledSteps.includes(2)){
                     this.setState({submitButtonText: AppConstants.signupToCompetition});
+                    setTimeout(() => {
+                        this.setParticipantAdditionalInfoStepFormFields();
+                    },300);
                 }
             }
         }catch(ex){
@@ -624,6 +649,11 @@ class AppTeamRegistrationForm extends Component{
                             },300);
                         }else{
                             this.state.enabledSteps.push(nextStep);
+                            if(nextStep == 2){
+                                setTimeout(() => {
+                                    this.setParticipantAdditionalInfoStepFormFields();
+                                },300);
+                            }
                         }
                         this.state.completedSteps.push(this.state.currentStep);
                         this.setState({currentStep: nextStep,
@@ -1707,7 +1737,7 @@ class AppTeamRegistrationForm extends Component{
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
                     <InputWithHead heading={AppConstants.whichCountryWereBorn} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoCountryRefId`, {
+                        {getFieldDecorator(`additionalInfoCountryRefId`, {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
                         <Select
@@ -1733,7 +1763,7 @@ class AppTeamRegistrationForm extends Component{
                     </Radio.Group>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAnyExistingMedialCondition`, {
+                        {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[1] }],
                         })(
                             <TextArea
@@ -1746,7 +1776,7 @@ class AppTeamRegistrationForm extends Component{
                     </Form.Item>
                     <InputWithHead heading={AppConstants.anyRedularMedicalConditions} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAnyRedularMedicalConditions`, {
+                        {getFieldDecorator(`additionalInfoAnyRedularMedicalConditions`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[2] }],
                         })(
                             <TextArea
@@ -1759,7 +1789,7 @@ class AppTeamRegistrationForm extends Component{
                     </Form.Item>   
                     <InputWithHead heading={AppConstants.injury} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoInjury`, {
+                        {getFieldDecorator(`additionalInfoInjury`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[3] }],
                         })( 
                             <TextArea
@@ -1772,7 +1802,7 @@ class AppTeamRegistrationForm extends Component{
                     </Form.Item>   
                     <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAlergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                             <TextArea
@@ -1785,7 +1815,7 @@ class AppTeamRegistrationForm extends Component{
                     </Form.Item>   
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoHaveDisablity`, {
+                        {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
                         })( 
                             <Radio.Group
@@ -1819,8 +1849,9 @@ class AppTeamRegistrationForm extends Component{
                     }
                     <div className="row">
                         <div className="col-md-6 col-sm-12">
+                            <InputWithHead heading={AppConstants.teamYouFollow} required={"required-field"}/>
                             <Form.Item>
-                                {getFieldDecorator(`AdditionalInfoTeamYouFollow`, {
+                                {getFieldDecorator(`additionalInfoTeamYouFollow`, {
                                     rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                 })(  
                                     <Select
@@ -1852,17 +1883,23 @@ class AppTeamRegistrationForm extends Component{
                     </div>
 
                     <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
-                    <Select
-                        mode="multiple"
-                        showArrow
-                        style={{ width: "100%" }}
-                        placeholder={AppConstants.select}
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                        defaultValue={teamRegistrationObj.additionalInfo.otherSportsInfo}>
-                        {otherSportsList.length > 0 && otherSportsList.map((item) => (
-                            < Option key={item.id} value={item.id}> {item.description}</Option>
-                        ))}
-                    </Select>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoPlayingOtherParticipantSports`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
+                        })(
+                        <Select
+                            mode="multiple"
+                            showArrow
+                            style={{ width: "100%" }}
+                            placeholder={AppConstants.select}
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
+                            defaultValue={teamRegistrationObj.additionalInfo.otherSportsInfo}>
+                            {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                            ))}
+                        </Select>
+                        )}
+                    </Form.Item> 
                     {hasOtherParticipantSports && (
                         <div style={{marginTop: "20px"}}>
                             <InputWithHead 
@@ -1874,7 +1911,7 @@ class AppTeamRegistrationForm extends Component{
                     )}
                    <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`AdditionalInfoHearAboutTheCompition`, {
+                        {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
                         })( 
                             <Radio.Group
@@ -1899,8 +1936,7 @@ class AppTeamRegistrationForm extends Component{
 
                     {teamRegistrationObj.regSetting.netball_experience == 1 && (
                         <div>
-                            <div className="input-style">{AppConstants.firstYearPlayingNetball}</div>
-                            {/* <InputWithHead heading={AppConstants.firstYearPlayingNetball} /> */}
+                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
@@ -1911,7 +1947,7 @@ class AppTeamRegistrationForm extends Component{
                             </Radio.Group>
                             {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
                                 <div>
-                                     <div class="input-style">{AppConstants.yearsOfPlayingNetball}</div>
+                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
                                     <Select
                                         placeholder={AppConstants.yearsOfPlaying}
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
@@ -1931,8 +1967,7 @@ class AppTeamRegistrationForm extends Component{
                         <div>
                             {teamRegistrationObj.regSetting.school_standard == 1 && (
                                 <div>
-                                  <div className="input-style">{AppConstants.schoolYouAttend}</div>
-                                  {/* <InputWithHead heading={AppConstants.schoolYouAttend} /> */}
+                                  <InputWithHead heading={AppConstants.schoolYouAttend} />
                                   <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
@@ -1947,9 +1982,8 @@ class AppTeamRegistrationForm extends Component{
 
                             {teamRegistrationObj.regSetting.school_grade == 1 && (
                                 <div>
-                                  <div className="input-style">{AppConstants.yourSchoolGrade}</div>
+                                  <InputWithHead heading={AppConstants.yourSchoolGrade} />
                                   <InputWithHead 
-                                    // heading={(AppConstants.yourSchoolGrade)} 
                                      placeholder={AppConstants.schoolGrade} 
                                      onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"schoolGradeInfo")} 
                                          value={teamRegistrationObj.additionalInfo.schoolGradeInfo}
@@ -1961,8 +1995,7 @@ class AppTeamRegistrationForm extends Component{
 
                             {teamRegistrationObj.regSetting.school_program == 1 && (
                                 <div>
-                                    <div className="input-style">{AppConstants.participatedSchoolProgram}</div>
-                                    {/* <InputWithHead heading={AppConstants.participatedSchoolProgram}/> */}
+                                    <InputWithHead heading={AppConstants.participatedSchoolProgram}/>
                                     <Radio.Group
                                         className="registration-radio-group"
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isParticipatedInSSP")} 
@@ -1978,8 +2011,7 @@ class AppTeamRegistrationForm extends Component{
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <div className="input-style">{AppConstants.nationalAccreditationLevelCoach}</div>
-                            {/* <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/> */}
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{flexDirection: "column"}}
