@@ -76,7 +76,7 @@ import { captializedString } from "../../util/helpers";
 import { nearByOrganisations } from "../../util/geocode";
 import ApiConstants from "../../themes/apiConstants";
 
-import zipcodes from  'zipcodes';
+// import zipcodes from  'zipcodes';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
