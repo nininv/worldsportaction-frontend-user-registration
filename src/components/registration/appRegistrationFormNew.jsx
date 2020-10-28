@@ -73,8 +73,10 @@ import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { isEmptyArray } from "formik";
 import { get } from "jquery";
 import { captializedString } from "../../util/helpers";
+import { nearByOrganisations } from "../../util/geocode";
 import ApiConstants from "../../themes/apiConstants";
 
+import zipcodes from  'zipcodes';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -106,7 +108,8 @@ class AppRegistrationFormNew extends Component{
             currentCompetitions: 1,
             organisations: [],
             postalCode: null,
-        } 
+            nearByOrganisationsData: [],
+        }
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
         this.props.countryReferenceAction();
@@ -938,9 +941,9 @@ class AppRegistrationFormNew extends Component{
         try{
             let { membershipProductInfo } = this.props.userRegistrationState;
             if(this.state.postalCode){
-                let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode?.toLowerCase().indexOf(this.state.postalCode) > -1);
-                this.setState({organisations: filteredOrganisation});
-                this.setAllCompetitions(filteredOrganisation);
+                const nearByOrganisationsData = nearByOrganisations(membershipProductInfo, this.state.postalCode, 20);
+                this.setState({organisations: nearByOrganisationsData});
+                this.setAllCompetitions(nearByOrganisationsData);
             }else{
                 this.setState({organisations: membershipProductInfo});
                 this.setAllCompetitions(membershipProductInfo);
