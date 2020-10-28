@@ -108,7 +108,6 @@ class AppRegistrationFormNew extends Component{
             currentCompetitions: 1,
             organisations: [],
             postalCode: null,
-            nearByOrganisationsData: [],
         }
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
