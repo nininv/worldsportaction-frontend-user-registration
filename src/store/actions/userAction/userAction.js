@@ -135,6 +135,15 @@ function getUmpireActivityListAction(payload, roleId, userId, sortBy, sortOrder)
   return action
 }
 
+/////get all the organisations without authentication and userId
+function getAllOrganisationListAction() {
+  const action = {
+    type: ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD,
+  };
+  return action
+}
+
+
 export {
   getRoleAction,
   getUreAction,
@@ -152,4 +161,5 @@ export {
   getUserRole,
   getScorerData,
   getUmpireActivityListAction,
+  getAllOrganisationListAction,
 }

@@ -99,6 +99,11 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
 
+  ////get all the organisations without authentication and userId
+  getAllOrganisationList() {
+    const url = `api/organisations/all`;
+    return Method.dataGet(url, token);
+  },
 }
 
 let Method = {

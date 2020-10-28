@@ -270,55 +270,74 @@ export function* getUserHistorySaga(action) {
 // Get the User Role 
 export function* getUserRole(action) {
     try {
-      const result = yield call(userHttpApi.getUserRoleData, action.userId);
-  
-      if (result.status === 1) {
-        yield put({
-          type: ApiConstants.API_GET_USER_ROLE_SUCCESS,
-          result: result.result.data,
-          status: result.status,
-        });
-      } else {
-        yield call(failSaga, result);
-      }
-    } catch (error) {
-      yield call(errorSaga, error);
-    }
-  }
+        const result = yield call(userHttpApi.getUserRoleData, action.userId);
 
-  // Get the Scorer Activity Data
-  export function* getScorerActivitySaga(action) {
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_USER_ROLE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
+// Get the Scorer Activity Data
+export function* getScorerActivitySaga(action) {
     try {
-      const result = yield call(userHttpApi.getScorerActivityData, action.payload, action.roleId, action.matchStatus);
-  
-      if (result.status === 1) {
-        yield put({
-          type: ApiConstants.API_GET_SCORER_ACTIVITY_SUCCESS,
-          result: result.result.data,
-          status: result.status,
-        });
-      } else {
-        yield call(failSaga, result);
-      }
-    } catch (error) {
-      yield call(errorSaga, error);
-    }
-  }
+        const result = yield call(userHttpApi.getScorerActivityData, action.payload, action.roleId, action.matchStatus);
 
-  // Get the umpire Activity Data
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_SCORER_ACTIVITY_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
+// Get the umpire Activity Data
 export function* getUmpireActivityListSaga(action) {
     try {
-      const result = yield call(livescoreAxiosApi.getUmpireActivityList, action.payload, action.roleId, action.userId, action.sortBy, action.sortOrder);
-      if (result.status === 1) {
-        yield put({
-          type: ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_SUCCESS,
-          result: result.result.data,
-          status: result.status,
-        });
-      } else {
-        yield call(failSaga, result);
-      }
+        const result = yield call(livescoreAxiosApi.getUmpireActivityList, action.payload, action.roleId, action.userId, action.sortBy, action.sortOrder);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
     } catch (error) {
-      yield call(errorSaga, error);
+        yield call(errorSaga, error);
     }
-  }
+}
+
+
+// /////////get all the organisations without authentication and userId
+export function* getAllOrganisationListSaga(action) {
+    try {
+        const result = yield call(userHttpApi.getAllOrganisationList, action);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_ALL_ORGANISATION_LIST_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}

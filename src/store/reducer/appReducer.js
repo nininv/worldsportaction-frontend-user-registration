@@ -1,5 +1,6 @@
 import ApiConstants from "../../themes/apiConstants";
 import history from "../../util/history";
+import {reverseArray} from "../../util/helpers";
 import { getRegistrationSetting } from "../objectModel/getRegSettingObject";
 const initialState = {
   onLoad: false,
@@ -290,7 +291,7 @@ function appState(state = initialState, action) {
       return {
         ...state,
         onLoad: false,
-        yearListing: action.result,
+        yearListing: reverseArray(action.result),
         status: action.status
       };
 

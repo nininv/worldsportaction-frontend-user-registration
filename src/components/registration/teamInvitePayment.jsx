@@ -161,7 +161,7 @@ const CheckoutForm = (props) => {
             });
             mainProps.updateTeamInviteAction(1, "direct_debit", 0, "total",null);
             setTimeout(() =>{
-                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId);
+                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, userRegId, 1);
             },100);
             
         } 
@@ -243,7 +243,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
 
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, userRegId);
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, userRegId, 1);
                 }
 
             }
@@ -280,13 +280,14 @@ const CheckoutForm = (props) => {
                 } else {
                     setBankError(null)
                     setClientKey("")
-                    props.onLoad(false)
-                    message.success("Payment status is " + result.paymentIntent.status)
-                    history.push("/invoice", {
-                        registrationId: null,
-                        userRegId: userRegId,
-                        paymentSuccess: true
-                    })
+                    props.onLoad(true);
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, userRegId, 2);
+                    // message.success("Payment status is " + result.paymentIntent.status)
+                    // history.push("/invoice", {
+                    //     registrationId: null,
+                    //     userRegId: userRegId,
+                    //     paymentSuccess: true
+                    // })
                 }
             }
         }
@@ -815,12 +816,20 @@ function mapStatetoProps(state){
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, userRegId) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, userRegId, urlFlag) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
    //console.log("Payload::" + JSON.stringify(payload));
+
+   let url;
+   if(urlFlag == 1){
+       url =  "/api/payments/createteampayments";
+   }
+   else{
+       url =  "/api/payments/createteampayments/directdebit";
+   }
   
     let body;
     if (paymentType === "card") {
@@ -846,7 +855,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     
     console.log("payload" + JSON.stringify(payload));
     return await new Promise((resolve, reject) => {
-        fetch(`${StripeKeys.apiURL}/api/payments/createteampayments`, {
+        fetch(`${StripeKeys.apiURL + url}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -871,16 +880,18 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             })
                         }
                         else if(paymentType =="direct_debit") {
-                            if(Response.clientSecret == null && Response.totalFee == 0){
+                            console.log("*****",Response.clientSecret);
+                            if(Response.clientSecret != null){
+                                setClientKey(Response.clientSecret)
+                                setRegId(userRegId)
+                            }
+                            else{
                                 history.push("/invoice", {
                                     registrationId: null,
                                     userRegId: userRegId,
                                     paymentSuccess: true
                                 })
-                            }
-                            else{
-                                setClientKey(Response.clientSecret)
-                                setRegId(userRegId)
+                               
                             }
                            // message.success(Response.message);
                         }
