@@ -358,10 +358,10 @@ class AppTeamRegistrationForm extends Component{
                     [`additionalInfoAnyRedularMedicalConditions`]: additionalInfo.regularMedication,
                     [`additionalInfoInjury`]: additionalInfo.injuryInfo,
                     [`additionalInfoAlergies`]: additionalInfo.allergyInfo,
-                    [`additionalInfoHaveDisablity`]: additionalInfo.isDisability,
                     [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
-                    [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo,
-                    [`additionalInfoHeardAboutTheCompition`]: additionalInfo.heardByRefId,
+                    [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo ? additionalInfo.otherSportsInfo : [],
+                    [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
+                    [`additionalInfoDisablityCareNumber`]:additionalInfo.disabilityCareNumber
                 });
             }
         }catch(ex){
@@ -1745,7 +1745,7 @@ class AppTeamRegistrationForm extends Component{
                             style={{ width: "100%" }}
                             placeholder={AppConstants.select}
                             onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
-                            value={teamRegistrationObj.additionalInfo.countryRefId}>
+                            setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
                             {countryList.length > 0 && countryList.map((item) => (
                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                             ))}
@@ -1770,7 +1770,7 @@ class AppTeamRegistrationForm extends Component{
                             <TextArea
                                 placeholder={AppConstants.existingMedConditions}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "existingMedicalCondition")} 
-                                value={teamRegistrationObj.additionalInfo.existingMedicalCondition}
+                                setFieldsValue={teamRegistrationObj.additionalInfo.existingMedicalCondition}
                                 allowClear
                             />
                         )}
@@ -1783,7 +1783,7 @@ class AppTeamRegistrationForm extends Component{
                             <TextArea
                                 placeholder={AppConstants.redularMedicalConditions}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "regularMedication")} 
-                                value={teamRegistrationObj.additionalInfo.regularMedication}
+                                setFieldsValue={teamRegistrationObj.additionalInfo.regularMedication}
                                 allowClear
                             />
                         )}
@@ -1796,7 +1796,7 @@ class AppTeamRegistrationForm extends Component{
                             <TextArea
                                 placeholder={AppConstants.anyInjury}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "injuryInfo")} 
-                                value={teamRegistrationObj.additionalInfo.injuryInfo}
+                                setFieldsValue={teamRegistrationObj.additionalInfo.injuryInfo}
                                 allowClear
                             />
                         )}
@@ -1809,33 +1809,40 @@ class AppTeamRegistrationForm extends Component{
                             <TextArea
                                 placeholder={AppConstants.anyAlergies}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")} 
-                                value={teamRegistrationObj.additionalInfo.allergyInfo}
+                                setFieldsValue={teamRegistrationObj.additionalInfo.allergyInfo}
                                 allowClear
                             />
                         )}
                     </Form.Item>   
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/>
-                    <Form.Item>
+                    {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
-                        })( 
+                        })(  */}
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")} 
-                                value={teamRegistrationObj.additionalInfo.isDisability}
+                                value={teamRegistrationObj.additionalInfo.isDisability ? teamRegistrationObj.additionalInfo.isDisability : 0}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
                             </Radio.Group>
-                        )}
-                    </Form.Item>  
+                        {/* )}
+                    </Form.Item>   */}
                     {teamRegistrationObj.additionalInfo.isDisability == 1 ? 
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber}/>
-                            <InputWithHead  
-                            placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityCareNumber")}
-                            value={teamRegistrationObj.additionalInfo.disabilityCareNumber}/>
+                            <Form.Item>
+                                {getFieldDecorator(`additionalInfoDisablityCareNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
+                                })( 
+                                    <InputWithHead  
+                                    placeholder={AppConstants.disabilityCareNumber} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityCareNumber")}
+                                    setFieldsValue={teamRegistrationObj.additionalInfo.disabilityCareNumber}
+                                    style={{marginBottom:'15px'}}/>
+                                )}
+                            </Form.Item>   
                             <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
                                 className="reg-competition-radio"
@@ -1856,9 +1863,9 @@ class AppTeamRegistrationForm extends Component{
                                     rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                 })(  
                                     <Select
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,paddingBottom: "10px" }}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteTeamRefId")}
-                                        value={teamRegistrationObj.additionalInfo.favouriteTeamRefId}
+                                        setFieldsValue={teamRegistrationObj.additionalInfo.favouriteTeamRefId}
                                         >  
                                         {(favouriteTeamsList || []).map((fav, index) => (
                                             <Option key={fav.id} value={fav.id}>{fav.description}</Option>
@@ -1870,15 +1877,21 @@ class AppTeamRegistrationForm extends Component{
                         {teamRegistrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
                                 <InputWithHead heading={AppConstants.who_fav_bird} />
-                                <Select
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
-                                    value={teamRegistrationObj.additionalInfo.favouriteFireBird}
-                                    >  
-                                    {(firebirdPlayerList || []).map((fire, index) => (
-                                        <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                                    ))}
-                                </Select>
+                                <Form.Item>
+                                    {getFieldDecorator(`additionalInfoFavoriteBird`, {
+                                        rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
+                                    })(
+                                    <Select
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,paddingBottom: "10px" }}
+                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "favouriteFireBird")}
+                                        setFieldsValue={teamRegistrationObj.additionalInfo.favouriteFireBird}
+                                        >  
+                                        {(firebirdPlayerList || []).map((fire, index) => (
+                                            <Option key={fire.id} value={fire.id}>{fire.description}</Option>
+                                        ))}
+                                    </Select>
+                                    )}
+                                </Form.Item>
                             </div>
                         )}
                     </div>
@@ -1891,10 +1904,10 @@ class AppTeamRegistrationForm extends Component{
                         <Select
                             mode="multiple"
                             showArrow
-                            style={{ width: "100%" }}
+                            style={{ width: "100%",paddingBottom: "10px" }}
                             placeholder={AppConstants.select}
                             onChange={(e) => this.onChangeSetAdditionalInfo(e,"otherSportsInfo")}
-                            defaultValue={teamRegistrationObj.additionalInfo.otherSportsInfo}>
+                            setFieldsValue={teamRegistrationObj.additionalInfo.otherSportsInfo}>
                             {otherSportsList.length > 0 && otherSportsList.map((item) => (
                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                             ))}
@@ -1911,21 +1924,21 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                     )}
                    <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"}/>
-                    <Form.Item>
+                    {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })( 
+                        })(  */}
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
-                                value={teamRegistrationObj.additionalInfo.heardByRefId}
+                                setFieldsValue={teamRegistrationObj.additionalInfo.heardByRefId}
                                 >
                                 {(heardByList || []).map((heard, index) => (
                                     <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
                                 ))}
                             </Radio.Group>
-                        )}
-                    </Form.Item>   
+                        {/* )}
+                    </Form.Item>    */}
                     {teamRegistrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 

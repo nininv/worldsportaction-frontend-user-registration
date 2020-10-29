@@ -183,10 +183,10 @@ class TeamInivteForm extends Component{
                     [`additionalInfoAnyRedularMedicalConditions`]: userRegDetails.regularMedication,
                     [`additionalInfoInjury`]: userRegDetails.injuryInfo,
                     [`additionalInfoAlergies`]: userRegDetails.allergyInfo,
-                    [`additionalInfoHaveDisablity`]: userRegDetails.isDisability,
                     [`additionalInfoTeamYouFollow`]: userRegDetails.favouriteTeamRefId,
-                    [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: [],
-                    [`additionalInfoHeardAboutTheCompition`]: userRegDetails.heardByRefId,
+                    [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo : [],
+                    [`additionalInfoFavoriteBird`]: userRegDetails.favouriteTeamRefId,
+                    [`additionalInfoDisablityCareNumber`]:userRegDetails.disabilityCareNumber
                 });
             }
         }catch(ex){
@@ -1320,7 +1320,7 @@ class TeamInivteForm extends Component{
                             style={{ width: "100%" }}
                             placeholder={AppConstants.select}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e,"countryRefId","userRegDetails")}
-                            value={userRegDetails.countryRefId}>
+                            setFieldsValue={userRegDetails.countryRefId}>
                             {countryList.length > 0 && countryList.map((item) => (
                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                             ))}
@@ -1345,7 +1345,7 @@ class TeamInivteForm extends Component{
                         <TextArea
                             placeholder={AppConstants.existingMedConditions}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "existingMedicalCondition","userRegDetails")} 
-                            value={userRegDetails.existingMedicalCondition}
+                            setFieldsValue={userRegDetails.existingMedicalCondition}
                             allowClear
                         />
                         )}
@@ -1358,7 +1358,7 @@ class TeamInivteForm extends Component{
                         <TextArea
                             placeholder={AppConstants.redularMedicalConditions}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "regularMedication","userRegDetails")} 
-                            value={userRegDetails.regularMedication}
+                            setFieldsValue={userRegDetails.regularMedication}
                             allowClear
                         />
                         )}
@@ -1371,7 +1371,7 @@ class TeamInivteForm extends Component{
                             <TextArea
                                 placeholder={AppConstants.anyInjury}
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "injuryInfo","userRegDetails")} 
-                                value={userRegDetails.injuryInfo}
+                                setFieldsValue={userRegDetails.injuryInfo}
                                 allowClear
                             />
                         )}
@@ -1384,38 +1384,45 @@ class TeamInivteForm extends Component{
                         <TextArea
                             placeholder={AppConstants.anyAlergies}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
-                            value={userRegDetails.allergyInfo}
+                            setFieldsValue={userRegDetails.allergyInfo}
                             allowClear
                         />
                         )}
                     </Form.Item>  
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/> 
-                    <Form.Item>
+                    {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
-                        })( 
+                        })(  */}
                         <Radio.Group
                             className="registration-radio-group"
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability","userRegDetails")} 
-                            value={userRegDetails.isDisability}
+                            value={userRegDetails.isDisability ? userRegDetails.isDisability : 0}
                             >
                             <Radio value={1}>{AppConstants.yes}</Radio>
                             <Radio value={0}>{AppConstants.no}</Radio>
                         </Radio.Group>
-                        )}
-                    </Form.Item>  
+                        {/* )}
+                    </Form.Item>   */}
                     {userRegDetails.isDisability == 1 ? 
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber}/>
-                            <InputWithHead 
-                            placeholder={AppConstants.disabilityCareNumber} 
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","userRegDetails")}
-                            value={userRegDetails.disabilityCareNumber}/>
+                            <Form.Item>
+                                {getFieldDecorator(`additionalInfoDisablityCareNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
+                                })( 
+                                    <InputWithHead 
+                                    placeholder={AppConstants.disabilityCareNumber} 
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityCareNumber","userRegDetails")}
+                                    setFieldsValue={userRegDetails.disabilityCareNumber}
+                                    style={{marginBottom:'15px'}}/>
+                                )}
+                            </Form.Item>   
                             <InputWithHead heading={AppConstants.typeOfDisability} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId","userRegDetails")} 
-                                value={userRegDetails.disabilityTypeRefId}>
+                                value={userRegDetails.disabilityTypeRefId ? userRegDetails.disabilityTypeRefId  : 5}>
                                     {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
                                 ))}
@@ -1431,9 +1438,9 @@ class TeamInivteForm extends Component{
                                     rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                 })(  
                                 <Select
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                                    style={{ width: "100%", paddingRight: 1, minWidth: 182,paddingBottom: "10px" }}
                                     onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteTeamRefId","userRegDetails")}
-                                    value={userRegDetails.favouriteTeamRefId}
+                                    setFieldsValue={userRegDetails.favouriteTeamRefId}
                                     >  
                                     {(favouriteTeamsList || []).map((fav, index) => (
                                         <Option key={fav.id} value={fav.id}>{fav.description}</Option>
@@ -1445,15 +1452,21 @@ class TeamInivteForm extends Component{
                         {userRegDetails.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
                                 <InputWithHead heading={AppConstants.who_fav_bird} />
-                                <Select
-                                    style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                                    onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","userRegDetails")}
-                                    value={userRegDetails.favouriteFireBird}
-                                    >  
-                                    {(firebirdPlayerList || []).map((fire, index) => (
-                                        <Option key={fire.id} value={fire.id}>{fire.description}</Option>
-                                    ))}
-                                </Select>
+                                <Form.Item>
+                                    {getFieldDecorator(`additionalInfoFavoriteBird`, {
+                                        rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
+                                    })(
+                                    <Select
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,paddingBottom: "10px" }}
+                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "favouriteFireBird","userRegDetails")}
+                                        setFieldsValue={userRegDetails.favouriteFireBird}
+                                        >  
+                                        {(firebirdPlayerList || []).map((fire, index) => (
+                                            <Option key={fire.id} value={fire.id}>{fire.description}</Option>
+                                        ))}
+                                    </Select>
+                                    )}
+                                </Form.Item>
                             </div>
                         )}
                     </div>
@@ -1466,10 +1479,10 @@ class TeamInivteForm extends Component{
                         <Select
                             mode="multiple"
                             showArrow
-                            style={{ width: "100%" }}
+                            style={{ width: "100%",paddingBottom: "10px" }}
                             placeholder={AppConstants.select}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e,"otherSportsInfo","userRegDetails")}
-                            value={userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: []}>
+                            setFieldsValue={userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo: []}>
                             {otherSportsList.length > 0 && otherSportsList.map((item) => (
                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                             ))}
@@ -1486,22 +1499,22 @@ class TeamInivteForm extends Component{
                         </div>
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"}/>
-                    <Form.Item>
+                    {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })( 
+                        })(  */}
                         <Radio.Group
                             className="registration-radio-group"
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId","userRegDetails")} 
-                            value={userRegDetails.heardByRefId}
+                            value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : 6}
                             >
                             {(heardByList || []).map((heard, index) => (
                                 <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
                             ))}
                         </Radio.Group>
-                        )}
-                    </Form.Item> 
-                    {userRegDetails.heardByRefId == 6 && (
+                        {/* )}
+                    </Form.Item>  */}
+                    {(userRegDetails.heardByRefId == null || userRegDetails.heardByRefId == 6) && (
                         <div style={{marginTop: "10px"}}>
                             <InputWithHead 
                             placeholder={AppConstants.other} 

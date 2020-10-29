@@ -107,14 +107,14 @@ const ValidationConstants = {
 
     additionalInfoQuestions: [
         "Please select Do you identify as",
-        "Any existing medical condition field is required",
-        "Any regular medication field is required",
+        "Existing medical condition field is required",
+        "Regular medication field is required",
         "Injury field is required",
         "Alergies field is required",
-        "Please select that you have disablity or not",
-        "Which sucorp super netball team do you follow field is required",
-        "Other participants field is required",
-        "Heard about the competition field is required"
+        "Disability care Number is required",
+        "This field is required",
+        "Favourite Firebird is required",
+        "This field is required",
     ]
 };
 
