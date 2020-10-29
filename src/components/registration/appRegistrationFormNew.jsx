@@ -2114,9 +2114,11 @@ class AppRegistrationFormNew extends Component{
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <div className="input-style-bold">{AppConstants.registeringAs}</div>
+                        <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
+                        <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringAs}</div>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
+                                className="membership-product-checkbox"
                                 checked={membershipProduct.isChecked}
                                 key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
                                 onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked, "products", competitionIndex, membershipProductIndex)}>
@@ -2168,7 +2170,7 @@ class AppRegistrationFormNew extends Component{
 
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
-                                <div className="input-style-bold">{AppConstants.totalCasualFees}</div>
+                                <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
                                 <div className="form-heading">{!this.props.userRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(competition.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                     <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                 </div>
@@ -2181,11 +2183,11 @@ class AppRegistrationFormNew extends Component{
                             </div>
                         </div>
                     </div>
-
+                    <div className="competition-specifics">{AppConstants.competitionSpecifics}</div>
                     <div className="row" style={{ marginTop: "20px" }}>
                         <div className="col-sm-12 col-md-4">
                             {/* <InputWithHead heading={AppConstants.training}/> */}
-                            <div className="input-style-bold">{AppConstants.training}</div>
+                            <div className="input-style-bold" style={{paddingTop:'0px'}}>{AppConstants.training}</div>
                             <div
                                 className="inter-medium-font"
                                 style={{ fontSize: "13px" }}>{competition.competitionInfo.training ?

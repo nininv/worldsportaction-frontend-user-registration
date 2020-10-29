@@ -633,3 +633,29 @@
   font-weight: 500;
   font-family: inter-medium;
 }
+
+.competition-specifics-headings{
+  display: flex;
+  align-content: flex-start;
+  padding-top: 30px;
+  padding-bottom: 11px;
+  font-size: 15px;
+  color: var(--app-1b1b34);
+  font-weight: 500;
+  font-family: inter-medium;
+ 
+}
+
+.competition-specifics{
+  font-size: 19px;
+  margin-top:25px;
+  color:var(--app-1b1b34);
+  font-weight: 500;
+  font-family: 'inter-medium';
+}
+
+.membership-product-checkbox{
+  font-family: 'inter';
+  font-weight: normal;
+  color: var(--app-414141);
+}
