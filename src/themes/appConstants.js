@@ -1133,7 +1133,7 @@ const AppConstants = {
  creditCardMsg: "A transaction fee of 2.25% + 30c is charged for domestic credit cards and 3.0% + 30c for International. For American express cards a fee of 2.7% + 30c applies.",
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
- competitionSpecifics:'Comepetiton Specifics',
+ competitionSpecifics:'Competition Specifics',
  totalsinglegamefees:'Total Single Game Fees'
 
 };
