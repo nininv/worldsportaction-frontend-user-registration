@@ -1163,13 +1163,12 @@ class AppTeamRegistrationForm extends Component{
                                 onChange={(e) => this.onChangeSetTeamValue(e.target.value, "street2")} 
                                 value={teamRegistrationObj.street2}
                             />
+                            <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
                             <Form.Item >
                                 {getFieldDecorator(`yourDetailsSuburb`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                     <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.suburb}
                                         placeholder={AppConstants.suburb}
                                         onChange={(e) => this.onChangeSetTeamValue(e.target.value, "suburb")} 
                                         setFieldsValue={teamRegistrationObj.suburb}
@@ -1801,7 +1800,7 @@ class AppTeamRegistrationForm extends Component{
                             />
                         )}
                     </Form.Item>   
-                    <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
+                    {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAlergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
@@ -1813,7 +1812,7 @@ class AppTeamRegistrationForm extends Component{
                                 allowClear
                             />
                         )}
-                    </Form.Item>   
+                    </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/>
                     {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
@@ -2052,7 +2051,7 @@ class AppTeamRegistrationForm extends Component{
                     
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead 

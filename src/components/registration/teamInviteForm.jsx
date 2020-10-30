@@ -1228,7 +1228,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.havePainInHeartOrChest}</div>
+                    <InputWithHead heading={AppConstants.havePainInHeartOrChest}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "havePainInHeartOrChest","walkingNetball")} 
@@ -1237,7 +1237,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.haveSpellsOfServerDizziness}</div>
+                    <InputWithHead heading={AppConstants.haveSpellsOfServerDizziness}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "haveSpellsOfServerDizziness","walkingNetball")} 
@@ -1246,7 +1246,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.hasBloodPressureHigh}</div>
+                    <InputWithHead heading={AppConstants.hasBloodPressureHigh}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "hasBloodPressureHigh","walkingNetball")} 
@@ -1255,7 +1255,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.hasBoneProblems}</div>
+                    <InputWithHead heading={AppConstants.hasBoneProblems}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "hasBoneProblems","walkingNetball")} 
@@ -1264,7 +1264,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.whyShouldNotTakePhysicalActivity}</div>
+                    <InputWithHead heading={AppConstants.whyShouldNotTakePhysicalActivity}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "whyShouldNotTakePhysicalActivity","walkingNetball")} 
@@ -1273,7 +1273,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.pregnentInLastSixMonths}</div>
+                    <InputWithHead heading={AppConstants.pregnentInLastSixMonths}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "pregnentInLastSixMonths","walkingNetball")} 
@@ -1282,7 +1282,7 @@ class TeamInivteForm extends Component{
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    <div className="input-style">{AppConstants.sufferAnyProblems}</div>
+                    <InputWithHead heading={AppConstants.sufferAnyProblems}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "sufferAnyProblems","walkingNetball")} 
@@ -1376,7 +1376,7 @@ class TeamInivteForm extends Component{
                             />
                         )}
                     </Form.Item>  
-                    <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
+                    {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAlergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
@@ -1388,7 +1388,7 @@ class TeamInivteForm extends Component{
                             allowClear
                         />
                         )}
-                    </Form.Item>  
+                    </Form.Item>   */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/> 
                     {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {

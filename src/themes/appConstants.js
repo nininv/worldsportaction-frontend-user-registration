@@ -1080,7 +1080,7 @@ const AppConstants = {
  securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian",
  returnToShoppingCart: "Return to Shopping Cart",
- anyExistingMedicalCondition: "Please detail any existing medical conditions or illnesses. Please detail a Management Plan (if applicable)",
+ anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies (medical or food) or Illnesses. Please detail a Management Plan (if applicable)",
  anyRedularMedicalConditions: "Any Regular Medications?",
  registeringAs:  " Registering as :",
  search: "Search",

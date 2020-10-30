@@ -2652,7 +2652,7 @@ class AppRegistrationFormNew extends Component{
                             />
                         )}
                     </Form.Item>   
-                    <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
+                    {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAlergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
@@ -2664,7 +2664,7 @@ class AppRegistrationFormNew extends Component{
                                 allowClear
                             />
                         )}
-                    </Form.Item>   
+                    </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"}/>
                     {/* <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
