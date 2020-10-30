@@ -1,6 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import AppConstants from "../../../themes/appConstants";
-import { feeIsNull } from "../../../util/helpers";
+import { feeIsNull, formatValue } from "../../../util/helpers";
 
 
 const initialState = {
@@ -16,14 +15,16 @@ const initialState = {
     participantAddresses: [],
     shopPickupAddresses: [],
     pickupAddressLoad: false,
-    deliveryOrBillingAddressSelected: false
+    deliveryOrBillingAddressSelected: false,
+    deleteOnLoad: false
 }
 
 function setYourInfo(action,state){
     try{
-        let email = action.value;
+        //let email = action.value;
         let yourInfo = state.registrationReviewList.yourInfo;
-        let user = state.participantUsers.find(x => x.email === email);
+        //let user = state.participantUsers.find(x => x.email === email);
+        let user = state.participantUsers[action.value]
         if(user != undefined){
             yourInfo["userId"] = user.id;
             yourInfo["firstName"] = user.firstName;
@@ -37,7 +38,7 @@ function setYourInfo(action,state){
             yourInfo["stateRefId"] = user.stateRefId;
             yourInfo["countryRefId"] = user.countryRefId;
         }else{
-            yourInfo["email"] = email;
+            //yourInfo["email"] = action.value;
         }
     }catch(ex){
         console.log("Error in setYourInfo"+ex);
@@ -156,7 +157,7 @@ function registrationProductsReducer(state = initialState, action){
                 console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
-                if(action.key == "email"){
+                if(action.key == "emailSelection"){
                     setYourInfo(action,state);
                 }else{
                     reviewData[action.subKey][action.key] = action.value
@@ -181,31 +182,66 @@ function registrationProductsReducer(state = initialState, action){
                 reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
                 state.deliveryOrBillingAddressSelected = true;
             }
+            else if(action.subKey == "total"){
+                console.log("***********************************" + action.key)
+                let type = action.key;
+                let totalVal = reviewData.total.total; 
+                console.log("totalVal" + totalVal);
+                let transactionVal = 0;
+                let targetVal = 0;
+                if(action.value == 1){
+                    if(type == "International_CC"){
+                        transactionVal = (totalVal * 3.0/100) + 0.30;
+                    }
+                    if(type == "International_AE"){
+                        transactionVal = (totalVal * 2.7/100) + 0.30;
+                    }
+                    else if(type == "DOMESTIC_CC"){
+                        transactionVal = (totalVal * 2.25/100)  + 0.30;
+                    }
+                    else if(type == "direct_debit"){
+                        transactionVal = (totalVal * 1.5/100) + 0.30;
+                        console.log("transactionVal DD" + transactionVal);
+                        if(transactionVal > 3.50){
+                            transactionVal = 3.50;
+                        }
+                    }
+                    console.log("TransVal" + transactionVal);
+                    targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
+                    reviewData["total"]["targetValue"] = formatValue(targetVal);
+                    reviewData["total"]["transactionFee"] = formatValue(transactionVal);
+                }
+                else{
+                    reviewData["total"]["targetValue"] = "0.00";
+                    reviewData["total"]["transactionFee"] = "0.00";
+                }
+               
+            }
             return {
                 ...state,
                 error: null
             }
 
         case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_LOAD:
-            return { ...state, onRegReviewLoad: true };
+            return { ...state, deleteOnLoad: true };
 
         case ApiConstants.API_DELETE_REGISTRATION_PRODUCT_SUCCESS:
             let regReviewDeleteData = action.result;
             return {
                 ...state,
-                onRegReviewLoad: false,
+                deleteOnLoad: false,
                 status: action.status,
                 registrationReviewList: regReviewDeleteData
             };
 
         case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_LOAD:
-            return { ...state, onRegReviewLoad: true };
+            return { ...state, deleteOnLoad: true };
 
         case ApiConstants.API_DELETE_REGISTRATION_PARTICIPANT_SUCCESS:
             let regReviewUpdatedData = action.result;
             return {
                 ...state,
-                onRegReviewLoad: false,
+                deleteOnLoad: false,
                 status: action.status,
                 registrationReviewList: regReviewUpdatedData
             };

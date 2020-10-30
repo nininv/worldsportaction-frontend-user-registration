@@ -554,17 +554,47 @@ class RegistrationInvoice extends Component {
                             />
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border">
+                            <div className="invoice-amount-border col-sm-3" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
                                     required={"pr-4 pt-3"}
-                                    heading={"Amount Due"}
+                                    heading={"Total"}
                                 />
                             </div>
                             <div className="invoice-amount-border">
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={"AUD" + " " + (total && total != null ?  total.targetValue : '0.00')}
+                                    heading={(total && total != null ?  total.total : '0.00')}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                                <InputWithHead
+                                    required={"pr-4 pt-3"}
+                                    heading={"Transaction Fee"}
+                                />
+                            </div>
+                            <div>
+                                <InputWithHead
+                                    required={"pt-3"}
+                                    style={{ display: "flex", justifyContent: 'flex-start' }}
+                                    heading={(total && total != null ? total.transactionFee : '0.00')}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <div className="invoice-amount-border col-sm-5">
+                                <InputWithHead
+                                    required={"pt-3"}
+                                    heading={!this.state.invoiceDisabled ? "Amount Due" : "Amount Pay"}
+                                />
+                            </div>
+                            <div className="invoice-amount-border">
+                                <InputWithHead
+                                    required={"pt-3"}
+                                    style={{ display: "flex", justifyContent: 'flex-start' }}
+                                    heading={(total && total != null ? total.targetValue : '0.00')}
                                 />
                             </div>
                         </div>

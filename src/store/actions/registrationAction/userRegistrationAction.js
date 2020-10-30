@@ -26,14 +26,15 @@ function updateUserRegistrationObjectAction(data,key){
     return action;
 }
 
-function updateParticipantCompetitionAction(data,key,index,subIndex,subKey){
+function updateParticipantCompetitionAction(data,key,index,subIndex,subKey,subData){
     const action = {
         type: ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT,
         data: data,
         key: key,
         index: index,
         subIndex: subIndex,
-        subKey: subKey
+        subKey: subKey,
+        subData: subData
     }
     return action;
 }
@@ -72,11 +73,12 @@ function updateUserRegistrationStateVarAction(key,data){
     return action;
 }
 
-function updateParticipantAdditionalInfoAction(key,data){
+function updateParticipantAdditionalInfoAction(data,key,subKey){
     const action = {
         type: ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO,
         key: key,
-        data: data
+        data: data,
+        subKey: subKey
     };
     return action;
 }
@@ -97,6 +99,14 @@ function registrationExpiryCheckAction(payload){
     return action;
 }
 
+function getSeasonalAndCasualFees(payload){
+    const action = {
+        type: ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,
+        payload
+    }
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -108,5 +118,6 @@ export{
     updateUserRegistrationStateVarAction,
     updateParticipantAdditionalInfoAction,
     orgRegistrationRegSettingsEndUserRegAction,
-    registrationExpiryCheckAction
+    registrationExpiryCheckAction,
+    getSeasonalAndCasualFees
 }

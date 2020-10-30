@@ -1,7 +1,25 @@
 import ApiConstants from "../../../themes/apiConstants";
+import AppConstants from "../../../themes/appConstants";
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
+
+let walkingNetballObj = {
+	"haveHeartTrouble" : null,
+	"havePainInHeartOrChest" : null,
+	"haveSpellsOfServerDizziness" : null,
+	"hasBloodPressureHigh" : null,
+	"hasBoneProblems" : null,
+	"whyShouldNotTakePhysicalActivity" : null,
+	"pregnentInLastSixMonths" : null,
+	"sufferAnyProblems" : null
+}
+
+let seasionalAndCasualFeesInputObj = {
+	"organisationId" : "",
+	"competitionId": "",
+	"competitionMembershipProductTypes": []
+}
 
 let registrationObjTemp = {
     "registrationId": null,
@@ -48,14 +66,14 @@ let registrationObjTemp = {
 		"hasDivisionError": null,
 		"isPlayer": null,
 		"isChildrenCheckNumber": null,
-		"disabilityTypeRefId": null,
+		"disabilityTypeRefId": 5,
 		"disabilityCareNumber": null,
 		"emergencyContactNumber": null,
 		"emergencyContactName": null,
 		//"playedBefore": 0,
 		"existingMedicalCondition": null,
 		"regularMedication": null,
-		"heardByRefId": null,
+		"heardByRefId": 6,
 		"heardByOther": null,
 		"favouriteTeamRefId": null,
 		"favouriteFireBird": null,
@@ -66,12 +84,13 @@ let registrationObjTemp = {
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
 		"countryRefId": 1,
-		"identifyRefId": null,
+		"identifyRefId": 3,
 		"injuryInfo": null,
 		"allergyInfo": null,
 		"otherSportsInfo": [],
+		"otherSports": null,
 		"isYearsPlayed": null,
-		"yearsPlayed": null,
+		"yearsPlayed": '2',
 		"schoolId": null,
 		"schoolGradeInfo": null,
 		"isParticipatedInSSP": null,
@@ -82,7 +101,8 @@ let registrationObjTemp = {
 		"accreditationUmpireExpiryDate": null,
 		"accreditationCoachExpiryDate": null,
 		"isPrerequestTrainingComplete": null,
-		"walkingNetballRefId": null,
+		//"walkingNetballRefId": null,
+		"walkingNetball": deepCopyFunction(walkingNetballObj),
 		"walkingNetballInfo": null
 	}
 }
@@ -93,6 +113,7 @@ const competitionObj = {
 	"organisationInfo": null,
 	"competitionInfo": null,
 	"registrationRestrictionTypeRefId": null,
+	"divisionInfoIndex": null,
 	"regSetting": {
 		"nominate_positions": 0,
 		"play_friend": 0,
@@ -121,8 +142,8 @@ const competitionObj = {
 		// }
 	],
 	"fees": {
-		"totalCasualFee": null,
-		"totalSeasonalFee": null
+		"totalCasualFee": "0.00",
+		"totalSeasonalFee": "0.00"
 	},
 	"positionId1": null,
 	"positionId2": null,
@@ -137,6 +158,8 @@ let friendObj = {
 	"mobileNumber": null,
 	"email": null
 }
+
+
 
 const initialState = {
 	onLoad:false,
@@ -155,8 +178,13 @@ const initialState = {
 	updateExistingUserOnLoad: false,
 	onSaveLoad: false,
 	parents: [],
+	registeredParents: [],
 	expiredRegistrationFlag: false,
-	expiredRegistration: null 
+	expiredRegistration: null,
+	seasionalAndCasualFeesInputObj : null,
+	enableSeasonalAndCasualService: false,
+	getSeasonalCasualFeesOnLoad: false,
+	seasonalAndCasualFeesCompetitionIndex: null
 }
 
 function getUserUpdatedRegistrationObj(state,action){
@@ -171,7 +199,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
-			if(selectedUser.street1 && selectedUser.suburb && selectedUser.postalCode){
+			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.street1 = selectedUser.street1;
 				registrationObj.street2 = selectedUser.street2;
@@ -179,6 +207,9 @@ function getUserUpdatedRegistrationObj(state,action){
 				registrationObj.postalCode = selectedUser.postalCode;	
 				registrationObj.stateRefId = selectedUser.stateRefId;
 				registrationObj.countryRefId = selectedUser.countryRefId;
+			}else{
+				registrationObj.selectAddressFlag = false;
+				registrationObj.addNewAddressFlag = true;
 			}
 			if(selectedUser.parentOrGuardian != null && selectedUser.parentOrGuardian.length > 0){
 				let i = 0;
@@ -196,8 +227,8 @@ function getUserUpdatedRegistrationObj(state,action){
 						"stateRefId": parent.stateRefId,
 						"countryRefId": parent.countryRefId,
 						"postalCode": parent.postalCode,
-						"selectAddressFlag": true,
-						"addNewAddressFlag": false,
+						"selectAddressFlag": (parent.stateRefId) ? true : false,
+						"addNewAddressFlag": (parent.stateRefId) ? false : true,
 						"manualEnterAddressFlag": false
 					}
 					registrationObj.parentOrGuardian.push(parentObj);
@@ -299,6 +330,7 @@ function getFilteredDivisions(divisions,state){
 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
 				if(division.genderRefId == genderRefId || genderRefId == 3){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -310,6 +342,7 @@ function getFilteredDivisions(divisions,state){
 				var endDate = moment(division.toDate, "YYYY-MM-DD");
 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
 					let div = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
@@ -322,6 +355,7 @@ function getFilteredDivisions(divisions,state){
 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
 						let div = {
+							"competitionMembershipProductId": division.competitionMembershipProductId,
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 							"divisionName": division.divisionName
@@ -330,6 +364,7 @@ function getFilteredDivisions(divisions,state){
 				}
 			}else{
 				let div = {
+					"competitionMembershipProductId": division.competitionMembershipProductId,
 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 					"divisionName": division.divisionName
@@ -337,9 +372,93 @@ function getFilteredDivisions(divisions,state){
 				filteredDivisions.push(div); 
 			}
 		}
+		console.log("filtered division",filteredDivisions)
 		return filteredDivisions;
 	}catch(ex){
 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
+	}
+}
+
+function setSeasonalFeeAndCasualFeeInput(state,competitionIndex,fromNonProductsOrDivisions,actionCheckBoxProduct){
+	try{
+		let registrationObjTemp = deepCopyFunction(state.registrationObj);
+		let competition = registrationObjTemp.competitions[competitionIndex];
+		let selectedInSameCompetition = state.seasionalAndCasualFeesInputObj ? 
+					(state.seasionalAndCasualFeesInputObj.organisationId == competition.organisationId) && (state.seasionalAndCasualFeesInputObj.competitionId == competition.competitionId) : false;
+		if(selectedInSameCompetition){
+			if(fromNonProductsOrDivisions == 1){
+				state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes = state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.filter(x => x.isPlayer != 0);
+				let products = registrationObjTemp.competitions[competitionIndex].products;
+				for(let product of products){
+					if(product.isPlayer == 0){
+						let obj = {
+							"competitionMembershipProductId": product.competitionMembershipProductId,
+							"isPlayer": product.isPlayer,
+							"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+							"competitionMembershipProductDivisionId": null
+						}
+						state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.push(obj);
+					}
+				}
+				if(actionCheckBoxProduct.isPlayer != 1){
+					state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+					state.enableSeasonalAndCasualService = true;
+				}
+			}else if(fromNonProductsOrDivisions == 2){
+				state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes = state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.filter(x => x.isPlayer != 1);
+				let divisions = registrationObjTemp.competitions[competitionIndex].divisions;
+				for(let division of divisions){
+					let obj = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
+						"isPlayer": 1,
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+					}
+					state.seasionalAndCasualFeesInputObj.competitionMembershipProductTypes.push(obj);
+				}
+				state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+				state.enableSeasonalAndCasualService = true;
+			}
+		}else{
+			let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
+			seasionalAndCasualFeesInputObjTemp.organisationId = competition.organisationId;
+			seasionalAndCasualFeesInputObjTemp.competitionId = competition.competitionId;
+			let products = registrationObjTemp.competitions[competitionIndex].products;
+			if(fromNonProductsOrDivisions == 1){
+				for(let product of products){
+					if(product.isPlayer == 0){
+						let obj = {
+							"competitionMembershipProductId": product.competitionMembershipProductId,
+							"isPlayer": product.isPlayer,
+							"competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+							"competitionMembershipProductDivisionId": null
+						}
+						seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes.push(obj);
+					}
+				}
+				state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+				if(actionCheckBoxProduct.isPlayer != 1){
+					state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+					state.enableSeasonalAndCasualService = true;
+				}
+			}else if(fromNonProductsOrDivisions == 2){
+				let divisions = registrationObjTemp.competitions[competitionIndex].divisions;
+				for(let division of divisions){
+					let obj = {
+						"competitionMembershipProductId": division.competitionMembershipProductId,
+						"isPlayer": 1,
+						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+					}
+					seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes.push(obj);
+				}
+				state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+				state.seasonalAndCasualFeesCompetitionIndex = competitionIndex;
+				state.enableSeasonalAndCasualService = true;
+			}
+		}
+	}catch(ex){
+		console.log("Error in setSeasonalFeeAndCasualFeeInput::"+ex);
 	}
 }
 
@@ -348,6 +467,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
 		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
 		membershipProductInfo.isChecked = competitionData;
+		let actionCheckBoxProduct;
 		if(competitionData){
 			let product = {
 				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
@@ -356,17 +476,22 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"isChecked": competitionData,
 				"isPlayer": membershipProductInfo.isPlayer	
 			}
+			actionCheckBoxProduct = product;
 			state.registrationObj.competitions[competitionIndex].products.push(product);
 			if(membershipProductInfo.isPlayer == 1){
-				console.log("inside");
 				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
+
+			setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
 			let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
-			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);	
+
+			//for prevent loading in fees
+			actionCheckBoxProduct = registrationObjProducts.find(product => product.competitionMembershipProductTypeId == membershipProductInfo.competitionMembershipProductTypeId);	
+			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
 			if(filteredProducts != undefined){
 				state.registrationObj.competitions[competitionIndex].products = filteredProducts;
 			}	
@@ -378,7 +503,15 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			if(filteredDivisions != undefined){
 				state.registrationObj.competitions[competitionIndex].divisions = filteredDivisions;
 			}
+
+			if(actionCheckBoxProduct.isPlayer == 0){
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
+			}else{
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2,actionCheckBoxProduct)
+			}
 		}
+		
+		
 	}catch(ex){
 		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
 	}
@@ -485,6 +618,25 @@ function setRegistrationSetting(state,settings){
 	}
 }
 
+function removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,state){
+	try{
+		let division = state.registrationObj.competitions[competitionIndex].divisions[competitionSubIndex];
+		let divisionInfoIndex = state.registrationObj.competitions[competitionIndex].divisionInfoIndex;
+		if(divisionInfoIndex){
+			let divisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo[divisionInfoIndex];
+			let sameTypeId = division.competitionMembershipProductTypeId == divisionInfo.competitionMembershipProductTypeId ? true : false;
+			let sameDivisonId = division.competitionMembershipProductDivisionId == divisionInfo.competitionMembershipProductDivisionId ? true : false;
+			if(sameTypeId && sameDivisonId){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}catch(ex){
+		console.log("Error in removeDivisionInfoIndexIfItHas::"+ex);
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -538,6 +690,7 @@ function userRegistrationReducer(state = initialState, action){
 				}else{
 					//Link previous participant parents for next participant 
 					state.parents = responseData.parents;
+					state.registeredParents = responseData.registeredParents;
 				}
 				return {
 					...state,
@@ -568,18 +721,24 @@ function userRegistrationReducer(state = initialState, action){
 			let competitionIndex = action.index;
 			let competitionSubIndex = action.subIndex;
 			let competitionSubKey = action.subKey;
+			let competitionSubData = action.subData;
 			if(competitionKey == "products"){
 				setMembershipProductsAndDivisionInfo(state,competitionData,
-					competitionIndex,competitionSubIndex);;
+					competitionIndex,competitionSubIndex);
 				updateUmpireCoachWalkingNetball(state);
 			}
 			else if(competitionKey == "divisionInfo"){
 				let divisionInfoTemp = state.registrationObj.competitions[competitionIndex].divisionInfo;
-				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData);
+				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData && x.competitionMembershipProductTypeId == competitionSubData);
 				state.registrationObj.competitions[competitionIndex].divisions.push(divisionInfo);
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
 			else if(competitionKey == "divisions"){
+				if(removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,state)){
+					state.registrationObj.competitions[competitionIndex].divisionInfoIndex = null
+				}
 				state.registrationObj.competitions[competitionIndex].divisions.splice(competitionSubIndex,1);
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
 			}
 			else if(competitionSubKey == "friends"){
 				state.registrationObj.competitions[competitionIndex].friends[competitionSubIndex][competitionKey] = competitionData;
@@ -608,12 +767,17 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
-			if(additionalInfoKey == "isYearsPlayed"){
-				if(additionalInfoData == 1){
-					state.registrationObj.additionalInfo.yearsPlayed = additionalInfoData;
+			let additionalInfoSubKey = action.subKey;
+			if(additionalInfoSubKey == "walkingNetball"){
+				state.registrationObj.additionalInfo.walkingNetball[additionalInfoKey] = additionalInfoData;
+			}else{
+				if(additionalInfoKey == "isYearsPlayed"){
+					if(additionalInfoData == 1){
+						state.registrationObj.additionalInfo.yearsPlayed = '2';
+					}
 				}
+				state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			}
-			state.registrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
 			return {
 				...state
 			};
@@ -656,6 +820,24 @@ function userRegistrationReducer(state = initialState, action){
 					expiredRegistration: expiredRegistrationTemp,
 					status: action.status
 				};
+
+			case ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD:
+				return {...state,getSeasonalCasualFeesOnLoad: true }
+
+			case ApiConstants.API_GET_SEASONAL_CASUAL_FEES_SUCCESS:
+				try{
+					let feesTemp = action.result;
+					let index = state.seasonalAndCasualFeesCompetitionIndex;
+					state.registrationObj.competitions[index].fees.totalCasualFee = feesTemp.totalCasualFees;
+					state.registrationObj.competitions[index].fees.totalSeasonalFee = feesTemp.totalSeasonalFees;
+					return {
+						...state,
+						getSeasonalCasualFeesOnLoad: false,
+						seasonalAndCasualFeesCompetitionIndex: null
+					}
+				}catch(ex){
+					console.log("Error in API_GET_SEASONAL_CASUAL_FEES_SUCCESS::"+ex);
+				}
 
         default:
             return state;

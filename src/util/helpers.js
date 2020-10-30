@@ -1,3 +1,4 @@
+var moment = require('moment') ;
 const isArrayNotEmpty = array => {
     if (array !== null && Array.isArray(array) && array.length > 0) {
         return true
@@ -23,7 +24,8 @@ const feeIsNull = (fee) => {
 }
 
 const getAge = (birthDate) => {
-    return  (Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10))
+  let dob = moment(birthDate,"DD-MM-YYYY").format("YYYY-MM-DD")
+  return moment().diff(dob, 'years',false)
 }
 
 const deepCopyFunction = inObject => 
@@ -48,12 +50,16 @@ const deepCopyFunction = inObject =>
   }
 
   const formatValue = (val) => {
-    return  val === null ? "0.00" : stringTOFloatNumber(val).toFixed(2)
+    return  val === null ? "0.00" : stringTOFloatNumberReg(val).toFixed(2)
   }
 
   const stringTOFloatNumber = (checkString) => {
     return typeof checkString === 'string' ? parseFloat(checkString) : checkString;
   }
+
+  const stringTOFloatNumberReg = (checkString) => {
+    return typeof checkString === 'string' ? Number(Number(checkString).toFixed(2)) : Number(Number(checkString).toFixed(2));
+}
 
   const captializedString = (value) => {
     if (value != undefined) {
@@ -62,5 +68,34 @@ const deepCopyFunction = inObject =>
     }
 };
 
+const getCurrentYear = (yearArr) => {
+  let currentYear = moment().year()
+  let currentYearIndex = yearArr.findIndex((x) => x.name == currentYear)
+  if (currentYearIndex === -1) {
+    let getfirstIndexId = yearArr[0].id
+    return getfirstIndexId
+  } else {
+    let getCurrentYearId = yearArr[currentYearIndex].id
+    return getCurrentYearId
+  }
+};
+
+const compare = (a, b) => {
+  const bandA = a.sortOrder;
+  const bandB = b.sortOrder;
+  let comparison = 0;
+  if (bandA < bandB) {
+    comparison = 1;
+  } else if (bandA > bandB) {
+    comparison = -1;
+  }
+  return comparison;
+}
+
+const reverseArray = (array) => {
+  let isSortedArray = []
+  isSortedArray = array.sort(compare)
+  return isSortedArray
+};
 module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
-  isNullOrUndefined, feeIsNull ,captializedString }
+  isNullOrUndefined, feeIsNull , captializedString, getCurrentYear, reverseArray }

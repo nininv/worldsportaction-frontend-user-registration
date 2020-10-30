@@ -2,6 +2,23 @@ import ApiConstants from "../../../themes/apiConstants";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 
+let walkingNetballObj = {
+	"haveHeartTrouble" : null,
+	"havePainInHeartOrChest" : null,
+	"haveSpellsOfServerDizziness" : null,
+	"hasBloodPressureHigh" : null,
+	"hasBoneProblems" : null,
+	"whyShouldNotTakePhysicalActivity" : null,
+	"pregnentInLastSixMonths" : null,
+	"sufferAnyProblems" : null
+}
+
+let seasionalAndCasualFeesInputObj = {
+	"organisationId" : "",
+	"competitionId": "",
+	"competitionMembershipProductTypes": []
+}
+
 const teamObj = {
   "registrationId": null,
   "participantId": null,
@@ -14,6 +31,7 @@ const teamObj = {
   "competitionMembershipProductId": null,
   "competitionMembershipProductTypeId": null,
   "competitionMembershipProductDivisionId": null,
+  "walkingNetballFlag": 0,
   "membershipProductList": [
     // {
     //   "competitionMembershipProductId": null,
@@ -37,8 +55,8 @@ const teamObj = {
     // }
   ],
   "fees": {
-    "totalCasualFee": null,
-    "totalSeasonalFee": null
+    "totalCasualFee": "0.00",
+    "totalSeasonalFee": "0.00"
   },
   "regSetting": {
     "school_grade": 0,
@@ -95,15 +113,17 @@ const teamObj = {
     "schoolId": null,
     "injuryInfo": null,
     "allergyInfo": null,
-    "yearsPlayed": null,
+    "isYearsPlayed": null,
+    "yearsPlayed": '2',
     "countryRefId": 1,
     "heardByOther": null,
-    "heardByRefId": null,
+    "heardByRefId": 6,
     "isDisability": false,
-    "identifyRefId": null,
+    "identifyRefId": 3,
     "newToUmpiring": null,
     "lastCaptainName": null,
     "otherSportsInfo": [],
+    "otherSports": null,
     "schoolGradeInfo": null,
     "hasDivisionError": null,
     "favouriteFireBird": null,
@@ -111,9 +131,10 @@ const teamObj = {
     "favouriteTeamRefId": null,
     "walkingNetballInfo": null,
     "childrenCheckNumber": null,
-    "disabilityTypeRefId": null,
+    "disabilityTypeRefId": 5,
     "isParticipatedInSSP": null,
-    "walkingNetballRefId": null,
+    //"walkingNetballRefId": null,
+    "walkingNetball": deepCopyFunction(walkingNetballObj),
     "associationLevelInfo": null,
     "disabilityCareNumber": null,
     "emergencyContactName": null,
@@ -170,7 +191,10 @@ const initialState = {
     // iniviteMemberInfo: null,
     // inviteOnLoad: false,
     // inviteMemberRegSettings: null,
-    // inviteMemberSaveOnLoad: false 
+    // inviteMemberSaveOnLoad: false ,
+    getSeasonalCasualFeesOnLoad: false,
+    enableSeasonalAndCasualService: false,
+    seasionalAndCasualFeesInputObj : null,
 }
 
 function setTeamRegistrationObj(state){
@@ -242,6 +266,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
     state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
     let membershipProduct = state.teamRegistrationObj.membershipProductList.find(x => x.competitionMembershipProductTypeId == competitionMembershipProductTypeId);
     if(membershipProduct){
+      state.teamRegistrationObj.walkingNetballFlag = membershipProduct.shortName == "Walking Netball" ? 1 : 0;
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
       if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
@@ -293,6 +318,26 @@ function updateTeamInfoByIdByMembershipInfo(state,teamData){
 	}
 }
 
+function setSeasonalAndCasualFeesObj(state){
+  try{
+    let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
+    let seasionalAndCasualFeesInputObjTemp = deepCopyFunction(seasionalAndCasualFeesInputObj);
+    seasionalAndCasualFeesInputObjTemp.organisationId = teamRegistrationObjTemp.organisationId;
+    seasionalAndCasualFeesInputObjTemp.competitionId = teamRegistrationObjTemp.competitionId;
+    let obj = {
+      "competitionMembershipProductId": teamRegistrationObjTemp.competitionMembershipProductId,
+      "isPlayer": 1,
+      "competitionMembershipProductTypeId": teamRegistrationObjTemp.competitionMembershipProductTypeId,
+      "competitionMembershipProductDivisionId": teamRegistrationObjTemp.competitionMembershipProductDivisionId
+    }
+    seasionalAndCasualFeesInputObjTemp.competitionMembershipProductTypes[0] = obj;
+    state.seasionalAndCasualFeesInputObj = seasionalAndCasualFeesInputObjTemp;
+    state.enableSeasonalAndCasualService = true;
+  }catch(ex){
+    console.log("Error in setSeasonalAndCasualFessOj::"+ex)
+  }
+}
+
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
@@ -325,7 +370,12 @@ function teamRegistrationReducer(state = initialState, action){
               let details = action.data;
               setCompetitionDetails(state,details);
             }else if(action.key == "competitionMembershipProductTypeId"){
-              setDivisions(state,action.data)
+              setDivisions(state,action.data);
+              state.teamRegistrationObj.fees.totalCasualFee = "0.00";
+              state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+            }else if(action.key == "competitionMembershipProductDivisionId"){
+              state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
+              setSeasonalAndCasualFeesObj(state);
             }else if(action.key == "addTeamMember"){
               let teamMemberObj = getUpdatedTeamMemberObj(state);
               state.teamRegistrationObj.teamMembers.push(teamMemberObj);
@@ -378,7 +428,17 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO: 
             let additionalInfoKey = action.key;
             let additionalInfoData = action.data;
-            state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+            let additionalInfoSubKey = action.subKey;
+            if(additionalInfoSubKey == "walkingNetball"){
+              state.teamRegistrationObj.additionalInfo.walkingNetball[additionalInfoKey] = additionalInfoData;
+            }else{
+              if(additionalInfoKey == "isYearsPlayed"){
+                if(additionalInfoData == 1){
+                  state.teamRegistrationObj.additionalInfo.yearsPlayed = '2';
+                }
+              }
+              state.teamRegistrationObj.additionalInfo[additionalInfoKey] = additionalInfoData;
+            }
             return {
               ...state
             };
@@ -461,7 +521,19 @@ function teamRegistrationReducer(state = initialState, action){
         //         ...state,
         //         inviteMemberSaveOnLoad: false,
         //         status: action.status
-        //     };   
+        //     };  
+        
+      case ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD:
+				return {...state,getSeasonalCasualFeesOnLoad: true }
+
+			case ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_SUCCESS:
+        let feesTemp = action.result;
+        state.teamRegistrationObj.fees.totalCasualFee = feesTemp.totalCasualTeamFees;
+        state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
+        return {
+          ...state,
+          getSeasonalCasualFeesOnLoad: false
+        }
 
         default:
             return state;

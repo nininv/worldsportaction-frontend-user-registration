@@ -10,8 +10,8 @@ import {
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
-  identificationReferenceSaga,otherSportsReferenceSaga,accreditationUmpireReferenceSaga,
-  accreditationCoachReferenceSaga,walkingNetballQuesReferenceSaga
+  identificationReferenceSaga, otherSportsReferenceSaga, accreditationUmpireReferenceSaga,
+  accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -24,7 +24,7 @@ import * as regProductsSaga from '../saga/registrationSaga/registrationProductsS
 
 //Live Score
 import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCompSaga";
-import { liveScoreLaddersListSaga } from './liveScoreSaga/liveScoreLadderSaga';
+import { liveScoreLaddersListSaga, liveScoreTeamSaga } from './liveScoreSaga/liveScoreLadderSaga';
 import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
 import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
 import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
@@ -186,15 +186,6 @@ export default function* root_saga() {
   //validation result code
   yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
 
-  //Get Team Registration Review
-  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.getTeamRegistrationReviewSaga)
-
-  //Save Team Registration Revie
-  yield takeEvery(ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD, endUserRegSaga.saveTeamRegistrationReviewSaga)
-
-  //Get Team Registration Review Products
-  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD, endUserRegSaga.getTeamRegistrationReviewProductsSaga)
-
   //Save DeRegister
   yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
 
@@ -238,32 +229,49 @@ export default function* root_saga() {
   //EndUserRegistration Registration Settings
   yield takeEvery(ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD, userRegistrationSaga.orgRegistrationRegistrationSettings)
 
-   //Get Registration Participant Users
-   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_LOAD, regProductsSaga.getRegParticipantUsersSaga)
+  //Get Registration Participant Users
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_LOAD, regProductsSaga.getRegParticipantUsersSaga)
 
-   //Get Registration Shop Pickup address
-   yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD, regProductsSaga.getRegistrationShopPickupAddressSaga)
+  //Get Registration Shop Pickup address
+  yield takeEvery(ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD, regProductsSaga.getRegistrationShopPickupAddressSaga)
 
   //Get Registration Participant Address
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD, regProductsSaga.getRegParticipantAddressSaga)
 
   //Expired competition check
-  yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD,userRegistrationSaga.expiredRegistrationCheck);
+  yield takeEvery(ApiConstants.API_EXPIRED_REGISTRATION_LOAD, userRegistrationSaga.expiredRegistrationCheck);
 
   yield takeEvery(ApiConstants.API_GET_TRANSFER_COMPETITIONS_LOAD, deRegisterSaga.getTransferOrganisationsSaga);
-  
+
   //Team registration saga
-  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD,teamRegistrationSaga.teamRegistrationMembershipProducts);
-  yield takeEvery(ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD,teamRegistrationSaga.orgTeamRegistrationSettings);
-  yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD,teamRegistrationSaga.saveTeamData);
-  yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD,teamRegistrationSaga.getTeamDataById);
-  yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD,teamRegistrationSaga.getExistingTeamDataById);
-  yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD,teamRegistrationSaga.expiredTeamRegistrationCheck);
-  
+  yield takeEvery(ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD, teamRegistrationSaga.teamRegistrationMembershipProducts);
+  yield takeEvery(ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD, teamRegistrationSaga.orgTeamRegistrationSettings);
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_LOAD, teamRegistrationSaga.saveTeamData);
+  yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD, teamRegistrationSaga.getTeamDataById);
+  yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD, teamRegistrationSaga.getExistingTeamDataById);
+  yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD, teamRegistrationSaga.expiredTeamRegistrationCheck);
+
+  yield takeEvery(ApiConstants.API_GET_USER_ROLE_LOAD, userSaga.getUserRole);
+  yield takeEvery(ApiConstants.API_GET_SCORER_ACTIVITY_LOAD, userSaga.getScorerActivitySaga);
+  yield takeEvery(ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD, userSaga.getUmpireActivityListSaga);
+
   //Team invite saga
-  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD,teamInviteSaga.getInvitedTeamRegInfoSaga);
-  yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD,teamInviteSaga.orgTeamInviteRegistrationSettings);
-  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga)
-  yield takeEvery(ApiConstants.API_GET_INVITE_TEAM_REVIEW_PRODUCT_LOAD, teamInviteSaga.getInviteTeamProductsSaga)
+  yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD, teamInviteSaga.getInvitedTeamRegInfoSaga);
+  yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD, teamInviteSaga.orgTeamInviteRegistrationSettings);
+  yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, teamInviteSaga.teamRegistrationInviteUpdateSaga);
+
+  ////////// Save stripe account
+  yield takeEvery(ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_LOAD, stripeSaga.saveStripeAccountSaga);
+  yield takeEvery(ApiConstants.API_GET_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.getTeamInviteReviewSaga);
+
+  yield takeEvery(ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD, teamInviteSaga.saveTeamInviteReviewSaga);
+  yield takeEvery(ApiConstants.API_GET_STRIPE_LOGIN_LINK_API_LOAD, stripeSaga.getStripeLoginLinkSaga);
+
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_TEAM_LOAD, liveScoreTeamSaga);
+
+  yield takeEvery(ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,userRegistrationSaga.getSeasonalCasualFeesSaga);
+  yield takeEvery(ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD, userSaga.getAllOrganisationListSaga);
+  yield takeEvery(ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD,teamRegistrationSaga.getTeamSeasonalCasualFeesSaga);
+  
 
 }

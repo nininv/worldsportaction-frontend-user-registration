@@ -108,7 +108,7 @@ class RegistrationShipping extends Component {
             for(let address of filteredShippingProductsAddresses){
                 address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
             }
-            this.setState({shippingOptions: filteredShippingProductsAddresses})
+            this.setState({shippingOptions: filteredShippingProductsAddresses});
         }catch(ex){
             console.log("Error in setShippingOptions"+ex);
         }
@@ -383,7 +383,6 @@ class RegistrationShipping extends Component {
         );
     }
     shippingLeftView = ()=>{
-        console.log("reutnr",this.checkAnyDeliveryAddress());
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
@@ -420,7 +419,7 @@ class RegistrationShipping extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
@@ -457,7 +456,7 @@ class RegistrationShipping extends Component {
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
                             onClick={() => this.goToRegistrationProducts()}
-                            style={{margin: "0px 15px 0px 10px"}}>
+                            style={{margin: "0px 15px 0px 20px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
@@ -471,7 +470,7 @@ class RegistrationShipping extends Component {
                     )}
                 )}
                  {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common shop-detail-text-common">
+                    <div  className="subtitle-text-common shop-detail-text-common inter-medium-w500">
                         <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -492,8 +491,8 @@ class RegistrationShipping extends Component {
                     </div>
                 ))}
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2 " style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2 " style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )

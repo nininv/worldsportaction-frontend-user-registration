@@ -31,7 +31,6 @@ import {isArrayNotEmpty,isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import { wrap } from "@progress/kendo-drawing";
 import { 
     getCommonRefData,
     countryReferenceAction
@@ -60,7 +59,8 @@ class RegistrationProducts extends Component {
            newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
-           onLoading: false
+           onLoading: false,
+           deleteOnLoad: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -70,7 +70,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "fa7066f7-6b49-4a2b-9331-b0ba020549a1";
+        //let registrationUniqueKey = "3ec7535a-febc-4f2c-acc9-e68440c54771";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -88,6 +88,11 @@ class RegistrationProducts extends Component {
         if(this.state.onLoading == true && registrationProductState.onRegReviewLoad == false){
             this.setYourInfoFormFields()
             this.setState({onLoading: false});
+        }
+        if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            this.setState({loading: true});
+            this.setState({deleteOnLoad: false})
         }
     }  
 
@@ -246,7 +251,9 @@ class RegistrationProducts extends Component {
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true})
+            // this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({productModalVisible: false});
@@ -265,7 +272,8 @@ class RegistrationProducts extends Component {
             }
 
             this.props.deleteRegistrationParticipantAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true});
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({participantModalVisible: false});
@@ -278,6 +286,10 @@ class RegistrationProducts extends Component {
         }else{
             history.push({pathname: '/appTeamRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
         } 
+    }
+
+    clickAddAnotherParticipant = (participantId,registrationId) => {
+        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
     }
 
     goToShop = () =>{
@@ -344,7 +356,7 @@ class RegistrationProducts extends Component {
             : null;
 
             let defaultAddress = '';
-            if(yourInfo.street1 && yourInfo.suburb && state && country){
+            if(state){
                 defaultAddress = (yourInfo.street1 ? yourInfo.street1 + ',': '') + 
                 (yourInfo.suburb ? yourInfo.suburb + ',': '') +
                 (state ? state + ',': '') +
@@ -362,12 +374,12 @@ class RegistrationProducts extends Component {
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
             if(address){
-                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
                 this.setReviewInfo(address.addressOne, "street1", null,"yourInfo", null);
                 this.setReviewInfo(address.suburb, "suburb", null,"yourInfo", null);
-                this.setReviewInfo(stateRefId, "stateRefId", null,"yourInfo", null);
-                this.setReviewInfo(countryRefId, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(stateRefId ? stateRefId : null, "stateRefId", null,"yourInfo", null);
+                this.setReviewInfo(countryRefId ? countryRefId : null, "countryRefId", null,"yourInfo", null);
                 this.setReviewInfo(address.postcode, "postalCode", null,"yourInfo", null);
             }
         }catch(ex){
@@ -400,7 +412,7 @@ class RegistrationProducts extends Component {
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
                 <div>
                     <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.redirect(null,this.state.registrationUniqueKey)}>
+                    onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                         + {AppConstants.addAnotherParticipant}
                     </div>
                 </div>
@@ -418,7 +430,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 {(compParticipants || []).map((item, index) =>(
-                    <div key={item.participantId + "#" + index}>
+                    <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
@@ -435,31 +447,47 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div style={{display:"flex",flexWrap:'wrap'}}>
-                    <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
-                        {
-                            item.photoUrl ? (
-                                <img src={item.photoUrl}/>
-                            ):
-                            (
-                                <img src={AppImages.userIcon} alt=""/>     
-                            )
-                        }
-                    </div>
+                   
                     {item.isTeamRegistration == 1 ?
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.teamName}</div>
-                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
-                        </div>
-                    :
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                            <div className="body-text-common">{item.gender + ', ' + 
-                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                <div className="defualt-team-logo-style">
+                                    <img src={AppImages.teamLoadDefualtWhite}/>
+                                </div>
+                                <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.teamName}</div>
+                                    <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                </div>
                             </div>
-                        </div>
+                        )
+                        
+                    :
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                 <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
+                                        {
+                                            item.photoUrl ? (
+                                                <img src={item.photoUrl}/>
+                                            ):
+                                            (
+                                                <div className="profile-default-img" style={{height: "67px" , width: "67px"}}>
+                                                    {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
+                                                </div>     
+                                            )
+                                        }
+                                    </div>
+                                    <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                                    <div className="body-text-common">{item.gender} 
+                                        {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                        
                     }
                    
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>
@@ -823,9 +851,9 @@ class RegistrationProducts extends Component {
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
                                     setFieldsValue={yourInfo ? yourInfo.email : null}
-                                    onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
-                                    {(participantUsers || []).map((item) => (
-                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                    onChange = {(e) => this.setReviewInfo(e, "emailSelection", null,"yourInfo", null)}>
+                                    {(participantUsers || []).map((item, index) => (
+                                        < Option key={"ParticipantUser"+index} value={index}> {item.firstName + ' ' + item.lastName}</Option>
                                     ))}
                                 </Select>
                             )}
@@ -1102,12 +1130,13 @@ class RegistrationProducts extends Component {
     productLeftView = (getFieldDecorator)=>{
         const {registrationReviewList, participantUsers} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
+        let hasClubVolunteer = registrationReviewList!= null ? registrationReviewList.hasClubVolunteer : 0;
         return(
             <div className="col-sm-12 col-md-8 col-lg-8 ">
                 <div className="product-left-view outline-style">
                     {this.participantDetailView()}
                     {isSchoolRegistration == 0 && this.charityView()}
-                    {this.otherinfoView()}
+                    {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
                 {participantUsers && participantUsers.length > 0 ? 
                 <div className="product-left-view outline-style">
@@ -1146,7 +1175,7 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
@@ -1188,7 +1217,7 @@ class RegistrationProducts extends Component {
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="inter-medium-w500" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -1200,7 +1229,7 @@ class RegistrationProducts extends Component {
                                 <div>({shop.optionName})</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
@@ -1312,7 +1341,8 @@ class RegistrationProducts extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
-                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad || 
+                        this.props.registrationProductState.deleteOnLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteParticiantModalView()}

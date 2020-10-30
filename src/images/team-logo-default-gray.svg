@@ -1,0 +1,16 @@
+<svg id="ic_netball-24px" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="Group_37" data-name="Group 37">
+    <rect id="Rectangle_136" data-name="Rectangle 136" width="20" height="20" fill="none"/>
+    <rect id="Rectangle_137" data-name="Rectangle 137" width="20" height="20" fill="none"/>
+  </g>
+  <g id="Group_39" data-name="Group 39" transform="translate(1.667 1.708)">
+    <g id="Group_38" data-name="Group 38">
+      <path id="Path_34" data-name="Path 34" d="M5.333,4.01A8.305,8.305,0,0,0,2.742,14.093l2.592-1.5Z" transform="translate(-2 -2.377)" fill="#d9d9d9"/>
+      <path id="Path_35" data-name="Path 35" d="M10.5,9.858V2.05A8.321,8.321,0,0,0,8,2.708v8.6Z" transform="translate(-3 -2.05)" fill="#d9d9d9"/>
+      <path id="Path_36" data-name="Path 36" d="M10.648,13.15,3.89,17.05a8.243,8.243,0,0,0,1.817,1.833L13.148,14.6Z" transform="translate(-2.315 -3.9)" fill="#d9d9d9"/>
+      <path id="Path_37" data-name="Path 37" d="M13,7.96v2.883l6.758,3.9a8.314,8.314,0,0,0,.683-2.483Z" transform="translate(-3.833 -3.035)" fill="#d9d9d9"/>
+      <path id="Path_38" data-name="Path 38" d="M8.07,20.34A8.337,8.337,0,0,0,18.1,17.54l-2.592-1.5Z" transform="translate(-3.012 -4.382)" fill="#d9d9d9"/>
+      <path id="Path_39" data-name="Path 39" d="M20.433,9.35A8.33,8.33,0,0,0,13,2.05v3Z" transform="translate(-3.833 -2.05)" fill="#d9d9d9"/>
+    </g>
+  </g>
+</svg>

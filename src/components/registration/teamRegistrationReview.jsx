@@ -13,7 +13,7 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import InputWithHead from '../../customComponents/InputWithHead';
 import moment from 'moment';
 import history from "../../util/history";
-import { getTeamRegistrationReviewAction,saveTeamRegistrationReview, updateTeamReviewInfoAction} from 
+import { saveTeamRegistrationReview, updateTeamReviewInfoAction} from 
             '../../store/actions/registrationAction/endUserRegistrationAction';
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -334,7 +334,7 @@ class TeamRegistrationReview extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getTeamRegistrationReviewAction,
+        //getTeamRegistrationReviewAction,
         saveTeamRegistrationReview,
         updateTeamReviewInfoAction
     }, dispatch);
