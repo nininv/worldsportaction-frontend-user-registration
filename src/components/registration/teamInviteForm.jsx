@@ -56,7 +56,8 @@ import {
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
-    walkingNetballQuesReferenceAction 
+    walkingNetballQuesReferenceAction ,
+    getSchoolListAction
 } from '../../store/actions/commonAction/commonAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";
@@ -278,11 +279,18 @@ class TeamInivteForm extends Component{
                     this.onChangeSetMemberInfoValue(address.postcode, "postalCode","userRegDetails");
                     this.onChangeSetMemberInfoValue(countryRefId ? countryRefId : null, "countryRefId","userRegDetails");
                     this.onChangeSetMemberInfoValue(stateRefId ? stateRefId : null, "stateRefId","userRegDetails");
+                    if(stateRefId){
+                        this.getSchoolList(stateRefId)
+                    }  
                 }
             }
         }catch(ex){
             console.log("Error in handlePlacesAutoComplete::"+ex);
         }
+    }
+
+    getSchoolList = (stateRefId) => {
+        this.props.getSchoolListAction(stateRefId);
     }
 
     onChangeSetMemberInfoValue = (value,key,subKey) => {
@@ -305,6 +313,9 @@ class TeamInivteForm extends Component{
                         });
                     });
                 }
+            }
+            if(key == "stateRefId"){
+                this.getSchoolList(value)
             }
         }catch(ex){
             console.log("Error in onChangeSetMemberInfoValue::"+ex);
@@ -1305,7 +1316,7 @@ class TeamInivteForm extends Component{
             const { iniviteMemberInfo,inviteMemberRegSettings } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             const {  countryList, identifyAsList,disabilityList,favouriteTeamsList,
-                firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
+                firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList,schoolList } = this.props.commonReducerState;
             let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
             let hasOtherParticipantSports = userRegDetails.otherSportsInfo?.find(x => x == "14");
             let walkingNetballQuesKeys = userRegDetails.walkingNetball && Object.keys(userRegDetails.walkingNetball);
@@ -1562,11 +1573,10 @@ class TeamInivteForm extends Component{
                                     <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e, "schoolId","userRegDetails")}
-                                        value={userRegDetails.schoolId}
-                                        >  
-                                        {/* {(yearsOfPlayingList || []).map((years, index) => (
-                                            <Option key={years} value={years}>{years}</Option>
-                                        ))} */}
+                                        value={userRegDetails.schoolId}>  
+                                        {(schoolList || []).map((school, index) => (
+                                            <Option key={school.id} value={school.id}>{school.name}</Option>
+                                        ))}
                                     </Select> 
                                 </div>
                             )}
@@ -1784,7 +1794,8 @@ function mapDispatchToProps(dispatch){
         walkingNetballQuesReferenceAction,
         teamInviteRegSettingsAction,
         updateInviteMemberInfoAction,
-        saveInviteMemberInfoAction
+        saveInviteMemberInfoAction,
+        getSchoolListAction
     }, dispatch);
 
 }

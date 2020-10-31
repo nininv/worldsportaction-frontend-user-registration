@@ -27,7 +27,8 @@ const initialState = {
     otherSportsList: [],
     accreditationUmpireList: [],
     accreditationCoachList: [] ,
-    walkingNetballQuesList: []		 
+    walkingNetballQuesList: [],
+    schoolList: []		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -273,6 +274,19 @@ function commonReducerState(state = initialState, action) {
                 ...state,
                 status: action.status,
                 walkingNetballQuesList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        //get the school list
+        case ApiConstants.API_GET_SCHOOLS_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_GET_SCHOOLS_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                schoolList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
                 error: null
             };

@@ -47,7 +47,8 @@ import {
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
-    walkingNetballQuesReferenceAction
+    walkingNetballQuesReferenceAction,
+    getSchoolListAction
 } from '../../store/actions/commonAction/commonAction';
 import { 
     getUserRegistrationUserInfoAction,
@@ -469,6 +470,10 @@ class AppRegistrationFormNew extends Component{
         return parentObj;
     }
 
+    getSchoolList = (stateRefId) => {
+        this.props.getSchoolListAction(stateRefId);
+    }
+
     onChangeSetParticipantValue = (value,key) => {
         const { registrationObj,parents,userInfo } = this.props.userRegistrationState;
         if(key == "addOrRemoveAddressBySelect"){
@@ -485,6 +490,9 @@ class AppRegistrationFormNew extends Component{
             }else{
                 this.clearParticipantAddress(registrationObj);
             }
+        }else if(key == "stateRefId"){
+            this.getSchoolList(value);
+            this.props.updateUserRegistrationObjectAction(value,key);
         }else{
             this.props.updateUserRegistrationObjectAction(value,key);
             console.log("update field",registrationObj);
@@ -659,6 +667,7 @@ class AppRegistrationFormNew extends Component{
             }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
+                this.getSchoolList(stateRefId);
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");
@@ -2581,7 +2590,7 @@ class AppRegistrationFormNew extends Component{
         try {
             const { registrationObj } = this.props.userRegistrationState;
             const { countryList, identifyAsList, disabilityList, favouriteTeamsList,
-                firebirdPlayerList, otherSportsList, heardByList, accreditationUmpireList, accreditationCoachList, walkingNetballQuesList } = this.props.commonReducerState;
+                firebirdPlayerList, otherSportsList, heardByList, accreditationUmpireList, accreditationCoachList, walkingNetballQuesList,schoolList } = this.props.commonReducerState;
             let yearsOfPlayingList = [{ years: '2' }, { years: '3' }, { years: '4' }, { years: '5' }, { years: '6' }, { years: '7' }, { years: '8' }, { years: '9' }, { years: '10+' }];
             let walkingNetballQuesKeys = Object.keys(registrationObj.additionalInfo.walkingNetball);
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => registrationObj.additionalInfo.walkingNetball[key] == 1);
@@ -2845,6 +2854,9 @@ class AppRegistrationFormNew extends Component{
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>
+                                    {registrationObj.registeringYourself == 3 && (
+                                        <InputWithHead heading={AppConstants.schoolSomeoneAttend} />
+                                    )}
                                     {registrationObj.registeringYourself == 2 && (
                                         <InputWithHead heading={AppConstants.schoolYourChildAttend} />
                                     )}
@@ -2852,13 +2864,14 @@ class AppRegistrationFormNew extends Component{
                                         <InputWithHead heading={AppConstants.schoolYouAttend} />
                                     )}
                                     <Select
+                                        showSearch
+                                        optionFilterProp="children"
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
-                                        value={registrationObj.additionalInfo.schoolId}
-                                    >
-                                        {/* {(yearsOfPlayingList || []).map((years, index) => (
-                                            <Option key={years} value={years}>{years}</Option>
-                                        ))} */}
+                                        value={registrationObj.additionalInfo.schoolId}>
+                                        {(schoolList || []).map((school, index) => (
+                                            <Option key={school.id} value={school.id}>{school.name}</Option>
+                                        ))}
                                     </Select>
                                 </div>
                             )}
@@ -3208,7 +3221,8 @@ function mapDispatchToProps(dispatch)
         getParticipantInfoById,
         orgRegistrationRegSettingsEndUserRegAction,
         registrationExpiryCheckAction,
-        getSeasonalAndCasualFees				 
+        getSeasonalAndCasualFees,
+        getSchoolListAction				 
     }, dispatch);
 
 }

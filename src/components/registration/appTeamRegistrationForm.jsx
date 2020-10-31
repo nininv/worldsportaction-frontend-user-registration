@@ -57,7 +57,8 @@ import {
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
-    walkingNetballQuesReferenceAction 
+    walkingNetballQuesReferenceAction ,
+    getSchoolListAction
 } from '../../store/actions/commonAction/commonAction';
 import { isEmptyArray } from "formik";
 import Loader from '../../customComponents/loader';
@@ -495,9 +496,16 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    getSchoolList = (stateRefId) => {
+        this.props.getSchoolListAction(stateRefId);
+    }
+
     onChangeSetTeamValue = (value,key) => {
         try{
             this.props.updateTeamRegistrationObjectAction(value,key);
+            if(key == "stateRefId"){
+                this.getSchoolList(value);
+            }
         }catch(ex){
             console.log("Error in onChangeSetTeamValue::"+ex);
         }
@@ -564,6 +572,7 @@ class AppTeamRegistrationForm extends Component{
                     this.onChangeSetTeamValue(address.postcode, "postalCode");
                     this.onChangeSetTeamValue(countryRefId ? countryRefId : null, "countryRefId");
                     this.onChangeSetTeamValue(stateRefId ? stateRefId : null, "stateRefId");
+                    this.getSchoolList(stateRefId);
                 }
             }
         }catch(ex){
@@ -1727,7 +1736,7 @@ class AppTeamRegistrationForm extends Component{
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             const { countryList, identifyAsList,disabilityList,favouriteTeamsList,
-                firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList } = this.props.commonReducerState;
+                firebirdPlayerList,otherSportsList,heardByList,accreditationUmpireList,accreditationCoachList,walkingNetballQuesList,schoolList } = this.props.commonReducerState;
             let yearsOfPlayingList = [{years: '2'},{years: '3'},{years: '4'},{years: '5'},{years: '6'},{years: '7'},{years: '8'},{years: '9'},{years: '10+'}];
             let hasOtherParticipantSports = teamRegistrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
             let walkingNetballQuesKeys = Object.keys(teamRegistrationObj.additionalInfo.walkingNetball);
@@ -1982,13 +1991,14 @@ class AppTeamRegistrationForm extends Component{
                                 <div>
                                   <InputWithHead heading={AppConstants.schoolYouAttend} />
                                   <Select
+                                        showSearch
+                                        optionFilterProp="children"
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182}}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e, "schoolId")}
-                                        value={teamRegistrationObj.additionalInfo.schoolId}
-                                        >  
-                                        {/* {(yearsOfPlayingList || []).map((years, index) => (
-                                            <Option key={years} value={years}>{years}</Option>
-                                        ))} */}
+                                        value={teamRegistrationObj.additionalInfo.schoolId}>  
+                                        {(schoolList || []).map((school, index) => (
+                                            <Option key={school.id} value={school.id}>{school.name}</Option>
+                                        ))}
                                     </Select> 
                                 </div>
                             )}
@@ -2221,7 +2231,8 @@ function mapDispatchToProps(dispatch){
         getExistingTeamInfoById,
         membershipProductTeamRegistrationAction,
         teamRegistrationExpiryCheckAction,
-        getSeasonalAndCasualFees
+        getSeasonalAndCasualFees,
+        getSchoolListAction
     }, dispatch);
 
 }

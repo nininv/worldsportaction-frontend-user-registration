@@ -1056,6 +1056,7 @@ const AppConstants = {
  yearsOfPlaying: "Years of playing",
  schoolYouAttend: "Which school do you attend?",
  schoolYourChildAttend: "Which school does your child attend?",
+ schoolSomeoneAttend: "Which school they attend?",
  yourChildSchoolGrade: "What school grade is your child in",
  yourSchoolGrade: "What school grade are you in",
  schoolGrade: "School Grade",
