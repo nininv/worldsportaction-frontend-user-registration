@@ -61,6 +61,8 @@ class RegistrationProducts extends Component {
            manualEnterAddressFlag: false,
            onLoading: false,
            deleteOnLoad: false,
+           organisationUniqueKey: null,
+           competitionUniqueKey: null
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -70,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "3ec7535a-febc-4f2c-acc9-e68440c54771";
+        //let registrationUniqueKey = "ecdb4f98-5704-46bd-aae3-3792ab43c3ff";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -260,15 +262,17 @@ class RegistrationProducts extends Component {
         }
     }
 
-    removeParticipantModal = (key, id) =>{
+    removeParticipantModal = (key, id, competitionId, organisationId) =>{
         if(key == "show"){
-            this.setState({participantModalVisible: true, id: id});
+            this.setState({participantModalVisible: true, id: id, competitionUniqueKey: competitionId, organisationUniqueKey: organisationId });
         }
         else if(key == "ok"){
             this.setState({participantModalVisible: false});
             let payload = {
                 registrationId : this.state.registrationUniqueKey,
-                participantId: this.state.id
+                participantId: this.state.id,
+                competitionUniqueKey: this.state.competitionUniqueKey,
+                organisationUniqueKey: this.state.organisationUniqueKey
             }
 
             this.props.deleteRegistrationParticipantAction(payload);
@@ -493,7 +497,7 @@ class RegistrationProducts extends Component {
                         </span>
                         <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
                     </div> 
-                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId)}>                   
+                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
                         <span className="link-text-common" style={{marginRight: "15px"}}>
                             {AppConstants.remove}
                         </span>
@@ -1244,6 +1248,12 @@ class RegistrationProducts extends Component {
     }
 
     deleteParticiantModalView = () => {
+        const {registrationReviewList} = this.props.registrationProductState;
+        let compParticipants = registrationReviewList!= null ? 
+                    isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                    registrationReviewList.compParticipants : [] : [];
+        let competitions = compParticipants.filter(x => x.participantId == this.state.id);
+        let participantHasMoreCompetitions = competitions.length > 1 ? true : false;
         return (
             <div>
               <Modal
@@ -1252,7 +1262,7 @@ class RegistrationProducts extends Component {
                 visible={this.state.participantModalVisible}
                 onOk={() => this.removeParticipantModal("ok")}
                 onCancel={() => this.removeParticipantModal("cancel")}>
-                  <p>{AppConstants.deleteParticipantMsg}</p>
+                  <p>{participantHasMoreCompetitions ? AppConstants.deleteCompetition : AppConstants.deleteParticipantMsg}</p>
               </Modal>
             </div>
           );

@@ -147,6 +147,14 @@ function walkingNetballQuesReferenceAction() {
     return action;
 }
 
+function getSchoolListAction(stateRefId){
+    const action = {
+        type: ApiConstants.API_GET_SCHOOLS_LOAD,
+        stateRefId
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -167,5 +175,6 @@ export {
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
-    walkingNetballQuesReferenceAction		
+    walkingNetballQuesReferenceAction,
+    getSchoolListAction		
 }

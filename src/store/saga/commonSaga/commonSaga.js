@@ -332,3 +332,20 @@ export function* walkingNetballQuesReferenceSaga(action){
     }
 }
 
+export function* getSchoolsSaga(action){
+    try {
+        const result = yield call(CommonAxiosApi.getSchools,action.stateRefId);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_SCHOOLS_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+

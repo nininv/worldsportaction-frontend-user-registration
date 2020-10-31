@@ -1038,8 +1038,9 @@ const AppConstants = {
  deliveryAddress:"Delivery Address",
  billingAddress:"Billing Address",
  useDifferentAddress:"Use a different address",
- deleteProductMsg: "Do you want to delete the product?",
- deleteParticipantMsg: "Do you want to delete the participant?",
+ deleteProductMsg: "Do you want to remove this product?",
+ deleteParticipantMsg: "Do you want to remove this participant?",
+ deleteCompetition: "Do you want to remove this competition?",
  whichCountryWereBorn: "In which country were you born?",
  doYouIdentifyAs: "Do you identify as: ",
  identifyAs: "IdentifyAs",
@@ -1056,6 +1057,7 @@ const AppConstants = {
  yearsOfPlaying: "Years of playing",
  schoolYouAttend: "Which school do you attend?",
  schoolYourChildAttend: "Which school does your child attend?",
+ schoolSomeoneAttend: "Which school they attend?",
  yourChildSchoolGrade: "What school grade is your child in",
  yourSchoolGrade: "What school grade are you in",
  schoolGrade: "School Grade",
@@ -1080,7 +1082,7 @@ const AppConstants = {
  securePaymentMsg: "There is no payment required",
  selectParentOrGuardian: "Select Parent/Guardian",
  returnToShoppingCart: "Return to Shopping Cart",
- anyExistingMedicalCondition: "Please detail any existing medical conditions or illnesses. Please detail a Management Plan (if applicable)",
+ anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies (medical or food) or Illnesses. Please detail a Management Plan (if applicable)",
  anyRedularMedicalConditions: "Any Regular Medications?",
  registeringAs:  " Registering as :",
  search: "Search",
@@ -1133,7 +1135,7 @@ const AppConstants = {
  creditCardMsg: "A transaction fee of 2.25% + 30c is charged for domestic credit cards and 3.0% + 30c for International. For American express cards a fee of 2.7% + 30c applies.",
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
- competitionSpecifics:'Comepetiton Specifics',
+ competitionSpecifics:'Competition Specifics',
  totalsinglegamefees:'Total Single Game Fees'
 
 };

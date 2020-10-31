@@ -54,7 +54,8 @@ class RegistrationShipping extends Component {
             shippingOptions: null,
             useDiffDeliveryAddressFlag: false,
             userDiffBillingAddressFlag: false,
-            deliveryOrBillingAddressSelected: false                  
+            deliveryOrBillingAddressSelected: false,
+            onlyDeliveryAddressFlag: false                  
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -105,10 +106,15 @@ class RegistrationShipping extends Component {
             let shopProducts = registrationReviewList != null ? isArrayNotEmpty(registrationReviewList.shopProducts) ?
                                                                 deepCopyFunction(registrationReviewList.shopProducts) : [] : [];
             let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
-            for(let address of filteredShippingProductsAddresses){
-                address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+            if(filteredShippingProductsAddresses.length > 0){
+                for(let address of filteredShippingProductsAddresses){
+                    address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+                }
+                this.setState({shippingOptions: filteredShippingProductsAddresses});
+                this.setState({onlyDeliveryAddressFlag : false});
+            }else{
+                this.setState({onlyDeliveryAddressFlag : true});
             }
-            this.setState({shippingOptions: filteredShippingProductsAddresses});
         }catch(ex){
             console.log("Error in setShippingOptions"+ex);
         }
@@ -385,8 +391,10 @@ class RegistrationShipping extends Component {
     shippingLeftView = ()=>{
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
-                {this.shippingOption()}
-                {this.checkAnyDeliveryAddress() && (
+                {this.state.onlyDeliveryAddressFlag == false && (
+                    <div>{this.shippingOption()}</div>
+                )}
+                {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
                     <div>{this.deliveryAndBillingView()}</div> 
                 )}               
             </div>

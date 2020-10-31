@@ -24,7 +24,7 @@ const feeIsNull = (fee) => {
 }
 
 const getAge = (birthDate) => {
-  let dob = moment(birthDate,"DD-MM-YYYY").format("YYYY-MM-DD")
+  let dob = moment(birthDate,"MM-DD-YYYY").format("YYYY-MM-DD");
   return moment().diff(dob, 'years',false)
 }
 
