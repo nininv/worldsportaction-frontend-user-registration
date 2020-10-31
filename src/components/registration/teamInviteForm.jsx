@@ -383,16 +383,29 @@ class TeamInivteForm extends Component{
         }
     }
 
-    getUpdatedUserRegDetailObj = (userRegDetails) => {
+    dateConversion = (f, key, subKey, referenceKey) => {
         try{
-            userRegDetails.dateOfBirth = userRegDetails.dateOfBirth ? moment(userRegDetails.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            userRegDetails.accreditationCoachExpiryDate = userRegDetails.accreditationCoachExpiryDate ? moment(userRegDetails.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            userRegDetails.childrenCheckExpiryDate = userRegDetails.childrenCheckExpiryDate ? moment(userRegDetails.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            return userRegDetails;
+            let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
+            if(referenceKey == "teamMember"){
+                this.onChangeSetMemberInfoValue(date, key, subKey) 
+            }else if(referenceKey == "additionalInfo"){
+                this.onChangeSetMemberInfoValue(date, key,subKey)
+            }
         }catch(ex){
-            console.log("Error in getUpdatedUserRegDetailObj::"+ex);
+            console.log("Error in dateConversion::"+ex)
         }
     }
+
+    // getUpdatedUserRegDetailObj = (userRegDetails) => {
+    //     try{
+    //         userRegDetails.dateOfBirth = userRegDetails.dateOfBirth ? moment(userRegDetails.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+    //         userRegDetails.accreditationCoachExpiryDate = userRegDetails.accreditationCoachExpiryDate ? moment(userRegDetails.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+    //         userRegDetails.childrenCheckExpiryDate = userRegDetails.childrenCheckExpiryDate ? moment(userRegDetails.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+    //         return userRegDetails;
+    //     }catch(ex){
+    //         console.log("Error in getUpdatedUserRegDetailObj::"+ex);
+    //     }
+    // }
 
     addressSearchValidation = () => {
         try{
@@ -420,7 +433,7 @@ class TeamInivteForm extends Component{
             e.preventDefault();
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let inviteMemberInfoTemp = JSON.parse(JSON.stringify(iniviteMemberInfo));
-            let userRegDetails = this.getUpdatedUserRegDetailObj(inviteMemberInfoTemp.userRegDetails);
+            //let userRegDetails = this.getUpdatedUserRegDetailObj(inviteMemberInfoTemp.userRegDetails);
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep == 0){
@@ -448,7 +461,7 @@ class TeamInivteForm extends Component{
                     }
                     if(this.state.currentStep == 1){
                         this.setState({buttonSaveOnLoad: true});
-                        this.props.saveInviteMemberInfoAction(userRegDetails);
+                        this.props.saveInviteMemberInfoAction(inviteMemberInfoTemp.userRegDetails);
                     }
                 }
             });
@@ -862,7 +875,7 @@ class TeamInivteForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "dateOfBirth","userRegDetails") }
+                                        onChange={(e,f) => this.dateConversion(f, "dateOfBirth","userRegDetails", "teamMember")}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1627,10 +1640,10 @@ class TeamInivteForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={(e,f) => this.onChangeSetMemberInfoValue(f, "accreditationCoachExpiryDate","userRegDetails") }
+                                    onChange={(e,f) => this.dateConversion(f, "accreditationCoachExpiryDate","userRegDetails", "additionalInfo")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
-                                    value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"YYYY-MM-DD")}
+                                    value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate,"MM-DD-YYYY")}
                                 />
                             )}
                         </div>

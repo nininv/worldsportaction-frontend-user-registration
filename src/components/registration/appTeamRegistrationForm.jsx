@@ -529,14 +529,14 @@ class AppTeamRegistrationForm extends Component{
             teamRegistrationObj.registeringYourself = 4;
             teamRegistrationObj.participantId = this.state.participantId != null ? this.state.participantId : null;
             teamRegistrationObj.registrationId = this.state.registrationId != null ? this.state.registrationId : null; 
-            teamRegistrationObj.dateOfBirth = teamRegistrationObj.dateOfBirth ? moment(teamRegistrationObj.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            for(let teamMember of teamRegistrationObj.teamMembers){
-                teamMember.dateOfBirth = teamMember.dateOfBirth ? moment(teamMember.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            }
-            teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ? 
-                                        moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            teamRegistrationObj.additionalInfo.childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ? 
-                                        moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            // teamRegistrationObj.dateOfBirth = teamRegistrationObj.dateOfBirth ? moment(teamRegistrationObj.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            // for(let teamMember of teamRegistrationObj.teamMembers){
+            //     teamMember.dateOfBirth = teamMember.dateOfBirth ? moment(teamMember.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            // }
+            // teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ? 
+            //                             moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+            // teamRegistrationObj.additionalInfo.childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ? 
+            //                             moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
 
             let memArr = [];
             (teamRegistrationObj.competitionInfo.membershipProducts).map((i, ind) => {
@@ -624,6 +624,21 @@ class AppTeamRegistrationForm extends Component{
             return error;
         }catch(ex){
             console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
+    dateConversion = (f, key, referenceKey, teamMemberIndex) => {
+        try{
+            let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
+            if(referenceKey == "team"){
+                this.onChangeSetTeamValue(date, key)
+            }else if(referenceKey == "teamMember"){
+                this.onChangeTeamMemberValue(date,key, teamMemberIndex)
+            }else if(referenceKey == "additionalInfo"){
+                this.onChangeSetAdditionalInfo(f, key)
+            }
+        }catch(ex){
+            console.log("Error in dateConversion::"+ex)
         }
     }
 
@@ -1347,7 +1362,7 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={(e,f) => this.onChangeSetTeamValue(f, "dateOfBirth") }
+                                        onChange={(e,f) => this.dateConversion(f, "dateOfBirth","team")}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -1505,7 +1520,7 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={(e,f) => this.onChangeTeamMemberValue(f, "dateOfBirth", teamMemberIndex) }
+                                        onChange={(e,f) => this.dateConversion(f, "dateOfBirth","teamMember",teamMemberIndex)}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -2050,10 +2065,10 @@ class AppTeamRegistrationForm extends Component{
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%",marginTop: "20px" }}
-                                    onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "accreditationCoachExpiryDate") }
+                                    onChange={(e,f) => this.dateConversion(f, "accreditationCoachExpiryDate","additionalInfo")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
-                                    value={teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate && moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD")}
+                                    value={teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate && moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"MM-DD-YYYY")}
                                 />
                             )}
                         </div>
@@ -2078,7 +2093,7 @@ class AppTeamRegistrationForm extends Component{
                                         onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate") }
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
-                                        value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD")}
+                                        value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY")}
                                     />
                                 </div>
                             </div>
