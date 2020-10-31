@@ -1656,7 +1656,7 @@ class TeamInivteForm extends Component{
                             {this.walkingNetballQuestions()}
                             {hasAnyOneYes && (
                                 <div>
-                                    <div className="input-style">{AppConstants.provideFurtherDetails}</div>
+                                    <InputWithHead heading={AppConstants.provideFurtherDetails}/>
                                     <InputWithHead 
                                         placeholder={AppConstants.walkingNetball2} 
                                         onChange={(e) => this.onChangeSetMemberInfoValue( e.target.value,"walkingNetballInfo","userRegDetails")} 
