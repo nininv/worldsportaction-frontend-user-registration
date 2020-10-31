@@ -1136,7 +1136,8 @@ const AppConstants = {
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
  competitionSpecifics:'Competition Specifics',
- totalsinglegamefees:'Total Single Game Fees'
+ totalsinglegamefees:'Total Single Game Fees',
+ seasonFixture: 'Season Fixture',
 
 };
 
