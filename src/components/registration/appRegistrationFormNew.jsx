@@ -1693,13 +1693,14 @@ class AppRegistrationFormNew extends Component{
                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", parentIndex)}
                                 value={parent.street2}
                             />
+                            <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
                             <Form.Item>
                                 {getFieldDecorator(`parentSuburb${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                     <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.suburb}
+                                        // required={"required-field pt-0 pb-0"}
+                                        // heading={AppConstants.suburb}
                                         placeholder={AppConstants.suburb}
                                         onChange={(e) => this.onChangeSetParentValue(e.target.value, "suburb", parentIndex)}
                                         setFieldsValue={parent.suburb}
@@ -2790,7 +2791,7 @@ class AppRegistrationFormNew extends Component{
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
-                                setFieldsValue={registrationObj.additionalInfo.heardByRefId}>
+                                value={registrationObj.additionalInfo.heardByRefId}>
                                 {(heardByList || []).map((heard, index) => (
                                     <Radio style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
                                 ))}
@@ -2995,7 +2996,7 @@ class AppRegistrationFormNew extends Component{
                         
                         {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
-                                <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
+                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6">
                                         <InputWithHead 

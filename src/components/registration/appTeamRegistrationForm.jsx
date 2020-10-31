@@ -1930,7 +1930,7 @@ class AppTeamRegistrationForm extends Component{
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")} 
-                                setFieldsValue={teamRegistrationObj.additionalInfo.heardByRefId}
+                                value={teamRegistrationObj.additionalInfo.heardByRefId}
                                 >
                                 {(heardByList || []).map((heard, index) => (
                                     <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>

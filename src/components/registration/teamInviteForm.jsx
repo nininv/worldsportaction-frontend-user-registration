@@ -680,13 +680,14 @@ class TeamInivteForm extends Component{
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "street2","userRegDetails")} 
                                 value={userRegDetails.street2}
                             />
+                            <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
                             <Form.Item >
                                 {getFieldDecorator(`yourDetailsSuburb`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                     <InputWithHead
-                                        required={"required-field pt-0 pb-0"}
-                                        heading={AppConstants.suburb}
+                                        // required={"required-field pt-0 pb-0"}
+                                        // heading={AppConstants.suburb}
                                         placeholder={AppConstants.suburb}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "suburb","userRegDetails")} 
                                         setFieldsValue={userRegDetails.suburb}
@@ -969,13 +970,14 @@ class TeamInivteForm extends Component{
                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "street2", parentIndex  )} 
                                 value={parent.street2}
                             />
+                            <InputWithHead heading={AppConstants.suburb}   required={"required-field"}/>
                             <Form.Item>
                                 {getFieldDecorator(`parentSuburb${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                 <InputWithHead
-                                    required={"required-field pt-0 pb-0"}
-                                    heading={AppConstants.suburb}
+                                    // required={"required-field pt-0 pb-0"}
+                                    // heading={AppConstants.suburb}
                                     placeholder={AppConstants.suburb}
                                     onChange={(e) => this.onChangeSetParentValue( e.target.value, "suburb", parentIndex  )} 
                                     setFieldsValue={parent.suburb}
@@ -1626,7 +1628,7 @@ class TeamInivteForm extends Component{
                     
                     {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
                         <div>
-                            <div className="input-style">{AppConstants.workingWithChildrenCheckNumber}</div>
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead 
