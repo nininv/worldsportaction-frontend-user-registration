@@ -1248,6 +1248,12 @@ class RegistrationProducts extends Component {
     }
 
     deleteParticiantModalView = () => {
+        const {registrationReviewList} = this.props.registrationProductState;
+        let compParticipants = registrationReviewList!= null ? 
+                    isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                    registrationReviewList.compParticipants : [] : [];
+        let competitions = compParticipants.filter(x => x.participantId == this.state.id);
+        let participantHasMoreCompetitions = competitions.length > 1 ? true : false;
         return (
             <div>
               <Modal
@@ -1256,7 +1262,7 @@ class RegistrationProducts extends Component {
                 visible={this.state.participantModalVisible}
                 onOk={() => this.removeParticipantModal("ok")}
                 onCancel={() => this.removeParticipantModal("cancel")}>
-                  <p>{AppConstants.deleteParticipantMsg}</p>
+                  <p>{participantHasMoreCompetitions ? AppConstants.deleteCompetition : AppConstants.deleteParticipantMsg}</p>
               </Modal>
             </div>
           );

@@ -301,7 +301,9 @@ class TeamInivteForm extends Component{
             this.props.updateInviteMemberInfoAction(value,key,subKey,null);
             if(key == "dateOfBirth"){
                 if(getAge(value) < 18){
-                    this.addParent("add");
+                    if(!isArrayNotEmpty(userRegDetails.parentOrGaurdianDetails)){
+                        this.addParent("add");
+                    }
                 }else{
                     this.addParent("removeAllParent")
                 }
@@ -368,6 +370,7 @@ class TeamInivteForm extends Component{
         try{
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            userRegDetails.parentOrGaurdianDetails = userRegDetails.parentOrGaurdianDetails == null ? [] : userRegDetails.parentOrGaurdianDetails;
             if(key == "add"){
                 let parentObj = deepCopyFunction(this.getParentObj()); 
                 userRegDetails.parentOrGaurdianDetails.push(parentObj);

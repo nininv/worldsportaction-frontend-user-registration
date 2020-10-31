@@ -71,7 +71,6 @@ import Loader from '../../customComponents/loader';
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import { isEmptyArray } from "formik";
 import { get } from "jquery";
 import { captializedString } from "../../util/helpers";
 import { nearByOrganisations } from "../../util/geocode";
@@ -507,7 +506,7 @@ class AppRegistrationFormNew extends Component{
             });
             if(key == "dateOfBirth"){
                 if(getAge(value) < 18){
-                    if(isEmptyArray(parents)){
+                    if(!isArrayNotEmpty(parents)){
                         this.addParent("add");
                     }
                 }else{
