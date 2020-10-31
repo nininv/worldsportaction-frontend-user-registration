@@ -290,6 +290,7 @@ class TeamInivteForm extends Component{
     }
 
     getSchoolList = (stateRefId) => {
+        this.onChangeSetMemberInfoValue(null, "schoolId","userRegDetails")
         this.props.getSchoolListAction(stateRefId);
     }
 

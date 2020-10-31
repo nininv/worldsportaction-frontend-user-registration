@@ -471,6 +471,7 @@ class AppRegistrationFormNew extends Component{
     }
 
     getSchoolList = (stateRefId) => {
+        this.onChangeSetAdditionalInfo(null, "schoolId");
         this.props.getSchoolListAction(stateRefId);
     }
 
@@ -667,7 +668,9 @@ class AppRegistrationFormNew extends Component{
             }
             if (key == "participant"){
                 this.onChangeSetParticipantValue(stateRefId, "stateRefId");
-                this.getSchoolList(stateRefId);
+                if(stateRefId){
+                    this.getSchoolList(stateRefId);
+                } 
                 this.onChangeSetParticipantValue(address.addressOne, "street1");
                 this.onChangeSetParticipantValue(address.suburb, "suburb");
                 this.onChangeSetParticipantValue(address.postcode, "postalCode");

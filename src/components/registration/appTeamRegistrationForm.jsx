@@ -497,6 +497,7 @@ class AppTeamRegistrationForm extends Component{
     }
 
     getSchoolList = (stateRefId) => {
+        this.onChangeSetAdditionalInfo(e, "schoolId");
         this.props.getSchoolListAction(stateRefId);
     }
 
@@ -572,7 +573,9 @@ class AppTeamRegistrationForm extends Component{
                     this.onChangeSetTeamValue(address.postcode, "postalCode");
                     this.onChangeSetTeamValue(countryRefId ? countryRefId : null, "countryRefId");
                     this.onChangeSetTeamValue(stateRefId ? stateRefId : null, "stateRefId");
-                    this.getSchoolList(stateRefId);
+                    if(stateRefId){
+                        this.getSchoolList(stateRefId);
+                    }
                 }
             }
         }catch(ex){
