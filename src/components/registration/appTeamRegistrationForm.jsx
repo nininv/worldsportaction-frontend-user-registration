@@ -497,7 +497,7 @@ class AppTeamRegistrationForm extends Component{
     }
 
     getSchoolList = (stateRefId) => {
-        this.onChangeSetAdditionalInfo(e, "schoolId");
+        this.onChangeSetAdditionalInfo(null, "schoolId");
         this.props.getSchoolListAction(stateRefId);
     }
 
