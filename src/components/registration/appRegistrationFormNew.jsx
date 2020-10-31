@@ -757,6 +757,17 @@ class AppRegistrationFormNew extends Component{
         this.props.updateParticipantAdditionalInfoAction(value,key,subKey);
     }
 
+    removeCompetition = (competitionId) => {
+        try{
+            let registrationObjTemp = this.props.userRegistrationState.registrationObj;
+            let filteredCompetitions = registrationObjTemp.competitions.filter(x => x.competitionId != competitionId);
+            registrationObjTemp.competitions = filteredCompetitions;
+            this.props.updateUserRegistrationObjectAction(registrationObjTemp,"registrationObj");
+        }catch(ex){
+            console.log("Error in removeCompetition");
+        }
+    }
+
     dateConversion = (f, key, referenceKey) => {
         try{
             let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
@@ -2490,8 +2501,14 @@ class AppRegistrationFormNew extends Component{
                         <div className="form-heading" style={{ paddingBottom: "0px" }}>{competition.competitionInfo.organisationName}</div>
                         <div style={{ display: "flex", flexWrap: "wrap" }}>
                             <div style={{ textAlign: "start", fontWeight: "600", marginTop: "-5px" }}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
-                            <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "8px" }}
-                                onClick={() => this.setState({ currentStep: 1 })}>{AppConstants.edit}</div>
+                            <div style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "8px",display: "flex" }}>
+                                <div className="orange-action-txt" 
+                                    onClick={() => this.setState({ currentStep: 1 })}>{AppConstants.edit}</div>
+                                <span className="remove-edit-icon"><img src={AppImages.editIcon} /></span>
+                                <div className="orange-action-txt" style={{marginLeft:"20px"}}
+                                    onClick={() => this.removeCompetition(competition.competitionId)}>{AppConstants.remove}</div>
+                                <span className="remove-edit-icon"><img src={AppImages.removeIcon} /></span>
+                            </div>
                         </div>
                         <div style={{
                             fontWeight: "600", marginTop: "-5px",

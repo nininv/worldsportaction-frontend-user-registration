@@ -659,3 +659,10 @@
   font-weight: normal;
   color: var(--app-414141);
 }
+
+.remove-edit-icon{
+  text-align: center;
+  font-size: 12px;
+  color: var(--app-red);
+  margin-left: 5px;
+}
