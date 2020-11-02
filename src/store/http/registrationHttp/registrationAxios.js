@@ -105,7 +105,7 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getEndUserRegMembershipProducts(payload) {
-        payload["currentDate"] =moment(new Date()).format('YYYY-MM-DD');
+        payload["currentDate"] = moment(new Date()).format('YYYY-MM-DD');
         var url = `/api/registration/membershipproducts`;
         return Method.dataPost(url, token, payload);
     },
@@ -224,7 +224,8 @@ let AxiosApi = {
     },
     //check expired registration from appRegistrationForm
     expiredRegistrationCheck(payload){
-        var url = `/api/registration/expiry/check?organisationId=${payload.organisationId}&competitionId=${payload.competitionId}`;
+        let currentDate = moment(new Date()).format('YYYY-MM-DD');
+        var url = `/api/registration/expiry/check?organisationId=${payload.organisationId}&competitionId=${payload.competitionId}&currentDate=${currentDate}`;
         return Method.dataGet(url, token);
     },
     getTransferOrganisationsData(payload) {
