@@ -2,8 +2,7 @@
 import http from "./registrationhttp";
 import { getUserId, getAuthToken, getOrganisationData } from "../../../util/sessionStorage"
 import history from "../../../util/history";
-import { message } from "antd";
-import ValidationConstants from "../../../themes/validationConstant";
+import moment from 'moment';
 
 async function logout() {
     await localStorage.clear();
@@ -106,7 +105,7 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getEndUserRegMembershipProducts(payload) {
-        payload["currentDate"] = new Date();
+        payload["currentDate"] =moment(new Date()).format('YYYY-MM-DD');
         var url = `/api/registration/membershipproducts`;
         return Method.dataPost(url, token, payload);
     },
