@@ -54,6 +54,7 @@ class TeamInviteShop extends Component{
             productModalVisible: false ,
             id: null,
             typeId: -1,
+            organisationUniqueKey: -1,
             expandObj: null,
             variantOptionId: null,
             quantity: null,
@@ -98,15 +99,16 @@ class TeamInviteShop extends Component{
         }
         console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
-        this.getRegistrationShopProducts(1, -1, userRegId);
+        this.getRegistrationShopProducts(1, -1, userRegId,-1);
     }
 
-    getRegistrationShopProducts = (page, typeId, userRegId) =>{
+    getRegistrationShopProducts = (page, typeId, userRegId,organisationUniqueKey) =>{
         let registrationId = this.props.teamInviteState.registrationId;
         let payload = {
             registrationId: registrationId,
             userRegId: userRegId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
@@ -117,8 +119,29 @@ class TeamInviteShop extends Component{
     }
 
     onChangeSetValue = (key, value) =>{
-        this.setState({typeId: value});
-        this.getRegistrationShopProducts(1, value, this.state.userRegId);
+        if(key == "typeId"){
+            this.setState({typeId: value});
+            this.getRegistrationShopProducts(1, value, this.state.userRegId,this.state.organisationUniqueKey);
+        }else if(key == "organisationUniqueKey"){
+            this.setState({organisationUniqueKey: value});
+            this.getRegistrationShopProducts(1, this.state.typeId, this.state.userRegId,value);
+        } 
+    }
+
+    getOrganisationFilterList = () => {
+        try{
+            const {registrationReviewList} = this.props.registrationProductState;
+            let compParticipants = registrationReviewList!= null ? 
+                        isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                        registrationReviewList.compParticipants : [] : [];
+            let organisationList = Array.from(new Set(compParticipants.map(a => a.organisationUniqueKey))).
+                map(organisationUniqueKey => {
+                    return compParticipants.find(a => a.organisationUniqueKey === organisationUniqueKey)
+                });
+            return organisationList;
+        }catch(ex){
+            console.log("Error in getOrganisationList::"+ex)
+        }
     }
 
     goToShipping = () =>{
@@ -212,6 +235,22 @@ class TeamInviteShop extends Component{
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
                 <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
+                <div style={{width:"230px",marginTop: "10px",marginLeft: "auto",marginRight: "15px"}}>
+                    <Select
+                        style={{ width: "100%", paddingRight: 1}}                  
+                        placeholder={AppConstants.all}  
+                        className="custom-dropdown"
+                        onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
+                        value={this.state.organisationUniqueKey}                                               
+                    >
+                        <Option value={-1}>All</Option> 
+                        {
+                            (this.getOrganisationFilterList() || []).map((item, index) =>(
+                                <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                            ))
+                        }    
+                    </Select>
+                </div>
                 <div style={{width:"230px",marginTop: "10px"}}>
                     <Select
                         style={{ width: "100%", paddingRight: 1}}                  

@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "f0684983-a8a8-4955-bed3-0dc5d437b502";
+        //let registrationUniqueKey = "f0476b76-a018-47ce-a9a3-123063c430d4";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -92,7 +92,7 @@ class RegistrationProducts extends Component {
             this.setState({onLoading: false});
         }
         if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
-            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1, -1);
             this.setState({loading: true});
             this.setState({deleteOnLoad: false})
         }
@@ -110,13 +110,14 @@ class RegistrationProducts extends Component {
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
         this.props.getRegParticipantUsersAction(payload);
-        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
 
-    getRegistrationProducts = (registrationId, page, typeId) =>{
+    getRegistrationProducts = (registrationId, page, typeId,organisationUniqueKey) =>{
         let payload = {
             registrationId: registrationId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),

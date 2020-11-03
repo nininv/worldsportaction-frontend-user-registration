@@ -50,7 +50,7 @@ class TeamInviteProducts extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //let userRegId = "298860de-79b8-4b94-9e8b-b45642a6a2f8"
+            //let userRegId = "5751dc44-f3bf-4edf-a588-2104d11d8a47"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -87,7 +87,7 @@ class TeamInviteProducts extends Component{
             userRegId: userRegId
         }
         this.props.getTeamInviteReviewAction(payload);
-        this.getShopProducts(userRegId, 1, -1);
+        this.getShopProducts(userRegId, 1, -1, -1);
     }
 
     goToTeamInvitePayments = () =>{
@@ -95,12 +95,13 @@ class TeamInviteProducts extends Component{
     }
 
     
-    getShopProducts = (userRegId, page, typeId) =>{
+    getShopProducts = (userRegId, page, typeId,organisationUniqueKey) =>{
         let {registrationId} = this.props.teamInviteState;
         let payload = {
             registrationId: registrationId,
             userRegId: userRegId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
