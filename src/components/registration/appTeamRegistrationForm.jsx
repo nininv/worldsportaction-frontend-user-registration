@@ -645,6 +645,15 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    selectAnother = () => {
+        try{
+            this.props.updateTeamRegistrationObjectAction(null,"teamRegistrationObj")
+            history.push({pathname:'/appRegistrationForm'});
+        }catch(ex){
+            console.log("Error in selectAnother::"+ex)
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
@@ -1746,7 +1755,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         </div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}
-                            onClick={() => this.onChangeStep(1)}>{AppConstants.selectAnother}</div>
+                            onClick={() => this.selectAnother()}>{AppConstants.selectAnother}</div>
                     </div>
                 </div>
             )
