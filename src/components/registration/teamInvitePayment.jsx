@@ -876,7 +876,8 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             history.push("/invoice", {
                                 userRegId: userRegId,
                                 registrationId: null,
-                                paymentSuccess: true
+                                paymentSuccess: true,
+                                paymentType: paymentType
                             })
                         }
                         else if(paymentType =="direct_debit") {
@@ -889,7 +890,8 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 history.push("/invoice", {
                                     registrationId: null,
                                     userRegId: userRegId,
-                                    paymentSuccess: true
+                                    paymentSuccess: true,
+                                    paymentType: "direct_debit"
                                 })
                                
                             }
@@ -899,7 +901,8 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             history.push("/invoice", {
                                 registrationId: null,
                                 userRegId: userRegId,
-                                paymentSuccess: true
+                                paymentSuccess: true,
+                                paymentType: "default"
                             })
                         }
                     }

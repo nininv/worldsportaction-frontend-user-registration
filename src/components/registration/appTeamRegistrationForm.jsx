@@ -1078,7 +1078,12 @@ class AppTeamRegistrationForm extends Component{
                             <div style={{display: "flex",flexWrap: "wrap"}}>
                                 <div style={{textAlign: "start",fontWeight: "600"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
                                 <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
+                                onClick={() => {
+                                    this.setState({currentStep: 0});
+                                    setTimeout(() => {
+                                        this.setSelectCompetitionStepFormFields();
+                                    },300);
+                                }}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
                                 <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
