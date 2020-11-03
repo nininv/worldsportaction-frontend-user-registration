@@ -890,7 +890,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.firstName}
                                             onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.firstName }
+                                            setFieldsValue={yourInfo ? yourInfo.firstName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsFirstName']: captializedString(i.target.value)
                                             })}
@@ -907,7 +907,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.lastName}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.lastName }
+                                            setFieldsValue={yourInfo ? yourInfo.lastName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsLastName']: captializedString(i.target.value)
                                             })}
@@ -924,7 +924,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.phone}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "mobileNumber", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.mobileNumber }
+                                            setFieldsValue={yourInfo ? yourInfo.mobileNumber : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -938,7 +938,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.email}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "email", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.email }
+                                            setFieldsValue={yourInfo ? yourInfo.email : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -1038,7 +1038,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.addressOne}
                                             placeholder={AppConstants.addressOne}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "street1", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.street1}
+                                            setFieldsValue={yourInfo ? yourInfo.street1 : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1057,7 +1057,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.suburb}
                                             placeholder={AppConstants.suburb}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "suburb", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.suburb}
+                                            setFieldsValue={yourInfo ? yourInfo.suburb : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1072,7 +1072,7 @@ class RegistrationProducts extends Component {
                                                     style={{ width: "100%" }}
                                                     placeholder={AppConstants.state}
                                                     onChange={(e) => this.setReviewInfo(e, "stateRefId", null,"yourInfo", null)}
-                                                    setFieldsValue={yourInfo.stateRefId}>
+                                                    setFieldsValue={yourInfo ? yourInfo.stateRefId : null}>
                                                     {stateList.length > 0 && stateList.map((item) => (
                                                         < Option key={item.id} value={item.id}> {item.name}</Option>
                                                     ))}
@@ -1091,7 +1091,7 @@ class RegistrationProducts extends Component {
                                                     placeholder={AppConstants.postcode}
                                                     onChange={(e) => this.setReviewInfo(e.target.value, "postalCode", null,"yourInfo", null)}
                                                     maxLength={4}
-                                                    setFieldsValue={yourInfo.postalCode}
+                                                    setFieldsValue={yourInfo ? yourInfo.postalCode : null}
                                                 />
                                                 )}
                                             </Form.Item>
@@ -1106,7 +1106,7 @@ class RegistrationProducts extends Component {
                                             style={{ width: "100%" }}
                                             placeholder={AppConstants.country}
                                             onChange={(e) => this.setReviewInfo(e, "countryRefId", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.countryRefId}>
+                                            setFieldsValue={yourInfo ? yourInfo.countryRefId : null}>
                                             {countryList.length > 0 && countryList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                                             ))}
