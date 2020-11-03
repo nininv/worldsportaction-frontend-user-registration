@@ -87,7 +87,7 @@ class AppRegistrationFormNew extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 1,
+            currentStep: 0,
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: false,
             searchAddressError: null,
