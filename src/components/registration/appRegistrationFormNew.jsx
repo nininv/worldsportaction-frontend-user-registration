@@ -87,7 +87,7 @@ class AppRegistrationFormNew extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            currentStep: 0,
+            currentStep: 1,
             submitButtonText: AppConstants.addPariticipant,
             showAddAnotherCompetitionView: false,
             searchAddressError: null,
@@ -109,6 +109,7 @@ class AppRegistrationFormNew extends Component{
             organisations: [],
             postalCode: null,
         }
+        this.ref = React.createRef();
         this.props.getCommonRefData();
         this.props.genderReferenceAction();
         this.props.countryReferenceAction();
@@ -751,6 +752,12 @@ class AppRegistrationFormNew extends Component{
             }
             this.props.updateUserRegistrationObjectAction(organisation,"competitions");
         }
+        setTimeout(() => {
+            window.scrollTo({
+                top: this.ref.offsetTop, 
+                behavior: "smooth" 
+            });
+        },300)
     }
 
     onChangeSetAdditionalInfo = (value,key,subKey) => {
@@ -1955,7 +1962,7 @@ class AppRegistrationFormNew extends Component{
                         {expiredRegistration == null ?
                             <div>
                                 {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                                    <div>{this.competitionDetailView(competition, competitionIndex, getFieldDecorator)}</div>
+                                    <div ref={(ref) => this.ref = ref}>{this.competitionDetailView(competition, competitionIndex, getFieldDecorator)}</div>
                                 ))}
                             </div>
                             :
