@@ -1054,7 +1054,7 @@ const AppConstants = {
  playingOtherParticipantSports: "Are you playing any other participation sport?",
  childPlayingOtherParticipantSports: "Is your child playing any other participation sport?",
  someOnePlayingOtherParticipantSports: "Are other playing any other participation sport?",
- firstYearPlayingNetball: "If this your first year playing netball?",
+ firstYearPlayingNetball: "Is this your first year playing netball?",
  yearsOfPlaying: "Years of playing",
  schoolYouAttend: "Which school do you attend?",
  schoolYourChildAttend: "Which school does your child attend?",
