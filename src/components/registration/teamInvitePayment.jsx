@@ -667,7 +667,7 @@ class TeamInvitePayment extends Component{
                               
                             </div>
                         ))}
-                        <div className="font-17" style={{color: "var(--app-bbbbc6)",marginTop: "10px"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                             <span className="link-text-common pointer font-17" 
                             onClick={() => this.goToTeamInviteProducts()}

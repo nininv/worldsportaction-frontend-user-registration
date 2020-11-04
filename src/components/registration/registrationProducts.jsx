@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "f0476b76-a018-47ce-a9a3-123063c430d4";
+        //let registrationUniqueKey = "20fb0cbf-5829-4dfc-8496-04347dab6205";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -589,7 +589,7 @@ class RegistrationProducts extends Component {
                                     <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
                                 }
                                 { p.paymentOptionRefId == 4 &&          
-                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
+                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.firstInstalment}</Radio>
                                 } 
                                 { p.paymentOptionRefId == 5 &&          
                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
@@ -1209,7 +1209,7 @@ class RegistrationProducts extends Component {
                             </div>
                         ))}
                          
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 

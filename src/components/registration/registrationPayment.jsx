@@ -706,7 +706,7 @@ class RegistrationPayment extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)",marginTop: "10px"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
                             onClick={() => this.goToRegistrationProducts()}

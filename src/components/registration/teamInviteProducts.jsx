@@ -453,7 +453,7 @@ class TeamInviteProducts extends Component{
                                 </div>
                             ))}
                              
-                            <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                            <div className="payment-option-txt">
                                 {paymentOptionTxt}
                             </div>
                             {item.governmentVoucherAmount != "0.00" && 

@@ -434,7 +434,7 @@ class TeamInviteShipping extends Component{
                                 }
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
                             onClick={() => this.goToTeamInviteProducts()}
