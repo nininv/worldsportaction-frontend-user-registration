@@ -38,7 +38,8 @@ import {
     getExistingTeamInfoById,
     membershipProductTeamRegistrationAction,
     teamRegistrationExpiryCheckAction,
-    getSeasonalAndCasualFees
+    getSeasonalAndCasualFees,
+    teamNameValidationAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -117,7 +118,8 @@ class AppTeamRegistrationForm extends Component{
             existingTeamParticipantId: null,
             onExistingTeamInfoByIdLoad: false,
             onExpiredRegistrationCheckLoad: false,
-            showExpiredRegistrationView: false
+            showExpiredRegistrationView: false,
+            buttonSubmitted: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -527,12 +529,39 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    showTeamNameValidation= (value) =>{
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        if(value!= null && value.length > 0){
+            let obj = {     
+                competitionId:  teamRegistrationObj.competitionId,
+                organisationId: teamRegistrationObj.organisationId,  
+                competitionMembershipProductDivisionId: teamRegistrationObj.competitionMembershipProductDivisionId,
+                teamName: value,           
+            }
+            this.props.teamNameValidationAction(obj);
+        }
+    }	
+
     scrollToTop = () => {
         window.scrollTo(0, 0);
     }
 
     onChangeTeamMemberValue = (value,key,index,subIndex) => {
         this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
+    }
+
+    showMemberTypeValidation = (teamMember) => {
+        try{
+            let error = false;
+            if(teamMember.membershipProductTypes.find(x => x.isChecked == true)){
+                error = false;
+            }else{
+                error = true;
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in showMemberTypeValidation::"+ex)
+        }
     }
 
     onChangeSetAdditionalInfo = (value,key,subKey) => {
@@ -682,6 +711,9 @@ class AppTeamRegistrationForm extends Component{
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
+            if(this.state.currentStep == 1){
+                this.setState({buttonSubmitted: true});
+            }
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
@@ -1476,22 +1508,20 @@ class AppTeamRegistrationForm extends Component{
                         )}
                     </div>
                     <InputWithHead heading={AppConstants.type} required={"required-field"}/>
-                    <Form.Item >
-                        {getFieldDecorator(`teamMemberType${teamMemberIndex}`, {
-                            rules: [{ required: true, message: ValidationConstants.memberTypeIsRequired }],
-                        })(
-                            <div>
-                                {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
-                                    <Checkbox 
-                                    checked={product.isChecked}
-                                    key={product.competitionMembershipProductTypeId}
-                                    onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
-                                        {product.productTypeName}
-                                    </Checkbox>
-                                ))}
-                            </div>
-                        )}
-                    </Form.Item>
+                    {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
+                        <Checkbox 
+                        checked={product.isChecked}
+                        key={product.competitionMembershipProductTypeId}
+                        onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
+                            {product.productTypeName}
+                        </Checkbox>
+                    ))}
+                    {this.showMemberTypeValidation(teamMember) && this.state.buttonSubmitted && (
+                            <div style={{color:"var(--app-red)"}}>
+                                {ValidationConstants.memberTypeIsRequired}
+                            </div>   
+                        )                           
+                    }
                   
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
                     <Form.Item >
@@ -1665,9 +1695,15 @@ class AppTeamRegistrationForm extends Component{
                                 placeholder={AppConstants.teamName}
                                 onChange={(e) => this.onChangeSetTeamValue(e.target.value, "teamName")} 
                                 setFieldsValue={teamRegistrationObj.teamName}
+                                onBlur = {(e) => this.showTeamNameValidation(e.target.value)}
                             />
                         )}
                     </Form.Item>
+                    {this.props.teamRegistrationState.teamNameValidationResultCode == 2 &&                
+                        <div style={{color:"var(--app-red)"}}>
+                            {AppConstants.teamAlreadyExists}
+                        </div>                         
+                    }
                     
                     {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (teamRegistrationObj.teamMembers || []).map((teamMember,teamMemberIndex) => (
                         <div>{this.teamMemberView(teamMember,teamMemberIndex,getFieldDecorator)}</div>
@@ -2317,7 +2353,8 @@ function mapDispatchToProps(dispatch){
         membershipProductTeamRegistrationAction,
         teamRegistrationExpiryCheckAction,
         getSeasonalAndCasualFees,
-        getSchoolListAction
+        getSchoolListAction,
+        teamNameValidationAction
     }, dispatch);
 
 }

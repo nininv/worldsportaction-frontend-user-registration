@@ -196,6 +196,7 @@ const initialState = {
     getSeasonalCasualFeesOnLoad: false,
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
+    teamNameValidationResultCode: null
 }
 
 function setTeamRegistrationObj(state){
@@ -563,6 +564,16 @@ function teamRegistrationReducer(state = initialState, action){
           ...state,
           getSeasonalCasualFeesOnLoad: false
         }
+
+      case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
+        return { ...state,onLoad: true};
+
+      case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
+        state.teamNameValidationResultCode = action.result.resultCode;     
+        return {
+            ...state,
+            onLoad: false,                
+        };
 
         default:
             return state;
