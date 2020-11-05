@@ -588,7 +588,7 @@ class RegistrationInvoice extends Component {
                             <div className="invoice-amount-border col-sm-5">
                                 <InputWithHead
                                     required={"pt-3"}
-                                    heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card' || paymentType == "cash_card") ? "Amount paid" : "Amount Pay"}
+                                    heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card') ? "Amount Paid" : "Amount Pending"}
                                 />
                             </div>
                             <div className="invoice-amount-border">
