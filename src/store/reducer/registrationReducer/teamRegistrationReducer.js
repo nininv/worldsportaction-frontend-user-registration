@@ -1,6 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
+import moment from 'moment';
 
 let walkingNetballObj = {
 	"haveHeartTrouble" : null,
@@ -338,6 +339,32 @@ function setSeasonalAndCasualFeesObj(state){
   }
 }
 
+function updateImportedTeamMember(state,importedTeamMemberList){
+  try{
+    state.teamRegistrationObj.teamMembers = [];
+    for(let importedTeamMember of importedTeamMemberList){
+      let teamMemberObj = getUpdatedTeamMemberObj(state);
+      teamMemberObj.firstName = importedTeamMember.first_name ? importedTeamMember.first_name : null;
+      teamMemberObj.middleName = importedTeamMember.middle_name ? importedTeamMember.middle_name : null;
+      teamMemberObj.lastName = importedTeamMember.last_name ? importedTeamMember.last_name : null;
+      if(importedTeamMember.gender){
+        teamMemberObj.genderRefId = importedTeamMember.gender == "Female" ? 1 : (importedTeamMember.gender == "Male" ? 2 : 3);
+      }
+      teamMemberObj.email = importedTeamMember.email ? importedTeamMember.email : null;
+      teamMemberObj.mobileNumber = importedTeamMember.phone ? importedTeamMember.phone : null;
+      //console.log("date",JSON.stringify(moment(new Date(importedTeamMember.date_of_birth)).format("MM-DD-YYYY")));
+      teamMemberObj.dateOfBirth = importedTeamMember.date_of_birth ? moment(importedTeamMember.date_of_birth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
+      let membershipProductTypesTemp = teamMemberObj.membershipProductTypes.find(x => x.productTypeName == importedTeamMember.type);
+      if(membershipProductTypesTemp){
+        membershipProductTypesTemp.isChecked = true;
+      }
+      state.teamRegistrationObj.teamMembers.push(teamMemberObj);
+    }
+  }catch(ex){
+    console.log("Error in updateImportedTeamMember::"+ex)
+  }
+}
+
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
@@ -381,6 +408,8 @@ function teamRegistrationReducer(state = initialState, action){
               state.teamRegistrationObj.teamMembers.push(teamMemberObj);
             }else if(action.key == "removeTeamMember"){
               state.teamRegistrationObj.teamMembers.splice(action.data,1);
+            }else if(action.key == "teamMemberList"){
+              updateImportedTeamMember(state,action.data);
             }else{
               state.teamRegistrationObj[action.key] = action.data;
             }

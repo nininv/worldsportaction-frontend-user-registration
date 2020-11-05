@@ -585,7 +585,7 @@ class RegistrationInvoice extends Component {
                             </div>
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border col-sm-5">
+                            <div className="invoice-amount-border col-sm-6">
                                 <InputWithHead
                                     required={"pt-3"}
                                     heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card') ? "Amount Paid" : "Amount Pending"}

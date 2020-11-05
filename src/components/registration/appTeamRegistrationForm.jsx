@@ -70,11 +70,26 @@ import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import history from "../../util/history";
 import { captializedString } from "../../util/helpers";
+import { NavLink } from "react-router-dom";
+import CSVReader from 'react-csv-reader'
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
+
+const parseOptions = {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    transformHeader: header =>
+      header
+        .toLowerCase()
+        .replace(/\W/g, '_'),
+    complete: function(results, file) {
+        console.log("Parsing complete:", results, file);
+    }
+}
 
 class AppTeamRegistrationForm extends Component{
     constructor(props){
@@ -522,6 +537,16 @@ class AppTeamRegistrationForm extends Component{
 
     onChangeSetAdditionalInfo = (value,key,subKey) => {
         this.props.updateTeamAdditionalInfoAction(key,value,subKey);
+    }
+
+    readTeamPlayersCSV = (teamMemberList) => {
+        console.log("csv data",teamMemberList);
+        this.props.updateTeamRegistrationObjectAction(teamMemberList,"teamMemberList");
+        setTimeout(() => {
+            this.setParticipantDetailStepFormFields();
+        },300)
+        let e = document.getElementById("teamPlayerUpload");
+        e.value = null;
     }
 
     getFilteredTeamRegisrationObj = (teamRegistrationObj) => {
@@ -1609,10 +1634,25 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="col-sm-12 col-md-6">
                             {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
-                                <Button 
-                                    style={{float: "right",textTransform: "uppercase"}}
-                                    className="white-button">{AppConstants.importTeam}
-                                </Button>
+                                <div style={{display: "flex",float: "right"}}>
+                                    <NavLink to="/templates/wsa-import-team-player.csv" target="_blank" download>
+                                        <Button 
+                                            style={{textTransform: "uppercase"}}
+                                            className="white-button">{AppConstants.downloadTemplate}
+                                        </Button>
+                                    </NavLink>
+                                    <label 
+                                        for={"teamPlayerUpload"}
+                                        style={{marginLeft: "20px",textTransform: "uppercase",padding: '12px'}}
+                                        className="white-button">{AppConstants.importTeam}
+                                    </label>
+                                    <CSVReader
+                                        inputId={"teamPlayerUpload"}
+                                        inputStyle={{display:'none'}}
+                                        parserOptions={parseOptions}
+                                        onFileLoaded={(e) => this.readTeamPlayersCSV(e)}
+                                    />
+                                </div>  
                             )}
                         </div>
                     </div>
