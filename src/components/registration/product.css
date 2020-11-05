@@ -1067,3 +1067,10 @@ input:focus, .StripeElement--focus {
   font-family: inter;
   padding-top: 10px;
 }
+
+.product-text-common-light {
+  display: flex;
+  align-content: flex-start;
+  color: var(--app-1b1b34);
+  font-family: inter;
+}

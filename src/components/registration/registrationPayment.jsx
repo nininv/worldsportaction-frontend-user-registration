@@ -747,15 +747,15 @@ class RegistrationPayment extends Component {
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex" }}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex" }}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600 " style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
                     </div>
@@ -766,7 +766,7 @@ class RegistrationPayment extends Component {
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
