@@ -1451,14 +1451,23 @@ class AppTeamRegistrationForm extends Component{
                         )}
                     </div>
                     <InputWithHead heading={AppConstants.type} required={"required-field"}/>
-                    {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
-                        <Checkbox 
-                        checked={product.isChecked}
-                        key={product.competitionMembershipProductTypeId}
-                        onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
-                            {product.productTypeName}
-                        </Checkbox>
-                    ))}
+                    <Form.Item >
+                        {getFieldDecorator(`teamMemberType${teamMemberIndex}`, {
+                            rules: [{ required: true, message: ValidationConstants.memberTypeIsRequired }],
+                        })(
+                            <div>
+                                {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
+                                    <Checkbox 
+                                    checked={product.isChecked}
+                                    key={product.competitionMembershipProductTypeId}
+                                    onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
+                                        {product.productTypeName}
+                                    </Checkbox>
+                                ))}
+                            </div>
+                        )}
+                    </Form.Item>
+                  
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
                     <Form.Item >
                         {getFieldDecorator(`teamMemberGenderRefId${teamMemberIndex}`, {
@@ -1989,31 +1998,35 @@ class AppTeamRegistrationForm extends Component{
                     )}
 
                     {teamRegistrationObj.regSetting.netball_experience == 1 && (
-                        <div>
-                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
-                            <Radio.Group
-                                className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
-                                value={teamRegistrationObj.additionalInfo.isYearsPlayed}
-                                >
-                                <Radio value={1}>{AppConstants.yes}</Radio>
-                                <Radio value={0}>{AppConstants.no}</Radio>
-                            </Radio.Group>
-                            {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
-                                <div>
-                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
-                                    <Select
-                                        placeholder={AppConstants.yearsOfPlaying}
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                        value={teamRegistrationObj.additionalInfo.yearsPlayed ? teamRegistrationObj.additionalInfo.yearsPlayed : '2'}
-                                        >  
-                                        {(yearsOfPlayingList || []).map((item, index) => (
-                                            <Option key={item.years} value={item.years}>{item.years}</Option>
-                                        ))}
-                                    </Select> 
-                                </div>
-                            )}
+                        <div className="row">
+                            <div className="col-md-6 col-sm-12">
+                                <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
+                                <Radio.Group
+                                    className="registration-radio-group"
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
+                                    value={teamRegistrationObj.additionalInfo.isYearsPlayed}
+                                    >
+                                    <Radio value={1}>{AppConstants.yes}</Radio>
+                                    <Radio value={0}>{AppConstants.no}</Radio>
+                                </Radio.Group>
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
+                                    <div>
+                                        <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
+                                        <Select
+                                            placeholder={AppConstants.yearsOfPlaying}
+                                            style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                            onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                            value={teamRegistrationObj.additionalInfo.yearsPlayed ? teamRegistrationObj.additionalInfo.yearsPlayed : '2'}
+                                            >  
+                                            {(yearsOfPlayingList || []).map((item, index) => (
+                                                <Option key={item.years} value={item.years}>{item.years}</Option>
+                                            ))}
+                                        </Select> 
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 

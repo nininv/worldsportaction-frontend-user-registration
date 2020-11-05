@@ -49,8 +49,8 @@ class TeamInviteProducts extends Component{
 
     componentDidMount(){
         try{
-            //let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            let userRegId = "5751dc44-f3bf-4edf-a588-2104d11d8a47"
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            //let userRegId = "5751dc44-f3bf-4edf-a588-2104d11d8a47"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){

@@ -684,7 +684,7 @@ class RegistrationPayment extends Component {
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                        <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
                                     </div>
                                 </div>
                                 
@@ -738,7 +738,7 @@ class RegistrationPayment extends Component {
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
                         </div>
                     </div>
                 ))} 

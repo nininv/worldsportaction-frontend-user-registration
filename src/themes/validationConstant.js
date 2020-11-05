@@ -106,7 +106,7 @@ const ValidationConstants = {
     fillMembershipProductDivisionInformation:"Please choose Registration Divisions.",
 
     additionalInfoQuestions: [
-        "Please select Do you identify as",
+        "Do you identify as field is required",
         "Existing medical condition field is required",
         "Regular medication field is required",
         "Injury field is required",
@@ -115,7 +115,8 @@ const ValidationConstants = {
         "This field is required",
         "Favourite Firebird is required",
         "This field is required",
-    ]
+    ],
+    memberTypeIsRequired: "Member type is required",
 };
 
 export default ValidationConstants;

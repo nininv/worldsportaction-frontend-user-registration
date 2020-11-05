@@ -1554,31 +1554,35 @@ class TeamInivteForm extends Component{
                     )}
 
                     {inviteMemberRegSettings.netball_experience == 1 && (
-                        <div>
-                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
-                            <Radio.Group
-                                className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isYearsPlayed","userRegDetails")} 
-                                value={userRegDetails.isYearsPlayed}
-                                >
-                                <Radio value={1}>{AppConstants.yes}</Radio>
-                                <Radio value={0}>{AppConstants.no}</Radio>
-                            </Radio.Group>
-                            {userRegDetails.isYearsPlayed == 0 && (
-                                <div>
-                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
-                                    <Select
-                                        placeholder={AppConstants.yearsOfPlaying}
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
-                                        onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
-                                        value={userRegDetails.yearsPlayed ? userRegDetails.yearsPlayed : '2'}
-                                        >  
-                                        {(yearsOfPlayingList || []).map((item, index) => (
-                                            <Option key={item.years} value={item.years}>{item.years}</Option>
-                                        ))}
-                                    </Select> 
-                                </div>
-                            )}
+                        <div className="row">
+                            <div className="col-md-6 col-sm-12">
+                                <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
+                                <Radio.Group
+                                    className="registration-radio-group"
+                                    onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isYearsPlayed","userRegDetails")} 
+                                    value={userRegDetails.isYearsPlayed}
+                                    >
+                                    <Radio value={1}>{AppConstants.yes}</Radio>
+                                    <Radio value={0}>{AppConstants.no}</Radio>
+                                </Radio.Group>
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                {userRegDetails.isYearsPlayed == 0 && (
+                                    <div>
+                                        <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
+                                        <Select
+                                            placeholder={AppConstants.yearsOfPlaying}
+                                            style={{ width: "100%", paddingRight: 1, minWidth: 182,marginTop: "20px" }}
+                                            onChange={(e) => this.onChangeSetMemberInfoValue(e, "yearsPlayed","userRegDetails")}
+                                            value={userRegDetails.yearsPlayed ? userRegDetails.yearsPlayed : '2'}
+                                            >  
+                                            {(yearsOfPlayingList || []).map((item, index) => (
+                                                <Option key={item.years} value={item.years}>{item.years}</Option>
+                                            ))}
+                                        </Select> 
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
