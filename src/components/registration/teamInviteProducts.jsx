@@ -130,7 +130,7 @@ class TeamInviteProducts extends Component{
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
