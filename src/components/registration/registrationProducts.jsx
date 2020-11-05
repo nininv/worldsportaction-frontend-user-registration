@@ -204,7 +204,7 @@ class RegistrationProducts extends Component {
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -589,7 +589,7 @@ class RegistrationProducts extends Component {
                                     <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
                                 }
                                 { p.paymentOptionRefId == 4 &&          
-                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.firstInstalment}</Radio>
+                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
                                 } 
                                 { p.paymentOptionRefId == 5 &&          
                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
