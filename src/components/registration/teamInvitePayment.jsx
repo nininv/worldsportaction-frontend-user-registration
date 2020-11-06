@@ -645,23 +645,23 @@ class TeamInvitePayment extends Component{
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className="inter-medium-w500 font-17" style={{marginTop: "17px"}}>
+                        <div className="inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
                         </div>
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="product-text-common mt-10" style={{display:"flex",fontSize:17}}>
+                                <div  className="product-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                                        <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
                                     </div>
                                 </div>
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                               
@@ -669,7 +669,7 @@ class TeamInvitePayment extends Component{
                         ))}
                         <div className="payment-option-txt">
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer font-17" 
+                            <span className="link-text-common pointer" 
                             onClick={() => this.goToTeamInviteProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
@@ -678,7 +678,7 @@ class TeamInvitePayment extends Component{
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 
@@ -699,41 +699,41 @@ class TeamInvitePayment extends Component{
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><i className="fa fa-trash-o" aria-hidden="true"></i></span>
+                            <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
                         </div>
                     </div>
                 ))} 
                 <div style={{borderBottom:"1px solid var(--app-e1e1f5)",marginTop: "-5px"}}>
-                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
+                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4 font-w600 font-17" style={{display:"flex"}}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
                 <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4  font-w600 font-17" style={{display:"flex"}}>
+                    <div  className="product-text-common mt-10 mr-4  font-w600" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common mt-10 mr-4  font-w600 font-17" style={{display:"flex" }}>
+                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex" }}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
                     </div>
                 </div>
                 
-                <div  className="product-text-common mt-10 mr-4  font-w600 font-17" style={{display:"flex"}}>
+                <div  className="product-text-common mt-10 mr-4  font-w600" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
                 </div>

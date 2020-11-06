@@ -76,6 +76,7 @@ class RegistrationProducts extends Component {
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
+
     componentDidUpdate(nextProps){
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
@@ -415,11 +416,8 @@ class RegistrationProducts extends Component {
         return(
             <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
-                <div>
-                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
-                        + {AppConstants.addAnotherParticipant}
-                    </div>
+                <div className="add-another-button-border pointer"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
+                    <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
                 </div>
             </div>
         );
@@ -1214,13 +1212,13 @@ class RegistrationProducts extends Component {
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
                                 </div>
                                 }
                                
@@ -1233,7 +1231,7 @@ class RegistrationProducts extends Component {
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 

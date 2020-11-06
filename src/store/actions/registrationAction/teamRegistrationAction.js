@@ -130,6 +130,14 @@ function getSeasonalAndCasualFees(payload){
     return action;
 }
 
+function teamNameValidationAction(payload){
+    const action = {
+        type: ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD,
+        payload: payload
+    }
+    return action;
+}
+
 
 export{
     selectTeamAction,
@@ -146,5 +154,6 @@ export{
     // getTeamRegistrationInviteAction,
     // updateInviteMemberInfoAction,
     // saveInviteMemberInfoAction,
-    getSeasonalAndCasualFees
+    getSeasonalAndCasualFees,
+    teamNameValidationAction
 }

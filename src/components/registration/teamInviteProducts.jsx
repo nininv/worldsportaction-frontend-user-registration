@@ -440,7 +440,7 @@ class TeamInviteProducts extends Component{
                                     {mem.discountsToDeduct!= "0.00" && 
                                     <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                        <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                     </div>
                                     }
                                     {/* {mem.childDiscountsToDeduct!= "0.00" && 
@@ -459,7 +459,7 @@ class TeamInviteProducts extends Component{
                             {item.governmentVoucherAmount != "0.00" && 
                             <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                                 <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                                <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                                <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                             </div> 
                             }
                         </div> 
