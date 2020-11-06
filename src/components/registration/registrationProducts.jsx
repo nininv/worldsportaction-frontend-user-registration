@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "20fb0cbf-5829-4dfc-8496-04347dab6205";
+       // let registrationUniqueKey = "95caddb8-ab8c-47fc-8619-6ae1550df3d8";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -1180,11 +1180,28 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                        {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
@@ -1192,6 +1209,7 @@ class RegistrationProducts extends Component {
                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
