@@ -914,19 +914,19 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
-            state["participantIndex"] = action.participantIndex;
-            return { ...state};
+        // case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
+        //     state["participantIndex"] = action.participantIndex;
+        //     return { ...state};
 
-        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
-            let  userReg = state.registrationDetail.userRegistrations;
-            userReg[state.participantIndex].team["resultCode"] = action.result.resultCode; 
-            state["participantIndex"] = null;       
+        // case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
+        //     let  userReg = state.registrationDetail.userRegistrations;
+        //     userReg[state.participantIndex].team["resultCode"] = action.result.resultCode; 
+        //     state["participantIndex"] = null;       
 
-            return {
-                ...state,
-                onLoad: false,                
-            };
+        //     return {
+        //         ...state,
+        //         onLoad: false,                
+        //     };
         
         // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
         //     return { ...state, onRegReviewLoad: true };
