@@ -666,3 +666,9 @@
   color: var(--app-red);
   margin-left: 5px;
 }
+
+.add-another-button-border{
+  border: 1px solid var(--app-orange);
+  padding: 7px;
+  border-radius: 5px;
+}

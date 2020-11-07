@@ -38,7 +38,8 @@ import {
     getExistingTeamInfoById,
     membershipProductTeamRegistrationAction,
     teamRegistrationExpiryCheckAction,
-    getSeasonalAndCasualFees
+    getSeasonalAndCasualFees,
+    teamNameValidationAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { 
@@ -70,11 +71,26 @@ import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import history from "../../util/history";
 import { captializedString } from "../../util/helpers";
+import { NavLink } from "react-router-dom";
+import CSVReader from 'react-csv-reader'
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
+
+const parseOptions = {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    transformHeader: header =>
+      header
+        .toLowerCase()
+        .replace(/\W/g, '_'),
+    complete: function(results, file) {
+        console.log("Parsing complete:", results, file);
+    }
+}
 
 class AppTeamRegistrationForm extends Component{
     constructor(props){
@@ -102,7 +118,8 @@ class AppTeamRegistrationForm extends Component{
             existingTeamParticipantId: null,
             onExistingTeamInfoByIdLoad: false,
             onExpiredRegistrationCheckLoad: false,
-            showExpiredRegistrationView: false
+            showExpiredRegistrationView: false,
+            buttonSubmitted: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -512,6 +529,19 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    showTeamNameValidation= (value) =>{
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        if(value!= null && value.length > 0){
+            let obj = {     
+                competitionId:  teamRegistrationObj.competitionId,
+                organisationId: teamRegistrationObj.organisationId,  
+                competitionMembershipProductDivisionId: teamRegistrationObj.competitionMembershipProductDivisionId,
+                teamName: value,           
+            }
+            this.props.teamNameValidationAction(obj);
+        }
+    }	
+
     scrollToTop = () => {
         window.scrollTo(0, 0);
     }
@@ -520,8 +550,32 @@ class AppTeamRegistrationForm extends Component{
         this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
     }
 
+    showMemberTypeValidation = (teamMember) => {
+        try{
+            let error = false;
+            if(teamMember.membershipProductTypes.find(x => x.isChecked == true)){
+                error = false;
+            }else{
+                error = true;
+            }
+            return error;
+        }catch(ex){
+            console.log("Error in showMemberTypeValidation::"+ex)
+        }
+    }
+
     onChangeSetAdditionalInfo = (value,key,subKey) => {
         this.props.updateTeamAdditionalInfoAction(key,value,subKey);
+    }
+
+    readTeamPlayersCSV = (teamMemberList) => {
+        console.log("csv data",teamMemberList);
+        this.props.updateTeamRegistrationObjectAction(teamMemberList,"teamMemberList");
+        setTimeout(() => {
+            this.setParticipantDetailStepFormFields();
+        },300)
+        let e = document.getElementById("teamPlayerUpload");
+        e.value = null;
     }
 
     getFilteredTeamRegisrationObj = (teamRegistrationObj) => {
@@ -645,9 +699,21 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    selectAnother = () => {
+        try{
+            this.props.updateTeamRegistrationObjectAction(null,"teamRegistrationObj")
+            history.push({pathname:'/appRegistrationForm'});
+        }catch(ex){
+            console.log("Error in selectAnother::"+ex)
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
+            if(this.state.currentStep == 1){
+                this.setState({buttonSubmitted: true});
+            }
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
@@ -1078,7 +1144,12 @@ class AppTeamRegistrationForm extends Component{
                             <div style={{display: "flex",flexWrap: "wrap"}}>
                                 <div style={{textAlign: "start",fontWeight: "600"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
                                 <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                onClick={() => this.setState({currentStep: 1})}>{AppConstants.edit}</div>
+                                onClick={() => {
+                                    this.setState({currentStep: 0});
+                                    setTimeout(() => {
+                                        this.setSelectCompetitionStepFormFields();
+                                    },300);
+                                }}>{AppConstants.edit}</div>
                             </div>
                             <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
                                 <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
@@ -1445,6 +1516,13 @@ class AppTeamRegistrationForm extends Component{
                             {product.productTypeName}
                         </Checkbox>
                     ))}
+                    {this.showMemberTypeValidation(teamMember) && this.state.buttonSubmitted && (
+                            <div style={{color:"var(--app-red)"}}>
+                                {ValidationConstants.memberTypeIsRequired}
+                            </div>   
+                        )                           
+                    }
+                  
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
                     <Form.Item >
                         {getFieldDecorator(`teamMemberGenderRefId${teamMemberIndex}`, {
@@ -1586,10 +1664,25 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="col-sm-12 col-md-6">
                             {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
-                                <Button 
-                                    style={{float: "right",textTransform: "uppercase"}}
-                                    className="white-button">{AppConstants.importTeam}
-                                </Button>
+                                <div style={{display: "flex",float: "right"}}>
+                                    <NavLink to="/templates/wsa-import-team-player.csv" target="_blank" download>
+                                        <Button 
+                                            style={{textTransform: "uppercase"}}
+                                            className="white-button">{AppConstants.downloadTemplate}
+                                        </Button>
+                                    </NavLink>
+                                    <label 
+                                        for={"teamPlayerUpload"}
+                                        style={{marginLeft: "20px",textTransform: "uppercase",padding: '12px'}}
+                                        className="white-button">{AppConstants.importTeam}
+                                    </label>
+                                    <CSVReader
+                                        inputId={"teamPlayerUpload"}
+                                        inputStyle={{display:'none'}}
+                                        parserOptions={parseOptions}
+                                        onFileLoaded={(e) => this.readTeamPlayersCSV(e)}
+                                    />
+                                </div>  
                             )}
                         </div>
                     </div>
@@ -1602,9 +1695,15 @@ class AppTeamRegistrationForm extends Component{
                                 placeholder={AppConstants.teamName}
                                 onChange={(e) => this.onChangeSetTeamValue(e.target.value, "teamName")} 
                                 setFieldsValue={teamRegistrationObj.teamName}
+                                onBlur = {(e) => this.showTeamNameValidation(e.target.value)}
                             />
                         )}
                     </Form.Item>
+                    {this.props.teamRegistrationState.teamNameValidationResultCode == 2 &&                
+                        <div style={{color:"var(--app-red)"}}>
+                            {AppConstants.teamAlreadyExists}
+                        </div>                         
+                    }
                     
                     {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (teamRegistrationObj.teamMembers || []).map((teamMember,teamMemberIndex) => (
                         <div>{this.teamMemberView(teamMember,teamMemberIndex,getFieldDecorator)}</div>
@@ -1741,7 +1840,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         </div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}
-                            onClick={() => this.onChangeStep(1)}>{AppConstants.selectAnother}</div>
+                            onClick={() => this.selectAnother()}>{AppConstants.selectAnother}</div>
                     </div>
                 </div>
             )
@@ -1975,31 +2074,35 @@ class AppTeamRegistrationForm extends Component{
                     )}
 
                     {teamRegistrationObj.regSetting.netball_experience == 1 && (
-                        <div>
-                            <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
-                            <Radio.Group
-                                className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
-                                value={teamRegistrationObj.additionalInfo.isYearsPlayed}
-                                >
-                                <Radio value={1}>{AppConstants.yes}</Radio>
-                                <Radio value={0}>{AppConstants.no}</Radio>
-                            </Radio.Group>
-                            {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
-                                <div>
-                                    <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
-                                    <Select
-                                        placeholder={AppConstants.yearsOfPlaying}
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182}}
-                                        onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
-                                        value={teamRegistrationObj.additionalInfo.yearsPlayed ? teamRegistrationObj.additionalInfo.yearsPlayed : '2'}
-                                        >  
-                                        {(yearsOfPlayingList || []).map((item, index) => (
-                                            <Option key={item.years} value={item.years}>{item.years}</Option>
-                                        ))}
-                                    </Select> 
-                                </div>
-                            )}
+                        <div className="row">
+                            <div className="col-md-6 col-sm-12">
+                                <InputWithHead heading={AppConstants.firstYearPlayingNetball} />
+                                <Radio.Group
+                                    className="registration-radio-group"
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isYearsPlayed")} 
+                                    value={teamRegistrationObj.additionalInfo.isYearsPlayed}
+                                    >
+                                    <Radio value={1}>{AppConstants.yes}</Radio>
+                                    <Radio value={0}>{AppConstants.no}</Radio>
+                                </Radio.Group>
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                {teamRegistrationObj.additionalInfo.isYearsPlayed == 0 && (
+                                    <div>
+                                        <InputWithHead heading={AppConstants.yearsOfPlayingNetball} />
+                                        <Select
+                                            placeholder={AppConstants.yearsOfPlaying}
+                                            style={{ width: "100%", paddingRight: 1, minWidth: 182}}
+                                            onChange={(e) => this.onChangeSetAdditionalInfo(e, "yearsPlayed")}
+                                            value={teamRegistrationObj.additionalInfo.yearsPlayed ? teamRegistrationObj.additionalInfo.yearsPlayed : '2'}
+                                            >  
+                                            {(yearsOfPlayingList || []).map((item, index) => (
+                                                <Option key={item.years} value={item.years}>{item.years}</Option>
+                                            ))}
+                                        </Select> 
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
@@ -2250,7 +2353,8 @@ function mapDispatchToProps(dispatch){
         membershipProductTeamRegistrationAction,
         teamRegistrationExpiryCheckAction,
         getSeasonalAndCasualFees,
-        getSchoolListAction
+        getSchoolListAction,
+        teamNameValidationAction
     }, dispatch);
 
 }

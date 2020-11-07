@@ -72,10 +72,11 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "ecdb4f98-5704-46bd-aae3-3792ab43c3ff";
+        //let registrationUniqueKey = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
+
     componentDidUpdate(nextProps){
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
@@ -92,7 +93,7 @@ class RegistrationProducts extends Component {
             this.setState({onLoading: false});
         }
         if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
-            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1, -1);
             this.setState({loading: true});
             this.setState({deleteOnLoad: false})
         }
@@ -110,13 +111,14 @@ class RegistrationProducts extends Component {
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
         this.props.getRegParticipantUsersAction(payload);
-        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
 
-    getRegistrationProducts = (registrationId, page, typeId) =>{
+    getRegistrationProducts = (registrationId, page, typeId,organisationUniqueKey) =>{
         let payload = {
             registrationId: registrationId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
@@ -203,7 +205,7 @@ class RegistrationProducts extends Component {
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -414,11 +416,8 @@ class RegistrationProducts extends Component {
         return(
             <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
-                <div>
-                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
-                        + {AppConstants.addAnotherParticipant}
-                    </div>
+                <div className="add-another-button-border pointer"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
+                    <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
                 </div>
             </div>
         );
@@ -530,7 +529,15 @@ class RegistrationProducts extends Component {
             <div className="innerview-outline">
                 {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
-                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                            </Radio.Group>  
+                        </div>
                         <div className="product-line">
                             {isArrayNotEmpty(item.teamMembers.payingForList) && (
                                 <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
@@ -549,17 +556,12 @@ class RegistrationProducts extends Component {
                                 </div>
                             ))}
                         </div>
-                        <div className="product-line">
-                            <Radio.Group className="body-text-common"
-                                value={item.selectedOptions.nominationPayOptionRefId}
-                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
-                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
-                            </Radio.Group>  
-                        </div>
+                        {item.selectedOptions.nominationPayOptionRefId == 2 &&
+                        <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        }
                     </div>
                 : 
-                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className="product-border-line">
                         <div className = "body-text-common">
                             {AppConstants.registration}{"(s)"}
                         </div>
@@ -890,7 +892,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.firstName}
                                             onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.firstName }
+                                            setFieldsValue={yourInfo ? yourInfo.firstName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsFirstName']: captializedString(i.target.value)
                                             })}
@@ -907,7 +909,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.lastName}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.lastName }
+                                            setFieldsValue={yourInfo ? yourInfo.lastName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsLastName']: captializedString(i.target.value)
                                             })}
@@ -924,7 +926,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.phone}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "mobileNumber", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.mobileNumber }
+                                            setFieldsValue={yourInfo ? yourInfo.mobileNumber : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -938,7 +940,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.email}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "email", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.email }
+                                            setFieldsValue={yourInfo ? yourInfo.email : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -1038,7 +1040,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.addressOne}
                                             placeholder={AppConstants.addressOne}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "street1", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.street1}
+                                            setFieldsValue={yourInfo ? yourInfo.street1 : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1057,7 +1059,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.suburb}
                                             placeholder={AppConstants.suburb}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "suburb", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.suburb}
+                                            setFieldsValue={yourInfo ? yourInfo.suburb : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1072,7 +1074,7 @@ class RegistrationProducts extends Component {
                                                     style={{ width: "100%" }}
                                                     placeholder={AppConstants.state}
                                                     onChange={(e) => this.setReviewInfo(e, "stateRefId", null,"yourInfo", null)}
-                                                    setFieldsValue={yourInfo.stateRefId}>
+                                                    setFieldsValue={yourInfo ? yourInfo.stateRefId : null}>
                                                     {stateList.length > 0 && stateList.map((item) => (
                                                         < Option key={item.id} value={item.id}> {item.name}</Option>
                                                     ))}
@@ -1091,7 +1093,7 @@ class RegistrationProducts extends Component {
                                                     placeholder={AppConstants.postcode}
                                                     onChange={(e) => this.setReviewInfo(e.target.value, "postalCode", null,"yourInfo", null)}
                                                     maxLength={4}
-                                                    setFieldsValue={yourInfo.postalCode}
+                                                    setFieldsValue={yourInfo ? yourInfo.postalCode : null}
                                                 />
                                                 )}
                                             </Form.Item>
@@ -1106,7 +1108,7 @@ class RegistrationProducts extends Component {
                                             style={{ width: "100%" }}
                                             placeholder={AppConstants.country}
                                             onChange={(e) => this.setReviewInfo(e, "countryRefId", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.countryRefId}>
+                                            setFieldsValue={yourInfo ? yourInfo.countryRefId : null}>
                                             {countryList.length > 0 && countryList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                                             ))}
@@ -1179,11 +1181,28 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                        {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
@@ -1191,30 +1210,31 @@ class RegistrationProducts extends Component {
                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
                                 </div>
                                 }
                                
                             </div>
                         ))}
                          
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 

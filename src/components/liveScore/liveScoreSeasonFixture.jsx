@@ -43,7 +43,7 @@ function matchResultImag(result) {
     }
 
 }
-
+let this_obj = null;
 
 
 const columns2 = [
@@ -163,7 +163,7 @@ const columns2 = [
 
                         </div>
                         <div className="table-live-score-table-fixture-style"  >
-                            <span >{venueCourt ? venueCourt.venue.shortName + "-" + venueCourt.name : ""}</span>
+                            <span >{this_obj.getVenueName(record, venueCourt)}</span>
                         </div>
                     </div >
 
@@ -171,7 +171,7 @@ const columns2 = [
             } else {
 
                 return (
-                    <span >{venueCourt ? venueCourt.venue.shortName + "-" + venueCourt.name : ""}</span>
+                    <span>{this_obj.getVenueName(record, venueCourt)}</span>
                 )
             }
         }
@@ -271,6 +271,7 @@ class LiveScoreSeasonFixture extends Component {
             setliveScoreOrgID(orgId)
             history.push('/liveScoreSeasonFixture')
         }
+        this_obj = this;
     }
     async componentDidMount() {
         this.props.getYearListing(this.props.appState)
@@ -377,6 +378,16 @@ class LiveScoreSeasonFixture extends Component {
                 </div>
             </div >
         )
+    }
+
+    getVenueName = (record, venueCourt) => {
+        if (record?.team1?.name == "Bye" || record?.team2?.name == "Bye") {
+            return ""
+        }
+        else {
+            let venueName = venueCourt ? venueCourt.venue.shortName + "-" + venueCourt.name : ""
+            return venueName
+        }
     }
 
     async setYearId(yearId) {
@@ -652,13 +663,15 @@ class LiveScoreSeasonFixture extends Component {
                                             </InputWithHead>
                                         </div>
                                     </div>
-                                    <div className='tableViewSeasonFixture'>
-                                        <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.venue} /></div>
-                                        <div style={{ width: '50%' }}>
-                                            <InputWithHead className="input-inside-table-fees" heading={item.venueCourt ? item.venueCourt?.venue?.shortName + "-" + item.venueCourt?.name : ""}>
-                                            </InputWithHead>
+                                    {item.team1 && item?.team1?.name !== 'Bye' && item.team2 && item?.team2?.name !== 'Bye' &&
+                                        < div className='tableViewSeasonFixture'>
+                                            <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.venue} /></div>
+                                            <div style={{ width: '50%' }}>
+                                                <InputWithHead className="input-inside-table-fees" heading={item.venueCourt ? item.venueCourt?.venue?.shortName + "-" + item.venueCourt?.name : ""}>
+                                                </InputWithHead>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                     <div className='tableViewSeasonFixture'>
                                         <div style={{ width: '50%' }}><InputWithHead heading={AppConstants.matchResult} /></div>
                                         <div style={{ width: '50%' }}>

@@ -50,7 +50,7 @@ class TeamInviteProducts extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //let userRegId = "298860de-79b8-4b94-9e8b-b45642a6a2f8"
+            //let userRegId = "5751dc44-f3bf-4edf-a588-2104d11d8a47"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -87,7 +87,7 @@ class TeamInviteProducts extends Component{
             userRegId: userRegId
         }
         this.props.getTeamInviteReviewAction(payload);
-        this.getShopProducts(userRegId, 1, -1);
+        this.getShopProducts(userRegId, 1, -1, -1);
     }
 
     goToTeamInvitePayments = () =>{
@@ -95,12 +95,13 @@ class TeamInviteProducts extends Component{
     }
 
     
-    getShopProducts = (userRegId, page, typeId) =>{
+    getShopProducts = (userRegId, page, typeId,organisationUniqueKey) =>{
         let {registrationId} = this.props.teamInviteState;
         let payload = {
             registrationId: registrationId,
             userRegId: userRegId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
@@ -129,7 +130,7 @@ class TeamInviteProducts extends Component{
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -439,7 +440,7 @@ class TeamInviteProducts extends Component{
                                     {mem.discountsToDeduct!= "0.00" && 
                                     <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                        <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                     </div>
                                     }
                                     {/* {mem.childDiscountsToDeduct!= "0.00" && 
@@ -452,13 +453,13 @@ class TeamInviteProducts extends Component{
                                 </div>
                             ))}
                              
-                            <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                            <div className="payment-option-txt">
                                 {paymentOptionTxt}
                             </div>
                             {item.governmentVoucherAmount != "0.00" && 
                             <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                                 <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                                <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                                <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                             </div> 
                             }
                         </div> 

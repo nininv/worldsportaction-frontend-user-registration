@@ -933,7 +933,8 @@ const AppConstants = {
   payAsYou:"Pay as You Go",
   gameVoucher:"Game Voucher",
   payfullAmount:"Pay Full Amount",
-  weeklyInstalment:"Weekly Instalment",
+  weeklyInstalment:"Instalment",
+  firstInstalment: "1st Instalment",
   instalmentDates:"Instalment dates",
   schoolRegistration:"School Invoice",
   governmentSportsVoucher:"Government Sports Voucher",
@@ -1053,7 +1054,7 @@ const AppConstants = {
  playingOtherParticipantSports: "Are you playing any other participation sport?",
  childPlayingOtherParticipantSports: "Is your child playing any other participation sport?",
  someOnePlayingOtherParticipantSports: "Are other playing any other participation sport?",
- firstYearPlayingNetball: "If this your first year playing netball?",
+ firstYearPlayingNetball: "Is this your first year playing netball?",
  yearsOfPlaying: "Years of playing",
  schoolYouAttend: "Which school do you attend?",
  schoolYourChildAttend: "Which school does your child attend?",
@@ -1106,8 +1107,6 @@ const AppConstants = {
  hide: "Hide",
  transactionFeeApplies: "A transaction fee of 2.25% applies.",
  transactionFee: "Transaction Fee",
- payInFull: "Pay in full",
- splitAmoingTeamMember: "Split amongst team members",
  liveScoreSeasonFixture:"LiveScore Season Fixture",
  dateTime:"Date/Time",
  matchResult:"Match Result",
@@ -1138,6 +1137,9 @@ const AppConstants = {
  competitionSpecifics:'Competition Specifics',
  totalsinglegamefees:'Total Single Game Fees',
  seasonFixture: 'Season Fixture',
+ payCompetitionFeesForAll: "Pay Competition Fees for All",
+ payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
+ howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you....."
 
 };
 

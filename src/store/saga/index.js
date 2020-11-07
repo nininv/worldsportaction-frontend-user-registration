@@ -184,7 +184,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_VALIDATE_DISCOUNT_CODE_LOAD, endUserRegSaga.validateDiscountCodeSaga)
 
   //validation result code
-  yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
+  // yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, endUserRegSaga.teamNameCheckExisting)
 
   //Save DeRegister
   yield takeEvery(ApiConstants.API_SAVE_DE_REGISTRATION_LOAD, deRegisterSaga.saveDeRegisterSaga)
@@ -252,6 +252,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_TEAM_BY_ID_LOAD, teamRegistrationSaga.getTeamDataById);
   yield takeEvery(ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD, teamRegistrationSaga.getExistingTeamDataById);
   yield takeEvery(ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD, teamRegistrationSaga.expiredTeamRegistrationCheck);
+  yield takeEvery(ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD, teamRegistrationSaga.teamNameCheckExisting)
 
   yield takeEvery(ApiConstants.API_GET_USER_ROLE_LOAD, userSaga.getUserRole);
   yield takeEvery(ApiConstants.API_GET_SCORER_ACTIVITY_LOAD, userSaga.getScorerActivitySaga);
