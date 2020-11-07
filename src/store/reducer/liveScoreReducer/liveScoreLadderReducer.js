@@ -9,20 +9,21 @@ const initialState = {
     liveScoreLadderDivisionData: [],
     liveScoreLadderListData: [],
     liveScoreLadderAdjData: [],
+    teamResult: [],
 };
 
-function createLadderRank(array){
-    for(let i in array){
-        array[i]["rank"] = JSON.parse(i)+1   
+function createLadderRank(array) {
+    for (let i in array) {
+        array[i]["rank"] = JSON.parse(i) + 1
     }
     return array
 }
 
 
-function createLadderAdjustments(array){
+function createLadderAdjustments(array) {
     let adjArr = [];
-    array.map((x, index)=>{
-        if(isArrayNotEmpty(x.adjustments)){
+    array.map((x, index) => {
+        if (isArrayNotEmpty(x.adjustments)) {
             adjArr = [...adjArr, ...x.adjustments];
         }
     })
@@ -44,7 +45,7 @@ function liveScoreLaddersReducer(state = initialState, action) {
             let divisionDatafromAction = action.divisionList
             let ladderList = action.ladderList ? action.ladderList : []
             let ladderAdjList = createLadderAdjustments(ladderList);
-          
+
             return {
                 ...state,
                 onLoad: false,
@@ -55,21 +56,20 @@ function liveScoreLaddersReducer(state = initialState, action) {
             };
 
 
-            /// ONLY LADDER
-            case ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_LOAD:
-                return { 
-                    ...state, 
-                    onLoad: true 
-                };
+        /// ONLY LADDER
+        case ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_LOAD:
+            return {
+                ...state,
+                onLoad: true
+            };
 
-            case ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_SUCCESS:
-    
-                return {
-                    ...state,
-                    onLoad: false,
-                    liveScoreLadderDivisionData: action.result,
-                    status: action.status
-                };
+        case ApiConstants.API_LIVE_SCORE_ONLY_DIVISION_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                liveScoreLadderDivisionData: action.result,
+                status: action.status
+            };
 
 
 
@@ -78,13 +78,13 @@ function liveScoreLaddersReducer(state = initialState, action) {
         case ApiConstants.API_LIVE_SCORE_LADDERS_LIST_LOAD:
             return { ...state, onLoad: true };
         case ApiConstants.API_LIVE_SCORE_LADDERS_LIST_SUCCESS:
-           
+
             let ladder_List = createLadderRank(action.result)
             let ladderAdjustmentList = createLadderAdjustments(action.result);
             return {
                 ...state,
                 onLoad: false,
-                liveScoreLadderListData:ladder_List,
+                liveScoreLadderListData: ladder_List,
                 liveScoreLadderAdjData: ladderAdjustmentList
             };
 
@@ -103,13 +103,34 @@ function liveScoreLaddersReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.API_LIVE_SCORE_CLEAR_LADDER : 
-        return{
-            ...state,
-            onLoad: false,
-            status: action.status,
-            liveScoreLadderListData:[]
-        }
+        case ApiConstants.API_LIVE_SCORE_CLEAR_LADDER:
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status,
+                liveScoreLadderListData: []
+            }
+
+        case ApiConstants.API_LIVE_SCORE_TEAM_LOAD:
+
+            return { ...state, };
+
+        case ApiConstants.API_LIVE_SCORE_TEAM_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
+                teamResult: action.result,
+            };
+
+        case ApiConstants.API_CLEAR_ROUND_DATA:
+            console.log(action, 'API_CLEAR_ROUND_DATA')
+            if (action.key == 'all') {
+                state.teamResult = []
+                state.liveScoreLadderDivisionData = []
+            }
+            return {
+                ...state,
+            }
 
         default:
             return state;

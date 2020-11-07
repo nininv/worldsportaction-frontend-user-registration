@@ -13,17 +13,19 @@ import {
     getUserModulePersonalByCompetitionAction, getUserModuleRegistrationAction,
     getUserModuleMedicalInfoAction, getUserModuleActivityPlayerAction,
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
-    getUserModuleActivityManagerAction, getUserHistoryAction
+    getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId, setUserId, getTempUserId, setTempUserId } from "../../util/sessionStorage";
+import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
-import { liveScore_formateDate } from '../../themes/dateformate';
+import { liveScore_formateDate, getTime } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
 import Loader from '../../customComponents/loader';
+import StripeKeys from "../stripe/stripeKeys";
+import { saveStripeAccountAction, getStripeLoginLinkAction } from '../../store/actions/stripeAction/stripeAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -31,6 +33,30 @@ const { TabPane } = Tabs;
 const { SubMenu } = Menu;
 let this_Obj = null;
 let section = null;
+
+function umpireActivityTableSort(key) {
+    let sortBy = key;
+    let sortOrder = null;
+    if (this_Obj.state.sortBy !== key) {
+        sortOrder = 'ASC';
+    } else if (this_Obj.state.sortBy === key && this_Obj.state.sortOrder === 'ASC') {
+        sortOrder = 'DESC';
+    } else if (this_Obj.state.sortBy === key && this_Obj.state.sortOrder === 'DESC') {
+        sortBy = sortOrder = null;
+    }
+    const payload =
+    {
+        "paging": {
+            "limit": 10,
+            "offset": this_Obj.state.umpireActivityOffset
+        }
+    }
+    this_Obj.setState({ UmpireActivityListSortBy: sortBy, UmpireActivityListSortOrder: sortOrder });
+
+    this_Obj.props.getUmpireActivityListAction(payload, JSON.stringify([15]), this_Obj.state.userId, sortBy, sortOrder);
+
+}
+
 const columns = [
     {
         title: "",
@@ -61,12 +87,12 @@ const columns = [
         title: "Valid Until",
         dataIndex: "expiryDate",
         key: "expiryDate",
-        render: (expiryDate, record, index) =>(
+        render: (expiryDate, record, index) => (
             <span>
-            {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate ) : ""}
-          </span>
+                {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : ""}
+            </span>
         )
-      },
+    },
     {
         title: 'Membership Product',
         dataIndex: 'membershipProduct',
@@ -82,32 +108,32 @@ const columns = [
         dataIndex: "divisionName",
         key: "divisionName",
         render: (divisionName, record, index) => {
-          return <div>{divisionName != null ?  divisionName : ""}</div>;
+            return <div>{divisionName != null ? divisionName : ""}</div>;
         },
     },
     {
         title: "Paid By",
         dataIndex: "paidBy",
         key: "paidBy",
-        render: (paidBy, record, index) => { 
-          return(
-          <div>
-            {this_Obj.state.userId == record.paidByUserId ? 'Self' :
-            <NavLink
-                      to={{
-                          pathname: `/userPersonal`,
-                          state: {
-                              userId: record.paidByUserId,
-                              tabKey: "registration"
-                          },
-                      }}
-                  >
-                      <span className="input-heading-add-another pt-0">{paidBy}</span>
-            </NavLink>}
-            </div>
+        render: (paidBy, record, index) => {
+            return (
+                <div>
+                    {this_Obj.state.userId == record.paidByUserId ? 'Self' :
+                        <NavLink
+                            to={{
+                                pathname: `/userPersonal`,
+                                state: {
+                                    userId: record.paidByUserId,
+                                    tabKey: "registration"
+                                },
+                            }}
+                        >
+                            <span className="input-heading-add-another pt-0">{paidBy}</span>
+                        </NavLink>}
+                </div>
             )
         },
-      },
+    },
     // {
     //     title: 'Shop Purchases',
     //     dataIndex: 'shopPurchases',
@@ -117,14 +143,14 @@ const columns = [
         title: 'Status',
         dataIndex: 'paymentStatus',
         key: 'paymentStatus',
-        render:(paymentStatus, record, index) =>{
-            return(
-                <span style={{textTransform:'capitalize'}}>
+        render: (paymentStatus, record, index) => {
+            return (
+                <span style={{ textTransform: 'capitalize' }}>
                     {paymentStatus}
                 </span>
             )
         }
-        
+
     },
     {
         title: "Action",
@@ -692,6 +718,99 @@ const menu = (
     </Menu>
 );
 
+//listeners for sorting
+const listeners = (key) => ({
+    onClick: () => umpireActivityTableSort(key),
+});
+
+const umpireActivityColumn = [
+    {
+        title: 'Match Id',
+        dataIndex: 'matchId',
+        key: 'matchId',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+    },
+    {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (date, record) => <span>{record?.match?.startTime ? liveScore_formateDate(record.match.startTime) : ""}</span>
+    },
+    {
+        title: 'Time',
+        dataIndex: 'time',
+        key: 'time',
+        // sorter: true,
+        render: (time, record) => <span>{record?.match?.startTime ? getTime(record.match.startTime) : ""}</span>
+    },
+    {
+        title: 'Competition',
+        dataIndex: 'competition',
+        key: 'competition',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (date, record) => <span>{record?.match?.competition ? record.match.competition.longName : ""}</span>
+    },
+    {
+        title: 'Affiliate',
+        dataIndex: 'affiliate',
+        key: 'affiliate',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (affiliate, record) => {
+            let organisationArray = record.user.userRoleEntities.length > 0 && this_Obj.getOrganisationArray(record.user.userRoleEntities, record.roleId)
+            return (
+                <div>
+                    {organisationArray.length > 0 && organisationArray.map((item, index) => {
+                        console.log(item)
+                        return (
+                            <span key={`organisationName` + index} className='multi-column-text-aligned'>{
+
+                                item.competitionOrganisation && item.competitionOrganisation.name}</span>
+                        )
+                    })
+                    }
+                </div>)
+        },
+    },
+    {
+        title: 'Home',
+        dataIndex: 'home',
+        key: 'home',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (home, record) => <span>{record?.match?.team1 ? record.match.team1.name : ""}</span>
+    },
+    {
+        title: 'Away',
+        dataIndex: 'away',
+        key: 'away',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (away, record) => <span>{record?.match?.team2 ? record.match.team2.name : ""}</span>
+    },
+    {
+        title: 'Amount',
+        dataIndex: 'amount',
+        key: 'amount',
+        // sorter: true,
+        // onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (amount, record) => <span>{"N/A"}</span>
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        // sorter: true,
+        // onHeaderCell: ({ dataIndex }) => listeners(dataIndex),
+        render: (status, record) => <span>{"N/A"}</span>
+    },
+]
+const umpireActivityData = []
+
 class UserModulePersonalDetail extends Component {
     constructor(props) {
         super(props);
@@ -707,7 +826,11 @@ class UserModulePersonalDetail extends Component {
             competitions: [],
             teams: [],
             divisions: [],
-            tempUserId: getTempUserId()
+            tempUserId: getTempUserId(),
+            umpireActivityOffset: 0,
+            UmpireActivityListSortBy: null,
+            UmpireActivityListSortOrder: null,
+            stripeDashBoardLoad: false,
         }
     }
 
@@ -729,6 +852,18 @@ class UserModulePersonalDetail extends Component {
         if (this.props.location.state != null && this.props.location.state != undefined) {
             let tabKey = this.props.location.state.tabKey != undefined ? this.props.location.state.tabKey : '1';
             await this.setState({ tabKey: tabKey });
+        }
+        let urlSplit = this.props.location.search.split("?code=")
+        let stripeConnected = getStripeAccountId() == "null" ? false : true
+        if (stripeConnected) {
+            console.log("stripe connected")
+        }
+        else if (urlSplit[1]) {
+            console.log("called1")
+            let codeSplit = urlSplit[1].split("&state=")
+            let code = codeSplit[0]
+
+            this.props.saveStripeAccountAction(code, Number(userId))
         }
         this.apiCalls(userId);
     }
@@ -768,6 +903,13 @@ class UserModulePersonalDetail extends Component {
                 // this.tabApiCalls(this.state.tabKey, this.getEmptyCompObj(), this.state.userId);
             }
         }
+        if (this.props.stripeState.onLoad === false && this.state.stripeDashBoardLoad === true) {
+            this.setState({ stripeDashBoardLoad: false })
+            let stripeDashboardUrl = this.props.stripeState.stripeLoginLink
+            if (stripeDashboardUrl) {
+                window.open(stripeDashboardUrl, '_newtab');
+            }
+        }
     }
 
     apiCalls = (userId) => {
@@ -778,7 +920,22 @@ class UserModulePersonalDetail extends Component {
         }
         this.props.getUserModulePersonalDetailsAction(payload);
         this.props.getUserModulePersonalByCompetitionAction(payload)
+        this.props.getUserRole(userId)
     };
+
+    getOrganisationArray(data, roleId) {
+        let orgArray = []
+        if (data.length > 0) {
+            for (let i in data) {
+                if (data[i].roleId == roleId == 19 ? 15 : roleId) {
+                    orgArray.push(data[i])
+                    return orgArray
+                }
+            }
+        }
+        return orgArray
+
+    }
 
     onChangeYear = (value) => {
         let userState = this.props.userState;
@@ -920,6 +1077,15 @@ class UserModulePersonalDetail extends Component {
             this.handleHistoryTableList(1, userId);
 
         }
+        else if (tabKey === "7") {
+            let payload = {
+                "paging": {
+                    "limit": 10,
+                    "offset": 0
+                }
+            }
+            this.props.getUmpireActivityListAction(payload, JSON.stringify([15]), userId, this.state.UmpireActivityListSortBy, this.state.UmpireActivityListSortOrder);
+        }
     }
 
     hanleActivityTableList = (page, userId, competition, key, yearRefId) => {
@@ -939,9 +1105,11 @@ class UserModulePersonalDetail extends Component {
         if (key == "parent")
             this.props.getUserModuleActivityParentAction(filter);
         if (key == "scorer")
-            this.props.getUserModuleActivityScorerAction(filter);
+            // this.props.getUserModuleActivityScorerAction(filter);
+            this.props.getScorerData(filter, 4, "ENDED");
         if (key == "manager")
             this.props.getUserModuleActivityManagerAction(filter);
+
     }
 
     handleRegistrationTableList = (page, userId, competition, yearRefId) => {
@@ -957,6 +1125,19 @@ class UserModulePersonalDetail extends Component {
             }
         }
         this.props.getUserModuleRegistrationAction(filter)
+    };
+
+    ////pagination handling for umpire activity table list
+    handleUmpireActivityTableList = (page, userId) => {
+        let offset = page ? 10 * (page - 1) : 0
+        this.setState({ umpireActivityOffset: offset })
+        let payload = {
+            "paging": {
+                "limit": 10,
+                "offset": offset,
+            }
+        }
+        this.props.getUmpireActivityListAction(payload, JSON.stringify([15]), userId, this.state.UmpireActivityListSortBy, this.state.UmpireActivityListSortOrder);
     };
 
     navigateTo = (screen) => {
@@ -1163,8 +1344,8 @@ class UserModulePersonalDetail extends Component {
 
     scorerActivityView = () => {
         let userState = this.props.userState;
-        let activityScorerList = userState.activityScorerList;
-        let total = userState.activityScorerTotalCount;
+        let activityScorerList = userState.scorerActivityRoster;
+        let total = userState.scorerTotalCount;
         return (
             <div className="comp-dash-table-view mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.scorerHeading}</div>
@@ -1179,9 +1360,9 @@ class UserModulePersonalDetail extends Component {
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
-                        current={userState.activityScorerPage}
+                        current={userState.scorerCurrentPage}
                         total={total}
-                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "scorer")}
+                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "scorer", this.state.yearRefId)}
                     />
                 </div>
             </div>
@@ -1233,8 +1414,8 @@ class UserModulePersonalDetail extends Component {
         //let nationalityName = "";
         //let languages = "";
         let userRegId = null;
-		let childrenCheckNumber = "";
-        let childrenCheckExpiryDate = "";						 
+        let childrenCheckNumber = "";
+        let childrenCheckExpiryDate = "";
 
         if (personalByCompData != null && personalByCompData.length > 0) {
             countryName = personalByCompData[0].countryName;
@@ -1242,7 +1423,7 @@ class UserModulePersonalDetail extends Component {
             // languages = personalByCompData[0].languages;
             userRegId = personalByCompData[0].userRegistrationId;
             childrenCheckNumber = personalByCompData[0].childrenCheckNumber;
-            childrenCheckExpiryDate = personalByCompData[0].childrenCheckExpiryDate;																					
+            childrenCheckExpiryDate = personalByCompData[0].childrenCheckExpiryDate;
         }
         return (
             <div className="comp-dash-table-view mt-2">
@@ -1325,15 +1506,15 @@ class UserModulePersonalDetail extends Component {
                                     <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
                                 </div> */}
                             </div>}
-                               <div className="other-info-row">
-                                    <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
-                                    <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckNumber}</div>
-                                </div>
-                                <div className="other-info-row">
-                                    <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
-                                    <div className="desc-text-style side-bar-profile-data other-info-font" style={{paddingTop: 7}}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
-                                </div>  
-                           
+                        <div className="other-info-row">
+                            <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
+                            <div className="desc-text-style side-bar-profile-data other-info-font" style={{ paddingTop: 7 }}>{childrenCheckNumber}</div>
+                        </div>
+                        <div className="other-info-row">
+                            <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
+                            <div className="desc-text-style side-bar-profile-data other-info-font" style={{ paddingTop: 7 }}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
+                        </div>
+
                         {/* <div className="other-info-row">
 							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.disability}</div>
 							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
@@ -1551,13 +1732,13 @@ class UserModulePersonalDetail extends Component {
                         <div className="col-row" style={{ display: 'flex', alignItems: 'flex-end' }}>
                             <div className="col-sm">
                                 <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{paddingRight: "69px"}}>
+                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{ paddingRight: "69px" }}>
                                         {AppConstants.register}
                                     </Button>
                                 </div>
                             </div>
-                            <div className="col-sm" style={{padding:0}}>
-                                <div className="col-sm" style={{padding:0}}>
+                            <div className="col-sm" style={{ padding: 0 }}>
+                                <div className="col-sm" style={{ padding: 0 }}>
                                     <Menu
                                         className="action-triple-dot-submenu menu-align-text"
                                         theme="light"
@@ -1573,10 +1754,10 @@ class UserModulePersonalDetail extends Component {
                                                 </Button>
                                             }
                                         >
-                                            <Menu.Item onClick={() => history.push("/deRegistration", {userId: this.state.userId})} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
                                                 <span>{AppConstants.deRegistration}</span>
                                             </Menu.Item>
-                                            <Menu.Item onClick={() => history.push("/deRegistration",{userId: this.state.userId})} >
+                                            <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                                 <span>{AppConstants.transfer}</span>
                                             </Menu.Item>
                                         </SubMenu>
@@ -1616,8 +1797,100 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
+    userEmail = () => {
+        let orgData = getOrganisationData()
+        let email = orgData && orgData.email ? encodeURIComponent(orgData.email) : ""
+        return email
+    }
+
+    stripeDashboardLoginUrl = () => {
+        this.setState({ stripeDashBoardLoad: true })
+        this.props.getStripeLoginLinkAction(this.state.userId)
+    }
+
+    umpireActivityView = () => {
+        let stripeConnected = getStripeAccountId() == "null" ? false : true
+        let userEmail = this.userEmail()
+        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`
+        let { umpireActivityOnLoad, umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
+        return (
+            <div
+                className="comp-dash-table-view mt-2"
+                style={{ backgroundColor: "#f7fafc" }}
+            >
+                {/* <div className="transfer-image-view mb-3">
+                    <Button
+                        className="primary-add-comp-form" type="primary">
+                        <div className="row">
+                            <div className="col-sm">
+                                <img
+                                    src={AppImages.export}
+                                    alt=""
+                                    className="export-image"
+                                />
+                                {AppConstants.export}
+                            </div>
+                        </div>
+                    </Button>
+
+                </div>
+ */}
+
+                <div className="transfer-image-view mb-3">
+
+                    {stripeConnected ?
+                        <Button
+                            type="primary"
+                            className="open-reg-button"
+                            onClick={() => this.stripeDashboardLoginUrl()}
+                        >
+                            {AppConstants.editBankAccount}
+                        </Button>
+                        :
+                        <Button
+                            type="primary"
+                            className="open-reg-button"
+                        >
+                            <a href={stripeConnectURL} className="stripe-connect">
+                                <span>
+                                    {AppConstants.uploadBankAccnt}
+                                </span>
+                            </a>
+
+                        </Button>
+                    }
+
+                </div>
+
+
+                <div className="table-responsive home-dash-table-view">
+                    <Table
+                        className="home-dashboard-table"
+                        columns={umpireActivityColumn}
+                        dataSource={umpireActivityList}
+                        pagination={false}
+                        loading={umpireActivityOnLoad == true && true}
+                    />
+                </div>
+                <div className="d-flex justify-content-end ">
+                    <Pagination
+                        className="antd-pagination pb-3"
+                        current={umpireActivityCurrentPage}
+                        total={umpireActivityTotalCount}
+                        onChange={(page) =>
+                            this.handleUmpireActivityTableList(
+                                page,
+                                this.state.userId
+                            )
+                        }
+                    />
+                </div>
+            </div>
+        );
+    };
+
     render() {
-        let { activityPlayerList, activityManagerList, activityScorerList, activityParentList, personalByCompData } = this.props.userState;
+        let { activityPlayerList, activityManagerList, activityScorerList, scorerActivityRoster, activityParentList, personalByCompData, userRole } = this.props.userState;
         let personalDetails = personalByCompData != null ? personalByCompData : [];
         let userRegistrationId = null;
         if (personalDetails != null && personalDetails.length > 0) {
@@ -1643,10 +1916,10 @@ class UserModulePersonalDetail extends Component {
                                             <TabPane tab={AppConstants.activity} key="1">
                                                 {activityPlayerList != null && activityPlayerList.length > 0 && this.playerActivityView()}
                                                 {activityManagerList != null && activityManagerList.length > 0 && this.managerActivityView()}
-                                                {activityScorerList != null && activityScorerList.length > 0 && this.scorerActivityView()}
+                                                {scorerActivityRoster != null && scorerActivityRoster.length > 0 && this.scorerActivityView()}
                                                 {/* {activityParentList!= null && activityParentList.length > 0 && this.parentActivityView()} */}
                                                 {activityPlayerList.length == 0 && activityManagerList.length == 0
-                                                    && activityScorerList.length == 0 //&& activityParentList.length == 0
+                                                    && scorerActivityRoster.length == 0 //&& activityParentList.length == 0
                                                     && this.noDataAvailable()}
                                             </TabPane>
                                             <TabPane tab={AppConstants.statistics} key="2">
@@ -1668,6 +1941,12 @@ class UserModulePersonalDetail extends Component {
                                             <TabPane tab={AppConstants.history} key="6">
                                                 {this.historyView()}
                                             </TabPane>
+                                            {
+                                                userRole &&
+                                                <TabPane tab={AppConstants.umpireActivity} key="7">
+                                                    {this.umpireActivityView()}
+                                                </TabPane>
+                                            }
                                         </Tabs>
                                     </div>
                                 </div>
@@ -1695,7 +1974,12 @@ function mapDispatchToProps(dispatch) {
         getUserModuleActivityManagerAction,
         getOnlyYearListAction,
         clearRegistrationDataAction,
-        getUserHistoryAction
+        getUserHistoryAction,
+        getUserRole,
+        getScorerData,
+        getUmpireActivityListAction,
+        saveStripeAccountAction,
+        getStripeLoginLinkAction,
     }, dispatch);
 
 }
@@ -1705,6 +1989,7 @@ function mapStatetoProps(state) {
         userState: state.UserState,
         appState: state.AppState,
         endUserRegistrationState: state.EndUserRegistrationState,
+        stripeState: state.StripeState,
     }
 }
 

@@ -27,7 +27,7 @@ function getUserOrganisationAction() {
 }
 
 
-function getUserModulePersonalDetailsAction(userId){
+function getUserModulePersonalDetailsAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_PERSONAL_DETAIL_LOAD,
     payload: userId
@@ -35,8 +35,7 @@ function getUserModulePersonalDetailsAction(userId){
   return action;
 }
 
-function getUserModulePersonalByCompetitionAction(payload)
-{
+function getUserModulePersonalByCompetitionAction(payload) {
   const action = {
     type: ApiConstants.API_USER_MODULE_PERSONAL_BY_COMPETITION_LOAD,
     payload: payload
@@ -44,8 +43,7 @@ function getUserModulePersonalByCompetitionAction(payload)
   return action;
 }
 
-function getUserModuleRegistrationAction(payload)
-{
+function getUserModuleRegistrationAction(payload) {
   const action = {
     type: ApiConstants.API_USER_MODULE_REGISTRATION_LOAD,
     payload: payload
@@ -53,7 +51,7 @@ function getUserModuleRegistrationAction(payload)
   return action;
 }
 
-function getUserModuleMedicalInfoAction(userId){
+function getUserModuleMedicalInfoAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_MEDICAL_INFO_LOAD,
     payload: userId
@@ -61,7 +59,7 @@ function getUserModuleMedicalInfoAction(userId){
   return action;
 }
 
-function getUserModuleActivityPlayerAction(userId){
+function getUserModuleActivityPlayerAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_ACTIVITY_PLAYER_LOAD,
     payload: userId
@@ -69,7 +67,7 @@ function getUserModuleActivityPlayerAction(userId){
   return action;
 }
 
-function getUserModuleActivityParentAction(userId){
+function getUserModuleActivityParentAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_ACTIVITY_PARENT_LOAD,
     payload: userId
@@ -77,7 +75,7 @@ function getUserModuleActivityParentAction(userId){
   return action;
 }
 
-function getUserModuleActivityScorerAction(userId){
+function getUserModuleActivityScorerAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_ACTIVITY_SCORER_LOAD,
     payload: userId
@@ -85,7 +83,7 @@ function getUserModuleActivityScorerAction(userId){
   return action;
 }
 
-function getUserModuleActivityManagerAction(userId){
+function getUserModuleActivityManagerAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_ACTIVITY_MANAGER_LOAD,
     payload: userId
@@ -96,19 +94,53 @@ function getUserModuleActivityManagerAction(userId){
 
 function userProfileUpdateAction(data) {
   const action = {
-      type: ApiConstants.API_USER_PROFILE_UPDATE_LOAD,
-      data,
+    type: ApiConstants.API_USER_PROFILE_UPDATE_LOAD,
+    data,
   };
 
   return action;
 }
 
-function getUserHistoryAction(userId){
+function getUserHistoryAction(userId) {
   const action = {
     type: ApiConstants.API_USER_MODULE_HISTORY_LOAD,
     payload: userId
   };
   return action;
+}
+
+function getUserRole(userId) {
+  const action = {
+    type: ApiConstants.API_GET_USER_ROLE_LOAD,
+    userId
+  };
+  return action
+}
+
+function getScorerData(payload, roleId, matchStatus) {
+  const action = {
+    type: ApiConstants.API_GET_SCORER_ACTIVITY_LOAD,
+    payload,
+    roleId,
+    matchStatus
+  };
+  return action
+}
+
+function getUmpireActivityListAction(payload, roleId, userId, sortBy, sortOrder) {
+  const action = {
+    type: ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD,
+    payload, roleId, userId, sortBy, sortOrder
+  };
+  return action
+}
+
+/////get all the organisations without authentication and userId
+function getAllOrganisationListAction() {
+  const action = {
+    type: ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD,
+  };
+  return action
 }
 
 
@@ -117,13 +149,17 @@ export {
   getUreAction,
   getUserOrganisationAction,
   getUserModulePersonalDetailsAction,
-  getUserModulePersonalByCompetitionAction, 
+  getUserModulePersonalByCompetitionAction,
   getUserModuleRegistrationAction,
-  getUserModuleMedicalInfoAction, 
+  getUserModuleMedicalInfoAction,
   getUserModuleActivityPlayerAction,
-  getUserModuleActivityParentAction, 
+  getUserModuleActivityParentAction,
   getUserModuleActivityScorerAction,
   getUserModuleActivityManagerAction,
   userProfileUpdateAction,
-  getUserHistoryAction
+  getUserHistoryAction,
+  getUserRole,
+  getScorerData,
+  getUmpireActivityListAction,
+  getAllOrganisationListAction,
 }

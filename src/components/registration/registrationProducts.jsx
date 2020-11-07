@@ -31,7 +31,6 @@ import {isArrayNotEmpty,isNullOrEmptyString} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import { wrap } from "@progress/kendo-drawing";
 import { 
     getCommonRefData,
     countryReferenceAction
@@ -60,7 +59,10 @@ class RegistrationProducts extends Component {
            newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
-           onLoading: false
+           onLoading: false,
+           deleteOnLoad: false,
+           organisationUniqueKey: null,
+           competitionUniqueKey: null
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -70,10 +72,11 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "fa7066f7-6b49-4a2b-9331-b0ba020549a1";
+        //let registrationUniqueKey = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
+
     componentDidUpdate(nextProps){
         let registrationProductState = this.props.registrationProductState
         if(this.state.loading == true && registrationProductState.onRegReviewLoad == false){
@@ -89,6 +92,11 @@ class RegistrationProducts extends Component {
             this.setYourInfoFormFields()
             this.setState({onLoading: false});
         }
+        if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
+            this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1, -1);
+            this.setState({loading: true});
+            this.setState({deleteOnLoad: false})
+        }
     }  
 
     goToRegistrationPayments = () =>{
@@ -103,13 +111,14 @@ class RegistrationProducts extends Component {
         this.props.getRegistrationReviewAction(payload);
         this.props.getTermsAndConditionsAction(payload);
         this.props.getRegParticipantUsersAction(payload);
-        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
 
-    getRegistrationProducts = (registrationId, page, typeId) =>{
+    getRegistrationProducts = (registrationId, page, typeId,organisationUniqueKey) =>{
         let payload = {
             registrationId: registrationId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
@@ -196,7 +205,7 @@ class RegistrationProducts extends Component {
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -246,26 +255,31 @@ class RegistrationProducts extends Component {
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true})
+            // this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({productModalVisible: false});
         }
     }
 
-    removeParticipantModal = (key, id) =>{
+    removeParticipantModal = (key, id, competitionId, organisationId) =>{
         if(key == "show"){
-            this.setState({participantModalVisible: true, id: id});
+            this.setState({participantModalVisible: true, id: id, competitionUniqueKey: competitionId, organisationUniqueKey: organisationId });
         }
         else if(key == "ok"){
             this.setState({participantModalVisible: false});
             let payload = {
                 registrationId : this.state.registrationUniqueKey,
-                participantId: this.state.id
+                participantId: this.state.id,
+                competitionUniqueKey: this.state.competitionUniqueKey,
+                organisationUniqueKey: this.state.organisationUniqueKey
             }
 
             this.props.deleteRegistrationParticipantAction(payload);
-            this.setState({loading: true});
+            this.setState({deleteOnLoad: true});
+            // this.setState({loading: true});
         }
         else if(key == "cancel"){
             this.setState({participantModalVisible: false});
@@ -278,6 +292,10 @@ class RegistrationProducts extends Component {
         }else{
             history.push({pathname: '/appTeamRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
         } 
+    }
+
+    clickAddAnotherParticipant = (participantId,registrationId) => {
+        history.push({pathname: '/appRegistrationForm', state: {participantId: participantId,registrationId: registrationId}})
     }
 
     goToShop = () =>{
@@ -344,7 +362,7 @@ class RegistrationProducts extends Component {
             : null;
 
             let defaultAddress = '';
-            if(yourInfo.street1 && yourInfo.suburb && state && country){
+            if(state){
                 defaultAddress = (yourInfo.street1 ? yourInfo.street1 + ',': '') + 
                 (yourInfo.suburb ? yourInfo.suburb + ',': '') +
                 (state ? state + ',': '') +
@@ -362,12 +380,12 @@ class RegistrationProducts extends Component {
             const { stateList,countryList } = this.props.commonReducerState;
             const address = addressData;
             if(address){
-                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address.state).id : null;
-                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address.country).id : null;
+                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
                 this.setReviewInfo(address.addressOne, "street1", null,"yourInfo", null);
                 this.setReviewInfo(address.suburb, "suburb", null,"yourInfo", null);
-                this.setReviewInfo(stateRefId, "stateRefId", null,"yourInfo", null);
-                this.setReviewInfo(countryRefId, "countryRefId", null,"yourInfo", null);
+                this.setReviewInfo(stateRefId ? stateRefId : null, "stateRefId", null,"yourInfo", null);
+                this.setReviewInfo(countryRefId ? countryRefId : null, "countryRefId", null,"yourInfo", null);
                 this.setReviewInfo(address.postcode, "postalCode", null,"yourInfo", null);
             }
         }catch(ex){
@@ -398,11 +416,8 @@ class RegistrationProducts extends Component {
         return(
             <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
                 <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
-                <div>
-                    <div className="link-text-common pointer" style={{margin:"7px 0px 0px 0px"}}
-                    onClick={() => this.redirect(null,this.state.registrationUniqueKey)}>
-                        + {AppConstants.addAnotherParticipant}
-                    </div>
+                <div className="add-another-button-border pointer"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
+                    <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
                 </div>
             </div>
         );
@@ -418,7 +433,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 {(compParticipants || []).map((item, index) =>(
-                    <div key={item.participantId + "#" + index}>
+                    <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index)}
@@ -435,37 +450,53 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div style={{display:"flex",flexWrap:'wrap'}}>
-                    <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
-                        {
-                            item.photoUrl ? (
-                                <img src={item.photoUrl}/>
-                            ):
-                            (
-                                <img src={AppImages.userIcon} alt=""/>     
-                            )
-                        }
-                    </div>
+                   
                     {item.isTeamRegistration == 1 ?
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.teamName}</div>
-                            <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
-                        </div>
-                    :
-                        <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                            <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                            <div className="body-text-common">{item.gender + ', ' + 
-                                liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                <div className="defualt-team-logo-style">
+                                    <img src={AppImages.teamLoadDefualtWhite}/>
+                                </div>
+                                <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.teamName}</div>
+                                    <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                </div>
                             </div>
-                        </div>
+                        )
+                        
+                    :
+                        (
+                            <div style={{display: "flex",alignItems: "center"}}>
+                                 <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
+                                        {
+                                            item.photoUrl ? (
+                                                <img src={item.photoUrl}/>
+                                            ):
+                                            (
+                                                <div className="profile-default-img" style={{height: "67px" , width: "67px"}}>
+                                                    {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
+                                                </div>     
+                                            )
+                                        }
+                                    </div>
+                                    <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                    <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                                    <div className="body-text-common">{item.gender} 
+                                        {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                        
                     }
                    
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
+                    <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
                         <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                             {AppConstants.edit}
                         </span>
                         <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
                     </div> 
-                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId)}>                   
+                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
                         <span className="link-text-common" style={{marginRight: "15px"}}>
                             {AppConstants.remove}
                         </span>
@@ -498,7 +529,15 @@ class RegistrationProducts extends Component {
             <div className="innerview-outline">
                 {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
-                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                            </Radio.Group>  
+                        </div>
                         <div className="product-line">
                             {isArrayNotEmpty(item.teamMembers.payingForList) && (
                                 <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
@@ -517,17 +556,12 @@ class RegistrationProducts extends Component {
                                 </div>
                             ))}
                         </div>
-                        <div className="product-line">
-                            <Radio.Group className="body-text-common"
-                                value={item.selectedOptions.nominationPayOptionRefId}
-                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
-                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
-                            </Radio.Group>  
-                        </div>
+                        {item.selectedOptions.nominationPayOptionRefId == 2 &&
+                        <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        }
                     </div>
                 : 
-                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className="product-border-line">
                         <div className = "body-text-common">
                             {AppConstants.registration}{"(s)"}
                         </div>
@@ -823,9 +857,9 @@ class RegistrationProducts extends Component {
                                     style={{ width: "100%" }}
                                     placeholder={AppConstants.select}
                                     setFieldsValue={yourInfo ? yourInfo.email : null}
-                                    onChange = {(e) => this.setReviewInfo(e, "email", null,"yourInfo", null)}>
-                                    {(participantUsers || []).map((item) => (
-                                        < Option key={item.email} value={item.email}> {item.firstName + ' ' + item.lastName}</Option>
+                                    onChange = {(e) => this.setReviewInfo(e, "emailSelection", null,"yourInfo", null)}>
+                                    {(participantUsers || []).map((item, index) => (
+                                        < Option key={"ParticipantUser"+index} value={index}> {item.firstName + ' ' + item.lastName}</Option>
                                     ))}
                                 </Select>
                             )}
@@ -858,7 +892,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.firstName}
                                             onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.firstName }
+                                            setFieldsValue={yourInfo ? yourInfo.firstName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsFirstName']: captializedString(i.target.value)
                                             })}
@@ -875,7 +909,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.lastName}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.lastName }
+                                            setFieldsValue={yourInfo ? yourInfo.lastName : null}
                                             onBlur={(i) =>this.props.form.setFieldsValue({
                                                 ['yourDetailsLastName']: captializedString(i.target.value)
                                             })}
@@ -892,7 +926,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.phone}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "mobileNumber", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.mobileNumber }
+                                            setFieldsValue={yourInfo ? yourInfo.mobileNumber : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -906,7 +940,7 @@ class RegistrationProducts extends Component {
                                         <InputWithHead
                                             placeholder={AppConstants.email}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "email", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.email }
+                                            setFieldsValue={yourInfo ? yourInfo.email : null}
                                         />
                                     )}
                                 </Form.Item>
@@ -1006,7 +1040,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.addressOne}
                                             placeholder={AppConstants.addressOne}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "street1", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.street1}
+                                            setFieldsValue={yourInfo ? yourInfo.street1 : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1025,7 +1059,7 @@ class RegistrationProducts extends Component {
                                             heading={AppConstants.suburb}
                                             placeholder={AppConstants.suburb}
                                             onChange={(e) => this.setReviewInfo(e.target.value, "suburb", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.suburb}
+                                            setFieldsValue={yourInfo ? yourInfo.suburb : null}
                                         />
                                         )}
                                     </Form.Item>
@@ -1040,7 +1074,7 @@ class RegistrationProducts extends Component {
                                                     style={{ width: "100%" }}
                                                     placeholder={AppConstants.state}
                                                     onChange={(e) => this.setReviewInfo(e, "stateRefId", null,"yourInfo", null)}
-                                                    setFieldsValue={yourInfo.stateRefId}>
+                                                    setFieldsValue={yourInfo ? yourInfo.stateRefId : null}>
                                                     {stateList.length > 0 && stateList.map((item) => (
                                                         < Option key={item.id} value={item.id}> {item.name}</Option>
                                                     ))}
@@ -1059,7 +1093,7 @@ class RegistrationProducts extends Component {
                                                     placeholder={AppConstants.postcode}
                                                     onChange={(e) => this.setReviewInfo(e.target.value, "postalCode", null,"yourInfo", null)}
                                                     maxLength={4}
-                                                    setFieldsValue={yourInfo.postalCode}
+                                                    setFieldsValue={yourInfo ? yourInfo.postalCode : null}
                                                 />
                                                 )}
                                             </Form.Item>
@@ -1074,7 +1108,7 @@ class RegistrationProducts extends Component {
                                             style={{ width: "100%" }}
                                             placeholder={AppConstants.country}
                                             onChange={(e) => this.setReviewInfo(e, "countryRefId", null,"yourInfo", null)}
-                                            setFieldsValue={yourInfo.countryRefId}>
+                                            setFieldsValue={yourInfo ? yourInfo.countryRefId : null}>
                                             {countryList.length > 0 && countryList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.description}</Option>
                                             ))}
@@ -1102,12 +1136,13 @@ class RegistrationProducts extends Component {
     productLeftView = (getFieldDecorator)=>{
         const {registrationReviewList, participantUsers} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
+        let hasClubVolunteer = registrationReviewList!= null ? registrationReviewList.hasClubVolunteer : 0;
         return(
             <div className="col-sm-12 col-md-8 col-lg-8 ">
                 <div className="product-left-view outline-style">
                     {this.participantDetailView()}
                     {isSchoolRegistration == 0 && this.charityView()}
-                    {this.otherinfoView()}
+                    {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
                 {participantUsers && participantUsers.length > 0 ? 
                 <div className="product-left-view outline-style">
@@ -1146,11 +1181,28 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
@@ -1158,37 +1210,38 @@ class RegistrationProducts extends Component {
                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
                                 </div>
                                 }
                                
                             </div>
                         ))}
                          
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                    <div  className="inter-medium-w500" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -1200,7 +1253,7 @@ class RegistrationProducts extends Component {
                                 <div>({shop.optionName})</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
@@ -1215,6 +1268,12 @@ class RegistrationProducts extends Component {
     }
 
     deleteParticiantModalView = () => {
+        const {registrationReviewList} = this.props.registrationProductState;
+        let compParticipants = registrationReviewList!= null ? 
+                    isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                    registrationReviewList.compParticipants : [] : [];
+        let competitions = compParticipants.filter(x => x.participantId == this.state.id);
+        let participantHasMoreCompetitions = competitions.length > 1 ? true : false;
         return (
             <div>
               <Modal
@@ -1223,7 +1282,7 @@ class RegistrationProducts extends Component {
                 visible={this.state.participantModalVisible}
                 onOk={() => this.removeParticipantModal("ok")}
                 onCancel={() => this.removeParticipantModal("cancel")}>
-                  <p>{AppConstants.deleteParticipantMsg}</p>
+                  <p>{participantHasMoreCompetitions ? AppConstants.deleteCompetition : AppConstants.deleteParticipantMsg}</p>
               </Modal>
             </div>
           );
@@ -1312,7 +1371,8 @@ class RegistrationProducts extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
-                        <Loader visible={this.props.registrationProductState.onRegReviewLoad} />
+                        <Loader visible={this.props.registrationProductState.onRegReviewLoad || 
+                        this.props.registrationProductState.deleteOnLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteParticiantModalView()}

@@ -249,6 +249,12 @@
   .livescore-seasonfixture-table .ant-table-small > .ant-table-content > .ant-table-body{
           margin: 0 0px;
   }
+  .tableViewShow{
+      display: none;
+  }
+  .tableViewHide{
+      display: block;
+  }
 
   .reg-filter-select-year .ant-select-selection {
     border: 1px solid var(--app-d9d9d9) !important;
@@ -283,6 +289,7 @@
         justify-content: space-between;
         align-items: center
     }
+    
   }
 
 @media(max-width:767px) {
@@ -321,4 +328,24 @@
         margin-right: 5px;
         /* height: 300px; */
     }
+    .tableViewHide{
+        display: none;
+    }
+    .tableViewShow{
+        display: block;
+    }
+    .stickytableData{
+        width: 80px;
+        max-width: fit-content;
+        max-height: fit-content;
+       height: 100px;
+       display: flex;
+       align-items: center;
+     }
+     .tableViewSeasonFixture{
+         width: 100%;
+         display: flex;
+         flex-wrap: wrap;
+         padding: 0px 10px;
+     }
 }

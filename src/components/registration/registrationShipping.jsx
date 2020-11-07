@@ -54,7 +54,8 @@ class RegistrationShipping extends Component {
             shippingOptions: null,
             useDiffDeliveryAddressFlag: false,
             userDiffBillingAddressFlag: false,
-            deliveryOrBillingAddressSelected: false                  
+            deliveryOrBillingAddressSelected: false,
+            onlyDeliveryAddressFlag: false                  
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -105,10 +106,15 @@ class RegistrationShipping extends Component {
             let shopProducts = registrationReviewList != null ? isArrayNotEmpty(registrationReviewList.shopProducts) ?
                                                                 deepCopyFunction(registrationReviewList.shopProducts) : [] : [];
             let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
-            for(let address of filteredShippingProductsAddresses){
-                address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+            if(filteredShippingProductsAddresses.length > 0){
+                for(let address of filteredShippingProductsAddresses){
+                    address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+                }
+                this.setState({shippingOptions: filteredShippingProductsAddresses});
+                this.setState({onlyDeliveryAddressFlag : false});
+            }else{
+                this.setState({onlyDeliveryAddressFlag : true});
             }
-            this.setState({shippingOptions: filteredShippingProductsAddresses})
         }catch(ex){
             console.log("Error in setShippingOptions"+ex);
         }
@@ -130,7 +136,7 @@ class RegistrationShipping extends Component {
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -383,11 +389,12 @@ class RegistrationShipping extends Component {
         );
     }
     shippingLeftView = ()=>{
-        console.log("reutnr",this.checkAnyDeliveryAddress());
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
-                {this.shippingOption()}
-                {this.checkAnyDeliveryAddress() && (
+                {this.state.onlyDeliveryAddressFlag == false && (
+                    <div>{this.shippingOption()}</div>
+                )}
+                {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
                     <div>{this.deliveryAndBillingView()}</div> 
                 )}               
             </div>
@@ -420,31 +427,47 @@ class RegistrationShipping extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                       {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer">
-                                            <img class="marginIcon" src={AppImages.removeIcon} />
-                                        </span>
+                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2 number-text-style" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
                                 </div>
                                 }
                                 {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
@@ -453,25 +476,25 @@ class RegistrationShipping extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
                             onClick={() => this.goToRegistrationProducts()}
-                            style={{margin: "0px 15px 0px 10px"}}>
+                            style={{margin: "0px 15px 0px 20px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 
                     )}
                 )}
                  {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common shop-detail-text-common">
+                    <div  className="subtitle-text-common shop-detail-text-common inter-medium-w500">
                         <div className="alignself-center pt-2 image-text-view">
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
@@ -492,8 +515,8 @@ class RegistrationShipping extends Component {
                     </div>
                 ))}
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2 " style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2 " style={{marginRight:10}}>${total && total.total}</div>
                 </div>
             </div>
         )

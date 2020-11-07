@@ -1,11 +1,12 @@
 import ApiConstants from "../../../themes/apiConstants";
 
 
-function liveScoreRoundListAction(competitionID, division) {
+function liveScoreRoundListAction(competitionID, division, teamId) {
     const action = {
         type: ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD,
         competitionID,
-        division
+        division,
+        teamId
     };
     return action;
 }
@@ -21,9 +22,10 @@ function liveScoreCreateRoundAction(roundName, sequence, competitionID, division
     return action;
 }
 
-function clearRoundData() {
+function clearRoundData(key) {
     const action = {
-        type: ApiConstants.API_CLEAR_ROUND_DATA
+        type: ApiConstants.API_CLEAR_ROUND_DATA,
+        key
     }
     return action
 }

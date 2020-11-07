@@ -156,6 +156,10 @@ let AxiosApi = {
         let url = `/common/reference/${referenceName}`;
         return Method.dataGet(url, token)
     },
+    getSchools(stateRefId){
+        let url = `/common/schools?stateRefId=${stateRefId}`;
+        return Method.dataGet(url, token)
+    },
 
     /// All Venues Listing 
     getVenuesList(payload) {

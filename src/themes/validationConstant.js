@@ -102,7 +102,21 @@ const ValidationConstants = {
     addressDetailsIsRequired: "Address details is required",
 
     selectAddressRequired: "Select address required",
-    fillMembershipProductInformation: "Please fill Membership product information"
+    fillMembershipProductInformation: "Please fill Membership product information",
+    fillMembershipProductDivisionInformation:"Please choose Registration Divisions.",
+
+    additionalInfoQuestions: [
+        "Do you identify as field is required",
+        "Existing medical condition field is required",
+        "Regular medication field is required",
+        "Injury field is required",
+        "Alergies field is required",
+        "Disability care Number is required",
+        "This field is required",
+        "Favourite Firebird is required",
+        "This field is required",
+    ],
+    memberTypeIsRequired: "Member type is required",
 };
 
 export default ValidationConstants;

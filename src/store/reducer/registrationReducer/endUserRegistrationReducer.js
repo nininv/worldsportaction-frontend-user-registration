@@ -766,73 +766,73 @@ function endUserRegistrationReducer(state = initialState, action) {
         //         error: null
         //     }
 
-        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD:
-            return { ...state, onRegReviewPrdLoad: true };
+        // case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_LOAD:
+        //     return { ...state, onRegReviewPrdLoad: true };
 
-        case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
-            let regReviewPrdData = action.result;
-            return {
-                ...state,
-                onRegReviewPrdLoad: false,
-                status: action.status,
-                regReviewPrdData: regReviewPrdData
-            };
+        // case ApiConstants.API_GET_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+        //     let regReviewPrdData = action.result;
+        //     return {
+        //         ...state,
+        //         onRegReviewPrdLoad: false,
+        //         status: action.status,
+        //         regReviewPrdData: regReviewPrdData
+        //     };
 
-        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD:
-            return { ...state, onRegReviewPrdLoad: true };
+        // case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_LOAD:
+        //     return { ...state, onRegReviewPrdLoad: true };
 
-        case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
-            return {
-                ...state,
-                onRegReviewPrdLoad: false,
-                status: action.status
-            };
+        // case ApiConstants.API_SAVE_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+        //     return {
+        //         ...state,
+        //         onRegReviewPrdLoad: false,
+        //         status: action.status
+        //     };
         
-        case ApiConstants.UPDATE_REVIEW_PRODUCT:
-            let reviewPrdData = state.regReviewPrdData;
-            if(action.key == "removeProduct"){
-                console.log("*******" + action.index + "***" + action.subkey + "****" + action.subIndex);
-                let partData = reviewPrdData["compParticipants"][action.index];
-                let paymentOptionRefId = partData.selectedOptions.paymentOptionRefId;
-                let memData = reviewPrdData["compParticipants"][action.index][action.subkey][action.subIndex];
-                let fee = 0;
-                let gst = 0;
-                let discount = 0;
+        // case ApiConstants.UPDATE_REVIEW_PRODUCT:
+        //     let reviewPrdData = state.regReviewPrdData;
+        //     if(action.key == "removeProduct"){
+        //         console.log("*******" + action.index + "***" + action.subkey + "****" + action.subIndex);
+        //         let partData = reviewPrdData["compParticipants"][action.index];
+        //         let paymentOptionRefId = partData.selectedOptions.paymentOptionRefId;
+        //         let memData = reviewPrdData["compParticipants"][action.index][action.subkey][action.subIndex];
+        //         let fee = 0;
+        //         let gst = 0;
+        //         let discount = 0;
 
-                if(paymentOptionRefId <= 2){
-                    fee = memData.casualFee;
-                    gst = memData.casualGST;
-                }
-                else{
-                    fee = memData.seasonalFee;
-                    gst = memData.seasonalGST;
-                }
+        //         if(paymentOptionRefId <= 2){
+        //             fee = memData.casualFee;
+        //             gst = memData.casualGST;
+        //         }
+        //         else{
+        //             fee = memData.seasonalFee;
+        //             gst = memData.seasonalGST;
+        //         }
 
-                memData.discounts.map((x) =>{
-                    if(x.isSelected == 1){
-                        discount += x.discountsToDeduct;
-                    }
-                });
+        //         memData.discounts.map((x) =>{
+        //             if(x.isSelected == 1){
+        //                 discount += x.discountsToDeduct;
+        //             }
+        //         });
 
-                reviewPrdData.total.subTotal = (Number(reviewPrdData.total.subTotal) - fee) + discount;
-                reviewPrdData.total.gst = Number(reviewPrdData.total.gst) - gst;
-                let tempTargetVal = formatValue(reviewPrdData.total.subTotal) + formatValue(reviewPrdData.total.gst);
-                if(reviewPrdData.charityRoundUpRefId > 0){
-                    let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
-                    reviewPrdData.total.targetValue = charityData.targetValue;
-                    reviewPrdData.total.charityValue = charityData.charityValue;
-                }
-                else{
-                    reviewPrdData.total.targetValue = tempTargetVal;
-                    reviewPrdData.total.charityValue = 0;
-                }
+        //         reviewPrdData.total.subTotal = (Number(reviewPrdData.total.subTotal) - fee) + discount;
+        //         reviewPrdData.total.gst = Number(reviewPrdData.total.gst) - gst;
+        //         let tempTargetVal = formatValue(reviewPrdData.total.subTotal) + formatValue(reviewPrdData.total.gst);
+        //         if(reviewPrdData.charityRoundUpRefId > 0){
+        //             let charityData = getCharityValue(tempTargetVal, reviewPrdData.charityRoundUpRefId);
+        //             reviewPrdData.total.targetValue = charityData.targetValue;
+        //             reviewPrdData.total.charityValue = charityData.charityValue;
+        //         }
+        //         else{
+        //             reviewPrdData.total.targetValue = tempTargetVal;
+        //             reviewPrdData.total.charityValue = 0;
+        //         }
                
 
-                reviewPrdData.deletedProducts.push(memData.orgRegParticipantId);
-                reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);
+        //         reviewPrdData.deletedProducts.push(memData.orgRegParticipantId);
+        //         reviewPrdData["compParticipants"][action.index][action.subkey].splice(action.subIndex, 1);
 
-                console.log("reviewPrdData", reviewPrdData);
-            }
+        //         console.log("reviewPrdData", reviewPrdData);
+        //     }
 
        
 
@@ -914,84 +914,53 @@ function endUserRegistrationReducer(state = initialState, action) {
                 status: action.status
             };
 
-        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
-            state["participantIndex"] = action.participantIndex;
-            return { ...state};
+        // case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
+        //     state["participantIndex"] = action.participantIndex;
+        //     return { ...state};
 
-        case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
-            let  userReg = state.registrationDetail.userRegistrations;
-            userReg[state.participantIndex].team["resultCode"] = action.result.resultCode; 
-            state["participantIndex"] = null;       
+        // case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
+        //     let  userReg = state.registrationDetail.userRegistrations;
+        //     userReg[state.participantIndex].team["resultCode"] = action.result.resultCode; 
+        //     state["participantIndex"] = null;       
 
-            return {
-                ...state,
-                onLoad: false,                
-            };
+        //     return {
+        //         ...state,
+        //         onLoad: false,                
+        //     };
         
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
-            return { ...state, onRegReviewLoad: true };
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_LOAD:
+        //     return { ...state, onRegReviewLoad: true };
 
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS:
-            let regTeamReviewData = action.result;
-            return {
-                ...state,
-                onRegReviewLoad: false,
-                status: action.status,
-                regTeamReviewData: regTeamReviewData
-            };
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_SUCCESS:
+        //     let regTeamReviewData = action.result;
+        //     return {
+        //         ...state,
+        //         onRegReviewLoad: false,
+        //         status: action.status,
+        //         regTeamReviewData: regTeamReviewData
+        //     };
 
-        case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD:
-            return { ...state, onRegReviewLoad: true };
+        // case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_LOAD:
+        //     return { ...state, onRegReviewLoad: true };
 
-        case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_SUCCESS:
-            return {
-                ...state,
-                onRegReviewLoad: false,
-                status: action.status
-            };
-        case ApiConstants.UPDATE_TEAM_REVIEW_INFO:
-            let reviewTeamData = state.regTeamReviewData;
-            if(action.subkey == "charity"){
-                reviewTeamData[action.key] = action.value;
-            }
-            else if(action.subkey == "selectedOptions"){
-                let memProds = reviewTeamData["compParticipants"][action.index]["membershipProducts"];
-                let compParticipant = reviewTeamData["compParticipants"][action.index];
-                
-                if(action.key == "paymentOptionRefId"){
-                    memProds.map((x, mIndex) =>{
-                        calculateTeamFee(action.value, x, compParticipant);
-                        // Calculate Discount
-                        x.feesToPay = formatValue(x.feesToPay);
-                        x.discountsToDeduct = formatValue(x.discountsToDeduct);
-                    })
-                    reviewTeamData["compParticipants"][action.index][action.subkey][action.key] = action.value;
+        // case ApiConstants.API_SAVE_TEAM_REGISTRATION_REVIEW_SUCCESS:
+        //     return {
+        //         ...state,
+        //         onRegReviewLoad: false,
+        //         status: action.status
+        //     };
+       
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD:
+        //     return { ...state, onRegReviewPrdLoad: true };
 
-                }
-                else{
-                    reviewTeamData["compParticipants"][action.index][action.subkey][action.key] = action.value;
-                }
-                
-            }
-
-            //console.log("ReviewData", reviewData);
-            
-            return {
-                ...state,
-                error: null
-            }
-        
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_LOAD:
-            return { ...state, onRegReviewPrdLoad: true };
-
-        case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
-            let regTeamReviewPrdData = action.result;
-            return {
-                ...state,
-                onRegReviewPrdLoad: false,
-                status: action.status,
-                regTeamReviewPrdData: regTeamReviewPrdData
-            };
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_REVIEW_PRODUCT_SUCCESS:
+        //     let regTeamReviewPrdData = action.result;
+        //     return {
+        //         ...state,
+        //         onRegReviewPrdLoad: false,
+        //         status: action.status,
+        //         regTeamReviewPrdData: regTeamReviewPrdData
+        //     };
         
        case ApiConstants.USER_REGISTRATION_CLEAR_DATA:
             let userRegistrationsTemp = state.registrationDetail.userRegistrations.map(e => ({ ... e }));

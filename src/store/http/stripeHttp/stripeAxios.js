@@ -39,6 +39,21 @@ let AxiosApi = {
         return Method.dataPost(url, token, body)
     },
 
+    //////Save stripe account
+    saveStripeAccount(code, userId) {
+        let body = {
+            code: code,
+            userId: userId
+        }
+        let url = `/api/payments/saveStripeForUser`
+        return Method.dataPost(url, token, body)
+    },
+
+    /////////////stripe login link
+    getStripeLoginLink(userId) {
+        var url = `/api/payments/loginStripe?userId=${userId}`;
+        return Method.dataGet(url, token);
+    },
 };
 
 const Method = {
@@ -50,8 +65,7 @@ const Method = {
                     headers: {
                         "Content-Type": "application/json",
                         "Access-Control-Allow-Origin": "*",
-                        Authorization: "BWSA " + authorization,
-                        "SourceSystem": "WebAdmin"
+                        Authorization: "BWSA " + authorization
                     }
                 })
 
@@ -127,7 +141,6 @@ const Method = {
                         Accept: "application/json",
                         Authorization: "BWSA " + authorization,
                         "Access-Control-Allow-Origin": "*",
-                        "SourceSystem": "WebAdmin"
                     }
                 })
 

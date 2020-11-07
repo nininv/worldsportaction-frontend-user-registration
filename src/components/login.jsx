@@ -11,7 +11,7 @@ import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
 import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId, 
-    getIsUserRegistration, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
+    getAuthToken, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9510c51d401fe5d10f9767759bbce7833692b87ccb78bc79cfff4edadaa661befa2039bc8fb88298d311d214306eea43776af229593a760ac82fff319046758e375b271a1756924aa4624b3435f458cef2e115e5ac93a4871d3b1daaf56c1a510218f2c680ba127512a358c990c3201c494b23833f9812beaf69f52213212a90d222e997040179e955f153593d9532905d';
@@ -48,7 +48,9 @@ class Login extends Component {
     componentDidUpdate(nextProps) {
         let loginstate = this.props.loginstate;
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            if(loginstate.status == 1){
+            
+            if(loginstate.status == 1 && getAuthToken()){
+                //this.setState({loginButton: true});
                 // if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
                 //     history.push("/teamRegistrationForm");
                 // }
@@ -121,7 +123,7 @@ class Login extends Component {
                     <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
                 </NavLink>
 
-                {this.state.isUserRegistration == 1 || this.state.userRegId ?
+                {/* {this.state.isUserRegistration == 1 || this.state.userRegId ? */}
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div style={{display:'flex'}}>
@@ -136,14 +138,15 @@ class Login extends Component {
                             <Button className="ant-btn-proceed-text login-btn-proceed" onClick={() => this.redirect()} type="primary" disabled={this.state.loginButton}>{AppConstants.proceedToRegistration}</Button>
                         </div>
                     </div>
-                </div> :
+                </div>
+                 {/* :
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div className="comp-finals-button-view">
                             <Button className="open-reg-button" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.login}</Button>
                         </div>
                     </div>
-                </div> }
+                </div> } */}
             </div>
         )
     }

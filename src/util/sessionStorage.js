@@ -155,6 +155,15 @@ const getSourceSystemFlag= key => {
     return localStorage.sourceSystem
 }
 
+// Set stripe acount id
+const setStripeAccountId = stripeCustomerAccountId => {
+    localStorage.setItem("stripeCustomerAccountId", stripeCustomerAccountId)
+}
+/// Set stripe acount id
+const getStripeAccountId = () => {
+    return localStorage.stripeCustomerAccountId
+}
+
 module.exports = {
     setCompetitionID, getCompetitonId,
     setAuthToken, getAuthToken,
@@ -180,5 +189,7 @@ module.exports = {
     setRegisteringYourselfRefId,getRegisteringYourselfRefId,
     setIsUserRegistration, getIsUserRegistration,
     setTempUserId, getTempUserId,
-	setSourceSystemFlag,getSourceSystemFlag
+    setSourceSystemFlag,getSourceSystemFlag,
+    setStripeAccountId,
+    getStripeAccountId,
 }

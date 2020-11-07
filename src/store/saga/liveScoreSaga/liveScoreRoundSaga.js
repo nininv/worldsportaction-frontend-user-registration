@@ -39,9 +39,8 @@ export function* liveScoreRoundSaga(action) {
 }
 
 export function* liveScoreRoundListSaga(action) {
-
     try {
-        const result = yield call(LiveScoreAxiosApi.liveScoreRound, action.competitionID, action.division);
+        const result = yield call(LiveScoreAxiosApi.liveScoreRound, action.competitionID, action.division, action.teamId);
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_LIVE_SCORE_ROUND_LIST_SUCCESS,

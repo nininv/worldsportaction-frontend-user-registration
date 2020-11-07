@@ -89,6 +89,21 @@ let userHttpApi = {
     const url = `api/user/history`;
     return Method.dataPost(url, token, payload);
   },
+  getUserRoleData(userId) {
+    const url = `ure/byUserId?userId=${userId}`;
+    return Method.dataGet(url, token);
+  },
+  
+  getScorerActivityData(payload, roleId, matchStatus) {
+    const url = `api/user/activity/roster?roleId=${roleId}&matchStatus=${matchStatus}`;
+    return Method.dataPost(url, token, payload);
+  },
+
+  ////get all the organisations without authentication and userId
+  getAllOrganisationList() {
+    const url = `api/organisations/all`;
+    return Method.dataGet(url, token);
+  },
 }
 
 let Method = {
@@ -162,10 +177,7 @@ let Method = {
     });
   },
 
-
-
   // Method to GET response
-
   async dataGet(newurl, authorization) {
     const url = newurl;
     return await new Promise((resolve, reject) => {

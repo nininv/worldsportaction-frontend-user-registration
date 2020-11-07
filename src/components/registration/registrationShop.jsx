@@ -46,6 +46,7 @@ class RegistrationShop extends Component {
             productModalVisible: false ,
             id: null,
             typeId: -1,
+            organisationUniqueKey: -1,
             expandObj: null,
             variantOptionId: null,
             quantity: null,
@@ -81,14 +82,15 @@ class RegistrationShop extends Component {
         }
         console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
-        this.getRegistrationProducts(registrationUniqueKey, 1, -1);
+        this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
 
-    getRegistrationProducts = (registrationId, page, typeId) =>{
+    getRegistrationProducts = (registrationId, page, typeId, organisationUniqueKey) =>{
         
         let payload = {
             registrationId: registrationId,
             typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
             paging: {
                 limit: 10,
                 offset: (page ? (10 * (page - 1)) : 0),
@@ -99,8 +101,13 @@ class RegistrationShop extends Component {
     }
 
     onChangeSetValue = (key, value) =>{
-        this.setState({typeId: value});
-        this.getRegistrationProducts(this.state.registrationUniqueKey , 1, value);
+        if(key == "typeId"){
+            this.setState({typeId: value});
+            this.getRegistrationProducts(this.state.registrationUniqueKey , 1, value,this.state.organisationUniqueKey);
+        }else if(key == "organisationUniqueKey"){
+            this.setState({organisationUniqueKey: value});
+            this.getRegistrationProducts(this.state.registrationUniqueKey , 1, this.state.typeId,value);
+        } 
     }
 
     goToShipping = () =>{
@@ -119,7 +126,7 @@ class RegistrationShop extends Component {
         let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -199,11 +206,27 @@ class RegistrationShop extends Component {
 
     enableExpandView = (key, item) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item}); 
+            this.setState({showCardView:true, expandObj: item,quantity: 1}); 
         } 
         else {
             this.setState({showCardView:false, expandObj: null, variantOptionId: null,
                 quantity: null}); 
+        }
+    }
+
+    getOrganisationFilterList = () => {
+        try{
+            const {registrationReviewList} = this.props.registrationProductState;
+            let compParticipants = registrationReviewList!= null ? 
+                        isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                        registrationReviewList.compParticipants : [] : [];
+            let organisationList = Array.from(new Set(compParticipants.map(a => a.organisationUniqueKey))).
+                map(organisationUniqueKey => {
+                    return compParticipants.find(a => a.organisationUniqueKey === organisationUniqueKey)
+                });
+            return organisationList;
+        }catch(ex){
+            console.log("Error in getOrganisationList::"+ex)
         }
     }
 
@@ -213,6 +236,22 @@ class RegistrationShop extends Component {
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
                 <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
+                <div style={{width:"230px",marginTop: "10px",marginLeft: "auto",marginRight: "15px"}}>
+                    <Select
+                        style={{ width: "100%", paddingRight: 1}}                  
+                        placeholder={AppConstants.all}  
+                        className="custom-dropdown"
+                        onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
+                        value={this.state.organisationUniqueKey}                                               
+                    >
+                        <Option value={-1}>All</Option> 
+                        {
+                            (this.getOrganisationFilterList() || []).map((item, index) =>(
+                                <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                            ))
+                        }    
+                    </Select>
+                </div>
                 <div style={{width:"230px",marginTop: "10px"}}>
                     <Select
                         style={{ width: "100%", paddingRight: 1}}                  
@@ -260,7 +299,7 @@ class RegistrationShop extends Component {
                                 <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
                             <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                         </div>
                     </div>
                 ))}
@@ -393,31 +432,47 @@ class RegistrationShop extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        <div className = "body-text-common" style={{marginTop: "17px"}}>
+                        {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" >
-                                             <img  class="marginIcon" src={AppImages.removeIcon} />
-                                        </span>
+                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.discountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
                                 {mem.childDiscountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
+                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
                                 </div>
                                 }
                                 {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
@@ -426,26 +481,26 @@ class RegistrationShop extends Component {
                                 </div>  */}
                             </div>
                         ))}
-                        <div style={{color: "var(--app-bbbbc6)" , fontFamily: "inter"}}>
+                        <div className="payment-option-txt">
                             {paymentOptionTxt}
                             <span className="link-text-common pointer" 
                             onClick={() => this.goToRegistrationProducts()}
-                            style={{margin: "0px 15px 0px 10px"}}>
+                            style={{margin: "0px 15px 0px 20px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
                         {item.governmentVoucherAmount != "0.00" && 
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>(${item.governmentVoucherAmount})</div>
+                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
                         </div> 
                         }
                     </div> 
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
-                    <div  className="subtitle-text-common shop-detail-text-common">
-                        <div className="alignself-center pt-2 image-text-view">
+                    <div  className="inter-medium-w500"  style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
+                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
                             <div>
                                 <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
                             </div>
@@ -456,7 +511,7 @@ class RegistrationShop extends Component {
                                 <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
+                        <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
                         <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
                             <span className="user-remove-btn pointer" >
                                 <img  class="marginIcon" src={AppImages.removeIcon} />
@@ -464,10 +519,10 @@ class RegistrationShop extends Component {
                         </div>
                     </div>
                 ))}
-                 
+               
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && feeIsNull(total.total).toFixed(2)}</div>
                 </div>
             </div>
         )
