@@ -817,7 +817,7 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					onLoad: false,
-					expiredRegistration: expiredRegistrationTemp,
+					expiredRegistration: expiredRegistrationTemp ? expiredRegistrationTemp : null,
 					status: action.status
 				};
 
