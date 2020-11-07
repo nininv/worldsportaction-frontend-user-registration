@@ -138,7 +138,7 @@ class RegistrationInvoice extends Component {
                         </label>
                         <div className="invoice-receipt">
                             <div className="invoice-receipt-num">
-                                    Receipt No.{userDetail && (userDetail.receiptNo ? userDetail.receiptNo : "100000")}
+                                    Receipt No.{userDetail && (userDetail.receiptId ? userDetail.receiptId : "100000")}
                             </div>
                             <div className="schoolInvoiceTxt">{msg}</div>
                         </div>
