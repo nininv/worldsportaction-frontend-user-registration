@@ -70,9 +70,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-       // let registrationUniqueKey = "95caddb8-ab8c-47fc-8619-6ae1550df3d8";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "95caddb8-ab8c-47fc-8619-6ae1550df3d8";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -529,7 +529,15 @@ class RegistrationProducts extends Component {
             <div className="innerview-outline">
                 {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
-                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                            </Radio.Group>  
+                        </div>
                         <div className="product-line">
                             {isArrayNotEmpty(item.teamMembers.payingForList) && (
                                 <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
@@ -548,17 +556,12 @@ class RegistrationProducts extends Component {
                                 </div>
                             ))}
                         </div>
-                        <div className="product-line">
-                            <Radio.Group className="body-text-common"
-                                value={item.selectedOptions.nominationPayOptionRefId}
-                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
-                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
-                            </Radio.Group>  
-                        </div>
+                        {item.selectedOptions.nominationPayOptionRefId == 2 &&
+                        <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        }
                     </div>
                 : 
-                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className="product-border-line">
                         <div className = "body-text-common">
                             {AppConstants.registration}{"(s)"}
                         </div>
