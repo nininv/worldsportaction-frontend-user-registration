@@ -317,7 +317,7 @@ class RegistrationInvoice extends Component {
         )
     }
 
-    nominationView = (competitionDetails) => {
+    nominationCompOrgView = (competitionDetails) => {
         return (
             <div className="row" >
                 <div className="invoice-col-View pr-0 pl-0" >
@@ -424,6 +424,61 @@ class RegistrationInvoice extends Component {
         )
     }
 
+    nominationAffiliateView = (affiliateDetail) => {
+        return (
+            <div className="row" >
+                <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                    {affiliateDetail && affiliateDetail.name &&
+                        <InputWithHead
+                            heading={affiliateDetail.name + " - Nomination Fees"}
+                        />
+                    }
+                </div>
+                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                    <div>
+                        <div className="row">
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={"1.00"}
+                                    />}
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + (Number(affiliateDetail.nominationFeeToPay)).toFixed(2)}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + "0.00"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    < InputWithHead
+                                        heading={'$' + (Number(affiliateDetail.nominationGSTToPay)).toFixed(2)}
+                                    />}
+                            </div>
+                            <div className="col-sm" >
+                                {affiliateDetail &&
+                                    < InputWithHead
+                                        required="invoice"
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2))).toFixed(2)}
+                                    />}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                < Divider className="mt-0 mb-0" />
+            </div>
+        )
+    }
+
     ////////form content view
     contentView = (result) => {
         let {invoiceData} = this.props.stripeState;
@@ -506,12 +561,15 @@ class RegistrationInvoice extends Component {
                                         {affiliateDetail &&
                                             this.competitionAffiliateView(affiliateDetail)
                                         }
+                                         {affiliateDetail && affiliateDetail.nominationFeeToPay > 0 &&
+                                            this.nominationAffiliateView(affiliateDetail)
+                                        }
 
                                         {competitionDetails && 
                                             this.competitionOrganiserView(competitionDetails)
                                         }
                                          {competitionDetails && competitionDetails.nominationFeeToPay > 0 &&
-                                            this.nominationView(competitionDetails)
+                                            this.nominationCompOrgView(competitionDetails)
                                         }
 
                                         {membershipDetail != null &&
