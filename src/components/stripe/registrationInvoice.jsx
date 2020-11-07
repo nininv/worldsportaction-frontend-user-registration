@@ -49,10 +49,10 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
-    //    let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-       let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
-       let userRegId = null;
+       let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+       let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
+    //    let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
+    //    let userRegId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
@@ -73,10 +73,10 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let invoiceId = 0
-            // let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            // let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-             let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
-             let userRegId = null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            //  let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
+            //  let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
