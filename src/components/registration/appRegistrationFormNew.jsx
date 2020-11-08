@@ -825,7 +825,8 @@ class AppRegistrationFormNew extends Component{
     findAnotherCompetition = (competitionIndex) => {
         if(competitionIndex == 0){
             this.setState({showAddAnotherCompetitionView: true,
-            findAnotherCompetitionFlag: true,organisationId: null,competitions: null,postalCode: null});
+            findAnotherCompetitionFlag: true,organisationId: null,competitions: null});
+            this.onChangeSetPostalCode('');
         }else{
             this.onChangeSetCompetitionValue(null,"competition",competitionIndex,null,null)
         }  
