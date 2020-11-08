@@ -718,12 +718,17 @@ class AppTeamRegistrationForm extends Component{
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
-            if(this.state.currentStep == 1){
-                this.setState({buttonSubmitted: true});
-            }
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
+            if(this.state.currentStep == 1){
+                this.setState({buttonSubmitted: true});
+                for(let teamMember of teamRegistrationObj.teamMembers){
+                    if(this.showMemberTypeValidation(teamMember)){
+                        return;
+                    }
+                }
+            }
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep == 0){
