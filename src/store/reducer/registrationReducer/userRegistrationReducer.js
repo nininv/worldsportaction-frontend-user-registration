@@ -295,12 +295,14 @@ function setMembershipProductsInfo(state,organisationData){
 						state.registrationObj.competitions.push(competition);
 						state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
 						state.addCompetitionFlag = true; 
-					}else{
-						state.expiredRegistrationFlag = true;
 					}
-				}else{
-					state.expiredRegistrationFlag = true;
+					// else{
+					// 	state.expiredRegistrationFlag = true;
+					// }
 				}
+				// else{
+				// 	state.expiredRegistrationFlag = true;
+				// }
 			}
 		}else{
 			competition.organisationId = organisationData.organisationInfo.organisationUniqueKey;
@@ -318,6 +320,24 @@ function setMembershipProductsInfo(state,organisationData){
 		}
 	}catch(ex){
 		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
+	}
+}
+
+function initiateExpiredRegistrationCall(state,membershipProductsInfoList){
+	try{
+		if(getOrganisationId() != null && getCompetitonId() != null){
+			let organisatinInfoTemp = membershipProductsInfoList.find(x => x.organisationUniqueKey == getOrganisationId());
+			if(organisatinInfoTemp){
+				let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+				if(competitionInfoTemp == undefined){
+					state.expiredRegistrationFlag = true;
+				}
+			}else{
+				state.expiredRegistrationFlag = true;
+			}
+		}
+	}catch(ex){
+		console.log("Error in initiateExpiredRegistrationCall::"+ex)
 	}
 }
 
@@ -708,6 +728,7 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
 			let data = action.result;
+			initiateExpiredRegistrationCall(state,data);
 			return {
 				...state,
 				onMembershipLoad: false,
@@ -817,7 +838,7 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					onLoad: false,
-					expiredRegistration: expiredRegistrationTemp,
+					expiredRegistration: expiredRegistrationTemp ? expiredRegistrationTemp : null,
 					status: action.status
 				};
 
