@@ -51,7 +51,7 @@ class RegistrationInvoice extends Component {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let registrationId = "3be6fba2-e864-4500-89d8-5d626238bb02";
+    //    let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
     //    let userRegId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
@@ -75,7 +75,7 @@ class RegistrationInvoice extends Component {
             let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = "3be6fba2-e864-4500-89d8-5d626238bb02";
+            //  let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
             //  let userRegId = null;
             this.props.getInvoice(registrationId, userRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
@@ -138,7 +138,7 @@ class RegistrationInvoice extends Component {
                         </label>
                         <div className="invoice-receipt">
                             <div className="invoice-receipt-num">
-                                    Receipt No.1234497
+                                    Receipt No.{userDetail && (userDetail.receiptId ? userDetail.receiptId : "100000")}
                             </div>
                             <div className="schoolInvoiceTxt">{msg}</div>
                         </div>
@@ -230,7 +230,7 @@ class RegistrationInvoice extends Component {
                         < div className="row" >
                             <div className="col-sm invoice-description"  >
                                 <InputWithHead
-                                    heading={("$1.00")}
+                                    heading={("1.00")}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -283,7 +283,7 @@ class RegistrationInvoice extends Component {
                         <div className="row">
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={"$1.00"}
+                                    heading={"1.00"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
@@ -317,6 +317,53 @@ class RegistrationInvoice extends Component {
         )
     }
 
+    nominationCompOrgView = (competitionDetails) => {
+        return (
+            <div className="row" >
+                <div className="invoice-col-View pr-0 pl-0" >
+                    {competitionDetails && competitionDetails.name &&
+                        <InputWithHead
+                            heading={competitionDetails.name + " - Nomination Fees"}
+                        />
+                    }
+                </div>
+                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                    <div>
+                        <div className="row">
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
+                                    heading={"1.00"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
+                                    heading={'$' + (Number(competitionDetails.nominationFeeToPay)).toFixed(2)}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
+                                    heading={'$' + "0.00"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
+                                    heading={'$' + (Number(competitionDetails.nominationGSTToPay)).toFixed(2)}
+                                />
+                            </div>
+                            <div className="col-sm" >
+                                <InputWithHead
+                                    required="invoice"
+                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2))).toFixed(2)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                < Divider className="mt-0 mb-0" />
+            </div>
+        )
+    }
+
     competitionAffiliateView = (affiliateDetail) => {
         let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ? 
                         affiliateDetail.childDiscountsToDeduct : 0;
@@ -337,7 +384,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                        heading={"$1.00"}
+                                        heading={"1.00"}
                                     />}
                             </div>
                             <div className="col-sm invoice-description" >
@@ -366,6 +413,61 @@ class RegistrationInvoice extends Component {
                                         required="invoice"
                                         heading={'$' + (parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
                                             parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                    />}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                < Divider className="mt-0 mb-0" />
+            </div>
+        )
+    }
+
+    nominationAffiliateView = (affiliateDetail) => {
+        return (
+            <div className="row" >
+                <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                    {affiliateDetail && affiliateDetail.name &&
+                        <InputWithHead
+                            heading={affiliateDetail.name + " - Nomination Fees"}
+                        />
+                    }
+                </div>
+                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                    <div>
+                        <div className="row">
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={"1.00"}
+                                    />}
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + (Number(affiliateDetail.nominationFeeToPay)).toFixed(2)}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + "0.00"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    < InputWithHead
+                                        heading={'$' + (Number(affiliateDetail.nominationGSTToPay)).toFixed(2)}
+                                    />}
+                            </div>
+                            <div className="col-sm" >
+                                {affiliateDetail &&
+                                    < InputWithHead
+                                        required="invoice"
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2))).toFixed(2)}
                                     />}
                             </div>
 
@@ -444,10 +546,10 @@ class RegistrationInvoice extends Component {
                                                         <InputWithHead
                                                             heading=
                                                             {mem.divisionName ?
-                                                                regName + " - " + typeName + " " + item.firstName + " " + item.lastName
+                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                 + ", " + item.competitionName + " - "+ mem.divisionName
                                                                 :
-                                                                regName + " - " + typeName + " " + item.firstName + " " + item.lastName
+                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                 + ", " + item.competitionName
                                                             }
                                                         />
@@ -459,10 +561,17 @@ class RegistrationInvoice extends Component {
                                         {affiliateDetail &&
                                             this.competitionAffiliateView(affiliateDetail)
                                         }
+                                         {affiliateDetail && affiliateDetail.nominationFeeToPay > 0 &&
+                                            this.nominationAffiliateView(affiliateDetail)
+                                        }
 
                                         {competitionDetails && 
                                             this.competitionOrganiserView(competitionDetails)
                                         }
+                                         {competitionDetails && competitionDetails.nominationFeeToPay > 0 &&
+                                            this.nominationCompOrgView(competitionDetails)
+                                        }
+
                                         {membershipDetail != null &&
                                             this.membershipProductView(membershipDetail, mProductName, mTypeName)
                                         }        

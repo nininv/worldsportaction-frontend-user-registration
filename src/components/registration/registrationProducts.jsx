@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "2aa78b82-6b8f-4a8f-b5ef-14d9d4f62f4c";
+        //let registrationUniqueKey = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -529,7 +529,15 @@ class RegistrationProducts extends Component {
             <div className="innerview-outline">
                 {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
                     <div>
-                        <div className = "body-text-common" style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
+                        <div className="product-line">
+                            <Radio.Group className="body-text-common"
+                                value={item.selectedOptions.nominationPayOptionRefId}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
+                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                            </Radio.Group>  
+                        </div>
                         <div className="product-line">
                             {isArrayNotEmpty(item.teamMembers.payingForList) && (
                                 <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
@@ -548,17 +556,12 @@ class RegistrationProducts extends Component {
                                 </div>
                             ))}
                         </div>
-                        <div className="product-line">
-                            <Radio.Group className="body-text-common"
-                                value={item.selectedOptions.nominationPayOptionRefId}
-                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                <Radio key={1} value={1}>{AppConstants.payInFull}</Radio>
-                                <Radio key={2} value={2}>{AppConstants.splitAmoingTeamMember}</Radio>
-                            </Radio.Group>  
-                        </div>
+                        {item.selectedOptions.nominationPayOptionRefId == 2 &&
+                        <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                        }
                     </div>
                 : 
-                    <div style={{borderBottom:"1px solid var(--app-d9d9d9)", paddingBottom: "16px"}}>
+                    <div className="product-border-line">
                         <div className = "body-text-common">
                             {AppConstants.registration}{"(s)"}
                         </div>
@@ -1178,11 +1181,28 @@ class RegistrationProducts extends Component {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
-                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                        {item.isTeamRegistration == 1  ? 
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
+                                {item.teamName +' - ' + item.competitionName}
+                            </div> :
+                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div>
+                            </div> 
+                        }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                {item.isTeamRegistration == 1 ?
+                                <div>
+                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
+                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
+                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
+                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
+                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
@@ -1190,6 +1210,7 @@ class RegistrationProducts extends Component {
                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>
+                                }
                                 
                                 {mem.discountsToDeduct!= "0.00" && 
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>

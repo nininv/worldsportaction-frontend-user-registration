@@ -1107,8 +1107,6 @@ const AppConstants = {
  hide: "Hide",
  transactionFeeApplies: "A transaction fee of 2.25% applies.",
  transactionFee: "Transaction Fee",
- payInFull: "Pay in full",
- splitAmoingTeamMember: "Split amongst team members",
  liveScoreSeasonFixture:"LiveScore Season Fixture",
  dateTime:"Date/Time",
  matchResult:"Match Result",
@@ -1137,7 +1135,10 @@ const AppConstants = {
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
  competitionSpecifics:'Competition Specifics',
- totalsinglegamefees:'Total Single Game Fees'
+ totalsinglegamefees:'Total Single Game Fees',
+ payCompetitionFeesForAll: "Pay Competition Fees for All",
+ payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
+ howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you....."
 
 };
 
