@@ -941,7 +941,9 @@ class AppTeamRegistrationForm extends Component{
                                 <div style={{display: "flex",flexWrap: "wrap"}}>
                                     <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                    onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
+                                    onClick={() => {
+                                        this.setState({showFindAnotherCompetitionview: true,organisationId: null,competitions: null,postalCode: null});
+                                    }}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
                                 <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
