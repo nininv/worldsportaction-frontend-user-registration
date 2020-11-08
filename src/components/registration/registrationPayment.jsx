@@ -417,7 +417,7 @@ const CheckoutForm = (props) => {
                                 }
                             </div>
                         </div>}
-                        {pay.securePaymentOptionRefId == 3 && 
+                        {/* {pay.securePaymentOptionRefId == 3 && 
                         <div>
                             <div className="row">
                                 <div className='col-sm'>
@@ -498,7 +498,7 @@ const CheckoutForm = (props) => {
                                 </div>
                             </div>
                         </div>
-                        }
+                        } */}
                     </div>
                     ))}
                 </div> : 

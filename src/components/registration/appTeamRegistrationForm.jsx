@@ -72,7 +72,8 @@ import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceS
 import history from "../../util/history";
 import { captializedString } from "../../util/helpers";
 import { NavLink } from "react-router-dom";
-import CSVReader from 'react-csv-reader'
+import CSVReader from 'react-csv-reader';
+import { nearByOrganisations } from "../../util/geocode";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -107,7 +108,7 @@ class AppTeamRegistrationForm extends Component{
             postalCode: null,
             organisations: [],
             competitions: [],
-            allCompetitions: [],
+            // allCompetitions: [],
             allCompetitionsByOrgId: [],
             competitionsCountPerPage: 6,
             competitionsCurrentPage: 1,
@@ -262,7 +263,7 @@ class AppTeamRegistrationForm extends Component{
                 this.props.selectTeamAction();
             }
             this.setState({organisations: teamRegistrationState.membershipProductInfo});
-            this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
+            // this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
         }catch(ex){
             console.log("Error in initialSetting::"+ex);
         }
@@ -435,30 +436,36 @@ class AppTeamRegistrationForm extends Component{
         try{
             let { membershipProductInfo } = this.props.teamRegistrationState;
             if(this.state.postalCode){
-                let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode?.toLowerCase().indexOf(this.state.postalCode) > -1);
-                this.setState({organisations: filteredOrganisation});
-                this.setAllCompetitions(filteredOrganisation);
+                // let filteredOrganisation = deepCopyFunction(membershipProductInfo).filter(x => x.postalCode?.toLowerCase().indexOf(this.state.postalCode) > -1);
+                // this.setState({organisations: filteredOrganisation});
+                //this.setAllCompetitions(filteredOrganisation);
+                const nearByOrganisationsData = nearByOrganisations(membershipProductInfo, this.state.postalCode, 20);
+                this.setState({organisations: nearByOrganisationsData});
+                let selectedOrganisationExistInList = nearByOrganisationsData.find(x => x.organisationUniqueKey == this.state.organisationId);
+                if(selectedOrganisationExistInList == undefined){
+                    this.setState({competitions: null,organisationId: null})
+                }
             }else{
                 this.setState({organisations: membershipProductInfo});
-                this.setAllCompetitions(membershipProductInfo);
+                // this.setAllCompetitions(membershipProductInfo);
             }
         }catch(ex){
             console.log("Error in searchOrganisationByPostalCode"+ex);
         }
     }
 
-    setAllCompetitions = (membershipProductInfo) => {
-        try{
-            let allCompetitionsTemp = [];
-            for(let org of membershipProductInfo){
-                allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
-            }
-            this.setState({allCompetitions: allCompetitionsTemp});
-            this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
-        }catch(ex){
-            console.log("Error in setAllCompetitions"+ex);
-        }
-    }
+    // setAllCompetitions = (membershipProductInfo) => {
+    //     try{
+    //         let allCompetitionsTemp = [];
+    //         for(let org of membershipProductInfo){
+    //             allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
+    //         }
+    //         this.setState({allCompetitions: allCompetitionsTemp});
+    //         this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
+    //     }catch(ex){
+    //         console.log("Error in setAllCompetitions"+ex);
+    //     }
+    // }
 
     onChangeSetOrganisation = (organisationId) => {
         try{
@@ -489,11 +496,11 @@ class AppTeamRegistrationForm extends Component{
         let startIndex = (current - 1 ) * this.state.competitionsCountPerPage;
         let endIndex = current * this.state.competitionsCountPerPage;
         this.setState({competitionsCurrentPage: current});
-        if(this.state.organisationId == null){
-            this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
-        }else{
+        // if(this.state.organisationId == null){
+        //     this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
+        // }else{
             this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
-        }
+        //}
     }
 
     addAnotherCompetition = (competitionInfo) => {
@@ -711,12 +718,17 @@ class AppTeamRegistrationForm extends Component{
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
-            if(this.state.currentStep == 1){
-                this.setState({buttonSubmitted: true});
-            }
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
+            if(this.state.currentStep == 1){
+                this.setState({buttonSubmitted: true});
+                for(let teamMember of teamRegistrationObj.teamMembers){
+                    if(this.showMemberTypeValidation(teamMember)){
+                        return;
+                    }
+                }
+            }
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
                     if(this.state.currentStep == 0){
@@ -842,7 +854,11 @@ class AppTeamRegistrationForm extends Component{
                             showSearch
                             optionFilterProp="children"
                             onChange={(e) => this.onChangeSetOrganisation(e)}
-                            style={{ width: "100%", paddingRight: 1 }}>
+                            style={{ width: "100%", paddingRight: 1 }}
+                            value={this.state.organisationId ? this.state.organisationId : -1}>
+                            {(this.state.organisationId == null || this.state.organisationId == undefined) && (
+                                < Option key={"Please select"} value={-1}> {AppConstants.pleaseSelect}</Option>
+                            )}    
                             {(this.state.organisations || []).map((item) => (
                                 < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
                             ))}
@@ -888,11 +904,16 @@ class AppTeamRegistrationForm extends Component{
                             pageSize={this.state.competitionsCountPerPage}
                             current={this.state.competitionsCurrentPage}
                             style={{textAlign: "center"}} 
-                            total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                            //total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                            total={this.state.allCompetitionsByOrgId.length} 
                             itemRender={this.paginationItems}/>
                         ) : 
                         (
-                            <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                            <div>
+                                {this.state.organisationId && (
+                                    <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                                )}
+                            </div> 
                         )
                     }
                 </div>
@@ -925,7 +946,10 @@ class AppTeamRegistrationForm extends Component{
                                 <div style={{display: "flex",flexWrap: "wrap"}}>
                                     <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
                                     <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                    onClick={() => this.setState({showFindAnotherCompetitionview: true})}>{AppConstants.findAnotherCompetition}</div>
+                                    onClick={() => {
+                                        this.onChangeSetPostalCode('');
+                                        this.setState({showFindAnotherCompetitionview: true,organisationId: null,competitions: null});
+                                    }}>{AppConstants.findAnotherCompetition}</div>
                                 </div>
                                 <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
