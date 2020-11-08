@@ -101,7 +101,7 @@ class AppRegistrationFormNew extends Component{
             findAnotherCompetitionFlag: false,
             registrationId: null,
             participantId: null,
-            allCompetitions: [],
+            // allCompetitions: [],
             allCompetitionsByOrgId: [],
             competitions: [],
             competitionsCountPerPage: 6,
@@ -143,7 +143,7 @@ class AppRegistrationFormNew extends Component{
                 } 
             }
             //Set all competitins of all organisation
-            this.setAllCompetitions(registrationState.membershipProductInfo);
+            // this.setAllCompetitions(registrationState.membershipProductInfo);
             this.setState({getMembershipLoad: false});
         }
 
@@ -232,18 +232,18 @@ class AppRegistrationFormNew extends Component{
         }
     }
 
-    setAllCompetitions = (membershipProductInfo) => {
-        try{
-            let allCompetitionsTemp = [];
-            for(let org of membershipProductInfo){
-                allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
-            }
-            this.setState({allCompetitions: allCompetitionsTemp});
-            this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
-        }catch(ex){
-            console.log("Error in setAllCompetitions"+ex);
-        }
-    }
+    // setAllCompetitions = (membershipProductInfo) => {
+    //     try{
+    //         let allCompetitionsTemp = [];
+    //         for(let org of membershipProductInfo){
+    //             allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
+    //         }
+    //         this.setState({allCompetitions: allCompetitionsTemp});
+    //         this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
+    //     }catch(ex){
+    //         console.log("Error in setAllCompetitions"+ex);
+    //     }
+    // }
 
     changeStep = (current) => {
         if(this.state.enabledSteps.includes(current)){
@@ -970,11 +970,11 @@ class AppRegistrationFormNew extends Component{
         let startIndex = (current - 1 ) * this.state.competitionsCountPerPage;
         let endIndex = current * this.state.competitionsCountPerPage;
         this.setState({currentCompetitions: current});
-        if(this.state.organisationId == null){
-            this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
-        }else{
+        // if(this.state.organisationId == null){
+        //     this.setState({competitions: this.state.allCompetitions.slice(startIndex,endIndex)});
+        // }else{
             this.setState({competitions: this.state.allCompetitionsByOrgId.slice(startIndex,endIndex)});
-        }
+        //}
     }
 
     goToRegistrationProducts = () =>{
@@ -1008,10 +1008,14 @@ class AppRegistrationFormNew extends Component{
             if(this.state.postalCode){
                 const nearByOrganisationsData = nearByOrganisations(membershipProductInfo, this.state.postalCode, 20);
                 this.setState({organisations: nearByOrganisationsData});
-                this.setAllCompetitions(nearByOrganisationsData);
+                //this.setAllCompetitions(nearByOrganisationsData);
+                let selectedOrganisationExistInList = nearByOrganisationsData.find(x => x.organisationUniqueKey == this.state.organisationId);
+                if(selectedOrganisationExistInList == undefined){
+                    this.setState({competitions: null,organisationId: null})
+                }
             }else{
                 this.setState({organisations: membershipProductInfo});
-                this.setAllCompetitions(membershipProductInfo);
+                //this.setAllCompetitions(membershipProductInfo);
             }
         }catch(ex){
             console.log("Error in searchOrganisationByPostalCode"+ex);
@@ -2027,104 +2031,116 @@ class AppRegistrationFormNew extends Component{
     }
 
     findAnotherCompetitionView = () => {
-        let { membershipProductInfo } = this.props.userRegistrationState;
-        let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
-
-        return (
-            <div className="registration-form-view">
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="form-heading">{AppConstants.findACompetition}</div>
-                    <div className="orange-action-txt"
-                        style={{ marginLeft: "auto", paddingBottom: "7.5px" }}
-                        onClick={() => this.setState({ showAddAnotherCompetitionView: false, organisationId: null })}>{AppConstants.cancel}</div>
-                </div>
-
-                <div className="light-grey-border-box">
-                    <div className="row">
-                        <div className="col">
-                            <InputWithHead
-                                allowClear
-                                heading={AppConstants.postCode}
-                                value={this.state.postalCode}
-                                placeholder={AppConstants.postCode}
-                                onChange={(e) => this.onChangeSetPostalCode(e.target.value)}
-                            />
-                        </div>
-                        <div className="col" style={{ alignSelf: "center" }}>
-                            <Button
-                                type="primary"
-                                style={{
-                                    color: "white", textTransform: "uppercase",
-                                    marginTop: "45px", float: "right",
-                                    paddingLeft: "50px", paddingRight: "50px"
-                                }}
-                                onClick={() => this.searchOrganisationByPostalCode()}
-                                className="open-reg-button">{AppConstants.search}</Button>
-                        </div>
+        try{
+            let { membershipProductInfo } = this.props.userRegistrationState;
+            let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
+            return (
+                <div className="registration-form-view">
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <div className="form-heading">{AppConstants.findACompetition}</div>
+                        <div className="orange-action-txt"
+                            style={{ marginLeft: "auto", paddingBottom: "7.5px" }}
+                            onClick={() => this.setState({ showAddAnotherCompetitionView: false, organisationId: null })}>{AppConstants.cancel}</div>
                     </div>
-                    <InputWithHead heading={AppConstants.organisationName} />
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        onChange={(e) => this.onChangeSetOrganisation(e)}
-                        style={{ width: "100%", paddingRight: 1 }}>
-                        {(this.state.organisations || []).map((item) => (
-                            < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
-                        ))}
-                    </Select>
-                    {organisationInfo && (
-                        <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
-                            <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
-                            <div style={{ width: "170px", marginLeft: "20px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
-                            {organisationInfo.mobileNumber && (
-                                <div style={{ marginLeft: "20px" }}><img className="icon-size-20" style={{ marginRight: "15px" }} src={AppImages.callAnswer} />{organisationInfo.mobileNumber}</div>
-                            )}
-                        </div>
-                    )}
-                </div>
-                <div className="row" style={{ marginTop: "30px" }}>
-                    {(this.state.competitions || []).map((competition, competitionIndex) => (
-                        <div className="col-md-6 col-sm-12 pointer"
-                            onClick={() => this.addAnotherCompetition(competition)}
-                            key={competition.competitionUniqueKey}
-                            style={{ marginBottom: "20px" }}>
-                            <div style={{ border: "1px solid var(--app-f0f0f2)", borderRadius: "10px", padding: "20px" }}>
-                                <div style={{
-                                    height: "150px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    borderRadius: "10px 10px 0px 0px",
-                                    margin: "-20px -20px -0px -20px",
-                                    borderBottom: "1px solid var(--app-f0f0f2)"
-                                }}>
-                                    <img style={{ height: "149px", borderRadius: "10px 10px 0px 0px" }} src={competition.heroImageUrl} />
-                                </div>
-                                <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
-                                {this.state.organisationId == null && (
-                                    <div style={{ fontWeight: "600", marginBottom: "5px" }}>{competition.organisationName}</div>
-                                )}
-                                <div style={{ fontWeight: "600" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                    <div className="light-grey-border-box">
+                        <div className="row">
+                            <div className="col">
+                                <InputWithHead
+                                    allowClear
+                                    heading={AppConstants.postCode}
+                                    value={this.state.postalCode}
+                                    placeholder={AppConstants.postCode}
+                                    onChange={(e) => this.onChangeSetPostalCode(e.target.value)}
+                                />
+                            </div>
+                            <div className="col" style={{ alignSelf: "center" }}>
+                                <Button
+                                    type="primary"
+                                    style={{
+                                        color: "white", textTransform: "uppercase",
+                                        marginTop: "45px", float: "right",
+                                        paddingLeft: "50px", paddingRight: "50px"
+                                    }}
+                                    onClick={() => this.searchOrganisationByPostalCode()}
+                                    className="open-reg-button">{AppConstants.search}</Button>
                             </div>
                         </div>
-                    ))}
+                        <InputWithHead heading={AppConstants.organisationName} />
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={(e) => this.onChangeSetOrganisation(e)}
+                            style={{ width: "100%", paddingRight: 1 }}
+                            value={this.state.organisationId ? this.state.organisationId : -1}>
+                            {(this.state.organisationId == null || this.state.organisationId == undefined) && (
+                                < Option key={"Please select"} value={-1}> {AppConstants.pleaseSelect}</Option>
+                            )}    
+                            {(this.state.organisations || []).map((item) => (
+                                < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
+                            ))}
+                        </Select>
+                        {organisationInfo && (
+                            <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+                                <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
+                                <div style={{ width: "170px", marginLeft: "20px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
+                                {organisationInfo.mobileNumber && (
+                                    <div style={{ marginLeft: "20px" }}><img className="icon-size-20" style={{ marginRight: "15px" }} src={AppImages.callAnswer} />{organisationInfo.mobileNumber}</div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <div className="row" style={{ marginTop: "30px" }}>
+                        {(this.state.competitions || []).map((competition, competitionIndex) => (
+                            <div className="col-md-6 col-sm-12 pointer"
+                                onClick={() => this.addAnotherCompetition(competition)}
+                                key={competition.competitionUniqueKey}
+                                style={{ marginBottom: "20px" }}>
+                                <div style={{ border: "1px solid var(--app-f0f0f2)", borderRadius: "10px", padding: "20px" }}>
+                                    <div style={{
+                                        height: "150px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        borderRadius: "10px 10px 0px 0px",
+                                        margin: "-20px -20px -0px -20px",
+                                        borderBottom: "1px solid var(--app-f0f0f2)"
+                                    }}>
+                                        <img style={{ height: "149px", borderRadius: "10px 10px 0px 0px" }} src={competition.heroImageUrl} />
+                                    </div>
+                                    <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
+                                    {this.state.organisationId == null && (
+                                        <div style={{ fontWeight: "600", marginBottom: "5px" }}>{competition.organisationName}</div>
+                                    )}
+                                    <div style={{ fontWeight: "600" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {this.state.competitions?.length > 0 ?
+                        (
+                            <Pagination
+                                onChange={(e) => this.pagingCompetitions(e)}
+                                pageSize={this.state.competitionsCountPerPage}
+                                current={this.state.currentCompetitions}
+                                style={{ textAlign: "center" }}
+                                //total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length}
+                                total={this.state.allCompetitionsByOrgId.length}
+                                itemRender={this.paginationItems} />
+                        )
+                        :
+                        (
+                            <div>
+                                {this.state.organisationId && (
+                                    <div className="form-heading" style={{fontSize: "20px",justifyContent: "center"}}>{AppConstants.noCompetitionsForOrganisations}</div>
+                                )}
+                            </div> 
+                        )
+                    }
                 </div>
-                {this.state.competitions?.length > 0 ?
-                    (
-                        <Pagination
-                            onChange={(e) => this.pagingCompetitions(e)}
-                            pageSize={this.state.competitionsCountPerPage}
-                            current={this.state.currentCompetitions}
-                            style={{ textAlign: "center" }}
-                            total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length}
-                            itemRender={this.paginationItems} />
-                    )
-                    :
-                    (
-                        <div className="form-heading" style={{ fontSize: "20px", justifyContent: "center" }}>{AppConstants.noCompetitionsForOrganisations}</div>
-                    )
-                }
-            </div>
-        )
+            )
+        }catch(ex){
+            console.log("Error in findAnotherCompetitionView::"+ex)
+        }
+        
     }
 
     competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
