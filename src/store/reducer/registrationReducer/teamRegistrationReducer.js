@@ -4,14 +4,22 @@ import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorag
 import moment from 'moment';
 
 let walkingNetballObj = {
-	"haveHeartTrouble" : null,
-	"havePainInHeartOrChest" : null,
-	"haveSpellsOfServerDizziness" : null,
-	"hasBloodPressureHigh" : null,
-	"hasBoneProblems" : null,
-	"whyShouldNotTakePhysicalActivity" : null,
-	"pregnentInLastSixMonths" : null,
-	"sufferAnyProblems" : null
+	// "haveHeartTrouble" : null,
+	// "havePainInHeartOrChest" : null,
+	// "haveSpellsOfServerDizziness" : null,
+	// "hasBloodPressureHigh" : null,
+	// "hasBoneProblems" : null,
+	// "whyShouldNotTakePhysicalActivity" : null,
+	// "pregnentInLastSixMonths" : null,
+  // "sufferAnyProblems" : null
+  "heartTrouble": null,
+  "chestPain": null,
+  "faintOrSpells": null,
+  "bloodPressure": null,
+  "jointOrBoneProblem": null,
+  "physicalActivity": null,
+  "pregnant": null,
+  "lowerBackProblem": null
 }
 
 let seasionalAndCasualFeesInputObj = {
@@ -268,7 +276,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
     state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
     let membershipProduct = state.teamRegistrationObj.membershipProductList.find(x => x.competitionMembershipProductTypeId == competitionMembershipProductTypeId);
     if(membershipProduct){
-      state.teamRegistrationObj.walkingNetballFlag = membershipProduct.shortName == "Walking Netball" ? 1 : 0;
+      state.teamRegistrationObj.walkingNetballFlag = (membershipProduct.shortName == "Walking Netball" || membershipProduct.shortName == "Player - Walking Netball") ? 1 : 0;
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
       if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){

@@ -56,7 +56,7 @@ class RegistrationProducts extends Component {
            id: null,
            agreeTerm: false,
            loading: false,
-           newYourDetails: false,
+        //    newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
            onLoading: false,
@@ -311,7 +311,7 @@ class RegistrationProducts extends Component {
             const { registrationReviewList } = this.props.registrationProductState;
             let yourInfo = registrationReviewList.yourInfo;
             if(yourInfo.email != null){
-                this.setState({newYourDetails: true});
+                // this.setState({newYourDetails: true});
                 setTimeout(() => {
                     this.props.form.setFieldsValue({
                         [`yourDetailsFirstName`]: yourInfo.firstName,
@@ -845,7 +845,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div className="headline-text-common">{AppConstants.yourDetails}</div>
-                {!this.state.newYourDetails ? 
+                {/* {!this.state.newYourDetails ? 
                     <div>
                         <InputWithHead heading={AppConstants.selectFromParticipantAndParentDetails} 
                         required={"required-field"}/>
@@ -881,7 +881,7 @@ class RegistrationProducts extends Component {
                             });
                         }}>
                             {AppConstants.selectFromParticipantAndParentDetails}
-                        </div>
+                        </div> */}
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.firstName} required={"required-field"}/>
@@ -1118,8 +1118,8 @@ class RegistrationProducts extends Component {
                                 </div>
                             )} 
                         </div>
-                    </div>  
-                }
+                    {/* </div>  
+                } */}
             </div>
         )
     }
