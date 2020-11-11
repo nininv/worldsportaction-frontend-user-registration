@@ -1775,7 +1775,7 @@ class AppTeamRegistrationForm extends Component{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             return(
                 <div>
-                    <InputWithHead required={"pt-0"} heading={AppConstants.haveHeartTrouble}/>
+                    <InputWithHead required={"pt-0 required-field"} heading={AppConstants.haveHeartTrouble}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoHeartTrouble`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1790,7 +1790,7 @@ class AppTeamRegistrationForm extends Component{
                             </Radio.Group>
                          )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.havePainInHeartOrChest}/>
+                    <InputWithHead heading={AppConstants.havePainInHeartOrChest} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoChestPain`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1805,7 +1805,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.haveSpellsOfServerDizziness}/>
+                    <InputWithHead heading={AppConstants.haveSpellsOfServerDizziness} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoFaintOrSpells`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1820,7 +1820,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.hasBloodPressureHigh}/>
+                    <InputWithHead heading={AppConstants.hasBloodPressureHigh} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoBloodPressure`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1835,7 +1835,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.hasBoneProblems}/>
+                    <InputWithHead heading={AppConstants.hasBoneProblems} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoJointOrBoneProblem`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1850,7 +1850,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.whyShouldNotTakePhysicalActivity}/>
+                    <InputWithHead heading={AppConstants.whyShouldNotTakePhysicalActivity} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoPhysicalActivity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1865,7 +1865,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.pregnentInLastSixMonths}/>
+                    <InputWithHead heading={AppConstants.pregnentInLastSixMonths} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoPregnant`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -1880,7 +1880,7 @@ class AppTeamRegistrationForm extends Component{
                         </Radio.Group>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.sufferAnyProblems}/>
+                    <InputWithHead heading={AppConstants.sufferAnyProblems} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoLowerBackProblem`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
@@ -2291,7 +2291,7 @@ class AppTeamRegistrationForm extends Component{
                             {this.walkingNetballQuestions(getFieldDecorator)}
                             {hasAnyOneYes && (
                                 <div>
-                                    <InputWithHead heading={AppConstants.provideFurtherDetails}/>
+                                    <InputWithHead heading={AppConstants.provideFurtherDetails} required={"required-field"}/>
                                     <Form.Item>
                                         {getFieldDecorator(`additionalInfoProvideFurtherDetails`, {
                                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
