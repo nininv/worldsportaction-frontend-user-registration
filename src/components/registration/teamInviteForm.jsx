@@ -806,8 +806,8 @@ class TeamInivteForm extends Component{
                     <div 
                     className="inter-medium-font" 
                     style={{fontSize: "13px"}}>
-                        {resgistererDetails.personRole ? 
-                        resgistererDetails.personRole : 
+                        {userRegDetails.role ? 
+                        userRegDetails.role : 
                         AppConstants.noInformationProvided}
                     </div>
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
