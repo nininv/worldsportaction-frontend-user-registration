@@ -1139,7 +1139,8 @@ const AppConstants = {
  payCompetitionFeesForAll: "Pay Competition Fees for All",
  payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
- pleaseSelect: "Please Select"
+ pleaseSelect: "Please Select",
+ noOfMatches: "No of Matches"
 
 };
 

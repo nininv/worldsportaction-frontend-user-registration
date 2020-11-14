@@ -104,6 +104,28 @@ function getRegistrationShopPickupAddressAction(payload){
     return action;
 }
 
+function getSingleGameDataAction(payload){
+    const action = {
+        type: ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_LOAD,
+        payload: payload
+    }
+
+    return action;
+}
+
+function updateSingleFeeAction(value, key, index, subkey, subIndex){
+    const action = {
+        type: ApiConstants.UPDATE_SINGLE_FEE,
+        value: value,
+        key: key,
+        index: index,
+        subKey: subkey,
+        subIndex: subIndex
+    }
+    return action;
+}
+
+
 
 
 export{
@@ -117,5 +139,7 @@ export{
     getRegistrationShopProductAction,
     getRegParticipantUsersAction,
     getRegParticipantAddressAction,
-    getRegistrationShopPickupAddressAction
+    getRegistrationShopPickupAddressAction,
+    getSingleGameDataAction,
+    updateSingleFeeAction
 }

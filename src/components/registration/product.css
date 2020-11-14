@@ -1079,3 +1079,30 @@ input:focus, .StripeElement--focus {
   border-bottom: 1px solid var(--app-d9d9d9);
   padding-bottom: 16px;
 }
+
+.counter{
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: 0;
+  margin-left: 4px;
+}
+.counter .plus {
+  margin-bottom: 3px;
+}
+
+.counter span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: #f60;
+  color: #fff;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+}

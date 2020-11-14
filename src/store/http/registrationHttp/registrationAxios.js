@@ -241,6 +241,11 @@ let AxiosApi = {
     getSeasonalCasualFees(payload){
         var url = `api/registration/productfees`;
         return Method.dataPost(url,token,payload)
+    },
+
+    getSingleGameData(payload){
+        var url = `api/registration/singlegame`;
+        return Method.dataPost(url,token,payload)
     }
 };
 
