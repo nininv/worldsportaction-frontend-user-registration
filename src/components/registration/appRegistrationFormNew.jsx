@@ -324,7 +324,16 @@ class AppRegistrationFormNew extends Component{
                     [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo ? additionalInfo.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
-                    [`additionalInfoDisablityCareNumber`]:additionalInfo.disabilityCareNumber
+                    [`additionalInfoDisablityCareNumber`]:additionalInfo.disabilityCareNumber,
+                    [`additionalInfoHeartTrouble`]:additionalInfo.walkingNetball.heartTrouble,
+                    [`additionalInfoChestPain`]:additionalInfo.walkingNetball.heartTrouble,
+                    [`additionalInfoFaintOrSpells`]:additionalInfo.walkingNetball.faintOrSpells,
+                    [`additionalInfoBloodPressure`]:additionalInfo.walkingNetball.bloodPressure,
+                    [`additionalInfoJointOrBoneProblem`]:additionalInfo.walkingNetball.jointOrBoneProblem,
+                    [`additionalInfoPhysicalActivity`]:additionalInfo.walkingNetball.physicalActivity,
+                    [`additionalInfoPregnant`]:additionalInfo.walkingNetball.pregnant,
+                    [`additionalInfoLowerBackProblem`]:additionalInfo.walkingNetball.lowerBackProblem,
+                    [`additionalInfoProvideFurtherDetails`]:additionalInfo.walkingNetballInfo
                 });
             }
         }catch(ex){
@@ -2555,85 +2564,123 @@ class AppRegistrationFormNew extends Component{
         )
     }
 
-    walkingNetballQuestions = () => {
+    walkingNetballQuestions = (getFieldDecorator) => {
         try {
             const { registrationObj } = this.props.userRegistrationState;
             return (
                 <div>
-                    <InputWithHead
-                        required={"pt-0"}
-                        heading={AppConstants.haveHeartTrouble} />
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveHeartTrouble", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.haveHeartTrouble}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.havePainInHeartOrChest}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "havePainInHeartOrChest", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.havePainInHeartOrChest}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.haveSpellsOfServerDizziness}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "haveSpellsOfServerDizziness", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.haveSpellsOfServerDizziness}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.hasBloodPressureHigh}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBloodPressureHigh", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.hasBloodPressureHigh}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.hasBoneProblems}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "hasBoneProblems", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.hasBoneProblems}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.whyShouldNotTakePhysicalActivity}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "whyShouldNotTakePhysicalActivity", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.whyShouldNotTakePhysicalActivity}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.pregnentInLastSixMonths}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnentInLastSixMonths", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.pregnentInLastSixMonths}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
-                    <InputWithHead heading={AppConstants.sufferAnyProblems}/>
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "sufferAnyProblems", "walkingNetball")}
-                        value={registrationObj.additionalInfo.walkingNetball.sufferAnyProblems}
-                    >
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
+                    <InputWithHead required={"pt-0 required-field"} heading={AppConstants.haveHeartTrouble}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoHeartTrouble`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heartTrouble", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.heartTrouble}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.havePainInHeartOrChest} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoChestPain`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "chestPain", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.chestPain}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.haveSpellsOfServerDizziness} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoFaintOrSpells`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "faintOrSpells", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.faintOrSpells}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.hasBloodPressureHigh} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoBloodPressure`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "bloodPressure", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.bloodPressure}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.hasBoneProblems} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoJointOrBoneProblem`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "jointOrBoneProblem", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.jointOrBoneProblem}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.whyShouldNotTakePhysicalActivity} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoPhysicalActivity`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "physicalActivity", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.physicalActivity}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.pregnentInLastSixMonths} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoPregnant`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "pregnant", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.pregnant}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
+                    <InputWithHead heading={AppConstants.sufferAnyProblems} required={"required-field"}/>
+                    <Form.Item>
+                        {getFieldDecorator(`additionalInfoLowerBackProblem`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                        })(  
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "lowerBackProblem", "walkingNetball")}
+                                setFieldsValue={registrationObj.additionalInfo.walkingNetball.lowerBackProblem}>
+                                <Radio value={1}>{AppConstants.yes}</Radio>
+                                <Radio value={0}>{AppConstants.no}</Radio>
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
                 </div>
             )
         } catch (ex) {
@@ -3104,17 +3151,21 @@ class AppRegistrationFormNew extends Component{
                                         <Radio key={ques.id} value={ques.id}>{ques.description}</Radio>
                                     ))}
                                 </Radio.Group> */}
-                                {this.walkingNetballQuestions()}
-                                
-
+                                {this.walkingNetballQuestions(getFieldDecorator)}
                                 {hasAnyOneYes && (
                                     <div>
-                                        <InputWithHead heading={AppConstants.provideFurtherDetails}/>
-                                        <InputWithHead 
-                                            placeholder={AppConstants.walkingNetball2} 
-                                            onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
-                                            value={registrationObj.additionalInfo.walkingNetballInfo}
-                                        />
+                                        <InputWithHead heading={AppConstants.provideFurtherDetails} required={"required-field"}/>
+                                        <Form.Item>
+                                            {getFieldDecorator(`additionalInfoProvideFurtherDetails`, {
+                                                rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                            })(  
+                                                <InputWithHead 
+                                                    placeholder={AppConstants.walkingNetball2} 
+                                                    onChange={(e) => this.onChangeSetAdditionalInfo( e.target.value,"walkingNetballInfo")} 
+                                                    setFieldsValue={registrationObj.additionalInfo.walkingNetballInfo}
+                                                />
+                                            )}
+                                        </Form.Item>
                                     </div>
                                 )}
                             </div>

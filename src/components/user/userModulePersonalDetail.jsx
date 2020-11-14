@@ -168,6 +168,11 @@ const columns = [
                     <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
                         <span>View</span>
                     </Menu.Item>
+                    {e.expiryDate == "Single Use" &&
+                    <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
+                        <span>Purchase Single Game(s)</span>
+                    </Menu.Item> }
+                    
                 </SubMenu>
             </Menu>
         )
@@ -922,6 +927,21 @@ class UserModulePersonalDetail extends Component {
         this.props.getUserModulePersonalByCompetitionAction(payload)
         this.props.getUserRole(userId)
     };
+
+    goToSigleGamePayment = (record) =>{
+        const {personalData} = this.props.userState;
+       
+        let data = {
+            "competitionMembershipProductTypeId": record.competitionMembershipProductTypeId,
+            "membershipMappingId": record.membershipMappingId,
+            "competitionMembershipProductDivisionId": record.competitionMembershipProductDivisionId,
+            "email": personalData.email,
+            "organisationId": record.organisationId,
+            "competitionId": record.competitionId,
+            "registrationId": record.registrationId
+        }
+        history.push({pathname:'/singleGamePayment', state: {data: data}});
+    }
 
     getOrganisationArray(data, roleId) {
         let orgArray = []

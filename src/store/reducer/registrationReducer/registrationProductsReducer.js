@@ -16,7 +16,8 @@ const initialState = {
     shopPickupAddresses: [],
     pickupAddressLoad: false,
     deliveryOrBillingAddressSelected: false,
-    deleteOnLoad: false
+    deleteOnLoad: false,
+    singlePaymentData: null
 }
 
 function setYourInfo(action,state){
@@ -322,6 +323,92 @@ function registrationProductsReducer(state = initialState, action){
                     status: action.status,
                     shopPickupAddresses: shopPickupAddresses
                 };
+
+            case ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_LOAD:
+                return { ...state, onLoad: true };
+        
+            case ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_SUCCESS:
+                let singlePaymentData = action.result;
+                return {
+                    ...state,
+                    onLoad: false,
+                    status: action.status,
+                    singlePaymentData: singlePaymentData
+                };
+
+            case ApiConstants.UPDATE_SINGLE_FEE:
+                let singleGameData = state.singlePaymentData;
+                
+                if(action.subKey == "total"){
+                    let type = action.key;
+                    if(type == "noOfMatch"){
+                        let existingVal = singleGameData[action.subKey][type];
+                        let gst =  feeIsNull(singleGameData[action.subKey]["gst"]) / existingVal;
+                        let total = feeIsNull(singleGameData[action.subKey]["total"]) / existingVal;
+                        let subTotal = feeIsNull(singleGameData[action.subKey]["subTotal"]) / existingVal;
+                        let targetValue = feeIsNull(singleGameData[action.subKey]["targetValue"]) / existingVal;
+                        let charityValue = feeIsNull(singleGameData[action.subKey]["charityValue"]) / existingVal;
+                        let transactionFee = feeIsNull(singleGameData[action.subKey]["transactionFee"]) / existingVal;
+
+                        if(action.subIndex == "increment"){
+                            singleGameData[action.subKey][type] = Number(action.value) + 1;
+                        }
+                        else if(action.subIndex == "decrement"){
+                            if(action.value == 1){
+                                singleGameData[action.subKey][type] = action.value;
+                            }
+                            else{
+                                singleGameData[action.subKey][type] = Number(action.value) - 1; 
+                            }
+                        }
+                        else{
+                            singleGameData[action.subKey][type] = action.value;
+                        }
+                        let newVal = singleGameData[action.subKey][type];
+                        singleGameData[action.subKey]["gst"] = formatValue(gst * newVal);
+                        singleGameData[action.subKey]["total"] = formatValue(total * newVal);
+                        singleGameData[action.subKey]["subTotal"] = formatValue(subTotal * newVal);
+                        singleGameData[action.subKey]["targetValue"] = formatValue(targetValue * newVal);
+                        singleGameData[action.subKey]["charityValue"] = formatValue(charityValue * newVal);
+                        singleGameData[action.subKey]["transactionFee"] = formatValue(transactionFee * newVal);
+
+                        (singleGameData.compParticipants).map((item) =>{
+                            (item.membershipProducts).map((mem) =>{
+                                let oldVal = feeIsNull(mem.feesToPay) / existingVal;
+                                mem["feesToPay"] = formatValue(feeIsNull(oldVal) * newVal);
+                            })
+                        });
+                    }
+                    else{
+                        let totalVal = singleGameData.total.total; 
+                        console.log("totalVal" + totalVal);
+                        let transactionVal = 0;
+                        let targetVal = 0;
+                        if(action.value == 1){
+                            if(type == "International_CC"){
+                                transactionVal = (totalVal * 3.0/100) + 0.30;
+                            }
+                            if(type == "International_AE"){
+                                transactionVal = (totalVal * 2.7/100) + 0.30;
+                            }
+                            else if(type == "DOMESTIC_CC"){
+                                transactionVal = (totalVal * 2.25/100)  + 0.30;
+                            }
+                            
+                            targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
+                            singleGameData["total"]["targetValue"] = formatValue(targetVal);
+                            singleGameData["total"]["transactionFee"] = formatValue(transactionVal);
+                        }
+                        else{
+                            singleGameData["total"]["targetValue"] = "0.00";
+                            singleGameData["total"]["transactionFee"] = "0.00";
+                        }
+                    }
+                }
+                return {
+                    ...state,
+                    error: null
+                }
     
         default:
             return state;
