@@ -36,6 +36,7 @@ import TeamInviteProducts from "../components/registration/teamInviteProducts";
 import TeamInviteShop from "../components/registration/teamInviteShop";
 import TeamInvitePayment from "../components/registration/teamInvitePayment";
 import TeamInviteShipping from "../components/registration/teamInviteShipping";
+import SingleGamePayment from "../components/registration/singleGamePayment";
 
 
 const lazyLoad = Component => {
@@ -180,6 +181,11 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/registrationShipping"
           component={lazyLoad(RegistrationShipping)}
+        />
+
+        <PrivateRoute
+          path="/singleGamePayment"
+          component={lazyLoad(SingleGamePayment)}
         />
 
         <Route path="/" component={lazyLoad(NotFound)} />

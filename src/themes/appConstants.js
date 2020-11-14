@@ -1115,7 +1115,7 @@ const AppConstants = {
  //Netball questions,
  haveHeartTrouble: "Has your doctor ever said you have heart trouble?",
  havePainInHeartOrChest: "Do you frequently have pains in your heart or chest?",
- haveSpellsOfServerDizziness: "Do you often feel faint or have spells of server dizziness?",
+ haveSpellsOfServerDizziness: "Do you often feel faint or have spells of severe dizziness?",
  hasBloodPressureHigh: "Has your doctor ever said your blood pressure is too high?",
  hasBoneProblems: "Do you have any joint or bone problem(s) that may be worsened with exercise?",
  whyShouldNotTakePhysicalActivity: "Do you know of any reason why you should not take part in physical activity?",
@@ -1140,7 +1140,8 @@ const AppConstants = {
  payCompetitionFeesForAll: "Pay Competition Fees for All",
  payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
- pleaseSelect: "Please Select"
+ pleaseSelect: "Please Select",
+ noOfMatches: "No of Matches"
 
 };
 

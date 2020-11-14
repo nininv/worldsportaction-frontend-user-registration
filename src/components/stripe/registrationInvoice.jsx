@@ -51,9 +51,11 @@ class RegistrationInvoice extends Component {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
+       let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+    //    let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
     //    let userRegId = null;
-       this.props.getInvoiceStatusAction(registrationId, userRegId);
+    //    let invoiceId = 8352;
+       this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
     }
@@ -72,12 +74,13 @@ class RegistrationInvoice extends Component {
         if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
-            let invoiceId = 0
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //  let registrationId = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
+            let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+            //  let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
             //  let userRegId = null;
-            this.props.getInvoice(registrationId, userRegId)
+            //  let invoiceId = 8352;
+            this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
     }
@@ -748,7 +751,7 @@ class RegistrationInvoice extends Component {
         let {invoiceData} = this.props.stripeState;
         let shopProducts = invoiceData!= null ? invoiceData.shopProducts : []
         let totalAmount = 0;
-        shopProducts.map((x) =>{
+        (shopProducts || []).map((x) =>{
             totalAmount += x.totalAmt;
         })
         return(

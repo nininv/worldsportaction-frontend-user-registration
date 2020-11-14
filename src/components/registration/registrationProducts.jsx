@@ -56,7 +56,7 @@ class RegistrationProducts extends Component {
            id: null,
            agreeTerm: false,
            loading: false,
-           newYourDetails: false,
+        //    newYourDetails: false,
            searchAddressFlag: true,
            manualEnterAddressFlag: false,
            onLoading: false,
@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "f92ce12c-d01a-434c-8277-cf2c4f1efae2";
+        //let registrationUniqueKey = "061038ce-6381-4f06-8efc-fe3a3c6389c1";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -311,7 +311,7 @@ class RegistrationProducts extends Component {
             const { registrationReviewList } = this.props.registrationProductState;
             let yourInfo = registrationReviewList.yourInfo;
             if(yourInfo.email != null){
-                this.setState({newYourDetails: true});
+                // this.setState({newYourDetails: true});
                 setTimeout(() => {
                     this.props.form.setFieldsValue({
                         [`yourDetailsFirstName`]: yourInfo.firstName,
@@ -845,7 +845,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div className="headline-text-common">{AppConstants.yourDetails}</div>
-                {!this.state.newYourDetails ? 
+                {/* {!this.state.newYourDetails ? 
                     <div>
                         <InputWithHead heading={AppConstants.selectFromParticipantAndParentDetails} 
                         required={"required-field"}/>
@@ -881,7 +881,7 @@ class RegistrationProducts extends Component {
                             });
                         }}>
                             {AppConstants.selectFromParticipantAndParentDetails}
-                        </div>
+                        </div> */}
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.firstName} required={"required-field"}/>
@@ -1118,8 +1118,8 @@ class RegistrationProducts extends Component {
                                 </div>
                             )} 
                         </div>
-                    </div>  
-                }
+                    {/* </div>  
+                } */}
             </div>
         )
     }
@@ -1137,6 +1137,8 @@ class RegistrationProducts extends Component {
         const {registrationReviewList, participantUsers} = this.props.registrationProductState;
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let hasClubVolunteer = registrationReviewList!= null ? registrationReviewList.hasClubVolunteer : 0;
+        let compParticipants = registrationReviewList!= null ? registrationReviewList.compParticipants : [];
+        let hasTeamRegistration = compParticipants.find(x=>x.isTeamRegistration == 1);
         return(
             <div className="col-sm-12 col-md-8 col-lg-8 ">
                 <div className="product-left-view outline-style">
@@ -1144,7 +1146,7 @@ class RegistrationProducts extends Component {
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
-                {participantUsers && participantUsers.length > 0 ? 
+                {!hasTeamRegistration ? 
                 <div className="product-left-view outline-style">
                     {this.yourDetailsView(getFieldDecorator)}
                 </div>

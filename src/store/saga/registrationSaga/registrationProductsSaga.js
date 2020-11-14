@@ -214,3 +214,22 @@ export function* getRegistrationShopPickupAddressSaga(action) {
     yield call(errorSaga, error)
   }
 }
+
+
+////// GetRegistrationSingleGameSaga
+export function* getRegistrationSingleGameSaga(action) {
+  try {
+    const result = yield call(AxiosApi.getSingleGameData, action.payload);
+    if (result.status === 1) {
+      yield put({
+        type: ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_SUCCESS,
+        result: result.result.data,
+        status: result.status
+      });
+    } else {
+      yield call(failSaga, result)
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}

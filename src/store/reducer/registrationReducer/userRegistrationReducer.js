@@ -5,14 +5,22 @@ import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/help
 import moment from 'moment';
 
 let walkingNetballObj = {
-	"haveHeartTrouble" : null,
-	"havePainInHeartOrChest" : null,
-	"haveSpellsOfServerDizziness" : null,
-	"hasBloodPressureHigh" : null,
-	"hasBoneProblems" : null,
-	"whyShouldNotTakePhysicalActivity" : null,
-	"pregnentInLastSixMonths" : null,
-	"sufferAnyProblems" : null
+	// "haveHeartTrouble" : null,
+	// "havePainInHeartOrChest" : null,
+	// "haveSpellsOfServerDizziness" : null,
+	// "hasBloodPressureHigh" : null,
+	// "hasBoneProblems" : null,
+	// "whyShouldNotTakePhysicalActivity" : null,
+	// "pregnentInLastSixMonths" : null,
+	// "sufferAnyProblems" : null,
+	"heartTrouble": null,
+    "chestPain": null,
+    "faintOrSpells": null,
+    "bloodPressure": null,
+    "jointOrBoneProblem": null,
+    "physicalActivity": null,
+    "pregnant": null,
+    "lowerBackProblem": null
 }
 
 let seasionalAndCasualFeesInputObj = {
@@ -544,7 +552,7 @@ function updateUmpireCoachWalkingNetball(state){
 		state.registrationObj.coachFlag = state.registrationObj.competitions.find(x => 
 			x.products.find(y => y.membershipTypeName == "Coach")) ? 1 : 0;
 		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
-			x.products.find(y => y.membershipTypeName == "Walking Netball")) ? 1 : 0;
+			x.products.find(y => y.membershipTypeName == "Walking Netball" || y.membershipTypeName == "Player - Walking Netball")) ? 1 : 0;
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
 	}
