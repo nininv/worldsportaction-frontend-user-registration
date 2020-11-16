@@ -166,7 +166,7 @@ class TeamInivteForm extends Component{
                 [`yourDetailsEmail`]: userRegDetails.email,
                 [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
-                [`emergencyMobileNumber`]: userRegDetails.emergencyMobileNumber,
+                [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
             });
             if(getAge(userRegDetails.dateOfBirth)){
                 this.addParent("add");
@@ -1259,17 +1259,17 @@ class TeamInivteForm extends Component{
                         </div>
                         <div className="col-sm-12 col-md-12">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactMobileNumber`, {
+                                {getFieldDecorator(`emergencyContactNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
                                 })(
                                     <InputWithHead
                                         required={"required-field"}
                                         heading={AppConstants.mobileNumber}
                                         placeholder={AppConstants.mobileNumber}
-                                        onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyMobileNumber","userRegDetails")}
-                                        setFieldsValue={userRegDetails?.emergencyMobileNumber}
+                                        onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyContactNumber","userRegDetails")}
+                                        setFieldsValue={userRegDetails?.emergencyContactNumber}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactMobileNumber`]: captializedString(i.target.value)
+                                            [`emergencyContactNumber`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}

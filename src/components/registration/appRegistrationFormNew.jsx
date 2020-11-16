@@ -287,7 +287,7 @@ class AppRegistrationFormNew extends Component{
                     [`participantEmail`]: registrationObj.email,
                     [`emergencyFirstName`]: registrationObj.emergencyFirstName,
                     [`emergencyLastName`]: registrationObj.emergencyLastName,
-                    [`emergencyMobileNumber`]: registrationObj.emergencyMobileNumber,
+                    [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
                 });
                 if(registrationObj.selectAddressFlag){
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
@@ -2020,17 +2020,17 @@ class AppRegistrationFormNew extends Component{
                         </div>
                         <div className="col-sm-12 col-md-12">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactMobileNumber`, {
+                                {getFieldDecorator(`emergencyContactNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
                                 })(
                                     <InputWithHead
                                         required={"required-field"}
                                         heading={AppConstants.mobileNumber}
                                         placeholder={AppConstants.mobileNumber}
-                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyMobileNumber")}
-                                        setFieldsValue={registrationObj.emergencyMobileNumber}
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyContactNumber")}
+                                        setFieldsValue={registrationObj.emergencyContactNumber}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactMobileNumber`]: captializedString(i.target.value)
+                                            [`emergencyContactNumber`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
