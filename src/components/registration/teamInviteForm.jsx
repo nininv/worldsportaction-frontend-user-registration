@@ -1257,7 +1257,7 @@ class TeamInivteForm extends Component{
                                 )}
                             </Form.Item>
                         </div>
-                        <div className="col-sm-12 col-md-12">
+                        <div className="col-sm-12 col-md-6">
                             <Form.Item>
                                 {getFieldDecorator(`emergencyContactNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
