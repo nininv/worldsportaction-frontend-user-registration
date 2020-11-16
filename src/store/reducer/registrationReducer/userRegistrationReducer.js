@@ -61,6 +61,9 @@ let registrationObjTemp = {
 	"parentOrGuardian": [],
 	"tempParents": [],
 	"competitions": [],
+	"emergencyFirstName": null,
+	"emergencyLastName": null,
+	"emergencyMobileNumber": null,
 	"regSetting":{
 		"netball_experience": 0,
 		"school_grade": 0,

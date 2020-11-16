@@ -284,7 +284,10 @@ class AppRegistrationFormNew extends Component{
                     [`participantMiddleName`]: registrationObj.middleName,
                     [`participantLastName`]: registrationObj.lastName,
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
-                    [`participantEmail`]: registrationObj.email
+                    [`participantEmail`]: registrationObj.email,
+                    [`emergencyFirstName`]: registrationObj.emergencyFirstName,
+                    [`emergencyLastName`]: registrationObj.emergencyLastName,
+                    [`emergencyMobileNumber`]: registrationObj.emergencyMobileNumber,
                 });
                 if(registrationObj.selectAddressFlag){
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
@@ -1173,8 +1176,14 @@ class AppRegistrationFormNew extends Component{
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 && (
+                {getAge(registrationObj.dateOfBirth) < 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
+                ) : (
+                    <div>
+                        {registrationObj.dateOfBirth && (
+                            <div>{this.emergencyContactView(getFieldDecorator)}</div>
+                        )}
+                    </div>
                 )}
             </div>
         )
@@ -1964,6 +1973,75 @@ class AppRegistrationFormNew extends Component{
                 >+ {AppConstants.addNewParentGaurdian}</div>
             </div>
         )
+    }
+
+    emergencyContactView = (getFieldDecorator) => {
+        try{
+            let { registrationObj } = this.props.userRegistrationState;
+            return(
+                <div className="registration-form-view">
+                    <div className="form-heading">{AppConstants.emergencyContact}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.firstName}
+                                        placeholder={AppConstants.firstName}
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyFirstName")}
+                                        setFieldsValue={registrationObj.emergencyFirstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactLastName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.lastName}
+                                        placeholder={AppConstants.lastName}
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyLastName")}
+                                        setFieldsValue={registrationObj.emergencyLastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-12">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactMobileNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.mobileNumber}
+                                        placeholder={AppConstants.mobileNumber}
+                                        onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyMobileNumber")}
+                                        setFieldsValue={registrationObj.emergencyMobileNumber}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactMobileNumber`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in emergencyContactView::"+ex)
+        }
     }
 
     selectCompetitionStepView = (getFieldDecorator) => {
