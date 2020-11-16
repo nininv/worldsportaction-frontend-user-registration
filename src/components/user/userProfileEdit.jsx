@@ -183,6 +183,7 @@ class UserProfileEdit extends Component {
 
     setEmergencyFormField = () => {
         let userData  = this.state.userData;
+        console.log("user data",userData)
         this.props.form.setFieldsValue({
             emergencyFirstName: userData.emergencyFirstName,
             emergencyLastName: userData.emergencyLastName,
