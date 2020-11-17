@@ -1018,13 +1018,13 @@ class AppTeamRegistrationForm extends Component{
                                 </div>
                                 <div className="col-sm-12 col-md-4">
                                     <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
                                 <div className="col-sm-12 col-md-4">
                                     <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
