@@ -1141,7 +1141,8 @@ const AppConstants = {
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
  pleaseSelect: "Please Select",
  noOfMatches: "No of Matches",
- emergencyContact: "Emergency Contact"
+ emergencyContact: "Emergency Contact",
+ competitionVenue:"Competition Venue"
 
 };
 

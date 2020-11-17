@@ -18,7 +18,7 @@ import {
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId } from "../../util/sessionStorage";
+import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId, setOrganistaionId, setCompetitionID, setSourceSystemFlag, setAuthToken, getAuthToken, setIsUserRegistration } from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate, getTime } from '../../themes/dateformate';
@@ -169,10 +169,10 @@ const columns = [
                         <span>View</span>
                     </Menu.Item>
                     {e.expiryDate == "Single Use" &&
-                    <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
-                        <span>Purchase Single Game(s)</span>
-                    </Menu.Item> }
-                    
+                        <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
+                            <span>Purchase Single Game(s)</span>
+                        </Menu.Item>}
+
                 </SubMenu>
             </Menu>
         )
@@ -847,14 +847,14 @@ class UserModulePersonalDetail extends Component {
         //console.log("componentWillMount")
         let competition = this.getEmptyCompObj();
         this.setState({ competition: competition });
-        this.props.getOnlyYearListAction();
+
     }
 
     async componentDidMount() {
-        let userId = this.state.userId;
+        let user_Id = this.state.userId;
         if (this.state.tempUserId != undefined && this.state.tempUserId != null) {
-            userId = this.state.tempUserId;
-            await this.setState({ userId: userId });
+            user_Id = this.state.tempUserId;
+            await this.setState({ userId: user_Id });
             localStorage.removeItem("tempUserId");
         }
 
@@ -872,9 +872,65 @@ class UserModulePersonalDetail extends Component {
             let codeSplit = urlSplit[1].split("&state=")
             let code = codeSplit[0]
 
-            this.props.saveStripeAccountAction(code, Number(userId))
+            this.props.saveStripeAccountAction(code, Number(user_Id))
         }
-        this.apiCalls(userId);
+
+        // alert("componentDidMount");
+        if (this.props.location && this.props.location.search) {
+            const query = this.queryfie(this.props.location.search);
+            let token = query.token;
+            let userId = query.userId;
+            let selectedTab = query.tab
+            console.log(query, "*******", selectedTab)
+            if (userId != undefined && token != undefined) {
+                await setUserId(userId);
+                await setAuthToken(token);
+            }
+            else {
+                let authToken = await getAuthToken();
+                let userIdFromStorage = await getUserId();
+                if (userIdFromStorage != undefined && authToken != undefined &&
+                    userIdFromStorage != null && authToken != null &&
+                    userIdFromStorage != "" && authToken != "" &&
+                    userIdFromStorage != 0) {
+                    userId = userIdFromStorage;
+                    token = authToken;
+                }
+            }
+
+            if (userId != undefined && token != undefined &&
+                userId != null && token != null &&
+                userId != "" && token != "" &&
+                userId != 0) {
+                if (selectedTab) {
+                    await setIsUserRegistration(1);
+                    history.push({ pathname: "/userpersonal", state: { tabKey: "5" } })
+                    this.apiCalls(userId);
+                } else {
+                    await setIsUserRegistration(1);
+                    history.push("/userpersonal")
+                    this.apiCalls(userId);
+                }
+            }
+            else {
+                await setIsUserRegistration(1);
+                history.push({ pathname: "/login", state: { isUserRegistration: 1 } });
+            }
+        }
+        else {
+            this.props.getOnlyYearListAction();
+            this.apiCalls(user_Id);
+        }
+    }
+
+
+
+    queryfie(string) {
+        return string
+            .slice(1)
+            .split('&')
+            .map(q => q.split('='))
+            .reduce((a, c) => { a[c[0]] = c[1]; return a; }, {});
     }
 
     componentDidUpdate(nextProps) {
@@ -932,9 +988,9 @@ class UserModulePersonalDetail extends Component {
         this.props.getUserRole(userId)
     };
 
-    goToSigleGamePayment = (record) =>{
-        const {personalData} = this.props.userState;
-       
+    goToSigleGamePayment = (record) => {
+        const { personalData } = this.props.userState;
+
         let data = {
             "competitionMembershipProductTypeId": record.competitionMembershipProductTypeId,
             "membershipMappingId": record.membershipMappingId,
@@ -944,7 +1000,7 @@ class UserModulePersonalDetail extends Component {
             "competitionId": record.competitionId,
             "registrationId": record.registrationId
         }
-        history.push({pathname:'/singleGamePayment', state: {data: data}});
+        history.push({ pathname: '/singleGamePayment', state: { data: data } });
     }
 
     getOrganisationArray(data, roleId) {
@@ -1920,7 +1976,7 @@ class UserModulePersonalDetail extends Component {
         if (personalDetails != null && personalDetails.length > 0) {
             userRegistrationId = personalByCompData[0].userRegistrationId
         }
-
+        console.log(this.state.tabKey)
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
