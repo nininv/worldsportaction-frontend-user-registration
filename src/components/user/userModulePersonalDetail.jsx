@@ -113,23 +113,26 @@ const columns = [
     },
     {
         title: "Paid By",
-        dataIndex: "paidBy",
-        key: "paidBy",
+        dataIndex: "paidByUsers",
+        key: "paidByUsers",
         render: (paidBy, record, index) => {
             return (
                 <div>
-                    {this_Obj.state.userId == record.paidByUserId ? 'Self' :
+                   { (record.paidByUsers || []).map((item, index) => (
+                        this_Obj.state.userId == item.paidByUserId ? 'Self' :
                         <NavLink
-                            to={{
-                                pathname: `/userPersonal`,
-                                state: {
-                                    userId: record.paidByUserId,
-                                    tabKey: "registration"
-                                },
-                            }}
+                        to={{
+                            pathname: `/userPersonal`,
+                            state: {
+                            userId: item.paidByUserId,
+                            tabKey: "registration"
+                            },
+                        }}
                         >
-                            <span className="input-heading-add-another pt-0">{paidBy}</span>
-                        </NavLink>}
+                        <span className="input-heading-add-another pt-0">{item.paidBy}</span>
+                        </NavLink>
+                    ))
+                    }
                 </div>
             )
         },
