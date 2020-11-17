@@ -204,7 +204,8 @@ const initialState = {
     getSeasonalCasualFeesOnLoad: false,
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
-    teamNameValidationResultCode: null
+    teamNameValidationResultCode: null,
+    feesInfo: null
 }
 
 function setTeamRegistrationObj(state){
@@ -595,6 +596,7 @@ function teamRegistrationReducer(state = initialState, action){
         state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
         return {
           ...state,
+          feesInfo: feesTemp,
           getSeasonalCasualFeesOnLoad: false
         }
 
