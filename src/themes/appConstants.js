@@ -1144,6 +1144,7 @@ const AppConstants = {
  pleaseSelect: "Please Select",
  noOfMatches: "No of Matches",
  emergencyContact: "Emergency Contact",
+ competitionVenue:"Competition Venue",
  dueAtRegistration: "*Yearly Membership Fees may also be due at Registration",
  registeringTeamTo: "Membership Product you are registering Team to :",
  registeringIndividualTo: "Membership Product you are registering Individual to :",
