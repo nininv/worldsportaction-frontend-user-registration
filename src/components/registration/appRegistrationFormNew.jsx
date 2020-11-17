@@ -2261,7 +2261,7 @@ class AppRegistrationFormNew extends Component{
                     </div>
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                        <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringAs}</div>
+                        <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
                         {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox"

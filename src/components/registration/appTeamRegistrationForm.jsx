@@ -180,6 +180,9 @@ class AppTeamRegistrationForm extends Component{
                 this.props.orgteamRegistrationRegSettingsAction(payload);
                 this.setState({showFindAnotherCompetitionview: false});
                 this.props.updateTeamRegistrationStateVarAction(false,"hasCompetitionSelected");
+                setTimeout(() => {
+                    this.setSelectCompetitionStepFormFields();
+                },300);
             }
 
             if(!teamRegistrationState.onTeamInfoByIdLoad && this.state.getTeamInfoByIdLoad){
@@ -965,7 +968,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="light-grey-border-box">
                             <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                            <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringAs}</div>
+                            <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringTeamTo}</div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductTypeId`, {
                                     rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired}],
@@ -1007,19 +1010,23 @@ class AppTeamRegistrationForm extends Component{
                             )}
     
                             <div className="row">
-                                <div className="col-sm-12 col-md-6">
+                                <div className="col-sm-12 col-md-4">
                                     <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-md-6">
-                                    <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
+                                <div className="col-sm-12 col-md-4">
+                                    <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalSeasonalFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
+                                <div className="col-sm-12 col-md-4">
+                                    <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
+                                </div>
                             </div>
+                            <div className="input-style-bold pt-1 pb-0">{AppConstants.dueAtRegistration}</div>
                         </div>
                         <div className="competition-specifics">{AppConstants.competitionSpecifics}</div>
                         <div className="row" style={{marginTop: "20px"}}>
