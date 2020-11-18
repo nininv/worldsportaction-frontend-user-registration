@@ -52,6 +52,7 @@ function ForgotPassword(props) {
               }}
               validationSchema={loginFormSchema}
               onSubmit={(values, { setSubmitting }) => {
+                console.log("hh");
                 if (loginState.onLoad === false) {
                   forgotPasswordAction(values.userName, resetType);
                 }
@@ -68,7 +69,7 @@ function ForgotPassword(props) {
                   setFieldValue
                 }) => (
                 <Form onSubmit={handleSubmit}>
-                  <div className="auth-form" style={{ zIndex: 15 }}>
+                  <div className="auth-form login-formView" style={{ zIndex: 15 }}>
                     <ContentView
                       values={values}
                       errors={errors}

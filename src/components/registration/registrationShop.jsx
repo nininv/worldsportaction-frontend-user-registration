@@ -275,6 +275,10 @@ class RegistrationShop extends Component {
 
     cardView = () =>{
         const {shopProductList} = this.props.registrationProductState;
+        (shopProductList || []).map((item, index) =>{
+            item["sIndex"] = index;
+        });
+        console.log("shopProductList", shopProductList);
         return(
             // <div style ={{ display: "flex" , flexWrap: "wrap"}}>
             //     {(shopProductList || []).map((item, index)=>{
@@ -291,18 +295,42 @@ class RegistrationShop extends Component {
             // </div>
             <div className="row">
                 {(shopProductList || []).map((item, index)=> (
-                    <div className="col-sm-12 col-md-4 ">
-                        <div className="shop-product-text card-header-text"
-                        style={{height: "240px"}}
-                        onClick={(e)=>this.enableExpandView("show", item)}>
-                            <div style={{display: "flex",justifyContent: "center"}}>
-                                <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                    <div className="col-md-4">
+                        <div>
+                            <div className="shop-product-text card-header-text"
+                            style={{height: "240px"}}
+                            onClick={(e) => this.enableExpandView("show", item)}>
+                                <div style={{display: "flex", justifyContent:"center"}}>
+                                    <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                </div>
+                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                             </div>
-                            <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                         </div>
+                        {this.s}
+                        {this.state.showCardView && index == this.state.expandObj.sIndex &&
+                            <div style={{width:"800px", marginLeft:"50%", transform: "translateX(-50%)"}}>
+                                {this.cardExpandView()}
+                            </div>                
+                        }
+                        
+
                     </div>
-                ))}
+
+                    // <div className="col-sm-12 col-md-4 " >
+                    //     <div className="shop-product-text card-header-text"
+                    //     style={{height: "240px"}}
+                    //     onClick={(e)=>this.enableExpandView("show", item)}>
+                    //         <div style={{display: "flex",justifyContent: "center"}}>
+                    //             <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                    //         </div>
+                    //         <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                    //         <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                    //     </div>
+                    // </div>  
+                ))
+                
+                }
             </div>
         )
     } 
@@ -396,11 +424,11 @@ class RegistrationShop extends Component {
             <div className="col-sm-12 col-md-12 col-lg-8 product-left-view outline-style" style={{cursor:"pointer" ,padding:"26px 47px"}}>
                 {this.headerView()}
                 {this.cardView()}
-                {this.state.showCardView &&
+                {/* {this.state.showCardView &&
                     <div>
                         {this.cardExpandView()}
                     </div>                
-                }
+                } */}
             </div>
         )
     }
