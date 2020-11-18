@@ -163,7 +163,10 @@ class TeamInivteForm extends Component{
                 [`yourDetailsLastName`]: userRegDetails.lastName,
                 [`yourDetailsdateOfBirth`]: userRegDetails.dateOfBirth && moment(userRegDetails.dateOfBirth, "YYYY-MM-DD"),
                 [`yourDetailsMobileNumber`]: userRegDetails.mobileNumber,
-                [`yourDetailsEmail`]: userRegDetails.email
+                [`yourDetailsEmail`]: userRegDetails.email,
+                [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
+                [`emergencyLastName`]: userRegDetails.emergencyLastName,
+                [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
             });
             if(getAge(userRegDetails.dateOfBirth)){
                 this.addParent("add");
@@ -1210,6 +1213,76 @@ class TeamInivteForm extends Component{
         )
     }
 
+    emergencyContactView = (getFieldDecorator) => {
+        try{
+            const { iniviteMemberInfo } = this.props.teamInviteState;
+            let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            return(
+                <div className="registration-form-view">
+                    <div className="form-heading">{AppConstants.emergencyContact}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.firstName}
+                                        placeholder={AppConstants.firstName}
+                                        onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyFirstName","userRegDetails")}
+                                        setFieldsValue={userRegDetails?.emergencyFirstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactLastName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.lastName}
+                                        placeholder={AppConstants.lastName}
+                                        onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyLastName","userRegDetails")}
+                                        setFieldsValue={userRegDetails?.emergencyLastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.mobileNumber}
+                                        placeholder={AppConstants.mobileNumber}
+                                        onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyContactNumber","userRegDetails")}
+                                        setFieldsValue={userRegDetails?.emergencyContactNumber}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactNumber`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in emergencyContactView::"+ex)
+        }
+    }
+
     yourDetailsStepView = (getFieldDecorator) => {
         try{
             const { iniviteMemberInfo } = this.props.teamInviteState;
@@ -1218,8 +1291,14 @@ class TeamInivteForm extends Component{
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {getAge(userRegDetails.dateOfBirth) < 18 && (
+                    {getAge(userRegDetails.dateOfBirth) < 18 ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
+                    ) : (
+                        <div>
+                            {userRegDetails.dateOfBirth && (
+                                <div>{this.emergencyContactView(getFieldDecorator)}</div>
+                            )}
+                        </div>
                     )}
                 </div>
             )

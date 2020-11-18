@@ -896,6 +896,8 @@ const AppConstants = {
   termsAndConditionsHeading: "Terms & Conditions",
   totalCasualFees: "Total Casual Fees",
   totalSeasonalFees: "Total Seasonal Fees",
+  feeDueAtRegistration: "Fee due at Registration",
+  feeDueAtMatch: "Fee due at Match",
   totalTeamFees: "Total Team Fees",
   includeGST: " (incl. GST)",
   history: "History",
@@ -1136,13 +1138,22 @@ const AppConstants = {
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
  competitionSpecifics:'Competition Specifics',
- totalsinglegamefees:'Total Single Game Fees',
+ totalsinglegamefees:'Single Game Fee',
  payCompetitionFeesForAll: "Pay Competition Fees for All",
  payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
  pleaseSelect: "Please Select",
- noOfMatches: "No of Matches"
-
+ noOfMatches: "No of Matches",
+ emergencyContact: "Emergency Contact",
+ competitionVenue:"Competition Venue",
+ dueAtRegistration: "*Yearly Membership Fees may also be due at Registration",
+ registeringTeamTo: "Membership Product you are registering Team to :",
+ registeringIndividualTo: "Membership Product you are registering Individual to :",
+thankYouRegistering: "Thank you for registering!",
+emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
+emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
+profile: "Profile",
+yourProfile: "Your Profile"
 };
 
 export default AppConstants;

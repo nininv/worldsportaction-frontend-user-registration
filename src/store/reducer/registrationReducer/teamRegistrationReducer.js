@@ -204,7 +204,8 @@ const initialState = {
     getSeasonalCasualFeesOnLoad: false,
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
-    teamNameValidationResultCode: null
+    teamNameValidationResultCode: null,
+    feesInfo: null
 }
 
 function setTeamRegistrationObj(state){
@@ -244,6 +245,22 @@ function setCompetitionDetails(state,details){
     state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId; 
     let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1 && x.isTeamRegistration == 1);
     state.teamRegistrationObj.membershipProductList = filteredPayerAndTeamMembershipProducts;
+
+    //When it has one item set defualt the first position
+    if(state.teamRegistrationObj.membershipProductList.length == 1){
+      setDivisions(state,state.teamRegistrationObj.membershipProductList[0].competitionMembershipProductTypeId);
+      state.teamRegistrationObj.fees.totalCasualFee = "0.00";
+      state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+    }else{
+      state.teamRegistrationObj.competitionMembershipProductTypeId = null;
+      state.teamRegistrationObj.divisions = [];
+      state.teamRegistrationObj.walkingNetballFlag = 0;
+      state.teamRegistrationObj.competitionMembershipProductId = null;
+      state.teamRegistrationObj.allowTeamRegistrationTypeRefId = null;
+      state.teamRegistrationObj.fees.totalCasualFee = "0.00";
+      state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+    }
+
     state.hasCompetitionSelected = true;
   }catch(ex){
     console.log("Error in setCompetitionDetails::"+ex);
@@ -292,6 +309,15 @@ function setDivisions(state,competitionMembershipProductTypeId){
         }
         state.teamRegistrationObj.divisions.push(div);
       }
+
+      //When it has one item set defualt the first position
+      if(state.teamRegistrationObj.divisions.length == 1){
+        state.teamRegistrationObj.competitionMembershipProductDivisionId = state.teamRegistrationObj.divisions[0].competitionMembershipProductDivisionId;
+        setSeasonalAndCasualFeesObj(state);
+      }else{
+        state.teamRegistrationObj.competitionMembershipProductDivisionId = null;
+      }
+
       state.divisionsChanged = true;
     }
   }catch(ex){
@@ -570,6 +596,7 @@ function teamRegistrationReducer(state = initialState, action){
         state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
         return {
           ...state,
+          feesInfo: feesTemp,
           getSeasonalCasualFeesOnLoad: false
         }
 

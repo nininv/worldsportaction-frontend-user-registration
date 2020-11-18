@@ -120,7 +120,7 @@
 .invoice-total-Amount{
 display: flex;
   width: 13%;
-  padding-right: 15px;
+  /* padding-right: 15px; */
   justify-content: flex-end
 }
 .drop-reverse{
