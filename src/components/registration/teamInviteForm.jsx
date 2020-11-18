@@ -809,8 +809,8 @@ class TeamInivteForm extends Component{
                     <div 
                     className="inter-medium-font" 
                     style={{fontSize: "13px"}}>
-                        {userRegDetails.role ? 
-                        userRegDetails.role : 
+                        {userRegDetails.membershipProductTypeName ? 
+                        userRegDetails.membershipProductTypeName : 
                         AppConstants.noInformationProvided}
                     </div>
                     <InputWithHead heading={AppConstants.gender} required={"required-field"}/>
@@ -1320,7 +1320,7 @@ class TeamInivteForm extends Component{
                             onClick={() => this.onChangeStep(0)}>{AppConstants.edit}</div>
                     </div>
                     <div className="inter-medium-font" style={{fontSize: "13px"}}>
-                        {userRegDetails.role}
+                        {userRegDetails.membershipProductTypeName}
                     </div>
                 </div>
             )
