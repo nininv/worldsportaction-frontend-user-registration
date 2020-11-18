@@ -1051,7 +1051,7 @@ class AppTeamRegistrationForm extends Component{
                                     AppConstants.noInformationProvided}
                                 </div>                                    
                                 {/* <InputWithHead heading={AppConstants.venue}/> */}
-                                <div className="input-style-bold">{AppConstants.venue}</div>
+                                <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>
