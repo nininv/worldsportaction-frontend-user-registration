@@ -66,7 +66,7 @@ function ContentView(props) {
                     <NavLink to={{ pathname: "/login" }}>
                       <Button
                         className="open-reg-button"
-                        type="primary"
+                        type="primary" 
                         disabled={loginState.onLoad}
                       >
                         {AppConstants.returnToLogin}

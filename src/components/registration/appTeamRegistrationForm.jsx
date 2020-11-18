@@ -1051,7 +1051,7 @@ class AppTeamRegistrationForm extends Component{
                                     AppConstants.noInformationProvided}
                                 </div>                                    
                                 {/* <InputWithHead heading={AppConstants.venue}/> */}
-                                <div className="input-style-bold">{AppConstants.venue}</div>
+                                <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>
@@ -1753,10 +1753,10 @@ class AppTeamRegistrationForm extends Component{
                     ))}
                     {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
                          <div className="orange-action-txt" 
-                         style={{marginTop: "10px"}}
+                         style={{marginTop: "25px"}}
                          onClick={() => {
                              this.onChangeSetTeamValue(null,"addTeamMember");
-                         }}>+ {AppConstants.addTeamMember}</div>
+                         }}><span className="add-another-button-border">+ {AppConstants.addTeamMember}</span></div>
                     )}
                 </div>
             )

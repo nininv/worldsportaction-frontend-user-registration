@@ -1,5 +1,5 @@
 import { takeEvery, takeLatest } from "redux-saga/effects";
-import { loginApiSaga } from "./authenticationSaga";
+import { loginApiSaga, forgotPasswordSaga } from "./authenticationSaga";
 
 import ApiConstants from "../../themes/apiConstants";
 
@@ -39,6 +39,7 @@ import * as teamInviteSaga from './registrationSaga/teamInviteSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
+  yield takeEvery(ApiConstants.API_FORGOT_PASSWORD_LOAD, forgotPasswordSaga);
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
   yield takeEvery(ApiConstants.API_URE_LOAD, userSaga.getUreSaga);
 

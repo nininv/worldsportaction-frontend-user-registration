@@ -424,7 +424,7 @@ const AppConstants = {
   medical: "Medical",
   addAnotherDetail: "Add another detail",
   register: "Register",
-  username: "Username",
+  username: "Username/Email",
   products: "Products",
   productDetails: "Product Details",
   playingMember: "Playing Member",
@@ -1077,6 +1077,7 @@ const AppConstants = {
  walkingNetball: "WalkingNetball",
  useParentsEmailAddress: "Use parent's email address",
  returnToSelectAddress: "Return to select address",
+ returnToLogin: "Return to Login",
  yourDetails: "Your Details",
  selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
  addNewDetails: "Add new Details",
@@ -1151,7 +1152,8 @@ const AppConstants = {
 thankYouRegistering: "Thank you for registering!",
 emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
 emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
-profile: "Profile"
+profile: "Profile",
+yourProfile: "Your Profile"
 };
 
 export default AppConstants;
