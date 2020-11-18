@@ -18,7 +18,7 @@ function SelectResetType(props) {
   }, [submitType, resetType]);
 
   return (
-    <div className="auth-form text-center" style={{ fontSize: 14, zIndex: 15 }}>
+    <div className="auth-form text-center login-formView" style={{ fontSize: 14, zIndex: 15 }}>
       <div className="content-view">
         <div className="d-flex justify-content-center">
           <img src={AppImages.netballLogo1} alt=""/>
@@ -29,8 +29,9 @@ function SelectResetType(props) {
         </p>
 
         <div className="d-flex justify-content-around">
-          <div className="d-flex">
+          <div style={{display:"flex", width:"13.5%", alignItems:"center"}}>
             <input
+              className="radioBtn"
               id="email"
               type="radio"
               name="resetType"
@@ -38,11 +39,13 @@ function SelectResetType(props) {
               checked={resetType === "email"}
               onChange={onChangeType}
             />
-            <label className="ml-3" htmlFor="email">Email</label>
+            {/* <input type="radio"></input> */}
+            <label className="ml-3 mt-2" htmlFor="email">Email</label>
           </div>
 
-          <div className="d-flex">
+          <div style={{display:"flex", width:"12%", alignItems:"center"}}>
             <input
+            className="radioBtn"
               id="sms"
               type="radio"
               name="resetType"
@@ -50,7 +53,7 @@ function SelectResetType(props) {
               checked={resetType === "sms"}
               onChange={onChangeType}
             />
-            <label className="ml-3" htmlFor="sms">SMS</label>
+            <label className="ml-3 mt-2" htmlFor="sms">SMS</label>
           </div>
         </div>
 
