@@ -1320,7 +1320,7 @@ class TeamInivteForm extends Component{
                             onClick={() => this.onChangeStep(0)}>{AppConstants.edit}</div>
                     </div>
                     <div className="inter-medium-font" style={{fontSize: "13px"}}>
-                        {userRegDetails.role}
+                        {userRegDetails.membershipProductTypeName}
                     </div>
                 </div>
             )
