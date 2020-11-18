@@ -691,7 +691,7 @@ class RegistrationInvoice extends Component {
                             </div>
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end",paddingRight: "30px" }}>
                                 <InputWithHead
                                     required={"pr-4 pt-3"}
                                     heading={"Transaction Fee"}
@@ -706,7 +706,7 @@ class RegistrationInvoice extends Component {
                             </div>
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border col-sm-6">
+                            <div className="invoice-amount-border col-sm-6" style={(paymentType == 'card') ? {paddingLeft: "55px"} : {paddingLeft: "30px"}}>
                                 <InputWithHead
                                     required={"pt-3"}
                                     heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card') ? "Amount Paid" : "Amount Pending"}
@@ -859,7 +859,7 @@ class RegistrationInvoice extends Component {
                 {userId != 0 ? (
                     <div style={{display: "flex"}}>
                         <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.profile}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
                     </div>
                 ) : (
                     <div style={{display: "flex"}}>

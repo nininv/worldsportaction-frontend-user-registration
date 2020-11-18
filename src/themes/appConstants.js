@@ -1151,7 +1151,8 @@ const AppConstants = {
 thankYouRegistering: "Thank you for registering!",
 emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
 emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
-profile: "Profile"
+profile: "Profile",
+yourProfile: "Your Profile"
 };
 
 export default AppConstants;
