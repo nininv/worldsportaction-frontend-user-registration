@@ -1146,10 +1146,10 @@ class RegistrationProducts extends Component {
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
-                {!hasTeamRegistration ? 
-                <div className="product-left-view outline-style">
-                    {this.yourDetailsView(getFieldDecorator)}
-                </div>
+                {!hasTeamRegistration && isArrayNotEmpty(participantUsers) ? 
+                    <div className="product-left-view outline-style">
+                        {this.yourDetailsView(getFieldDecorator)}
+                    </div>
                  : null }
             </div>
         )
