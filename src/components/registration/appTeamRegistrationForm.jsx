@@ -1753,10 +1753,10 @@ class AppTeamRegistrationForm extends Component{
                     ))}
                     {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
                          <div className="orange-action-txt" 
-                         style={{marginTop: "10px"}}
+                         style={{marginTop: "25px"}}
                          onClick={() => {
                              this.onChangeSetTeamValue(null,"addTeamMember");
-                         }}>+ {AppConstants.addTeamMember}</div>
+                         }}><span className="add-another-button-border">+ {AppConstants.addTeamMember}</span></div>
                     )}
                 </div>
             )
