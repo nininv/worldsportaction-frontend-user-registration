@@ -706,6 +706,7 @@ class AppTeamRegistrationForm extends Component{
     dateConversion = (f, key, referenceKey, teamMemberIndex) => {
         try{
             let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
+            console.log("Date",date)
             if(referenceKey == "team"){
                 this.onChangeSetTeamValue(date, key)
             }else if(referenceKey == "teamMember"){
