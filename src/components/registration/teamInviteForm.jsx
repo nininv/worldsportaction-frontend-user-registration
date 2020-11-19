@@ -1770,7 +1770,7 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
 
-                    {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
+                    {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
                             <Radio.Group
@@ -1797,7 +1797,7 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
 
-                    {(userRegDetails.resgistererDetails.personRoleRefId == 2) && (
+                    {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
                             <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
                             <div className="row">
