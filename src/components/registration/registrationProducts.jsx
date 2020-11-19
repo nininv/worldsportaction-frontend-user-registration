@@ -70,9 +70,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "096f0992-3d97-40c5-b91b-258b68f39d7c";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "6d6d6099-58c4-4b47-b977-22a8f66f4350";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -230,6 +230,9 @@ class RegistrationProducts extends Component {
         }
         else if(key == "removeVoucher"){
             this.callSaveRegistrationProducts("voucher", registrationReview);
+        }
+        else if(key == "charityRoundUpRefId"){
+            this.callSaveRegistrationProducts("charity", registrationReview);
         }
     }
 
