@@ -168,7 +168,7 @@ class TeamInivteForm extends Component {
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
             });
-            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY"))) {
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
                 this.addParent("add");
             }
         } catch (ex) {
@@ -430,6 +430,7 @@ class TeamInivteForm extends Component {
             let error = false;
             const { iniviteMemberInfo } = this.props.teamInviteState;
             if (this.state.searchAddressFlag &&
+        
                 iniviteMemberInfo.userRegDetails.stateRefId == null) {
                 error = true;
             }
@@ -437,6 +438,7 @@ class TeamInivteForm extends Component {
                 let parent = iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails.find(x => x.searchAddressFlag == true &&
                     x.stateRefId == null);
                 if (parent != undefined) {
+        
                     error = true;
                 }
             }
