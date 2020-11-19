@@ -168,7 +168,7 @@ class TeamInivteForm extends Component {
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
             });
-            if (getAge(userRegDetails.dateOfBirth)) {
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY"))) {
                 this.addParent("add");
             }
         } catch (ex) {
@@ -1293,11 +1293,12 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let dateFormat = moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY");
             return (
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {getAge(userRegDetails.dateOfBirth) < 18 ? (
+                    {getAge(dateFormat) < 18 ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
