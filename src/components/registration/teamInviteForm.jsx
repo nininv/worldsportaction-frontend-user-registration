@@ -1223,7 +1223,7 @@ class TeamInivteForm extends Component{
                     <div className="row">
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                {getFieldDecorator(`emergencyFirstName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                 })(
                                     <InputWithHead
@@ -1233,7 +1233,7 @@ class TeamInivteForm extends Component{
                                         onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyFirstName","userRegDetails")}
                                         setFieldsValue={userRegDetails?.emergencyFirstName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                            [`emergencyFirstName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -1241,7 +1241,7 @@ class TeamInivteForm extends Component{
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactLastName`, {
+                                {getFieldDecorator(`emergencyLastName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                 })(
                                     <InputWithHead
@@ -1251,7 +1251,7 @@ class TeamInivteForm extends Component{
                                         onChange={ (e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyLastName","userRegDetails")}
                                         setFieldsValue={userRegDetails?.emergencyLastName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                            [`emergencyLastName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
