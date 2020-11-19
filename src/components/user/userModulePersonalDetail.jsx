@@ -119,18 +119,20 @@ const columns = [
             return (
                 <div>
                    { (record.paidByUsers || []).map((item, index) => (
-                        this_Obj.state.userId == item.paidByUserId ? 'Self' :
-                        <NavLink
-                        to={{
-                            pathname: `/userPersonal`,
-                            state: {
-                            userId: item.paidByUserId,
-                            tabKey: "registration"
-                            },
-                        }}
-                        >
-                        <span className="input-heading-add-another pt-0">{item.paidBy}</span>
-                        </NavLink>
+                        this_Obj.state.userId == item.paidByUserId ? <div>{'Self'} </div>:
+                        <div>
+                            <NavLink
+                            to={{
+                                pathname: `/userPersonal`,
+                                state: {
+                                userId: item.paidByUserId,
+                                tabKey: "registration"
+                                },
+                            }}
+                            >
+                            <span className="input-heading-add-another pt-0">{item.paidBy}</span>
+                            </NavLink>
+                        </div>
                     ))
                     }
                 </div>

@@ -55,6 +55,18 @@ function login(state = initialState, action) {
         status: action.status
       };
 
+      case ApiConstants.API_FORGOT_PASSWORD_LOAD:
+            return { ...state, onLoad: true };
+
+        case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                forgotPasswordMessage: action.result.message ? action.result.message : '',
+                onLoad: false,
+                forgotPasswordSuccess: true,
+                status: action.status,
+            };
+
     default:
       return state;
   }

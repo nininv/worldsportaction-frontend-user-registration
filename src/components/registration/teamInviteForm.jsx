@@ -809,15 +809,15 @@ class TeamInivteForm extends Component {
             let resgistererDetails = userRegDetails.resgistererDetails;
             return (
                 <div className="registration-form-view">
-                    <div className="form-heading"
-                        style={{ paddingBottom: "0px" }}>{AppConstants.yourDetails}</div>
-                    <InputWithHead heading={AppConstants.personRegisteringRole} />
-                    <div
-                        className="inter-medium-font"
-                        style={{ fontSize: "13px" }}>
-                        {userRegDetails.role ?
-                            userRegDetails.role :
-                            AppConstants.noInformationProvided}
+                    <div className="form-heading" 
+                    style={{paddingBottom: "0px"}}>{AppConstants.yourDetails}</div>
+                    <InputWithHead heading={AppConstants.personRegisteringRole}/>
+                    <div 
+                    className="inter-medium-font" 
+                    style={{fontSize: "13px"}}>
+                        {userRegDetails.membershipProductTypeName ? 
+                        userRegDetails.membershipProductTypeName : 
+                        AppConstants.noInformationProvided}
                     </div>
                     <InputWithHead heading={AppConstants.gender} required={"required-field"} />
                     <Form.Item >
@@ -1325,8 +1325,8 @@ class TeamInivteForm extends Component {
                         <div className="orange-action-txt" style={{ marginLeft: "auto" }}
                             onClick={() => this.onChangeStep(0)}>{AppConstants.edit}</div>
                     </div>
-                    <div className="inter-medium-font" style={{ fontSize: "13px" }}>
-                        {userRegDetails.role}
+                    <div className="inter-medium-font" style={{fontSize: "13px"}}>
+                        {userRegDetails.membershipProductTypeName}
                     </div>
                 </div>
             )
