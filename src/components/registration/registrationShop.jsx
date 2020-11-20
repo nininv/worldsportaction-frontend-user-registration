@@ -41,6 +41,8 @@ class RegistrationShop extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            width:  800,
+            height: 182,
             showCardView:false,
             registrationUniqueKey: null,   
             productModalVisible: false ,
@@ -50,16 +52,22 @@ class RegistrationShop extends Component {
             expandObj: null,
             variantOptionId: null,
             quantity: null,
-            loading: false
+            loading: false,
+            shopSelectedRow: -1
         };
     }
 
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         this.setState({registrationUniqueKey: registrationUniqueKey});
-
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions.bind(this));
         this.getApiInfo(registrationUniqueKey);
     }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
+      }
 
     componentDidUpdate(nextProps){
         let registrationProductState = this.props.registrationProductState;
@@ -75,6 +83,16 @@ class RegistrationShop extends Component {
             }
         }
     } 
+
+    updateDimensions() {
+    if(window.innerWidth < 500) {
+      this.setState({ width: 450, height: 102 });
+    } else {
+      let update_width  = window.innerWidth-100;
+      let update_height = Math.round(update_width/4.4);
+      this.setState({ width: update_width, height: update_height });
+    }
+  }
 
     getApiInfo = (registrationUniqueKey) => {
         let payload = {
@@ -204,12 +222,12 @@ class RegistrationShop extends Component {
         this.setState({loading: true, buttonPressed: key});
     }
 
-    enableExpandView = (key, item) =>{
+    enableExpandView = (key, item, index) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item,quantity: 1}); 
+            this.setState({showCardView:true, expandObj: item,quantity: 1, shopSelectedRow: index}); 
         } 
         else {
-            this.setState({showCardView:false, expandObj: null, variantOptionId: null,
+            this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
                 quantity: null}); 
         }
     }
@@ -272,66 +290,104 @@ class RegistrationShop extends Component {
         );
 
     }
+    getShopProductList =(shopProductList) =>{
+        try {
+            let shopProductListTemp = [];
+            for (let i = 0; i < shopProductList.length; i=i+3) {
+                let obj = {
+                    shopProduct1: shopProductList[i] ,
+                    shopProduct2:shopProductList[i+1]&& shopProductList[i+1],
+                    shopProduct3:shopProductList[i+2]&& shopProductList[i+2]
+                }
+                shopProductListTemp.push(obj);
+            }
+            return shopProductListTemp;
+        } catch (ex) {
+            console.log("Error in getOrganisationPhotos::" + ex);
+        }
+    }
 
+    shopProductColumnView = (item, index) => {
+        return (
+            <div className="col-md-4">
+                    <div>
+                        <div className="shop-product-text card-header-text"
+                        style={{height: "240px"}}
+                        onClick={(e) => this.enableExpandView("show", item, index)}>
+                            <div style={{display: "flex", justifyContent:"center"}}>
+                                <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                            </div>
+                            <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                        </div>
+                    </div>
+            </div>
+        )
+    }
     cardView = () =>{
         const {shopProductList} = this.props.registrationProductState;
         (shopProductList || []).map((item, index) =>{
             item["sIndex"] = index;
         });
-        console.log("shopProductList", shopProductList);
+        let shopProductListTemp = this.getShopProductList(shopProductList);
         return(
-            // <div style ={{ display: "flex" , flexWrap: "wrap"}}>
-            //     {(shopProductList || []).map((item, index)=>{
-            //         return(
-            //             <div class="shop-product-text card-header-text" style={{marginRight: 20}} onClick={(e)=>this.enableExpandView("show", item)}>
-            //                 <div style={{textAlign: "center" , height: "250px" , width: "188px"}}>
-            //                     <img style={{width:"100%"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
-            //                 </div>
-            //                 <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-            //                 <div class="subtitle-text-common">${ (feeIsNull(item.amount) +  feeIsNull(item.tax)).toFixed(2) }</div>
-            //             </div>
-            //         )
-            //     })}           
-            // </div>
-            <div className="row">
-                {(shopProductList || []).map((item, index)=> (
-                    <div className="col-md-4">
+            <div>
+                {window.innerWidth < 768 ?
+                <div>
+                    {(shopProductList || []).map((item, index) =>(
                         <div>
                             <div className="shop-product-text card-header-text"
                             style={{height: "240px"}}
-                            onClick={(e) => this.enableExpandView("show", item)}>
+                            onClick={(e) => this.enableExpandView("show", item, index)}>
                                 <div style={{display: "flex", justifyContent:"center"}}>
                                     <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                                 </div>
                                 <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
                                 <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                             </div>
+                            {this.state.showCardView && index == this.state.expandObj.sIndex &&
+                                <div>
+                                    {this.cardExpandView()}
+                                </div>                
+                            }
                         </div>
-                        {this.s}
-                        {this.state.showCardView && index == this.state.expandObj.sIndex &&
-                            <div style={{width:"800px", marginLeft:"50%", transform: "translateX(-50%)"}}>
-                                {this.cardExpandView()}
-                            </div>                
-                        }
+                    ))}
+                </div> :
+                    <div >
+                        {(shopProductListTemp  || []).map((item, index)=> (
+                            <div className="row">
+                                {console.log(index)}
+                                {this.shopProductColumnView(item.shopProduct1, index)}
+                                {this.shopProductColumnView(item.shopProduct2, index)}
+                                {this.shopProductColumnView(item.shopProduct3, index)}
+                                {this.state.showCardView && index == this.state.shopSelectedRow &&
+                                <div className="col-md-12">
+                                    {this.cardExpandView()}
+                                </div>                
+                                }
+                             </div>
+
                         
 
+                            // <div className="col-sm-12 col-md-4 " >
+                            //     <div className="shop-product-text card-header-text"
+                            //     style={{height: "240px"}}
+                            //     onClick={(e)=>this.enableExpandView("show", item)}>
+                            //         <div style={{display: "flex",justifyContent: "center"}}>
+                            //             <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                            //         </div>
+                            //         <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                            //         <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            //     </div>
+                            // </div>  
+                         ))
+                    
+                        }
                     </div>
 
-                    // <div className="col-sm-12 col-md-4 " >
-                    //     <div className="shop-product-text card-header-text"
-                    //     style={{height: "240px"}}
-                    //     onClick={(e)=>this.enableExpandView("show", item)}>
-                    //         <div style={{display: "flex",justifyContent: "center"}}>
-                    //             <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
-                    //         </div>
-                    //         <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                    //         <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
-                    //     </div>
-                    // </div>  
-                ))
-                
                 }
             </div>
+
         )
     } 
   
