@@ -314,7 +314,7 @@ class RegistrationShop extends Component {
                         <div className="shop-product-text card-header-text"
                         style={{height: "240px"}}
                         onClick={(e) => this.enableExpandView("show", item, index)}>
-                            <div style={{display: "flex", justifyContent:"center"}}>
+                            <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
                                 <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
                             <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
@@ -356,10 +356,9 @@ class RegistrationShop extends Component {
                     <div >
                         {(shopProductListTemp  || []).map((item, index)=> (
                             <div className="row">
-                                {console.log(index)}
                                 {this.shopProductColumnView(item.shopProduct1, index)}
-                                {this.shopProductColumnView(item.shopProduct2, index)}
-                                {this.shopProductColumnView(item.shopProduct3, index)}
+                                {item.shopProduct2 && this.shopProductColumnView(item.shopProduct2, index)}
+                                {item.shopProduct3 && this.shopProductColumnView(item.shopProduct3, index)}
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
                                 <div className="col-md-12">
                                     {this.cardExpandView()}
