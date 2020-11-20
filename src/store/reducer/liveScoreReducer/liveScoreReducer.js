@@ -15,7 +15,7 @@ const initialState = {
         isRound: false,
         isLadder: false
     },
-    scorerListResult: []
+    scorerListResult: [],
 };
 function LiveScoreState(state = initialState, action) {
 
@@ -53,7 +53,6 @@ function LiveScoreState(state = initialState, action) {
                 onLoad: false,
                 scorerListResult: action.result
             };
-
 
         default:
             return state;
