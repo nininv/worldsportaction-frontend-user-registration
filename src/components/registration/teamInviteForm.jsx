@@ -191,15 +191,15 @@ class TeamInivteForm extends Component {
                     [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: userRegDetails.favouriteTeamRefId,
                     [`additionalInfoDisablityCareNumber`]: userRegDetails.disabilityCareNumber,
-                    [`additionalInfoHeartTrouble`]: userRegDetails.walkingNetball.heartTrouble,
-                    [`additionalInfoChestPain`]: userRegDetails.walkingNetball.heartTrouble,
-                    [`additionalInfoFaintOrSpells`]: userRegDetails.walkingNetball.faintOrSpells,
-                    [`additionalInfoBloodPressure`]: userRegDetails.walkingNetball.bloodPressure,
-                    [`additionalInfoJointOrBoneProblem`]: userRegDetails.walkingNetball.jointOrBoneProblem,
-                    [`additionalInfoPhysicalActivity`]: userRegDetails.walkingNetball.physicalActivity,
-                    [`additionalInfoPregnant`]: userRegDetails.walkingNetball.pregnant,
-                    [`additionalInfoLowerBackProblem`]: userRegDetails.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: userRegDetails.walkingNetballInfo
+                    [`additionalInfoHeartTrouble`]: userRegDetails.walkingNetball?.heartTrouble,
+                    [`additionalInfoChestPain`]: userRegDetails.walkingNetball?.chestPain,
+                    [`additionalInfoFaintOrSpells`]: userRegDetails.walkingNetball?.faintOrSpells,
+                    [`additionalInfoBloodPressure`]: userRegDetails.walkingNetball?.bloodPressure,
+                    [`additionalInfoJointOrBoneProblem`]: userRegDetails.walkingNetball?.jointOrBoneProblem,
+                    [`additionalInfoPhysicalActivity`]: userRegDetails.walkingNetball?.physicalActivity,
+                    [`additionalInfoPregnant`]: userRegDetails.walkingNetball?.pregnant,
+                    [`additionalInfoLowerBackProblem`]: userRegDetails.walkingNetball?.lowerBackProblem,
+                    [`additionalInfoProvideFurtherDetails`]: userRegDetails?.walkingNetballInfo
                 });
             }
         } catch (ex) {

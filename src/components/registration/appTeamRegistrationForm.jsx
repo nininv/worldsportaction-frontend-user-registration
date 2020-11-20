@@ -385,7 +385,7 @@ class AppTeamRegistrationForm extends Component{
                     [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoDisablityCareNumber`]:additionalInfo.disabilityCareNumber,
                     [`additionalInfoHeartTrouble`]:additionalInfo.walkingNetball.heartTrouble,
-                    [`additionalInfoChestPain`]:additionalInfo.walkingNetball.heartTrouble,
+                    [`additionalInfoChestPain`]:additionalInfo.walkingNetball.chestPain,
                     [`additionalInfoFaintOrSpells`]:additionalInfo.walkingNetball.faintOrSpells,
                     [`additionalInfoBloodPressure`]:additionalInfo.walkingNetball.bloodPressure,
                     [`additionalInfoJointOrBoneProblem`]:additionalInfo.walkingNetball.jointOrBoneProblem,
