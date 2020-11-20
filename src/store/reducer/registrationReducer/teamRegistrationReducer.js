@@ -288,63 +288,64 @@ function getUpdatedTeamMemberObj(state){
   }
 }
 
-function getFilteredDivisions(divisions,state){
-	try{
-		let filteredDivisions = [];
-		let genderRefId = state.teamRegistrationObj.genderRefId;
-		var date = moment(state.teamRegistrationObj.dateOfBirth, "DD/MM/YYYY");
-		for(let division of divisions){
-			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
-				if(division.genderRefId == genderRefId || genderRefId == 3){
-					let div = {
-						"competitionMembershipProductId": division.competitionMembershipProductId,
-						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-						"divisionName": division.divisionName
-					}      
-					filteredDivisions.push(div);
-				}
-			}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
-				var startDate = moment(division.fromDate, "YYYY-MM-DD");
-				var endDate = moment(division.toDate, "YYYY-MM-DD");
-				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
-					let div = {
-						"competitionMembershipProductId": division.competitionMembershipProductId,
-						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-						"divisionName": division.divisionName
-					}      
-					filteredDivisions.push(div);
-				}
-			}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
-				var startDate = moment(division.fromDate, "YYYY-MM-DD");
-				var endDate = moment(division.toDate, "YYYY-MM-DD");
-				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
-					&& (division.genderRefId == genderRefId || genderRefId == 3)){
-						let div = {
-							"competitionMembershipProductId": division.competitionMembershipProductId,
-							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-							"divisionName": division.divisionName
-						}      
-						filteredDivisions.push(div);
-				}
-			}else{
-				let div = {
-					"competitionMembershipProductId": division.competitionMembershipProductId,
-					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-					"divisionName": division.divisionName
-				}      
-				filteredDivisions.push(div); 
-			}
-		}
-		console.log("filtered division",filteredDivisions)
-		return filteredDivisions;
-	}catch(ex){
-		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
-	}
-}
+// function getFilteredDivisions(divisions,state){
+// 	try{
+// 		let filteredDivisions = [];
+// 		let genderRefId = state.teamRegistrationObj.genderRefId;
+//     var date = moment(state.teamRegistrationObj.dateOfBirth, "DD/MM/YYYY");
+//     console.log("filter",genderRefId,date)
+// 		for(let division of divisions){
+// 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
+// 				if(division.genderRefId == genderRefId || genderRefId == 3){
+// 					let div = {
+// 						"competitionMembershipProductId": division.competitionMembershipProductId,
+// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 						"divisionName": division.divisionName
+// 					}      
+// 					filteredDivisions.push(div);
+// 				}
+// 			}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
+// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
+// 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
+// 					let div = {
+// 						"competitionMembershipProductId": division.competitionMembershipProductId,
+// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 						"divisionName": division.divisionName
+// 					}      
+// 					filteredDivisions.push(div);
+// 				}
+// 			}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
+// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
+// 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
+// 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
+// 						let div = {
+// 							"competitionMembershipProductId": division.competitionMembershipProductId,
+// 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 							"divisionName": division.divisionName
+// 						}      
+// 						filteredDivisions.push(div);
+// 				}
+// 			}else{
+// 				let div = {
+// 					"competitionMembershipProductId": division.competitionMembershipProductId,
+// 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 					"divisionName": division.divisionName
+// 				}      
+// 				filteredDivisions.push(div); 
+// 			}
+// 		}
+// 		console.log("filtered division",filteredDivisions)
+// 		return filteredDivisions;
+// 	}catch(ex){
+// 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
+// 	}
+// }
 
 function setDivisions(state,competitionMembershipProductTypeId){
   try{
@@ -359,16 +360,16 @@ function setDivisions(state,competitionMembershipProductTypeId){
         state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
       }
       state.teamRegistrationObj.divisions = [];
-      let divisionInfoList = state.teamRegistrationObj.divisions;
-      divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProduct.divisions,state));
-      // for(let division of membershipProduct.divisions){
-      //   let div = {
-      //     "divisionName": division.divisionName,
-      //     "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-			//     "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
-      //   }
-      //   state.teamRegistrationObj.divisions.push(div);
-      // }
+      // let divisionInfoList = state.teamRegistrationObj.divisions;
+      // divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProduct.divisions,state));
+      for(let division of membershipProduct.divisions){
+        let div = {
+          "divisionName": division.divisionName,
+          "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+			    "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+        }
+        state.teamRegistrationObj.divisions.push(div);
+      }
 
       //When it has one item set defualt the first position
       if(state.teamRegistrationObj.divisions.length == 1){
