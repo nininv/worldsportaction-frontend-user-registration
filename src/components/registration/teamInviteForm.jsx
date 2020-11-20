@@ -168,7 +168,7 @@ class TeamInivteForm extends Component {
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
             });
-            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY"))) {
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
                 this.addParent("add");
             }
         } catch (ex) {
@@ -430,6 +430,7 @@ class TeamInivteForm extends Component {
             let error = false;
             const { iniviteMemberInfo } = this.props.teamInviteState;
             if (this.state.searchAddressFlag &&
+        
                 iniviteMemberInfo.userRegDetails.stateRefId == null) {
                 error = true;
             }
@@ -437,6 +438,7 @@ class TeamInivteForm extends Component {
                 let parent = iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails.find(x => x.searchAddressFlag == true &&
                     x.stateRefId == null);
                 if (parent != undefined) {
+        
                     error = true;
                 }
             }
@@ -1229,7 +1231,7 @@ class TeamInivteForm extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                {getFieldDecorator(`emergencyFirstName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                 })(
                                     <InputWithHead
@@ -1239,7 +1241,7 @@ class TeamInivteForm extends Component {
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyFirstName", "userRegDetails")}
                                         setFieldsValue={userRegDetails?.emergencyFirstName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                            [`emergencyFirstName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -1247,7 +1249,7 @@ class TeamInivteForm extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactLastName`, {
+                                {getFieldDecorator(`emergencyLastName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                 })(
                                     <InputWithHead
@@ -1257,7 +1259,7 @@ class TeamInivteForm extends Component {
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "emergencyLastName", "userRegDetails")}
                                         setFieldsValue={userRegDetails?.emergencyLastName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                            [`emergencyLastName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
