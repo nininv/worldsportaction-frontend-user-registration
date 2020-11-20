@@ -50,7 +50,7 @@ class TeamInviteProducts extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //let userRegId = "5751dc44-f3bf-4edf-a588-2104d11d8a47"
+            //let userRegId = "2fbfdcab-4607-4817-a476-29d531f18031"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -155,6 +155,9 @@ class TeamInviteProducts extends Component{
         }
         else if(key == "removeVoucher"){
             this.callSaveRegistrationProducts("voucher", teamInviteReview);
+        }
+        else if(key == "charityRoundUpRefId"){
+            this.callSaveRegistrationProducts("charity", teamInviteReview);
         }
     }
 
@@ -385,6 +388,36 @@ class TeamInviteProducts extends Component{
         )
     }
 
+    charityView = () => {
+        const {teamInviteReviewList} = this.props.teamInviteState;
+        let charity = teamInviteReviewList!= null ? teamInviteReviewList.charity : null;
+        let charityRoundUp = teamInviteReviewList!= null ? teamInviteReviewList.charityRoundUp : [];
+        
+        return(
+            <div style={{marginTop: "23px"}}>   
+                {charity!= null &&             
+                <div className="headline-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
+                    {charity.name}
+                </div>}
+                {charity!= null && 
+                <div className = "product-text-common" style={{fontWeight:500 ,  marginTop: "8px" ,width: "92%" }}>
+                    {charity.description}
+                </div>
+                }
+                {charityRoundUp.length > 0 &&
+                <div style={{marginTop:6}}>
+                    <Radio.Group className="product-radio-group"
+                     value={teamInviteReviewList.charityRoundUpRefId}
+                     onChange={(e) => this.setReviewInfo(e.target.value, "charityRoundUpRefId", null,"charity")}>
+                        {(charityRoundUp || []).map((x, cIndex) => (
+                            <Radio key ={x.charityRoundUpRefId} value={x.charityRoundUpRefId}>{x.description}</Radio>  
+                        ))}
+                    </Radio.Group>
+                </div>}
+            </div>
+        )
+    }
+
     productLeftView = (getFieldDecorator)=>{
         const {teamInviteReviewList} = this.props.teamInviteState;
         //console.log("registrationReviewList", this.props.registrationProductState);
@@ -399,6 +432,7 @@ class TeamInviteProducts extends Component{
                             {this.userInfoView(item, index)}
                             {this.productsView(item, index)}
                             {this.governmentVoucherView(item, index)}
+                            {this.charityView()}
                         </div>
                     </div>
                 ))

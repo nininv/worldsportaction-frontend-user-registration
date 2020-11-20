@@ -9,6 +9,8 @@ import CommonReducerState from "./commonReducer/commonReducer";
 import EndUserRegistrationState from "./registrationReducer/endUserRegistrationReducer";
 import UserState from "./userReducer/userReducer";
 
+import LiveScoreState from './liveScoreReducer/liveScoreReducer';
+import LiveScoreUmpireState from './liveScoreReducer/liveScoreUmpireReducer';
 import LiveScoreFixturCompState from './liveScoreReducer/liveScoreFixtureCompetitionReducer';
 import LiveScoreLadderState from './liveScoreReducer/liveScoreLadderReducer'
 import LiveScoreRoundState from './liveScoreReducer/liveScoreRound';
@@ -38,7 +40,9 @@ const rootReducer = combineReducers({
   UserRegistrationState,
   RegistrationProductState,
   TeamRegistrationState,
-  TeamInviteState
+  TeamInviteState,
+  LiveScoreState,
+  LiveScoreUmpireState
 });
 
 export default rootReducer;

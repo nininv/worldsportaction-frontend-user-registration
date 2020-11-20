@@ -1,5 +1,5 @@
 import { takeEvery, takeLatest } from "redux-saga/effects";
-import { loginApiSaga } from "./authenticationSaga";
+import { loginApiSaga, forgotPasswordSaga } from "./authenticationSaga";
 
 import ApiConstants from "../../themes/apiConstants";
 
@@ -27,6 +27,8 @@ import { getLiveScoreFixtureCompSaga } from "./liveScoreSaga/liveScoreFixtureCom
 import { liveScoreLaddersListSaga, liveScoreTeamSaga } from './liveScoreSaga/liveScoreLadderSaga';
 import * as divisionsaga from "../saga/liveScoreSaga/liveScoreDivisionSaga"
 import { liveScoreRoundSaga, liveScoreRoundListSaga } from './liveScoreSaga/liveScoreRoundSaga';
+import * as liveScoreSaga from './liveScoreSaga/liveScoreSaga';
+import * as liveScoreUmpireSaga from './liveScoreSaga/liveScoreUmpireSaga';
 import * as stripeSaga from "../saga/stripeSaga/stripeSaga"
 import * as shopProductSaga from "../saga/shopSaga/productSaga";
 
@@ -39,6 +41,7 @@ import * as teamInviteSaga from './registrationSaga/teamInviteSaga';
 
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
+  yield takeEvery(ApiConstants.API_FORGOT_PASSWORD_LOAD, forgotPasswordSaga);
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
   yield takeEvery(ApiConstants.API_URE_LOAD, userSaga.getUreSaga);
 
@@ -277,7 +280,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD,teamRegistrationSaga.getTeamSeasonalCasualFeesSaga);
   
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_LOAD,regProductsSaga.getRegistrationSingleGameSaga);
-  
-  
 
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.getUmpireAvailabilitySaga);
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_SAVE_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.saveUmpireAvailabilitySaga);
 }

@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "061038ce-6381-4f06-8efc-fe3a3c6389c1";
+        //let registrationUniqueKey = "6d6d6099-58c4-4b47-b977-22a8f66f4350";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -230,6 +230,9 @@ class RegistrationProducts extends Component {
         }
         else if(key == "removeVoucher"){
             this.callSaveRegistrationProducts("voucher", registrationReview);
+        }
+        else if(key == "charityRoundUpRefId"){
+            this.callSaveRegistrationProducts("charity", registrationReview);
         }
     }
 
@@ -845,7 +848,7 @@ class RegistrationProducts extends Component {
         return(
             <div>
                 <div className="headline-text-common">{AppConstants.yourDetails}</div>
-                {/* {!this.state.newYourDetails ? 
+                {!this.state.newYourDetails ? 
                     <div>
                         <InputWithHead heading={AppConstants.selectFromParticipantAndParentDetails} 
                         required={"required-field"}/>
@@ -881,7 +884,7 @@ class RegistrationProducts extends Component {
                             });
                         }}>
                             {AppConstants.selectFromParticipantAndParentDetails}
-                        </div> */}
+                        </div>
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <InputWithHead heading={AppConstants.firstName} required={"required-field"}/>
@@ -1118,8 +1121,8 @@ class RegistrationProducts extends Component {
                                 </div>
                             )} 
                         </div>
-                    {/* </div>  
-                } */}
+                    </div>  
+                }
             </div>
         )
     }
@@ -1146,10 +1149,10 @@ class RegistrationProducts extends Component {
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
-                {!hasTeamRegistration ? 
-                <div className="product-left-view outline-style">
-                    {this.yourDetailsView(getFieldDecorator)}
-                </div>
+                {!hasTeamRegistration && isArrayNotEmpty(participantUsers) ? 
+                    <div className="product-left-view outline-style">
+                        {this.yourDetailsView(getFieldDecorator)}
+                    </div>
                  : null }
             </div>
         )

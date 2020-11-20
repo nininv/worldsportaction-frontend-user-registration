@@ -45,7 +45,7 @@ class UserProfileEdit extends Component {
             tabKey: "3",
             userData: {genderRefId: 0,firstName: "",lastName:"",mobileNumber:"",email: "",middleName: "",
                 dateOfBirth: "",street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
-                emergencyContactName: "",emergencyContactNumber: "", existingMedicalCondition: "",regularMedication: "",
+                emergencyFirstName: "",emergencyLastName: "",emergencyContactNumber: "", existingMedicalCondition: "",regularMedication: "",
                 disabilityCareNumber: '', isDisability: 0,
                 disabilityTypeRefId: 0,  countryRefId: null, nationalityRefId: null,languages: ""
             },
@@ -183,8 +183,10 @@ class UserProfileEdit extends Component {
 
     setEmergencyFormField = () => {
         let userData  = this.state.userData;
+        console.log("user data",userData)
         this.props.form.setFieldsValue({
-            emergencyContactName: userData.emergencyContactName,
+            emergencyFirstName: userData.emergencyFirstName,
+            emergencyLastName: userData.emergencyLastName,
             emergencyContactNumber: userData.emergencyContactNumber,
         })
     }
@@ -599,35 +601,50 @@ class UserProfileEdit extends Component {
 
         return (
             <div className="content-view pt-0">
- 
-                {/* First and Last name row */}
                 <div className='row'>
-                    <div className="col-sm" >
+                    <div className="col-sm-12 col-md-6" >
                     <Form.Item >
-                        {getFieldDecorator('emergencyContactName', {
+                        {getFieldDecorator('emergencyFirstName', {
                             rules: [{ required: true, message: ValidationConstants.emergencyContactName[0] }],
                         })(
                         <InputWithHead
                             required={"required-field "}
-                            heading={AppConstants.emergencyContactName}
-                            placeholder={AppConstants.emergencyContactName}
-                            name={'emergencyContactName'}
-                            setFieldsValue={userData.emergencyContactName}
-                            onChange={(e) => this.onChangeSetValue(e.target.value, "emergencyContactName")}
+                            heading={AppConstants.firstName}
+                            placeholder={AppConstants.firstName}
+                            name={'emergencyFirstName'}
+                            setFieldsValue={userData.emergencyFirstName}
+                            onChange={(e) => this.onChangeSetValue(e.target.value, "emergencyFirstName")}
 
                         />
                         )}
                     </Form.Item>
                     </div>
-                    <div className="col-sm" >
+                    <div className="col-sm-12 col-md-6" >
+                    <Form.Item >
+                        {getFieldDecorator('emergencyLastName', {
+                            rules: [{ required: true, message: ValidationConstants.emergencyContactName[1] }],
+                        })(
+                        <InputWithHead
+                            required={"required-field "}
+                            heading={AppConstants.lastName}
+                            placeholder={AppConstants.lastName}
+                            name={'emergencyLastName'}
+                            setFieldsValue={userData.emergencyLastName}
+                            onChange={(e) => this.onChangeSetValue(e.target.value, "emergencyLastName")}
+
+                        />
+                        )}
+                    </Form.Item>
+                    </div>
+                    <div className="col-sm-12 col-md-6" >
                     <Form.Item >
                         {getFieldDecorator('emergencyContactNumber', {
                             rules: [{ required: true, message: ValidationConstants.emergencyContactNumber[0] }],
                         })(
                         <InputWithHead
                             required={"required-field"}
-                            heading={AppConstants.emergencyContactMobile}
-                            placeholder={AppConstants.emergencyContactMobile}
+                            heading={AppConstants.mobileNumber}
+                            placeholder={AppConstants.mobileNumber}
                             name={'emergencyContactNumber'}
                             setFieldsValue={userData.emergencyContactNumber}
                             onChange={(e) => this.onChangeSetValue(e.target.value, "emergencyContactNumber")}

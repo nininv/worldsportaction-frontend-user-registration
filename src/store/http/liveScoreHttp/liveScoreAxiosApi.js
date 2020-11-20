@@ -81,6 +81,17 @@ let LiveScoreAxiosApi = {
         return Method.dataGet(url, localStorage.token)
     },
 
+
+    getUmpireAvailabilityList(userId, fromTime, endTime) {
+        const url = `/booking/?userId=${userId}&fromTime=${fromTime}&endTime=${endTime}`;
+        return Method.dataGet(url, token);
+    },
+
+    saveUmpireAvailabilityList(payload, userId, fromTime, endTime) {
+        let url = `/booking/save?userId=${userId}&fromTime=${fromTime}&endTime=${endTime}`;
+        return Method.dataPost(url, token, payload);
+    },
+
 };
 
 

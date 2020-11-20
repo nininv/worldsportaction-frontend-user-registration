@@ -204,7 +204,8 @@ const initialState = {
     getSeasonalCasualFeesOnLoad: false,
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
-    teamNameValidationResultCode: null
+    teamNameValidationResultCode: null,
+    feesInfo: null
 }
 
 function setTeamRegistrationObj(state){
@@ -244,6 +245,22 @@ function setCompetitionDetails(state,details){
     state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId; 
     let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1 && x.isTeamRegistration == 1);
     state.teamRegistrationObj.membershipProductList = filteredPayerAndTeamMembershipProducts;
+
+    //When it has one item set defualt the first position
+    if(state.teamRegistrationObj.membershipProductList.length == 1){
+      setDivisions(state,state.teamRegistrationObj.membershipProductList[0].competitionMembershipProductTypeId);
+      state.teamRegistrationObj.fees.totalCasualFee = "0.00";
+      state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+    }else{
+      state.teamRegistrationObj.competitionMembershipProductTypeId = null;
+      state.teamRegistrationObj.divisions = [];
+      state.teamRegistrationObj.walkingNetballFlag = 0;
+      state.teamRegistrationObj.competitionMembershipProductId = null;
+      state.teamRegistrationObj.allowTeamRegistrationTypeRefId = null;
+      state.teamRegistrationObj.fees.totalCasualFee = "0.00";
+      state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+    }
+
     state.hasCompetitionSelected = true;
   }catch(ex){
     console.log("Error in setCompetitionDetails::"+ex);
@@ -271,6 +288,65 @@ function getUpdatedTeamMemberObj(state){
   }
 }
 
+// function getFilteredDivisions(divisions,state){
+// 	try{
+// 		let filteredDivisions = [];
+// 		let genderRefId = state.teamRegistrationObj.genderRefId;
+//     var date = moment(state.teamRegistrationObj.dateOfBirth, "DD/MM/YYYY");
+//     console.log("filter",genderRefId,date)
+// 		for(let division of divisions){
+// 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
+// 				if(division.genderRefId == genderRefId || genderRefId == 3){
+// 					let div = {
+// 						"competitionMembershipProductId": division.competitionMembershipProductId,
+// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 						"divisionName": division.divisionName
+// 					}      
+// 					filteredDivisions.push(div);
+// 				}
+// 			}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
+// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
+// 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
+// 					let div = {
+// 						"competitionMembershipProductId": division.competitionMembershipProductId,
+// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 						"divisionName": division.divisionName
+// 					}      
+// 					filteredDivisions.push(div);
+// 				}
+// 			}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
+// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
+// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
+// 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
+// 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
+// 						let div = {
+// 							"competitionMembershipProductId": division.competitionMembershipProductId,
+// 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 							"divisionName": division.divisionName
+// 						}      
+// 						filteredDivisions.push(div);
+// 				}
+// 			}else{
+// 				let div = {
+// 					"competitionMembershipProductId": division.competitionMembershipProductId,
+// 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+// 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+// 					"divisionName": division.divisionName
+// 				}      
+// 				filteredDivisions.push(div); 
+// 			}
+// 		}
+// 		console.log("filtered division",filteredDivisions)
+// 		return filteredDivisions;
+// 	}catch(ex){
+// 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
+// 	}
+// }
+
 function setDivisions(state,competitionMembershipProductTypeId){
   try{
     state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
@@ -284,6 +360,8 @@ function setDivisions(state,competitionMembershipProductTypeId){
         state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
       }
       state.teamRegistrationObj.divisions = [];
+      // let divisionInfoList = state.teamRegistrationObj.divisions;
+      // divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProduct.divisions,state));
       for(let division of membershipProduct.divisions){
         let div = {
           "divisionName": division.divisionName,
@@ -292,6 +370,15 @@ function setDivisions(state,competitionMembershipProductTypeId){
         }
         state.teamRegistrationObj.divisions.push(div);
       }
+
+      //When it has one item set defualt the first position
+      if(state.teamRegistrationObj.divisions.length == 1){
+        state.teamRegistrationObj.competitionMembershipProductDivisionId = state.teamRegistrationObj.divisions[0].competitionMembershipProductDivisionId;
+        setSeasonalAndCasualFeesObj(state);
+      }else{
+        state.teamRegistrationObj.competitionMembershipProductDivisionId = null;
+      }
+
       state.divisionsChanged = true;
     }
   }catch(ex){
@@ -570,6 +657,7 @@ function teamRegistrationReducer(state = initialState, action){
         state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
         return {
           ...state,
+          feesInfo: feesTemp,
           getSeasonalCasualFeesOnLoad: false
         }
 

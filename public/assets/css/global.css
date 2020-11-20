@@ -695,3 +695,22 @@ pre {
 	border: 1px solid var(--app-color);
   	background-color: var(--app-fdf9f0);
 }
+
+.thank-you-registering-view{
+	padding: 10px 20px 10px 20px;
+	width: 100%;
+	border: 1px solid #dbdbdc;
+}
+
+.thank-you-registering-view-title{
+	font-weight: 500;
+	font-family: inter-medium;
+	font-size: 15px;
+    color: var(--app-414141);
+}
+
+.thank-you-registering-view-content{
+	font-family: inter-medium;
+	font-size: 14px;
+    color: #414141b8;
+}

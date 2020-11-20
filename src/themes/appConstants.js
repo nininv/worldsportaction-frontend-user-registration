@@ -424,7 +424,7 @@ const AppConstants = {
   medical: "Medical",
   addAnotherDetail: "Add another detail",
   register: "Register",
-  username: "Username",
+  username: "Username/Email",
   products: "Products",
   productDetails: "Product Details",
   playingMember: "Playing Member",
@@ -896,6 +896,8 @@ const AppConstants = {
   termsAndConditionsHeading: "Terms & Conditions",
   totalCasualFees: "Total Casual Fees",
   totalSeasonalFees: "Total Seasonal Fees",
+  feeDueAtRegistration: "Fee due at Registration",
+  feeDueAtMatch: "Fee due at Match",
   totalTeamFees: "Total Team Fees",
   includeGST: " (incl. GST)",
   history: "History",
@@ -1075,6 +1077,7 @@ const AppConstants = {
  walkingNetball: "WalkingNetball",
  useParentsEmailAddress: "Use parent's email address",
  returnToSelectAddress: "Return to select address",
+ returnToLogin: "Return to Login",
  yourDetails: "Your Details",
  selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
  addNewDetails: "Add new Details",
@@ -1135,14 +1138,25 @@ const AppConstants = {
  multpleRolesSelected:"(multiple roles can be selected)",
  membershipDetails:'Membership Details',
  competitionSpecifics:'Competition Specifics',
- totalsinglegamefees:'Total Single Game Fees',
+ totalsinglegamefees:'Single Game Fee',
  seasonFixture: 'Season Fixture',
  payCompetitionFeesForAll: "Pay Competition Fees for All",
  payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
  pleaseSelect: "Please Select",
- noOfMatches: "No of Matches"
 
+ myUmpiringAvailability: "My Umpiring Availability",
+ noOfMatches: "No of Matches",
+ emergencyContact: "Emergency Contact",
+ competitionVenue:"Competition Venue",
+ dueAtRegistration: "*Yearly Membership Fees may also be due at Registration",
+ registeringTeamTo: "Membership Product you are registering Team to :",
+ registeringIndividualTo: "Membership Product you are registering Individual to :",
+thankYouRegistering: "Thank you for registering!",
+emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
+emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
+profile: "Profile",
+yourProfile: "Your Profile"
 };
 
 export default AppConstants;
