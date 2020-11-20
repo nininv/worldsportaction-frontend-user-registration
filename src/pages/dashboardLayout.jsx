@@ -112,10 +112,10 @@ class DashboardLayout extends React.Component {
     history.push("./")
   }
 
-  navigateTo = async () => {
+  navigateTo = async pathData => {
     console.log("navigateTo")
     await this.clearLocalStorage();
-    history.push("/userPersonal")
+    history.push(pathData)
   }
 
   clearLocalStorage =  () => {
@@ -137,15 +137,18 @@ class DashboardLayout extends React.Component {
    
     return (
       <div className="dropdown">
-        {this.props.isUserTabNotVisible !== true && (<button
-          className="dropdown-toggle"
-          type="button"
-          data-toggle="dropdown"
-        >
-          <img
-            src={userImage}
-            alt="" />
-        </button>)}
+        {!this.props.isUserTabNotVisible && (
+          <button
+            className="dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+          >
+            <img
+              src={userImage}
+              alt="" />
+          </button>
+        )}
+
         <ul className="dropdown-menu">
           <li style={{paddingBottom: '0px'}}>
             <div className="media">
@@ -188,8 +191,22 @@ class DashboardLayout extends React.Component {
             : null} */}
            <div className="acc-help-support-list-view">
             <li>
-              <a onClick={() => this.navigateTo()}>{"Profile"}</a>
+              <a onClick={() => this.navigateTo("/userPersonal")}>{"Profile"}</a>
             </li>
+
+            {this.props.userState.userRole &&
+              <li class="item-with-submenu">
+                <div className="acc-help-support-menu-item dropdown-toggle" >
+                  {"My Umpiring"}
+                </div>
+                <ul class="dropdown-menu item-submenu" >
+                  <li className="acc-help-support-submenu-item">
+                    <a onClick={() => this.navigateTo("/myUmpiringAvailability")}>{"My Umpiring Availability"}</a>
+                  </li>
+                </ul>
+              </li>
+            }
+
             {/* <li>
               <a href="#"> {"Help & Support"}</a>
             </li> */}

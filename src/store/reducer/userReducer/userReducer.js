@@ -137,7 +137,8 @@ function userReducer(state = initialState, action) {
             let arr = [];
             if (personalData != null) {
                 let obj = {
-                    emergencyContactName: personalData.emergencyContactName,
+                    emergencyFirstName: personalData.emergencyFirstName,
+                    emergencyLastName: personalData.emergencyLastName,
                     emergencyContactNumber: personalData.emergencyContactNumber,
                     userId: personalData.userId
                 };

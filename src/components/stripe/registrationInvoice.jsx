@@ -19,6 +19,7 @@ import { isArrayNotEmpty, isNullOrEmptyString } from "../../util/helpers";
 import history from "../../util/history";
 import Doc from '../../util/DocService';
 import PdfContainer from '../../util/PdfContainer';
+import {getUserId } from '../../util/sessionStorage'
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -99,6 +100,14 @@ class RegistrationInvoice extends Component {
 
         this.props.saveInvoiceAction(payload)
         this.setState({ loading: true });
+    }
+
+    gotoUserPage = (userId) => {
+        if(userId != 0){
+            history.push({pathname: '/userPersonal'});
+        }else{
+            history.push({pathname: '/login'});
+        }
     }
 
     ///////view for breadcrumb
@@ -682,7 +691,7 @@ class RegistrationInvoice extends Component {
                             </div>
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end",paddingRight: "30px" }}>
                                 <InputWithHead
                                     required={"pr-4 pt-3"}
                                     heading={"Transaction Fee"}
@@ -697,7 +706,7 @@ class RegistrationInvoice extends Component {
                             </div>
                         </div>
                         <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border col-sm-6">
+                            <div className="invoice-amount-border col-sm-6" style={(paymentType == 'card') ? {paddingLeft: "55px"} : {paddingLeft: "30px"}}>
                                 <InputWithHead
                                     required={"pt-3"}
                                     heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card') ? "Amount Paid" : "Amount Pending"}
@@ -842,6 +851,26 @@ class RegistrationInvoice extends Component {
 
     createPdf = (html) => Doc.createPdf(html);
 
+    thankYouRegisteringView = () => {
+        let userId = getUserId();
+        return(
+            <div className="thank-you-registering-view">
+                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
+                {userId != 0 ? (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
+                    </div>
+                ) : (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     render() {
         let result = this.props.stripeState.getInvoicedata
         console.log("result", result)
@@ -856,6 +885,7 @@ class RegistrationInvoice extends Component {
                     {this.headerView()}
                     <Content className="container">
                         <div className="formView" style={{width: "75%"}}>
+                            <div>{this.thankYouRegisteringView()}</div>
                             <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
                                 {this.topView(result)}
                                 {this.contentView(result)}

@@ -27,7 +27,11 @@ let userHttpApi = {
     return Method.dataGet(url, authorization);
   },
 
-
+  forgotPassword(email, resetType) {
+    const param = encodeURIComponent(email);
+    const url = `password/forgot?email=${param}&type=${resetType}`;
+    return Method.dataGet(url, token);
+  },
   //role Api
   role() {
     var url = "/ref/roles";

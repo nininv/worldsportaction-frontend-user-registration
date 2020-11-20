@@ -180,6 +180,9 @@ class AppTeamRegistrationForm extends Component{
                 this.props.orgteamRegistrationRegSettingsAction(payload);
                 this.setState({showFindAnotherCompetitionview: false});
                 this.props.updateTeamRegistrationStateVarAction(false,"hasCompetitionSelected");
+                setTimeout(() => {
+                    this.setSelectCompetitionStepFormFields();
+                },300);
             }
 
             if(!teamRegistrationState.onTeamInfoByIdLoad && this.state.getTeamInfoByIdLoad){
@@ -382,7 +385,7 @@ class AppTeamRegistrationForm extends Component{
                     [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoDisablityCareNumber`]:additionalInfo.disabilityCareNumber,
                     [`additionalInfoHeartTrouble`]:additionalInfo.walkingNetball.heartTrouble,
-                    [`additionalInfoChestPain`]:additionalInfo.walkingNetball.heartTrouble,
+                    [`additionalInfoChestPain`]:additionalInfo.walkingNetball.chestPain,
                     [`additionalInfoFaintOrSpells`]:additionalInfo.walkingNetball.faintOrSpells,
                     [`additionalInfoBloodPressure`]:additionalInfo.walkingNetball.bloodPressure,
                     [`additionalInfoJointOrBoneProblem`]:additionalInfo.walkingNetball.jointOrBoneProblem,
@@ -703,6 +706,7 @@ class AppTeamRegistrationForm extends Component{
     dateConversion = (f, key, referenceKey, teamMemberIndex) => {
         try{
             let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
+            console.log("Date",date)
             if(referenceKey == "team"){
                 this.onChangeSetTeamValue(date, key)
             }else if(referenceKey == "teamMember"){
@@ -965,7 +969,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="light-grey-border-box">
                             <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                            <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringAs}</div>
+                            <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringTeamTo}</div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductTypeId`, {
                                     rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired}],
@@ -1007,19 +1011,26 @@ class AppTeamRegistrationForm extends Component{
                             )}
     
                             <div className="row">
-                                <div className="col-sm-12 col-md-6">
+                                <div className="col-sm-12 col-md-4">
                                     <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-md-6">
-                                    <div className="input-style-bold">{AppConstants.totalSeasonalFees}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalSeasonalFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                <div className="col-sm-12 col-md-4">
+                                    <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
+                                        <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
+                                    </div>
+                                </div>
+                                <div className="col-sm-12 col-md-4">
+                                    <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
                             </div>
+                            <div className="input-style-bold pt-1 pb-0">{AppConstants.dueAtRegistration}</div>
                         </div>
                         <div className="competition-specifics">{AppConstants.competitionSpecifics}</div>
                         <div className="row" style={{marginTop: "20px"}}>
@@ -1041,7 +1052,7 @@ class AppTeamRegistrationForm extends Component{
                                     AppConstants.noInformationProvided}
                                 </div>                                    
                                 {/* <InputWithHead heading={AppConstants.venue}/> */}
-                                <div className="input-style-bold">{AppConstants.venue}</div>
+                                <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                                 <div 
                                 className="inter-medium-font" 
                                 style={{fontSize: "13px"}}>
@@ -1743,10 +1754,10 @@ class AppTeamRegistrationForm extends Component{
                     ))}
                     {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
                          <div className="orange-action-txt" 
-                         style={{marginTop: "10px"}}
+                         style={{marginTop: "25px"}}
                          onClick={() => {
                              this.onChangeSetTeamValue(null,"addTeamMember");
-                         }}>+ {AppConstants.addTeamMember}</div>
+                         }}><span className="add-another-button-border">+ {AppConstants.addTeamMember}</span></div>
                     )}
                 </div>
             )
