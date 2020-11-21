@@ -1143,6 +1143,8 @@ const AppConstants = {
  payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
  pleaseSelect: "Please Select",
+
+ myUmpiringAvailability: "My Umpiring Availability",
  noOfMatches: "No of Matches",
  emergencyContact: "Emergency Contact",
  competitionVenue:"Competition Venue",

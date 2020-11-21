@@ -2369,6 +2369,7 @@ class AppTeamRegistrationForm extends Component{
                         <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                     </Steps>
                     {this.stepsContentView(getFieldDecorator)}
+                    {this.singleCompModalView()}
                 </div>
             )
         }catch(ex){
@@ -2393,6 +2394,32 @@ class AppTeamRegistrationForm extends Component{
         }catch(ex){
             console.log("Error in footerView::"+ex);
         }
+    }
+
+    singleCompModalView = () => {
+        let { saveValidationErrorMsg } = this.props.teamRegistrationState;
+        let { saveValidationErrorCode } = this.props.teamRegistrationState;
+        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
+        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={title}
+                    visible={this.state.singleCompModalVisible}
+                    onCancel={() => this.setState({ singleCompModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                    {(errorMsg || []).map((item, index) => (
+                        <p key={index}> {item}</p>
+                    ))}
+                </Modal>
+            </div>
+        )
     }
 
     render(){
