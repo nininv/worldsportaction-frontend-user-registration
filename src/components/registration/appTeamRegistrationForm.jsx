@@ -939,6 +939,7 @@ class AppTeamRegistrationForm extends Component{
     competitionDetailView = (teamRegistrationObj,getFieldDecorator) => {
         try{
             let competitionInfo = teamRegistrationObj.competitionInfo;
+            let organisaionInfo = teamRegistrationObj.organisationInfo;
             let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
                             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
             let organisationPhotos = this.getOrganisationPhotos(teamRegistrationObj.organisationInfo.organisationPhotos);
@@ -952,7 +953,7 @@ class AppTeamRegistrationForm extends Component{
                     <div>
                         <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
                             <div className="col-sm-1.5">
-                                <img className="profile-img" src={competitionInfo.compLogoUrl}/> 
+                                <img className="profile-img" src={organisaionInfo.organisationLogoUrl}/> 
                             </div>
                             <div className="col">
                                 <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionInfo.organisationName}</div>
