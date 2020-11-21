@@ -679,7 +679,7 @@ class AppTeamRegistrationForm extends Component{
     checkIsPlayer = (membershipProductTypes) => {
         try{
             let exist = false;
-            let isPlayer = membershipProductTypes.find(x => x.isPlayer == 1 && x.isChecked == true);
+            let isPlayer = membershipProductTypes.find(x => x.isChecked == true);
             if(isPlayer){
                 exist = true;
             }
