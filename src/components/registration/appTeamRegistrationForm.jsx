@@ -679,7 +679,7 @@ class AppTeamRegistrationForm extends Component{
     checkIsPlayer = (membershipProductTypes) => {
         try{
             let exist = false;
-            let isPlayer = membershipProductTypes.find(x => x.isPlayer == 1 && x.isChecked == true);
+            let isPlayer = membershipProductTypes.find(x => x.isChecked == true);
             if(isPlayer){
                 exist = true;
             }
@@ -939,6 +939,7 @@ class AppTeamRegistrationForm extends Component{
     competitionDetailView = (teamRegistrationObj,getFieldDecorator) => {
         try{
             let competitionInfo = teamRegistrationObj.competitionInfo;
+            let organisaionInfo = teamRegistrationObj.organisationInfo;
             let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
                             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : ''; 
             let organisationPhotos = this.getOrganisationPhotos(teamRegistrationObj.organisationInfo.organisationPhotos);
@@ -952,7 +953,7 @@ class AppTeamRegistrationForm extends Component{
                     <div>
                         <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
                             <div className="col-sm-1.5">
-                                <img className="profile-img" src={competitionInfo.compLogoUrl}/> 
+                                <img className="profile-img" src={organisaionInfo.organisationLogoUrl}/> 
                             </div>
                             <div className="col">
                                 <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionInfo.organisationName}</div>
@@ -1506,7 +1507,12 @@ class AppTeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.email} required={"required-field"}/>
                             <Form.Item >
                                 {getFieldDecorator(`yourDetailsEmail`, {
-                                    rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                    rules: [{ required: true, message: ValidationConstants.emailField[0] },
+                                    {
+                                        type: "email",
+                                        pattern: new RegExp(AppConstants.emailExp),
+                                        message: ValidationConstants.email_validation
+                                    }],
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.email}
@@ -1671,7 +1677,12 @@ class AppTeamRegistrationForm extends Component{
                             <InputWithHead heading={AppConstants.email} required={"required-field"}/>
                             <Form.Item >
                                 {getFieldDecorator(`teamMemberEmail${teamMemberIndex}`, {
-                                    rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                    rules: [{ required: true, message: ValidationConstants.emailField[0] },
+                                    {
+                                        type: "email",
+                                        pattern: new RegExp(AppConstants.emailExp),
+                                        message: ValidationConstants.email_validation
+                                    }],
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.email}
@@ -2369,6 +2380,7 @@ class AppTeamRegistrationForm extends Component{
                         <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) &&"finish"} title={AppConstants.additionalInformation}/>
                     </Steps>
                     {this.stepsContentView(getFieldDecorator)}
+                    {this.singleCompModalView()}
                 </div>
             )
         }catch(ex){
@@ -2393,6 +2405,32 @@ class AppTeamRegistrationForm extends Component{
         }catch(ex){
             console.log("Error in footerView::"+ex);
         }
+    }
+
+    singleCompModalView = () => {
+        let { saveValidationErrorMsg } = this.props.teamRegistrationState;
+        let { saveValidationErrorCode } = this.props.teamRegistrationState;
+        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
+        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={title}
+                    visible={this.state.singleCompModalVisible}
+                    onCancel={() => this.setState({ singleCompModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                    {(errorMsg || []).map((item, index) => (
+                        <p key={index}> {item}</p>
+                    ))}
+                </Modal>
+            </div>
+        )
     }
 
     render(){

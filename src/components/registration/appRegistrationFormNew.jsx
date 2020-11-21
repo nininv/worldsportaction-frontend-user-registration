@@ -284,16 +284,23 @@ class AppRegistrationFormNew extends Component {
             if (registrationObj) {
                 this.props.form.setFieldsValue({
                     [`genderRefId`]: registrationObj.genderRefId,
-                    [`dateOfBirth`]: registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "MM-DD-YYYY"),
+                    [`dateOfBirth`]: registrationObj.dateOfBirth && moment(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY"), "MM-DD-YYYY"),
                     [`participantFirstName`]: registrationObj.firstName,
                     [`participantMiddleName`]: registrationObj.middleName,
                     [`participantLastName`]: registrationObj.lastName,
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
                     [`participantEmail`]: registrationObj.email,
-                    [`emergencyFirstName`]: registrationObj.emergencyFirstName,
-                    [`emergencyLastName`]: registrationObj.emergencyLastName,
-                    [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
                 });
+                console.log(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))
+                if ((getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))> 18){
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`emergencyFirstName`]: registrationObj.emergencyFirstName,
+                            [`emergencyLastName`]: registrationObj.emergencyLastName,
+                            [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
+                        });
+                    }, 300)
+                }
                 if (registrationObj.selectAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
                 }
@@ -1192,7 +1199,7 @@ class AppRegistrationFormNew extends Component {
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 ? (
+                {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 ) : (
                         <div>
@@ -1602,7 +1609,14 @@ class AppRegistrationFormNew extends Component {
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
                                 <Form.Item >
                                     {getFieldDecorator(`participantEmail`, {
-                                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                        rules: [
+                                            { required: true, message: ValidationConstants.emailField[0] },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }
+                                        ],
                                     })(
                                         <InputWithHead
                                             disabled={registrationObj.userId == getUserId()}
@@ -1614,7 +1628,7 @@ class AppRegistrationFormNew extends Component {
                                 </Form.Item>
                             </div>
                         )}
-                        {getAge(registrationObj.dateOfBirth) < 18 && (
+                        {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
                             <Checkbox
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
@@ -1961,7 +1975,12 @@ class AppRegistrationFormNew extends Component {
                                 <div className="col-sm-6">
                                     <Form.Item>
                                         {getFieldDecorator(`parentEmail${parentIndex}`, {
-                                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                            rules: [{ required: true, message: ValidationConstants.emailField[0] },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }],
                                         })(
                                             <InputWithHead
                                                 required={"required-field pt-0 pb-0"}
@@ -2265,7 +2284,7 @@ class AppRegistrationFormNew extends Component {
                 <div>
                     <div className="row" style={competitionInfo.heroImageUrl ? { marginTop: "30px", marginLeft: "0px", marginRight: "0px" } : { marginLeft: "0px", marginRight: "0px" }}>
                         <div className="col-sm-1.5">
-                            <img className="profile-img" src={competitionInfo.compLogoUrl} />
+                            <img className="profile-img" src={competition.organisationInfo.organisationLogoUrl} />
                         </div>
                         <div className="col">
                             <div className="form-heading" style={{ paddingBottom: "0px" }}>{competition.competitionInfo.organisationName}</div>
@@ -3052,7 +3071,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
 
-                    {(getAge(registrationObj.dateOfBirth) < 18) && (
+                    {(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) && (
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>
