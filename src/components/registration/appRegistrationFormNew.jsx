@@ -1602,7 +1602,14 @@ class AppRegistrationFormNew extends Component {
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
                                 <Form.Item >
                                     {getFieldDecorator(`participantEmail`, {
-                                        rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                        rules: [
+                                            { required: true, message: ValidationConstants.emailField[0] },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }
+                                        ],
                                     })(
                                         <InputWithHead
                                             disabled={registrationObj.userId == getUserId()}
@@ -1961,7 +1968,12 @@ class AppRegistrationFormNew extends Component {
                                 <div className="col-sm-6">
                                     <Form.Item>
                                         {getFieldDecorator(`parentEmail${parentIndex}`, {
-                                            rules: [{ required: true, message: ValidationConstants.emailField[0] }],
+                                            rules: [{ required: true, message: ValidationConstants.emailField[0] },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }],
                                         })(
                                             <InputWithHead
                                                 required={"required-field pt-0 pb-0"}
