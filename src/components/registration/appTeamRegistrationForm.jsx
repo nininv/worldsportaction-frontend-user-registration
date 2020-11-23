@@ -156,6 +156,38 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    setUser = () => {
+        try{
+            console.log("inside")
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            let userInfoList = this.props.userRegistrationstate.userInfo;
+            let userId = getUserId();
+            let user = userInfoList.find((x) => x.id == userId);
+            if(user){
+                teamRegistrationObj.firstName = user.firstName;
+                teamRegistrationObj.lastName = user.lastName;
+                teamRegistrationObj.middleName = user.middleName;
+                teamRegistrationObj.mobileNumber = user.mobileNumber;
+                teamRegistrationObj.email = user.email;
+                teamRegistrationObj.dateOfBirth = user.dateOfBirth;
+                teamRegistrationObj.genderRefId = user.genderRefId;
+                teamRegistrationObj.street1 = user.street1;
+                teamRegistrationObj.street2 = user.street2;
+                teamRegistrationObj.postalCode = user.postalCode;
+                teamRegistrationObj.suburb = user.suburb;
+                teamRegistrationObj.stateRefId = user.stateRefId;
+                teamRegistrationObj.countryRefId = user.countryRefId;
+                teamRegistrationObj.addNewAddressFlag = false;
+                teamRegistrationObj.selectAddressFlag = false;
+                teamRegistrationObj.manualEnterAddressFlag = true;
+                console.log("team",teamRegistrationObj)
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj,"teamRegistrationObj")
+            }
+        }catch(ex){
+            console.log("Error in setUser::"+ex)
+        }
+    }
+
     componentDidUpdate(){
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
@@ -169,6 +201,7 @@ class AppTeamRegistrationForm extends Component{
                 if(getOrganisationId() == null && getCompetitonId() == null){
                     this.setState({showFindAnotherCompetitionview: true});
                 }
+                this.setUser()
                 this.props.updateTeamRegistrationStateVarAction(false,"hasTeamSelected");
             }
 
@@ -2496,7 +2529,8 @@ function mapDispatchToProps(dispatch){
 function mapStatetoProps(state){
     return {
         teamRegistrationState: state.TeamRegistrationState,
-        commonReducerState: state.CommonReducerState
+        commonReducerState: state.CommonReducerState,
+        userRegistrationstate: state.UserRegistrationState,
     }
 }
 
