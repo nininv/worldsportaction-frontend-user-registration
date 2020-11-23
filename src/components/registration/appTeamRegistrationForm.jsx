@@ -169,7 +169,7 @@ class AppTeamRegistrationForm extends Component{
                 teamRegistrationObj.middleName = user.middleName;
                 teamRegistrationObj.mobileNumber = user.mobileNumber;
                 teamRegistrationObj.email = user.email;
-                teamRegistrationObj.dateOfBirth = user.dateOfBirth;
+                teamRegistrationObj.dateOfBirth = user.dateOfBirth ? moment(user.dateOfBirth).format("MM-DD-YYYY") : null;
                 teamRegistrationObj.genderRefId = user.genderRefId;
                 teamRegistrationObj.street1 = user.street1;
                 teamRegistrationObj.street2 = user.street2;
