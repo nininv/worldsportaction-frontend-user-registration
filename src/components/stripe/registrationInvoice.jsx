@@ -53,9 +53,9 @@ class RegistrationInvoice extends Component {
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
        let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-    //    let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
+    //    let registrationId = "25955e35-b2ae-412f-bed3-4a104f4e4348";
     //    let userRegId = null;
-    //    let invoiceId = 8352;
+    //    let invoiceId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
@@ -78,9 +78,9 @@ class RegistrationInvoice extends Component {
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            //  let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
+            //  let registrationId = "25955e35-b2ae-412f-bed3-4a104f4e4348";
             //  let userRegId = null;
-            //  let invoiceId = 8352;
+            //  let invoiceId = null;
             this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -557,12 +557,22 @@ class RegistrationInvoice extends Component {
                                                     {item && item.firstName &&
                                                         <InputWithHead
                                                             heading=
-                                                            {mem.divisionName ?
-                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
-                                                                + ", " + item.competitionName + " - "+ mem.divisionName
+                                                            {isTeamReg == 1 ?
+                                                                mem.divisionName ?
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", Team - " + item.teamName + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", Team - " + item.teamName + ", " + item.competitionName
                                                                 :
-                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
-                                                                + ", " + item.competitionName
+                                                                mem.divisionName ?
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", " + item.competitionName
+                                                                
+
                                                             }
                                                         />
                                                     }
