@@ -50,12 +50,12 @@ class RegistrationInvoice extends Component {
 
     getInvoiceStatusAPI = () => {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
-    //    let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-    //    let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-       let registrationId = null;
-       let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
-       let invoiceId = null;
+       let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+       let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
+       let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+    //    let registrationId = null;
+    //    let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+    //    let invoiceId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
@@ -75,12 +75,12 @@ class RegistrationInvoice extends Component {
         if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
-            // let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            // let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            // let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            let registrationId = null;
-            let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
-            let invoiceId = null;
+            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+            // let registrationId = null;
+            // let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+            // let invoiceId = null;
             this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
