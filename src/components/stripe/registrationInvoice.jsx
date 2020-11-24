@@ -547,7 +547,7 @@ class RegistrationInvoice extends Component {
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
                                  Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
-                                 let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
+                                 let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
                                  return (
                                     <div>
