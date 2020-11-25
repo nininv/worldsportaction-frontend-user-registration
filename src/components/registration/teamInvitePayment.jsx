@@ -27,7 +27,7 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
-import {isArrayNotEmpty} from '../../util/helpers';
+import {isArrayNotEmpty, feeIsNull} from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -112,6 +112,8 @@ const CheckoutForm = (props) => {
     let paymentOptions = props.paymentOptions;
     let payload = props.payload;
     let userRegId = props.userRegId;
+    let totalVal = feeIsNull(payload?.total?.targetValue);
+    let hasFutureInstalment = payload.hasFutureInstalment;
     
     console.log("PaymentOptions" ,props.paymentOptions);
     console.log(selectedPaymentOption)
@@ -230,7 +232,7 @@ const CheckoutForm = (props) => {
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
         console.log(auBankAccount, card)
-        if (auBankAccount || card) {
+        if (auBankAccount || card || hasFutureInstalment == 1) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -290,12 +292,19 @@ const CheckoutForm = (props) => {
                     // })
                 }
             }
+            else if(hasFutureInstalment){
+                props.onLoad(true)
+                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, userRegId,1);
+            }
         }
         else {
-            message.config({
-                maxCount: 1, duration: 0.9
-            })
-            message.error(AppConstants.selectedPaymentOption)
+            if(!hasFutureInstalment){
+                message.config({
+                    maxCount: 1, duration: 0.9
+                })
+                message.error(AppConstants.selectedPaymentOption)
+            }
+           
         }
     }
 
@@ -303,7 +312,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {(paymentOptions.length > 0 ) ?
+                {(paymentOptions.length > 0  && (totalVal > 0 || hasFutureInstalment == 0)) ?
                 <div className="content-view pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
@@ -500,7 +509,7 @@ const CheckoutForm = (props) => {
                 <div className="mt-5">
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
-                            {(paymentOptions.length > 0) ?
+                            {(paymentOptions.length > 0  || totalVal == 0 || hasFutureInstalment == 1) ?
                                 <Button
                                     className="open-reg-button"
                                     htmlType="submit"
