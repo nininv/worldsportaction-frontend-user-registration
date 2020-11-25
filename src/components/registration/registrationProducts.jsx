@@ -558,6 +558,10 @@ class RegistrationProducts extends Component {
                                     {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
                                 </div>
                             ))}
+                            <div style={{color: "var(--app-red)", marginTop: "10px"}}
+                            className="body-text-common">
+                                {AppConstants.teamRegistrationNote}
+                            </div>
                         </div>
                         {item.selectedOptions.nominationPayOptionRefId == 2 &&
                         <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
