@@ -282,6 +282,7 @@ class TeamInivteForm extends Component {
 
     handlePlacesAutocomplete = (addressData, key) => {
         try {
+            console.log("addressdata", addressData)
             const { stateList, countryList } = this.props.commonReducerState;
             const address = addressData;
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
@@ -429,19 +430,22 @@ class TeamInivteForm extends Component {
         try {
             let error = false;
             const { iniviteMemberInfo } = this.props.teamInviteState;
+            console.log("Memberinfo",iniviteMemberInfo)
             if (this.state.searchAddressFlag &&
         
                 iniviteMemberInfo.userRegDetails.stateRefId == null) {
                 error = true;
+                console.log("StateRefId",iniviteMemberInfo.userRegDetails.stateRefId)
             }
             if (isArrayNotEmpty(iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails)) {
                 let parent = iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails.find(x => x.searchAddressFlag == true &&
                     x.stateRefId == null);
                 if (parent != undefined) {
-        
+                    console.log("Parent",parent)
                     error = true;
                 }
             }
+            console.log("error",error)
             return error;
         } catch (ex) {
             console.log("Error in addressSearchValidation" + ex);
