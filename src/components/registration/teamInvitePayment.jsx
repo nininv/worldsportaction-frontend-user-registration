@@ -113,7 +113,7 @@ const CheckoutForm = (props) => {
     let payload = props.payload;
     let userRegId = props.userRegId;
     let totalVal = feeIsNull(payload?.total?.targetValue);
-    let hasFutureInstalment = payload.hasFutureInstalment;
+    let hasFutureInstalment = payload?.hasFutureInstalment;
     
     console.log("PaymentOptions" ,props.paymentOptions);
     console.log(selectedPaymentOption)
