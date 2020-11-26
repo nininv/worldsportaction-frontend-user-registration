@@ -113,10 +113,7 @@ const CheckoutForm = (props) => {
     let payload = props.payload;
     let userRegId = props.userRegId;
     let totalVal = feeIsNull(payload?.total?.targetValue);
-    let hasFutureInstalment = payload?.hasFutureInstalment;
-    
-    console.log("PaymentOptions" ,props.paymentOptions);
-    console.log(selectedPaymentOption)
+    let hasFutureInstalment = feeIsNull(payload?.hasFutureInstalment);
     // Handle real-time validation errors from the card Element.
 
     const handleChange = async (event) => {
@@ -312,7 +309,7 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {(paymentOptions.length > 0  && (totalVal > 0 || hasFutureInstalment == 0)) ?
+                {(paymentOptions.length > 0  && (totalVal > 0 || (totalVal == 0 && hasFutureInstalment == 1))) ?
                 <div className="content-view pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
