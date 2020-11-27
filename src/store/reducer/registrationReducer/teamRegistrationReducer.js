@@ -461,6 +461,30 @@ function updateImportedTeamMember(state,importedTeamMemberList){
   }
 }
 
+function getTeamMembershipInfo(organisationList){
+	try{
+		let filteredMembershipProductInfoTemp = [];
+		for(let organisation of organisationList){
+			for(let competition of organisation.competitions){
+				let teamMembershipProduct = competition.membershipProducts.find(x => x.isTeamRegistration == 1);
+				if(teamMembershipProduct){
+					let organisatioExist = filteredMembershipProductInfoTemp.find(x => x.organisationUniqueKey == organisation.organisationUniqueKey);
+					if(organisatioExist){
+						organisatioExist.competitions.push(competition);
+					}else{
+            let organisationTemp = deepCopyFunction(organisation);
+            organisationTemp.competitions = [];
+            filteredMembershipProductInfoTemp.push(organisationTemp);
+          }
+				}
+			}
+		}
+		return filteredMembershipProductInfoTemp;
+	}catch(ex){
+		console.log("Error in getIndividualMembershipInfo::"+ex)
+	}
+}
+
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
@@ -474,9 +498,10 @@ function teamRegistrationReducer(state = initialState, action){
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
+            let teamRegMembershipInfo = getTeamMembershipInfo(data);
             return {
               ...state,
-              membershipProductInfo: data,
+              membershipProductInfo: teamRegMembershipInfo,
               status: action.status,
               onMembershipLoad: false
             };
