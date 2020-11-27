@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <g id="Group_43" data-name="Group 43" transform="translate(-274 -686)">
+    <g id="Rectangle_147" data-name="Rectangle 147" transform="translate(274 686)" fill="#fff" stroke="#9e9eb0" stroke-width="1">
+      <rect width="48" height="48" rx="10" stroke="none"/>
+      <rect x="0.5" y="0.5" width="47" height="47" rx="9.5" fill="none"/>
+    </g>
+    <g id="ic_competition-24px" transform="translate(284 696)">
+      <rect id="Rectangle_149" data-name="Rectangle 149" width="28" height="28" fill="none"/>
+      <path id="Path_50" data-name="Path 50" d="M22.556,5.444H20.111V3H7.889V5.444H5.444A2.452,2.452,0,0,0,3,7.889V9.111a6.1,6.1,0,0,0,5.366,6.038,6.123,6.123,0,0,0,4.412,3.618v3.789H7.889V25H20.111V22.556H15.222V18.767a6.123,6.123,0,0,0,4.412-3.618A6.1,6.1,0,0,0,25,9.111V7.889A2.452,2.452,0,0,0,22.556,5.444ZM5.444,9.111V7.889H7.889v4.669A3.679,3.679,0,0,1,5.444,9.111ZM14,16.444a3.677,3.677,0,0,1-3.667-3.667V5.444h7.333v7.333A3.677,3.677,0,0,1,14,16.444Zm8.556-7.333a3.679,3.679,0,0,1-2.444,3.447V7.889h2.444Z" transform="translate(0 0)" fill="#9e9eb0"/>
+    </g>
+  </g>
+</svg>
