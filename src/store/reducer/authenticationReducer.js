@@ -15,6 +15,8 @@ const initialState = {
 function login(state = initialState, action) {
   switch (action.type) {
     case ApiConstants.API_LOGIN_LOAD:
+    localStorage.removeItem("token");
+    localStorage.removeItem('stripeCustomerAccountId')
       return { ...state, onLoad: true };
 
     case ApiConstants.API_LOGIN_SUCCESS:
