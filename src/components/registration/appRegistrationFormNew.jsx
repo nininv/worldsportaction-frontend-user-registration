@@ -2206,7 +2206,7 @@ class AppRegistrationFormNew extends Component {
                         </Select>
                         {organisationInfo && (
                             <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
-                                <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
+                                <img className="profile-img" src={organisationInfo.organisationLogoUrl?organisationInfo.organisationLogoUrl:AppImages.compDefaultIcon} />
                                 <div style={{ width: "170px", marginLeft: "20px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
                                     <div style={{ marginLeft: "20px" }}><img className="icon-size-20" style={{ marginRight: "15px" }} src={AppImages.callAnswer} />{organisationInfo.mobileNumber}</div>

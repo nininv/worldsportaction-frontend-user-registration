@@ -1,4 +1,5 @@
 const AppImages = {
+  compDefaultIcon: require("../images/champ.svg"),
   plusSign: require("../images/add.png"),
   transfer: require("../images/transfer.png"),
   moreTripleDot: require("../images/more.png"),
