@@ -2143,7 +2143,7 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>
-                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "MM-DD-YYYY").format("DD/MM/YYYY")}
+                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}
                                 </div>
                             )}
                         </div>
