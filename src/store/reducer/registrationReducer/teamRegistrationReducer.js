@@ -182,6 +182,7 @@ const initialState = {
     onMembershipLoad: false,
     status: null,
     membershipProductInfo: [],
+    NonFilteredMembershipProductInfo: [],
     teamRegistrationObj : null,
     hasTeamSelected: false,
     hasCompetitionSelected: false,
@@ -225,15 +226,36 @@ function setTeamRegistrationObj(state){
           }
           setCompetitionDetails(state,details);
         }else{
-          state.expiredRegistrationFlag = true;
+          // state.expiredRegistrationFlag = true;
+          initiateExpiredRegistrationCall(state)
         }
       }else{
-        state.expiredRegistrationFlag = true;
+        // state.expiredRegistrationFlag = true;
+        initiateExpiredRegistrationCall(state);
       }
     }
   }catch(ex){
     console.log("Error in getTeamRegistrationObj in teamRegistrationReducer::"+ex);
   }
+}
+
+function initiateExpiredRegistrationCall(state){
+	try{
+		if(getOrganisationId() != null && getCompetitonId() != null){
+      let membershipProductsInfoList = state.NonFilteredMembershipProductInfo;
+			let organisatinInfoTemp = membershipProductsInfoList.find(x => x.organisationUniqueKey == getOrganisationId());
+			if(organisatinInfoTemp){
+				let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+				if(competitionInfoTemp == undefined){
+					state.expiredRegistrationFlag = true;
+				}
+			}else{
+				state.expiredRegistrationFlag = true;
+			}
+		}
+	}catch(ex){
+		console.log("Error in initiateExpiredRegistrationCall::"+ex)
+	}
 }
 
 function setCompetitionDetails(state,details){
@@ -502,6 +524,7 @@ function teamRegistrationReducer(state = initialState, action){
             return {
               ...state,
               membershipProductInfo: teamRegMembershipInfo,
+              NonFilteredMembershipProductInfo: data,
               status: action.status,
               onMembershipLoad: false
             };

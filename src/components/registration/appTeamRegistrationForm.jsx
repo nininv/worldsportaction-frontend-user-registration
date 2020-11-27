@@ -200,6 +200,17 @@ class AppTeamRegistrationForm extends Component{
             if(teamRegistrationState.hasTeamSelected){
                 if(getOrganisationId() == null && getCompetitonId() == null){
                     this.setState({showFindAnotherCompetitionview: true});
+                }else{
+                    let membershipProductInfo = teamRegistrationState.membershipProductInfo;
+                    let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                    if(organisatinInfoTemp){
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        if(competitionInfoTemp == undefined){
+                            this.setState({showFindAnotherCompetitionview: true});
+                        }
+                    }else{
+                        this.setState({showFindAnotherCompetitionview: true});
+                    }
                 }
                 this.setUser()
                 this.props.updateTeamRegistrationStateVarAction(false,"hasTeamSelected");
