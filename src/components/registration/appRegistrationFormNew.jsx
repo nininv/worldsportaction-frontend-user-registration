@@ -290,17 +290,10 @@ class AppRegistrationFormNew extends Component {
                     [`participantLastName`]: registrationObj.lastName,
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
                     [`participantEmail`]: registrationObj.email,
+                    [`emergencyFirstName`]: registrationObj.emergencyFirstName,
+                    [`emergencyLastName`]: registrationObj.emergencyLastName,
+                    [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
                 });
-                console.log(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))
-                if ((getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))> 18){
-                    setTimeout(() => {
-                        this.props.form.setFieldsValue({
-                            [`emergencyFirstName`]: registrationObj.emergencyFirstName,
-                            [`emergencyLastName`]: registrationObj.emergencyLastName,
-                            [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
-                        });
-                    }, 300)
-                }
                 if (registrationObj.selectAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
                 }
@@ -2021,7 +2014,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                {getFieldDecorator(`emergencyFirstName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                 })(
                                     <InputWithHead
@@ -2031,7 +2024,7 @@ class AppRegistrationFormNew extends Component {
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyFirstName")}
                                         setFieldsValue={registrationObj.emergencyFirstName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                            [`emergencyFirstName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -2039,7 +2032,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactLastName`, {
+                                {getFieldDecorator(`emergencyLastName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                 })(
                                     <InputWithHead
@@ -2049,7 +2042,7 @@ class AppRegistrationFormNew extends Component {
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyLastName")}
                                         setFieldsValue={registrationObj.emergencyLastName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                            [`emergencyLastName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -2274,6 +2267,7 @@ class AppRegistrationFormNew extends Component {
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
         let organisationPhotos = this.getOrganisationPhotos(competition.organisationInfo.organisationPhotos);
+        let individualMembershipProducts = competition.competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1);
         return (
             <div className="registration-form-view" key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
@@ -2299,7 +2293,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
                         <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
-                        {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
+                        {(individualMembershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox"
                                 checked={membershipProduct.isChecked}

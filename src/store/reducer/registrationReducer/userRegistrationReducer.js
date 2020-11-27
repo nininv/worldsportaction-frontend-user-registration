@@ -210,6 +210,9 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
+			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
+            registrationObj.emergencyLastName = selectedUser.emergencyLastName;
+            registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.street1 = selectedUser.street1;
