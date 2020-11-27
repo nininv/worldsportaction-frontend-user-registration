@@ -2267,6 +2267,7 @@ class AppRegistrationFormNew extends Component {
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
         let organisationPhotos = this.getOrganisationPhotos(competition.organisationInfo.organisationPhotos);
+        let individualMembershipProducts = competition.competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1);
         return (
             <div className="registration-form-view" key={competitionIndex}>
                 {competitionInfo.heroImageUrl && (
@@ -2292,7 +2293,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
                         <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
-                        {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
+                        {(individualMembershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox"
                                 checked={membershipProduct.isChecked}
