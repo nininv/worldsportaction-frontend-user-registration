@@ -156,6 +156,38 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    setUser = () => {
+        try{
+            console.log("inside")
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            let userInfoList = this.props.userRegistrationstate.userInfo;
+            let userId = getUserId();
+            let user = userInfoList.find((x) => x.id == userId);
+            if(user){
+                teamRegistrationObj.firstName = user.firstName;
+                teamRegistrationObj.lastName = user.lastName;
+                teamRegistrationObj.middleName = user.middleName;
+                teamRegistrationObj.mobileNumber = user.mobileNumber;
+                teamRegistrationObj.email = user.email;
+                teamRegistrationObj.dateOfBirth = user.dateOfBirth ? moment(user.dateOfBirth).format("MM-DD-YYYY") : null;
+                teamRegistrationObj.genderRefId = user.genderRefId;
+                teamRegistrationObj.street1 = user.street1;
+                teamRegistrationObj.street2 = user.street2;
+                teamRegistrationObj.postalCode = user.postalCode;
+                teamRegistrationObj.suburb = user.suburb;
+                teamRegistrationObj.stateRefId = user.stateRefId;
+                teamRegistrationObj.countryRefId = user.countryRefId;
+                teamRegistrationObj.addNewAddressFlag = false;
+                teamRegistrationObj.selectAddressFlag = false;
+                teamRegistrationObj.manualEnterAddressFlag = true;
+                console.log("team",teamRegistrationObj)
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj,"teamRegistrationObj")
+            }
+        }catch(ex){
+            console.log("Error in setUser::"+ex)
+        }
+    }
+
     componentDidUpdate(){
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
@@ -168,7 +200,19 @@ class AppTeamRegistrationForm extends Component{
             if(teamRegistrationState.hasTeamSelected){
                 if(getOrganisationId() == null && getCompetitonId() == null){
                     this.setState({showFindAnotherCompetitionview: true});
+                }else{
+                    let membershipProductInfo = teamRegistrationState.membershipProductInfo;
+                    let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                    if(organisatinInfoTemp){
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        if(competitionInfoTemp == undefined){
+                            this.setState({showFindAnotherCompetitionview: true});
+                        }
+                    }else{
+                        this.setState({showFindAnotherCompetitionview: true});
+                    }
                 }
+                this.setUser()
                 this.props.updateTeamRegistrationStateVarAction(false,"hasTeamSelected");
             }
 
@@ -878,7 +922,7 @@ class AppTeamRegistrationForm extends Component{
                         </Select>
                         {organisationInfo && (
                             <div style={{display: "flex",alignItems: "center",marginTop: "20px"}}>
-                                <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
+                                <img className="profile-img" src={organisationInfo.organisationLogoUrl?organisationInfo.organisationLogoUrl:AppImages.compDefaultIcon}/>
                                 <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
                                     <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
@@ -1378,7 +1422,6 @@ class AppTeamRegistrationForm extends Component{
             console.log("Error in yourDetailsAddressView::"+ex);
         }
     }
-
     yourDetailsView = (getFieldDecorator) => {
         try{
             const { genderList } = this.props.commonReducerState;
@@ -1927,6 +1970,10 @@ class AppTeamRegistrationForm extends Component{
     teamInfoView = () => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
+            let totalPlayer =  teamRegistrationObj.teamMembers.length
+            if(teamRegistrationObj.registeringAsAPlayer == 1 || teamRegistrationObj.personRoleRefId == 4){
+                totalPlayer = teamRegistrationObj.teamMembers.length + 1
+            }
             return(
                 <div className="registration-form-view">
                     <div style={{display: "flex",alignItems:"center"}}>
@@ -1937,7 +1984,7 @@ class AppTeamRegistrationForm extends Component{
                             <div className="form-heading"  style={{paddingBottom: "0px"}}>{teamRegistrationObj.teamName}</div>
                             <div className="inter-medium-font" 
                             style={{fontSize: "13px"}}>
-                                {AppConstants.team},{teamRegistrationObj.teamMembers.length} {AppConstants.members}
+                                {AppConstants.team},{totalPlayer} {AppConstants.members}
                             </div>
                         </div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}
@@ -2496,7 +2543,8 @@ function mapDispatchToProps(dispatch){
 function mapStatetoProps(state){
     return {
         teamRegistrationState: state.TeamRegistrationState,
-        commonReducerState: state.CommonReducerState
+        commonReducerState: state.CommonReducerState,
+        userRegistrationstate: state.UserRegistrationState,
     }
 }
 

@@ -38,6 +38,7 @@ import { updateTeamInviteAction, saveTeamInviteReviewAction} from
 import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction, getRegParticipantAddressAction} 
         from '../../store/actions/registrationAction/registrationProductsAction';
 import { getCommonRefData, countryReferenceAction} from '../../store/actions/commonAction/commonAction';
+import Tooltip from 'react-png-tooltip';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -299,7 +300,14 @@ class TeamInviteShipping extends Component{
                                 padding: "15px",
                                 marginTop: "10px"
                             }}>
-                                <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                <div style={{display: "flex"}}>
+                                    <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                    <div style={{marginTop: "-5px"}}>
+                                        <Tooltip placement="top">
+                                            <span>{item.pickupInstruction}</span>
+                                        </Tooltip>
+                                    </div>
+                                </div>
                                 <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
                             </div>    
                         )}

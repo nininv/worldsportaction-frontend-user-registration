@@ -290,17 +290,10 @@ class AppRegistrationFormNew extends Component {
                     [`participantLastName`]: registrationObj.lastName,
                     [`participantMobileNumber`]: registrationObj.mobileNumber,
                     [`participantEmail`]: registrationObj.email,
+                    [`emergencyFirstName`]: registrationObj.emergencyFirstName,
+                    [`emergencyLastName`]: registrationObj.emergencyLastName,
+                    [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
                 });
-                console.log(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))
-                if ((getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")))> 18){
-                    setTimeout(() => {
-                        this.props.form.setFieldsValue({
-                            [`emergencyFirstName`]: registrationObj.emergencyFirstName,
-                            [`emergencyLastName`]: registrationObj.emergencyLastName,
-                            [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
-                        });
-                    }, 300)
-                }
                 if (registrationObj.selectAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("selectAddressFlag");
                 }
@@ -2021,7 +2014,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactFirstName`, {
+                                {getFieldDecorator(`emergencyFirstName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                 })(
                                     <InputWithHead
@@ -2031,7 +2024,7 @@ class AppRegistrationFormNew extends Component {
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyFirstName")}
                                         setFieldsValue={registrationObj.emergencyFirstName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactFirstName`]: captializedString(i.target.value)
+                                            [`emergencyFirstName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -2039,7 +2032,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <Form.Item>
-                                {getFieldDecorator(`emergencyContactLastName`, {
+                                {getFieldDecorator(`emergencyLastName`, {
                                     rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                 })(
                                     <InputWithHead
@@ -2049,7 +2042,7 @@ class AppRegistrationFormNew extends Component {
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "emergencyLastName")}
                                         setFieldsValue={registrationObj.emergencyLastName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactLastName`]: captializedString(i.target.value)
+                                            [`emergencyLastName`]: captializedString(i.target.value)
                                         })}
                                     />
                                 )}
@@ -2143,7 +2136,7 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>
-                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "MM-DD-YYYY").format("DD/MM/YYYY")}
+                                    {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth).format("DD/MM/YYYY")}
                                 </div>
                             )}
                         </div>
@@ -2206,7 +2199,7 @@ class AppRegistrationFormNew extends Component {
                         </Select>
                         {organisationInfo && (
                             <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
-                                <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
+                                <img className="profile-img" src={organisationInfo.organisationLogoUrl?organisationInfo.organisationLogoUrl:AppImages.compDefaultIcon} />
                                 <div style={{ width: "170px", marginLeft: "20px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
                                     <div style={{ marginLeft: "20px" }}><img className="icon-size-20" style={{ marginRight: "15px" }} src={AppImages.callAnswer} />{organisationInfo.mobileNumber}</div>
@@ -2299,7 +2292,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
                         <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
-                        {(competition.competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
+                        {(competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox"
                                 checked={membershipProduct.isChecked}

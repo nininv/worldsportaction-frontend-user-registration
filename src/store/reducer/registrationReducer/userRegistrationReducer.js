@@ -210,6 +210,9 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.photoUrl = selectedUser.photoUrl;
 			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
+			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
+            registrationObj.emergencyLastName = selectedUser.emergencyLastName;
+            registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.street1 = selectedUser.street1;
@@ -668,6 +671,30 @@ function removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,sta
 	}
 }
 
+function getIndividualMembershipInfo(organisationList){
+	try{
+		let filteredMembershipProductInfoTemp = [];
+		for(let organisation of organisationList){
+			for(let competition of organisation.competitions){
+				let individualMembershipProduct = competition.membershipProducts.find(x => x.isIndividualRegistration == 1);
+				if(individualMembershipProduct){
+					let organisationExist = filteredMembershipProductInfoTemp.find(x => x.organisationUniqueKey == organisation.organisationUniqueKey);
+					if(organisationExist){
+						organisationExist.competitions.push(competition);
+					}else{
+						let organisationTemp = deepCopyFunction(organisation);
+						organisationTemp.competitions = [];
+						filteredMembershipProductInfoTemp.push(organisationTemp);
+					}
+				}
+			}
+		}
+		return filteredMembershipProductInfoTemp;
+	}catch(ex){
+		console.log("Error in getIndividualMembershipInfo::"+ex)
+	}
+}
+
 function userRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_USER_REGISTRATION_GET_USER_INFO_LOAD:
@@ -740,11 +767,12 @@ function userRegistrationReducer(state = initialState, action){
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
 			let data = action.result;
 			initiateExpiredRegistrationCall(state,data);
+			let individualRegMembershipInfo = getIndividualMembershipInfo(data);
 			return {
 				...state,
 				onMembershipLoad: false,
 				status: action.status,
-				membershipProductInfo: data
+				membershipProductInfo: individualRegMembershipInfo
 			};
 
 		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT: 
