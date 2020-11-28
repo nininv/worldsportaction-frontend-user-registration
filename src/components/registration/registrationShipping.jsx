@@ -34,6 +34,7 @@ import {
     getCommonRefData,
     countryReferenceAction
 } from '../../store/actions/commonAction/commonAction';
+import Tooltip from 'react-png-tooltip';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -289,7 +290,14 @@ class RegistrationShipping extends Component {
                                 padding: "15px",
                                 marginTop: "10px"
                             }}>
-                                <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                <div style={{display: "flex"}}>
+                                    <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                    <div style={{marginTop: "-5px"}}>
+                                        <Tooltip placement="top">
+                                            <span>{item.pickupInstruction}</span>
+                                        </Tooltip>
+                                    </div>
+                                </div>
                                 <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
                             </div>    
                         )}

@@ -182,6 +182,7 @@ const initialState = {
     onMembershipLoad: false,
     status: null,
     membershipProductInfo: [],
+    NonFilteredMembershipProductInfo: [],
     teamRegistrationObj : null,
     hasTeamSelected: false,
     hasCompetitionSelected: false,
@@ -225,15 +226,36 @@ function setTeamRegistrationObj(state){
           }
           setCompetitionDetails(state,details);
         }else{
-          state.expiredRegistrationFlag = true;
+          // state.expiredRegistrationFlag = true;
+          initiateExpiredRegistrationCall(state)
         }
       }else{
-        state.expiredRegistrationFlag = true;
+        // state.expiredRegistrationFlag = true;
+        initiateExpiredRegistrationCall(state);
       }
     }
   }catch(ex){
     console.log("Error in getTeamRegistrationObj in teamRegistrationReducer::"+ex);
   }
+}
+
+function initiateExpiredRegistrationCall(state){
+	try{
+		if(getOrganisationId() != null && getCompetitonId() != null){
+      let membershipProductsInfoList = state.NonFilteredMembershipProductInfo;
+			let organisatinInfoTemp = membershipProductsInfoList.find(x => x.organisationUniqueKey == getOrganisationId());
+			if(organisatinInfoTemp){
+				let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+				if(competitionInfoTemp == undefined){
+					state.expiredRegistrationFlag = true;
+				}
+			}else{
+				state.expiredRegistrationFlag = true;
+			}
+		}
+	}catch(ex){
+		console.log("Error in initiateExpiredRegistrationCall::"+ex)
+	}
 }
 
 function setCompetitionDetails(state,details){
@@ -461,6 +483,30 @@ function updateImportedTeamMember(state,importedTeamMemberList){
   }
 }
 
+function getTeamMembershipInfo(organisationList){
+	try{
+		let filteredMembershipProductInfoTemp = [];
+		for(let organisation of organisationList){
+			for(let competition of organisation.competitions){
+				let teamMembershipProduct = competition.membershipProducts.find(x => x.isTeamRegistration == 1);
+				if(teamMembershipProduct){
+					let organisatioExist = filteredMembershipProductInfoTemp.find(x => x.organisationUniqueKey == organisation.organisationUniqueKey);
+					if(organisatioExist){
+						organisatioExist.competitions.push(competition);
+					}else{
+            let organisationTemp = deepCopyFunction(organisation);
+            organisationTemp.competitions = [];
+            filteredMembershipProductInfoTemp.push(organisationTemp);
+          }
+				}
+			}
+		}
+		return filteredMembershipProductInfoTemp;
+	}catch(ex){
+		console.log("Error in getIndividualMembershipInfo::"+ex)
+	}
+}
+
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
@@ -474,9 +520,11 @@ function teamRegistrationReducer(state = initialState, action){
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
+            let teamRegMembershipInfo = getTeamMembershipInfo(data);
             return {
               ...state,
-              membershipProductInfo: data,
+              membershipProductInfo: teamRegMembershipInfo,
+              NonFilteredMembershipProductInfo: data,
               status: action.status,
               onMembershipLoad: false
             };

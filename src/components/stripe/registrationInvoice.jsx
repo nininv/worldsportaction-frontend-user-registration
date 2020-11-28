@@ -53,9 +53,9 @@ class RegistrationInvoice extends Component {
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
        let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-    //    let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
-    //    let userRegId = null;
-    //    let invoiceId = 8352;
+    //    let registrationId = null;
+    //    let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+    //    let invoiceId = null;
        this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
@@ -78,9 +78,9 @@ class RegistrationInvoice extends Component {
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            //  let registrationId = "dd596cfc-e5e0-477d-ad83-338a561d67b0";
-            //  let userRegId = null;
-            //  let invoiceId = 8352;
+            // let registrationId = null;
+            // let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+            // let invoiceId = null;
             this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
@@ -547,7 +547,7 @@ class RegistrationInvoice extends Component {
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
                                  Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
-                                 let typeName = isTeamReg == 1 ? AppConstants.personRegistering : mTypeName;
+                                 let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
                                  return (
                                     <div>
@@ -557,12 +557,22 @@ class RegistrationInvoice extends Component {
                                                     {item && item.firstName &&
                                                         <InputWithHead
                                                             heading=
-                                                            {mem.divisionName ?
-                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
-                                                                + ", " + item.competitionName + " - "+ mem.divisionName
+                                                            {isTeamReg == 1 || item.isTeamRegistration == null ?
+                                                                mem.divisionName ?
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", Team - " + item.teamName + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", Team - " + item.teamName + ", " + item.competitionName
                                                                 :
-                                                                regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
-                                                                + ", " + item.competitionName
+                                                                mem.divisionName ?
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
+                                                                    regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
+                                                                    + ", " + item.competitionName
+                                                                
+
                                                             }
                                                         />
                                                     }

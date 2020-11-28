@@ -72,7 +72,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "6d6d6099-58c4-4b47-b977-22a8f66f4350";
+        //let registrationUniqueKey = "ca86e31b-8523-462c-84a6-39a4d2cde06e";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -558,6 +558,10 @@ class RegistrationProducts extends Component {
                                     {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
                                 </div>
                             ))}
+                            <div style={{color: "var(--app-red)", marginTop: "10px"}}
+                            className="body-text-common">
+                                {AppConstants.teamRegistrationNote}
+                            </div>
                         </div>
                         {item.selectedOptions.nominationPayOptionRefId == 2 &&
                         <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
