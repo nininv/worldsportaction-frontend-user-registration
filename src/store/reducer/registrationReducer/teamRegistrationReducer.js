@@ -496,6 +496,7 @@ function getTeamMembershipInfo(organisationList){
 					}else{
             let organisationTemp = deepCopyFunction(organisation);
             organisationTemp.competitions = [];
+            organisationTemp.competitions.push(competition);
             filteredMembershipProductInfoTemp.push(organisationTemp);
           }
 				}
