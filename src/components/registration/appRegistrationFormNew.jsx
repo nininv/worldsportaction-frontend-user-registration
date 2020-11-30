@@ -438,6 +438,8 @@ class AppRegistrationFormNew extends Component {
             }
             this.setState({ getUserLoad: true });
             this.props.getUserRegistrationUserInfoAction(payload);
+        }else{
+            this.props.updateUserRegistrationStateVarAction("userInfo",[])
         }
     }
 
@@ -3403,6 +3405,7 @@ class AppRegistrationFormNew extends Component {
                         <Footer>{this.footerView()}</Footer>
                         <Loader visible={
                             // this.props.userRegistrationState.onMembershipLoad || 
+                            this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
                             this.props.userRegistrationState.onSaveLoad
                         } />

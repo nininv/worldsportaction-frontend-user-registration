@@ -70,9 +70,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount(){
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "ca86e31b-8523-462c-84a6-39a4d2cde06e";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "4464918d-3169-4137-9c22-16eb38f62356";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
