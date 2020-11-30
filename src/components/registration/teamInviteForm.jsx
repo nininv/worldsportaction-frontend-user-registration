@@ -280,7 +280,7 @@ class TeamInivteForm extends Component {
         }
     }
 
-    handlePlacesAutocomplete = (addressData, key) => {
+    handlePlacesAutocomplete = (addressData, key, parentIndex) => {
         try {
             console.log("addressdata", addressData)
             const { stateList, countryList } = this.props.commonReducerState;
@@ -297,6 +297,13 @@ class TeamInivteForm extends Component {
                     if (stateRefId) {
                         this.getSchoolList(stateRefId)
                     }
+                }
+                else if(key == "parent"){
+                    this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
+                    this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
+                    this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
+                    this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
+                    this.onChangeSetParentValue(countryRefId ? countryRefId : null, "countryRefId", parentIndex);
                 }
             }
         } catch (ex) {
