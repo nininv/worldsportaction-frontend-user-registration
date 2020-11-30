@@ -36,6 +36,7 @@ import { updateTeamInviteAction} from
 import {getRegistrationByIdAction} 
 from '../../store/actions/registrationAction/registrationProductsAction';
 import StripeKeys from "../stripe/stripeKeys";
+import {getUserId } from '../../util/sessionStorage'
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -305,6 +306,34 @@ const CheckoutForm = (props) => {
         }
     }
 
+    const gotoUserPage = (userId) => {
+        if(userId != 0){
+            history.push({pathname: '/userPersonal'});
+        }else{
+            history.push({pathname: '/login'});
+        }
+    }
+
+    const thankYouRegisteringView = () => {
+        let userId = getUserId();
+        return(
+            <div className="thank-you-registering-view">
+                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
+                {userId != 0 ? (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
+                    </div>
+                ) : (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => gotoUserPage(userId)}>{AppConstants.login}</div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     return (
         // className="content-view"
         <div>
@@ -328,7 +357,7 @@ const CheckoutForm = (props) => {
                                             onChange={handleChange}
                                             className='StripeElement'
                                         />
-                                       <div className="card-errors" role="alert">{error}</div>
+                                        <div className="card-errors" role="alert">{error}</div>
                                         <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                     </div>
                                 }
@@ -415,7 +444,7 @@ const CheckoutForm = (props) => {
                             </div>
                         </div>}
                         {/* {pay.securePaymentOptionRefId == 3 && 
-                       <div>
+                        <div>
                             <div className="row">
                                 <div className='col-sm'>
                                     <Radio key={"3"} 
@@ -519,7 +548,7 @@ const CheckoutForm = (props) => {
                 </div>
             </form >
 
-        </div >
+        </div > 
     );
 }
 
@@ -773,12 +802,54 @@ class TeamInvitePayment extends Component{
         )
     }
 
-    contentView = () =>{
+    gotoUserPage = (userId) => {
+        if(userId != 0){
+            history.push({pathname: '/userPersonal'});
+        }else{
+            history.push({pathname: '/login'});
+        }
+    }
+
+    thankYouRegisteringView = () => {
+        let userId = getUserId();
         return(
-            <div style={{display:"flex"}}>
-                {this.paymentLeftView()}
-                {this.paymentRightView()}                
+            <div className="thank-you-registering-view" style={{backgroundColor:"white"}}>
+                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
+                {userId != 0 ? (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
+                    </div>
+                ) : (
+                    <div style={{display: "flex"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
+                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</div>
+                    </div>
+                )}
             </div>
+        )
+    }
+
+    contentView = () =>{
+        const {teamInviteReviewList} = this.props.teamInviteState;
+        let paymentOptions = teamInviteReviewList!= null ? teamInviteReviewList.securePaymentOptions : [];
+        let totalVal = feeIsNull(teamInviteReviewList?.total?.targetValue);
+        let hasFutureInstalment = feeIsNull(teamInviteReviewList?.hasFutureInstalment);
+        return(
+            <div>
+                {(paymentOptions.length > 0  && (totalVal > 0 || (totalVal == 0 && hasFutureInstalment == 1))) ?
+                    <div style={{display:"flex"}}>
+                        {this.paymentLeftView()}
+                        {this.paymentRightView()}                
+                    </div>
+                    :
+                    <div>
+                        {this.thankYouRegisteringView()}
+                    </div>
+                            
+                }
+            </div>
+
         );
     }
 
