@@ -306,33 +306,6 @@ const CheckoutForm = (props) => {
         }
     }
 
-    const gotoUserPage = (userId) => {
-        if(userId != 0){
-            history.push({pathname: '/userPersonal'});
-        }else{
-            history.push({pathname: '/login'});
-        }
-    }
-
-    const thankYouRegisteringView = () => {
-        let userId = getUserId();
-        return(
-            <div className="thank-you-registering-view">
-                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
-                {userId != 0 ? (
-                    <div style={{display: "flex"}}>
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
-                    </div>
-                ) : (
-                    <div style={{display: "flex"}}>
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => gotoUserPage(userId)}>{AppConstants.login}</div>
-                    </div>
-                )}
-            </div>
-        )
-    }
 
     return (
         // className="content-view"
@@ -813,17 +786,25 @@ class TeamInvitePayment extends Component{
     thankYouRegisteringView = () => {
         let userId = getUserId();
         return(
-            <div className="thank-you-registering-view" style={{backgroundColor:"white"}}>
-                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
+            <div className="thank-you-registering-view" style={{backgroundColor:"white", width:"50%", margin:"auto", borderRadius:"10px", textAlign:"center"}}>
+                <div className="thank-you-registering-view-title" style={{marginTop:"10px"}}>{AppConstants.thankYouRegistering}</div>
                 {userId != 0 ? (
-                    <div style={{display: "flex"}}>
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
+                    <div style={{marginTop:"20px"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.successProfileUpdateMessage}</div>
+                        <div className="thank-you-registering-view-content" style={{marginBottom:"20px"}}>{AppConstants.whatDoWantDO}</div>
+                        <div style={{marginBottom:"15px"}}>
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase"}} onClick={() => window.close()}>{AppConstants.exit}</Button>
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</Button>
+                        </div>
                     </div>
                 ) : (
-                    <div style={{display: "flex"}}>
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</div>
+                    <div style={{marginTop:"20px"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.successProfileUpdateMessage}</div>
+                        <div className="thank-you-registering-view-content" style={{marginBottom:"20px"}}>{AppConstants.whatDoWantDO}</div>
+                        <div style={{marginBottom:"15px"}}>
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase"}} value="close">{AppConstants.exit}</Button>
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</Button>    
+                        </div>
                     </div>
                 )}
             </div>
