@@ -156,6 +156,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
             this.props.form.setFieldsValue({
                 [`yourDetailsgenderRefId`]: userRegDetails.genderRefId,
                 [`yourDetailsFirstName`]: userRegDetails.firstName,
@@ -167,10 +168,34 @@ class TeamInivteForm extends Component {
                 [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
+                [`yourDetailsStreet1`] : userRegDetails.street1,
+                [`yourDetailsSuburb`] : userRegDetails.suburb,
+                [`yourDetailsStateRefId`]: userRegDetails.stateRefId,
+                [`yourDetailsPostalCode`]: userRegDetails.postCode,
+                [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
             });
-            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
-                this.addParent("add");
-            }
+
+            // if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
+            //     if(parentOrGuardians == null){
+            //         this.addParent("add");
+            //     }
+            // }
+
+            (parentOrGuardians || []).map((parent, parentIndex) => {
+                this.props.form.setFieldsValue({
+                    [`parentFirstName${parentIndex}`] : parent.firstName,
+                    [`parentMiddleName${parentIndex}`] : parent.middleName,
+                    [`parentLastName${parentIndex}`] : parent.lastName,
+                    [`parentMobileNumber${parentIndex}`] : parent.mobileNumber,
+                    [`parentEmail${parentIndex}`] : parent.email,
+                    [`parentStreet1${parentIndex}`] : parent.street1,
+                    [`parentSuburb${parentIndex}`]: parent.suburb,
+                    [`parentStateRefId${parentIndex}`] : parent.stateRefId,
+                    [`parentPostalCode${parentIndex}`] : parent.postalCode,
+                    [`parentCountryRefId${parentIndex}`] : parent.countryRefId
+                })
+            })
+            
         } catch (ex) {
             console.log("Error in setYourDetailsValue::" + ex);
         }
