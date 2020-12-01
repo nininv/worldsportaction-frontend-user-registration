@@ -124,7 +124,11 @@ class TeamInivteForm extends Component {
                 this.setState({ inviteOnLoad: false });
             }
             if (!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad) {
-                history.push({ pathname: "/teamInviteProductsReview", state: { userRegId: getUserRegId() } })
+                if(teamInviteState.teamInviteCount > 0){
+                    history.push({ pathname: "/teamInviteProductsReview", state: { userRegId: getUserRegId() } })
+                }else{
+                    history.push({ pathname: "/teamInvitePayment", state: { userRegId: getUserRegId()}})
+                }
             }
         } catch (ex) {
             console.log("Error in componentDidUpdate::" + ex);
