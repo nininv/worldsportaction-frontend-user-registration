@@ -375,6 +375,50 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    setYourDetailsParentAddressFormFields = (parent, pIndex) => {
+        try {
+            this.props.form.setFieldsValue({
+                [`parentStreet1${pIndex}`]: parent.street1,
+                [`parentSuburb${pIndex}`]: parent.suburb,
+                [`parentStateRefId${pIndex}`]: parent.stateRefId,
+                [`parentCountryRefId${pIndex}`]: parent.countryRefId,
+                [`parentPostalCode${pIndex}`]: parent.postalCode,
+            });
+        } catch (ex) {
+            console.log("Error in setParticipantDetailStepParentAddressFormFields" + ex);
+        }
+    }
+
+    setTeamMemberAddressFormFields = (key,member,mIndex) => {
+        try{
+            if(key == "manualEnterAddressFlag"){
+                this.props.form.setFieldsValue({
+                    [`teamMemberStreet1${mIndex}`]: member.street1,
+                    [`teamMemberSuburb${mIndex}`]: member.suburb,
+                    [`teamMemberStateRefId${mIndex}`]: member.stateRefId,
+                    [`teamMemberPostalCode${mIndex}`]: member.postalCode,
+                    [`teamMemberCountryRefId${mIndex}`]: member.countryRefId
+                }); 
+            }
+        }catch(ex){
+            console.log("Error in setTeamMemberAddressFormFields::"+ex)
+        }
+    }
+
+    setTeamMemberParentAddressFormFields = (mIndex,mParent,mParentIndex) => {
+        try{
+            this.props.form.setFieldsValue({
+                [`teamMemberParentStreet1${mIndex}${mParentIndex}`]: mParent.street1,
+                [`teamMemberParentSuburb${mIndex}${mParentIndex}`]: mParent.suburb,
+                [`teamMemberParentStateRefId${mIndex}${mParentIndex}`]: mParent.stateRefId,
+                [`teamMemberParentCountryRefId${mIndex}${mParentIndex}`]: mParent.countryRefId,
+                [`teamMemberParentPostalCode${mIndex}${mParentIndex}`]: mParent.postalCode,
+            });
+        }catch(ex){
+            console.log("Error in setTeamMemberParentAddressFormFields"+ex);
+        }
+    }
+
     setParticipantDetailStepFormFields = () => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
@@ -394,6 +438,17 @@ class AppTeamRegistrationForm extends Component{
                 if(teamRegistrationObj.manualEnterAddressFlag){
                     this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
                 }
+                {(teamRegistrationObj.parentOrGuardian || []).map((parent,parentIndex) => {
+                    this.props.form.setFieldsValue({
+                        [`parentFirstName${parentIndex}`]: parent.firstName,
+                        [`parentMiddleName${parentIndex}`]: parent.middleName,
+                        [`parentLastName${parentIndex}`]: parent.lastName,
+                        [`parentDateOfBirth${parentIndex}`]: parent.dateOfBirth ? moment(parent.dateOfBirth, "MM-DD-YYYY") : null,
+                        [`parentMobileNumber${parentIndex}`]:  parent.mobileNumber,
+                        [`parentEmail${parentIndex}`]:  parent.email,
+                    });
+                    this.setYourDetailsParentAddressFormFields(parent,parentIndex)
+                })}
                 if(teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
                     {(teamRegistrationObj.teamMembers || []).map((member,mIndex) =>{
                         this.props.form.setFieldsValue({
@@ -405,25 +460,25 @@ class AppTeamRegistrationForm extends Component{
                             [`teamMemberMobileNumber${mIndex}`]:  member.mobileNumber,
                             [`teamMemberEmail${mIndex}`]:  member.email,
                         });
+                        if(member.manualEnterAddressFlag){
+                            this.setTeamMemberAddressFormFields("manualEnterAddressFlag",member,mIndex);
+                        }
+                        {(member.parentOrGuardian || []).map((mParent,mParentIndex) => {
+                            this.props.form.setFieldsValue({
+                                [`teamMemberParentFirstName${mIndex}${mParentIndex}`]: mParent.firstName,
+                                [`teamMemberParentMiddleName${mIndex}${mParentIndex}`]: mParent.middleName,
+                                [`teamMemberParentLastName${mIndex}${mParentIndex}`]: mParent.lastName,
+                                [`teamMemberParentDateOfBirth${mIndex}${mParentIndex}`]: mParent.dateOfBirth ? moment(mParent.dateOfBirth, "MM-DD-YYYY") : null,
+                                [`teamMemberParentMobileNumber${mIndex}${mParentIndex}`]:  mParent.mobileNumber,
+                                [`teamMemberParentEmail${mIndex}${mParentIndex}`]:  mParent.email,
+                            });
+                            this.setTeamMemberParentAddressFormFields(mIndex,mParent,mParentIndex)
+                        })}
                     })}
                 } 
             }
         }catch(ex){
             console.log("Error in setParticipantDetailStepFormFields::"+ex);
-        }
-    }
-
-    setYourDetailsParentAddressFormFields = (key, parent, pIndex) => {
-        try {
-            this.props.form.setFieldsValue({
-                [`parentStreet1${pIndex}`]: parent.street1,
-                [`parentSuburb${pIndex}`]: parent.suburb,
-                [`parentStateRefId${pIndex}`]: parent.stateRefId,
-                [`parentCountryRefId${pIndex}`]: parent.countryRefId,
-                [`parentPostalCode${pIndex}`]: parent.postalCode,
-            });
-        } catch (ex) {
-            console.log("Error in setParticipantDetailStepParentAddressFormFields" + ex);
         }
     }
 
@@ -924,6 +979,7 @@ class AppTeamRegistrationForm extends Component{
             if (key == "removeAllParent") {
                 teamMember.parentOrGuardian = [];
             }
+            console.log("teamREg",teamMember)
             this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
         }catch(ex){
             console.log("Error in addTeamMemberParent::"+ex)
@@ -946,7 +1002,7 @@ class AppTeamRegistrationForm extends Component{
                 if(getAge(date) < 18){
                     this.addTeamMemberParent("add",teamMemberIndex)
                 }else{
-                    this.addTeamMemberParent("removeAllParent")
+                    this.addTeamMemberParent("removeAllParent",teamMemberIndex)
                 }
             }else if(referenceKey == "additionalInfo"){
                 this.onChangeSetAdditionalInfo(f, key)
@@ -1821,7 +1877,7 @@ class AppTeamRegistrationForm extends Component{
                             >{AppConstants.returnToAddressSearch}</div>
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberStreet1`, {
+                                {getFieldDecorator(`teamMemberStreet1${teamMemberIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.addressField}],
                                 })(
                                     <InputWithHead
@@ -1841,7 +1897,7 @@ class AppTeamRegistrationForm extends Component{
                             />
                             <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberSuburb`, {
+                                {getFieldDecorator(`teamMemberSuburb${teamMemberIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                     <InputWithHead
@@ -1855,7 +1911,7 @@ class AppTeamRegistrationForm extends Component{
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
                                     <Form.Item >
-                                        {getFieldDecorator(`teamMemberStateRefId`, {
+                                        {getFieldDecorator(`teamMemberStateRefId${teamMemberIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.stateField[0] }],
                                         })(
                                             <Select
@@ -1873,7 +1929,7 @@ class AppTeamRegistrationForm extends Component{
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead heading={AppConstants.postCode}   required={"required-field"}/>
                                     <Form.Item >
-                                        {getFieldDecorator(`teamMemberPostalCode`, {
+                                        {getFieldDecorator(`teamMemberPostalCode${teamMemberIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                         })(
                                             <InputWithHead
@@ -1889,7 +1945,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberCountryRefId`, {
+                                {getFieldDecorator(`teamMemberCountryRefId${teamMemberIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                                 })(
                                 <Select
@@ -1952,7 +2008,7 @@ class AppTeamRegistrationForm extends Component{
                             >{AppConstants.returnToAddressSearch}</div>
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{AppConstants.enterAddress}</div>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberParentStreet1`, {
+                                {getFieldDecorator(`teamMemberParentStreet1${teamMemberIndex}${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.addressField}],
                                 })(
                                     <InputWithHead
@@ -1972,7 +2028,7 @@ class AppTeamRegistrationForm extends Component{
                             />
                             <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberParentSuburb`, {
+                                {getFieldDecorator(`teamMemberParentSuburb${teamMemberIndex}${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
                                 })(
                                     <InputWithHead
@@ -1986,7 +2042,7 @@ class AppTeamRegistrationForm extends Component{
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead heading={AppConstants.state}   required={"required-field"}/>
                                     <Form.Item >
-                                        {getFieldDecorator(`teamMemberParentStateRefId`, {
+                                        {getFieldDecorator(`teamMemberParentStateRefId${teamMemberIndex}${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.stateField[0] }],
                                         })(
                                             <Select
@@ -2004,7 +2060,7 @@ class AppTeamRegistrationForm extends Component{
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead heading={AppConstants.postCode}   required={"required-field"}/>
                                     <Form.Item >
-                                        {getFieldDecorator(`teamMemberParentPostalCode`, {
+                                        {getFieldDecorator(`teamMemberParentPostalCode${teamMemberIndex}${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                         })(
                                             <InputWithHead
@@ -2020,7 +2076,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <InputWithHead heading={AppConstants.country}   required={"required-field"}/>
                             <Form.Item >
-                                {getFieldDecorator(`teamMemberParentCountryRefId`, {
+                                {getFieldDecorator(`teamMemberParentCountryRefId${teamMemberIndex}${parentIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.countryField[0] }],
                                 })(
                                 <Select
@@ -2063,7 +2119,7 @@ class AppTeamRegistrationForm extends Component{
                         <div className="row">
                             <div className="col-sm-12 col-md-6">
                                 <Form.Item>
-                                    {getFieldDecorator(`teamMemberParentFirstName${parentIndex}`, {
+                                    {getFieldDecorator(`teamMemberParentFirstName${teamMemberIndex}${parentIndex}`, {
                                         rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                                     })(
                                         <InputWithHead
@@ -2073,7 +2129,7 @@ class AppTeamRegistrationForm extends Component{
                                             onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "firstName", parentIndex, teamMemberIndex)}
                                             setFieldsValue={parent.firstName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                [`teamMemberParentFirstName${parentIndex}`]: captializedString(i.target.value)
+                                                [`teamMemberParentFirstName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
                                             })}
                                         />
                                     )}
@@ -2081,7 +2137,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <div className="col-sm-12 col-md-6">
                                 <Form.Item>
-                                    {getFieldDecorator(`teamMemberParentMiddleName${parentIndex}`, {
+                                    {getFieldDecorator(`teamMemberParentMiddleName${teamMemberIndex}${parentIndex}`, {
                                         rules: [{ required: false }],
                                     })(
                                         <InputWithHead
@@ -2091,7 +2147,7 @@ class AppTeamRegistrationForm extends Component{
                                             onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "middleName", parentIndex,teamMemberIndex)}
                                             setFieldsValue={parent.middleName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                [`teamMemberParentMiddleName${parentIndex}`]: captializedString(i.target.value)
+                                                [`teamMemberParentMiddleName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
                                             })}
                                         />
                                     )}
@@ -2099,7 +2155,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <div className="col-sm-12 col-md-12">
                                 <Form.Item>
-                                    {getFieldDecorator(`teamMemberParentLastName${parentIndex}`, {
+                                    {getFieldDecorator(`teamMemberParentLastName${teamMemberIndex}${parentIndex}`, {
                                         rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                                     })(
                                         <InputWithHead
@@ -2109,7 +2165,7 @@ class AppTeamRegistrationForm extends Component{
                                             onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "lastName", parentIndex, teamMemberIndex)}
                                             setFieldsValue={parent.lastName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                [`teamMemberParentLastName${parentIndex}`]: captializedString(i.target.value)
+                                                [`teamMemberParentLastName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
                                             })}
                                         />
                                     )}
@@ -2117,7 +2173,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <div className="col-sm-6">
                                 <Form.Item>
-                                    {getFieldDecorator(`teamMemberParentMobileNumber${parentIndex}`, {
+                                    {getFieldDecorator(`teamMemberParentMobileNumber${teamMemberIndex}${parentIndex}`, {
                                         rules: [{ required: true, message: ValidationConstants.contactField }],
                                     })(
                                         <InputWithHead
@@ -2132,7 +2188,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                             <div className="col-sm-6">
                                 <Form.Item>
-                                    {getFieldDecorator(`teamMemberParentEmail${parentIndex}`, {
+                                    {getFieldDecorator(`teamMemberParentEmail${teamMemberIndex}${parentIndex}`, {
                                         rules: [{ required: true, message: ValidationConstants.emailField[0] },
                                         {
                                             type: "email",
@@ -2161,9 +2217,6 @@ class AppTeamRegistrationForm extends Component{
                             <div>{this.teamMemberParentOrGuardianAddressView(parent, parentIndex, getFieldDecorator,teamMemberIndex)}</div>
                         )}
                     </div>
-                    <div className="orange-action-txt" style={{ marginTop: "10px" }}
-                        onClick={() => { this.addTeamMemberParent("add",teamMemberIndex) }}
-                    >+ {AppConstants.addNewParentGaurdian}</div>
                 </div>
             )
         }catch(ex){
@@ -2338,6 +2391,9 @@ class AppTeamRegistrationForm extends Component{
                                     {(teamMember.parentOrGuardian || []).map((parent,parentIndex) => (
                                         <div>{this.teamMemberParentOrGuardianView(parent,parentIndex,teamMember,teamMemberIndex,getFieldDecorator)}</div>
                                     ))}
+                                    <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                                        onClick={() => { this.addTeamMemberParent("add",teamMemberIndex) }}
+                                    >+ {AppConstants.addNewParentGaurdian}</div>
                                 </div>
                             )}
                         </div>
