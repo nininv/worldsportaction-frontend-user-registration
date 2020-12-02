@@ -205,6 +205,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 		if(key == "registeringYourself" && registeringYourself == 1){
 			//For prepopulate loginned user when select registeringYourself as true
 			registrationObj = state.registrationObj;
+			registrationObj.userId = getUserId();
 		}else{
 			registrationObj = deepCopyFunction(registrationObjTemp);
 		}
@@ -222,6 +223,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
             registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
+				registrationObj.addNewAddressFlag = false;
 				registrationObj.street1 = selectedUser.street1;
 				registrationObj.street2 = selectedUser.street2;
 				registrationObj.suburb = selectedUser.suburb;

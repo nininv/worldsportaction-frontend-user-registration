@@ -1340,6 +1340,7 @@ class AppRegistrationFormNew extends Component {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
         let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
+        console.log("exist",registrationObj,userInfo)
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
