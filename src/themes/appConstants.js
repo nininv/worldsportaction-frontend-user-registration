@@ -806,7 +806,7 @@ const AppConstants = {
   ByMatch: "By Match",
   total: "Total",
   //End User Registration
-  areYouRegisteringYourself: "Are you registering yourself as an individual?",
+  areYouRegisteringYourself: "Are you registering yourself?",
   whoAreYouRegistering: "Who are you registering?",
   child: "Child",
   team: "Team",
