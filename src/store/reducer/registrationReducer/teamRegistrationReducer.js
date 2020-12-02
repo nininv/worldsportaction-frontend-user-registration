@@ -396,12 +396,14 @@ function setDivisions(state,competitionMembershipProductTypeId){
       // let divisionInfoList = state.teamRegistrationObj.divisions;
       // divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProduct.divisions,state));
       for(let division of membershipProduct.divisions){
-        let div = {
-          "divisionName": division.divisionName,
-          "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-			    "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+        if(division.registrationTeamLock == 0 && division.isTeamRegistration == 1){
+          let div = {
+            "divisionName": division.divisionName,
+            "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+            "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+          }
+          state.teamRegistrationObj.divisions.push(div);
         }
-        state.teamRegistrationObj.divisions.push(div);
       }
 
       //When it has one item set defualt the first position
