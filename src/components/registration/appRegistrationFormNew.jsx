@@ -221,6 +221,11 @@ class AppRegistrationFormNew extends Component {
             this.props.getSeasonalAndCasualFees(registrationState.seasionalAndCasualFeesInputObj);
             this.props.updateUserRegistrationStateVarAction("enableSeasonalAndCasualService", false);
         }
+
+        if(registrationState.individualCompetitionNotExist == true){
+            this.setState({organisationId: null,competitionId: null});
+            this.props.updateUserRegistrationStateVarAction("individualCompetitionNotExist", false);
+        }
     }
 
     componentDidMount() {
@@ -354,15 +359,15 @@ class AppRegistrationFormNew extends Component {
     setParticipantDetailStepAddressFormFields = (key) => {
         try {
             const { registrationObj, userInfo } = this.props.userRegistrationState;
-            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
+            let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj?.userId);
             let selectAddressDropDownList = this.getSelectAddressDropdown(user);
-            let selectAddressDropDownUserAddress = selectAddressDropDownList?.find(x => x.userId == registrationObj.userId)
+            let selectAddressDropDownUserAddress = selectAddressDropDownList?.find(x => x.userId == registrationObj?.userId)
             if (key == "selectAddressFlag") {
                 if (isArrayNotEmpty(userInfo)) {
                     this.props.form.setFieldsValue({
                         [`participantSelectAddress`]: this.getAddress(selectAddressDropDownUserAddress)
                     });
-                    this.onChangeSetParticipantValue(selectAddressDropDownUserAddress.userId, "addOrRemoveAddressBySelect")
+                    this.onChangeSetParticipantValue(selectAddressDropDownUserAddress?.userId, "addOrRemoveAddressBySelect")
                 }
             } else if (key == "manualEnterAddressFlag") {
                 this.props.form.setFieldsValue({
@@ -407,22 +412,24 @@ class AppRegistrationFormNew extends Component {
 
     getAddress = (addressObject) => {
         try {
-            const { stateList, countryList } = this.props.commonReducerState;
-            const state = stateList.length > 0 && addressObject.stateRefId > 0
-                ? stateList.find((state) => state.id === addressObject.stateRefId).name
-                : null;
-            const country = countryList.length > 0 && addressObject.countryRefId > 0
-                ? countryList.find((country) => country.id === addressObject.countryRefId).description
-                : null;
-
-            let defaultAddress = '';
-            if (state) {
-                defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ' : '') +
-                    (addressObject.suburb ? addressObject.suburb + ', ' : '') +
-                    (addressObject.postalCode ? addressObject.postalCode + ', ' : '') +
-                    (state ? state + ', ' : '') +
-                    (country ? country + '.' : '');
-                return defaultAddress;
+            if(addressObject){
+                const { stateList, countryList } = this.props.commonReducerState;
+                const state = stateList.length > 0 && addressObject.stateRefId > 0
+                    ? stateList.find((state) => state.id === addressObject.stateRefId).name
+                    : null;
+                const country = countryList.length > 0 && addressObject.countryRefId > 0
+                    ? countryList.find((country) => country.id === addressObject.countryRefId).description
+                    : null;
+    
+                let defaultAddress = '';
+                if (state) {
+                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ' : '') +
+                        (addressObject.suburb ? addressObject.suburb + ', ' : '') +
+                        (addressObject.postalCode ? addressObject.postalCode + ', ' : '') +
+                        (state ? state + ', ' : '') +
+                        (country ? country + '.' : '');
+                    return defaultAddress;
+                }
             }
         } catch (ex) {
             console.log("Error in getPartcipantParentAddress" + ex);
@@ -516,7 +523,7 @@ class AppRegistrationFormNew extends Component {
             this.props.updateUserRegistrationObjectAction(value, key);
         } else {
             this.props.updateUserRegistrationObjectAction(value, key);
-            console.log("update field", registrationObj);
+            // console.log("update field", registrationObj);
         }
 
         if (key == "dateOfBirth" || key == "referParentEmail") {
@@ -883,6 +890,26 @@ class AppRegistrationFormNew extends Component {
         // return disabled;
     }
 
+    isExistIndividualRegCompetition = () => {
+        try{
+            const { membershipProductInfo } = this.props.userRegistrationState;
+            let exist = false;
+            if(getOrganisationId() && getCompetitonId()){
+                let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                if(organisation){
+                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                    if(competition){
+                        exist = true;
+                    }
+                }
+            }else{
+                exist = true;
+            }
+        }catch(ex){
+            console.log("Error in isExistIndividualReCompetition::"+ex);
+        }
+    }
+
     selectAnotherParticipant = () => {
         let empty = [];
         this.setState({
@@ -891,8 +918,8 @@ class AppRegistrationFormNew extends Component {
             currentStep: 0
         });
 
-        //For retain competition in the url for a another participant
-        if (getOrganisationId() != null && getCompetitonId() != null) {
+        //For retain competitions based on the url for a another participant
+        if (getOrganisationId() != null && getCompetitonId() != null && this.isExistIndividualRegCompetition()) {
             this.setState({
                 showAddAnotherCompetitionView: false,
                 organisationId: getOrganisationId(),
@@ -1056,29 +1083,31 @@ class AppRegistrationFormNew extends Component {
     getSelectAddressDropdown = (user) => {
         try {
             let addresses = [];
-            let address = {
-                "userId": user.id,
-                "street1": user.street1,
-                "street2": user.street2,
-                "suburb": user.suburb,
-                "postalCode": user.postalCode,
-                "stateRefId": user.stateRefId,
-                "countryRefId": user.countryRefId
-            }
-            addresses.push(address);
-            if (isArrayNotEmpty(user.parentOrGuardian)) {
-                for (let parent of user.parentOrGuardian) {
-                    let parentAddress = {
-                        "userId": parent.userId,
-                        "street1": parent.street1,
-                        "street2": parent.street2,
-                        "suburb": parent.suburb,
-                        "postalCode": parent.postalCode,
-                        "stateRefId": parent.stateRefId,
-                        "countryRefId": parent.countryRefId
-                    }
-                    addresses.push(parentAddress);
+            if(user){
+                let address = {
+                    "userId": user.id,
+                    "street1": user.street1,
+                    "street2": user.street2,
+                    "suburb": user.suburb,
+                    "postalCode": user.postalCode,
+                    "stateRefId": user.stateRefId,
+                    "countryRefId": user.countryRefId
                 }
+                addresses.push(address);
+                if (isArrayNotEmpty(user.parentOrGuardian)) {
+                    for (let parent of user.parentOrGuardian) {
+                        let parentAddress = {
+                            "userId": parent.userId,
+                            "street1": parent.street1,
+                            "street2": parent.street2,
+                            "suburb": parent.suburb,
+                            "postalCode": parent.postalCode,
+                            "stateRefId": parent.stateRefId,
+                            "countryRefId": parent.countryRefId
+                        }
+                        addresses.push(parentAddress);
+                    }
+                }  
             }
             return addresses;
         } catch (ex) {
@@ -1092,7 +1121,7 @@ class AppRegistrationFormNew extends Component {
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
-            console.log("final obj" + JSON.stringify(filteredSaveRegistrationObj));
+            // console.log("final obj" + JSON.stringify(filteredSaveRegistrationObj));
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (!err) {
                     // if(registrationObj.photoUrl == null){
@@ -2227,9 +2256,6 @@ class AppRegistrationFormNew extends Component {
                                         <img style={{ height: "149px", borderRadius: "10px 10px 0px 0px" }} src={competition.heroImageUrl} />
                                     </div>
                                     <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
-                                    {this.state.organisationId == null && (
-                                        <div style={{ fontWeight: "600", marginBottom: "5px" }}>{competition.organisationName}</div>
-                                    )}
                                     <div style={{ fontWeight: "600" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>

@@ -216,7 +216,8 @@ const initialState = {
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
     teamNameValidationResultCode: null,
-    feesInfo: null
+    feesInfo: null,
+    teamCompetitionNotExist: false
 }
 
 function setTeamRegistrationObj(state){
@@ -518,6 +519,22 @@ function getTeamMembershipInfo(organisationList){
 	}
 }
 
+function checkExistInFilteredOrgList(state,teamRegMembershipInfo){
+	try{
+		let organisation = teamRegMembershipInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+		if(organisation){
+			let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+			if(competition == undefined){
+				state.teamCompetitionNotExist = true;
+			}
+		}else{
+			state.teamCompetitionNotExist = true;
+		}
+	}catch(ex){
+		console.log("Error in checkExistInFilteredOrgList::"+ex)
+	}
+}
+
 function teamRegistrationReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.UPDATE_TEAM_REGISTRATION_STATE_VAR:
@@ -532,6 +549,7 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
             let teamRegMembershipInfo = getTeamMembershipInfo(data);
+            checkExistInFilteredOrgList(teamRegMembershipInfo);
             return {
               ...state,
               membershipProductInfo: teamRegMembershipInfo,

@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import AppConstants from "../../../themes/appConstants";
-import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
+import { getOrganisationId,  getCompetitonId, getUserId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
 
@@ -195,13 +195,20 @@ const initialState = {
 	seasionalAndCasualFeesInputObj : null,
 	enableSeasonalAndCasualService: false,
 	getSeasonalCasualFeesOnLoad: false,
-	seasonalAndCasualFeesCompetitionIndex: null
+	seasonalAndCasualFeesCompetitionIndex: null,
+	individualCompetitionNotExist: false
 }
 
-function getUserUpdatedRegistrationObj(state,action){
+function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 	try{
-		let registrationObj = deepCopyFunction(registrationObjTemp);
-		if(action.data != -1 && action.data != -2){
+		let registrationObj;
+		if(key == "registeringYourself" && registeringYourself == 1){
+			//For prepopulate loginned user when select registeringYourself as true
+			registrationObj = state.registrationObj;
+		}else{
+			registrationObj = deepCopyFunction(registrationObjTemp);
+		}
+		if((action.data != -1) || (getUserId() != 0 && registrationObj.registeringYourself == 1)){
 			let selectedUser = state.userInfo.find((user) => user.id == action.data);
 			registrationObj.firstName = selectedUser.firstName;
 			registrationObj.lastName = selectedUser.lastName;
@@ -352,6 +359,22 @@ function initiateExpiredRegistrationCall(state,membershipProductsInfoList){
 		}
 	}catch(ex){
 		console.log("Error in initiateExpiredRegistrationCall::"+ex)
+	}
+}
+
+function checkExistInFilteredOrgList(state,individualRegMembershipInfo){
+	try{
+		let organisation = individualRegMembershipInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+		if(organisation){
+			let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+			if(competition == undefined){
+				state.individualCompetitionNotExist = true;
+			}
+		}else{
+			state.individualCompetitionNotExist = true;
+		}
+	}catch(ex){
+		console.log("Error in checkExistInFilteredOrgList::"+ex)
 	}
 }
 
@@ -729,6 +752,11 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
+			}else if(key == "registeringYourself"){
+				state.registrationObj[key] = value;
+				if(getUserId() != 0){
+					getUserUpdatedRegistrationObj(state,{data: getUserId()},"registeringYourself",state.registrationObj.registeringYourself);
+				}
 			}else{
 				state.registrationObj[key] = value;
 			}
@@ -769,6 +797,9 @@ function userRegistrationReducer(state = initialState, action){
 			let data = action.result;
 			initiateExpiredRegistrationCall(state,data);
 			let individualRegMembershipInfo = getIndividualMembershipInfo(data);
+			if(getOrganisationId() && getCompetitonId()){
+				checkExistInFilteredOrgList(state,individualRegMembershipInfo)
+			}
 			return {
 				...state,
 				onMembershipLoad: false,

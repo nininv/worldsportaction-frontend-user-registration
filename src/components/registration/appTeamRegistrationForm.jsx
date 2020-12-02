@@ -287,10 +287,35 @@ class AppTeamRegistrationForm extends Component{
                 this.props.getSeasonalAndCasualFees(teamRegistrationState.seasionalAndCasualFeesInputObj);
                 this.props.updateTeamRegistrationStateVarAction(false,"enableSeasonalAndCasualService");
             }
+
+            if(teamRegistrationState.teamCompetitionNotExist == true){
+                this.setState({organisationId: null,competitionId: null});
+                this.props.updateTeamRegistrationStateVarAction("teamCompetitionNotExist", false);
+            }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
         }
     }
+
+    isExistTeamRegCompetition = () => {
+        try{
+            const { membershipProductInfo } = this.props.teamRegistrationState;
+            if(getOrganisationId() && getCompetitonId()){
+                let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                if(organisation){
+                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                    if(competition == undefined){
+                        this.setState({organisationId: null,competitionId: null})
+                    }
+                }else{
+                    this.setState({organisationId: null,competitionId: null})
+                }
+            }
+        }catch(ex){
+            console.log("Error in isExistTeamRegCompetition::"+ex);
+        }
+    }
+
 
     initialSetting = () => {
         try{
@@ -310,6 +335,7 @@ class AppTeamRegistrationForm extends Component{
                 this.props.selectTeamAction();
             }
             this.setState({organisations: teamRegistrationState.membershipProductInfo});
+            this.isExistTeamRegCompetition();
             // this.setAllCompetitions(teamRegistrationState.membershipProductInfo);
         }catch(ex){
             console.log("Error in initialSetting::"+ex);
