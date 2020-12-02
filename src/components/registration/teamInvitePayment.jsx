@@ -794,7 +794,7 @@ class TeamInvitePayment extends Component{
                         <div className="thank-you-registering-view-content" style={{marginBottom:"20px"}}>{AppConstants.whatDoWantDO}</div>
                         <div style={{marginBottom:"15px"}}>
                             {/* <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase"}} onClick={() => window.close()}>{AppConstants.exit}</Button> */}
-                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</Button>
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.viewYourProfile}</Button>
                         </div>
                     </div>
                 ) : (

@@ -1159,6 +1159,7 @@ successProfileUpdateMessage:"You have successfully updated your profile for this
 exit: "Exit",
 profile: "Profile",
 yourProfile: "Your Profile",
+viewYourProfile: "View Your Profile",
 sameAddressAsTeamMember: "Use same address as Team member"
 };
 
