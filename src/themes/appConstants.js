@@ -1159,7 +1159,9 @@ emailConfirmExistingUserMessage: "We have sent you an email confirmation. You ca
 successProfileUpdateMessage:"You have successfully updated your profile for this Registration.",
 exit: "Exit",
 profile: "Profile",
-yourProfile: "Your Profile"
+yourProfile: "Your Profile",
+viewYourProfile: "View Your Profile",
+sameAddressAsTeamMember: "Use same address as Team member"
 };
 
 export default AppConstants;
