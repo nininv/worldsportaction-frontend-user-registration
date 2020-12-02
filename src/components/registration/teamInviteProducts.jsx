@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import {
     Layout,
     Button, 
-    Form, 
+    Form,
+    Checkbox, 
     Input,
     Select,
     Radio, Modal, message
@@ -27,8 +28,10 @@ import {
     getTeamInviteReviewAction,saveTeamInviteReviewAction,
     updateTeamInviteAction
 } from '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationShopProductAction } from 
+import {getRegistrationShopProductAction, getTermsAndConditionsAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
+import ValidationConstants from "../../themes/validationConstant";
+
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -87,6 +90,7 @@ class TeamInviteProducts extends Component{
             userRegId: userRegId
         }
         this.props.getTeamInviteReviewAction(payload);
+        this.props.getTermsAndConditionsAction(payload);
         this.getShopProducts(userRegId, 1, -1, -1);
     }
 
@@ -529,6 +533,42 @@ class TeamInviteProducts extends Component{
         }
     } 
 
+    termsAndConditionsView = (getFieldDecorator) =>{
+        const {termsAndConditions} = this.props.registrationProductState;
+        return(
+            <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </div>
+                <div className="pt-2">   
+                { (termsAndConditions || []).map((item, index) =>(               
+                    <div className="pb-4 link-text-common" style={{marginLeft:0}}>
+                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                        Terms and Conditions for {item.name}
+                        </a>
+                    </div> 
+                ))}                  
+                </div>                           
+                <div className="body-text-common mt-0" style={{display:"flex"}}>
+                <Form.Item>
+                        {getFieldDecorator(`termsAndCondition`, {
+                            rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
+                        })(  
+                    <div>
+                        <Checkbox
+                                className="single-checkbox mt-0"
+                                checked={this.state.agreeTerm}
+                                onChange={e => this.setState({ agreeTerm: e.target.checked })}>
+                                {AppConstants.agreeTerm}
+                                <span style={{marginLeft:"5px"}} ></span>
+                            </Checkbox>
+                    </div>
+                     )}
+                     </Form.Item> 
+                    {/* <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                    */}
+                </div>                      
+            </div>
+        )
+    }
+
     buttonView = () => {
         try{
             return(
@@ -550,6 +590,7 @@ class TeamInviteProducts extends Component{
         return(
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
                 {this.yourOrderView()}
+                {this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
             </div>
         )
@@ -596,7 +637,8 @@ function mapDispatchToProps(dispatch){
         getTeamInviteReviewAction,
         saveTeamInviteReviewAction,
         updateTeamInviteAction,
-        getRegistrationShopProductAction
+        getRegistrationShopProductAction,
+        getTermsAndConditionsAction  
     }, dispatch);
 
 }
