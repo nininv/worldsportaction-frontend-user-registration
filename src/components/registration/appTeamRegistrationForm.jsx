@@ -3005,9 +3005,9 @@ class AppTeamRegistrationForm extends Component{
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             let totalPlayer =  teamRegistrationObj.teamMembers.length
-            // if(teamRegistrationObj.registeringAsAPlayer == 1 || teamRegistrationObj.personRoleRefId == 4){
-            //     totalPlayer = teamRegistrationObj.teamMembers.length + 1
-            // }
+            if(teamRegistrationObj.registeringAsAPlayer == 1 || teamRegistrationObj.personRoleRefId == 4 || teamRegistrationObj.personRoleRefId == 2){
+                 totalPlayer = teamRegistrationObj.teamMembers.length + 1
+            }
             return(
                 <div className="registration-form-view">
                     <div style={{display: "flex",alignItems:"center"}}>
@@ -3018,7 +3018,7 @@ class AppTeamRegistrationForm extends Component{
                             <div className="form-heading"  style={{paddingBottom: "0px"}}>{teamRegistrationObj.teamName}</div>
                             <div className="inter-medium-font" 
                             style={{fontSize: "13px"}}>
-                                {AppConstants.team},{totalPlayer + 1} {AppConstants.members}
+                                {AppConstants.team},{totalPlayer} {AppConstants.members}
                             </div>
                         </div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}

@@ -122,7 +122,13 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     getTermsAndConditions(payload) {
-        var url = `/api/registration/termsandconditions?registrationId=${payload.registrationId}`;
+        var url;
+        if(payload.registrationId){
+            url = `/api/registration/termsandconditions?registrationId=${payload.registrationId}`;
+        }
+        else{
+            url = `/api/registration/termsandconditions?userRegistrationId=${payload.userRegId}`;
+        }
         return Method.dataGet(url, token);
     },
     getRegistrationProductFees(payload) {
