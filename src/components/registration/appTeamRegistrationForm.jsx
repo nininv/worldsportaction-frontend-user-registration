@@ -988,6 +988,7 @@ class AppTeamRegistrationForm extends Component{
 
     dateConversion = (f, key, referenceKey, teamMemberIndex) => {
         try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
             let date = moment(f,"DD-MM-YYYY").format("MM-DD-YYYY");
             console.log("Date",date)
             if(referenceKey == "team"){
@@ -999,16 +1000,24 @@ class AppTeamRegistrationForm extends Component{
                 }
             }else if(referenceKey == "teamMember"){
                 this.onChangeTeamMemberValue(date,key, teamMemberIndex);
-                if(getAge(date) < 18){
-                    this.addTeamMemberParent("add",teamMemberIndex)
-                }else{
-                    this.addTeamMemberParent("removeAllParent",teamMemberIndex)
-                }
+                this.teamMemberAddingProcess(date,teamRegistrationObj.teamMembers[teamMemberIndex].payingFor,teamMemberIndex)
             }else if(referenceKey == "additionalInfo"){
                 this.onChangeSetAdditionalInfo(f, key)
             }
         }catch(ex){
             console.log("Error in dateConversion::"+ex)
+        }
+    }
+
+    teamMemberAddingProcess = (dob,payingFor,teamMemberIndex) => {
+        try{
+            if(getAge(dob) < 18 && payingFor == 1){
+                this.addTeamMemberParent("add",teamMemberIndex)
+            }else{
+                this.addTeamMemberParent("removeAllParent",teamMemberIndex)
+            }
+        }catch(ex){
+            console.log("Error in teamMemberAddingProcess::"+ex)
         }
     }
 
@@ -2378,7 +2387,10 @@ class AppTeamRegistrationForm extends Component{
                         <Checkbox
                             className="single-checkbox"
                             checked={teamMember.payingFor == 1 ? true : false}
-                            onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)} >
+                            onChange={e => {
+                                this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)
+                                this.teamMemberAddingProcess(teamMember.dateOfBirth,e.target.checked ? 1 : 0,teamMemberIndex)
+                            }}>
                             {AppConstants.payingForMember}
                         </Checkbox>
                     )}
