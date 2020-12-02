@@ -905,6 +905,7 @@ class AppRegistrationFormNew extends Component {
             }else{
                 exist = true;
             }
+            return exist;
         }catch(ex){
             console.log("Error in isExistIndividualReCompetition::"+ex);
         }
