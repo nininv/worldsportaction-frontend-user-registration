@@ -978,10 +978,12 @@ class AppTeamRegistrationForm extends Component{
             if(filteredTeamRegistrationObj.personRoleRefId == 4 || (filteredTeamRegistrationObj.personRoleRefId != 4 && filteredTeamRegistrationObj.registeringAsAPlayer == 1)){
                 let genderRefId = filteredTeamRegistrationObj.genderRefId;
                 let dob = moment(filteredTeamRegistrationObj.dateOfBirth).format("YYYY-MM-DD");
-                if(genderRefId != selectedDivision.genderRefId){
-                    errorTypes.push("Gender");
-                    let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
-                    personNames.push(name)
+                if(selectedDivision.genderRefId){
+                    if(genderRefId != selectedDivision.genderRefId){
+                        errorTypes.push("Gender");
+                        let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+                        personNames.push(name)
+                    }
                 }
                 if(selectedDivision.fromDate && selectedDivision.toDate){
                     if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
@@ -999,14 +1001,16 @@ class AppTeamRegistrationForm extends Component{
                     if(isPlayer){
                         let genderRefId = member.genderRefId;
                         let dob = moment(member.dateOfBirth).format("YYYY-MM-DD");
-                        if(genderRefId != selectedDivision.genderRefId){
-                            let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
-                            errorTypes = filteredErrorTypes;
-                            errorTypes.push("Gender");
-                            let name = member.firstName + ' ' + member.lastName;
-                            let filteredNames = personNames.filter(x => x != name);
-                            personNames = filteredNames;
-                            personNames.push(name)
+                        if(selectedDivision.genderRefId){
+                            if(genderRefId != selectedDivision.genderRefId){
+                                let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+                                errorTypes = filteredErrorTypes;
+                                errorTypes.push("Gender");
+                                let name = member.firstName + ' ' + member.lastName;
+                                let filteredNames = personNames.filter(x => x != name);
+                                personNames = filteredNames;
+                                personNames.push(name)
+                            }
                         }
                         if(selectedDivision.fromDate && selectedDivision.toDate){
                             if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){

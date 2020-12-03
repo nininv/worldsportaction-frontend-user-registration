@@ -62,7 +62,8 @@ class RegistrationProducts extends Component {
            onLoading: false,
            deleteOnLoad: false,
            organisationUniqueKey: null,
-           competitionUniqueKey: null
+           competitionUniqueKey: null,
+           teamName: null
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -267,9 +268,9 @@ class RegistrationProducts extends Component {
         }
     }
 
-    removeParticipantModal = (key, id, competitionId, organisationId) =>{
+    removeParticipantModal = (key, id, competitionId, organisationId, teamName) =>{
         if(key == "show"){
-            this.setState({participantModalVisible: true, id: id, competitionUniqueKey: competitionId, organisationUniqueKey: organisationId });
+            this.setState({participantModalVisible: true, id: id, competitionUniqueKey: competitionId, organisationUniqueKey: organisationId,teamName: teamName });
         }
         else if(key == "ok"){
             this.setState({participantModalVisible: false});
@@ -279,9 +280,12 @@ class RegistrationProducts extends Component {
                 competitionUniqueKey: this.state.competitionUniqueKey,
                 organisationUniqueKey: this.state.organisationUniqueKey
             }
+            if(this.state.teamName){
+                payload["teamName"] = this.state.teamName;
+            }
 
             this.props.deleteRegistrationParticipantAction(payload);
-            this.setState({deleteOnLoad: true});
+            this.setState({deleteOnLoad: true,teamName: null});
             // this.setState({loading: true});
         }
         else if(key == "cancel"){
@@ -499,7 +503,7 @@ class RegistrationProducts extends Component {
                         </span>
                         <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
                     </div> 
-                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
+                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey,item.teamName)}>                   
                         <span className="link-text-common" style={{marginRight: "15px"}}>
                             {AppConstants.remove}
                         </span>
