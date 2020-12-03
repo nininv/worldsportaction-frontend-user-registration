@@ -158,7 +158,6 @@ class AppTeamRegistrationForm extends Component{
 
     setUser = () => {
         try{
-            console.log("inside")
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             let userInfoList = this.props.userRegistrationstate.userInfo;
             let userId = getUserId();
@@ -290,7 +289,7 @@ class AppTeamRegistrationForm extends Component{
 
             if(teamRegistrationState.teamCompetitionNotExist == true){
                 this.setState({organisationId: null,competitionId: null});
-                this.props.updateTeamRegistrationStateVarAction("teamCompetitionNotExist", false);
+                this.props.updateTeamRegistrationStateVarAction(false,"teamCompetitionNotExist");
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -946,7 +945,7 @@ class AppTeamRegistrationForm extends Component{
     checkIsPlayer = (membershipProductTypes) => {
         try{
             let exist = false;
-            let isPlayer = membershipProductTypes.find(x => x.isChecked == true);
+            let isPlayer = membershipProductTypes.find(x => x.isPlayer == 1 && x.isChecked == true);
             if(isPlayer){
                 exist = true;
             }
@@ -967,6 +966,77 @@ class AppTeamRegistrationForm extends Component{
             return error;
         }catch(ex){
             console.log("Error in addressSearchValidation"+ex);
+        }
+    }
+
+    checkDivisionRestriction = (filteredTeamRegistrationObj) => {
+        try{
+            let personNames = [];
+            let errorTypes = [];
+            let errorMessage = '';
+            let selectedDivision = filteredTeamRegistrationObj.divisions.find(x => x.competitionMembershipProductDivisionId == filteredTeamRegistrationObj.competitionMembershipProductDivisionId);
+            if(filteredTeamRegistrationObj.personRoleRefId == 4 || (filteredTeamRegistrationObj.personRoleRefId != 4 && filteredTeamRegistrationObj.registeringAsAPlayer == 1)){
+                let genderRefId = filteredTeamRegistrationObj.genderRefId;
+                let dob = moment(filteredTeamRegistrationObj.dateOfBirth).format("YYYY-MM-DD");
+                if(genderRefId != selectedDivision.genderRefId){
+                    errorTypes.push("Gender");
+                    let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+                    personNames.push(name)
+                }
+                if(selectedDivision.fromDate && selectedDivision.toDate){
+                    if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+                        errorTypes.push("DOB");
+                        let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+                        let filteredNames = personNames.filter(x => x != name);
+                        personNames = filteredNames;
+                        personNames.push(name)
+                    }
+                }
+            }
+            if(isArrayNotEmpty(filteredTeamRegistrationObj.teamMembers)){
+                for(let member of filteredTeamRegistrationObj.teamMembers){
+                    let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
+                    if(isPlayer){
+                        let genderRefId = member.genderRefId;
+                        let dob = moment(member.dateOfBirth).format("YYYY-MM-DD");
+                        if(genderRefId != selectedDivision.genderRefId){
+                            let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+                            errorTypes = filteredErrorTypes;
+                            errorTypes.push("Gender");
+                            let name = member.firstName + ' ' + member.lastName;
+                            let filteredNames = personNames.filter(x => x != name);
+                            personNames = filteredNames;
+                            personNames.push(name)
+                        }
+                        if(selectedDivision.fromDate && selectedDivision.toDate){
+                            if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+                                let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+                                errorTypes = filteredErrorTypes;
+                                errorTypes.push("DOB");
+                                let name = member.firstName + ' ' + member.lastName;
+                                let filteredNames = personNames.filter(x => x != name);
+                                personNames = filteredNames;
+                                personNames.push(name)
+                            }
+                        }
+                    }
+                }
+            }
+            if(isArrayNotEmpty(personNames) && isArrayNotEmpty(errorTypes)){
+                let personsString = '';
+                for(let i in personNames){
+                    personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
+                }
+                errorMessage += personsString + 'do not meet the restriction of ';
+                let errorTypesString = '';
+                for(let i in errorTypes){
+                    errorTypesString += errorTypes[i] + (errorTypes.length - 1 != i ? ' and ' : ' ');
+                }
+                errorMessage += errorTypesString + '. It should be updated.';
+            }
+            return errorMessage;
+        }catch(ex){
+            console.log("Error in checkDivisionRestriction::"+ex)
         }
     }
 
@@ -1060,7 +1130,7 @@ class AppTeamRegistrationForm extends Component{
         try{
             e.preventDefault();
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
-            console.log("teamRegis final",teamRegistrationObj)
+            // console.log("teamRegis final",teamRegistrationObj)
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
             if(this.state.currentStep == 1){
@@ -1084,6 +1154,11 @@ class AppTeamRegistrationForm extends Component{
                         let addressSearchError = this.addressSearchValidation();
                         if(addressSearchError){
                             message.error(ValidationConstants.addressDetailsIsRequired);
+                            return;
+                        }
+                        let isDivisionRestrictionError = this.checkDivisionRestriction(filteredTeamRegistrationObj);
+                        if(isDivisionRestrictionError != ''){
+                            message.error(isDivisionRestrictionError);
                             return;
                         }
                     }
@@ -2409,7 +2484,7 @@ class AppTeamRegistrationForm extends Component{
                             </Form.Item>
                         </div>
                     </div>
-                    {this.checkIsPlayer(teamMember.membershipProductTypes) && (
+                    {teamMember.membershipProductTypes.find(x => x.isChecked == true) && (
                         <Checkbox
                             className="single-checkbox"
                             checked={teamMember.payingFor == 1 ? true : false}
