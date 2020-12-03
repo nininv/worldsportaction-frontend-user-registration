@@ -55,7 +55,7 @@ class TeamInviteShipping extends Component{
             id: null,
             loading: false ,
             apiOnLoad: false ,
-            shippingOptions: null,
+            shippingOptions: [],
             useDiffDeliveryAddressFlag: false,
             userDiffBillingAddressFlag: false,
             deliveryOrBillingAddressSelected: false    
@@ -149,70 +149,109 @@ class TeamInviteShipping extends Component{
     }
 
 
+    // setShippingOptions = () => {
+    //     try{
+    //         const {teamInviteReviewList} = this.props.teamInviteState;
+    //         const { shopPickupAddresses } = this.props.registrationProductState;
+    //         let shopProducts = teamInviteReviewList != null ? isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
+    //                                                             deepCopyFunction(teamInviteReviewList.shopProducts) : [] : [];
+    //         let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
+    //         for(let address of filteredShippingProductsAddresses){
+    //             address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
+    //         }
+    //         this.setState({shippingOptions: filteredShippingProductsAddresses})
+    //     }catch(ex){
+    //         console.log("Error in setShippingOptions"+ex);
+    //     }
+    // }
+
     setShippingOptions = () => {
         try{
-            const {teamInviteReviewList} = this.props.teamInviteState;
-            const { shopPickupAddresses } = this.props.registrationProductState;
+            const {teamInviteReviewList,shopPickupAddresses} = this.props.teamInviteState;
+            const { shopProductList } = this.props.registrationProductState;
             let shopProducts = teamInviteReviewList != null ? isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
-                                                                deepCopyFunction(teamInviteReviewList.shopProducts) : [] : [];
-            let filteredShippingProductsAddresses = deepCopyFunction(shopPickupAddresses).filter(x => shopProducts.some(y => y.organisationId == x.organisationId));
-            for(let address of filteredShippingProductsAddresses){
-                address["pickupOrDelivery"] = this.getShippingOptionValue(address.organisationId);
-            }
-            this.setState({shippingOptions: filteredShippingProductsAddresses})
-        }catch(ex){
-            console.log("Error in setShippingOptions"+ex);
-        }
-    }
-
-    getShippingOptionValue = (organisationId) => {
-        try{
-            const {teamInviteReviewList} = this.props.teamInviteState;
-            let value;
-            if(teamInviteReviewList.shippingOptions){
-                let shippingOption = teamInviteReviewList.shippingOptions.find(x => x.organisationId == organisationId);
-                if(shippingOption != undefined){
-                    value = 1;
-                }else{
-                    value = 2;
+                                      deepCopyFunction(teamInviteReviewList.shopProducts) : [] : [];
+            for(let item of shopProducts){
+                let buyingProduct = shopProductList.find(x => x.productId == item.productId); 
+                if(buyingProduct){
+                    buyingProduct["organisationId"] = item.organisationId;
+                    let pickupAddress = shopPickupAddresses.find(x => x.organisationId == item.organisationId);
+                    if(pickupAddress){
+                        buyingProduct["pickupAddress"] = `${pickupAddress.address}, ${pickupAddress.suburb}, ${pickupAddress.postcode}, ${pickupAddress.state}`;
+                        buyingProduct["pickupInstruction"] = pickupAddress.pickupInstruction;
+                    }
+                    this.state.shippingOptions.push(buyingProduct);
                 }
-            }else{
-                value = 2;
             }
-            return value;
         }catch(ex){
-            console.log("Error in getShippingOptionValue"+ex);
+            console.log("Error in setShippingOptions::"+ex);
         }
     }
 
-    onChangeSetShippingOptions = (value,index) => {
-        try{
-            let shippingOptions = [...this.state.shippingOptions];
-            shippingOptions[index]["pickupOrDelivery"] = value;
-            this.setState({shippingOptions: shippingOptions});
-            console.log(shippingOptions[index].organisationId)
-            if(value == 1){
-                this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"add", null, "shippingOptions",null);
-            }else{
-                this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"remove", null, "shippingOptions",null);
-            }
-        }catch(ex){
-            console.log("Error in onChangeSetShippingOptions"+ex);
-        }
-    }
+    // getShippingOptionValue = (organisationId) => {
+    //     try{
+    //         const {teamInviteReviewList} = this.props.teamInviteState;
+    //         let value;
+    //         if(teamInviteReviewList.shippingOptions){
+    //             let shippingOption = teamInviteReviewList.shippingOptions.find(x => x.organisationId == organisationId);
+    //             if(shippingOption != undefined){
+    //                 value = 1;
+    //             }else{
+    //                 value = 2;
+    //             }
+    //         }else{
+    //             value = 2;
+    //         }
+    //         return value;
+    //     }catch(ex){
+    //         console.log("Error in getShippingOptionValue"+ex);
+    //     }
+    // }
+
+    // onChangeSetShippingOptions = (value,index) => {
+    //     try{
+    //         let shippingOptions = [...this.state.shippingOptions];
+    //         shippingOptions[index]["pickupOrDelivery"] = value;
+    //         this.setState({shippingOptions: shippingOptions});
+    //         console.log(shippingOptions[index].organisationId)
+    //         if(value == 1){
+    //             this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"add", null, "shippingOptions",null);
+    //         }else{
+    //             this.props.updateTeamInviteAction(shippingOptions[index].organisationId,"remove", null, "shippingOptions",null);
+    //         }
+    //     }catch(ex){
+    //         console.log("Error in onChangeSetShippingOptions"+ex);
+    //     }
+    // }
 
     addAddress = (index,subKey) => {
         this.setState({deliveryOrBillingAddressSelected: true});
         this.props.updateTeamInviteAction(null,null, index, subKey,null);
     }
 
+    // checkAnyDeliveryAddress = () => {
+    //     try{
+    //         if(isArrayNotEmpty(this.state.shippingOptions)){
+    //             let shippingOptions = [...this.state.shippingOptions];
+    //             console.log(shippingOptions);
+    //             let deliveryAddress = shippingOptions.find(x => x.pickupOrDelivery == 2);
+    //             if(deliveryAddress != undefined){
+    //                 return true;
+    //             }else{
+    //                 return false;
+    //             }
+    //         }
+    //     }catch(ex){
+    //         console.log("Error in checkAnyDeliveryAddress"+ex);
+    //     }
+    // }
+
     checkAnyDeliveryAddress = () => {
         try{
             if(isArrayNotEmpty(this.state.shippingOptions)){
                 let shippingOptions = [...this.state.shippingOptions];
-                console.log(shippingOptions);
-                let deliveryAddress = shippingOptions.find(x => x.pickupOrDelivery == 2);
-                if(deliveryAddress != undefined){
+                let deliveryAddress = shippingOptions.find(x => x.deliveryType == "shipping" || x.deliveryType == "");
+                if(deliveryAddress){
                     return true;
                 }else{
                     return false;
@@ -276,6 +315,48 @@ class TeamInviteShipping extends Component{
         }
     }
 
+    // shippingOption = () =>{
+    //     return(
+    //         <div className="outline-style product-left-view" style={{marginRight:0}}>
+    //             <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.shippingOptions}</div>
+    //             {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
+    //                 <div>
+    //                     <div className="subtitle-text-common"
+    //                     style={{marginTop: "20px"}}>{item.organisationName}</div>
+    //                     <div style={{marginTop:6}}>
+    //                         <Radio.Group className="product-radio-group"
+    //                         onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
+    //                         value={this.getShippingOptionValue(item.organisationId)}>                           
+    //                             <Radio value={1}>{AppConstants.Pickup}</Radio>
+    //                             <Radio value={2}>{AppConstants.Delivery}</Radio>
+    //                         </Radio.Group>
+    //                     </div>  
+    //                     {item.pickupOrDelivery == 1 && (
+    //                         <div style={{
+    //                             background: "var(--app-fdfdfe)",
+    //                             border: "1px solid var(--app-f0f0f2)",
+    //                             borderRadius: "10px",
+    //                             padding: "15px",
+    //                             marginTop: "10px"
+    //                         }}>
+    //                             <div style={{display: "flex"}}>
+    //                                 <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+    //                                 <div style={{marginTop: "-5px"}}>
+    //                                     <Tooltip placement="top">
+    //                                         <span>{item.pickupInstruction}</span>
+    //                                     </Tooltip>
+    //                                 </div>
+    //                             </div>
+    //                             <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
+    //                         </div>    
+    //                     )}
+    //                 </div>
+    //             ))}
+    //         </div>
+    //     );
+
+    // }
+
     shippingOption = () =>{
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
@@ -283,16 +364,16 @@ class TeamInviteShipping extends Component{
                 {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
                     <div>
                         <div className="subtitle-text-common"
-                        style={{marginTop: "20px"}}>{item.organisationName}</div>
+                        style={{marginTop: "20px"}}>{item.productName}</div>
                         <div style={{marginTop:6}}>
                             <Radio.Group className="product-radio-group"
-                            onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-                            value={this.getShippingOptionValue(item.organisationId)}>                           
-                                <Radio value={1}>{AppConstants.Pickup}</Radio>
-                                <Radio value={2}>{AppConstants.Delivery}</Radio>
+                            //onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
+                            value={item.deliveryType == "pickup" ? 1 : 2}>                           
+                                <Radio disabled={(item.deliveryType == "pickup" && item.deliveryType != "") ? false : true} value={1}>{AppConstants.Pickup}</Radio>
+                                <Radio disabled={(item.deliveryType == "shipping" || item.deliveryType == "") ? false : true} value={2}>{AppConstants.Delivery}</Radio>
                             </Radio.Group>
                         </div>  
-                        {item.pickupOrDelivery == 1 && (
+                        {item.deliveryType == "pickup" && (
                             <div style={{
                                 background: "var(--app-fdfdfe)",
                                 border: "1px solid var(--app-f0f0f2)",
@@ -308,7 +389,7 @@ class TeamInviteShipping extends Component{
                                         </Tooltip>
                                     </div>
                                 </div>
-                                <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
+                                <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
                             </div>    
                         )}
                     </div>
@@ -319,9 +400,9 @@ class TeamInviteShipping extends Component{
     }
 
     deliveryAndBillingView = () =>{
-        const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
-        let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
-        let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
+        const {teamInviteReviewList,participantAddresses} = this.props.teamInviteState;
+        let deliveryAddress = teamInviteReviewList ? teamInviteReviewList.deliveryAddress : null;
+        let billingAddress = teamInviteReviewList ? teamInviteReviewList.billingAddress : null;
         return(
             <div className="outline-style product-left-view" style={{marginRight:0}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>

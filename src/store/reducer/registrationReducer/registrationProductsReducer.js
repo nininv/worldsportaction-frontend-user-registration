@@ -163,17 +163,19 @@ function registrationProductsReducer(state = initialState, action){
                 }else{
                     reviewData[action.subKey][action.key] = action.value
                 }   
-            }else if(action.subKey == "shippingOptions"){
-                let organisationId = action.value;
-                reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
-                let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
-                if(action.key == "add"){
-                   reviewData.shippingOptions.push(pickupAddress);
-                }else if(action.key == "remove"){
-                    let index = reviewData.shippingOptions.indexOf(pickupAddress);
-                    reviewData.shippingOptions.splice(index,1);
-                }
-            }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
+            }
+            // else if(action.subKey == "shippingOptions"){
+            //     let organisationId = action.value;
+            //     reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
+            //     let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
+            //     if(action.key == "add"){
+            //        reviewData.shippingOptions.push(pickupAddress);
+            //     }else if(action.key == "remove"){
+            //         let index = reviewData.shippingOptions.indexOf(pickupAddress);
+            //         reviewData.shippingOptions.splice(index,1);
+            //     }
+            // }
+            else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
                 let index = action.index;
                 reviewData[action.subKey]["street1"] = state.participantAddresses[index].street1;
                 reviewData[action.subKey]["street2"] = state.participantAddresses[index].steet2;
