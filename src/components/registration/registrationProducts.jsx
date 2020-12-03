@@ -269,6 +269,7 @@ class RegistrationProducts extends Component {
     }
 
     removeParticipantModal = (key, id, competitionId, organisationId, teamName) =>{
+        console.log(teamName)
         if(key == "show"){
             this.setState({participantModalVisible: true, id: id, competitionUniqueKey: competitionId, organisationUniqueKey: organisationId,teamName: teamName });
         }
@@ -280,6 +281,7 @@ class RegistrationProducts extends Component {
                 competitionUniqueKey: this.state.competitionUniqueKey,
                 organisationUniqueKey: this.state.organisationUniqueKey
             }
+            console.log("teamName",this.state.teamName)
             if(this.state.teamName){
                 payload["teamName"] = this.state.teamName;
             }

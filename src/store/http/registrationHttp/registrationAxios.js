@@ -207,7 +207,11 @@ let AxiosApi = {
         return Method.dataDelete(url, token);
     },
     deleteRegistrationParticipant(payload) {
-        var url = `/api/registration/participant/delete?registrationId=${payload.registrationId}&participantId=${payload.participantId}&competitionUniqueKey=${payload.competitionUniqueKey}&organisationUniqueKey=${payload.organisationUniqueKey}`;
+        if(payload.teamName){
+            var url = `/api/registration/participant/delete?registrationId=${payload.registrationId}&participantId=${payload.participantId}&competitionUniqueKey=${payload.competitionUniqueKey}&organisationUniqueKey=${payload.organisationUniqueKey}&teamName=${payload.teamName}`;
+        }else{
+            var url = `/api/registration/participant/delete?registrationId=${payload.registrationId}&participantId=${payload.participantId}&competitionUniqueKey=${payload.competitionUniqueKey}&organisationUniqueKey=${payload.organisationUniqueKey}`;
+        }
         return Method.dataDelete(url, token);
     },
     getRegParticipantUsers(payload) {
