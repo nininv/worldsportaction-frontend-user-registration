@@ -1554,7 +1554,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "identifyRefId", "userRegDetails")}
-                        value={userRegDetails.identifyRefId ? userRegDetails.identifyRefId : 3}
+                        value={userRegDetails.identifyRefId ? userRegDetails.identifyRefId : null}
                     >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
@@ -1620,7 +1620,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability", "userRegDetails")}
-                        value={userRegDetails.isDisability ? userRegDetails.isDisability : 0}
+                        value={userRegDetails.isDisability ? userRegDetails.isDisability : null}
                     >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
@@ -1645,7 +1645,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId", "userRegDetails")}
-                                value={userRegDetails.disabilityTypeRefId ? userRegDetails.disabilityTypeRefId : 5}>
+                                value={userRegDetails.disabilityTypeRefId ? userRegDetails.disabilityTypeRefId : null}>
                                 {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
                                 ))}
@@ -1729,7 +1729,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId", "userRegDetails")}
-                        value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : 6}
+                        value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : null}
                     >
                         {(heardByList || []).map((heard, index) => (
                             <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>

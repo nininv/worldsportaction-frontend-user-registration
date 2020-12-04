@@ -2923,7 +2923,7 @@ class AppRegistrationFormNew extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
-                        value={registrationObj.additionalInfo.isDisability ? registrationObj.additionalInfo.isDisability : 0}>
+                        value={registrationObj.additionalInfo.isDisability}>
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>

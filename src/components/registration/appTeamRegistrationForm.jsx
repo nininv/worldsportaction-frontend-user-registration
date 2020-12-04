@@ -3208,7 +3208,7 @@ class AppTeamRegistrationForm extends Component{
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")} 
-                                value={teamRegistrationObj.additionalInfo.isDisability ? teamRegistrationObj.additionalInfo.isDisability : 0}
+                                value={teamRegistrationObj.additionalInfo.isDisability}
                                 >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
