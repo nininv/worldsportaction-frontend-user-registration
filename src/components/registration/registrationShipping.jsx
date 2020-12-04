@@ -132,7 +132,7 @@ class RegistrationShipping extends Component {
                     buyingProduct["organisationId"] = item.organisationId;
                     let pickupAddress = shopPickupAddresses.find(x => x.organisationId == item.organisationId);
                     if(pickupAddress){
-                        buyingProduct["pickupAddress"] = `${pickupAddress.address}, ${pickupAddress.suburb}, ${pickupAddress.postcode}, ${pickupAddress.state}`;
+                        buyingProduct["pickupAddress"] = `${pickupAddress.address}, ${pickupAddress.suburb}, ${pickupAddress.postcode}, ${pickupAddress.state}.`;
                         buyingProduct["pickupInstruction"] = pickupAddress.pickupInstruction;
                     }
                     this.state.shippingOptions.push(buyingProduct);
@@ -327,15 +327,15 @@ class RegistrationShipping extends Component {
                                 padding: "15px",
                                 marginTop: "10px"
                             }}>
-                                <div style={{display: "flex"}}>
-                                    <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
-                                    <div style={{marginTop: "-5px"}}>
-                                        <Tooltip placement="top">
-                                            <span>{item.pickupInstruction}</span>
-                                        </Tooltip>
-                                    </div>
-                                </div>
+                                <div className="subtitle-text-common">{AppConstants.pickupAddress}</div>
+                                {/* <div style={{marginTop: "-5px"}}>
+                                    <Tooltip placement="top">
+                                        <span>{item.pickupInstruction}</span>
+                                    </Tooltip>
+                                </div> */}
                                 <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
+                                <div className="subtitle-text-common" style={{marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
+                                <div style={{marginTop: "5px" }}>{item.pickupInstruction}</div>
                             </div>    
                         )}
                     </div>

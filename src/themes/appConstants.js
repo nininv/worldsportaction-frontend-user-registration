@@ -1160,7 +1160,8 @@ exit: "Exit",
 profile: "Profile",
 yourProfile: "Your Profile",
 viewYourProfile: "View Your Profile",
-sameAddressAsTeamMember: "Use same address as Team member"
+sameAddressAsTeamMember: "Use same address as Team member",
+pickupInstruction: "Pickup Instruction"
 };
 
 export default AppConstants;
