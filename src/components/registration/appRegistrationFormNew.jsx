@@ -1040,11 +1040,11 @@ class AppRegistrationFormNew extends Component {
         history.push({ pathname: '/registrationProducts', state: { registrationId: this.state.registrationId } })
     }
 
-    goToTeamRegistrationForm = (uniqueKey) => {
+    goToTeamRegistrationForm = (uniqueKey,registrationId) => {
         if (uniqueKey) {
-            history.push({ pathname: '/appTeamRegistrationForm', state: { existingTeamParticipantId: uniqueKey } });
+            history.push({ pathname: '/appTeamRegistrationForm', state: { existingTeamParticipantId: uniqueKey,registrationId: registrationId } });
         } else {
-            history.push({ pathname: '/appTeamRegistrationForm' });
+            history.push({ pathname: '/appTeamRegistrationForm', state: { registrationId: registrationId } });
         }
     }
 
@@ -1278,7 +1278,7 @@ class AppRegistrationFormNew extends Component {
                                 </div>
                                 :
                                 <div
-                                    onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey)}
+                                    onClick={() => this.goToTeamRegistrationForm(user.userRegUniqueKey,this.state.registrationId)}
                                     className={registrationObj != null && registrationObj.userId == user.id ? 'new-participant-button-active' : 'new-participant-button-inactive'}>
                                     <div className="defualt-team-logo-style" style={{ height: "80px", width: "80px" }}>
                                         <img src={AppImages.teamLoadDefualtWhite} />
@@ -1299,7 +1299,7 @@ class AppRegistrationFormNew extends Component {
                     </div>
                     <div className='col-sm-12 col-md-6'>
                         <div
-                            onClick={() => this.goToTeamRegistrationForm(null)}
+                            onClick={() => this.goToTeamRegistrationForm(null,this.state.registrationId)}
                             className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
                             style={{ textAlign: "center", padding: "0px 70px" }}>+ {AppConstants.newTeamRegistration}</div>
                     </div>

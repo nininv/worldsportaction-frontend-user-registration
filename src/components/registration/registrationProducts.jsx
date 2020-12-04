@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "14864208-9df3-4824-938a-c08ecf91dfd8";
+        //let registrationUniqueKey = "77e04dcc-9391-4ef1-9880-6605a9322685";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -95,6 +95,12 @@ class RegistrationProducts extends Component {
         }
         if(registrationProductState.deleteOnLoad == false && this.state.deleteOnLoad == true){
             this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1, -1);
+            let registrationReviewList = registrationProductState.registrationReviewList;
+            let compParticipants = registrationReviewList!= null ? isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                                    registrationReviewList.compParticipants : [] : [];
+            if(compParticipants.length == 0){
+                this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey);
+            }
             this.setState({loading: true});
             this.setState({deleteOnLoad: false})
         }

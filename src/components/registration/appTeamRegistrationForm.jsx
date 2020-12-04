@@ -322,7 +322,7 @@ class AppTeamRegistrationForm extends Component{
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
             this.setState({participantId: participantId,registrationId: registrationId,existingTeamParticipantId: existingTeamParticipantId});
-
+            // console.log("registrationid",registrationId)
             let teamRegistrationState = this.props.teamRegistrationState;
             if(participantId && registrationId){
                 this.props.getTeamInfoById(participantId,'');
