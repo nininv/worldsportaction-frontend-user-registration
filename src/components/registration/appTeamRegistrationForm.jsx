@@ -995,6 +995,7 @@ class AppTeamRegistrationForm extends Component{
                     }
                 }
             }
+            // console.log("names","array",errorTypes,personNames)
             if(isArrayNotEmpty(filteredTeamRegistrationObj.teamMembers)){
                 for(let member of filteredTeamRegistrationObj.teamMembers){
                     let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
@@ -1004,6 +1005,7 @@ class AppTeamRegistrationForm extends Component{
                         if(selectedDivision.genderRefId){
                             if(genderRefId != selectedDivision.genderRefId){
                                 let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+                                // console.log("member geder",filteredErrorTypes)
                                 errorTypes = filteredErrorTypes;
                                 errorTypes.push("Gender");
                                 let name = member.firstName + ' ' + member.lastName;
@@ -1014,7 +1016,7 @@ class AppTeamRegistrationForm extends Component{
                         }
                         if(selectedDivision.fromDate && selectedDivision.toDate){
                             if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
-                                let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+                                let filteredErrorTypes = errorTypes.filter(x => x != "DOB");
                                 errorTypes = filteredErrorTypes;
                                 errorTypes.push("DOB");
                                 let name = member.firstName + ' ' + member.lastName;
