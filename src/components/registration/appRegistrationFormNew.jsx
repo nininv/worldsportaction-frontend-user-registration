@@ -1330,7 +1330,7 @@ class AppRegistrationFormNew extends Component {
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                     <div className="form-heading" style={{ textAlign: "start" }}>{AppConstants.addNewParticipant}</div>
                     <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
-                        onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                        onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnotherUser}</div>
                 </div>
                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>{this.getParticipantType()}</div>
             </div>
@@ -2165,7 +2165,7 @@ class AppRegistrationFormNew extends Component {
                             <div style={{ display: "flex", flexWrap: "wrap" }}>
                                 <div className="form-heading" style={{ textAlign: "start" }}>{registrationObj.firstName} {registrationObj.lastName}</div>
                                 <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
-                                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnotherUser}</div>
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>

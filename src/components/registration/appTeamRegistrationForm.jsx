@@ -3113,7 +3113,7 @@ class AppTeamRegistrationForm extends Component{
                             </div>
                         </div>
                         <div className="orange-action-txt" style={{marginLeft: "auto"}}
-                            onClick={() => this.selectAnother()}>{AppConstants.selectAnother}</div>
+                            onClick={() => this.selectAnother()}>{AppConstants.selectAnotherTeam}</div>
                     </div>
                 </div>
             )
