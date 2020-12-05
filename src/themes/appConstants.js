@@ -997,6 +997,8 @@ const AppConstants = {
  newParticipant: "New Participant",
  addNewParticipant: "Add a new participant", 
  selectAnother: "Select Another",
+ selectAnotherTeam: "Wrong Team?",
+ selectAnotherUser: "Wrong User?",
  selectAddress: "Select Address",
  addNewAddress: "Add New Address",
  addNewParentGaurdian: "Add New Parent/Gaurdian",
