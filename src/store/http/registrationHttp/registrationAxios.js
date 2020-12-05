@@ -203,7 +203,11 @@ let AxiosApi = {
         return Method.dataPost(url, token, payload);
     },
     deleteRegistrationProduct(payload) {
-        var url = `/api/registration/product/delete?registrationId=${payload.registrationId}&orgRegParticipantId=${payload.orgRegParticipantId}`;
+        if(payload.teamName){
+            var url = `/api/registration/product/delete?registrationId=${payload.registrationId}&orgRegParticipantId=${payload.orgRegParticipantId}&teamName=${payload.teamName}`;
+        }else{
+            var url = `/api/registration/product/delete?registrationId=${payload.registrationId}&orgRegParticipantId=${payload.orgRegParticipantId}`;
+        }
         return Method.dataDelete(url, token);
     },
     deleteRegistrationParticipant(payload) {

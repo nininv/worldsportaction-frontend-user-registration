@@ -410,6 +410,8 @@ class TeamInivteForm extends Component {
         parentOrGuardians[parentIndex]["stateRefId"] = null;
         parentOrGuardians[parentIndex]["countryRefId"] = null;
         parentOrGuardians[parentIndex]["postalCode"] = null;
+        parentOrGuardians[parentIndex]["searchAddressFlag"] = true;
+        parentOrGuardians[parentIndex]["manualEnterAddressFlag"] = false;
         this.props.updateInviteMemberInfoAction(iniviteMemberInfo, "iniviteMemberInfo", null, null)
     }
 
@@ -679,46 +681,8 @@ class TeamInivteForm extends Component {
             const { stateList, countryList } = this.props.commonReducerState;
             return (
                 <div>
-                    {/* {teamRegistrationObj.selectAddressFlag && (
-                        <div>
-                            <div className="form-heading" 
-                            style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
-                            <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
-                            <Form.Item >
-                                {getFieldDecorator(`yourDetailsSelectAddress`, {
-                                    rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
-                                })(
-                                <Select
-                                    style={{ width: "100%" }}
-                                    placeholder={AppConstants.select}
-                                    onChange={(e) => this.onChangeSetTeamValue(e, "addOrRemoveAddressBySelect")}
-                                    setFieldsValue={this.getAddress(user)}>
-                                    {(this.getSelectAddressDropdown(user) || []).map((item) => (
-                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
-                                    ))}
-                                </Select>
-                                )}
-                            </Form.Item> 
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParticipantValue(true,"addNewAddressFlag")
-                                this.onChangeSetParticipantValue(false,"selectAddressFlag");
-                                this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
-                            }}
-                            >+ {AppConstants.addNewAddress}</div>	
-                        </div>
-                    )}  */}
-
                     {this.state.searchAddressFlag && (
                         <div>
-                            {/* {!newUser && (
-                                <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
-                                onClick={() => {
-                                    this.onChangeSetParticipantValue(true,"selectAddressFlag");
-                                    this.onChangeSetParticipantValue(false,"addNewAddressFlag");
-                                }}
-                                >{AppConstants.returnToSelectAddress}</div>
-                            )} */}
                             <div className="form-heading"
                                 style={{ paddingBottom: "0px", marginBottom: "-20px", marginTop: "20px" }}>{AppConstants.findAddress}</div>
                             <div>

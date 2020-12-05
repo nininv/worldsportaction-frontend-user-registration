@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "77e04dcc-9391-4ef1-9880-6605a9322685";
+        //let registrationUniqueKey = "d60b2d86-8e6d-4706-8b31-9e3b2b37a0f5";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -254,9 +254,9 @@ class RegistrationProducts extends Component {
         }
     }
 
-    removeProductModal = (key, id) =>{
+    removeProductModal = (key, id, teamName) =>{
         if(key == "show"){
-            this.setState({productModalVisible: true, id: id});
+            this.setState({productModalVisible: true, id: id,teamName: teamName});
         }
         else if(key == "ok"){
             this.setState({productModalVisible: false});
@@ -264,8 +264,13 @@ class RegistrationProducts extends Component {
                 registrationId : this.state.registrationUniqueKey,
                 orgRegParticipantId: this.state.id
             }
+            console.log("teamName",this.state.teamName)
+            if(this.state.teamName){
+                payload["teamName"] = this.state.teamName;
+            }
+
             this.props.deleteRegistrationProductAction(payload);
-            this.setState({deleteOnLoad: true})
+            this.setState({deleteOnLoad: true,teamName: null})
             // this.getRegistrationProducts(this.state.registrationUniqueKey, 1, -1);
             // this.setState({loading: true});
         }
@@ -1230,17 +1235,19 @@ class RegistrationProducts extends Component {
                                     <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
                                     <div  className="subtitle-text-common" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
-                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
-                                        </div>
+                                        <div className="alignself-center pt-2" style={(mem.email !== item.email) ? {marginRight:10} : {marginRight:30}}>${mem.feesToPay}</div>
+                                        {(mem.email !== item.email) && (
+                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId,item.teamName)}>
+                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 :
                                 <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId,null)}>
                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                     </div>
                                 </div>

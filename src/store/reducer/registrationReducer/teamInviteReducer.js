@@ -18,6 +18,28 @@ const initialState = {
     teamInviteCount: null
 }
 
+function updateInviteMemberInfo(iniviteMemberInfoTemp){
+    try{
+        let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
+        let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
+        for(let parent of userRegDetails.parentOrGaurdianDetails){
+            let parentAddress = parent.street1 + parent.street2 + parent.suburb + parent.postalCode + parent.stateRefId + parent.countryRefId;
+            if(registererAddress === parentAddress){
+                parent["isSameAddress"] = true;
+                parent["searchAddressFlag"] = false;
+                parent["manualEnterAddressFlag"] = false;
+            }else{
+                parent["isSameAddress"] = false;
+                parent["searchAddressFlag"] = true;
+                parent["manualEnterAddressFlag"] = false;
+            }
+        }
+        return iniviteMemberInfoTemp;
+    }catch(ex){
+        console.log("Error in updateInviteMemberInfo::"+ex)
+    }
+}
+
 function teamInviteReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
@@ -29,7 +51,7 @@ function teamInviteReducer(state = initialState, action){
               ...state,
               status: action.status,
               inviteOnLoad: false,
-              iniviteMemberInfo : iniviteMemberInfoTemp
+              iniviteMemberInfo : updateInviteMemberInfo(iniviteMemberInfoTemp)
             };
 
         case ApiConstants.UPDATE_INVITE_MEMBER_INFO_ACTION:
