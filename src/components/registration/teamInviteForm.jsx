@@ -179,11 +179,11 @@ class TeamInivteForm extends Component {
                 [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
             });
 
-            // if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
-            //     if(parentOrGuardians == null){
-            //         this.addParent("add");
-            //     }
-            // }
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
+                if(parentOrGuardians == null){
+                    this.addParent("add");
+                }
+            }
 
             (parentOrGuardians || []).map((parent, parentIndex) => {
                 this.props.form.setFieldsValue({
@@ -1737,7 +1737,7 @@ class TeamInivteForm extends Component {
                     </Radio.Group>
                     {/* )}
                     </Form.Item>  */}
-                    {(userRegDetails.heardByRefId == null || userRegDetails.heardByRefId == 6) && (
+                    {(userRegDetails.heardByRefId == 6) && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
                                 placeholder={AppConstants.other}

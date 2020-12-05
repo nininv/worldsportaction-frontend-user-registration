@@ -1330,7 +1330,7 @@ class AppRegistrationFormNew extends Component {
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                     <div className="form-heading" style={{ textAlign: "start" }}>{AppConstants.addNewParticipant}</div>
                     <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
-                        onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                        onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnotherUser}</div>
                 </div>
                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>{this.getParticipantType()}</div>
             </div>
@@ -2165,7 +2165,7 @@ class AppRegistrationFormNew extends Component {
                             <div style={{ display: "flex", flexWrap: "wrap" }}>
                                 <div className="form-heading" style={{ textAlign: "start" }}>{registrationObj.firstName} {registrationObj.lastName}</div>
                                 <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
-                                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                                    onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnotherUser}</div>
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>
@@ -2261,7 +2261,8 @@ class AppRegistrationFormNew extends Component {
                                     }}>
                                         <img style={{ height: "149px", borderRadius: "10px 10px 0px 0px" }} src={competition.heroImageUrl} />
                                     </div>
-                                    <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
+                                    <div className="form-heading" style={{ marginTop: "20px", textAlign: "start", paddingBottom:"3.5px"}}>{competition.competitionName}</div>
+                                    <div style={{fontWeight: "600", marginBottom:"10px"}}>{competition.compOrgName}</div>
                                     <div style={{ fontWeight: "600" }}><img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
