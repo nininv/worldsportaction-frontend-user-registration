@@ -1315,10 +1315,11 @@ class AppTeamRegistrationForm extends Component{
                                     borderBottom: "1px solid var(--app-f0f0f2)"}}>
                                         <img style={{height: "149px",borderRadius: "10px 10px 0px 0px",overflow: "hidden"}} src={competition.heroImageUrl}/>
                                     </div>
-                                    <div className="form-heading" style={{marginTop: "20px",textAlign: "start"}}>{competition.competitionName}</div>
+                                    <div className="form-heading" style={{marginTop: "20px",textAlign: "start", paddingBottom:"3.5px"}}>{competition.competitionName}</div>
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
+                                    <div style={{fontWeight: "600", marginBottom:"10px"}}>{competition.compOrgName}</div>
                                     <div style={{fontWeight: "600"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                 </div>
                             </div>
