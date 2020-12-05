@@ -369,6 +369,8 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    
+
     setSelectCompetitionStepFormFields = () => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
@@ -458,7 +460,10 @@ class AppTeamRegistrationForm extends Component{
                     [`yourDetailsdateOfBirth`]: teamRegistrationObj.dateOfBirth ? moment(teamRegistrationObj.dateOfBirth, "MM-DD-YYYY") : null,
                     [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
                     [`yourDetailsEmail`]: teamRegistrationObj.email,
-                    [`teamName`]: teamRegistrationObj.teamName
+                    [`teamName`]: teamRegistrationObj.teamName,
+                    [`emergencyFirstName`]: teamRegistrationObj.emergencyFirstName,
+                    [`emergencyLastName`]: teamRegistrationObj.emergencyLastName,
+                    [`emergencyContactNumber`]: teamRegistrationObj.emergencyContactNumber,
                 });
                 if(teamRegistrationObj.manualEnterAddressFlag){
                     this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
@@ -484,6 +489,9 @@ class AppTeamRegistrationForm extends Component{
                             [`teamMemberDateOfBirth${mIndex}`]: member.dateOfBirth ? moment(member.dateOfBirth, "MM-DD-YYYY") : null,
                             [`teamMemberMobileNumber${mIndex}`]:  member.mobileNumber,
                             [`teamMemberEmail${mIndex}`]:  member.email,
+                            [`teamMemberEmergencyFirstName${mIndex}`]:  member.emergencyFirstName,
+                            [`teamMemberEmergencyLastName${mIndex}`]:  member.emergencyLastName,
+                            [`teamMemberEmergencyContactNumber${mIndex}`]:  member.emergencyContactNumber,
                         });
                         // if(member.manualEnterAddressFlag){
                         //     this.setTeamMemberAddressFormFields("manualEnterAddressFlag",member,mIndex);
@@ -2629,7 +2637,7 @@ class AppTeamRegistrationForm extends Component{
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px",marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
+                            {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) < 18 && 
                                 <div>
                                     {(teamMember.parentOrGuardian || []).map((parent,parentIndex) => (
                                         <div>{this.teamMemberParentOrGuardianView(parent,parentIndex,teamMember,teamMemberIndex,getFieldDecorator)}</div>
@@ -2638,6 +2646,15 @@ class AppTeamRegistrationForm extends Component{
                                         onClick={() => { this.addTeamMemberParent("add",teamMemberIndex) }}
                                     >+ {AppConstants.addNewParentGaurdian}</div>
                                 </div>
+                            
+                            }
+                        </div>
+                    )}
+
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 &&(
+                            <div>
+                            {teamMember.dateOfBirth && (
+                                <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
                             )}
                         </div>
                     )}
@@ -2986,6 +3003,145 @@ class AppTeamRegistrationForm extends Component{
         )
     }
 
+    emergencyContactView = (getFieldDecorator) => {
+        try {
+            let { teamRegistrationObj } = this.props.teamRegistrationState;
+            return (
+                <div className="registration-form-view">
+                    <div className="form-heading">{AppConstants.emergencyContact}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyFirstName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.firstName}
+                                        placeholder={AppConstants.firstName}
+                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "emergencyFirstName")}
+                                        setFieldsValue={teamRegistrationObj.emergencyFirstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyFirstName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyLastName`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.lastName}
+                                        placeholder={AppConstants.lastName}
+                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "emergencyLastName")}
+                                        setFieldsValue={teamRegistrationObj.emergencyLastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyLastName`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`emergencyContactNumber`, {
+                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.mobileNumber}
+                                        placeholder={AppConstants.mobileNumber}
+                                        onChange={(e) => this.onChangeSetTeamValue(e.target.value, "emergencyContactNumber")}
+                                        setFieldsValue={teamRegistrationObj.emergencyContactNumber}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`emergencyContactNumber`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+            )
+        } catch (ex) {
+            console.log("Error in emergencyContactView::" + ex)
+        }
+    }
+
+    teamMemberEmergencyContactView = (teamMemberIndex,getFieldDecorator) => {
+        try {
+            let { teamRegistrationObj } = this.props.teamRegistrationState;
+            return (
+                <div className="registration-form-view">
+                    <div className="form-heading">{AppConstants.emergencyContact}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`teamMemberEmergencyFirstName${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.firstName}
+                                        placeholder={AppConstants.firstName}
+                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "emergencyFirstName", teamMemberIndex)}
+                                        setFieldsValue={teamRegistrationObj.emergencyFirstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyFirstName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`teamMemberEmergencyLastName${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.lastName}
+                                        placeholder={AppConstants.lastName}
+                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "emergencyLastName", teamMemberIndex)}
+                                        setFieldsValue={teamRegistrationObj.emergencyLastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyLastName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`teamMemberEmergencyContactNumber${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.mobileNumber}
+                                        placeholder={AppConstants.mobileNumber}
+                                        onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "emergencyContactNumber", teamMemberIndex)}
+                                        setFieldsValue={teamRegistrationObj.emergencyContactNumber}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyContactNumber${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+            )
+        } catch (ex) {
+            console.log("Error in emergencyContactView::" + ex)
+        }
+    }
+
+
     teamDetailsView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
@@ -3063,8 +3219,14 @@ class AppTeamRegistrationForm extends Component{
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(moment(teamRegistrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) && (
+                    {(getAge(moment(teamRegistrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
+                    ) : (
+                        <div>
+                            {teamRegistrationObj.dateOfBirth && (
+                                <div>{this.emergencyContactView(getFieldDecorator)}</div>
+                            )}
+                        </div>
                     )}
                     <div>{this.teamDetailsView(getFieldDecorator)}</div>
                 </div>
