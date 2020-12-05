@@ -3441,7 +3441,7 @@ class AppRegistrationFormNew extends Component {
                         </Content>
                         <Footer>{this.footerView()}</Footer>
                         <Loader visible={
-                            // this.props.userRegistrationState.onMembershipLoad || 
+                            this.props.userRegistrationState.onMembershipLoad || 
                             this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
                             this.props.userRegistrationState.onSaveLoad

@@ -977,56 +977,113 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
-    checkDivisionRestriction = (filteredTeamRegistrationObj) => {
+    // checkDivisionRestriction = (filteredTeamRegistrationObj) => {
+    //     try{
+    //         let personNames = [];
+    //         let errorTypes = [];
+    //         let errorMessage = '';
+    //         let selectedDivision = filteredTeamRegistrationObj.divisions.find(x => x.competitionMembershipProductDivisionId == filteredTeamRegistrationObj.competitionMembershipProductDivisionId);
+    //         if(filteredTeamRegistrationObj.personRoleRefId == 4 || (filteredTeamRegistrationObj.personRoleRefId != 4 && filteredTeamRegistrationObj.registeringAsAPlayer == 1)){
+    //             let genderRefId = filteredTeamRegistrationObj.genderRefId;
+    //             let dob = moment(filteredTeamRegistrationObj.dateOfBirth).format("YYYY-MM-DD");
+    //             if(selectedDivision.genderRefId){
+    //                 if(genderRefId != selectedDivision.genderRefId){
+    //                     errorTypes.push("Gender");
+    //                     let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+    //                     personNames.push(name)
+    //                 }
+    //             }
+    //             if(selectedDivision.fromDate && selectedDivision.toDate){
+    //                 if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+    //                     errorTypes.push("DOB");
+    //                     let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+    //                     let filteredNames = personNames.filter(x => x != name);
+    //                     personNames = filteredNames;
+    //                     personNames.push(name)
+    //                 }
+    //             }
+    //         }
+    //         // console.log("names","array",errorTypes,personNames)
+    //         if(isArrayNotEmpty(filteredTeamRegistrationObj.teamMembers)){
+    //             for(let member of filteredTeamRegistrationObj.teamMembers){
+    //                 let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
+    //                 if(isPlayer){
+    //                     let genderRefId = member.genderRefId;
+    //                     let dob = moment(member.dateOfBirth).format("YYYY-MM-DD");
+    //                     if(selectedDivision.genderRefId){
+    //                         if(genderRefId != selectedDivision.genderRefId){
+    //                             let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
+    //                             // console.log("member geder",filteredErrorTypes)
+    //                             errorTypes = filteredErrorTypes;
+    //                             errorTypes.push("Gender");
+    //                             let name = member.firstName + ' ' + member.lastName;
+    //                             let filteredNames = personNames.filter(x => x != name);
+    //                             personNames = filteredNames;
+    //                             personNames.push(name)
+    //                         }
+    //                     }
+    //                     if(selectedDivision.fromDate && selectedDivision.toDate){
+    //                         if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+    //                             let filteredErrorTypes = errorTypes.filter(x => x != "DOB");
+    //                             errorTypes = filteredErrorTypes;
+    //                             errorTypes.push("DOB");
+    //                             let name = member.firstName + ' ' + member.lastName;
+    //                             let filteredNames = personNames.filter(x => x != name);
+    //                             personNames = filteredNames;
+    //                             personNames.push(name)
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         if(isArrayNotEmpty(personNames) && isArrayNotEmpty(errorTypes)){
+    //             let personsString = '';
+    //             for(let i in personNames){
+    //                 personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
+    //             }
+    //             errorMessage += personsString + 'do not meet the restriction of ';
+    //             let errorTypesString = '';
+    //             for(let i in errorTypes){
+    //                 errorTypesString += errorTypes[i] + (errorTypes.length - 1 != i ? ' and ' : ' ');
+    //             }
+    //             errorMessage += errorTypesString + '. It should be updated.';
+    //         }
+    //         return errorMessage;
+    //     }catch(ex){
+    //         console.log("Error in checkDivisionRestriction::"+ex)
+    //     }
+    // }
+
+    checkGenderDivisionRestriction = (filteredTeamRegistrationObj) => {
         try{
-            let personNames = [];
-            let errorTypes = [];
-            let errorMessage = '';
+            const { membershipProductInfo } = this.props.teamRegistrationState;
+            let competitionName = '';
+            for(let org of membershipProductInfo){
+                let competition = org.competitions.find(x => x.competitionUniqueKey == filteredTeamRegistrationObj.competitionId);
+                if(competition){
+                    competitionName = competition.competitionName;
+                }
+            }
             let selectedDivision = filteredTeamRegistrationObj.divisions.find(x => x.competitionMembershipProductDivisionId == filteredTeamRegistrationObj.competitionMembershipProductDivisionId);
+            let gender = selectedDivision.genderRefId == 1 ? "Female" : selectedDivision.genderRefId == 2 ? "Male" : "Non-binary";
+            let personNames = [];
+            let errorMessage = '';
             if(filteredTeamRegistrationObj.personRoleRefId == 4 || (filteredTeamRegistrationObj.personRoleRefId != 4 && filteredTeamRegistrationObj.registeringAsAPlayer == 1)){
                 let genderRefId = filteredTeamRegistrationObj.genderRefId;
-                let dob = moment(filteredTeamRegistrationObj.dateOfBirth).format("YYYY-MM-DD");
                 if(selectedDivision.genderRefId){
                     if(genderRefId != selectedDivision.genderRefId){
-                        errorTypes.push("Gender");
                         let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
-                        personNames.push(name)
-                    }
-                }
-                if(selectedDivision.fromDate && selectedDivision.toDate){
-                    if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
-                        errorTypes.push("DOB");
-                        let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
-                        let filteredNames = personNames.filter(x => x != name);
-                        personNames = filteredNames;
                         personNames.push(name)
                     }
                 }
             }
-            // console.log("names","array",errorTypes,personNames)
             if(isArrayNotEmpty(filteredTeamRegistrationObj.teamMembers)){
                 for(let member of filteredTeamRegistrationObj.teamMembers){
                     let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
                     if(isPlayer){
                         let genderRefId = member.genderRefId;
-                        let dob = moment(member.dateOfBirth).format("YYYY-MM-DD");
                         if(selectedDivision.genderRefId){
                             if(genderRefId != selectedDivision.genderRefId){
-                                let filteredErrorTypes = errorTypes.filter(x => x != "Gender");
-                                // console.log("member geder",filteredErrorTypes)
-                                errorTypes = filteredErrorTypes;
-                                errorTypes.push("Gender");
-                                let name = member.firstName + ' ' + member.lastName;
-                                let filteredNames = personNames.filter(x => x != name);
-                                personNames = filteredNames;
-                                personNames.push(name)
-                            }
-                        }
-                        if(selectedDivision.fromDate && selectedDivision.toDate){
-                            if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
-                                let filteredErrorTypes = errorTypes.filter(x => x != "DOB");
-                                errorTypes = filteredErrorTypes;
-                                errorTypes.push("DOB");
                                 let name = member.firstName + ' ' + member.lastName;
                                 let filteredNames = personNames.filter(x => x != name);
                                 personNames = filteredNames;
@@ -1036,21 +1093,73 @@ class AppTeamRegistrationForm extends Component{
                     }
                 }
             }
-            if(isArrayNotEmpty(personNames) && isArrayNotEmpty(errorTypes)){
+            // console.log("personName",personNames)
+            if(isArrayNotEmpty(personNames)){
                 let personsString = '';
                 for(let i in personNames){
                     personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
                 }
-                errorMessage += personsString + 'do not meet the restriction of ';
-                let errorTypesString = '';
-                for(let i in errorTypes){
-                    errorTypesString += errorTypes[i] + (errorTypes.length - 1 != i ? ' and ' : ' ');
-                }
-                errorMessage += errorTypesString + '. It should be updated.';
+                errorMessage = competitionName + " is a " + gender + " only competition." + personsString + " is not allowed to register to this competition."
             }
+            // console.log("errr",errorMessage)
             return errorMessage;
         }catch(ex){
-            console.log("Error in checkDivisionRestriction::"+ex)
+            console.log("Error in checkGenderDivisionRestriction::"+ex);
+        }
+    }
+
+    checkDobDivisionRestriction = (filteredTeamRegistrationObj) => {
+        try{
+            const { membershipProductInfo } = this.props.teamRegistrationState;
+            let competitionName = '';
+            for(let org of membershipProductInfo){
+                let competition = org.competitions.find(x => x.competitionUniqueKey == filteredTeamRegistrationObj.competitionId);
+                if(competition){
+                    competitionName = competition.competitionName;
+                }
+            }
+            let selectedDivision = filteredTeamRegistrationObj.divisions.find(x => x.competitionMembershipProductDivisionId == filteredTeamRegistrationObj.competitionMembershipProductDivisionId);
+            let personNames = [];
+            let errorMessage = '';
+            if(filteredTeamRegistrationObj.personRoleRefId == 4 || (filteredTeamRegistrationObj.personRoleRefId != 4 && filteredTeamRegistrationObj.registeringAsAPlayer == 1)){
+                let dob = moment(filteredTeamRegistrationObj.dateOfBirth).format("YYYY-MM-DD");
+                if(selectedDivision.fromDate && selectedDivision.toDate){
+                    if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+                        let name = filteredTeamRegistrationObj.firstName + ' ' + filteredTeamRegistrationObj.lastName;
+                        personNames.push(name)
+                    }
+                }
+            }
+            if(isArrayNotEmpty(filteredTeamRegistrationObj.teamMembers)){
+                for(let member of filteredTeamRegistrationObj.teamMembers){
+                    let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
+                    if(isPlayer){
+                        let dob = moment(member.dateOfBirth).format("YYYY-MM-DD");
+                        if(selectedDivision.fromDate && selectedDivision.toDate){
+                            if(!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))){
+                                let name = member.firstName + ' ' + member.lastName;
+                                let filteredNames = personNames.filter(x => x != name);
+                                personNames = filteredNames;
+                                personNames.push(name)
+                            }
+                        }
+                    }
+                }
+            }
+            // console.log("personName2",personNames)
+            if(isArrayNotEmpty(personNames)){
+                let fromDate = moment(selectedDivision.fromDate).format("YYYY-MM-DD");
+                let toDate = moment(selectedDivision.toDate).format("YYYY-MM-DD"); 
+                let personsString = '';
+                for(let i in personNames){
+                    personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
+                }
+                errorMessage = competitionName + " has a DOB restriction of " + fromDate + " to " + toDate + "." + personsString + " is not allowed to register to this competition."
+            }
+            // console.log("errr2",errorMessage)
+            return errorMessage;
+        }catch(ex){
+            console.log("Error in checkGenderDivisionRestriction::"+ex);
         }
     }
 
@@ -1170,9 +1279,14 @@ class AppTeamRegistrationForm extends Component{
                             message.error(ValidationConstants.addressDetailsIsRequired);
                             return;
                         }
-                        let isDivisionRestrictionError = this.checkDivisionRestriction(filteredTeamRegistrationObj);
-                        if(isDivisionRestrictionError != ''){
-                            message.error(isDivisionRestrictionError);
+                        let isGenderDivisionRestrictionError = this.checkGenderDivisionRestriction(filteredTeamRegistrationObj);
+                        if(isGenderDivisionRestrictionError != ''){
+                            message.error(isGenderDivisionRestrictionError);
+                            return;
+                        }
+                        let isDobDivisionRestrictionError = this.checkDobDivisionRestriction(filteredTeamRegistrationObj);
+                        if(isDobDivisionRestrictionError != ''){
+                            message.error(isDobDivisionRestrictionError);
                             return;
                         }
                     }
