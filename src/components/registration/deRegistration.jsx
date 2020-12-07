@@ -277,7 +277,7 @@ class DeRegistration extends Component {
         else if (subItem.id == 2 && selectedOption == 2) {
             return (
                 <div className="ml-5">
-                    <InputWithHead heading={AppConstants.organisationName} required={"required-field"} />
+                    <InputWithHead heading={AppConstants.organisationNameTransferTo} required={"required-field"} />
                     <Form.Item >
                     {getFieldDecorator(`transferOrganisationId`, {
                         rules: [{ required: true, message: ValidationConstants.organisationName }],
@@ -300,7 +300,7 @@ class DeRegistration extends Component {
                         </Select>
                     )}
                 </Form.Item>
-                <InputWithHead heading={AppConstants.competition_name} required={"required-field"} />
+                <InputWithHead heading={AppConstants.competitionNameTransferTo} required={"required-field"} />
                 <Form.Item >
                     {getFieldDecorator(`transferCompetitionId`, {
                         rules: [{ required: true, message: ValidationConstants.competitionRequired }],

@@ -1163,7 +1163,9 @@ profile: "Profile",
 yourProfile: "Your Profile",
 viewYourProfile: "View Your Profile",
 sameAddressAsTeamMember: "Use same address as Team member",
-pickupInstruction: "Pickup Instruction"
+pickupInstruction: "Pickup Instruction",
+organisationNameTransferTo: "Organisation Name you are Transferring to?",
+competitionNameTransferTo: "Competition Name you are Transferring to?",
 };
 
 export default AppConstants;
