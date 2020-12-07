@@ -59,21 +59,6 @@ function umpireActivityTableSort(key) {
 
 const columns = [
     {
-        title: "",
-        dataIndex: "pay",
-        key: "pay",
-        width: 20,
-        render: (pay, record, index) => {
-            return (
-                <div>
-                    <Checkbox
-                        className="single-checkbox mt-1 d-flex justify-content-center"
-                    ></Checkbox>
-                </div>
-            )
-        }
-    },
-    {
         title: 'Affiliate',
         dataIndex: 'affiliate',
         key: 'affiliate'

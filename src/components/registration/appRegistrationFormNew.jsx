@@ -716,10 +716,33 @@ class AppRegistrationFormNew extends Component {
         this.props.updateParticipantCompetitionAction(value, key, index, subIndex, subKey, subValue);
     }
 
+    divRestriction = (competition, divisionInfo, competitionIndex) => {
+        let restrictionId = competition.competitionInfo.registrationRestrictionTypeRefId
+        let isSameDiv = (competition.divisions || []).find(x => x.competitionMembershipProductDivisionId == divisionInfo.competitionMembershipProductDivisionId)
+        if(restrictionId == 1){
+            if(competition.divisions.length < 1){
+            this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
+            }
+        }
+        else if(restrictionId == 2) {
+            if(!isSameDiv){
+                this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
+            }
+        }
+        else{
+            this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
+        }
+    }
+
     onChangeDivisionInfo = (divisionIndex, competitionIndex, divisionInfoList) => {
-        this.onChangeSetCompetitionValue(divisionIndex, "divisionInfoIndex", competitionIndex);
+        const { registrationObj} = this.props.userRegistrationState;
+        // this.onChangeSetCompetitionValue(divisionIndex, "divisionInfoIndex", competitionIndex);
+        this.onChangeSetCompetitionValue(null, "divisionInfoIndex", competitionIndex);
         let divisionInfo = divisionInfoList[divisionIndex];
-        this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
+        (registrationObj.competitions || []).map((competition) => (
+            this.divRestriction(competition, divisionInfo, competitionIndex)
+        ))
+        // this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
     }
 
     addFriend = (removeOrAdd, competitionIndex, friendIndex) => {
@@ -2372,7 +2395,8 @@ class AppRegistrationFormNew extends Component {
                                 </Select> */}
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
-                                    value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
+                                    // value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
+                                    value={competition.divisionInfoIndex}
                                     onChange={(index) => this.onChangeDivisionInfo(index, competitionIndex, competition.divisionInfo)}
                                 >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
@@ -3363,7 +3387,7 @@ class AppRegistrationFormNew extends Component {
                             <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) && "finish"} title={AppConstants.additionalInformation} />
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
-                        {this.singleCompModalView()}
+                        {/* {this.singleCompModalView()} */}
                     </div>
                 )}
             </div>
@@ -3391,31 +3415,31 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
-    singleCompModalView = () => {
-        let { saveValidationErrorMsg } = this.props.userRegistrationState;
-        let { saveValidationErrorCode } = this.props.userRegistrationState;
-        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
-        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
-        return (
-            <div>
-                <Modal
-                    className="add-membership-type-modal"
-                    title={title}
-                    visible={this.state.singleCompModalVisible}
-                    onCancel={() => this.setState({ singleCompModalVisible: false })}
-                    footer={[
-                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
-                            {AppConstants.ok}
-                        </Button>
-                    ]}
-                >
-                    {(errorMsg || []).map((item, index) => (
-                        <p key={index}> {item}</p>
-                    ))}
-                </Modal>
-            </div>
-        )
-    }
+    // singleCompModalView = () => {
+    //     let { saveValidationErrorMsg } = this.props.userRegistrationState;
+    //     let { saveValidationErrorCode } = this.props.userRegistrationState;
+    //     let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
+    //     let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+    //     return (
+    //         <div>
+    //             <Modal
+    //                 className="add-membership-type-modal"
+    //                 title={title}
+    //                 visible={this.state.singleCompModalVisible}
+    //                 onCancel={() => this.setState({ singleCompModalVisible: false })}
+    //                 footer={[
+    //                     <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+    //                         {AppConstants.ok}
+    //                     </Button>
+    //                 ]}
+    //             >
+    //                 {(errorMsg || []).map((item, index) => (
+    //                     <p key={index}> {item}</p>
+    //                 ))}
+    //             </Modal>
+    //         </div>
+    //     )
+    // }
 
     render() {
         const { getFieldDecorator } = this.props.form;
