@@ -36,6 +36,7 @@ import { updateTeamInviteAction} from
 import {getRegistrationByIdAction} 
 from '../../store/actions/registrationAction/registrationProductsAction';
 import StripeKeys from "../stripe/stripeKeys";
+import {getUserId } from '../../util/sessionStorage'
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -305,6 +306,7 @@ const CheckoutForm = (props) => {
         }
     }
 
+
     return (
         // className="content-view"
         <div>
@@ -328,7 +330,7 @@ const CheckoutForm = (props) => {
                                             onChange={handleChange}
                                             className='StripeElement'
                                         />
-                                       <div className="card-errors" role="alert">{error}</div>
+                                        <div className="card-errors" role="alert">{error}</div>
                                         <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                     </div>
                                 }
@@ -415,7 +417,7 @@ const CheckoutForm = (props) => {
                             </div>
                         </div>}
                         {/* {pay.securePaymentOptionRefId == 3 && 
-                       <div>
+                        <div>
                             <div className="row">
                                 <div className='col-sm'>
                                     <Radio key={"3"} 
@@ -519,7 +521,7 @@ const CheckoutForm = (props) => {
                 </div>
             </form >
 
-        </div >
+        </div > 
     );
 }
 
@@ -773,12 +775,62 @@ class TeamInvitePayment extends Component{
         )
     }
 
-    contentView = () =>{
+    gotoUserPage = (userId) => {
+        if(userId != 0){
+            history.push({pathname: '/userPersonal'});
+        }else{
+            history.push({pathname: '/login'});
+        }
+    }
+
+    thankYouRegisteringView = () => {
+        let userId = getUserId();
         return(
-            <div style={{display:"flex"}}>
-                {this.paymentLeftView()}
-                {this.paymentRightView()}                
+            <div className="thank-you-registering-view" style={{backgroundColor:"white", width:"50%", margin:"auto", borderRadius:"10px", textAlign:"center"}}>
+                <div className="thank-you-registering-view-title" style={{marginTop:"10px"}}>{AppConstants.thankYouRegistering}</div>
+                {userId != 0 ? (
+                    <div style={{marginTop:"20px"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.successProfileUpdateMessage}</div>
+                        <div className="thank-you-registering-view-content" style={{marginBottom:"20px"}}>{AppConstants.whatDoWantDO}</div>
+                        <div style={{marginBottom:"15px"}}>
+                            {/* <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase"}} onClick={() => window.close()}>{AppConstants.exit}</Button> */}
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.viewYourProfile}</Button>
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{marginTop:"20px"}}>
+                        <div className="thank-you-registering-view-content">{AppConstants.successProfileUpdateMessage}</div>
+                        <div className="thank-you-registering-view-content" style={{marginBottom:"20px"}}>{AppConstants.whatDoWantDO}</div>
+                        <div style={{marginBottom:"15px"}}>
+                            {/* <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase"}} value="close">{AppConstants.exit}</Button> */}
+                            <Button className="open-reg-button" style={{color:"var(--app-white) " ,textTransform: "uppercase", marginLeft:"15px"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</Button>    
+                        </div>
+                    </div>
+                )}
             </div>
+        )
+    }
+
+    contentView = () =>{
+        const {teamInviteReviewList} = this.props.teamInviteState;
+        let paymentOptions = teamInviteReviewList!= null ? teamInviteReviewList.securePaymentOptions : [];
+        let totalVal = feeIsNull(teamInviteReviewList?.total?.targetValue);
+        let hasFutureInstalment = feeIsNull(teamInviteReviewList?.hasFutureInstalment);
+        return(
+            <div>
+                {(paymentOptions.length > 0  && (totalVal > 0 || (totalVal == 0 && hasFutureInstalment == 1))) ?
+                    <div style={{display:"flex"}}>
+                        {this.paymentLeftView()}
+                        {this.paymentRightView()}                
+                    </div>
+                    :
+                    <div>
+                        {this.thankYouRegisteringView()}
+                    </div>
+                            
+                }
+            </div>
+
         );
     }
 

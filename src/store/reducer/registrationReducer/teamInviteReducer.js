@@ -14,7 +14,8 @@ const initialState = {
     registrationId: null,
     shopPickupAddresses: null,
     participantAddresses: [],
-    deliveryOrBillingAddressSelected: false
+    deliveryOrBillingAddressSelected: false,
+    teamInviteCount: null
 }
 
 function teamInviteReducer(state = initialState, action){
@@ -60,6 +61,7 @@ function teamInviteReducer(state = initialState, action){
         case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
             return {
                 ...state,
+                teamInviteCount: action.result.teamInviteCount,
                 inviteMemberSaveOnLoad: false,
                 status: action.status
             };  
