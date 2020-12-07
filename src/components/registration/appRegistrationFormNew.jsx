@@ -3387,7 +3387,7 @@ class AppRegistrationFormNew extends Component {
                             <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) && "finish"} title={AppConstants.additionalInformation} />
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
-                        {this.singleCompModalView()}
+                        {/* {this.singleCompModalView()} */}
                     </div>
                 )}
             </div>
@@ -3415,31 +3415,31 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
-    singleCompModalView = () => {
-        let { saveValidationErrorMsg } = this.props.userRegistrationState;
-        let { saveValidationErrorCode } = this.props.userRegistrationState;
-        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
-        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
-        return (
-            <div>
-                <Modal
-                    className="add-membership-type-modal"
-                    title={title}
-                    visible={this.state.singleCompModalVisible}
-                    onCancel={() => this.setState({ singleCompModalVisible: false })}
-                    footer={[
-                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
-                            {AppConstants.ok}
-                        </Button>
-                    ]}
-                >
-                    {(errorMsg || []).map((item, index) => (
-                        <p key={index}> {item}</p>
-                    ))}
-                </Modal>
-            </div>
-        )
-    }
+    // singleCompModalView = () => {
+    //     let { saveValidationErrorMsg } = this.props.userRegistrationState;
+    //     let { saveValidationErrorCode } = this.props.userRegistrationState;
+    //     let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
+    //     let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+    //     return (
+    //         <div>
+    //             <Modal
+    //                 className="add-membership-type-modal"
+    //                 title={title}
+    //                 visible={this.state.singleCompModalVisible}
+    //                 onCancel={() => this.setState({ singleCompModalVisible: false })}
+    //                 footer={[
+    //                     <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+    //                         {AppConstants.ok}
+    //                     </Button>
+    //                 ]}
+    //             >
+    //                 {(errorMsg || []).map((item, index) => (
+    //                     <p key={index}> {item}</p>
+    //                 ))}
+    //             </Modal>
+    //         </div>
+    //     )
+    // }
 
     render() {
         const { getFieldDecorator } = this.props.form;
