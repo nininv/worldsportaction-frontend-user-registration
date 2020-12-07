@@ -22,16 +22,18 @@ function updateInviteMemberInfo(iniviteMemberInfoTemp){
     try{
         let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
         let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
-        for(let parent of userRegDetails.parentOrGaurdianDetails){
-            let parentAddress = parent.street1 + parent.street2 + parent.suburb + parent.postalCode + parent.stateRefId + parent.countryRefId;
-            if(registererAddress === parentAddress){
-                parent["isSameAddress"] = true;
-                parent["searchAddressFlag"] = false;
-                parent["manualEnterAddressFlag"] = false;
-            }else{
-                parent["isSameAddress"] = false;
-                parent["searchAddressFlag"] = true;
-                parent["manualEnterAddressFlag"] = false;
+        if(userRegDetails.parentOrGaurdianDetails){
+            for(let parent of userRegDetails.parentOrGaurdianDetails){
+                let parentAddress = parent.street1 + parent.street2 + parent.suburb + parent.postalCode + parent.stateRefId + parent.countryRefId;
+                if(registererAddress === parentAddress){
+                    parent["isSameAddress"] = true;
+                    parent["searchAddressFlag"] = false;
+                    parent["manualEnterAddressFlag"] = false;
+                }else{
+                    parent["isSameAddress"] = false;
+                    parent["searchAddressFlag"] = true;
+                    parent["manualEnterAddressFlag"] = false;
+                }
             }
         }
         return iniviteMemberInfoTemp;
@@ -50,8 +52,8 @@ function teamInviteReducer(state = initialState, action){
             return {
               ...state,
               status: action.status,
+              iniviteMemberInfo : updateInviteMemberInfo(iniviteMemberInfoTemp),
               inviteOnLoad: false,
-              iniviteMemberInfo : updateInviteMemberInfo(iniviteMemberInfoTemp)
             };
 
         case ApiConstants.UPDATE_INVITE_MEMBER_INFO_ACTION:
