@@ -272,8 +272,8 @@ class TeamInivteForm extends Component {
                         let obj = {
                             photoUrl1: organisationPhotos[i].photoUrl,
                             photoType1: organisationPhotos[i].photoType,
-                            photoUrl2: organisationPhotos[i + 1].photoUrl,
-                            photoType2: organisationPhotos[i + 1].photoType,
+                            photoUrl2: organisationPhotos[i + 1] && organisationPhotos[i + 1].photoUrl,
+                            photoType2: organisationPhotos[i + 1] && organisationPhotos[i + 1].photoType,
                         }
                         organisationPhotosTemp.push(obj);
                     }
@@ -564,15 +564,15 @@ class TeamInivteForm extends Component {
         const { iniviteMemberInfo } = this.props.teamInviteState;
         let competitionDetails = iniviteMemberInfo?.competitionDetails;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
-        let contactDetails = competitionDetails.replyName || competitionDetails.replyPhone || competitionDetails.replyEmail ?
-            competitionDetails.replyName + ' ' + competitionDetails.replyPhone + ' ' + competitionDetails.replyEmail : '';
-        let organisationPhotos = this.getOrganisationPhotos(competitionDetails.organisationPhotos);
+        let contactDetails = competitionDetails?.replyName || competitionDetails?.replyPhone || competitionDetails?.replyEmail ?
+            competitionDetails?.replyName + ' ' + competitionDetails?.replyPhone + ' ' + competitionDetails?.replyEmail : '';
+        let organisationPhotos = competitionDetails?.organisationPhotos ? this.getOrganisationPhotos(competitionDetails?.organisationPhotos) : [];
         try {
             return (
                 <div className="registration-form-view">
                     <div className="row" style={{ marginLeft: "0px", marginRight: "0px" }}>
                         <div className="col-sm-1.5">
-                            <img style={{ height: "60px", borderRadius: "50%" }} src={competitionDetails.compLogoUrl} />
+                            <img style={{ height: "60px", borderRadius: "50%" }} src={competitionDetails?.compLogoUrl} />
                         </div>
                         <div className="col">
                             <div className="form-heading" style={{ paddingBottom: "0px" }}>{competitionDetails.organisationName}</div>
@@ -812,7 +812,7 @@ class TeamInivteForm extends Component {
             const { genderList } = this.props.commonReducerState;
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
+            let resgistererDetails = userRegDetails?.resgistererDetails;
             return (
                 <div className="registration-form-view">
                     <div className="form-heading" 
@@ -1107,7 +1107,7 @@ class TeamInivteForm extends Component {
     parentOrGuardianView = (getFieldDecorator) => {
         const { iniviteMemberInfo } = this.props.teamInviteState;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
-        let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+        let parentOrGuardians = userRegDetails?.parentOrGaurdianDetails;
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
@@ -1309,7 +1309,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let dateFormat = moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY");
+            let dateFormat = moment(userRegDetails?.dateOfBirth).format("MM-DD-YYYY");
             return (
                 <div>
                     <div>{this.competitionDetailView()}</div>
@@ -1318,7 +1318,7 @@ class TeamInivteForm extends Component {
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
-                                {userRegDetails.dateOfBirth && (
+                                {userRegDetails?.dateOfBirth && (
                                     <div>{this.emergencyContactView(getFieldDecorator)}</div>
                                 )}
                             </div>
