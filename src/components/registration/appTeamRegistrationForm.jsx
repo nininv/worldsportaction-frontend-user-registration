@@ -2473,7 +2473,9 @@ class AppTeamRegistrationForm extends Component{
     }
 
     teamMemberView = (teamMember,teamMemberIndex,getFieldDecorator) => {
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
         const { genderList } = this.props.commonReducerState;
+        let membershipProductTypes = teamMember.membershipProductTypes.filter(x => x.competitionMembershipProductId == teamRegistrationObj.competitionMembershipProductId);
         try{
             return(
                 <div className="light-grey-border-box">
@@ -2487,7 +2489,7 @@ class AppTeamRegistrationForm extends Component{
                         )}
                     </div>
                     <InputWithHead heading={AppConstants.type} required={"required-field"}/>
-                    {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
+                    {(membershipProductTypes || []).map((product, productIndex) => (
                         <Checkbox 
                         checked={product.isChecked}
                         key={product.competitionMembershipProductTypeId}
