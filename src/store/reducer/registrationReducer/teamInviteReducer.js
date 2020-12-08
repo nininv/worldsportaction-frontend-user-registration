@@ -25,10 +25,16 @@ function updateInviteMemberInfo(iniviteMemberInfoTemp){
         if(userRegDetails.parentOrGaurdianDetails){
             for(let parent of userRegDetails.parentOrGaurdianDetails){
                 let parentAddress = parent.street1 + parent.street2 + parent.suburb + parent.postalCode + parent.stateRefId + parent.countryRefId;
-                if(registererAddress === parentAddress){
-                    parent["isSameAddress"] = true;
-                    parent["searchAddressFlag"] = false;
-                    parent["manualEnterAddressFlag"] = false;
+                if(parent.stateRefId){
+                    if(registererAddress === parentAddress){
+                        parent["isSameAddress"] = true;
+                        parent["searchAddressFlag"] = false;
+                        parent["manualEnterAddressFlag"] = false;
+                    }else{
+                        parent["isSameAddress"] = false;
+                        parent["searchAddressFlag"] = true;
+                        parent["manualEnterAddressFlag"] = false;
+                    }
                 }else{
                     parent["isSameAddress"] = false;
                     parent["searchAddressFlag"] = true;
