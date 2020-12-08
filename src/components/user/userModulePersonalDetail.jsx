@@ -14,6 +14,7 @@ import {
     getUserModuleMedicalInfoAction, getUserModuleActivityPlayerAction,
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
     getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
+    userPhotoUpdateAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -1238,6 +1239,24 @@ class UserModulePersonalDetail extends Component {
         this.props.getUserHistoryAction(filter)
     }
 
+    selectImage() {
+        const fileInput = document.getElementById('user-pic');
+        fileInput.setAttribute("type", "file");
+        fileInput.setAttribute("accept", "image/*");
+        if (!!fileInput) {
+            fileInput.click();
+        }
+    }
+
+    setImage = (data, key) => {
+        let userState = this.props.userState;
+        let personal = userState.personalData;
+        if (data.files[0] !== undefined) {
+                const formData = new FormData();
+                formData.append("profile_photo", data.files[0]);
+                this.props.userPhotoUpdateAction(formData);
+        }
+    }
     headerView = () => {
         return (
             <Header className="comp-player-grades-header-view container mb-n3" >
@@ -1262,17 +1281,29 @@ class UserModulePersonalDetail extends Component {
 
                 <div className='profile-image-view mr-5' style={{ marginTop: 20 }}>
                     {/* <span className="user-contact-heading">{AppConstants.playerProfile}</span> */}
-                    <div className="circular--landscape">
+                    <div className="circular--landscape" onClick={() => this.selectImage()}>
                         {
                             personal.photoUrl ?
-                                <img src={personal.photoUrl} alt="" />
+                                <img 
+                                    src={personal.photoUrl} alt="" 
+                                />
                                 :
                                 <span className="user-contact-heading">{AppConstants.noImage}</span>
 
                         }
+                        <input
+                            type="file"
+                            id={"user-pic"}
+                            style={{ display: 'none' }}
+                            onChange={(evt) => this.setImage(evt.target)}
+                        />
                     </div>
                     <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
+                    {personal.userId ? 
                     <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
+                    :
+                    <span className="year-select-heading pt-0">{'#' + personal.id}</span>
+                    }
                 </div>
 
 
@@ -2050,6 +2081,7 @@ function mapDispatchToProps(dispatch) {
         getUmpireActivityListAction,
         saveStripeAccountAction,
         getStripeLoginLinkAction,
+        userPhotoUpdateAction
     }, dispatch);
 
 }

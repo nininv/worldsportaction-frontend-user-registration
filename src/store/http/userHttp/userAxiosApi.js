@@ -108,6 +108,11 @@ let userHttpApi = {
     const url = `api/organisations/all`;
     return Method.dataGet(url, token);
   },
+
+  saveUserPhoto(payload) {
+    const url = `users/photo`;
+    return Method.dataPost(url, token, payload);
+  }
 }
 
 let Method = {
