@@ -56,7 +56,9 @@ class RegistrationShipping extends Component {
             useDiffDeliveryAddressFlag: false,
             userDiffBillingAddressFlag: false,
             deliveryOrBillingAddressSelected: false,
-            onlyDeliveryAddressFlag: false                  
+            onlyDeliveryAddressFlag: false,
+            deliveryAddressManualEnterAddressFlag: false,
+            billingAddressManualEnterAddressFlag: false                  
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -80,14 +82,14 @@ class RegistrationShipping extends Component {
             this.setShippingOptions();
             this.setState({apiOnLoad: false});
         }
-        if(registrationProductState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
-            if(this.state.useDiffDeliveryAddressFlag){
-                this.setState({useDiffDeliveryAddressFlag: false});
-            }else if(this.state.useDiffBillingAddressFlag){
-                this.setState({useDiffBillingAddressFlag: false});
-            }
-            this.setState({deliveryOrBillingAddressSelected: false});
-        }
+        // if(registrationProductState.deliveryOrBillingAddressSelected && this.state.deliveryOrBillingAddressSelected){
+        //     if(this.state.useDiffDeliveryAddressFlag){
+        //         this.setState({useDiffDeliveryAddressFlag: false});
+        //     }else if(this.state.useDiffBillingAddressFlag){
+        //         this.setState({useDiffBillingAddressFlag: false});
+        //     }
+        //     this.setState({deliveryOrBillingAddressSelected: false});
+        // }
     }  
 
     getApiInfo = (registrationUniqueKey) => {
@@ -254,6 +256,10 @@ class RegistrationShipping extends Component {
         this.props.updateReviewInfoAction(null,null, index, subKey,null);
     }
 
+    onChangeSetAddressValue = (value,key,subKey) => {
+        this.props.updateReviewInfoAction(value,key, null, subKey,null);
+    }
+
     // checkAnyDeliveryAddress = () => {
     //     try{
     //         if(isArrayNotEmpty(this.state.shippingOptions)){
@@ -390,101 +396,389 @@ class RegistrationShipping extends Component {
 
 
 
-    deliveryAndBillingView = () =>{
-        const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
-        let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
-        let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
-        return(
-            <div className="outline-style product-left-view" style={{marginRight:0}}>
-                <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
-                {this.state.useDiffDeliveryAddressFlag && (
-                    <div style={{marginTop: "10px"}}>
-                        <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-                        <div className="row">
-                            {participantAddresses != null && participantAddresses.map((item,index) => (
-                                <div className="col-sm-12 col-md-6" 
-                                onClick={() => this.addAddress(index,"deliveryAddress")}>
-                                    <div className="address-border-box">
-                                        <div className="headline-text-common" 
-                                        style={{fontSize:21}}>{this.getAddress(item)}</div>
-                                    </div>
-                                </div>
-                            ))}
+    // deliveryAndBillingView = () =>{
+    //     const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
+    //     let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
+    //     let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
+    //     return(
+    //         <div className="outline-style product-left-view" style={{marginRight:0}}>
+    //             <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
+    //             {this.state.useDiffDeliveryAddressFlag && (
+    //                 <div style={{marginTop: "10px"}}>
+    //                     <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+    //                     <div className="row">
+    //                         {participantAddresses != null && participantAddresses.map((item,index) => (
+    //                             <div className="col-sm-12 col-md-6" 
+    //                             onClick={() => this.addAddress(index,"deliveryAddress")}>
+    //                                 <div className="address-border-box">
+    //                                     <div className="headline-text-common" 
+    //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
+    //                                 </div>
+    //                             </div>
+    //                         ))}
+    //                     </div>
+    //                     <div style={{marginTop: "10px"}}>
+    //                         <span className="link-text-common"
+    //                         onClick={() => this.setState({useDiffDeliveryAddressFlag: false})}>
+    //                             {AppConstants.cancel}
+    //                         </span>
+    //                     </div>
+    //                 </div>
+    //             )}
+    //              {this.state.useDiffBillingAddressFlag && (
+    //                 <div style={{marginTop: "10px"}}>
+    //                     <div className="body-text-common">{AppConstants.billingAddress}</div>  
+    //                     <div className="row">
+    //                         {participantAddresses != null && participantAddresses.map((item,index) => (
+    //                             <div className="col-sm-12 col-md-6" 
+    //                             onClick={() => this.addAddress(index,"billingAddress")}>
+    //                                 <div className="address-border-box">
+    //                                     <div className="headline-text-common" 
+    //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
+    //                                 </div>
+    //                             </div>
+    //                         ))}
+    //                     </div>
+    //                     <div style={{marginTop: "10px"}}>
+    //                         <span className="link-text-common"
+    //                         onClick={() => this.setState({useDiffBillingAddressFlag: false})}>
+    //                             {AppConstants.cancel}
+    //                         </span>
+    //                     </div>
+    //                 </div>
+    //             )}
+    //             <div class="row">
+    //                 {!this.state.useDiffDeliveryAddressFlag && (
+    //                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
+    //                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+    //                         <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>   
+    //                         {participantAddresses.length > 1 && (
+    //                             <div className="link-text-common"
+    //                             onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
+    //                         )}   
+    //                     </div>  
+    //                 )}
+    //                 {!this.state.useDiffBillingAddressFlag && (
+    //                      <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
+    //                         <div className="body-text-common">{AppConstants.billingAddress}</div>
+    //                         <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
+    //                         {participantAddresses.length > 1 && (
+    //                             <div className="link-text-common"
+    //                             onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
+    //                         )}   
+    //                     </div>  
+    //                 )}
+    //             </div>
+    //         </div>
+    //     )
+    // } 
+
+    getAddressDropDownValue = (address) => {
+        try{
+            const { participantAddresses } = this.props.registrationProductState;
+            let addressTemp = participantAddresses.find(x => this.getAddress(x) == address);
+            let index = null;
+            if(addressTemp){
+                index = participantAddresses.indexOf(addressTemp);
+            }
+            return index;
+        }catch(ex){
+            console.log("Error in getAddressDropDownValue::"+ex)
+        }
+    }
+
+    showAddressSection = (addressType) => {
+        try{
+            if(addressType == 1){
+                this.setState({billingAddressManualEnterAddressFlag: !this.state.billingAddressManualEnterAddressFlag})
+            }else{
+                this.setState({deliveryAddressManualEnterAddressFlag: !this.state.deliveryAddressManualEnterAddressFlag})
+            }
+        }catch(ex){
+            console.log("Exception occured in showAddressSection::"+ex);
+        }
+    }
+    
+
+    billingManualEnterAddressView = (getFieldDecorator) => {
+        try{
+            const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
+            let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
+            const { stateList, countryList } = this.props.commonReducerState;
+            return(
+                <div>
+                    <div className="orange-action-txt" style={{marginBottom: "10px",marginTop: 20 }}
+                    onClick={() => this.showAddressSection(1)}>{AppConstants.returnToSelectAddress}</div>
+                    <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.enterAddress}</div>
+                    <Form.Item>
+                        {getFieldDecorator(`baStreet1`, {
+                            rules: [{ required: true, message: ValidationConstants.addressField[0] }],
+                        })(
+                            <InputWithHead
+                                required={"required-field pt-0 pb-0"}
+                                heading={AppConstants.addressOne}
+                                placeholder={AppConstants.addressOne}
+                                onChange={(e) => this.onChangeSetAddressValue(e.target.value, "street1", "enterManualBillingAddress")}
+                                //setFieldsValue={parent.street1}
+                            />
+                        )}
+                    </Form.Item>
+                    <InputWithHead
+                        heading={AppConstants.addressTwo}
+                        placeholder={AppConstants.addressTwo}
+                        onChange={(e) => this.onChangeSetAddressValue(e.target.value, "street2", "enterManualBillingAddress")}
+                        value={billingAddress.street2}
+                    />
+                    <InputWithHead heading={AppConstants.suburb} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`baSuburb`, {
+                            rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                        })(
+                            <InputWithHead
+                                placeholder={AppConstants.suburb}
+                                onChange={(e) => this.onChangeSetAddressValue(e.target.value, "suburb", "enterManualBillingAddress")}
+                                // setFieldsValue={parent.suburb}
+                            />
+                        )}
+                    </Form.Item>
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-6">
+                            <InputWithHead heading={AppConstants.state} required={"required-field"} />
+                            <Form.Item>
+                                {getFieldDecorator(`baStateRefId`, {
+                                    rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                })(
+                                    <Select
+                                        style={{ width: "100%" }}
+                                        placeholder={AppConstants.state}
+                                        onChange={(e) => this.onChangeSetAddressValue(e, "stateRefId", "enterManualBillingAddress")}
+                                        // setFieldsValue={parent.stateRefId}
+                                        >
+                                        {stateList.length > 0 && stateList.map((item) => (
+                                            < Option key={item.id} value={item.id}> {item.name}</Option>
+                                        ))
+                                        }
+                                    </Select>
+                                )}
+                            </Form.Item>
                         </div>
-                        <div style={{marginTop: "10px"}}>
-                            <span className="link-text-common"
-                            onClick={() => this.setState({useDiffDeliveryAddressFlag: false})}>
-                                {AppConstants.cancel}
-                            </span>
+                        <div className="col-sm-12 col-lg-6">
+                            <InputWithHead heading={AppConstants.postCode} required={"required-field"} />
+                            <Form.Item>
+                                {getFieldDecorator(`baPostalCode`, {
+                                    rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        placeholder={AppConstants.postcode}
+                                        onChange={(e) => this.onChangeSetAddressValue(e.target.value, "postalCode", "enterManualBillingAddress")}
+                                        // setFieldsValue={parent.postalCode}
+                                        maxLength={4}
+                                    />
+                                )}
+                            </Form.Item>
                         </div>
                     </div>
-                )}
-                 {this.state.useDiffBillingAddressFlag && (
-                    <div style={{marginTop: "10px"}}>
-                        <div className="body-text-common">{AppConstants.billingAddress}</div>  
-                        <div className="row">
-                            {participantAddresses != null && participantAddresses.map((item,index) => (
-                                <div className="col-sm-12 col-md-6" 
-                                onClick={() => this.addAddress(index,"billingAddress")}>
-                                    <div className="address-border-box">
-                                        <div className="headline-text-common" 
-                                        style={{fontSize:21}}>{this.getAddress(item)}</div>
-                                    </div>
-                                </div>
-                            ))}
+                    <InputWithHead heading={AppConstants.country} required={"required-field"} />
+                    <Form.Item >
+                        {getFieldDecorator(`baCountryRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                        })(
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder={AppConstants.country}
+                                onChange={(e) => this.onChangeSetAddressValue(e, "countryRefId", "enterManualBillingAddress")}
+                                // setFieldsValue={parent.countryRefId}
+                                >
+                                {countryList.length > 0 && countryList.map((item) => (
+                                    < Option key={item.id} value={item.id}> {item.description}</Option>
+                                ))}
+                            </Select>
+                        )}
+                    </Form.Item>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in billingManualEnterAddressView::"+ex);
+        }
+    }
+
+    deliveryManualEnterAddressView = (getFieldDecorator) => {
+        try{
+            const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
+            let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
+            const { stateList, countryList } = this.props.commonReducerState;
+            return(
+                <div>
+                    <div className="orange-action-txt" style={{marginBottom: "10px",marginTop: 20 }}
+                    onClick={() => this.showAddressSection(2)}>{AppConstants.returnToSelectAddress}</div>
+                    <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.enterAddress}</div>
+                    <Form.Item>
+                        {getFieldDecorator(`baStreet1`, {
+                            rules: [{ required: true, message: ValidationConstants.addressField[0] }],
+                        })(
+                            <InputWithHead
+                                required={"required-field pt-0 pb-0"}
+                                heading={AppConstants.addressOne}
+                                placeholder={AppConstants.addressOne}
+                                onChange={(e) => this.onChangeSetAddressValue(e, "countryRefId", "enterManualDeliveryAddress")}
+                                //setFieldsValue={parent.street1}
+                            />
+                        )}
+                    </Form.Item>
+                    <InputWithHead
+                        heading={AppConstants.addressTwo}
+                        placeholder={AppConstants.addressTwo}
+                        onChange={(e) => this.onChangeSetAddressValue(e.target.value, "street2",  "enterManualDeliveryAddress")}
+                        value={deliveryAddress.street2}
+                    />
+                    <InputWithHead heading={AppConstants.suburb} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`baSuburb`, {
+                            rules: [{ required: true, message: ValidationConstants.suburbField[0] }],
+                        })(
+                            <InputWithHead
+                                placeholder={AppConstants.suburb}
+                                onChange={(e) => this.onChangeSetAddressValue(e.target.value, "suburb", "enterManualDeliveryAddress")}
+                                // setFieldsValue={parent.suburb}
+                            />
+                        )}
+                    </Form.Item>
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-6">
+                            <InputWithHead heading={AppConstants.state} required={"required-field"} />
+                            <Form.Item>
+                                {getFieldDecorator(`baStateRefId`, {
+                                    rules: [{ required: true, message: ValidationConstants.stateField[0] }],
+                                })(
+                                    <Select
+                                        style={{ width: "100%" }}
+                                        placeholder={AppConstants.state}
+                                        onChange={(e) => this.onChangeSetAddressValue(e, "stateRefId", "enterManualDeliveryAddress")}
+                                        // setFieldsValue={parent.stateRefId}
+                                        >
+                                        {stateList.length > 0 && stateList.map((item) => (
+                                            < Option key={item.id} value={item.id}> {item.name}</Option>
+                                        ))
+                                        }
+                                    </Select>
+                                )}
+                            </Form.Item>
                         </div>
-                        <div style={{marginTop: "10px"}}>
-                            <span className="link-text-common"
-                            onClick={() => this.setState({useDiffBillingAddressFlag: false})}>
-                                {AppConstants.cancel}
-                            </span>
+                        <div className="col-sm-12 col-lg-6">
+                            <InputWithHead heading={AppConstants.postCode} required={"required-field"} />
+                            <Form.Item>
+                                {getFieldDecorator(`baPostalCode`, {
+                                    rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field pt-0 pb-0"}
+                                        placeholder={AppConstants.postcode}
+                                        onChange={(e) => this.onChangeSetAddressValue(e.target.value, "postalCode", "enterManualDeliveryAddress")}
+                                        // setFieldsValue={parent.postalCode}
+                                        maxLength={4}
+                                    />
+                                )}
+                            </Form.Item>
                         </div>
                     </div>
-                )}
-                <div class="row">
-                    {!this.state.useDiffDeliveryAddressFlag && (
-                        <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-                            <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-                            <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>   
-                            {participantAddresses.length > 1 && (
-                                <div className="link-text-common"
-                                onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-                            )}   
-                        </div>  
+                    <InputWithHead heading={AppConstants.country} required={"required-field"} />
+                    <Form.Item >
+                        {getFieldDecorator(`baCountryRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.countryField[0] }],
+                        })(
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder={AppConstants.country}
+                                onChange={(e) => this.onChangeSetAddressValue(e, "countryRefId", "enterManualDeliveryAddress")}
+                                // setFieldsValue={parent.countryRefId}
+                                >
+                                {countryList.length > 0 && countryList.map((item) => (
+                                    < Option key={item.id} value={item.id}> {item.description}</Option>
+                                ))}
+                            </Select>
+                        )}
+                    </Form.Item>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in billingManualEnterAddressView::"+ex);
+        }
+    }
+
+    deliveryAndBillingView = (getFieldDecorator) => {
+        try{
+            const { registrationReviewList,participantAddresses } = this.props.registrationProductState;
+            let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
+            let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
+            return(
+                <div className="outline-style product-left-view" style={{marginRight:0}}>
+                    <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div> 
+                    {!this.state.billingAddressManualEnterAddressFlag ? (
+                        <div>
+                            <Select
+                                style={{ width: "100%",marginTop: 10 }}
+                                placeholder={AppConstants.select}
+                                onChange={(e) => this.addAddress(e,"billingAddress")}
+                                value={this.getAddressDropDownValue(this.getAddress(billingAddress))}>
+                                {(participantAddresses || []).map((address,addressIndex) => (
+                                    <Option key={"BillingAddress"+addressIndex} value={addressIndex}> {this.getAddress(address)}</Option>
+                                ))}
+                            </Select>
+                            <div className="orange-action-txt" style={{marginTop: 10}}
+                            onClick={() => this.showAddressSection(1)}>
+                                {AppConstants.enterAddressManually}
+                            </div>
+                        </div>
+                    ) : (
+                        <div>{this.billingManualEnterAddressView(getFieldDecorator)}</div>
                     )}
-                    {!this.state.useDiffBillingAddressFlag && (
-                         <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-                            <div className="body-text-common">{AppConstants.billingAddress}</div>
-                            <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
-                            {participantAddresses.length > 1 && (
-                                <div className="link-text-common"
-                                onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-                            )}   
-                        </div>  
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.deliveryAddress}</div> 
+                    {!this.state.deliveryAddressManualEnterAddressFlag ? (
+                        <div>
+                            <Select
+                                style={{ width: "100%",marginTop: 10 }}
+                                placeholder={AppConstants.select}
+                                onChange={(e) => this.addAddress(e,"deliveryAddress")}
+                                value={this.getAddressDropDownValue(this.getAddress(deliveryAddress))}>
+                                {(participantAddresses || []).map((address,addressIndex) => (
+                                    <Option key={"DeliveryAddress"+addressIndex} value={addressIndex}> {this.getAddress(address)}</Option>
+                                ))}
+                            </Select>
+                            <div className="orange-action-txt" style={{marginTop: 10}}
+                             onClick={() => this.showAddressSection(2)}>
+                                    {AppConstants.enterAddressManually}
+                            </div>
+                        </div>
+                    ) : (
+                        <div>{this.deliveryManualEnterAddressView(getFieldDecorator)}</div>
                     )}
                 </div>
-            </div>
-        )
-    } 
+            )
+        }catch(ex){
+            console.log("Error in deliveryAndBillingAddressView::"+ex)
+        }
+    }
   
   
-    contentView = () =>{
+    contentView = (getFieldDecorator) =>{
         return(
             <div class="row">
-                {this.shippingLeftView()}
+                {this.shippingLeftView(getFieldDecorator)}
                 {this.shippingRightView()}                
             </div>
         );
     }
-    shippingLeftView = ()=>{
+    shippingLeftView = (getFieldDecorator)=>{
         return(
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.state.onlyDeliveryAddressFlag == false && (
                     <div>{this.shippingOption()}</div>
                 )}
                 {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
-                    <div>{this.deliveryAndBillingView()}</div> 
-                )}               
+                    <div>{this.deliveryAndBillingView(getFieldDecorator)}</div> 
+                )}
             </div>
         )
     }

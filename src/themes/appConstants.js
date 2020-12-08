@@ -338,7 +338,7 @@ const AppConstants = {
   direct: "Direct",
   notApplicable: " Not Applicable",
   percentageOff_FixedAmount: "Percentage off or Fixed Amount",
-  governmentVouchers: "Government Vouchers",
+  governmentVouchers: "Government Voucher",
   nswActiveKids: "NSW Active Kids",
   qldFairPlay: "Qld Fair Play",
   charityRoundUp: "Charity round up",
@@ -1166,6 +1166,8 @@ sameAddressAsTeamMember: "Use same address as Team member",
 pickupInstruction: "Pickup Instruction",
 organisationNameTransferTo: "Organisation Name you are Transferring to?",
 competitionNameTransferTo: "Competition Name you are Transferring to?",
+perMatchFees: "How would you like to pay your per match fees?",
+voucherType: "Voucher Type"
 };
 
 export default AppConstants;

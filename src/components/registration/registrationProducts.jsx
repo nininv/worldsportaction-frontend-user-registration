@@ -753,7 +753,7 @@ class RegistrationProducts extends Component {
                 {(selectedVouchers || []).map((gov, govIndex) =>(
                     <div className="row">
                         <div class ="col-sm-11 col-lg-6"  style={{ width: "100%",margin: "15px 0px 0px 0px"}}>
-                            <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.favouriteTeam}</div>
+                            <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.voucherType}</div>
                             <div>
                                 <Select
                                         style={{ width: "100%", paddingRight: 1, minWidth: 182  }}  

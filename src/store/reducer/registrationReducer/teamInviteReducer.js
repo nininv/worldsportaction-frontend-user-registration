@@ -242,7 +242,11 @@ function teamInviteReducer(state = initialState, action){
                 reviewData[action.subKey]["postalCode"] = state.participantAddresses[index].postalCode;
                 reviewData[action.subKey]["stateRefId"] = state.participantAddresses[index].stateRefId;
                 reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
-                state.deliveryOrBillingAddressSelected = true;
+                // state.deliveryOrBillingAddressSelected = true;
+            }else if(action.subKey == "enterManualBillingAddress"){
+                reviewData["billingAddress"][action.key] = action.value;
+            }else if(action.subKey == "enterManualDeliveryAddress"){
+                reviewData["deliveryAddress"][action.key] = action.value;
             }
             else if(action.subKey == "total"){
                 console.log("***********************************" + action.key)
