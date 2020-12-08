@@ -283,4 +283,6 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.getUmpireAvailabilitySaga);
   yield takeEvery(ApiConstants.API_LIVE_SCORE_SAVE_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.saveUmpireAvailabilitySaga);
+
+  yield takeEvery(ApiConstants.API_USER_PHOTO_UPDATE_LOAD, userSaga.saveUserPhotosSaga);
 }

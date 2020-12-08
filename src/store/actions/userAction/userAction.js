@@ -143,6 +143,13 @@ function getAllOrganisationListAction() {
   return action
 }
 
+function userPhotoUpdateAction(payload) {
+  return {
+      type: ApiConstants.API_USER_PHOTO_UPDATE_LOAD,
+      payload,
+  };
+}
+
 
 export {
   getRoleAction,
@@ -162,4 +169,5 @@ export {
   getScorerData,
   getUmpireActivityListAction,
   getAllOrganisationListAction,
+  userPhotoUpdateAction
 }
