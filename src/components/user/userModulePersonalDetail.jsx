@@ -1299,7 +1299,7 @@ class UserModulePersonalDetail extends Component {
                                                     +
                                                     </div>
                                                 <div style={{ marginTop: "-7px" }}>
-                                                    {AppConstants.upload}
+                                                    {AppConstants.addPhoto}
                                                 </div>
                                             </div>
                                     }
