@@ -1288,7 +1288,14 @@ class UserModulePersonalDetail extends Component {
                                     src={personal.photoUrl} alt="" 
                                 />
                                 :
-                                <span className="user-contact-heading">{AppConstants.noImage}</span>
+                                <div className="img-upload-target" style={{height:"80px", width:"80px", paddingTop:"15px"}}>
+                                    <div style={{ fontSize: "22px" }}>
+                                        +
+                                    </div>
+                                    <div style={{ marginTop: "-7px", fontSize:"11px" }}>
+                                        {AppConstants.addPhoto}
+                                    </div>
+                                </div>
 
                         }
                         <input

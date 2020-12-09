@@ -117,6 +117,7 @@ const AppConstants = {
   voucherLink: "Voucher link",
   nearestCompetition: "Nearest Competition",
   photo: "Photo",
+  addPhoto: "Add Photo",
   addParent_guardian: "Add Parent/Guardian",
   addfriend: "Add Friend",
 
