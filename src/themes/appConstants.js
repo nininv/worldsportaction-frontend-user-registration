@@ -1167,7 +1167,10 @@ pickupInstruction: "Pickup Instruction",
 organisationNameTransferTo: "Organisation Name you are Transferring to?",
 competitionNameTransferTo: "Competition Name you are Transferring to?",
 perMatchFees: "How would you like to pay your per match fees?",
-voucherType: "Voucher Type"
+voucherType: "Voucher Type",
+asBelow: "As Below",
+asAbove: "As Above",
+alreadyPaid: "no need to pay, as its already paid"
 };
 
 export default AppConstants;
