@@ -133,8 +133,7 @@ class RegistrationInvoice extends Component {
         return (
             <div className="content-view pt-4 pb-0 " >
                 <div className="drop-reverse" >
-                    <div className="col-sm pt-3"
-                    >
+                    <div className="col-sm pt-3 pl-0">
                         <label className="invoice-description">
                             <img
                                 src={organisationLogo ? organisationLogo : AppImages.squareImage}
@@ -188,7 +187,7 @@ class RegistrationInvoice extends Component {
                     </div>
 
 
-                    <div className="col-sm-5 mb-5">
+                    <div className="col-sm-5 mb-5 pl-0">
                         <div >
                             {(getAffiliteDetailData).map((item, index) => {
                                 return (
@@ -231,37 +230,42 @@ class RegistrationInvoice extends Component {
 
         return (
             < div className="row" >
-                <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                     <InputWithHead
                         heading={mOrganisationName + " - " + membershipProductName + " Membership Fees" + " - " + mTypeName}
+                        required="pr-3 justify-content-start"
                     />
                 </div>
 
-                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                     <div>
-                        < div className="row" >
+                        < div className="row flex-nowrap">
                             <div className="col-sm invoice-description"  >
                                 <InputWithHead
                                     heading={("1.00")}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(membershipDetail.feesToPay)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) 
                                         + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(membershipDetail.feesToPayGST)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
-                            <div className="col-sm " >
+                            <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) -
@@ -283,38 +287,43 @@ class RegistrationInvoice extends Component {
                                 competitionDetails.governmentVoucherAmount : 0;
         return (
             <div className="row" >
-                <div className="invoice-col-View pr-0 pl-0" >
+                <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                     {competitionDetails && competitionDetails.name &&
                         <InputWithHead
                             heading={competitionDetails.name + " - Competition Fees"}
+                            required="pr-3 justify-content-start"
                         />
                     }
                 </div>
-                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                     <div>
-                        <div className="row">
+                        <div className="row flex-nowrap">
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"1.00"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(competitionDetails.feesToPay)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) + parseFloat((childDiscountsToDeduct).toFixed(2))
                                         ).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(competitionDetails.feesToPayGST)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
-                            <div className="col-sm" >
+                            <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
@@ -332,37 +341,41 @@ class RegistrationInvoice extends Component {
     nominationCompOrgView = (competitionDetails) => {
         return (
             <div className="row" >
-                <div className="invoice-col-View pr-0 pl-0" >
+                <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                     {competitionDetails && competitionDetails.name &&
                         <InputWithHead
                             heading={competitionDetails.name + " - Nomination Fees"}
                         />
                     }
                 </div>
-                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                     <div>
-                        <div className="row">
+                        <div className="row flex-nowrap">
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"1.00"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(competitionDetails.nominationFeeToPay)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + "0.00"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(competitionDetails.nominationGSTToPay)).toFixed(2)}
+                                    required={"input-align-right"}
                                 />
                             </div>
-                            <div className="col-sm" >
+                            <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2))).toFixed(2)}
@@ -383,26 +396,29 @@ class RegistrationInvoice extends Component {
                                     affiliateDetail.governmentVoucherAmount : 0;
         return (
             <div className="row" >
-                <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                     {affiliateDetail && affiliateDetail.name &&
                         <InputWithHead
                             heading={affiliateDetail.name + " - Competition Fees"}
+                            required="pr-3 justify-content-start"
                         />
                     }
                 </div>
-                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                     <div>
-                        <div className="row">
+                        <div className="row flex-nowrap">
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={"1.00"}
+                                        required={"input-align-right"}
                                     />}
                             </div>
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={'$' + (Number(affiliateDetail.feesToPay)).toFixed(2)}
+                                        required={"input-align-right"}
                                     />
                                 }
                             </div>
@@ -410,6 +426,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={'$' + (parseFloat((affiliateDetail.discountsToDeduct).toFixed(2))  + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        required={"input-align-right"}
                                     />
                                 }
                             </div>
@@ -417,9 +434,10 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         heading={'$' + (Number(affiliateDetail.feesToPayGST)).toFixed(2)}
+                                        required={"input-align-right"}
                                     />}
                             </div>
-                            <div className="col-sm" >
+                            <div className="col-sm invoice-right-column" >
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
@@ -439,26 +457,29 @@ class RegistrationInvoice extends Component {
     nominationAffiliateView = (affiliateDetail) => {
         return (
             <div className="row" >
-                <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                     {affiliateDetail && affiliateDetail.name &&
                         <InputWithHead
                             heading={affiliateDetail.name + " - Nomination Fees"}
+                            required={"justify-content-start"}
                         />
                     }
                 </div>
-                <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                     <div>
-                        <div className="row">
+                        <div className="row flex-nowrap">
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={"1.00"}
+                                        required={"input-align-right"}
                                     />}
                             </div>
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={'$' + (Number(affiliateDetail.nominationFeeToPay)).toFixed(2)}
+                                        required={"input-align-right"}
                                     />
                                 }
                             </div>
@@ -466,6 +487,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={'$' + "0.00"}
+                                        required={"input-align-right"}
                                     />
                                 }
                             </div>
@@ -473,9 +495,10 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         heading={'$' + (Number(affiliateDetail.nominationGSTToPay)).toFixed(2)}
+                                        required={"input-align-right"}
                                     />}
                             </div>
-                            <div className="col-sm" >
+                            <div className="col-sm invoice-right-column" >
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
@@ -498,36 +521,42 @@ class RegistrationInvoice extends Component {
         return (
             <div className="content-view pt-0 pb-0">
                 <div className="invoice-row-view" >
-                    <div className="invoice-col-View pb-0 pr-0 pl-0 " >
+                    <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                         <InputWithHead
                             heading={"Description"}
+                            required={"justify-content-start"}
                         />
                     </div>
-                    <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
-                        <div className="invoice-row-view " >
+                    <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
+                        <div className="invoice-row-view flex-nowrap">
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"Quantity"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"Unit Price"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"Discount"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"GST"}
+                                    required={"input-align-right"}
                                 />
                             </div>
-                            <div className="col-sm" >
+                            <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     heading={"Amount AUD"}
+                                    required={"input-align-right"}
                                 />
                             </div>
                         </div>
@@ -574,6 +603,7 @@ class RegistrationInvoice extends Component {
                                                                 
 
                                                             }
+                                                            required={"justify-content-start"}
                                                         />
                                                     }
                                                 </div>
@@ -599,17 +629,20 @@ class RegistrationInvoice extends Component {
                                         }        
             
                                         <div className="d-flex row d-flex justify-content-end" >
-                                            <div className="invoice-total justify-content-end">
-                                                <InputWithHead
-                                                    heading={"Total"}
-                                                />
+                                            <div className="col-sm " />
+                                            <div className="col-sm pl-0 pr-0 d-flex justify-content-end p-0">
+                                                <div className="col-8 pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
+                                                    <InputWithHead
+                                                        heading={"Total"}
+                                                    />
+                                                </div>
+                                                <div className="col-sm invoice-right-column pr-0">
+                                                    <InputWithHead
+                                                        required="invoice"
+                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
+                                                    />
+                                                </div> 
                                             </div>
-                                            <div className="invoice-total-Amount">
-                                                <InputWithHead
-                                                    required="invoice"
-                                                    heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
-                                                />
-                                            </div> 
                                             {data.length - 1 !== participantIndex &&
                                                 < Divider className="mt-0 mb-0" />
             
@@ -646,53 +679,58 @@ class RegistrationInvoice extends Component {
                         } */}
                     </div>
                     <div className="col-sm pl-0 pr-0">
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="col-8 pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
-                                    required={"pr-4"}
+                                    // required={"pr-4"}
                                     heading={"Subtotal"}
                                 />
                             </div>
+                            <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
                                 heading={total && total != null ? '$' + total.subTotal : '$0.00'}
                             />
-
+                            </div>
                         </div>
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="col-8  pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
-                                    required={"pr-5 pt-0"}
+                                    required={"pt-0"}
                                     heading={"GST"}
                                 />
                             </div>
+                            <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
                                 heading={total && total != null ? '$' + total.gst : '$0.00'}
                             />
+                            </div>
                         </div>
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="col-8 pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <InputWithHead
-                                    required={"pr-5 pt-0"}
+                                    required={"pt-0"}
                                     heading={"Charity"}
                                 />
                             </div>
+                            <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
                                 heading={total && total != null ?  '$' + total.charityValue : '$0.00'}
                             />
+                            </div>
                         </div>
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border col-sm-3" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="invoice-amount-border col-8 px-0 d-flex justify-content-end">
                                 <InputWithHead
-                                    required={"pr-4 pt-3"}
+                                    required={"pt-3"}
                                     heading={"Total"}
                                 />
                             </div>
-                            <div className="invoice-amount-border">
+                            <div className="invoice-amount-border col-sm invoice-right-column pr-0">
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
@@ -700,14 +738,14 @@ class RegistrationInvoice extends Component {
                                 />
                             </div>
                         </div>
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="col-sm-8" style={{ display: "flex", justifyContent: "flex-end",paddingRight: "30px" }}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="col-8 px-0  d-flex justify-content-end">
                                 <InputWithHead
-                                    required={"pr-4 pt-3"}
+                                    required={"pt-3"}
                                     heading={"Transaction Fee"}
                                 />
                             </div>
-                            <div>
+                            <div className="col-sm invoice-right-column pr-0">
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
@@ -715,14 +753,14 @@ class RegistrationInvoice extends Component {
                                 />
                             </div>
                         </div>
-                        <div className="col-sm" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <div className="invoice-amount-border col-sm-6" style={(paymentType == 'card') ? {paddingLeft: "55px"} : {paddingLeft: "30px"}}>
+                        <div className="col-sm d-flex justify-content-end p-0">
+                            <div className="invoice-amount-border col-8 pr-0 d-flex justify-content-end">
                                 <InputWithHead
                                     required={"pt-3"}
                                     heading={!this.state.invoiceDisabled ? "Amount Due" : (paymentType == 'card') ? "Amount Paid" : "Amount Pending"}
                                 />
                             </div>
-                            <div className="invoice-amount-border">
+                            <div className="invoice-amount-border col-sm invoice-right-column pr-0">
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
@@ -777,35 +815,42 @@ class RegistrationInvoice extends Component {
             <div>
                 {(shopProducts || []).map((item, index) =>(
                     <div className="row" >
-                    <div className="invoice-col-View pb-0 pr-0 pl-0" >
+                    <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                         {item.productName &&
                             <InputWithHead
                                 heading={item.organisationName + " - " + item.productName + " - " + item.variantName +'('+ item.optionName+')' + " - Shop Product Fees"}
+                                required="pr-3 justify-content-start"
                             />
                         }
                     </div>
-                    <div className="invoice-col-View-30 pb-0 pl-0 pr-0" >
+                    <div className="col-md-9 col-4 pb-0 pl-0 pr-0" >
                         <div>
-                            <div className="row">
+                            <div className="row flex-nowrap">
                                 <div className="col-sm invoice-description" >
-                                    <InputWithHead heading={(Number(item.quantity)).toFixed(2)} />
+                                    <InputWithHead 
+                                        heading={(Number(item.quantity)).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
                                 </div>
                                 <div className="col-sm invoice-description" >
                                     <InputWithHead
-                                            heading={'$' + (Number(item.amount)).toFixed(2)}
-                                        />
+                                        heading={'$' + (Number(item.amount)).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
                                 </div>
                                 <div className="col-sm invoice-description" >
                                     <InputWithHead
-                                            heading={"0.00"}
-                                        />
+                                        heading={"0.00"}
+                                        required={"input-align-right"}
+                                    />
                                 </div>
                                 <div className="col-sm invoice-description" >
-                                        < InputWithHead
-                                            heading={'$' + (Number(item.tax)).toFixed(2)}
-                                        />
+                                    < InputWithHead
+                                        heading={'$' + (Number(item.tax)).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
                                 </div>
-                                <div className="col-sm" >
+                                <div className="col-sm invoice-right-column" >
                                         < InputWithHead
                                             required="invoice"
                                             heading={'$' + (Number(item.totalAmt)).toFixed(2)}
@@ -820,17 +865,20 @@ class RegistrationInvoice extends Component {
                 ))}
                 {isArrayNotEmpty(shopProducts) && (
                     <div className="d-flex row d-flex justify-content-end" >
-                        <div className="invoice-total justify-content-end">
-                            <InputWithHead
-                                heading={"Total"}
-                            />
+                        <div className="col-sm " />
+                        <div className="col-sm pl-0 pr-0  d-flex justify-content-end p-0">
+                            <div className="col-8 pr-0 d-flex justify-content-end">
+                                <InputWithHead
+                                    heading={"Total"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-right-column pr-0">
+                                <InputWithHead
+                                    required="invoice"
+                                    heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
+                                />
+                            </div> 
                         </div>
-                        <div className="invoice-total-Amount">
-                            <InputWithHead
-                                required="invoice"
-                                heading={"$" + totalAmount ? (totalAmount).toFixed(2) : "N/A"}
-                            />
-                        </div> 
                     </div>
                 )}
             </div>
@@ -865,17 +913,18 @@ class RegistrationInvoice extends Component {
         let userId = getUserId();
         return(
             <div className="thank-you-registering-view">
-                <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
-                {userId != 0 ? (
-                    <div style={{display: "flex"}}>
+                <div>
+                    <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
+                    {userId != 0 ? (
                         <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
-                    </div>
-                ) : (
-                    <div style={{display: "flex"}}>
+                    ) : (
                         <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
-                        <div className="btn-text-common pointer" style={{marginLeft: "auto"}} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</div>
-                    </div>
+                    )}
+                </div>
+                {userId != 0 ? (
+                    <div className="btn-text-common pointer" style={{marginLeft: "auto", marginRight: 0, minWidth: 85 }} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
+                ) : (
+                    <div className="btn-text-common pointer" style={{marginLeft: "auto", marginRight: 0 }} onClick={() => this.gotoUserPage(userId)}>{AppConstants.login}</div>
                 )}
             </div>
         )
@@ -892,9 +941,9 @@ class RegistrationInvoice extends Component {
                 />
                 <InnerHorizontalMenu />
                 <Layout>
-                    {this.headerView()}
-                    <Content className="container">
-                        <div className="formView" style={{width: "75%"}}>
+                    {/* {this.headerView()} */}
+                    <Content className="registration-form-wrapper mt-5">
+                        <div className="formView mb-4" style={{ width: "100%" }}>
                             <div>{this.thankYouRegisteringView()}</div>
                             <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
                                 {this.topView(result)}

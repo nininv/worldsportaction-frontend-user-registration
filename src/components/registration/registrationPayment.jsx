@@ -341,7 +341,7 @@ const CheckoutForm = (props) => {
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
                 {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) ?
-                <div className="content-view pt-5">
+                <div className="pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
                         {pay.securePaymentOptionRefId == 2 && 
@@ -372,7 +372,7 @@ const CheckoutForm = (props) => {
                                 className="payment-type-radio-style"
                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
-                                    <div>
+                                    <div className="pt-5">
                                         <div class="sr-root">
                                             <div class="sr-main">
                                                 {/* <div class="sr-combo-inputs-row">
@@ -440,7 +440,7 @@ const CheckoutForm = (props) => {
                                                 </div> */}
                                             </div>
                                         </div>
-                                        <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
+                                        <div style={{marginTop: "10px", padding: "0 15px 20px 0"}}>{AppConstants.directDebitMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -699,9 +699,12 @@ class RegistrationPayment extends Component {
     
     contentView = () =>{
         return(
-            <div style={{display:"flex"}}>
+            <div 
+                className="row"
+                style={{margin: 0}}
+            >
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}                
+                {this.paymentRighttView()}          
             </div>
         );
     }
@@ -712,7 +715,8 @@ class RegistrationPayment extends Component {
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
-            <div className="col-sm-8 product-left-view outline-style">              
+            <div className="col-sm-12 col-md-8 col-lg-8 p-0" style={{marginBottom: 23}}>
+            <div className="product-left-view outline-style mt-0">              
                 <div className="product-text-common" style={{fontSize:22}}>
                     {AppConstants.securePaymentOptions}
                 </div>  
@@ -725,12 +729,13 @@ class RegistrationPayment extends Component {
                     </Elements>
                </div>              
             </div>
+            </div>
         )
     }
 
     paymentRighttView = ()=>{
         return(
-            <div className="product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 px-0 mt-0 product-right-view">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -921,7 +926,7 @@ class RegistrationPayment extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout className="layout-margin">
                     <Form
                         // autocomplete="off"
                         // scrollToFirstError={true}

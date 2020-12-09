@@ -311,7 +311,7 @@ class RegistrationShipping extends Component {
 
     shippingOption = () =>{
         return(
-            <div className="outline-style product-left-view" style={{marginRight:0}}>
+            <div style={{marginBottom: 23}}>
                 <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.shippingOptions}</div>
                 {this.state.shippingOptions != null && this.state.shippingOptions.map((item,index) => (
                     <div>
@@ -712,7 +712,7 @@ class RegistrationShipping extends Component {
             let deliveryAddress = registrationReviewList ? registrationReviewList.deliveryAddress : null;
             let billingAddress = registrationReviewList ? registrationReviewList.billingAddress : null;
             return(
-                <div className="outline-style product-left-view" style={{marginRight:0}}>
+                <div>
                     <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
                     <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div> 
                     {!this.state.billingAddressManualEnterAddressFlag ? (
@@ -764,7 +764,7 @@ class RegistrationShipping extends Component {
   
     contentView = (getFieldDecorator) =>{
         return(
-            <div class="row">
+            <div class="row m-0">
                 {this.shippingLeftView(getFieldDecorator)}
                 {this.shippingRightView()}                
             </div>
@@ -772,19 +772,21 @@ class RegistrationShipping extends Component {
     }
     shippingLeftView = (getFieldDecorator)=>{
         return(
-            <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
+                <div className="mt-0 product-left-view outline-style">
                 {this.state.onlyDeliveryAddressFlag == false && (
                     <div>{this.shippingOption()}</div>
                 )}
                 {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
                     <div>{this.deliveryAndBillingView(getFieldDecorator)}</div> 
                 )}
+                </div>            
             </div>
         )
     }
     shippingRightView = ()=>{
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0 mt-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -950,7 +952,7 @@ class RegistrationShipping extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout  className="layout-margin">
                     <Form
                         autocomplete="off"
                         scrollToFirstError={true}

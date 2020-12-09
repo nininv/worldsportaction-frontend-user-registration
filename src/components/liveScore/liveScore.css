@@ -8,7 +8,7 @@
 }
 
 .live-score-player-profile-content {
-    padding: 0 3%;
+    background-color: rgb(247, 250, 252);
 }
 
 .live-score-heading-text {
@@ -68,7 +68,6 @@
 .live-score-side-desc-view {
     padding-top: 10px;
     padding-bottom: 15px;
-    border-bottom: 0.5px solid var(--app-e1e1f5);
 }
 
 .primary-reg-live-score {
@@ -140,7 +139,7 @@
 .profile-image-view {
     /* background-color: antiquewhite; */
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     flex-direction: column;
     /* margin-right: 50px */
