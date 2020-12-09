@@ -104,6 +104,11 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
+    const [perMatchSelectedPaymentOption,setPerMatchSelectedPaymentOption] = useState({
+        singleCash: false,
+        singleCredit: false,
+        selectedOption: 0
+    })
 
     
     const stripe = useStripe();
@@ -217,6 +222,28 @@ const CheckoutForm = (props) => {
         }
     }
 
+    const changeSinglePaymentOption = (e,key) => {
+        try{
+            if (key === 'credit') {
+                setPerMatchSelectedPaymentOption({
+                    ...perMatchSelectedPaymentOption,
+                    "singleCredit": true,
+                    "singleCash": false,
+                    "selectedOption": "card"
+                });
+            }else if(key === "cash") {
+                setPerMatchSelectedPaymentOption({
+                    ...perMatchSelectedPaymentOption,
+                    "singleCredit": false,
+                    "singleCash": true,
+                    "selectedOption": "cash"
+                });
+            }
+        }catch(ex){
+            console.log("Error in changeSinglePaymentOption::"+ex)
+        }
+    }
+
 
 
     // Handle form submission.
@@ -232,8 +259,9 @@ const CheckoutForm = (props) => {
         console.log("Payload", payload);
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
+        const perMatchPaymentOption = payload.singleGameSelected == 1 && perMatchSelectedPaymentOption.selectedOption != 0 ? true : false;
         console.log(auBankAccount, card)
-        if (auBankAccount || card || isSchoolRegistration == 1 || isHardshipEnabled == 1) {
+        if ((auBankAccount || card || isSchoolRegistration == 1 || isHardshipEnabled == 1) && (perMatchPaymentOption || payload.singleGameSelected != 1)) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -246,7 +274,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result", result);
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
 
             }
@@ -313,7 +341,7 @@ const CheckoutForm = (props) => {
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
                 {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) ?
-                <div className="content-view pt-5">
+                <div className="pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
                         {pay.securePaymentOptionRefId == 2 && 
@@ -322,7 +350,7 @@ const CheckoutForm = (props) => {
                                     <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
                                         className="payment-type-radio-style"
                                         checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                        {selectedPaymentOption.credit == true && 
+                                        {selectedPaymentOption.credit == true && (
                                             <div className="pt-5">
                                                 <CardElement
                                                     id="card-element"
@@ -333,7 +361,7 @@ const CheckoutForm = (props) => {
                                                 <div className="card-errors" role="alert">{error}</div>
                                                 <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                             </div>   
-                                        }
+                                        )}
                                 </div>
                             </div>
                         }
@@ -344,7 +372,7 @@ const CheckoutForm = (props) => {
                                 className="payment-type-radio-style"
                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
-                                    <div>
+                                    <div className="pt-5">
                                         <div class="sr-root">
                                             <div class="sr-main">
                                                 {/* <div class="sr-combo-inputs-row">
@@ -412,7 +440,7 @@ const CheckoutForm = (props) => {
                                                 </div> */}
                                             </div>
                                         </div>
-                                        <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
+                                        <div style={{marginTop: "10px", padding: "0 15px 20px 0"}}>{AppConstants.directDebitMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -501,7 +529,59 @@ const CheckoutForm = (props) => {
                         } */}
                     </div>
                     ))}
-                </div> : 
+                    {payload.singleGameSelected == 1 && (
+                        <div>
+                            <div className="product-text-common" style={{fontSize:22,marginTop: 30,marginLeft: -40,marginBottom: 30}}>
+                                {AppConstants.perMatchFees}
+                            </div>  
+                            {(paymentOptions || []).map((paymentOption, paymentOptionIndex) =>(
+                                <div>
+                                    {paymentOption.securePaymentOptionRefId == 2 && (
+                                        <div className="row">
+                                            <div className='col-sm'>
+                                                <Radio className="payment-type-radio-style"
+                                                disabled={selectedPaymentOption.selectedOption == 0}
+                                                key={"1"}
+                                                checked={perMatchSelectedPaymentOption.singleCredit}
+                                                onChange={(e) => changeSinglePaymentOption(e,"credit")}>
+                                                    {AppConstants.creditCard}
+                                                </Radio>
+                                                {selectedPaymentOption.credit == false && perMatchSelectedPaymentOption.singleCredit == true ? (
+                                                    <div className="pt-5">
+                                                        <CardElement
+                                                            id="card-element"
+                                                            options={CARD_ELEMENT_OPTIONS}
+                                                            onChange={handleChange}
+                                                            className='StripeElement'
+                                                        />
+                                                        <div className="card-errors" role="alert">{error}</div>
+                                                        <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
+                                                    </div>   
+                                                ) : (
+                                                    <div>
+                                                        {selectedPaymentOption.credit == true && perMatchSelectedPaymentOption.singleCredit == true && (
+                                                            <div  className="product-text-common">{AppConstants.asAbove}</div>
+                                                        )}
+                                                    </div>                                                )}
+                                            </div>
+                                        </div>
+                                    )}   
+                                    {paymentOption.securePaymentOptionRefId == 3 && (
+                                        <Radio className="payment-type-radio-style"
+                                        key={"2"}
+                                        disabled={selectedPaymentOption.selectedOption == 0}
+                                        checked={perMatchSelectedPaymentOption.singleCash}
+                                        onChange={(e) => changeSinglePaymentOption(e,"cash")}>
+                                            {AppConstants.cash}
+                                        </Radio>
+                                    )}
+                                </div>
+                                    
+                            ))}
+                        </div>
+                    )}
+                </div> 
+                : 
                 <div className="content-view pt-5 secure-payment-msg">
                     {AppConstants.securePaymentMsg}
                 </div>
@@ -619,9 +699,12 @@ class RegistrationPayment extends Component {
     
     contentView = () =>{
         return(
-            <div style={{display:"flex"}}>
+            <div 
+                className="row"
+                style={{margin: 0}}
+            >
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}                
+                {this.paymentRighttView()}          
             </div>
         );
     }
@@ -632,7 +715,8 @@ class RegistrationPayment extends Component {
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
-            <div className="col-sm-8 product-left-view outline-style">              
+            <div className="col-sm-12 col-md-8 col-lg-8 p-0" style={{marginBottom: 23}}>
+            <div className="product-left-view outline-style mt-0">              
                 <div className="product-text-common" style={{fontSize:22}}>
                     {AppConstants.securePaymentOptions}
                 </div>  
@@ -645,12 +729,13 @@ class RegistrationPayment extends Component {
                     </Elements>
                </div>              
             </div>
+            </div>
         )
     }
 
     paymentRighttView = ()=>{
         return(
-            <div className="product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 px-0 mt-0 product-right-view">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -841,7 +926,7 @@ class RegistrationPayment extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout className="layout-margin">
                     <Form
                         // autocomplete="off"
                         // scrollToFirstError={true}
@@ -881,7 +966,7 @@ function mapStatetoProps(state){
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
@@ -943,10 +1028,13 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                 console.log(response.status, "status", paymentType)
                 resp.then((Response) => {
                     if (response.status === 200) {
-                        if (paymentType == "card" || paymentType == "cash_card") {
+                        if (paymentType == "card") {
                             message.success(Response.message);
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
+                            if(Response.message != AppConstants.alreadyPaid){
+                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                            }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
                                 userRegId: null,
@@ -954,8 +1042,11 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 paymentType: paymentType
                             })
                         }
-                        else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
+                        else if(paymentType =="direct_debit") {
                             if(Response.clientSecret == null){
+                                if(Response.message != AppConstants.alreadyPaid){
+                                    createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                }
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
                                     userRegId: null,
@@ -970,6 +1061,9 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                            // message.success(Response.message);
                         }
                         else{
+                            if(Response.message != AppConstants.alreadyPaid){
+                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                            }                            
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
                                 userRegId: null,
@@ -997,4 +1091,52 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             });
     }) 
 }
+
+async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,props,registrationUniqueKey){
+    try{
+        console.log("invoice id",invoiceId)
+        let url =  "/api/payments/createpermatchpayments";
+        let body = {
+            invoiceId: invoiceId,
+            subPaymentType: perMatchSeletedPaymentOption,
+            registrationId: registrationUniqueKey
+        }
+        return await new Promise((resolve, reject) => {
+            fetch(`${StripeKeys.apiURL + url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.token,
+                },
+                body: JSON.stringify(body)
+            }).then((response) => {
+                    props.onLoad(false)
+                    let resp = response.json()
+                    resp.then((Response) => {
+                        if (response.status === 200) {
+
+                        }
+                        else if (response.status === 212) {
+                            message.error(Response.message);
+                        }
+                        else if (response.status === 400) {
+                            message.error(Response.message);
+                        }
+                        else {
+                            message.error("Something went wrong.")
+                        }
+    
+                    })
+    
+                })
+                .catch((error) => {
+                    props.onLoad(false)
+                    console.error(error);
+                });
+        }) 
+    }catch(ex){
+        console.log("Error occured in createPerMatchPayments::"+ex)
+    }
+}
+
 export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);

@@ -151,7 +151,7 @@ class MyUmpiringAvailability extends Component {
 
     headerView = () => {
         return (
-            <div className="row" >
+            <div className="row mx-0" >
                 <div className="col-sm">
                     <Header className="form-header-view" style={{
                         backgroundColor: "transparent",
@@ -177,7 +177,7 @@ class MyUmpiringAvailability extends Component {
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
                         <div className="fluid-width" >
-                            <div className="row" >
+                            <div className="row mx-0" >
 
                                 <div className="col-sm-12" style={{ backgroundColor: "#f7fafc", }}>
                                     <div>{this.headerView()}</div>
@@ -201,18 +201,20 @@ class MyUmpiringAvailability extends Component {
                                                             {AppConstants.save}
                                                         </Button>
                                                     </div>
-                                                    <ScheduleSelector
-                                                        selection={schedule}
-                                                        numDays={7}
-                                                        minTime={8}
-                                                        maxTime={22}
-                                                        hourlyChunks={2}
-                                                        startDate={scheduleStartDate}
-                                                        dateFormat='D/M'
-                                                        timeFormat='HH:mm'
-                                                        onChange={this.handleChangeSchedule}
-                                                        renderDateCell={this.renderCell}
-                                                    />
+                                                    <div>
+                                                        <ScheduleSelector
+                                                            selection={schedule}
+                                                            numDays={7}
+                                                            minTime={8}
+                                                            maxTime={22}
+                                                            hourlyChunks={2}
+                                                            startDate={scheduleStartDate}
+                                                            dateFormat='D/M'
+                                                            timeFormat='HH:mm'
+                                                            onChange={this.handleChangeSchedule}
+                                                            renderDateCell={this.renderCell}
+                                                        />
+                                                    </div>
                                                 </>
                                             }
 

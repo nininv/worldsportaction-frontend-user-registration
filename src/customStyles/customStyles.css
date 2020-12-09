@@ -166,7 +166,7 @@
 }
 
 .year-select-heading {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--app-9b9bad);
   font-weight: 500;
   font-family: inter-medium;
@@ -212,5 +212,14 @@
   }
   .comp-draw-head-content-view {
     padding: 0 7%;
+  }
+
+  .content-view-padding {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .home-dashboard-table .ant-table-tbody>tr>td {
+    padding: 16px;
   }
 }

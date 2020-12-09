@@ -226,11 +226,13 @@ class DashboardLayout extends React.Component {
     return (
       <header className="site-header">
         <div className="header-wrap">
-          <div className="row m-0-res">
-            <div className="col-sm-12 d-flex">
+          <div
+            className="d-flex"
+          >
+            <div className="col-sm-12 d-flex p-0">
               <div className="logo-box">
                 {/* <NavLink to="/" className="site-brand"> */}
-                 <img src={AppImages.netballLogo1} alt="" />
+                 <img src={AppImages.netballLogo1} alt="" className="netball-logo"/>
                 {/* </NavLink> */}
                 <div className="col-sm dashboard-layout-menu-heading-view">
                 <span className="dashboard-layout-menu-heading">

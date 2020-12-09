@@ -15,10 +15,11 @@ class Loader extends Component {
                 cancelButtonProps={{ style: { display: 'none' } }}
                 okButtonProps={{ style: { display: 'none' } }}
                 centered={true}
-                width={0}
-                height={0}
+                width='unset'
+                height='unset'
                 closable={false}
                 footer={null}
+                className="custom-loader"
 
             >
                 <Spin tip="Loading..." />
