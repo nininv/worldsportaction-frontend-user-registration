@@ -2322,6 +2322,7 @@ class AppRegistrationFormNew extends Component {
     competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
         const { playerPositionList } = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
+        console.log("competitionInfo",competitionInfo.membershipProducts)
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
         let organisationPhotos = this.getOrganisationPhotos(competition.organisationInfo.organisationPhotos);
@@ -2354,7 +2355,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
                         <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
-                        {(competitionInfo.membershipProducts || []).map((membershipProduct, membershipProductIndex) => (
+                        {(competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1) || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox"
                                 checked={membershipProduct.isChecked}
