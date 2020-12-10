@@ -434,9 +434,9 @@ class RegistrationProducts extends Component {
 
     headerView = () =>{
         return(
-            <div style={{display:"flex",flexWrap: "wrap" , width:"105%"}}>
-                <div className="headline-text-common col-lg-6" style={{padding:0}}> {AppConstants.participants}</div>
-                <div className="add-another-button-border pointer"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
+            <div className="col-sm-12 col-md-8 col-lg-8" style={{display:"flex",flexWrap: "wrap", justifyContent: 'space-between', padding: 0 }}>
+                <div className="headline-text-common" style={{padding:0, marginRight: 10 }}> {AppConstants.participants}</div>
+                <div className="add-another-button-border pointer reg-products-add-participant"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                     <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
                 </div>
             </div>
@@ -466,6 +466,23 @@ class RegistrationProducts extends Component {
         )
     } 
 
+    editRemoveView = item => (
+        <div style={{ display: 'flex', marginLeft: 5 }}>
+            <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
+                <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
+                    {AppConstants.edit}
+                </span>
+                <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
+            </div> 
+            <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
+                <span className="link-text-common" style={{marginRight: "15px"}}>
+                    {AppConstants.remove}
+                </span>
+                <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+            </div>
+        </div>
+    )
+
     userInfoView = (item, index) =>{
         return(
             <div>
@@ -473,58 +490,51 @@ class RegistrationProducts extends Component {
                    
                     {item.isTeamRegistration == 1 ?
                         (
-                            <div style={{display: "flex",alignItems: "center"}}>
+                            <div style={{display: "flex",alignItems: "center", width: '100%'}}>
                                 <div className="defualt-team-logo-style">
                                     <img src={AppImages.teamLoadDefualtWhite}/>
                                 </div>
-                                <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                                    <div className="headline-text-common">{item.teamName}</div>
-                                    <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
+                                    <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
+                                        <div className="headline-text-common">{item.teamName}</div>
+                                        <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
+                                    </div>
+                                    {this.editRemoveView(item)}
                                 </div>
                             </div>
                         )
                         
                     :
                         (
-                            <div style={{display: "flex",alignItems: "center"}}>
-                                 <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
-                                        {
-                                            item.photoUrl ? (
-                                                <img src={item.photoUrl}/>
-                                            ):
-                                            (
-                                                <div className="profile-default-img" style={{height: "67px" , width: "67px"}}>
-                                                    {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
-                                                </div>     
-                                            )
-                                        }
-                                    </div>
+                            <div style={{display: "flex",alignItems: "center", width: '100%'}}>
+                                <div className="circular--landscape" style={{height: "67px" , width: "67px", minWidth: 67}}>
+                                    {
+                                        item.photoUrl ? (
+                                            <img src={item.photoUrl}/>
+                                        ):
+                                        (
+                                            <div className="profile-default-img" style={{height: "67px" , width: "67px", minWidth: 67}}>
+                                                {item.firstName?.slice(0,1)}{item.lastName?.slice(0,1)}
+                                            </div>     
+                                        )
+                                    }
+                                </div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
                                     <div class="pl-2" style={{marginLeft:10,marginRight: "auto"}}>
-                                    <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                                    <div className="body-text-common">{item.gender} 
-                                        {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
+                                        <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
+                                        <div className="body-text-common">{item.gender} 
+                                            {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
+                                        </div>
                                     </div>
+                                    {this.editRemoveView(item)}
                                 </div>
                             </div>
                         )
                         
                     }
-                   
-                    <div className="transfer-image-view pointer" style={{paddingRight:"15px",marginLeft: "auto"}} onClick={() => this.redirect(item.participantId,this.state.registrationUniqueKey,item.isTeamRegistration)}>                   
-                        <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
-                            {AppConstants.edit}
-                        </span>
-                        <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
-                    </div> 
-                    <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey,item.teamName)}>                   
-                        <span className="link-text-common" style={{marginRight: "15px"}}>
-                            {AppConstants.remove}
-                        </span>
-                        <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
-                    </div> 
                 </div>
-                <div style={{display:"flex" , marginTop:30}}>
-                     <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
+                <div style={{display:"flex", alignItems: 'center', marginTop:30}}>
+                     <div className="circular--landscape" style={{height: "67px" , width: "67px", minWidth: 67}}>
                      {
                             item.competitionLogoUrl ? (
                                 <img src={item.competitionLogoUrl} alt="" />
@@ -534,7 +544,7 @@ class RegistrationProducts extends Component {
                             )
                         }              
                     </div>
-                    <div class = "pt-3 pl-2" style={{marginLeft:10}}>
+                    <div class = "pl-2" style={{marginLeft:10}}>
                         <div className="body-text-common">Competition</div>
                         <div className="headline-text-common">{item.competitionName}</div>
                         <div className="body-text-common">{item.organisationName}</div>
@@ -551,7 +561,7 @@ class RegistrationProducts extends Component {
                     <div>
                         <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
                         <div className="product-line">
-                            <Radio.Group className="body-text-common"
+                            <Radio.Group className="body-text-common registration-radio-group"
                                 value={item.selectedOptions.nominationPayOptionRefId}
                                 onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
                                 <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
@@ -1177,7 +1187,7 @@ class RegistrationProducts extends Component {
         let compParticipants = registrationReviewList!= null ? registrationReviewList.compParticipants : [];
         let hasTeamRegistration = compParticipants.find(x=>x.isTeamRegistration == 1);
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8 ">
+            <div className="col-sm-12 col-md-8 col-lg-8" style={{ padding:0 }}>
                 <div className="product-left-view outline-style">
                     {this.participantDetailView()}
                     {isSchoolRegistration == 0 && this.charityView()}
@@ -1212,7 +1222,7 @@ class RegistrationProducts extends Component {
                             isArrayNotEmpty(registrationReviewList.shopProducts) ?
                             registrationReviewList.shopProducts : [] : [];
         return(
-            <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
+            <div className="outline-style " style={{padding: "36px 20px"}}>
                 <div className="headline-text-common">
                     {AppConstants.yourOrder}
                 </div>
@@ -1403,7 +1413,7 @@ class RegistrationProducts extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout className="layout-margin">
                     {this.headerView()}
                     <Form
                         autocomplete="off"

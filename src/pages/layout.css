@@ -166,13 +166,26 @@
   border: none;
 }
 
+.netball-logo {
+  object-fit: none;
+}
+
 @media screen and (max-width: 1190px) {
   .header-wrap .logo-box {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 0 90%;
   }
+
+  .header-wrap .user-right {
+    align-self: center;
+  }
+
+  .header-wrap .user-right ul {
+    margin: 0;
+  }
+
   .header-wrap .col-sm.dashboard-layout-menu-heading-view {
-    position: relative;
-    top: 17px;
     margin-left: 0;
   }
 }
@@ -213,13 +226,13 @@
   }
   .site-header {
     width: auto;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .header-wrap .col-sm.dashboard-layout-menu-heading-view {
     display: inline-block;
     margin-left: 0;
-    width: 108px;
+    width: fit-content;
     padding-left: 0;
     ;
     border: 0px solid;

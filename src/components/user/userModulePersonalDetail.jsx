@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox, Icon } from 'antd';
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -60,100 +60,64 @@ function umpireActivityTableSort(key) {
 
 const columns = [
     {
-        title: 'Affiliate',
-        dataIndex: 'affiliate',
-        key: 'affiliate'
-    },
-    {
-        title: "Competition",
-        dataIndex: "competitionName",
-        key: "competitionName",
-    },
-    {
-        title: "Valid Until",
-        dataIndex: "expiryDate",
-        key: "expiryDate",
-        render: (expiryDate, record, index) => (
-            <span>
-                {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : ""}
-            </span>
-        )
-    },
-    {
-        title: 'Membership Product',
-        dataIndex: 'membershipProduct',
-        key: 'membershipProduct'
-    },
-    {
-        title: 'Membership Type',
-        dataIndex: 'membershipType',
-        key: 'membershipType'
-    },
-    {
-        title: "Division",
-        dataIndex: "divisionName",
-        key: "divisionName",
-        render: (divisionName, record, index) => {
-            return <div>{divisionName != null ? divisionName : ""}</div>;
-        },
-    },
-    {
-        title: "Paid By",
-        dataIndex: "paidByUsers",
-        key: "paidByUsers",
-        render: (paidBy, record, index) => {
+        title: "",
+        dataIndex: "regData",
+        key: "regData",
+        render: (regData, record, index) => {
+            const { expiryDate, competitionName, affiliate, membershipType } = record;
             return (
                 <div>
-                   { (record.paidByUsers || []).map((item, index) => (
-                        this_Obj.state.userId == item.paidByUserId ? <div>{'Self'} </div>:
-                        <div>
-                            <NavLink
-                            to={{
-                                pathname: `/userPersonal`,
-                                state: {
-                                userId: item.paidByUserId,
-                                tabKey: "registration"
-                                },
-                            }}
-                            >
-                            <span className="input-heading-add-another pt-0">{item.paidBy}</span>
-                            </NavLink>
+                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                        <span className='year-select-heading mr-3'>{AppConstants.validUntil}</span>
+                        <span className="user-details-info-text">
+                            {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : "-"}
+                        </span>
+                    </div>
+                    <div className="d-flex flex-wrap">
+                        {/* TODO logo is not in the existing backend data now but in the design */}
+                        {/* <div className="circular--landscape" style={{ marginRight: 17, minWidth: 64 }}>
+                            {
+                                logo ?
+                                    <img src={logo} alt="" />
+                                    :
+                                    <span className="user-contact-heading p-0" style={{ fontSize: 10 }} >{AppConstants.noImage}</span>
+
+                            }
+                        </div> */}
+                        <div
+                            // style={{ marginTop: 13 }}
+                        >
+                            <div className="form-heading p-0">{affiliate}</div>
+                            <div style={{ textAlign: "start" }}>{competitionName}</div>
+                            <div className="d-flex flex-wrap align-items-center">
+                                {/* TODO add dates when backend is ready */}
+                                {/* <div className="d-flex align-items-center py-3" style={{ marginRight: 42 }}>
+                                    <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> 
+                                    <div>01/01/1970 - 01/01/1970</div>
+                                </div> */}
+                                <div className="d-flex align-items-center py-3">
+                                    <span>{membershipType}</span>
+                                    <div className="status-indicator">{AppConstants.status}</div>
+                                </div>
+                            </div>
                         </div>
-                    ))
-                    }
+                    </div>
                 </div>
             )
-        },
-    },
-    // {
-    //     title: 'Shop Purchases',
-    //     dataIndex: 'shopPurchases',
-    //     key: 'shopPurchases'
-    // },
-    {
-        title: 'Status',
-        dataIndex: 'paymentStatus',
-        key: 'paymentStatus',
-        render: (paymentStatus, record, index) => {
-            return (
-                <span style={{ textTransform: 'capitalize' }}>
-                    {paymentStatus}
-                </span>
-            )
         }
-
     },
     {
         title: "Action",
         dataIndex: "regForm",
         key: "regForm",
+        width: 52,
         render: (regForm, e) => (
             <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
-                style={{ lineHeight: "25px" }}
+                style={{ lineHeight: "8px" }}
             >
                 <SubMenu
                     key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDot}
+                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                         alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
@@ -831,6 +795,8 @@ class UserModulePersonalDetail extends Component {
             UmpireActivityListSortBy: null,
             UmpireActivityListSortOrder: null,
             stripeDashBoardLoad: false,
+            isTablet: false,
+            isCollapsedUserDetails: true,
         }
     }
 
@@ -859,7 +825,6 @@ class UserModulePersonalDetail extends Component {
             console.log("stripe connected")
         }
         else if (urlSplit[1]) {
-            console.log("called1")
             let codeSplit = urlSplit[1].split("&state=")
             let code = codeSplit[0]
 
@@ -871,8 +836,7 @@ class UserModulePersonalDetail extends Component {
             const query = this.queryfie(this.props.location.search);
             let token = query.token;
             let userId = query.userId;
-            let selectedTab = query.tab
-            console.log(query, "*******", selectedTab)
+            let selectedTab = query.tab;
             if (userId != undefined && token != undefined) {
                 await setUserId(userId);
                 await setAuthToken(token);
@@ -912,9 +876,22 @@ class UserModulePersonalDetail extends Component {
             this.props.getOnlyYearListAction();
             this.apiCalls(user_Id);
         }
+
+        this.checkWidth = () => {
+            const matchMedia = window.matchMedia(`(max-width: 767px)`);
+            
+            if (matchMedia) {
+                this.setState({ isTablet: matchMedia.matches });
+            }
+        };
+      
+        this.checkWidth();
+        window.addEventListener('resize', this.checkWidth);
     }
 
-
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.checkWidth);
+    }
 
     queryfie(string) {
         return string
@@ -925,8 +902,6 @@ class UserModulePersonalDetail extends Component {
     }
 
     componentDidUpdate(nextProps) {
-        // console.log("Component componentDidUpdate");
-
         let userState = this.props.userState;
         let personal = userState.personalData;
         if (userState.onLoad === false && this.state.loading === true) {
@@ -969,7 +944,6 @@ class UserModulePersonalDetail extends Component {
     }
 
     apiCalls = (userId) => {
-        console.log("apiCalls::" + userId);
         let payload = {
             userId: userId,
             organisationId: null
@@ -1026,7 +1000,7 @@ class UserModulePersonalDetail extends Component {
     generateCompInfo = (competitions, yearRefId) => {
         let teams = [];
         let divisions = [];
-        // console.log("competitions::" + JSON.stringify(competitions));
+
         (competitions || []).map((item, index) => {
             if (item.teams != null && item.teams.length > 0) {
                 (item.teams || []).map((i, ind) => {
@@ -1118,7 +1092,6 @@ class UserModulePersonalDetail extends Component {
     }
 
     onChangeTab = (key) => {
-        console.log("onChangeTab::" + key);
         this.setState({ tabKey: key, isRegistrationForm: false });
         this.tabApiCalls(key, this.state.competition, this.state.userId, this.state.yearRefId);
     };
@@ -1129,20 +1102,20 @@ class UserModulePersonalDetail extends Component {
             competitionId: competition.competitionUniqueKey,
             yearRefId: yearRefId
         }
-        if (tabKey == "1") {
+        if (tabKey === "1") {
+            this.handleRegistrationTableList(1, userId, competition, yearRefId);
+        }
+        else if (tabKey == "2") {
             this.hanleActivityTableList(1, userId, competition, "player", yearRefId);
             // this.hanleActivityTableList(1, userId, competition, "parent", yearRefId);
             this.hanleActivityTableList(1, userId, competition, "scorer", yearRefId);
             this.hanleActivityTableList(1, userId, competition, "manager", yearRefId);
         }
-        if (tabKey === "3") {
+        if (tabKey === "4") {
             this.props.getUserModulePersonalByCompetitionAction(payload)
         }
-        else if (tabKey === "4") {
-            this.props.getUserModuleMedicalInfoAction(payload)
-        }
         else if (tabKey === "5") {
-            this.handleRegistrationTableList(1, userId, competition, yearRefId);
+            this.props.getUserModuleMedicalInfoAction(payload)
         }
         else if (tabKey === "6") {
             this.handleHistoryTableList(1, userId);
@@ -1217,7 +1190,6 @@ class UserModulePersonalDetail extends Component {
     }
 
     loadAnotherUser = async (userId) => {
-        console.log("userId::" + userId);
         await setTempUserId(userId);
         //history.push({pathname: '/userPersonal'})
         window.location.reload();
@@ -1276,115 +1248,147 @@ class UserModulePersonalDetail extends Component {
         let personal = userState.personalData;
         let compititionId = this.state.competition != null ? this.state.competition.competitionUniqueKey : null;
 
+        const { isTablet, isCollapsedUserDetails } = this.state;
+
         return (
-            <div className="fluid-width mt-2" >
+            <div className="fluid-width" >
 
-                <div className='profile-image-view mr-5' style={{ marginTop: 20 }}>
-                    {/* <span className="user-contact-heading">{AppConstants.playerProfile}</span> */}
-                    <div className="circular--landscape" onClick={() => this.selectImage()}>
-                        {
-                            personal.photoUrl ?
-                                <img 
-                                    src={personal.photoUrl} alt="" 
-                                />
-                                :
-                                <span className="user-contact-heading">{AppConstants.noImage}</span>
+                {isTablet && 
+                    <div
+                        className="breadcrumb-product mt-3 mb-3 d-flex justify-content-between align-items-center"
+                        style={{
+                            height: 80,
+                        }}
+                    >
+                        <div className='d-flex align-items-center'>
+                            <div className="circular--landscape" style={{ width: 48, height: 48 }}>
+                                {
+                                    personal.photoUrl ?
+                                        <img src={personal.photoUrl} alt="" />
+                                        :
+                                        <span className="user-contact-heading p-0" style={{ fontSize: 10 }} >{AppConstants.noImage}</span>
 
+                                }
+                            </div>
+                            <div className='d-flex flex-column align-items-start justify-content-center' style={{ marginLeft: 16 }}>
+                                <span className="user-contact-heading p-0">{personal.firstName + " " + personal.lastName}</span>
+                                <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
+                            </div>
+                        </div>
+
+                        <div style={{ color: 'var(--app-color)' }}>
+                            {isCollapsedUserDetails 
+                                ? <Icon type="down" onClick={() => this.setState({ isCollapsedUserDetails: false})}/>
+                                : <Icon type="up" onClick={() => this.setState({ isCollapsedUserDetails: true})}/>
+                            }
+                        </div>
+                    </div>
+                }
+
+                {(!isCollapsedUserDetails || !isTablet) &&
+                    <>
+                        {!isTablet && 
+                            <div className='profile-image-view' style={{ marginTop: 20 }}>
+                                <div className="circular--landscape">
+                                    {
+                                        personal.photoUrl ?
+                                            <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
+                                            :
+                                            <div className="img-upload-target" style={{width:"64px", height:"64px", paddingTop:"8px"}} onClick={() => this.selectImage()}>
+                                                <div style={{ fontSize: "22px" }}>
+                                                    +
+                                                    </div>
+                                                <div style={{ marginTop: "-7px" }}>
+                                                    {AppConstants.addPhoto}
+                                                </div>
+                                            </div>
+                                    }
+                                    <input
+                                        type="file"
+                                        id={"user-pic"}
+                                        style={{ display: 'none' }}
+                                        onChange={(evt) => this.setImage(evt.target)}
+                                    />
+                                </div>
+                                <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
+                                {personal.userId ? 
+                                    <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
+                                    :
+                                    <span className="year-select-heading pt-0">{'#' + personal.id}</span>
+                                }
+                            </div>
                         }
-                        <input
-                            type="file"
-                            id={"user-pic"}
-                            style={{ display: 'none' }}
-                            onChange={(evt) => this.setImage(evt.target)}
-                        />
-                    </div>
-                    <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
-                    {personal.userId ? 
-                    <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
-                    :
-                    <span className="year-select-heading pt-0">{'#' + personal.id}</span>
-                    }
-                </div>
 
 
-                <div className="live-score-profile-img-view">
-                    <div className="live-score-side-desc-view">
-                        <div className="live-score-title-icon-view">
-                            <div className="live-score-icon-view">
-                                <img src={AppImages.calendar} alt="" height="16" width="16" />
+                        <div className="live-score-profile-img-view">
+                            <div className="live-score-side-desc-view d-flex flex-wrap">
+                                <div className='user-details-info-text-wrapper'>
+                                    <span className='user-details-info-text mr-3'>{AppConstants.dateOfBirth}</span>
+                                </div>
+                                <span className="user-details-info-text">{liveScore_formateDate(personal.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(personal.dateOfBirth)}</span>
                             </div>
-                            <span className='year-select-heading ml-3'>{AppConstants.dateOfBirth}</span>
-                        </div>
-                        <span className="live-score-desc-text side-bar-profile-data">{liveScore_formateDate(personal.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(personal.dateOfBirth)}</span>
-                    </div>
-                    <div className="live-score-side-desc-view">
-                        <div className="live-score-title-icon-view">
-                            <div className="live-score-icon-view">
-                                <img src={AppImages.callAnswer} alt="" height="16" width="16" />
+                            <div className="live-score-side-desc-view d-flex flex-wrap" style={{ paddingBottom: 25 }}>
+                                <div className='user-details-info-text-wrapper'>
+                                    <span className='user-details-info-text mr-3'>{AppConstants.phone}</span>
+                                </div>
+                                <span className="user-details-info-text">{personal.mobileNumber}</span>
                             </div>
-                            <span className='year-select-heading ml-3'>{AppConstants.contactNumber}</span>
-                        </div>
-                        <span className="live-score-desc-text side-bar-profile-data">{personal.mobileNumber}</span>
-                    </div>
-                    <div className="live-score-side-desc-view">
-                        <div className="live-score-title-icon-view">
-                            <div className="live-score-icon-view">
-                                <img src={AppImages.circleOutline} alt="" height="16" width="16" />
-                            </div>
-                            <span className='year-select-heading ml-3'>{AppConstants.competition}</span>
-                        </div>
-                        <Select
-                            name={"yearRefId"}
-                            className="user-prof-filter-select"
-                            style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
-                            onChange={yearRefId => this.onChangeYear(yearRefId)}
-                            value={this.state.yearRefId}>
-                            <Option key={-1} value={-1}>{AppConstants.all}</Option>
-                            {this.props.appState.yearList.map(item => {
-                                return (
-                                    <Option key={"yearRefId" + item.id} value={item.id}>
-                                        {item.description}
-                                    </Option>
-                                );
-                            })}
-                        </Select>
-                        <Select
-                            className="user-prof-filter-select"
-                            style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
-                            onChange={(e) => this.onChangeSetValue(e)}
-                            value={compititionId}>
-                            <Option key={-1} value={'-1'}>{AppConstants.all}</Option>
-                            {(this.state.competitions || []).map((comp, index) => (
-                                <Option key={comp.competitionUniqueKey} value={comp.competitionUniqueKey}>{comp.competitionName}</Option>
-                            ))}
-                        </Select>
-                    </div>
-                    <div className="live-score-side-desc-view">
-                        <div className="live-score-title-icon-view">
-                            <div className="live-score-icon-view">
-                                <img src={AppImages.group} height="16" width="16" alt="" />
-                            </div>
-                            <span className='year-select-heading ml-3'>{AppConstants.team}</span>
-                        </div>
-                        {(this.state.teams != null && this.state.teams || []).map((item, index) => (
-                            <div key={item.teamId} className="live-score-desc-text side-bar-profile-data">{item.teamName}</div>
-                        ))}
 
-                    </div>
-                    <div className="live-score-side-desc-view">
-                        <div className="live-score-title-icon-view">
-                            <div className="live-score-icon-view">
-                                <img src={AppImages.circleOutline} alt="" height="16" width="16" />
+                            <div className="orange-action-txt" style={{ marginBottom: 36, cursor: 'default' }}>
+                                <span className="add-another-button-border" style={{ padding: '7px 15px' }}>{AppConstants.personalDetails}</span>
                             </div>
-                            <span className='year-select-heading ml-3'>{AppConstants.division}</span>
-                        </div>
-                        {(this.state.divisions != null && this.state.divisions || []).map((item, index) => (
-                            <div key={item.divisionId} className="live-score-desc-text side-bar-profile-data">{item.divisionName}</div>
-                        ))}
-                        {/* <span className="live-score-desc-text side-bar-profile-data">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
-                    </div>
 
-                </div>
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <span className='year-select-heading'>{AppConstants.competition}</span>
+                                </div>
+                                <Select
+                                    name={"yearRefId"}
+                                    className="user-prof-filter-select"
+                                    style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
+                                    onChange={yearRefId => this.onChangeYear(yearRefId)}
+                                    value={this.state.yearRefId}>
+                                    <Option key={-1} value={-1}>{AppConstants.all}</Option>
+                                    {this.props.appState.yearList.map(item => {
+                                        return (
+                                            <Option key={"yearRefId" + item.id} value={item.id}>
+                                                {item.description}
+                                            </Option>
+                                        );
+                                    })}
+                                </Select>
+                                <Select
+                                    className="user-prof-filter-select"
+                                    style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
+                                    onChange={(e) => this.onChangeSetValue(e)}
+                                    value={compititionId}>
+                                    <Option key={-1} value={'-1'}>{AppConstants.all}</Option>
+                                    {(this.state.competitions || []).map((comp, index) => (
+                                        <Option key={comp.competitionUniqueKey} value={comp.competitionUniqueKey}>{comp.competitionName}</Option>
+                                    ))}
+                                </Select>
+                            </div>
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <span className='year-select-heading'>{AppConstants.team}</span>
+                                </div>
+                                {(this.state.teams != null && this.state.teams || []).map((item, index) => (
+                                    <div key={item.teamId} className="live-score-desc-text side-bar-profile-data">{item.teamName}</div>
+                                ))}
+
+                            </div>
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <span className='year-select-heading'>{AppConstants.division}</span>
+                                </div>
+                                {(this.state.divisions != null && this.state.divisions || []).map((item, index) => (
+                                    <div key={item.divisionId} className="live-score-desc-text side-bar-profile-data">{item.divisionName}</div>
+                                ))}
+                                {/* <span className="live-score-desc-text side-bar-profile-data">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
+                            </div>
+                        </div>
+                    </>
+                }
             </div>
         )
     }
@@ -1579,7 +1583,7 @@ class UserModulePersonalDetail extends Component {
                     <div className="col-sm" style={{ marginTop: '7px', marginRight: '15px' }}>
                         <div className="comp-buttons-view">
                             <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4" } }} >
-                                <Button className="other-info-edit-btn" type="primary" >
+                                <Button className="other-info-btn other-info-edit-btn" type="primary" >
                                     {AppConstants.edit}
                                 </Button>
                             </NavLink>
@@ -1643,7 +1647,7 @@ class UserModulePersonalDetail extends Component {
                             <div className="col-sm" style={{ marginTop: '7px', marginRight: '15px' }}>
                                 <div className="comp-buttons-view">
                                     <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: item, moduleFrom: "5" } }} >
-                                        <Button className="other-info-edit-btn" type="primary" >
+                                        <Button className="other-info-btn other-info-edit-btn" type="primary" >
                                             {AppConstants.edit}
                                         </Button>
                                     </NavLink>
@@ -1691,11 +1695,13 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let userRegistrationList = userState.userRegistrationList;
         let total = userState.userRegistrationDataTotalCount;
+        console.log('userRegistrationList', userRegistrationList)
         return (
             <div className="mt-2">
                 <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
+                    <Table className="home-dashboard-table dashboard-registration-table"
                         columns={columns}
+                        showHeader={false}
                         dataSource={userRegistrationList}
                         pagination={false}
                         loading={this.props.userState.userRegistrationOnLoad == true && true}
@@ -1814,7 +1820,7 @@ class UserModulePersonalDetail extends Component {
     headerView = () => {
         return (
             <div className="row" >
-                <div className="col-sm">
+                <div className="col-sm" style={{ flex: 1 }}>
                     <Header className="form-header-view" style={{
                         backgroundColor: "transparent",
                         display: "flex", paddingLeft: '0px',
@@ -1828,47 +1834,39 @@ class UserModulePersonalDetail extends Component {
                         </Breadcrumb>
                     </Header >
                 </div>
-                {(this.state.tabKey == "5") &&
-                    <div className="col-sm" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                        <div className="col-row" style={{ display: 'flex', alignItems: 'flex-end' }}>
-                            <div className="col-sm">
-                                <div className="comp-buttons-view mt-4" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-                                    <Button onClick={() => this.navigateTo("/appRegistrationForm")} className='other-info-edit-btn' type='primary' style={{ paddingRight: "69px" }}>
-                                        {AppConstants.register}
-                                    </Button>
-                                </div>
-                            </div>
-                            <div className="col-sm" style={{ padding: 0 }}>
-                                <div className="col-sm" style={{ padding: 0 }}>
-                                    <Menu
-                                        className="action-triple-dot-submenu menu-align-text"
-                                        theme="light"
-                                        mode="horizontal"
-                                        style={{ lineHeight: "25px" }}
-                                    >
-                                        <SubMenu
-                                            key="sub1"
-                                            style={{ borderBottomStyle: "solid", borderBottom: 0 }}
-                                            title={
-                                                <Button className="other-info-edit-btn" type="primary">
-                                                    {AppConstants.edit}
-                                                </Button>
-                                            }
-                                        >
-                                            <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
-                                                <span>{AppConstants.deRegistration}</span>
-                                            </Menu.Item>
-                                            <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
-                                                <span>{AppConstants.transfer}</span>
-                                            </Menu.Item>
-                                        </SubMenu>
-                                    </Menu>
 
-                                </div>
+                <div className="col-sm d-flex align-items-center justify-content-end" style={{ flex: 1 }}>
+                    <div className="col-row" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                        <div className="col-sm" style={{ padding: 0 }}>
+                            <div className="col-sm" style={{ padding: 0 }}>
+                                <Menu
+                                    className="action-triple-dot-submenu menu-align-text"
+                                    theme="light"
+                                    mode="horizontal"
+                                    style={{ lineHeight: "25px" }}
+                                >
+                                    <SubMenu
+                                        key="sub1"
+                                        style={{ borderBottomStyle: "solid", borderBottom: 0 }}
+                                        title={
+                                            <Button className="other-info-btn" type="primary">
+                                                {AppConstants.actions}
+                                            </Button>
+                                        }
+                                    >
+                                        <Menu.Item onClick={() => history.push("/userProfileEdit")} >
+                                            <span>{AppConstants.editProfile}</span>
+                                        </Menu.Item>
+                                        <Menu.Item onClick={() => this.navigateTo("/appRegistrationForm")} >
+                                            <span>{AppConstants.register}</span>
+                                        </Menu.Item>
+                                    </SubMenu>
+                                </Menu>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
+
             </div>
         )
     }
@@ -1997,7 +1995,9 @@ class UserModulePersonalDetail extends Component {
         if (personalDetails != null && personalDetails.length > 0) {
             userRegistrationId = personalByCompData[0].userRegistrationId
         }
-        console.log(this.state.tabKey)
+
+        const { isTablet, isCollapsedUserDetails} = this.state;
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} />
@@ -2005,16 +2005,35 @@ class UserModulePersonalDetail extends Component {
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
                         <div className="fluid-width" >
-                            <div className="row" >
-                                <div className="col-sm-3 " style={{ marginBottom: "7%" }} >
+                            <div
+                                className="d-flex flex-wrap"
+                                style={{
+                                    padding: `${isTablet ? 0 : '0 15px 0 30px'}`
+                                }}
+                            >
+                                <div
+                                    className={`${isTablet ? "col-sm-12" : "col-sm-3"} bg-white content-view-padding`}
+                                    style={{
+                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '7%'}`
+                                    }}
+                                >
                                     {this.leftHandSideView()}
                                 </div>
 
-                                <div className="col-sm-9" style={{ backgroundColor: "#f7fafc", }}>
-                                    <div>{this.headerView()}</div>
+                                <div
+                                    className={`${isTablet ? "col-sm-12" : "col-sm-9"} content-view-padding`}
+                                    style={{ backgroundColor: "#f7fafc", }}
+                                >
+                                    <div className="mt-4">{this.headerView()}</div>
                                     <div className="inside-table-view mt-4" >
                                         <Tabs activeKey={this.state.tabKey} onChange={(e) => this.onChangeTab(e)}>
-                                            <TabPane tab={AppConstants.activity} key="1">
+                                            <TabPane tab={AppConstants.registrations} key="1">
+                                                {!this.state.isRegistrationForm ?
+                                                    this.registrationView() :
+                                                    this.registrationFormView()
+                                                }
+                                            </TabPane>
+                                            <TabPane tab={AppConstants.activity} key="2">
                                                 {activityPlayerList != null && activityPlayerList.length > 0 && this.playerActivityView()}
                                                 {activityManagerList != null && activityManagerList.length > 0 && this.managerActivityView()}
                                                 {scorerActivityRoster != null && scorerActivityRoster.length > 0 && this.scorerActivityView()}
@@ -2023,22 +2042,16 @@ class UserModulePersonalDetail extends Component {
                                                     && scorerActivityRoster.length == 0 //&& activityParentList.length == 0
                                                     && this.noDataAvailable()}
                                             </TabPane>
-                                            <TabPane tab={AppConstants.statistics} key="2">
+                                            <TabPane tab={AppConstants.statistics} key="3">
                                                 {this.statisticsView()}
                                             </TabPane>
-                                            <TabPane tab={AppConstants.personalDetails} key="3">
+                                            <TabPane tab={AppConstants.personalDetails} key="4">
                                                 {this.personalView()}
                                             </TabPane>
                                             {userRegistrationId != null &&
-                                                <TabPane tab={AppConstants.medical} key="4">
+                                                <TabPane tab={AppConstants.medical} key="5">
                                                     {this.medicalView()}
                                                 </TabPane>}
-                                            <TabPane tab={AppConstants.registration} key="5">
-                                                {!this.state.isRegistrationForm ?
-                                                    this.registrationView() :
-                                                    this.registrationFormView()
-                                                }
-                                            </TabPane>
                                             <TabPane tab={AppConstants.history} key="6">
                                                 {this.historyView()}
                                             </TabPane>
@@ -2092,6 +2105,7 @@ function mapStatetoProps(state) {
         appState: state.AppState,
         endUserRegistrationState: state.EndUserRegistrationState,
         stripeState: state.StripeState,
+        userRegistrationState: state.UserRegistrationState,
     }
 }
 

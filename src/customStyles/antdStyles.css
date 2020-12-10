@@ -478,6 +478,15 @@ textarea.ant-input {
   font-style: normal;
 }
 
+.ant-select-selection--single .ant-select-selection__rendered {
+  margin-right: 35px;
+}
+
+.custom-loader .ant-modal-content {
+  background: transparent;
+  box-shadow: none;
+}
+
 @media (max-width: 767px) {
   .ant-tabs-nav .ant-tabs-tab {
     padding: 12px 16px;

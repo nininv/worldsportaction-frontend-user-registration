@@ -1375,7 +1375,7 @@ class AppTeamRegistrationForm extends Component{
     
                     <div className="light-grey-border-box">
                         <div className="row">
-                            <div className="col">
+                            <div className="col post-code-input" >
                                 <InputWithHead 
                                     allowClear 
                                     heading={AppConstants.postCode} 
@@ -1387,11 +1387,8 @@ class AppTeamRegistrationForm extends Component{
                             <div className="col" style={{alignSelf: "center"}}>
                                 <Button 
                                     type="primary"
-                                    style={{color: "white",textTransform: "uppercase",
-                                    marginTop: "45px",float: "right",
-                                    paddingLeft: "50px",paddingRight: "50px"}}
                                     onClick={() => this.searchOrganisationByPostalCode()}
-                                    className="open-reg-button">{AppConstants.search}</Button>
+                                    className="open-reg-button postal-code-button">{AppConstants.search}</Button>
                             </div>
                         </div>
                         <InputWithHead heading={AppConstants.organisationName}/>
@@ -1409,40 +1406,58 @@ class AppTeamRegistrationForm extends Component{
                             ))}
                         </Select>
                         {organisationInfo && (
-                            <div style={{display: "flex",alignItems: "center",marginTop: "20px"}}>
+                            <div className="organisation-info-wrapper">
                                 {organisationInfo.organisationLogoUrl?
                                 <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
                                 :
                                 <img className="profile-img" style={{borderRadius:"20%"}} src={AppImages.compDefaultIcon}/>
                                 }
-                                <div style={{width: "170px",marginLeft: "20px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
+                                <div style={{width: "170px"}}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
-                                    <div style={{marginLeft: "20px"}}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
+                                    <div style={{ minWidth: 120 }}><img className="icon-size-20" style={{marginRight: "15px"}} src={AppImages.callAnswer}/>{organisationInfo.mobileNumber}</div>
                                 )}
                             </div>
                         )}
                     </div>
                     <div className="row" style={{marginTop: "30px"}}>
                         {(this.state.competitions || []).map((competition,competitionIndex) => (
-                            <div className="col-md-6 col-sm-12 pointer"
-                            onClick={() => this.addAnotherCompetition(competition)}
-                            key={competition.competitionUniqueKey} 
-                            style={{marginBottom: "20px"}}>
-                                <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px"}}>
-                                    <div style={{height: "150px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    borderRadius: "10px 10px 0px 0px",
-                                    margin: "-20px -20px -0px -20px",
-                                    borderBottom: "1px solid var(--app-f0f0f2)"}}>
-                                        <img style={{height: "149px",borderRadius: "10px 10px 0px 0px",overflow: "hidden"}} src={competition.heroImageUrl}/>
+                            <div
+                                className="col-md-6 col-sm-12 pointer"
+                                onClick={() => this.addAnotherCompetition(competition)}
+                                key={competition.competitionUniqueKey} 
+                                style={{marginBottom: "20px"}}
+                            >
+                                <div style={{border:"1px solid var(--app-f0f0f2)",borderRadius: "10px",padding: "20px", height: '100%'}}>
+                                    <div 
+                                        style={{
+                                            height: "150px",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            borderRadius: "10px 10px 0px 0px",
+                                            margin: "-20px -20px -0px -20px",
+                                            borderBottom: "1px solid var(--app-f0f0f2)"
+                                        }}
+                                    >
+                                        <img
+                                            style={{
+                                                height: 149,
+                                                width: '100%',
+                                                borderRadius: "10px 10px 0px 0px",
+                                                overflow: "hidden", 
+                                                objectFit: 'contain'
+                                                }}
+                                            src={competition.heroImageUrl}
+                                        />
                                     </div>
                                     <div className="form-heading" style={{marginTop: "20px",textAlign: "start", paddingBottom:"3.5px"}}>{competition.competitionName}</div>
                                     {this.state.organisationId == null && (
                                         <div style={{fontWeight: "600",marginBottom: "5px"}}>{competition.organisationName}</div>
                                     )}
                                     <div style={{fontWeight: "600", marginBottom:"10px"}}>{competition.compOrgName}</div>
-                                    <div style={{fontWeight: "600"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    <div style={{fontWeight: "600", display: 'flex', alignItems: 'center' }}>
+                                        <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/>
+                                        <div>{competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -1484,30 +1499,38 @@ class AppTeamRegistrationForm extends Component{
                 <div className="registration-form-view">
                     {competitionInfo.heroImageUrl && (
                         <div className="map-style">
-                            <img style={{height: "249px",borderRadius: "10px 10px 0px 0px"}} src={competitionInfo.heroImageUrl}/>
+                            <img style={{height: "249px", width: "100%", borderRadius: "10px 10px 0px 0px", objectFit: 'contain' }} src={competitionInfo.heroImageUrl}/>
                         </div>
                     )}
                     <div>
                         <div className="row" style={competitionInfo.heroImageUrl ? {marginTop: "30px",marginLeft: "0px",marginRight: "0px"} : {marginLeft: "0px",marginRight: "0px"}}>
-                            <div className="col-sm-1.5">
+                            <div className="col-sm-1.5 mr-4" style={{ display: "flex", alignItems: 'center' }}>
                                 {organisaionInfo.organisationLogoUrl?
                                 <img className="profile-img" src={organisaionInfo.organisationLogoUrl}/>
                                 :
                                 <img className="profile-img" style={{borderRadius:"20%"}} src={AppImages.compDefaultIcon}/>
                                 }
-                                {/* <img className="profile-img" src={organisaionInfo.organisationLogoUrl}/>  */}
                             </div>
-                            <div className="col">
-                                <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionInfo.organisationName}</div>
-                                <div style={{display: "flex",flexWrap: "wrap"}}>
-                                    <div style={{textAlign: "start",fontWeight: "600",marginTop: "-5px"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
-                                    <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                    onClick={() => {
-                                        this.onChangeSetPostalCode('');
-                                        this.setState({showFindAnotherCompetitionview: true,organisationId: null,competitions: null});
-                                    }}>{AppConstants.findAnotherCompetition}</div>
+                            <div className="col" style={{ padding: 0 }}>
+                                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                        <div className="form-heading">{competitionInfo.organisationName}</div>
+                                        <div style={{textAlign: "start",fontWeight: "600",marginRight: 10, marginBottom: 5}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
+                                        <div style={{fontWeight: "600",display: 'flex', alignItems: 'center' }}>
+                                            <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
+                                            <div>{competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="orange-action-txt" style={{margin: "5px 0"}}
+                                        onClick={() => {
+                                            this.onChangeSetPostalCode('');
+                                            this.setState({showFindAnotherCompetitionview: true,organisationId: null,competitions: null});
+                                        }}
+                                    >
+                                        {AppConstants.findAnotherCompetition}
+                                    </div>
                                 </div>
-                                <div style={{fontWeight: "600",marginTop: "-5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
                             </div>
                         </div>
                         <div className="light-grey-border-box">
@@ -1554,19 +1577,19 @@ class AppTeamRegistrationForm extends Component{
                             )}
     
                             <div className="row">
-                                <div className="col-sm-12 col-md-4">
+                                <div className="col-sm-12 col-lg-4">
                                     <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(teamRegistrationObj.fees.totalCasualFee)) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-md-4">
+                                <div className="col-sm-12 col-lg-4">
                                     <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-md-4">
+                                <div className="col-sm-12 col-lg-4">
                                     <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
                                     <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$'+(this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{textAlign: "center"}}><Spin /></div>)}
                                         <span style={{fontSize: "12px",alignSelf: "flex-end",marginBottom: "5px"}}>&#8199;incl.GST</span>
@@ -1577,7 +1600,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="competition-specifics">{AppConstants.competitionSpecifics}</div>
                         <div className="row" style={{marginTop: "20px"}}>
-                            <div className="col-sm-12 col-md-4">
+                            <div className="col-sm-12 col-lg-4">
                                 {/* <InputWithHead heading={AppConstants.training}/> */}
                                 <div className="input-style-bold" style={{paddingTop:'0px'}}>{AppConstants.training}</div>
                                 <div 
@@ -1616,7 +1639,7 @@ class AppTeamRegistrationForm extends Component{
                                     AppConstants.noInformationProvided}
                                 </div> 
                             </div>
-                            <div className="col-sm-12 col-md-8">
+                            <div className="col-sm-12 col-lg-8 mt-5">
                                 <Carousel autoplay
                                     style={{marginTop: "16px",
                                     height: "160px",
@@ -1624,13 +1647,13 @@ class AppTeamRegistrationForm extends Component{
                                     display: "flex"}}>
                                 {(organisationPhotos || []).map((photo,photoIndex) => (
                                         <div>
-                                            <div style={{display: "flex",justifyContent: "flex-end"}}>
-                                                <div>
-                                                    <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo.photoType1}</div>
+                                            <div className="registration-competition-venue-form-wrapper">
+                                                <div style={{marginRight: "25px", marginBottom: "10px"}}>
+                                                    <div className="font-bold-carosal" style={{marginBottom: "10px"}}>{photo.photoType1}</div>
                                                     <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo.photoUrl1}/>
                                                 </div>
-                                                <div style={{marginLeft: "25px"}}>
-                                                    <div className="font-bold-carosal" style={{marginTop: "-21px",marginBottom: "10px"}}>{photo?.photoType2}</div>
+                                                <div>
+                                                    <div className="font-bold-carosal" style={{marginBottom: "10px"}}>{photo?.photoType2}</div>
                                                     <img style={{height: "158px",margin: "auto",fontWeight: "500"}} src={photo?.photoUrl2}/>
                                                 </div>
                                             </div>
@@ -1667,7 +1690,10 @@ class AppTeamRegistrationForm extends Component{
                         <div className="col">
                             <div className="form-heading" style={{paddingBottom: "0px"}}>{expiredRegistration.organisationName}</div>
                             <div style={{fontWeight: "600",color: "black"}}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
-                            <div style={{fontWeight: "600",marginTop: "5px"}}><img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> {expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            <div style={{fontWeight: "600",marginTop: "5px", display: 'flex', alignItems: 'center' }}>
+                                <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/>
+                                <div>{expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
+                            </div>
                         </div>
                     </div>
                     <div className="light-grey-border-box" style={{textAlign: "center"}}>
@@ -1723,24 +1749,27 @@ class AppTeamRegistrationForm extends Component{
             return(
                 <div className="registration-form-view">
                     <div className="row" style={{marginLeft: "0px",marginRight: "0px"}}>
-                        <div className="col-sm-1.5">
+                        <div className="col-sm-1.5" style={{ display: "flex", alignItems: 'center' }}>
                             <img style={{height: "60px",borderRadius: "50%"}} src={competitionInfo.compLogoUrl}/> 
                         </div>
                         <div className="col">
-                            <div className="form-heading" style={{paddingBottom: "0px"}}>{competitionInfo.organisationName}</div>
-                            <div style={{display: "flex",flexWrap: "wrap"}}>
-                                <div style={{textAlign: "start",fontWeight: "600"}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
-                                <div className="orange-action-txt" style={{marginLeft: "auto",alignSelf: "center",marginBottom: "8px"}}
-                                onClick={() => {
-                                    this.setState({currentStep: 0});
-                                    setTimeout(() => {
-                                        this.setSelectCompetitionStepFormFields();
-                                    },300);
-                                }}>{AppConstants.edit}</div>
-                            </div>
-                            <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
-                                <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
-                                {competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate} 
+                            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <div className="form-heading">{competitionInfo.organisationName}</div>
+                                    <div style={{textAlign: "start",fontWeight: "600", marginRight: 10, marginBotoom: 5}}>{competitionInfo.stateOrgName} - {competitionInfo.competitionName}</div>
+                                    <div style={{fontWeight: "600",display: "flex",alignItems: "center"}}>
+                                        <img className="icon-size-25" style={{marginRight: "5px"}} src={AppImages.calendarGrey}/> 
+                                        <div>{competitionInfo.registrationOpenDate} - {competitionInfo.registrationCloseDate}</div>
+                                    </div>
+                                </div>
+
+                                <div className="orange-action-txt" style={{margin: "5px 0"}}
+                                        onClick={() => {
+                                            this.setState({currentStep: 0});
+                                            setTimeout(() => {
+                                                this.setSelectCompetitionStepFormFields();
+                                            },300);
+                                        }}>{AppConstants.edit}</div>
                             </div>
                         </div>
                     </div>
@@ -2491,6 +2520,7 @@ class AppTeamRegistrationForm extends Component{
                     <InputWithHead heading={AppConstants.type} required={"required-field"}/>
                     {(membershipProductTypes || []).map((product, productIndex) => (
                         <Checkbox 
+                        className="py-2"
                         checked={product.isChecked}
                         key={product.competitionMembershipProductTypeId}
                         onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
@@ -3149,22 +3179,22 @@ class AppTeamRegistrationForm extends Component{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             return(
                 <div className="registration-form-view">
-                    <div className="row">
-                        <div className="col-sm-12 col-md-6">
+                    <div className="row mx-0">
+                        <div className="col-sm-12 col-lg-4 pl-0" style={{ display: 'flex', alignItems: 'center'}}>
                             <div className="form-heading">{AppConstants.teamDetails}</div>
                         </div>
-                        <div className="col-sm-12 col-md-6">
+                        <div className="col-sm-12 col-lg-8" style={{ padding: 0 }}>
                             {teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && (
-                                <div style={{display: "flex",float: "right"}}>
+                                <div className="team-details-actions">
                                     <NavLink to="/templates/wsa-import-team-player.csv" target="_blank" download>
                                         <Button 
-                                            style={{textTransform: "uppercase"}}
+                                            style={{marginRight: "15px",marginBottom: 10, textTransform: "uppercase"}}
                                             className="white-button">{AppConstants.downloadTemplate}
                                         </Button>
                                     </NavLink>
                                     <label 
                                         for={"teamPlayerUpload"}
-                                        style={{marginLeft: "20px",textTransform: "uppercase",padding: '12px'}}
+                                        style={{textTransform: "uppercase",padding: '12px'}}
                                         className="white-button">{AppConstants.importTeam}
                                     </label>
                                     <CSVReader
@@ -3823,7 +3853,7 @@ class AppTeamRegistrationForm extends Component{
     contentView = (getFieldDecorator) => {
         try{
             return(
-                <div style={{width: "70%",margin: "auto"}}>
+                <div className="registration-form-wrapper">
                     <Steps className="registration-steps" current={this.state.currentStep} onChange={this.onChangeStep}>
                         <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.selectCompetition}/>
                         <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.participantDetails}/>
@@ -3841,7 +3871,7 @@ class AppTeamRegistrationForm extends Component{
     footerView = () => {
         try{
             return(
-                <div style={{width: "75%",margin: "auto",paddingBottom: "50px"}}>
+                <div className="form-registration-action">
                     {!this.state.showFindAnotherCompetitionview && (
                         <Button 
                             htmlType="submit"
@@ -3900,7 +3930,7 @@ class AppTeamRegistrationForm extends Component{
                         onSubmit={this.saveRegistrationForm}
                         noValidate="noValidate">
                         <Content>{this.contentView(getFieldDecorator)}</Content>
-                        <Footer>{this.footerView()}</Footer>
+                        <div>{this.footerView()}</div>
                         <Loader visible={this.props.teamRegistrationState.onTeamInfoByIdLoad || 
                         this.props.teamRegistrationState.onMembershipLoad} />
                     </Form>

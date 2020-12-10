@@ -3,6 +3,7 @@ const AppImages = {
   plusSign: require("../images/add.png"),
   transfer: require("../images/transfer.png"),
   moreTripleDot: require("../images/more.png"),
+  moreTripleDotActive: require("../images/active-more.svg"),
   activeRegist: require("../images/active-regist.svg"),
   playerDp: require("../images/dp.jpg"),
   calendar: require("../images/calendar.png"),
