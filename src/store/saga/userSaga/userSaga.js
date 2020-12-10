@@ -359,3 +359,21 @@ export function* saveUserPhotosSaga(action) {
       yield call(errorSaga, error);
     }
   }
+
+export function* registrationResendEmailSaga(action){
+    try {
+      const result = yield call(userHttpApi.registrationResendEmail, action.teamId);
+      
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_REGISTRATION_RESEND_EMAIL_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+}

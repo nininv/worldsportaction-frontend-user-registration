@@ -112,7 +112,11 @@ let userHttpApi = {
   saveUserPhoto(payload) {
     const url = `users/photo`;
     return Method.dataPost(url, token, payload);
-  }
+  },
+  registrationResendEmail(teamId){
+    const url = `api/users/registration/resendmail`;
+    return Method.dataPost(url, token, null);
+  },
 }
 
 let Method = {

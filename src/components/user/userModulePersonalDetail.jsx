@@ -14,7 +14,8 @@ import {
     getUserModuleMedicalInfoAction, getUserModuleActivityPlayerAction,
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
     getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
-    userPhotoUpdateAction
+    userPhotoUpdateAction,
+    registrationResendEmailAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -126,8 +127,13 @@ const columns = [
                     {e.expiryDate == "Single Use" &&
                         <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
                             <span>Purchase Single Game(s)</span>
-                        </Menu.Item>}
-
+                        </Menu.Item>
+                    }
+                    {/* {e.teamId &&
+                        <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
+                            <span>Resend Email</span>
+                        </Menu.Item>
+                    } */}
                 </SubMenu>
             </Menu>
         )
@@ -2094,7 +2100,8 @@ function mapDispatchToProps(dispatch) {
         getUmpireActivityListAction,
         saveStripeAccountAction,
         getStripeLoginLinkAction,
-        userPhotoUpdateAction
+        userPhotoUpdateAction,
+        registrationResendEmailAction
     }, dispatch);
 
 }

@@ -2327,7 +2327,6 @@ class AppRegistrationFormNew extends Component {
     competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
         const { playerPositionList } = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
-        console.log("competitionInfo",competitionInfo.membershipProducts)
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
         let organisationPhotos = this.getOrganisationPhotos(competition.organisationInfo.organisationPhotos);

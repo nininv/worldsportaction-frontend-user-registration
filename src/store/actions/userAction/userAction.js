@@ -150,6 +150,14 @@ function userPhotoUpdateAction(payload) {
   };
 }
 
+function registrationResendEmailAction(teamId){
+  const action = {
+      type: ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD,
+      teamId
+  } 
+  return action;
+}
+
 
 export {
   getRoleAction,
@@ -169,5 +177,6 @@ export {
   getScorerData,
   getUmpireActivityListAction,
   getAllOrganisationListAction,
-  userPhotoUpdateAction
+  userPhotoUpdateAction,
+  registrationResendEmailAction
 }
