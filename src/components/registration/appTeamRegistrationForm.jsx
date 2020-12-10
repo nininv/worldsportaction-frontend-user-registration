@@ -3439,6 +3439,8 @@ class AppTeamRegistrationForm extends Component{
             let hasOtherParticipantSports = teamRegistrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
             let walkingNetballQuesKeys = Object.keys(teamRegistrationObj.additionalInfo.walkingNetball);
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => teamRegistrationObj.additionalInfo.walkingNetball[key] == 1);
+            let childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ? moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY") : null;
+            let accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"MM-DD-YYYY") : null;
             return(
                 <div className="registration-form-view"> 
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -3755,7 +3757,7 @@ class AppTeamRegistrationForm extends Component{
                                     onChange={(e,f) => this.dateConversion(f, "accreditationCoachExpiryDate","additionalInfo")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
-                                    value={teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate && moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"MM-DD-YYYY")}
+                                    value={accreditationCoachExpiryDate}
                                 />
                             )}
                         </div>
@@ -3777,10 +3779,10 @@ class AppTeamRegistrationForm extends Component{
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
                                         style={{ width: "100%"}}
-                                        onChange={(e,f) => this.onChangeSetAdditionalInfo(f, "childrenCheckExpiryDate") }
+                                        onChange={(e,f) => this.dateConversion(f, "childrenCheckExpiryDate","additionalInfo")}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
-                                        value={teamRegistrationObj.additionalInfo.childrenCheckExpiryDate && moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY")}
+                                        value={childrenCheckExpiryDate}
                                     />
                                 </div>
                             </div>

@@ -531,7 +531,7 @@ const CheckoutForm = (props) => {
                     ))}
                     {payload.singleGameSelected == 1 && (
                         <div>
-                            <div className="product-text-common" style={{fontSize:22,marginTop: 30,marginLeft: -40,marginBottom: 30}}>
+                            <div className="product-text-common" style={{fontSize:22,marginTop: 30,marginBottom: 30}}>
                                 {AppConstants.perMatchFees}
                             </div>  
                             {(paymentOptions || []).map((paymentOption, paymentOptionIndex) =>(

@@ -2887,6 +2887,8 @@ class AppRegistrationFormNew extends Component {
             let walkingNetballQuesKeys = Object.keys(registrationObj.additionalInfo.walkingNetball);
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => registrationObj.additionalInfo.walkingNetball[key] == 1);
             let hasOtherParticipantSports = registrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
+            let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY") : null;
+            let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"MM-DD-YYYY") : null;
             return (
                 <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -3297,7 +3299,7 @@ class AppRegistrationFormNew extends Component {
                                         onChange={(e, f) => this.dateConversion(f, "accreditationCoachExpiryDate", "additionalInfo")}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
-                                        value={registrationObj.additionalInfo.accreditationCoachExpiryDate && moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "MM-DD-YYYY")}
+                                        value={accreditationCoachExpiryDate}
                                     />
                                 )}
                             </div>
@@ -3322,7 +3324,7 @@ class AppRegistrationFormNew extends Component {
                                             onChange={(e, f) => this.dateConversion(f, "childrenCheckExpiryDate", "additionalInfo")}
                                             format={"DD-MM-YYYY"}
                                             showTime={false}
-                                            value={registrationObj.additionalInfo.childrenCheckExpiryDate && moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "MM-DD-YYYY")}
+                                            value={childrenCheckExpiryDate}
                                         />
                                     </div>
                                 </div>
