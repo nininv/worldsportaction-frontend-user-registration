@@ -1289,10 +1289,10 @@ class UserModulePersonalDetail extends Component {
                     <>
                         {!isTablet && 
                             <div className='profile-image-view' style={{ marginTop: 20 }}>
-                                <div className="circular--landscape" onClick={() => this.selectImage()}>
+                                <div className="circular--landscape">
                                     {
                                         personal.photoUrl ?
-                                            <img src={personal.photoUrl} alt="" />
+                                            <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
                                             :
                                             <div className="img-upload-target" style={{width:"64px", height:"64px", paddingTop:"8px"}} onClick={() => this.selectImage()}>
                                                 <div style={{ fontSize: "22px" }}>
