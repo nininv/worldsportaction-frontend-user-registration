@@ -384,13 +384,13 @@ function getFilteredDivisions(divisions,state){
 	try{
 		let filteredDivisions = [];
 		let genderRefId = state.registrationObj.genderRefId;
-		var date = moment(state.registrationObj.dateOfBirth,"MM-DD-YYYY");
-		console.log("date",JSON.stringify(date))
+		// console.log("date",state.registrationObj.dateOfBirth)
+		var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
+		// console.log("date",JSON.stringify(date))
 		for(let division of divisions){
 			if(division.registrationLock == 0 && division.isIndividualRegistration == 1){
 				if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
 					if(division.genderRefId == genderRefId || genderRefId == 3){
-						console.log("inside 1")
 						let div = {
 							"competitionMembershipProductId": division.competitionMembershipProductId,
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
@@ -403,7 +403,6 @@ function getFilteredDivisions(divisions,state){
 					var startDate = moment(division.fromDate, "YYYY-MM-DD");
 					var endDate = moment(division.toDate, "YYYY-MM-DD");
 					if ((date.isBefore(endDate) && date.isAfter(startDate)) || (date.isSame(startDate) || date.isSame(endDate))){
-						console.log("inside 2")
 						let div = {
 							"competitionMembershipProductId": division.competitionMembershipProductId,
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
@@ -415,7 +414,7 @@ function getFilteredDivisions(divisions,state){
 				}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
 					var startDate = moment(division.fromDate, "YYYY-MM-DD");
 					var endDate = moment(division.toDate, "YYYY-MM-DD");
-					console.log("date",JSON.stringify(date),JSON.stringify(startDate),JSON.stringify(endDate),date.isBefore(endDate),date.isAfter(startDate),division.genderRefId == genderRefId)
+					// console.log("date",JSON.stringify(date),JSON.stringify(startDate),JSON.stringify(endDate),date.isBefore(endDate),date.isAfter(startDate),division.genderRefId == genderRefId)
 					if (((date.isBefore(endDate) && date.isAfter(startDate)) || (date.isSame(startDate) || date.isSame(endDate))) 
 						&& (division.genderRefId == genderRefId || genderRefId == 3)){
 							console.log("inside 3")
@@ -428,7 +427,6 @@ function getFilteredDivisions(divisions,state){
 							filteredDivisions.push(div);
 					}
 				}else{
-					console.log("inside 4")
 					let div = {
 						"competitionMembershipProductId": division.competitionMembershipProductId,
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
@@ -439,7 +437,6 @@ function getFilteredDivisions(divisions,state){
 				}
 			}
 		}
-		console.log("filtered division",filteredDivisions)
 		return filteredDivisions;
 	}catch(ex){
 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
