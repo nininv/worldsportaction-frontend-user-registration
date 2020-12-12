@@ -943,7 +943,7 @@ const AppConstants = {
   weeklyInstalment:"Instalment",
   firstInstalment: "1st Instalment",
   instalmentDates:"Instalment dates",
-  schoolRegistration:"School Invoice",
+  schoolRegistration:"Invoice",
   governmentSportsVoucher:"Government Sports Voucher",
   support:"Support",
   confidentGirlsFoundation:"Confident Girls Foundation",
@@ -1186,6 +1186,7 @@ const AppConstants = {
   enterNewPassword: 'Enter new password',
   confirmPassword: 'Confirm password',
   enterConfirmPassword: 'Enter confirm password',
+  invoiceCode: "Invoice Code"
 };
 
 export default AppConstants;

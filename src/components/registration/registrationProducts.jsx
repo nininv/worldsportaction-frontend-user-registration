@@ -229,7 +229,7 @@ class RegistrationProducts extends Component {
         else if(key == "removeDiscount"){
             this.callSaveRegistrationProducts("discount", registrationReview)
         }
-        else if(key == "isSchoolRegCodeApplied"){
+        else if(key == "isSchoolRegCodeApplied" || subIndex == "removeSchoolRegCode"){
             this.callSaveRegistrationProducts("school", registrationReview)
         }
         else if(key == "voucher"){
@@ -444,7 +444,7 @@ class RegistrationProducts extends Component {
 
     }
 
-    participantDetailView = () =>{
+    participantDetailView = (isSchoolRegistration) =>{
         const {registrationReviewList} = this.props.registrationProductState;
         //console.log("registrationReviewList", this.props.registrationProductState);
         let compParticipants = registrationReviewList!= null ? 
@@ -456,8 +456,8 @@ class RegistrationProducts extends Component {
                     <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
-                        {this.discountcodeView(item, index)}
-                        {item.isTeamRegistration == 1 && item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
+                        {this.discountcodeView(item, index, isSchoolRegistration)}
+                        {item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
                         {this.governmentVoucherView(item, index)}
                     </div>
                 ))}
@@ -655,7 +655,7 @@ class RegistrationProducts extends Component {
         )
     }
 
-    discountcodeView = (item, index) =>{
+    discountcodeView = (item, index, isSchoolRegistration) =>{
         let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
@@ -690,6 +690,8 @@ class RegistrationProducts extends Component {
                     </div>
                 ))
                 }
+                
+                {!isSchoolRegistration  && 
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
                     <div style={{marginTop: "13px", alignSelf: "center"}}>
                         <span className="btn-text-common pointer" style={{paddingTop: 7}} 
@@ -706,12 +708,12 @@ class RegistrationProducts extends Component {
                         </Button>
                     </div> 
                     }
-                </div>
+                </div> }
             </div>
         )
     }
 
-    schoolRegistrationView =(item, index) =>{
+    schoolRegistrationView_1 =(item, index) =>{
         return (
             <div>
                 <div>
@@ -729,7 +731,7 @@ class RegistrationProducts extends Component {
                             <div className="" style={{alignSelf:"center"}}>
                                 {item.selectedOptions.isSchoolRegCodeApplied == 1 ?
                                 <Button className="open-reg-button"
-                                    onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", null)}
+                                    onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", "removeSchoolRegCode")}
                                     type="primary">
                                     {AppConstants.removeCode}
                                 </Button> : 
@@ -746,6 +748,48 @@ class RegistrationProducts extends Component {
                             }
                         </div>                   
                     </div>
+                </div>
+            </div>
+        )
+    }
+
+    
+    schoolRegistrationView =(item, index) =>{
+        return (
+            <div>
+                 <div className="headline-text-common" style={{marginTop: "21px"}}>
+                        {AppConstants.invoiceCode}
+                </div>
+                <div style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between",marginRight:26}}>
+                    <div style={{ width: "100%"}}>
+                        <InputWithHead
+                            style={{ width: "97%"}}
+                            required={"required-field pt-0 pb-0"}
+                            placeholder={AppConstants.invoiceCode} 
+                            value={item.selectedOptions.selectedSchoolRegCode}
+                            onChange={(e) => this.setReviewInfo(e.target.value, "selectedSchoolRegCode", index,"selectedOptions", null)}                     
+                        />
+                    </div>
+                    <div className="transfer-image-view pointer" style={{paddingLeft: '15px',}}>                   
+                        <span className="user-remove-btn" 
+                                 onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", "removeSchoolRegCode")}>
+                                <img class="marginIcon" src={AppImages.removeIcon} />                           
+                        </span>
+                    </div>    
+                    {item.selectedOptions.invalidSchoolRegCode == 1 && 
+                    <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                        Invalid code
+                    </div>
+                    }                
+                </div>
+                <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"flex-end",width: "99%"}}>
+                    <div style={{padding:"15px 0px 0px 0px"}}>
+                        <Button className="open-reg-button"
+                            onClick={(e) =>  this.setReviewInfo(null, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                            type="primary">
+                            {AppConstants.applyCode}
+                        </Button>
+                    </div> 
                 </div>
             </div>
         )
@@ -1189,7 +1233,7 @@ class RegistrationProducts extends Component {
         return(
             <div className="col-sm-12 col-md-8 col-lg-8" style={{ padding:0 }}>
                 <div className="product-left-view outline-style">
-                    {this.participantDetailView()}
+                    {this.participantDetailView(isSchoolRegistration)}
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
