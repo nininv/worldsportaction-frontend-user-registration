@@ -40,6 +40,8 @@ import SingleGamePayment from "../components/registration/singleGamePayment";
 
 import MyUmpiringAvailability from "../components/umpire/myUmpiringAvailability";
 
+// changePassword 
+import ManagePassword from './Accounts/password';
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -193,6 +195,11 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/myUmpiringAvailability"
           component={lazyLoad(MyUmpiringAvailability)}
+          />
+
+        <PrivateRoute
+          path="/managePassword"
+          component={lazyLoad(ManagePassword)}
           />
 
         <Route path="/" component={lazyLoad(NotFound)} />

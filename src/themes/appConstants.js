@@ -1177,7 +1177,15 @@ const AppConstants = {
   asAbove: "As Above",
   alreadyPaid: "no need to pay, as its already paid",
 
-  validUntil: 'Valid Until',
+  validUntil: 'Valid Until',  
+  managePassword : 'Manage Password',
+  changeYourPassword: 'Change Your Password',
+  currentPassword: 'Current password',
+  enterCurrentPassword: 'Enter current password',
+  newPassword: 'New password',
+  enterNewPassword: 'Enter new password',
+  confirmPassword: 'Confirm password',
+  enterConfirmPassword: 'Enter confirm password',
 };
 
 export default AppConstants;
