@@ -3556,6 +3556,7 @@ class AppRegistrationFormNew extends Component {
     // }
 
     render() {
+        console.log("render")
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
