@@ -154,6 +154,7 @@ const CheckoutForm = (props) => {
     }
 
     const changePaymentOption = (e, key) => {
+        console.log("Change payment option",payload)
         if (key === 'direct') {
             props.onLoad(true)
             setUser({
@@ -698,6 +699,7 @@ class RegistrationPayment extends Component {
 
     
     contentView = () =>{
+        console.log("content view displayed")
         return(
             <div 
                 className="row"
