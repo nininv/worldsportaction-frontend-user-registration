@@ -1295,12 +1295,12 @@ class UserModulePersonalDetail extends Component {
                     <>
                         {!isTablet && 
                             <div className='profile-image-view' style={{ marginTop: 20 }}>
-                                <div className="circular--landscape">
+                                <div className="circular--landscape" style={{width:"80px", height:"80px"}}>
                                     {
                                         personal.photoUrl ?
                                             <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
                                             :
-                                            <div className="img-upload-target" style={{width:"64px", height:"64px", paddingTop:"8px"}} onClick={() => this.selectImage()}>
+                                            <div className="img-upload-target" style={{width:"80px", height:"80px", paddingTop:"15px"}} onClick={() => this.selectImage()}>
                                                 <div style={{ fontSize: "22px" }}>
                                                     +
                                                     </div>
