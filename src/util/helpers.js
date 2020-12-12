@@ -97,5 +97,12 @@ const reverseArray = (array) => {
   isSortedArray = array.sort(compare)
   return isSortedArray
 };
+
+const regexNumberExpression = (number) => {
+  if (number) {
+      return number.replace(/[^\d]/g, '');
+  }
+};
+
 module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
-  isNullOrUndefined, feeIsNull , captializedString, getCurrentYear, reverseArray }
+  isNullOrUndefined, feeIsNull , captializedString, getCurrentYear, reverseArray , regexNumberExpression}

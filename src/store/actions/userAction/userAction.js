@@ -158,6 +158,13 @@ function registrationResendEmailAction(teamId){
   return action;
 }
 
+function userPasswordUpdateAction(payload) {
+  return {
+      type: ApiConstants.API_USER_PASSWORD_UPDATE_LOAD,
+      payload,
+  };
+}
+
 
 export {
   getRoleAction,
@@ -178,5 +185,6 @@ export {
   getUmpireActivityListAction,
   getAllOrganisationListAction,
   userPhotoUpdateAction,
-  registrationResendEmailAction
+  registrationResendEmailAction,
+  userPasswordUpdateAction
 }

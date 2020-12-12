@@ -117,6 +117,16 @@ let userHttpApi = {
     const url = `api/users/registration/resendmail`;
     return Method.dataPost(url, token, null);
   },
+  updatePassword(data) {
+    console.log(data)
+    let payload = {
+      password: data.currentPassword,
+      newPassword: data.newPassword,
+    }
+    console.log(payload)
+    const url = `users/updatePassword`;
+    return Method.dataPatch(url, token, payload);        
+  },
 }
 
 let Method = {
@@ -328,6 +338,78 @@ let Method = {
               error: err
             });
 
+          }
+        });
+    });
+  },
+  async dataPatch(newUrl, authorization, body) {
+    const url = newUrl;
+    return await new Promise((resolve, reject) => {
+      userHttp
+        .patch(url, body, {    
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: "BWSA " + authorization,
+            "Access-Control-Allow-Origin": "*"
+          }
+        })
+        .then(result => {
+          if (result.status === 200) {
+            return resolve({
+              status: 1,
+              result: result
+            });
+          } else if (result.status === 212) {
+            return resolve({
+              status: 4,
+              result: result
+            });
+          } else {
+            if (result) {
+              return reject({
+                status: 3,
+                error: result.data.message,
+              });
+            } else {
+              return reject({
+                status: 4,
+                error: "Something went wrong."
+              });
+            }
+          }
+        })
+        .catch(err => {
+          if (err.response) {
+            if (err.response.status !== null || err.response.status !== undefined) {
+              if (err.response.status === 401) {
+                let unauthorizedStatus = err.response.status;
+                if (unauthorizedStatus === 401) {
+                  logout();
+                  message.error(ValidationConstants.messageStatus401)
+                }
+              } else if (err.response.status === 400) {
+                message.config({
+                  duration: 1.5,
+                  maxCount: 1,
+                });
+                message.error(err.response.data.message);
+                return reject({
+                  status: 5,
+                  error: err.response.data.message
+                });
+              } else {
+                return reject({
+                  status: 5,
+                  error: err.response && err.response.data.message
+                });
+              }
+            }
+          } else {
+            return reject({
+              status: 5,
+              error: err.response && err.response.data.message
+            });
           }
         });
     });

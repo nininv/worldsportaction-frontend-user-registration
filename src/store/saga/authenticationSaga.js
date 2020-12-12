@@ -3,6 +3,7 @@ import ApiConstants from "../../themes/apiConstants";
 import userAxiosApi from "../http/userHttp/userAxiosApi";
 import { message } from "antd";
 import AppConstants from "../../themes/appConstants";
+import { setAuthToken } from "../../util/sessionStorage";
 
 
 export function* loginApiSaga(action) {
@@ -56,6 +57,49 @@ export function* forgotPasswordSaga(action) {
               result: result.result.data,
               status: result.status,
           });
+      } else {
+          yield put({ type: ApiConstants.API_LOGIN_FAIL });
+
+          setTimeout(() => {
+              message.config({
+                  duration: 1.5,
+                  maxCount: 1,
+              });
+              message.error(result.result.data.message);
+          }, 800);
+      }
+  } catch (error) {
+      yield put({
+          type: ApiConstants.API_LOGIN_ERROR,
+          error,
+          status: error.status,
+      });
+
+      setTimeout(() => {
+          message.config({
+              duration: 1.5,
+              maxCount: 1,
+          });
+          message.error('Something went wrong.');
+      }, 800);
+  }
+}
+
+export function* updatePasswordSaga(action) {
+  try {
+      const result = yield call(userAxiosApi.updatePassword, action.data);
+      console.log("result in saga" , result);
+      if (result.status === 1) {
+        setAuthToken(result.result.data.authToken);
+
+        yield put({
+          type: ApiConstants.API_UPDATE_PASSWORD_SUCCESS,
+          result: result.result.data.user,
+          status: result.status,
+        });
+  
+        message.success('Password is updated successfully.');
+   
       } else {
           yield put({ type: ApiConstants.API_LOGIN_FAIL });
 

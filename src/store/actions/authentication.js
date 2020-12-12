@@ -27,8 +27,26 @@ function clearReducerAction(key) {
   };
 }
 
+// change password fields
+function updatePasswordFieldsAction(key , value) {
+  return {
+    type: ApiConstants.ACTION_TO_UPDATE_PASSWORD_FIELDS,
+    key,
+    value
+  };
+}
+// change password
+function updatePasswordAction(data) {
+  return {
+    type: ApiConstants.API_UPDATE_PASSWORD,
+    data
+  };
+}
+
 export {
    loginAction,
    forgotPasswordAction,
    clearReducerAction,
+   updatePasswordFieldsAction,
+   updatePasswordAction
 }

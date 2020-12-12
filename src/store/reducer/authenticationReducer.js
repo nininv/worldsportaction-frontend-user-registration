@@ -9,14 +9,19 @@ const initialState = {
   error: null,
   result: null,
   status: 0,
-  loggedIn: false
+  loggedIn: false,
+  passwordInputs: {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
 };
 
 function login(state = initialState, action) {
   switch (action.type) {
     case ApiConstants.API_LOGIN_LOAD:
-    localStorage.removeItem("token");
-    localStorage.removeItem('stripeCustomerAccountId')
+      localStorage.removeItem("token");
+      localStorage.removeItem('stripeCustomerAccountId')
       return { ...state, onLoad: true };
 
     case ApiConstants.API_LOGIN_SUCCESS:
@@ -57,17 +62,35 @@ function login(state = initialState, action) {
         status: action.status
       };
 
-      case ApiConstants.API_FORGOT_PASSWORD_LOAD:
-            return { ...state, onLoad: true };
+    case ApiConstants.API_FORGOT_PASSWORD_LOAD:
+      return { ...state, onLoad: true };
 
-        case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
-            return {
-                ...state,
-                forgotPasswordMessage: action.result.message ? action.result.message : '',
-                onLoad: false,
-                forgotPasswordSuccess: true,
-                status: action.status,
-            };
+    case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        forgotPasswordMessage: action.result.message ? action.result.message : '',
+        onLoad: false,
+        forgotPasswordSuccess: true,
+        status: action.status,
+      };
+    case ApiConstants.ACTION_TO_UPDATE_PASSWORD_FIELDS:
+      let passwords = { ...state.passwordInputs };
+      passwords[action.key] = action.value;
+      return {
+        ...state,
+        passwordInputs: passwords
+      };
+
+    case ApiConstants.API_UPDATE_PASSWORD:
+      return { ...state, onLoad: true };
+
+    case ApiConstants.API_UPDATE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        onLoad: false,
+        status: action.status,
+        error: null
+      };
 
     default:
       return state;
