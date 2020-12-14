@@ -642,15 +642,36 @@ class RegistrationProducts extends Component {
                         ))}
                     </Radio.Group>
                 </div>
-                {item.selectedOptions.paymentOptionRefId == 4 && 
-                <div className="row" style={{marginTop: '20px'}}>
-                    {(item.instalmentDates || []).map((i, iIndex) => (
-                        <div className="col-sm-3" key={iIndex}>
-                        <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
-                        <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+                {item.selectedOptions.paymentOptionRefId == 1 &&
+                <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                    <div className="col-sm-3">
+                        <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
+                        <div>{"$" + item.payPerMatch}</div>
                     </div>
-                    )) }
-                </div>}
+                </div>
+                }
+                {item.selectedOptions.paymentOptionRefId == 4 &&
+                <div>
+                    <div className="row" style={{marginTop: '20px'}}>
+                        {(item.instalmentDates || []).map((i, iIndex) => (
+                            <div className="col-sm-3" key={iIndex}>
+                                <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
+                                <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+                            </div>
+                        )) }
+                    </div>
+                    <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                        <div className="col-sm-3">
+                            <div className="subtitle-text-common">{AppConstants.payNow}</div>
+                            <div>{"$" + item.payNow}</div>
+                        </div>
+                        <div className="col-sm-3">
+                            <div className="subtitle-text-common">{AppConstants.payPerInstalment}</div>
+                            <div>{"$" + item.payPerInstalment}</div>
+                        </div>
+                    </div>
+                </div>
+                }
             </div>
         )
     }
