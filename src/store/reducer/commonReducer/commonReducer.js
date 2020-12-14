@@ -28,7 +28,8 @@ const initialState = {
     accreditationUmpireList: [],
     accreditationCoachList: [] ,
     walkingNetballQuesList: [],
-    schoolList: []		 
+    schoolList: [],
+    registrationCapValidationMessage: null		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -298,6 +299,7 @@ function commonReducerState(state = initialState, action) {
             return {
                 ...state,
                 status: action.status,
+                registrationCapValidationMessage: action.result.message,
                 onLoad: false,
                 error : null
             }

@@ -29,6 +29,12 @@ let seasionalAndCasualFeesInputObj = {
 	"competitionMembershipProductTypes": []
 }
 
+let registrationCapValidateInputObjTemp = {
+	"registrationId": "",
+	"isTeamRegistration": 0,
+	"products": []
+  }
+
 let registrationObjTemp = {
     "registrationId": null,
     "participantId": null,
@@ -196,7 +202,9 @@ const initialState = {
 	enableSeasonalAndCasualService: false,
 	getSeasonalCasualFeesOnLoad: false,
 	seasonalAndCasualFeesCompetitionIndex: null,
-	individualCompetitionNotExist: false
+	individualCompetitionNotExist: false,
+	registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
+    enableValidateRegistrationCapService: false
 }
 
 function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
@@ -443,6 +451,45 @@ function getFilteredDivisions(divisions,state){
 	}
 }
 
+function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fromNonProductsOrDivisions,isPlayer){
+	try{
+		let registrationObjTemp = deepCopyFunction(state.registrationObj);
+		let competition = registrationObjTemp.competitions[competitionIndex];
+		let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
+		validateRegistrationCapObj.registrationId = registrationObjTemp.registrationId ? registrationObjTemp.registrationId : "";
+		validateRegistrationCapObj.isTeamRegistration = 0;
+		validateRegistrationCapObj.products = [];
+		if(fromNonProductsOrDivisions == 2 || isPlayer != 1){
+			for(let productItem of competition.products){
+				let divisions = competition.divisions.filter(x => x.competitionMembershipProductId == productItem.competitionMembershipProductId && x.competitionMembershipProductTypeId == productItem.competitionMembershipProductTypeId);
+				if(divisions && divisions.length > 0){
+					for(let divisionItem of divisions){
+						let product = {
+							"competitionId": competition.competitionId,
+							"organisationId": competition.organisationId,
+							"competitionMembershipProductTypeId": divisionItem.competitionMembershipProductTypeId,
+							"divisionId": divisionItem.competitionMembershipProductDivisionId
+						}
+						validateRegistrationCapObj.products.push(product);
+					} 
+				}else{
+					let product = {
+						"competitionId": competition.competitionId,
+						"organisationId": competition.organisationId,
+						"competitionMembershipProductTypeId": productItem.competitionMembershipProductTypeId,
+						"divisionId": null
+					}
+					validateRegistrationCapObj.products.push(product);
+				}
+			}
+			state.registrationCapValidateInputObj = validateRegistrationCapObj;
+			state.enableValidateRegistrationCapService = true;
+		}
+	}catch(ex){
+	  console.log("Error in setValidateRegistrationCapObj::"+ex);
+	}
+  }
+
 function setSeasonalFeeAndCasualFeeInput(state,competitionIndex,fromNonProductsOrDivisions,actionCheckBoxProduct){
 	try{
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
@@ -547,7 +594,8 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
 			}
 
-			setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
+			setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct);
+			setValidateRegistrationBySingleProductCapObj(state,competitionIndex,1,actionCheckBoxProduct.isPlayer)
 		}else{
 			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
 			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
@@ -569,9 +617,11 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			}
 
 			if(actionCheckBoxProduct.isPlayer == 0){
-				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct)
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct);
+				setValidateRegistrationBySingleProductCapObj(state,competitionIndex,1,actionCheckBoxProduct.isPlayer)
 			}else{
-				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2,actionCheckBoxProduct)
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2,actionCheckBoxProduct);
+				setValidateRegistrationBySingleProductCapObj(state,competitionIndex,2,actionCheckBoxProduct.isPlayer)
 			}
 		}
 		
@@ -830,14 +880,16 @@ function userRegistrationReducer(state = initialState, action){
 				let divisionInfoTemp = state.registrationObj.competitions[competitionIndex].divisionInfo;
 				let divisionInfo = divisionInfoTemp.find(x => x.competitionMembershipProductDivisionId == competitionData && x.competitionMembershipProductTypeId == competitionSubData);
 				state.registrationObj.competitions[competitionIndex].divisions.push(divisionInfo);
-				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2);
+				setValidateRegistrationBySingleProductCapObj(state,competitionIndex,2)
 			}
 			else if(competitionKey == "divisions"){
 				if(removeDivisionInfoIndexIfItHas(competitionIndex,competitionSubIndex,state)){
 					state.registrationObj.competitions[competitionIndex].divisionInfoIndex = null
 				}
 				state.registrationObj.competitions[competitionIndex].divisions.splice(competitionSubIndex,1);
-				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2)
+				setSeasonalFeeAndCasualFeeInput(state,competitionIndex,2);
+				setValidateRegistrationBySingleProductCapObj(state,competitionIndex,1)
 			}
 			else if(competitionSubKey == "friends"){
 				state.registrationObj.competitions[competitionIndex].friends[competitionSubIndex][competitionKey] = competitionData;

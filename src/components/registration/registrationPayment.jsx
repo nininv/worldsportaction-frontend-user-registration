@@ -275,7 +275,8 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result", result);
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
+                    registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
+                    // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
 
             }
@@ -616,7 +617,9 @@ class RegistrationPayment extends Component {
             registrationUniqueKey: null,  
             productModalVisible: false ,
             id: null,
-            onLoad: false                  
+            onLoad: false,
+            registrationCapModalVisible: false ,
+            registrationCapValidationMessage: null                 
         };
     }
 
@@ -697,6 +700,26 @@ class RegistrationPayment extends Component {
         }
     }
 
+    registrationCapValidationModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.registrationCapModalVisible}
+                    onCancel={() => this.setState({ registrationCapModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ registrationCapModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                     <p> { this.state.registrationCapValidationMessage }</p>
+                </Modal>
+            </div>
+        )
+    }
+
     
     contentView = () =>{
         console.log("content view displayed")
@@ -706,7 +729,8 @@ class RegistrationPayment extends Component {
                 style={{margin: 0}}
             >
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}          
+                {this.paymentRighttView()}  
+                {this.registrationCapValidationModal()}        
             </div>
         );
     }
@@ -727,7 +751,8 @@ class RegistrationPayment extends Component {
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
                         payload={registrationReviewList} registrationUniqueKey = {this.state.registrationUniqueKey}
                         isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}
-                        mainProps={this.props}/>
+                        mainProps={this.props} registrationCapModalVisible={(status) => this.setState({registrationCapModalVisible: status})}
+                        registrationCapValidationMessage={(error) => this.setState({registrationCapValidationMessage: error})} />
                     </Elements>
                </div>              
             </div>
@@ -963,7 +988,61 @@ function mapDispatchToProps(dispatch)
 
 function mapStatetoProps(state){
     return {
-        registrationProductState: state.RegistrationProductState
+        registrationProductState: state.RegistrationProductState,
+        commonReducerState: state.CommonReducerState
+    }
+}
+
+async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption){
+    try{
+        let url =  "/api/registrationcap/validate";
+        let body = {
+            "registrationId": registrationUniqueKey
+            // "isTeamRegistration": payload.compParticipants.find(x => x.isTeamRegistration == 1) ? 1 : 0,
+            // "products": []
+        };
+        
+        return await new Promise((resolve, reject) => {
+            fetch(`${StripeKeys.apiURL + url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.token,
+                },
+                body: JSON.stringify(body)
+            }).then((response) => {
+                    props.onLoad(false)
+                    let resp = response.json()
+                    resp.then((Response) => {
+                        if (response.status === 200) {
+                            stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption);
+                        }
+                        else if (response.status === 212) {
+                            props.registrationCapModalVisible(true);
+                            props.registrationCapValidationMessage(Response.message);
+                            // message.error(Response.message);
+                        }
+                        else if (response.status === 400) {
+                            message.error(Response.message);
+                        }
+                        else {
+                            message.error("Something went wrong.")
+                        }
+    
+                    })
+    
+                })
+                .catch((error) => {
+                    props.onLoad(false)
+                    console.error(error);
+                });
+        }).then((data) => {
+            console.log("data");
+        }).catch((data) => {
+            console.log("Error")
+        }) 
+    }catch(ex){
+        console.log("Error occured in createPerMatchPayments::"+ex)
     }
 }
 

@@ -48,7 +48,8 @@ import {
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
-    getSchoolListAction
+    getSchoolListAction,
+    validateRegistrationCapAction
 } from '../../store/actions/commonAction/commonAction';
 import {
     getUserRegistrationUserInfoAction,
@@ -110,7 +111,10 @@ class AppRegistrationFormNew extends Component {
             postalCode: null,
             hasErrorParticipitant: false,
             hasErrorParent: false,
-            hasErrorEmergency: false
+            hasErrorEmergency: false,
+            registrationCapModalVisible: false,
+            validateRegistrationCapOnLoad: false,
+            validateRegistrationCapBySubmit: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -228,6 +232,24 @@ class AppRegistrationFormNew extends Component {
         if (registrationState.individualCompetitionNotExist == true) {
             this.setState({ organisationId: null, competitionId: null });
             this.props.updateUserRegistrationStateVarAction("individualCompetitionNotExist", false);
+        }
+
+        if(registrationState.enableValidateRegistrationCapService == true){
+            this.props.validateRegistrationCapAction(registrationState.registrationCapValidateInputObj);
+            this.setState({validateRegistrationCapOnLoad: true})
+            this.props.updateUserRegistrationStateVarAction("enableValidateRegistrationCapService",false)
+        }
+
+        if(this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true){
+            if(this.props.commonReducerState.status == 4){
+                this.setState({registrationCapModalVisible: true})
+            }else{
+                if(this.state.validateRegistrationCapBySubmit == true){
+                    this.stepNavigation();
+                    this.setState({validateRegistrationCapBySubmit: false});
+                }
+            }
+            this.setState({validateRegistrationCapOnLoad: false})
         }
     }
 
@@ -1212,6 +1234,64 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
+    stepNavigation = (registrationObj,expiredRegistration) => {
+        try{
+            let nextStep = this.state.currentStep + 1;
+            this.scrollToTop();
+            if (nextStep == 1) {
+                if (registrationObj.competitions.length == 0 &&
+                    expiredRegistration == null) {
+                    this.setState({ showAddAnotherCompetitionView: true });
+                }
+                this.state.enabledSteps.push(0, nextStep);
+            } else {
+                this.state.enabledSteps.push(nextStep);
+                if (nextStep == 2) {
+                    setTimeout(() => {
+                        this.setParticipantAdditionalInfoStepFormFields();
+                    }, 300);
+                }
+            }
+            this.state.completedSteps.push(this.state.currentStep);
+            this.setState({
+                currentStep: nextStep,
+                enabledSteps: this.state.enabledSteps,
+                completedSteps: this.state.completedSteps
+            });
+        }catch(ex){
+            console.log("Error in stepNavigation::"+ex);
+        }
+    }
+
+    getRegistrationCapValidationInputObj = (registrationObj) => {
+        try{
+            let registrationCapValidateInputObjTemp = {
+                registrationId: registrationObj.registrationId ? registrationObj.registrationId : "",
+                isTeamRegistration: 0,
+                products: []
+            }
+            for(let competition of registrationObj.competitions){
+                for(let productItem of competition.products){
+                    let divisions = competition.divisions.filter(x => x.competitionMembershipProductId == productItem.competitionMembershipProductId && x.competitionMembershipProductTypeId == productItem.competitionMembershipProductTypeId);
+                    if(divisions){
+                        for(let divisionItem of divisions){
+                            let product = {
+                                "competitionId": competition.competitionId,
+                                "organisationId": competition.organisationId,
+                                "competitionMembershipProductTypeId": divisionItem.competitionMembershipProductTypeId,
+                                "divisionId": divisionItem.competitionMembershipProductDivisionId
+                            }
+                            registrationCapValidateInputObjTemp.products.push(product);
+                        } 
+                    }
+                }
+            }
+            return registrationCapValidateInputObjTemp;
+        }catch(ex){
+            console.log("Error in getRegistrationCapValidationInputObj::"+ex)
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
@@ -1243,30 +1323,13 @@ class AppRegistrationFormNew extends Component {
                                 return;
                             }
                         }
+                        let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj)
+                        this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
+                        this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                        return;
                     }
                     if (this.state.currentStep != 2) {
-                        let nextStep = this.state.currentStep + 1;
-                        this.scrollToTop();
-                        if (nextStep == 1) {
-                            if (registrationObj.competitions.length == 0 &&
-                                expiredRegistration == null) {
-                                this.setState({ showAddAnotherCompetitionView: true });
-                            }
-                            this.state.enabledSteps.push(0, nextStep);
-                        } else {
-                            this.state.enabledSteps.push(nextStep);
-                            if (nextStep == 2) {
-                                setTimeout(() => {
-                                    this.setParticipantAdditionalInfoStepFormFields();
-                                }, 300);
-                            }
-                        }
-                        this.state.completedSteps.push(this.state.currentStep);
-                        this.setState({
-                            currentStep: nextStep,
-                            enabledSteps: this.state.enabledSteps,
-                            completedSteps: this.state.completedSteps
-                        });
+                        this.stepNavigation(registrationObj,expiredRegistration);
                     }
                     setTimeout(() => {
                         this.setState({
@@ -1436,7 +1499,6 @@ class AppRegistrationFormNew extends Component {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
         let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
-        console.log("exist",registrationObj,userInfo)
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
@@ -3502,6 +3564,7 @@ class AppRegistrationFormNew extends Component {
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
                         {/* {this.singleCompModalView()} */}
+                        {this.registrationCapValidationModal()}
                     </div>
                 )}
             </div>
@@ -3555,8 +3618,28 @@ class AppRegistrationFormNew extends Component {
     //     )
     // }
 
+    registrationCapValidationModal = () => {
+        const { registrationCapValidationMessage } = this.props.commonReducerState;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.registrationCapModalVisible}
+                    onCancel={() => this.setState({ registrationCapModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ registrationCapModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                   <p> { registrationCapValidationMessage }</p>
+                </Modal>
+            </div>
+        )
+    }
+
     render() {
-        console.log("render")
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
@@ -3621,7 +3704,8 @@ function mapDispatchToProps(dispatch) {
         orgRegistrationRegSettingsEndUserRegAction,
         registrationExpiryCheckAction,
         getSeasonalAndCasualFees,
-        getSchoolListAction
+        getSchoolListAction,
+        validateRegistrationCapAction
     }, dispatch);
 
 }

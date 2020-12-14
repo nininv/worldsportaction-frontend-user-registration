@@ -124,7 +124,8 @@ class AppTeamRegistrationForm extends Component{
             showExpiredRegistrationView: false,
             buttonSubmitted: false,
             validateRegistrationCapBySubmit: false,
-            registrationCapModalVisible: false
+            registrationCapModalVisible: false,
+            validateRegistrationCapOnLoad: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -191,7 +192,7 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(nextProps){
         try{
             let teamRegistrationState = this.props.teamRegistrationState;
 
@@ -296,14 +297,23 @@ class AppTeamRegistrationForm extends Component{
                 this.props.updateTeamRegistrationStateVarAction(false,"teamCompetitionNotExist");
             }
 
+            //Below 2 conditions for Registration cap validation
             if(teamRegistrationState.enableValidateRegistrationCapService == true){
                 this.props.validateRegistrationCapAction(teamRegistrationState.registrationCapValidateInputObj);
+                this.setState({validateRegistrationCapOnLoad: true})
                 this.props.updateTeamRegistrationStateVarAction(false,"enableValidateRegistrationCapService")
             }
 
-            if(this.state.validateRegistrationCapBySubmit == true){
-                this.stepNavigation();
-                this.setState({validateRegistrationCapBySubmit: false});
+            if(this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true){
+                if(this.props.commonReducerState.status == 4){
+                    this.setState({registrationCapModalVisible: true})
+                }else{
+                    if(this.state.validateRegistrationCapBySubmit == true){
+                        this.stepNavigation();
+                        this.setState({validateRegistrationCapBySubmit: false});
+                    }
+                }
+                this.setState({validateRegistrationCapOnLoad: false})
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -1315,7 +1325,8 @@ class AppTeamRegistrationForm extends Component{
                         //     return;
                         // } 
                         this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
-                        this.setState({validateRegistrationCapBySubmit: true})
+                        this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                        return;
                     }
                     if(this.state.currentStep == 1){
                         let addressSearchError = this.addressSearchValidation();
@@ -3941,6 +3952,7 @@ class AppTeamRegistrationForm extends Component{
     }
 
     registrationCapValidationModal = () => {
+        const { registrationCapValidationMessage } = this.props.commonReducerState;
         return (
             <div>
                 <Modal
@@ -3954,9 +3966,7 @@ class AppTeamRegistrationForm extends Component{
                         </Button>
                     ]}
                 >
-                    {/* {(errorMsg || []).map((item, index) => (
-                        <p key={index}> {item}</p>
-                    ))} */}
+                     <p> { registrationCapValidationMessage }</p>
                 </Modal>
             </div>
         )

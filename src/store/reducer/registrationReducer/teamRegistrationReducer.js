@@ -361,6 +361,7 @@ function setDivisions(state,competitionMembershipProductTypeId){
       if(state.teamRegistrationObj.divisions.length == 1){
         state.teamRegistrationObj.competitionMembershipProductDivisionId = state.teamRegistrationObj.divisions[0].competitionMembershipProductDivisionId;
         setSeasonalAndCasualFeesObj(state);
+        setValidateRegistrationCapObj(state);
       }else{
         state.teamRegistrationObj.competitionMembershipProductDivisionId = null;
       }
@@ -376,8 +377,9 @@ function setValidateRegistrationCapObj(state){
   try{
     let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
     let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
-    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId;
+    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId ? teamRegistrationObjTemp.registrationId : "";
     validateRegistrationCapObj.isTeamRegistration = 1;
+    validateRegistrationCapObj.products = [];
     let product = {
       "competitionId": teamRegistrationObjTemp.competitionId,
       "organisationId": teamRegistrationObjTemp.organisationId,
@@ -549,7 +551,7 @@ function teamRegistrationReducer(state = initialState, action){
             }else if(action.key == "competitionMembershipProductDivisionId"){
               state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
               setSeasonalAndCasualFeesObj(state);
-              // setValidateRegistrationCapObj(state);
+              setValidateRegistrationCapObj(state);
             }else if(action.key == "addTeamMember"){
               let teamMemberObj = getUpdatedTeamMemberObj(state);
               state.teamRegistrationObj.teamMembers.push(teamMemberObj);
