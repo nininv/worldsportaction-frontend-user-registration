@@ -81,7 +81,7 @@ const columns = [
                                 logo ?
                                     <img src={logo} alt="" />
                                     :
-                                    <span className="user-contact-heading p-0" style={{ fontSize: 10 }} >{AppConstants.noImage}</span>
+                                    <span className="user-heading p-0" style={{ fontSize: 10 }} >{AppConstants.noImage}</span>
 
                             }
                         </div> */}
@@ -388,7 +388,7 @@ const columnsPersonalAddress = [
                 style={{ lineHeight: "25px" }}>
                 <SubMenu
                     key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDot}
+                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                         alt="" width="16" height="16" />}
                 >
                     <Menu.Item key="1">
@@ -451,7 +451,7 @@ const columnsPersonalPrimaryContacts = [
                 mode="horizontal" style={{ lineHeight: "25px" }}>
                 <SubMenu
                     key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDot}
+                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                         alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1">
@@ -514,7 +514,7 @@ const columnsPersonalChildContacts = [
                 mode="horizontal" style={{ lineHeight: "25px" }}>
                 <SubMenu
                     key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDot}
+                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                         alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1">
@@ -556,7 +556,7 @@ const columnsPersonalEmergency = [
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image"
-                        src={AppImages.moreTripleDot} alt="" width="16" height="16" />
+                        src={AppImages.moreTripleDotActive} alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1">
                         <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "3" } }} >
@@ -1239,13 +1239,44 @@ class UserModulePersonalDetail extends Component {
         return (
             <Header className="comp-player-grades-header-view container mb-n3" >
                 <div className="row" >
-                    <div className="col-sm" style={{ display: "flex", alignContent: "center" }} >
+                    <div className="col-sm d-flex align-content-center">
                         <Breadcrumb separator=" > ">
                             < Breadcrumb.Item className="breadcrumb-add">{AppConstants.personalDetails}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                 </div>
             </Header >
+        )
+    }
+
+    personalPhotoView = () => {
+        const personal = this.props.userState.personalData;
+
+        return (
+            <div className={`${!this.state.isTablet ? 'align-self-center' : ''} circular--landscape`}>
+                {
+                    personal.photoUrl ?
+                        <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
+                        :
+                        <div 
+                            className="img-upload-target" 
+                            onClick={() => this.selectImage()}
+                        >
+                            <div className="img-upload-target-plus">
+                                +
+                            </div>
+                            <div style={{ marginTop: "-7px" }}>
+                                {AppConstants.addPhoto}
+                            </div>
+                        </div>
+                }
+                <input
+                    type="file"
+                    id={"user-pic"}
+                    style={{ display: 'none' }}
+                    onChange={(evt) => this.setImage(evt.target)}
+                />
+            </div>
         )
     }
 
@@ -1261,23 +1292,17 @@ class UserModulePersonalDetail extends Component {
 
                 {isTablet && 
                     <div
-                        className="breadcrumb-product mt-3 mb-3 d-flex justify-content-between align-items-center"
+                        className="d-flex justify-content-between align-items-center"
                         style={{
-                            height: 80,
+                            minHeight: 48,
+                            padding: '16px 20px',
+                            borderBottom: '1px solid rgba(27, 27, 52, 0.07)'
                         }}
                     >
                         <div className='d-flex align-items-center'>
-                            <div className="circular--landscape" style={{ width: 48, height: 48 }}>
-                                {
-                                    personal.photoUrl ?
-                                        <img src={personal.photoUrl} alt="" />
-                                        :
-                                        <span className="user-contact-heading p-0" style={{ fontSize: 10 }} >{AppConstants.noImage}</span>
-
-                                }
-                            </div>
+                            {this.personalPhotoView()}
                             <div className='d-flex flex-column align-items-start justify-content-center' style={{ marginLeft: 16 }}>
-                                <span className="user-contact-heading p-0">{personal.firstName + " " + personal.lastName}</span>
+                                <span className="user-heading p-0">{personal.firstName + " " + personal.lastName}</span>
                                 <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                             </div>
                         </div>
@@ -1294,29 +1319,9 @@ class UserModulePersonalDetail extends Component {
                 {(!isCollapsedUserDetails || !isTablet) &&
                     <>
                         {!isTablet && 
-                            <div className='profile-image-view' style={{ marginTop: 20 }}>
-                                <div className="circular--landscape" style={{width:"80px", height:"80px"}}>
-                                    {
-                                        personal.photoUrl ?
-                                            <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
-                                            :
-                                            <div className="img-upload-target" style={{width:"80px", height:"80px", paddingTop:"15px"}} onClick={() => this.selectImage()}>
-                                                <div style={{ fontSize: "22px" }}>
-                                                    +
-                                                    </div>
-                                                <div style={{ marginTop: "-7px" }}>
-                                                    {AppConstants.addPhoto}
-                                                </div>
-                                            </div>
-                                    }
-                                    <input
-                                        type="file"
-                                        id={"user-pic"}
-                                        style={{ display: 'none' }}
-                                        onChange={(evt) => this.setImage(evt.target)}
-                                    />
-                                </div>
-                                <span className="user-contact-heading">{personal.firstName + " " + personal.lastName}</span>
+                            <div className='profile-image-view' style={{ marginTop: 40, marginBottom: 23 }}>
+                                {this.personalPhotoView()}
+                                <span className="user-heading">{personal.firstName + " " + personal.lastName}</span>
                                 {personal.userId ? 
                                     <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                                     :
@@ -1326,25 +1331,34 @@ class UserModulePersonalDetail extends Component {
                         }
 
 
-                        <div className="live-score-profile-img-view">
-                            <div className="live-score-side-desc-view d-flex flex-wrap">
+                        <div className={`${isTablet ? 'content-view-padding' : ''} profile-info-view`}>
+                            <div className="profile-info-desc-view d-flex flex-wrap">
                                 <div className='user-details-info-text-wrapper'>
                                     <span className='user-details-info-text mr-3'>{AppConstants.dateOfBirth}</span>
                                 </div>
-                                <span className="user-details-info-text">{liveScore_formateDate(personal.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(personal.dateOfBirth)}</span>
+                                <span className="user-details-info-text text-overflow">{liveScore_formateDate(personal.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(personal.dateOfBirth)}</span>
                             </div>
-                            <div className="live-score-side-desc-view d-flex flex-wrap" style={{ paddingBottom: 25 }}>
+                            <div className="profile-info-desc-view d-flex flex-wrap">
                                 <div className='user-details-info-text-wrapper'>
                                     <span className='user-details-info-text mr-3'>{AppConstants.phone}</span>
                                 </div>
-                                <span className="user-details-info-text">{personal.mobileNumber}</span>
+                                <span className="user-details-info-text text-overflow">{personal.mobileNumber}</span>
+                            </div>
+                            <div className="profile-info-desc-view d-flex flex-wrap">
+                                <div className='user-details-info-text-wrapper'>
+                                    <span className='user-details-info-text mr-3'>{AppConstants.email}</span>
+                                </div>
+                                <span className="user-details-info-text text-overflow">{personal.email}</span>
                             </div>
 
-                            <div className="orange-action-txt" style={{ marginBottom: 36, cursor: 'default' }}>
+                            <div
+                                className="orange-action-txt user-orange-action-txt"
+                                onClick={() => this.onChangeTab('4')}
+                            >
                                 <span className="add-another-button-border" style={{ padding: '7px 15px' }}>{AppConstants.personalDetails}</span>
                             </div>
 
-                            <div className="live-score-side-desc-view">
+                            <div className="profile-info-details-view">
                                 <div className="live-score-title-icon-view">
                                     <span className='year-select-heading'>{AppConstants.competition}</span>
                                 </div>
@@ -1374,23 +1388,23 @@ class UserModulePersonalDetail extends Component {
                                     ))}
                                 </Select>
                             </div>
-                            <div className="live-score-side-desc-view">
+                            <div className="profile-info-details-view">
                                 <div className="live-score-title-icon-view">
                                     <span className='year-select-heading'>{AppConstants.team}</span>
                                 </div>
                                 {(this.state.teams != null && this.state.teams || []).map((item, index) => (
-                                    <div key={item.teamId} className="live-score-desc-text side-bar-profile-data">{item.teamName}</div>
+                                    <div key={item.teamId} className="side-bar-profile-desc-text">{item.teamName}</div>
                                 ))}
 
                             </div>
-                            <div className="live-score-side-desc-view">
+                            <div className="profile-info-details-view">
                                 <div className="live-score-title-icon-view">
                                     <span className='year-select-heading'>{AppConstants.division}</span>
                                 </div>
                                 {(this.state.divisions != null && this.state.divisions || []).map((item, index) => (
-                                    <div key={item.divisionId} className="live-score-desc-text side-bar-profile-data">{item.divisionName}</div>
+                                    <div key={item.divisionId} className="side-bar-profile-desc-text">{item.divisionName}</div>
                                 ))}
-                                {/* <span className="live-score-desc-text side-bar-profile-data">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
+                                {/* <span className="side-bar-profile-desc-text">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
                             </div>
                         </div>
                     </>
@@ -1586,10 +1600,10 @@ class UserModulePersonalDetail extends Component {
                 </div>
                 <div className="row ">
                     <div className="col-sm user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.otherInformation}</div>
-                    <div className="col-sm" style={{ marginTop: '7px', marginRight: '15px' }}>
-                        <div className="comp-buttons-view">
+                    <div className="col-sm d-flex justify-content-end align-items-end" style={{ marginTop: 7, marginBottom: 10 }}>
+                        <div className="comp-buttons-view m-0">
                             <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4" } }} >
-                                <Button className="other-info-btn other-info-edit-btn" type="primary" >
+                                <Button className="other-info-btn other-info-edit-btn m-0" type="primary" >
                                     {AppConstants.edit}
                                 </Button>
                             </NavLink>
@@ -1600,35 +1614,35 @@ class UserModulePersonalDetail extends Component {
                     <div style={{ marginTop: '7px', marginRight: '15px', marginBottom: '15px' }}>
                         <div className="other-info-row" style={{ paddingTop: '10px' }}>
                             <div className="year-select-heading other-info-label" >{AppConstants.gender}</div>
-                            <div className="live-score-desc-text side-bar-profile-data other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].gender : null}</div>
+                            <div className="side-bar-profile-desc-text other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].gender : null}</div>
                         </div>
                         {userRegId != null &&
                             <div>
                                 <div className="other-info-row">
                                     <div className="year-select-heading other-info-label" >{AppConstants.countryOfBirth}</div>
-                                    <div className="desc-text-style side-bar-profile-data other-info-font">{countryName}</div>
+                                    <div className="side-bar-profile-desc-text other-info-font">{countryName}</div>
                                 </div>
                                 {/* <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.nationalityReference}</div>
-                                    <div className="desc-text-style side-bar-profile-data other-info-font">{nationalityName}</div>
+                                    <div className="side-bar-profile-desc-text other-info-font">{nationalityName}</div>
                                 </div>
                                 <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.childLangSpoken}</div>
-                                    <div className="desc-text-style side-bar-profile-data other-info-font">{languages}</div>
+                                    <div className="side-bar-profile-desc-text other-info-font">{languages}</div>
                                 </div> */}
                             </div>}
                         <div className="other-info-row">
                             <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
-                            <div className="desc-text-style side-bar-profile-data other-info-font" style={{ paddingTop: 7 }}>{childrenCheckNumber}</div>
+                            <div className="side-bar-profile-desc-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckNumber}</div>
                         </div>
                         <div className="other-info-row">
                             <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
-                            <div className="desc-text-style side-bar-profile-data other-info-font" style={{ paddingTop: 7 }}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
+                            <div className="side-bar-profile-desc-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
                         </div>
 
                         {/* <div className="other-info-row">
 							<div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.disability}</div>
-							<div className="live-score-desc-text side-bar-profile-data other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
+							<div className="side-bar-profile-desc-text other-info-font">{personal.isDisability == 0 ? "No" : "Yes"}</div>
 						</div> */}
                     </div>
                 </div>
@@ -1650,7 +1664,7 @@ class UserModulePersonalDetail extends Component {
                 {
                     (medical || []).map((item, index) => (
                         <div key={item.userRegistrationId} className="table-responsive home-dash-table-view">
-                            <div className="col-sm" style={{ marginTop: '7px', marginRight: '15px' }}>
+                            <div className="col-sm d-flex justify-content-end" style={{ marginRight: '15px' }}>
                                 <div className="comp-buttons-view">
                                     <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: item, moduleFrom: "5" } }} >
                                         <Button className="other-info-btn other-info-edit-btn" type="primary" >
@@ -1661,19 +1675,19 @@ class UserModulePersonalDetail extends Component {
                             </div>
                             <div style={{ marginBottom: "1%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.existingMedConditions}</div>
-                                <div className="live-score-desc-text side-bar-profile-data other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.existingMedicalCondition}
                                 </div>
                             </div>
                             <div style={{ marginBottom: "3%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.redularMedicalConditions}</div>
-                                <div className="live-score-desc-text side-bar-profile-data other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.regularMedication}
                                 </div>
                             </div>
                             <div style={{ marginBottom: "3%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.disability}</div>
-                                <div className="live-score-desc-text side-bar-profile-data other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.isDisability}
                                 </div>
                             </div>
@@ -1701,7 +1715,6 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let userRegistrationList = userState.userRegistrationList;
         let total = userState.userRegistrationDataTotalCount;
-        console.log('userRegistrationList', userRegistrationList)
         return (
             <div className="mt-2">
                 <div className="table-responsive home-dash-table-view">
@@ -1832,12 +1845,7 @@ class UserModulePersonalDetail extends Component {
                         display: "flex", paddingLeft: '0px',
                         alignItems: "center",
                     }} >
-                        <Breadcrumb separator=" > ">
-                            {/* <NavLink to="/userGraphicalDashboard" >
-                            <Breadcrumb.Item separator=">" className="breadcrumb-product">{AppConstants.user}</Breadcrumb.Item>
-                        </NavLink> */}
-                            <div className="breadcrumb-product">{AppConstants.userProfile}</div>
-                        </Breadcrumb>
+                        <div className="user-heading">{AppConstants.userProfile}</div>
                     </Header >
                 </div>
 
@@ -2024,9 +2032,9 @@ class UserModulePersonalDetail extends Component {
                                 }}
                             >
                                 <div
-                                    className={`${isTablet ? "col-sm-12" : "col-sm-3"} bg-white content-view-padding`}
+                                    className={`${isTablet ? "col-sm-12 px-0" : "col-sm-3 content-view-padding"} bg-white`}
                                     style={{
-                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '7%'}`
+                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '7%'}`,
                                     }}
                                 >
                                     {this.leftHandSideView()}

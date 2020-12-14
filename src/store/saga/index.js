@@ -11,7 +11,7 @@ import {
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
   identificationReferenceSaga, otherSportsReferenceSaga, accreditationUmpireReferenceSaga,
-  accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga, getSchoolsSaga
+  accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga, getSchoolsSaga, validateRegistrationCapSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -290,5 +290,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD, userSaga.registrationResendEmailSaga);
 
   yield takeEvery(ApiConstants.API_UPDATE_PASSWORD, updatePasswordSaga);
+  
+  yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
 
 }

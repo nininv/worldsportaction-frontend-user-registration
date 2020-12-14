@@ -47,15 +47,28 @@
   margin-right: 15px;
 }
 
-.user-contact-heading {
+.user-heading {
   display: flex;
   align-content: center;
   padding-top: 20px;
   padding-bottom: 11px;
-  font-size: 15px;
-  color: var(--app-1b1b34);
+  font-size: 22px;
+  color: var(--app-414141);
   font-weight: 500;
   font-family: inter-medium;
+}
+
+.form-header-view .user-heading {
+  padding: 0;
+}
+
+
+.side-bar-profile-desc-text {
+  font-size: 15px;
+  color: var(--app-414141);
+  font-weight: 500;
+  font-family: inter-medium;
+  padding-top: 10px;
 }
 
 .user-approval-button {
@@ -275,7 +288,7 @@
   width: 100%;
 }		
 
-.circular--landscape .user-contact-heading {
+.circular--landscape .user-heading {
   font-size: 10px;
 }
 
@@ -340,4 +353,70 @@
 
 .inside-table-view .ant-tabs-tab-arrow-show > span {
   line-height: 10px;
+}
+
+.img-upload-target {
+  width: 64px;
+  height: 64px;
+  padding-top: 8px;
+}
+
+.img-upload-target-plus {
+  font-size: 22px;
+}
+
+.profile-info-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info-desc-view {
+  margin-bottom: 20px;
+}
+
+.profile-info-details-view {
+  margin-bottom: 30px;
+}
+
+.profile-info-details-view:last-of-type {
+  margin-bottom: 10px;
+}
+
+.user-orange-action-txt {
+  margin-bottom: 36px;
+  margin-top: 33px;
+}
+
+@media (max-width: 767px) {
+  .form-header-view .user-heading {
+    font-size: 22px;
+  }
+
+  .user-heading {
+    font-size: 14px;
+  }
+
+  .circular--landscape {
+    width: 48px;
+    height: 48px;
+  }
+
+  .img-upload-target {
+    width: 48px;
+    height: 48px;
+    font-size: 8px;
+  }
+
+  .img-upload-target-plus {
+    font-size: 16px;
+  }
+
+  .profile-info-view {
+    margin-top: 30px;
+  }
+
+  .user-orange-action-txt {
+    margin-top: 10px;
+    margin-bottom: 25px;
+  }
 }
