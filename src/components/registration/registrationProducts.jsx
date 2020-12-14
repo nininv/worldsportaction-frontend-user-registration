@@ -474,7 +474,7 @@ class RegistrationProducts extends Component {
                 </span>
                 <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
             </div> 
-            <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
+            <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey, item.teamName)}>                   
                 <span className="link-text-common" style={{marginRight: "15px"}}>
                     {AppConstants.remove}
                 </span>
