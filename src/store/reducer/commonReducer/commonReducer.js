@@ -291,6 +291,17 @@ function commonReducerState(state = initialState, action) {
                 error: null
             };
 
+        case ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD:
+            return {...state,onLoad: true,error: null}
+
+        case ApiConstants.API_VALIDATE_REGISTRATION_CAP_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                onLoad: false,
+                error : null
+            }
+
         default:
             return state;
     }

@@ -260,6 +260,11 @@ let AxiosApi = {
     getSingleGameData(payload){
         var url = `api/registration/singlegame`;
         return Method.dataPost(url,token,payload)
+    },
+
+    validateRegistrationCap(payload){
+        var url = `api/registrationcap/validate`;
+        return Method.dataPost(url,token,payload)
     }
 };
 

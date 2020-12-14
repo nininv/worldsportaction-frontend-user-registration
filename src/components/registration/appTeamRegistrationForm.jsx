@@ -59,7 +59,8 @@ import {
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction ,
-    getSchoolListAction
+    getSchoolListAction,
+    validateRegistrationCapAction
 } from '../../store/actions/commonAction/commonAction';
 import { isEmptyArray } from "formik";
 import Loader from '../../customComponents/loader';
@@ -74,6 +75,7 @@ import { captializedString } from "../../util/helpers";
 import { NavLink } from "react-router-dom";
 import CSVReader from 'react-csv-reader';
 import { nearByOrganisations } from "../../util/geocode";
+import commonReducerState from "../../store/reducer/commonReducer/commonReducer";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -120,7 +122,9 @@ class AppTeamRegistrationForm extends Component{
             onExistingTeamInfoByIdLoad: false,
             onExpiredRegistrationCheckLoad: false,
             showExpiredRegistrationView: false,
-            buttonSubmitted: false
+            buttonSubmitted: false,
+            validateRegistrationCapBySubmit: false,
+            registrationCapModalVisible: false
         }
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -290,6 +294,16 @@ class AppTeamRegistrationForm extends Component{
             if(teamRegistrationState.teamCompetitionNotExist == true){
                 this.setState({organisationId: null,competitionId: null});
                 this.props.updateTeamRegistrationStateVarAction(false,"teamCompetitionNotExist");
+            }
+
+            if(teamRegistrationState.enableValidateRegistrationCapService == true){
+                this.props.validateRegistrationCapAction(teamRegistrationState.registrationCapValidateInputObj);
+                this.props.updateTeamRegistrationStateVarAction(false,"enableValidateRegistrationCapService")
+            }
+
+            if(this.state.validateRegistrationCapBySubmit == true){
+                this.stepNavigation();
+                this.setState({validateRegistrationCapBySubmit: false});
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -1249,6 +1263,34 @@ class AppTeamRegistrationForm extends Component{
         }
     }
 
+    stepNavigation = () => {
+        try{
+            let nextStep = this.state.currentStep + 1;
+            this.scrollToTop();
+            if(nextStep == 1){
+                this.state.enabledSteps.push(0,nextStep);
+                setTimeout(() => {
+                    this.setParticipantDetailStepFormFields();
+                },300);
+            }else{
+                this.state.enabledSteps.push(nextStep);
+                if(nextStep == 2){
+                    setTimeout(() => {
+                        this.setParticipantAdditionalInfoStepFormFields();
+                    },300);
+                }
+            }
+            this.state.completedSteps.push(this.state.currentStep);
+            this.setState({currentStep: nextStep,
+            enabledSteps: this.state.enabledSteps,
+            completedSteps: this.state.completedSteps});
+            this.setState({submitButtonText: nextStep == 1 ? 
+                AppConstants.next : AppConstants.signupToCompetition});
+        }catch(ex){
+            console.log("Error in stepNavigation::"+ex)
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try{
             e.preventDefault();
@@ -1272,6 +1314,8 @@ class AppTeamRegistrationForm extends Component{
                         //     message.error(ValidationConstants.fillMembershipProductInformation);
                         //     return;
                         // } 
+                        this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
+                        this.setState({validateRegistrationCapBySubmit: true})
                     }
                     if(this.state.currentStep == 1){
                         let addressSearchError = this.addressSearchValidation();
@@ -1291,27 +1335,7 @@ class AppTeamRegistrationForm extends Component{
                         }
                     }
                     if(this.state.currentStep != 2){
-                        let nextStep = this.state.currentStep + 1;
-                        this.scrollToTop();
-                        if(nextStep == 1){
-                            this.state.enabledSteps.push(0,nextStep);
-                            setTimeout(() => {
-                                this.setParticipantDetailStepFormFields();
-                            },300);
-                        }else{
-                            this.state.enabledSteps.push(nextStep);
-                            if(nextStep == 2){
-                                setTimeout(() => {
-                                    this.setParticipantAdditionalInfoStepFormFields();
-                                },300);
-                            }
-                        }
-                        this.state.completedSteps.push(this.state.currentStep);
-                        this.setState({currentStep: nextStep,
-                        enabledSteps: this.state.enabledSteps,
-                        completedSteps: this.state.completedSteps});
-                        this.setState({submitButtonText: nextStep == 1 ? 
-                            AppConstants.next : AppConstants.signupToCompetition});
+                       this.stepNavigation();
                     }
 
                     if(this.state.currentStep == 2){
@@ -3863,6 +3887,7 @@ class AppTeamRegistrationForm extends Component{
                     </Steps>
                     {this.stepsContentView(getFieldDecorator)}
                     {this.singleCompModalView()}
+                    {this.registrationCapValidationModal()}
                 </div>
             )
         }catch(ex){
@@ -3910,6 +3935,28 @@ class AppTeamRegistrationForm extends Component{
                     {(errorMsg || []).map((item, index) => (
                         <p key={index}> {item}</p>
                     ))}
+                </Modal>
+            </div>
+        )
+    }
+
+    registrationCapValidationModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.registrationCapModalVisible}
+                    onCancel={() => this.setState({ registrationCapModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ registrationCapModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                    {/* {(errorMsg || []).map((item, index) => (
+                        <p key={index}> {item}</p>
+                    ))} */}
                 </Modal>
             </div>
         )
@@ -3970,7 +4017,8 @@ function mapDispatchToProps(dispatch){
         teamRegistrationExpiryCheckAction,
         getSeasonalAndCasualFees,
         getSchoolListAction,
-        teamNameValidationAction
+        teamNameValidationAction,
+        validateRegistrationCapAction
     }, dispatch);
 
 }

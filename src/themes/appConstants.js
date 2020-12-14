@@ -1186,6 +1186,7 @@ const AppConstants = {
   enterNewPassword: 'Enter new password',
   confirmPassword: 'Confirm password',
   enterConfirmPassword: 'Enter confirm password',
+  warning: "Warning"
 };
 
 export default AppConstants;
