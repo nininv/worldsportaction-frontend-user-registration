@@ -154,6 +154,7 @@ const CheckoutForm = (props) => {
     }
 
     const changePaymentOption = (e, key) => {
+        console.log("Change payment option",payload)
         if (key === 'direct') {
             props.onLoad(true)
             setUser({
@@ -698,6 +699,7 @@ class RegistrationPayment extends Component {
 
     
     contentView = () =>{
+        console.log("content view displayed")
         return(
             <div 
                 className="row"
@@ -1033,7 +1035,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
                             if(Response.message != AppConstants.alreadyPaid){
-                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,token);
                             }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
@@ -1092,15 +1094,29 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     }) 
 }
 
-async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,props,registrationUniqueKey){
+async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,props,registrationUniqueKey,token){
     try{
         console.log("invoice id",invoiceId)
         let url =  "/api/payments/createpermatchpayments";
-        let body = {
-            invoiceId: invoiceId,
-            subPaymentType: perMatchSeletedPaymentOption,
-            registrationId: registrationUniqueKey
+        let body = null;
+        if(perMatchSeletedPaymentOption == 'card'){
+            let stripeToken = token.id
+            body = {
+                invoiceId: invoiceId,
+                subPaymentType: perMatchSeletedPaymentOption,
+                registrationId: registrationUniqueKey,
+                token: {
+                    id: stripeToken
+                }
+            }
+        }else{
+            body = {
+                invoiceId: invoiceId,
+                subPaymentType: perMatchSeletedPaymentOption,
+                registrationId: registrationUniqueKey
+            }
         }
+        
         return await new Promise((resolve, reject) => {
             fetch(`${StripeKeys.apiURL + url}`, {
                 method: 'POST',

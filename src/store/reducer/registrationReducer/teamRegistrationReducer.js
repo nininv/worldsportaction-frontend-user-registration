@@ -28,6 +28,12 @@ let seasionalAndCasualFeesInputObj = {
 	"competitionMembershipProductTypes": []
 }
 
+let registrationCapValidateInputObjTemp = {
+  "registrationId": "",
+  "isTeamRegistration": 0,
+  "products": []
+}
+
 const teamObj = {
   "registrationId": null,
   "participantId": null,
@@ -216,7 +222,9 @@ const initialState = {
     seasionalAndCasualFeesInputObj : null,
     teamNameValidationResultCode: null,
     feesInfo: null,
-    teamCompetitionNotExist: false
+    teamCompetitionNotExist: false,
+    registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
+    enableValidateRegistrationCapService: false
 }
 
 function setTeamRegistrationObj(state){
@@ -361,6 +369,26 @@ function setDivisions(state,competitionMembershipProductTypeId){
     }
   }catch(ex){
     console.log("Error in setDivisions::"+ex);
+  }
+}
+
+function setValidateRegistrationCapObj(state){
+  try{
+    let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
+    let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
+    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId;
+    validateRegistrationCapObj.isTeamRegistration = 1;
+    let product = {
+      "competitionId": teamRegistrationObjTemp.competitionId,
+      "organisationId": teamRegistrationObjTemp.organisationId,
+      "competitionMembershipProductTypeId": teamRegistrationObjTemp.competitionMembershipProductTypeId,
+      "divisionId": teamRegistrationObjTemp.competitionMembershipProductDivisionId
+    }
+    validateRegistrationCapObj.products.push(product);
+    state.registrationCapValidateInputObj = validateRegistrationCapObj;
+    state.enableValidateRegistrationCapService = true;
+  }catch(ex){
+    console.log("Error in setValidateRegistrationCapObj::"+ex);
   }
 }
 
@@ -521,6 +549,7 @@ function teamRegistrationReducer(state = initialState, action){
             }else if(action.key == "competitionMembershipProductDivisionId"){
               state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
               setSeasonalAndCasualFeesObj(state);
+              // setValidateRegistrationCapObj(state);
             }else if(action.key == "addTeamMember"){
               let teamMemberObj = getUpdatedTeamMemberObj(state);
               state.teamRegistrationObj.teamMembers.push(teamMemberObj);

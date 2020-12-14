@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "d60b2d86-8e6d-4706-8b31-9e3b2b37a0f5";
+        // let registrationUniqueKey = "981eb76f-6080-48a8-9506-948bb1254627";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -229,7 +229,7 @@ class RegistrationProducts extends Component {
         else if(key == "removeDiscount"){
             this.callSaveRegistrationProducts("discount", registrationReview)
         }
-        else if(key == "isSchoolRegCodeApplied"){
+        else if(key == "isSchoolRegCodeApplied" || subIndex == "removeSchoolRegCode"){
             this.callSaveRegistrationProducts("school", registrationReview)
         }
         else if(key == "voucher"){
@@ -444,7 +444,7 @@ class RegistrationProducts extends Component {
 
     }
 
-    participantDetailView = () =>{
+    participantDetailView = (isSchoolRegistration) =>{
         const {registrationReviewList} = this.props.registrationProductState;
         //console.log("registrationReviewList", this.props.registrationProductState);
         let compParticipants = registrationReviewList!= null ? 
@@ -456,8 +456,8 @@ class RegistrationProducts extends Component {
                     <div style={{marginBottom: "40px"}} key={item.participantId + "#" + index}>
                         {this.userInfoView(item, index)}
                         {this.productsView(item, index)}
-                        {this.discountcodeView(item, index)}
-                        {item.isTeamRegistration == 1 && item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
+                        {this.discountcodeView(item, index, isSchoolRegistration)}
+                        {item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item,index)}
                         {this.governmentVoucherView(item, index)}
                     </div>
                 ))}
@@ -474,7 +474,7 @@ class RegistrationProducts extends Component {
                 </span>
                 <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
             </div> 
-            <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey)}>                   
+            <div className="transfer-image-view pointer"  onClick={() => this.removeParticipantModal('show', item.participantId,item.competitionUniqueKey,item.organisationUniqueKey, item.teamName)}>                   
                 <span className="link-text-common" style={{marginRight: "15px"}}>
                     {AppConstants.remove}
                 </span>
@@ -642,20 +642,41 @@ class RegistrationProducts extends Component {
                         ))}
                     </Radio.Group>
                 </div>
-                {item.selectedOptions.paymentOptionRefId == 4 && 
-                <div className="row" style={{marginTop: '20px'}}>
-                    {(item.instalmentDates || []).map((i, iIndex) => (
-                        <div className="col-sm-3" key={iIndex}>
-                        <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
-                        <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+                {item.selectedOptions.paymentOptionRefId == 1 &&
+                <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                    <div className="col-sm-3">
+                        <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
+                        <div>{"$" + item.payPerMatch}</div>
                     </div>
-                    )) }
-                </div>}
+                </div>
+                }
+                {item.selectedOptions.paymentOptionRefId == 4 &&
+                <div>
+                    <div className="row" style={{marginTop: '20px'}}>
+                        {(item.instalmentDates || []).map((i, iIndex) => (
+                            <div className="col-sm-3" key={iIndex}>
+                                <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
+                                <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+                            </div>
+                        )) }
+                    </div>
+                    <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                        <div className="col-sm-3">
+                            <div className="subtitle-text-common">{AppConstants.payNow}</div>
+                            <div>{"$" + item.payNow}</div>
+                        </div>
+                        <div className="col-sm-3">
+                            <div className="subtitle-text-common">{AppConstants.payPerInstalment}</div>
+                            <div>{"$" + item.payPerInstalment}</div>
+                        </div>
+                    </div>
+                </div>
+                }
             </div>
         )
     }
 
-    discountcodeView = (item, index) =>{
+    discountcodeView = (item, index, isSchoolRegistration) =>{
         let discountCodes = item.selectedOptions.discountCodes;
         return(
             <div>
@@ -690,6 +711,8 @@ class RegistrationProducts extends Component {
                     </div>
                 ))
                 }
+                
+                {!isSchoolRegistration  && 
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
                     <div style={{marginTop: "13px", alignSelf: "center"}}>
                         <span className="btn-text-common pointer" style={{paddingTop: 7}} 
@@ -706,12 +729,12 @@ class RegistrationProducts extends Component {
                         </Button>
                     </div> 
                     }
-                </div>
+                </div> }
             </div>
         )
     }
 
-    schoolRegistrationView =(item, index) =>{
+    schoolRegistrationView_1 =(item, index) =>{
         return (
             <div>
                 <div>
@@ -729,7 +752,7 @@ class RegistrationProducts extends Component {
                             <div className="" style={{alignSelf:"center"}}>
                                 {item.selectedOptions.isSchoolRegCodeApplied == 1 ?
                                 <Button className="open-reg-button"
-                                    onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", null)}
+                                    onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", "removeSchoolRegCode")}
                                     type="primary">
                                     {AppConstants.removeCode}
                                 </Button> : 
@@ -746,6 +769,48 @@ class RegistrationProducts extends Component {
                             }
                         </div>                   
                     </div>
+                </div>
+            </div>
+        )
+    }
+
+    
+    schoolRegistrationView =(item, index) =>{
+        return (
+            <div>
+                 <div className="headline-text-common" style={{marginTop: "21px"}}>
+                        {AppConstants.invoiceCode}
+                </div>
+                <div style={{display:"flex" , marginTop: "15px" , justifyContent:"space-between",marginRight:26}}>
+                    <div style={{ width: "100%"}}>
+                        <InputWithHead
+                            style={{ width: "97%"}}
+                            required={"required-field pt-0 pb-0"}
+                            placeholder={AppConstants.invoiceCode} 
+                            value={item.selectedOptions.selectedSchoolRegCode}
+                            onChange={(e) => this.setReviewInfo(e.target.value, "selectedSchoolRegCode", index,"selectedOptions", null)}                     
+                        />
+                    </div>
+                    <div className="transfer-image-view pointer" style={{paddingLeft: '15px',}}>                   
+                        <span className="user-remove-btn" 
+                                 onClick={(e) =>  this.setReviewInfo(null, "selectedSchoolRegCode", index,"selectedOptions", "removeSchoolRegCode")}>
+                                <img class="marginIcon" src={AppImages.removeIcon} />                           
+                        </span>
+                    </div>    
+                    {item.selectedOptions.invalidSchoolRegCode == 1 && 
+                    <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
+                        Invalid code
+                    </div>
+                    }                
+                </div>
+                <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"flex-end",width: "99%"}}>
+                    <div style={{padding:"15px 0px 0px 0px"}}>
+                        <Button className="open-reg-button"
+                            onClick={(e) =>  this.setReviewInfo(null, "isSchoolRegCodeApplied", index,"selectedOptions")}
+                            type="primary">
+                            {AppConstants.applyCode}
+                        </Button>
+                    </div> 
                 </div>
             </div>
         )
@@ -1189,7 +1254,7 @@ class RegistrationProducts extends Component {
         return(
             <div className="col-sm-12 col-md-8 col-lg-8" style={{ padding:0 }}>
                 <div className="product-left-view outline-style">
-                    {this.participantDetailView()}
+                    {this.participantDetailView(isSchoolRegistration)}
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>

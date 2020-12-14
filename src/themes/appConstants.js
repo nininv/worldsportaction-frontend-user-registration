@@ -865,6 +865,9 @@ const AppConstants = {
   payment: "Payment",
   submitPayment: "Submit Payment",
   pay: "Pay",
+  payNow: "Pay Now",
+  payPerInstalment: "Pay per Instalment",
+  payPerMatch: "Pay per Match",
   disput_description: "Result in dispute",
   draft_description: "Final result entered and unconfirmed",
   final_description: "Final result entered and confirmed",
@@ -943,7 +946,7 @@ const AppConstants = {
   weeklyInstalment:"Instalment",
   firstInstalment: "1st Instalment",
   instalmentDates:"Instalment dates",
-  schoolRegistration:"School Invoice",
+  schoolRegistration:"Invoice",
   governmentSportsVoucher:"Government Sports Voucher",
   support:"Support",
   confidentGirlsFoundation:"Confident Girls Foundation",
@@ -1186,6 +1189,8 @@ const AppConstants = {
   enterNewPassword: 'Enter new password',
   confirmPassword: 'Confirm password',
   enterConfirmPassword: 'Enter confirm password',
+  invoiceCode: "Invoice Code",
+  warning: "Warning"
 };
 
 export default AppConstants;

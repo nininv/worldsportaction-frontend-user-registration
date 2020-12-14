@@ -155,6 +155,14 @@ function getSchoolListAction(stateRefId){
     return action;
 }
 
+function validateRegistrationCapAction(payload){
+    const action = {
+        type: ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD,
+        payload
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -176,5 +184,6 @@ export {
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
-    getSchoolListAction		
+    getSchoolListAction,
+    validateRegistrationCapAction		
 }

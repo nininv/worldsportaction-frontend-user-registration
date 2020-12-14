@@ -302,6 +302,10 @@ class TeamInviteShop extends Component{
                             <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
                                 <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
+                            <div className="px-4">
+                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            </div>
                         </div>
                     </div>
             </div>

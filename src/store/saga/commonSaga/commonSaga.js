@@ -1,6 +1,7 @@
 import { put, call } from 'redux-saga/effects'
 import ApiConstants from "../../../themes/apiConstants";
 import CommonAxiosApi from "../../http/commonHttp/commonAxios";
+import RegistrationAxiosApi from "../../http/registrationHttp/registrationAxios";
 import CompetitionAxiosApi from "../../http/competitionHttp/competitionAxiosApi";
 import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
 import { message } from "antd";
@@ -338,6 +339,23 @@ export function* getSchoolsSaga(action){
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_SCHOOLS_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* validateRegistrationCapSaga(action){
+    try {
+        const result = yield call(RegistrationAxiosApi.validateRegistrationCap,action.payload);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_VALIDATE_REGISTRATION_CAP_SUCCESS,
                 result: result.result.data,
                 status: result.status,
             });

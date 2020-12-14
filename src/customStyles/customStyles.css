@@ -206,17 +206,23 @@
   width: 100%;
 }
 
+.text-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content-view-padding {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 @media (max-width: 767px) {
   .form-header-view.ant-layout-header {
     padding: 0 0px;
   }
   .comp-draw-head-content-view {
     padding: 0 7%;
-  }
-
-  .content-view-padding {
-    padding-left: 20px;
-    padding-right: 20px;
   }
 
   .home-dashboard-table .ant-table-tbody>tr>td {
