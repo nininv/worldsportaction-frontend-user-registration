@@ -110,7 +110,7 @@ class AppRegistrationFormNew extends Component {
             organisations: [],
             postalCode: null,
             hasErrorParticipitant: false,
-            hasErrorParent: false,
+            hasErrorParent: [],
             hasErrorEmergency: false,
             registrationCapModalVisible: false,
             validateRegistrationCapOnLoad: false,
@@ -172,8 +172,7 @@ class AppRegistrationFormNew extends Component {
             }
         }
 
-        if (registrationState.addCompetitionFlag) {
-            console.log(this.state.organisationId, this.state.competitionId)
+        if (registrationState.addCompetitionFlag) {            
             //calling setting service after added competition
             let payload = {
                 "organisationUniqueKey": this.state.organisationId,
@@ -256,8 +255,7 @@ class AppRegistrationFormNew extends Component {
     componentDidMount() {
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
-        this.setState({ getMembershipLoad: true });
-        console.log(getOrganisationId(), getCompetitonId());
+        this.setState({ getMembershipLoad: true });        
         if (getOrganisationId() != null && getCompetitonId() != null) {
             this.setState({
                 showAddAnotherCompetitionView: false,
@@ -724,16 +722,42 @@ class AppRegistrationFormNew extends Component {
             }
             else if (key == "mobileNumber") {
                 if (value.length === 10) {
-                    this.setState({
-                        hasErrorParent: false
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    if(obj != undefined)
+                    {
+                        hasError.splice(hasError.indexOf(obj) , 1);
+                    }                                        
+                    // hasError.push({
+                    //     error : false,
+                    //     parentIndex : parentIndex
+                    // })
+                    this.setState({                        
+                        hasErrorParent: hasError
                     })
                     registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
                     this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
                 } else if (value.length < 10) {
                     registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
                     this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
-                    this.setState({
-                        hasErrorParent: true
+                    // this.setState({
+                    //     hasErrorParent: true
+                    // })
+                    console.log('obj ' , this.state.hasErrorParent , parentIndex)
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    console.log('obj ' , obj)
+                    if(obj == undefined )
+                    {
+                        hasError.push({
+                            error : true,
+                            parentIndex : parentIndex
+                        })
+                    };
+
+                    
+                    this.setState({                        
+                        hasErrorParent: hasError
                     })
 
 
@@ -769,9 +793,7 @@ class AppRegistrationFormNew extends Component {
     handlePlacesAutocomplete = (addressData, key, parentIndex) => {
         const { registrationObj } = this.props.userRegistrationState;
         const { stateList, countryList } = this.props.commonReducerState;
-        const address = addressData;
-        console.log("address", address)
-        console.log("key", key);
+        const address = addressData;        
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
         // }else {
@@ -1052,7 +1074,6 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            console.log("registrarion obj", registrationObj);
             if (registrationObj.addNewAddressFlag &&
                 registrationObj.stateRefId == null) {
                 error = true;
@@ -1115,8 +1136,7 @@ class AppRegistrationFormNew extends Component {
 
     onChangeSetOrganisation = (organisationId) => {
         try {
-            let { membershipProductInfo } = this.props.userRegistrationState;
-            console.log(membershipProductInfo);
+            let { membershipProductInfo } = this.props.userRegistrationState;            
             this.setState({
                 organisationId: organisationId,
                 currentCompetitions: 1
@@ -1295,21 +1315,88 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;            
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
-            let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
-            // console.log("final obj" + JSON.stringify(filteredSaveRegistrationObj));
+            let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)            
+   
             this.props.form.validateFieldsAndScroll((err, values) => {
+                if(err)
+                {                        
+                        if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
+                        {
+                            for(let a in filteredSaveRegistrationObj.parentOrGuardian)
+                            {
+                                if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null ||filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
+                                {
+                                    if(this.state.hasErrorParent.length > 0)
+                                    {
+                                        let item = this.state.hasErrorParent.find(element => element.parentIndex == a);
+                                        if(item != undefined)
+                                        {
+                                            let hasErrors = this.state.hasErrorParent;
+                                            hasErrors[a].error = true;
+                                            this.setState({
+                                                hasErrorParent : hasErrors
+                                            })
+                                        }                                    
+                                        else{
+                                            let hasErrors = this.state.hasErrorParent;
+                                            hasErrors.push({
+                                                error : true,
+                                                parentIndex : a
+                                            })
+                                            this.setState({
+                                                hasErrorParent : hasErrors
+                                            })
+                                        }
+                                    }
+                                    else{
+                                        let hasErrors = this.state.hasErrorParent;
+                                        hasErrors.push({
+                                            error : true,
+                                            parentIndex : a
+                                        })
+                                        this.setState({
+                                            hasErrorParent : hasErrors
+                                        })
+                                    }
+
+                                }
+                            }
+                        }
+                      
+                }
                 if (!err) {
                     // if(registrationObj.photoUrl == null){
                     //     message.error(ValidationConstants.userPhotoIsRequired);
                     //     return;
                     // }
+               
                     if (this.state.currentStep == 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
                             message.error(ValidationConstants.addressDetailsIsRequired);
                             return;
+                        };
+
+                        if(values.participantMobileNumber != null && values.participantMobileNumber.length != 10)
+                        {
+                            // message.error(ValidationConstants.mobileLength);
+                            return false;
+                        }
+                        if(values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10)
+                        {
+                            return false;
+                        }
+                        if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
+                        {
+                            for(let a in filteredSaveRegistrationObj.parentOrGuardian)
+                            {
+                                if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
+                                {
+                                    return false
+                                }
+                            }
                         }
                     }
                     if (this.state.currentStep == 1) {
@@ -1341,7 +1428,7 @@ class AppRegistrationFormNew extends Component {
                     if (this.state.currentStep == 2) {
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
-                        formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
+                        formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));                     
                         this.props.saveParticipantInfo(formData);
                     }
                 }
@@ -1498,7 +1585,7 @@ class AppRegistrationFormNew extends Component {
     participantAddressView = (getFieldDecorator) => {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
-        let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
+        let userInfo = deepCopyFunction(userRegistrationstate.userInfo);        
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
@@ -2080,6 +2167,12 @@ class AppRegistrationFormNew extends Component {
                 )}
 
                 {(registrationObj.parentOrGuardian || []).map((parent, parentIndex) => {
+                    let hasErrorParentviaIndex = hasErrorParent.find(element => element.parentIndex == parentIndex);
+                    let hasError = false;
+                    if(hasErrorParentviaIndex != undefined )
+                    {
+                        hasError = hasErrorParentviaIndex.error;
+                    }                    
                     return (
                         <div key={"parent" + parentIndex} className="light-grey-border-box">
                             {(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) && (
@@ -2153,8 +2246,8 @@ class AppRegistrationFormNew extends Component {
                                     <Form.Item
                                         name={AppConstants.contactNO}
                                         rules={[{ required: true, message: ValidationConstants.contactField }]}
-                                        help={hasErrorParent && ValidationConstants.mobileLength}
-                                        validateStatus={hasErrorParent ? "error" : 'validating'}
+                                        help={hasError && ValidationConstants.mobileLength}
+                                        validateStatus={hasError ? "error" : 'validating'}
                                     >
                                         {getFieldDecorator(`parentMobileNumber${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.contactField }],
