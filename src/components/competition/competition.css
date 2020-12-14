@@ -609,6 +609,7 @@
   border: 1px solid var(--app-orange);
   padding: 7px;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 @media (max-width: 991px) {
