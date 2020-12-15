@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "981eb76f-6080-48a8-9506-948bb1254627";
+        // let registrationUniqueKey = "d41dcdb6-c10e-4cd9-b8f1-3f73b5c3d3ab";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -666,13 +666,16 @@ class RegistrationProducts extends Component {
                     {item.selectedOptions.paymentOptionRefId == 4 &&
                     <div>
                         <div className="row" style={{marginTop: '20px'}}>
-                            {item.isTeamRegistration ? item.isTeamSeasonalUponReg : item.isSeasonalUponReg ?
+                            {item.isTeamRegistration ? item.isTeamSeasonalUponReg &&
+                            <div className="col-sm-3">
+                                <div>{AppConstants.firstInstalment}</div>
+                                <div>{moment(currentDate).format("DD/MM/YYYY")}</div>
+                            </div>
+                            : item.isSeasonalUponReg &&
                                 <div className="col-sm-3">
                                     <div>{AppConstants.firstInstalment}</div>
                                     <div>{moment(currentDate).format("DD/MM/YYYY")}</div>
                                 </div>
-                                :
-                                null
                             }               
                             {(item.instalmentDates || []).map((i, iIndex) => (
                                 <div className="col-sm-3" key={iIndex}>
