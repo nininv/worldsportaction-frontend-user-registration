@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "d41dcdb6-c10e-4cd9-b8f1-3f73b5c3d3ab";
+        //let registrationUniqueKey = "d41dcdb6-c10e-4cd9-b8f1-3f73b5c3d3ab";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -556,18 +556,29 @@ class RegistrationProducts extends Component {
 
     productsView = (item, index) =>{
         try{
-            let currentDate = moment()
-            let instalmentCount = 1;
-            if(item.isTeamRegistration) {
-                if(item.isTeamSeasonalUponReg){
-                    instalmentCount = 2;
+            let currentDate = moment();
+            // let instalmentCount = 1;
+            // if(item.isTeamRegistration) {
+            //     if(item.isTeamSeasonalUponReg){
+            //         instalmentCount = 2;
+            //     }
+            // }else{
+            //     if(item.isSeasonalUponReg){
+            //         instalmentCount = 2;
+            //     }
+            // }   
+            if((item.isTeamRegistration == 1 && item.isTeamSeasonalUponReg == 1) || item.isSeasonalUponReg == 1){
+                let currentDateExist = item.instalmentDates.find(x => moment(x.instalmentDate).format("DD/MM/YYYY") === moment(currentDate).format("DD/MM/YYYY"));
+                if(!currentDateExist){
+                    let obj = {
+                        competitionId: item.instalmentDates[0].competitionId,
+                        instalmentDate: moment(currentDate)
+                    }
+                    item.instalmentDates.push(obj);
                 }
+                const sortedArray  = item.instalmentDates.sort((a,b) => moment(a.instalmentDate).format('YYYYMMDD') - moment(b.instalmentDate).format('YYYYMMDD'))
+                item.instalmentDates = sortedArray;
             }
-            else{
-                if(item.isSeasonalUponReg){
-                    instalmentCount = 2;
-                }
-            }   
             return(
                 <div className="innerview-outline">
                     {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
@@ -666,7 +677,7 @@ class RegistrationProducts extends Component {
                     {item.selectedOptions.paymentOptionRefId == 4 &&
                     <div>
                         <div className="row" style={{marginTop: '20px'}}>
-                            {item.isTeamRegistration ? item.isTeamSeasonalUponReg &&
+                            {/* {item.isTeamRegistration ? item.isTeamSeasonalUponReg &&
                             <div className="col-sm-3">
                                 <div>{AppConstants.firstInstalment}</div>
                                 <div>{moment(currentDate).format("DD/MM/YYYY")}</div>
@@ -676,10 +687,10 @@ class RegistrationProducts extends Component {
                                     <div>{AppConstants.firstInstalment}</div>
                                     <div>{moment(currentDate).format("DD/MM/YYYY")}</div>
                                 </div>
-                            }               
+                            }*/}
                             {(item.instalmentDates || []).map((i, iIndex) => (
                                 <div className="col-sm-3" key={iIndex}>
-                                    <div>{(iIndex + instalmentCount) + this.getOrdinalString(iIndex + instalmentCount) +" instalment"}</div>
+                                    <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
                                     <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
                                 </div>
                             )) }
