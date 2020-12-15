@@ -736,6 +736,7 @@ class AppTeamRegistrationForm extends Component{
     }
 
     onChangeTeamMemberValue = (value,key,index,subIndex) => {
+        console.log("value,key,index,subIndex",value,key,index,subIndex)
         this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
     }
 
@@ -2558,7 +2559,10 @@ class AppTeamRegistrationForm extends Component{
                         className="py-2"
                         checked={product.isChecked}
                         key={product.competitionMembershipProductTypeId}
-                        onChange={(e) => this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,productIndex)}>
+                        onChange={(e) => {
+                            let prodIndexTemp = teamMember.membershipProductTypes.findIndex(x => x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId && x.competitionMembershipProductId === product.competitionMembershipProductId);
+                            this.onChangeTeamMemberValue(e.target.checked,"membershipProductTypes",teamMemberIndex,prodIndexTemp)
+                        }}>
                             {product.productTypeName}
                         </Checkbox>
                     ))}
