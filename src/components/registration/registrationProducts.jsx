@@ -555,125 +555,152 @@ class RegistrationProducts extends Component {
     }
 
     productsView = (item, index) =>{
-        return(
-            <div className="innerview-outline">
-                {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
-                    <div>
-                        <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
-                        <div className="product-line">
-                            <Radio.Group className="body-text-common registration-radio-group"
-                                value={item.selectedOptions.nominationPayOptionRefId}
-                                onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
-                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
-                            </Radio.Group>  
-                        </div>
-                        <div className="product-line">
-                            {isArrayNotEmpty(item.teamMembers.payingForList) && (
-                                <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
-                            )}
-                            {(item.teamMembers.payingForList || []).map((payingFor,payigForIndex) => (
-                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
-                                    {payingFor.membershipProductTypeName + ' ' + payingFor.name}
-                                </div>
-                            ))}
-                            {isArrayNotEmpty(item.teamMembers.notPayingForList) && (
-                                <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
-                            )}
-                            {(item.teamMembers.notPayingForList || []).map((notPlayingFor,notPayigForIndex) => (
-                                <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
-                                    {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
-                                </div>
-                            ))}
-                            {item.selectedOptions.nominationPayOptionRefId == 1 ? 
-                                <div style={{color: "var(--app-red)", marginTop: "10px"}}
-                                className="body-text-common">
-                                    {AppConstants.teamRegistrationNote}
-                                </div>
-                                : isArrayNotEmpty(item.teamMembers.notPayingForList) &&
-                                <div style={{color: "var(--app-red)", marginTop: "10px"}}
-                                className="body-text-common">
-                                    {AppConstants.teamRegistrationNote}
-                                </div>
-                            }
-
-                        </div>
-                        {item.selectedOptions.nominationPayOptionRefId == 2 && isArrayNotEmpty(item.teamMembers.notPayingForList) &&
-                        <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
-                        }
-                    </div>
-                : 
-                    <div className="product-border-line">
-                        <div className = "body-text-common">
-                            {AppConstants.registration}{"(s)"}
-                        </div>
-                        { (item.membershipProducts || []).map((mem, memIndex) =>(
-                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
-                            style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
-                                {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
-                            </div>
-                        )) }
-                    </div>
+        try{
+            let currentDate = moment()
+            let instalmentCount = 1;
+            if(item.isTeamRegistration) {
+                if(item.isTeamSeasonalUponReg){
+                    instalmentCount = 2;
                 }
-                               
-                <div className="subtitle-text-common" style={{marginTop: "16px"}}>
-                    {AppConstants.wouldYouLikeTopay}
-                </div>
-                <div style={{marginTop:6}}>
-                    <Radio.Group className="body-text-common"
-                        value={item.selectedOptions.paymentOptionRefId}
-                        onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
-                        {(item.paymentOptions || []).map((p, pIndex) =>(  
-                            <span key={p.paymentOptionRefId}>
-                                {p.paymentOptionRefId == 1 && 
-                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
-                                }  
-                                {p.paymentOptionRefId == 3 &&          
-                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
+            }
+            else{
+                if(item.isSeasonalUponReg){
+                    instalmentCount = 2;
+                }
+            }   
+            return(
+                <div className="innerview-outline">
+                    {item.isTeamRegistration == 1 && (isArrayNotEmpty(item.teamMembers.payingForList) || isArrayNotEmpty(item.teamMembers.notPayingForList))? 
+                        <div>
+                            <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
+                            <div className="product-line">
+                                <Radio.Group className="body-text-common registration-radio-group"
+                                    value={item.selectedOptions.nominationPayOptionRefId}
+                                    onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
+                                    <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
+                                    <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                </Radio.Group>  
+                            </div>
+                            <div className="product-line">
+                                {isArrayNotEmpty(item.teamMembers.payingForList) && (
+                                    <div className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.payingFor}</div>
+                                )}
+                                {(item.teamMembers.payingForList || []).map((payingFor,payigForIndex) => (
+                                    <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                        {payingFor.membershipProductTypeName + ' ' + payingFor.name}
+                                    </div>
+                                ))}
+                                {isArrayNotEmpty(item.teamMembers.notPayingForList) && (
+                                    <div style={{marginTop: "10px"}} className = "body-text-common">{AppConstants.registration+"(s), "+ AppConstants.notPayingFor}</div>
+                                )}
+                                {(item.teamMembers.notPayingForList || []).map((notPlayingFor,notPayigForIndex) => (
+                                    <div className="subtitle-text-common"  style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                        {notPlayingFor.membershipProductTypeName + ' ' + notPlayingFor.name}
+                                    </div>
+                                ))}
+                                {item.selectedOptions.nominationPayOptionRefId == 1 ? 
+                                    <div style={{color: "var(--app-red)", marginTop: "10px"}}
+                                    className="body-text-common">
+                                        {AppConstants.teamRegistrationNote}
+                                    </div>
+                                    : isArrayNotEmpty(item.teamMembers.notPayingForList) &&
+                                    <div style={{color: "var(--app-red)", marginTop: "10px"}}
+                                    className="body-text-common">
+                                        {AppConstants.teamRegistrationNote}
+                                    </div>
                                 }
-                                { p.paymentOptionRefId == 4 &&          
-                                    <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-                                } 
-                                { p.paymentOptionRefId == 5 &&          
-                                   <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
-                                } 
-
-                            </span>                  
-                        ))}
-                    </Radio.Group>
-                </div>
-                {item.selectedOptions.paymentOptionRefId == 1 &&
-                <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
-                    <div className="col-sm-3">
-                        <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
-                        <div>{"$" + item.payPerMatch}</div>
-                    </div>
-                </div>
-                }
-                {item.selectedOptions.paymentOptionRefId == 4 &&
-                <div>
-                    <div className="row" style={{marginTop: '20px'}}>
-                        {(item.instalmentDates || []).map((i, iIndex) => (
-                            <div className="col-sm-3" key={iIndex}>
-                                <div>{(iIndex + 1) + this.getOrdinalString(iIndex + 1) +" instalment"}</div>
-                                <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+    
                             </div>
-                        )) }
+                            {item.selectedOptions.nominationPayOptionRefId == 2 && isArrayNotEmpty(item.teamMembers.notPayingForList) &&
+                            <div className = "body-text-common product-border-line" style={{color:" var(--app-red)" , marginTop: '16px'}}>{AppConstants.ifAllTeamMemberHaveNotRegistered}</div>
+                            }
+                        </div>
+                    : 
+                        <div className="product-border-line">
+                            <div className = "body-text-common">
+                                {AppConstants.registration}{"(s)"}
+                            </div>
+                            { (item.membershipProducts || []).map((mem, memIndex) =>(
+                                <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
+                                style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
+                                    {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
+                                </div>
+                            )) }
+                        </div>
+                    }
+                                   
+                    <div className="subtitle-text-common" style={{marginTop: "16px"}}>
+                        {AppConstants.wouldYouLikeTopay}
                     </div>
+                    <div style={{marginTop:6}}>
+                        <Radio.Group className="body-text-common"
+                            value={item.selectedOptions.paymentOptionRefId}
+                            onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
+                            {(item.paymentOptions || []).map((p, pIndex) =>(  
+                                <span key={p.paymentOptionRefId}>
+                                    {p.paymentOptionRefId == 1 && 
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                                    }  
+                                    {p.paymentOptionRefId == 3 &&          
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
+                                    }
+                                    { p.paymentOptionRefId == 4 &&          
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
+                                    } 
+                                    { p.paymentOptionRefId == 5 &&          
+                                       <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                    } 
+    
+                                </span>                  
+                            ))}
+                        </Radio.Group>
+                    </div>
+                    {item.selectedOptions.paymentOptionRefId == 1 &&
                     <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
                         <div className="col-sm-3">
-                            <div className="subtitle-text-common">{AppConstants.payNow}</div>
-                            <div>{"$" + item.payNow}</div>
-                        </div>
-                        <div className="col-sm-3">
-                            <div className="subtitle-text-common">{AppConstants.payPerInstalment}</div>
-                            <div>{"$" + item.payPerInstalment}</div>
+                            <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
+                            <div>{"$" + item.payPerMatch}</div>
                         </div>
                     </div>
+                    }
+                    {item.selectedOptions.paymentOptionRefId == 4 &&
+                    <div>
+                        <div className="row" style={{marginTop: '20px'}}>
+                            {item.isTeamRegistration ? item.isTeamSeasonalUponReg : item.isSeasonalUponReg ?
+                                <div className="col-sm-3">
+                                    <div>{AppConstants.firstInstalment}</div>
+                                    <div>{moment(currentDate).format("DD/MM/YYYY")}</div>
+                                </div>
+                                :
+                                null
+                            }               
+                            {(item.instalmentDates || []).map((i, iIndex) => (
+                                <div className="col-sm-3" key={iIndex}>
+                                    <div>{(iIndex + instalmentCount) + this.getOrdinalString(iIndex + instalmentCount) +" instalment"}</div>
+                                    <div>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "")}</div>
+                                </div>
+                            )) }
+                        </div>
+    
+                        <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                            <div className="col-sm-3">
+                                <div className="subtitle-text-common">{AppConstants.payNow}</div>
+                                <div>{"$" + item.payNow}</div>
+                            </div>
+                            <div className="col-sm-3">
+                                <div className="subtitle-text-common">{AppConstants.payPerInstalment}</div>
+                                <div>{"$" + item.payPerInstalment}</div>
+                            </div>
+                        </div>
+                    </div>
+                    }
                 </div>
-                }
-            </div>
-        )
+            )
+        }
+        catch(ex){
+            console.log("Error in products view"+ ex)
+        }
+        
     }
 
     discountcodeView = (item, index, isSchoolRegistration) =>{
