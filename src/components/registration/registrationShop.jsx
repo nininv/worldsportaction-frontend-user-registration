@@ -543,9 +543,11 @@ class RegistrationShop extends Component {
                                     <div  className="subtitle-text-common" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
-                                        </div>
+                                        {(mem.email !== item.email) && ( 
+                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 :
