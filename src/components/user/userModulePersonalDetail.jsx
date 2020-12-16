@@ -1837,6 +1837,9 @@ class UserModulePersonalDetail extends Component {
     }
 
     headerView = () => {
+        const { userState } = this.props;
+        const personalByCompData = !!userState.personalByCompData ? userState.personalByCompData : [];
+
         return (
             <div className="row" >
                 <div className="col-sm" style={{ flex: 1 }}>
@@ -1868,7 +1871,11 @@ class UserModulePersonalDetail extends Component {
                                             </Button>
                                         }
                                     >
-                                        <Menu.Item onClick={() => history.push("/userProfileEdit")} >
+                                        <Menu.Item onClick={() => history.push({
+                                                pathname: '/userProfileEdit',
+                                                state: { userData: personalByCompData[0], moduleFrom: "1" }
+                                            })}
+                                        >
                                             <span>{AppConstants.editProfile}</span>
                                         </Menu.Item>
                                         <Menu.Item onClick={() => this.navigateTo("/appRegistrationForm")} >
