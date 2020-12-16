@@ -799,6 +799,7 @@ class AppRegistrationFormNew extends Component {
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
+        console.log("adderssData",address)
         if (address) {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
@@ -1074,6 +1075,7 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
+            console.log("registrationObj",registrationObj);
             if (registrationObj.addNewAddressFlag &&
                 registrationObj.stateRefId == null) {
                 error = true;
