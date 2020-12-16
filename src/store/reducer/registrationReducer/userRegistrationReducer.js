@@ -208,7 +208,7 @@ function getUserUpdatedRegistrationObj(state,action){
 			registrationObj.email = selectedUser.email;
 			registrationObj.genderRefId = selectedUser.genderRefId;
 			registrationObj.photoUrl = selectedUser.photoUrl;
-			registrationObj.dateOfBirth = selectedUser.dateOfBirth;
+			registrationObj.dateOfBirth = selectedUser.dateOfBirth ? moment(selectedUser.dateOfBirth).format("MM-DD-YYYY") : null;
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;

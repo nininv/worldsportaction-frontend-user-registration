@@ -1184,6 +1184,7 @@ class AppRegistrationFormNew extends Component {
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
+        console.log("regostratop",registrationObj.dateOfBirth)
         return (
             <div>
                 {registrationObj.userId == -1 || registrationObj.userId == -2 ?
@@ -1192,7 +1193,7 @@ class AppRegistrationFormNew extends Component {
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 ? (
+                {getAge(registrationObj.dateOfBirth) < 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 ) : (
                         <div>
@@ -1621,7 +1622,7 @@ class AppRegistrationFormNew extends Component {
                                 </Form.Item>
                             </div>
                         )}
-                        {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
+                        {getAge(registrationObj.dateOfBirth) < 18 && (
                             <Checkbox
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
@@ -3064,7 +3065,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
 
-                    {(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) && (
+                    {(getAge(registrationObj.dateOfBirth) < 18) && (
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>
