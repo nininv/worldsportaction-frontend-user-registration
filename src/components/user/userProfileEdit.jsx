@@ -42,7 +42,7 @@ class UserProfileEdit extends Component {
             displaySection: "0",
             loadValue: false,
             saveLoad: false,
-            tabKey: "3",
+            tabKey: "4",
             userData: {genderRefId: 0,firstName: "",lastName:"",mobileNumber:"",email: "",middleName: "",
                 dateOfBirth: "",street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
                 emergencyFirstName: "",emergencyLastName: "",emergencyContactNumber: "", existingMedicalCondition: "",regularMedication: "",
@@ -84,7 +84,7 @@ class UserProfileEdit extends Component {
             }else if(moduleFrom == "5"){
                 titleLabel= AppConstants.edit + ' ' +  AppConstants.medical;
                 section = "medical";
-                this.setState({tabKey:"4"});
+                this.setState({tabKey:"5"});
               if(data!= null){
                   if(data.disability!= null && data.disability.length > 0){
                       data["isDisability"] = data.disability[0]["isDisability"];
