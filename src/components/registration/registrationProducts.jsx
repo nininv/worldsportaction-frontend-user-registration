@@ -589,8 +589,8 @@ class RegistrationProducts extends Component {
                                     value={item.selectedOptions.nominationPayOptionRefId}
                                     onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}> 
                                     <div style={{display:"flex"}}>
-                                        <Radio key={1} value={1} className="team-reg-radio-custom-style" >{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
-                                        <Radio key={2} value={2} className="team-reg-radio-custom-style">{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                        <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                        <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
                                     </div> 
                                 </Radio.Group>  
                             </div>
