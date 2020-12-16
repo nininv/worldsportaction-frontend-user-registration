@@ -1116,8 +1116,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             message.success(Response.message);
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
-                            if(Response.message != AppConstants.alreadyPaid){
+                            if(perMatchSelectedOption){
                                 createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,token);
+                            }else{
+                                props.onLoad(false)
                             }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
@@ -1128,8 +1130,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         }
                         else if(paymentType =="direct_debit") {
                             if(Response.clientSecret == null){
-                                if(Response.message != AppConstants.alreadyPaid){
+                                if(perMatchSelectedOption){
                                     createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                }else{
+                                    props.onLoad(false)
                                 }
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
@@ -1141,12 +1145,15 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             else{
                                 setClientKey(Response.clientSecret)
                                 setRegId(registrationUniqueKey)
+                                props.onLoad(false)
                             }
                            // message.success(Response.message);
                         }
                         else{
-                            if(Response.message != AppConstants.alreadyPaid){
+                            if(perMatchSelectedOption){
                                 createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                            }else{
+                                props.onLoad(false)
                             }                            
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
