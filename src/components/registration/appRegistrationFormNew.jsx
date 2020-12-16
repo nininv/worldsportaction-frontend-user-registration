@@ -600,7 +600,7 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == "dateOfBirth") {
                 if (getAge(value) < 18) {
-                    if (!isArrayNotEmpty(parents)) {
+                    if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
                         this.addParent("add");
                     }
                 } else {
@@ -1932,8 +1932,8 @@ class AppRegistrationFormNew extends Component {
 
                 <InputWithHead heading={AppConstants.photo} />
                 {registrationObj.photoUrl == null ?
-                    <div className="img-upload-target" onClick={() => this.selectImage()}>
-                        <div style={{ fontSize: "22px" }}>
+                    <div className="upload-default" onClick={() => this.selectImage()}>
+                        <div style={{ fontSize: "22px",marginTop: 8 }}>
                             +
                             </div>
                         <div style={{ marginTop: "-7px" }}>
