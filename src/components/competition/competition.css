@@ -591,7 +591,10 @@
   font-weight: 500;
   font-family: 'inter-medium';
 }
-
+.competition-specifics-information{
+  font-family: inter-semi-bold;
+  
+}
 .membership-product-checkbox{
   font-family: 'inter';
   font-weight: normal;
