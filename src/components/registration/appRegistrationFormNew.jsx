@@ -1384,18 +1384,28 @@ class AppRegistrationFormNew extends Component {
                         if(values.participantMobileNumber != null && values.participantMobileNumber.length != 10)
                         {
                             // message.error(ValidationConstants.mobileLength);
+                            this.setState({hasErrorParticipitant: true})
                             return false;
                         }
                         if(values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10)
                         {
+                            this.setState({hasErrorEmergency: true})
                             return false;
                         }
+                        let hasError = this.state.hasErrorParent;
                         if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
                         {
                             for(let a in filteredSaveRegistrationObj.parentOrGuardian)
                             {
                                 if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
                                 {
+                                    hasError.push({
+                                        error : true,
+                                        parentIndex : a
+                                    });
+                                    this.setState({                        
+                                        hasErrorParent: hasError
+                                    })
                                     return false
                                 }
                             }
