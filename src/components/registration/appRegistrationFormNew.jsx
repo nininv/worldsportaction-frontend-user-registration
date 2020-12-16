@@ -89,7 +89,7 @@ class AppRegistrationFormNew extends Component {
         super(props);
         this.state = {
             currentStep: 0,
-            submitButtonText: AppConstants.addPariticipant,
+            submitButtonText: AppConstants.next,
             showAddAnotherCompetitionView: false,
             searchAddressError: null,
             organisationId: null,
@@ -284,7 +284,7 @@ class AppRegistrationFormNew extends Component {
             this.scrollToTop();
         }
         if (current == 0) {
-            this.setState({ submitButtonText: AppConstants.addPariticipant })
+            this.setState({ submitButtonText: AppConstants.next })
             setTimeout(() => {
                 this.setParticipantDetailStepFormFields();
             }, 300);
@@ -1496,7 +1496,7 @@ class AppRegistrationFormNew extends Component {
             >
                 <div className="form-heading"
                     style={{ paddingBottom: "0px" }}>
-                    {userInfo.length == 0 ? AppConstants.addPariticipant : AppConstants.selectOrAddParticipant}
+                    {userInfo.length == 0 ? AppConstants.addParticipant : AppConstants.selectOrAddParticipant}
                 </div>
                 <div className="row">
                     {(userInfo || []).map((user, index) => (

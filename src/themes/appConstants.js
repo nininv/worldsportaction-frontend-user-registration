@@ -1000,7 +1000,7 @@ const AppConstants = {
   participantDetails : "Participant Details",
   selectCompetition: "Select Competitions",
   additionalInformation: "Additional Information",
-  addPariticipant: "Add a Participant",
+  addParticipant: "Add a Participant",
   selectOrAddParticipant: "Select or Add a participant",
   newParticipant: "New Participant",
   addNewParticipant: "Add a new participant", 
