@@ -73,7 +73,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "d41dcdb6-c10e-4cd9-b8f1-3f73b5c3d3ab";
+        // let registrationUniqueKey = "0bc8dc8c-74cc-4af1-ab81-27bde59357dd";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -585,11 +585,13 @@ class RegistrationProducts extends Component {
                         <div>
                             <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
                             <div className="product-line">
-                                <Radio.Group className="body-text-common registration-radio-group"
+                                <Radio.Group 
                                     value={item.selectedOptions.nominationPayOptionRefId}
-                                    onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}>  
-                                    <Radio key={1} value={1}>{AppConstants.payCompetitionFeesForAll}</Radio>
-                                    <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                    onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}> 
+                                    <div style={{display:"flex"}}>
+                                        <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                        <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                    </div> 
                                 </Radio.Group>  
                             </div>
                             <div className="product-line">

@@ -1173,8 +1173,8 @@ class AppTeamRegistrationForm extends Component{
             }
             // console.log("personName2",personNames)
             if(isArrayNotEmpty(personNames)){
-                let fromDate = moment(selectedDivision.fromDate).format("YYYY-MM-DD");
-                let toDate = moment(selectedDivision.toDate).format("YYYY-MM-DD"); 
+                let fromDate = moment(selectedDivision.fromDate).format("DD-MM-YYYY");
+                let toDate = moment(selectedDivision.toDate).format("DD-MM-YYYY"); 
                 let personsString = '';
                 for(let i in personNames){
                     personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');

@@ -1231,3 +1231,12 @@ input:focus, .StripeElement--focus {
     margin: 10px 0 0;
   }
 }
+
+.team-reg-radio-custom-style{
+  white-space: break-spaces !important;
+  display: flex !important;
+}
+
+.team-reg-radio-custom-style .ant-radio{
+  margin-top: 5px;
+}
