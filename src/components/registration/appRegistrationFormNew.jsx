@@ -89,7 +89,7 @@ class AppRegistrationFormNew extends Component {
         super(props);
         this.state = {
             currentStep: 0,
-            submitButtonText: AppConstants.addPariticipant,
+            submitButtonText: AppConstants.next,
             showAddAnotherCompetitionView: false,
             searchAddressError: null,
             organisationId: null,
@@ -284,7 +284,7 @@ class AppRegistrationFormNew extends Component {
             this.scrollToTop();
         }
         if (current == 0) {
-            this.setState({ submitButtonText: AppConstants.addPariticipant })
+            this.setState({ submitButtonText: AppConstants.next })
             setTimeout(() => {
                 this.setParticipantDetailStepFormFields();
             }, 300);
@@ -1498,7 +1498,7 @@ class AppRegistrationFormNew extends Component {
             >
                 <div className="form-heading"
                     style={{ paddingBottom: "0px" }}>
-                    {userInfo.length == 0 ? AppConstants.addPariticipant : AppConstants.selectOrAddParticipant}
+                    {userInfo.length == 0 ? AppConstants.addParticipant : AppConstants.selectOrAddParticipant}
                 </div>
                 <div className="row">
                     {(userInfo || []).map((user, index) => (
@@ -2691,24 +2691,23 @@ class AppRegistrationFormNew extends Component {
                             {/* <InputWithHead heading={AppConstants.training}/> */}
                             <div className="input-style-bold" style={{ paddingTop: '0px' }}>{AppConstants.training}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>{competition.competitionInfo.training ?
+                                className="competition-specifics-information">
+                                 {competition.competitionInfo.training ?
                                     competition.competitionInfo.training :
                                     AppConstants.noInformationProvided}
                             </div>
                             {/* <InputWithHead heading={AppConstants.specialNotes}/> */}
                             <div className="input-style-bold">{AppConstants.specialNotes}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>{competition.competitionInfo.specialNote ?
+                                className="competition-specifics-information">
+                                {competition.competitionInfo.specialNote ?
                                     competition.competitionInfo.specialNote :
                                     AppConstants.noInformationProvided}
                             </div>
                             {/* <InputWithHead heading={AppConstants.venue}/> */}
                             <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>
+                                className="competition-specifics-information">
                                 {competitionInfo.venues == null || competitionInfo.venues.length == 0 ? AppConstants.noInformationProvided :
                                     <span>
                                         {(competitionInfo.venues || []).map((v, vIndex) => (
@@ -2722,7 +2721,9 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             {/* <InputWithHead heading={AppConstants.contactDetails}/> */}
                             <div className="input-style-bold">{AppConstants.contactDetails}</div>
-                            <div className="inter-medium-font" style={{ fontSize: "13px" }}>{contactDetails ? contactDetails :
+                            <div 
+                                className="competition-specifics-information">
+                                {contactDetails ? contactDetails :
                                 AppConstants.noInformationProvided}
                             </div>
                         </div>
