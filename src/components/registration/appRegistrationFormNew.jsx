@@ -2689,24 +2689,23 @@ class AppRegistrationFormNew extends Component {
                             {/* <InputWithHead heading={AppConstants.training}/> */}
                             <div className="input-style-bold" style={{ paddingTop: '0px' }}>{AppConstants.training}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>{competition.competitionInfo.training ?
+                                className="competition-specifics-information">
+                                 {competition.competitionInfo.training ?
                                     competition.competitionInfo.training :
                                     AppConstants.noInformationProvided}
                             </div>
                             {/* <InputWithHead heading={AppConstants.specialNotes}/> */}
                             <div className="input-style-bold">{AppConstants.specialNotes}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>{competition.competitionInfo.specialNote ?
+                                className="competition-specifics-information">
+                                {competition.competitionInfo.specialNote ?
                                     competition.competitionInfo.specialNote :
                                     AppConstants.noInformationProvided}
                             </div>
                             {/* <InputWithHead heading={AppConstants.venue}/> */}
                             <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                             <div
-                                className="inter-medium-font"
-                                style={{ fontSize: "13px" }}>
+                                className="competition-specifics-information">
                                 {competitionInfo.venues == null || competitionInfo.venues.length == 0 ? AppConstants.noInformationProvided :
                                     <span>
                                         {(competitionInfo.venues || []).map((v, vIndex) => (
@@ -2720,7 +2719,9 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             {/* <InputWithHead heading={AppConstants.contactDetails}/> */}
                             <div className="input-style-bold">{AppConstants.contactDetails}</div>
-                            <div className="inter-medium-font" style={{ fontSize: "13px" }}>{contactDetails ? contactDetails :
+                            <div 
+                                className="competition-specifics-information">
+                                {contactDetails ? contactDetails :
                                 AppConstants.noInformationProvided}
                             </div>
                         </div>
