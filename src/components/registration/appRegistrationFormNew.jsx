@@ -1933,7 +1933,7 @@ class AppRegistrationFormNew extends Component {
                 <InputWithHead heading={AppConstants.photo} />
                 {registrationObj.photoUrl == null ?
                     <div className="upload-default" onClick={() => this.selectImage()}>
-                        <div style={{ fontSize: "22px",marginTop: 8 }}>
+                        <div style={{ fontSize: "22px" }}>
                             +
                             </div>
                         <div style={{ marginTop: "-7px" }}>

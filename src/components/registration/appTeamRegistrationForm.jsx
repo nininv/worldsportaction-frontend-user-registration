@@ -1238,7 +1238,9 @@ class AppTeamRegistrationForm extends Component{
             if(referenceKey == "team"){
                 this.onChangeSetTeamValue(date, key);
                 if(getAge(date) < 18){
-                    this.addParent("add")
+                    if (!isArrayNotEmpty(teamRegistrationObj.parentOrGuardian)) {
+                        this.addParent("add")
+                    }
                 }else{
                     this.addParent("removeAllParent")
                 }
@@ -1255,8 +1257,11 @@ class AppTeamRegistrationForm extends Component{
 
     teamMemberAddingProcess = (dob,payingFor,teamMemberIndex) => {
         try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
             if(getAge(dob) < 18 && payingFor == 1){
-                this.addTeamMemberParent("add",teamMemberIndex)
+                if(!isArrayNotEmpty(teamRegistrationObj.teamMembers[teamMemberIndex].parentOrGuardian)){
+                    this.addTeamMemberParent("add",teamMemberIndex)
+                } 
             }else{
                 this.addTeamMemberParent("removeAllParent",teamMemberIndex)
             }
@@ -3290,7 +3295,7 @@ class AppTeamRegistrationForm extends Component{
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(moment(teamRegistrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) ? (
+                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                         <div>
