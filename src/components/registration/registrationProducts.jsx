@@ -63,7 +63,8 @@ class RegistrationProducts extends Component {
            deleteOnLoad: false,
            organisationUniqueKey: null,
            competitionUniqueKey: null,
-           teamName: null
+           teamName: null,
+           isAgreed: false,
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -73,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "0bc8dc8c-74cc-4af1-ab81-27bde59357dd";
+        // let registrationUniqueKey = "4862ef3e-7a16-46d3-bd60-ef93f1ef5c88";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -157,7 +158,7 @@ class RegistrationProducts extends Component {
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
         let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
-
+        const {termsAndConditions} = this.props.registrationProductState;
         let participantUsers = this.props.registrationProductState.participantUsers;
         if(incompletePaymentMessage != ''){
             incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
@@ -170,6 +171,13 @@ class RegistrationProducts extends Component {
             console.log("Error: " + err);
             if(!err)
             {
+                if(termsAndConditions.length > 0){
+                    if(this.state.agreeTerm == false){
+                        this.setState({isAgreed:true})
+                        return;
+                    }
+                }
+
                 console.log(this.state.searchAddressFlag,yourInfo.stateRefId);
                 if(isArrayNotEmpty(participantUsers) && this.state.searchAddressFlag && yourInfo.stateRefId == null){
                     message.error(ValidationConstants.addressDetailsIsRequired);
@@ -1311,10 +1319,11 @@ class RegistrationProducts extends Component {
     }
 
     productRightView = (termsAndConditionsView)=>{
+        const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
                 {this.yourOrderView()}
-                {this.termsAndConditionsView(termsAndConditionsView)}
+                {termsAndConditions.length > 0 && this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
             </div>
         )
@@ -1462,6 +1471,13 @@ class RegistrationProducts extends Component {
           );
     }
 
+    termsAndConditionsCheck = (e) => {
+        this.setState({ agreeTerm: e.target.checked });
+        if(e.target.checked){
+            this.setState({isAgreed:false})
+        }
+    }
+
     termsAndConditionsView = (getFieldDecorator) =>{
         const {termsAndConditions} = this.props.registrationProductState;
         return(
@@ -1476,24 +1492,25 @@ class RegistrationProducts extends Component {
                     </div> 
                 ))}                  
                 </div>                           
-                <div className="body-text-common mt-0" style={{display:"flex"}}>
-                <Form.Item>
-                        {getFieldDecorator(`termsAndCondition`, {
-                            rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
-                        })(  
+                <div className="body-text-common mt-0" style={{display:"flex"}}> 
                     <div>
                         <Checkbox
                                 className="single-checkbox mt-0"
                                 checked={this.state.agreeTerm}
-                                onChange={e => this.setState({ agreeTerm: e.target.checked })}>
+                                onChange={e => this.termsAndConditionsCheck(e)}
+                                >
                                 {AppConstants.agreeTerm}
                                 <span style={{marginLeft:"5px"}} ></span>
-                            </Checkbox>
+                        </Checkbox>
                     </div>
-                     )}
-                     </Form.Item> 
                     {/* <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                    */}
-                </div>                      
+                </div>
+                {this.state.isAgreed &&
+                    <div style={{color:"var(--app-red)"}}>
+                        {ValidationConstants.termsAndCondition[0]}
+                    </div>  
+                }
+                    
             </div>
         )
     }
