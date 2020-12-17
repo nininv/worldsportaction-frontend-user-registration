@@ -2713,7 +2713,7 @@ class AppTeamRegistrationForm extends Component{
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px",marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) < 18 && 
+                            {getAge(teamMember.dateOfBirth) < 18 && 
                                 <div>
                                     {(teamMember.parentOrGuardian || []).map((parent,parentIndex) => (
                                         <div>{this.teamMemberParentOrGuardianView(parent,parentIndex,teamMember,teamMemberIndex,getFieldDecorator)}</div>
