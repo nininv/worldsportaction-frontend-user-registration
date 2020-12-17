@@ -2134,6 +2134,11 @@ class AppRegistrationFormNew extends Component {
                                 <div className="form-heading" style={{ textAlign: "start" }}>{registrationObj.firstName} {registrationObj.lastName}</div>
                                 <div className="orange-action-txt" style={{ marginLeft: "auto", alignSelf: "center", marginBottom: "5px" }}
                                     onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnother}</div>
+                                {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
+                                    <div style={{ fontWeight: "600", marginTop: "-5px" }}>
+                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"MM-DD-YYYY").format("DD/MM/YYYY")}
+                                    </div>
+                                )}
                             </div>
                             {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                 <div style={{ fontWeight: "600", marginTop: "-5px" }}>
