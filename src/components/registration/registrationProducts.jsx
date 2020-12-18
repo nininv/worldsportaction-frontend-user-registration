@@ -74,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "4862ef3e-7a16-46d3-bd60-ef93f1ef5c88";
+        // let registrationUniqueKey = "860bf924-4b7f-4772-898a-844d8efab764";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -579,7 +579,7 @@ class RegistrationProducts extends Component {
                 let currentDateExist = item.instalmentDates.find(x => moment(x.instalmentDate).format("DD/MM/YYYY") === moment(currentDate).format("DD/MM/YYYY"));
                 if(!currentDateExist){
                     let obj = {
-                        competitionId: item.instalmentDates[0].competitionId,
+                        competitionId: item.instalmentDates.length > 0 ? item.instalmentDates[0].competitionId : null,
                         instalmentDate: moment(currentDate)
                     }
                     item.instalmentDates.push(obj);
@@ -678,6 +678,10 @@ class RegistrationProducts extends Component {
                     </div>
                     {item.selectedOptions.paymentOptionRefId == 1 &&
                     <div className="row" style={{borderTop: "1px solid var(--app-d9d9d9)", paddingTop: "16px", marginTop: "16px"}}>
+                        <div className="col-sm-3">
+                            <div className="subtitle-text-common">{AppConstants.payNow}</div>
+                            <div>{"$" + item.payNow}</div>
+                        </div>
                         <div className="col-sm-3">
                             <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
                             <div>{"$" + item.payPerMatch}</div>
