@@ -102,7 +102,7 @@ const AppConstants = {
   childNationality: "What nationality are you",
   childLangSpoken: "Languages spoken at home",
   haveDisability: "Do you qualify for NDIS (National Disability Insurance Scheme)?",
-  disabilityCareNumber: "Disability care Number",
+  disabilityCareNumber: "Disability Care Number",
   typeOfDisability: "Type of Disability",
   addanotherQuestion: "Add Another question",
   uniformAndMerchandise: "Uniforms and Merchandise",
