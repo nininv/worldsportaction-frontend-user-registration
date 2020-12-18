@@ -393,8 +393,9 @@ function getFilteredDivisions(divisions,state){
 		let filteredDivisions = [];
 		let genderRefId = state.registrationObj.genderRefId;
 		// console.log("date",state.registrationObj.dateOfBirth)
-		var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
-		// console.log("date",JSON.stringify(date))
+		// var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
+		var date = moment(state.registrationObj.dateOfBirth,"MM-DD-YYYY");
+		console.log("date",JSON.stringify(date))
 		for(let division of divisions){
 			if(division.registrationLock == 0 && division.isIndividualRegistration == 1){
 				if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
