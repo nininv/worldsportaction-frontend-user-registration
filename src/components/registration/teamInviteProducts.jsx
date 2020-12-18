@@ -47,6 +47,8 @@ class TeamInviteProducts extends Component{
             userRegId: null,
             productModalVisible: false,
             loading: false,
+            agreeTerm: false,
+            isAgreed: false
         }
     }
 
@@ -178,9 +180,18 @@ class TeamInviteProducts extends Component{
 
     teamInviteProductSave = (e) => {
         try{
+            const {termsAndConditions} = this.props.registrationProductState;
             e.preventDefault();
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
+
+                    if(termsAndConditions.length > 0){
+                        if(this.state.agreeTerm == false){
+                            this.setState({isAgreed:true})
+                            return;
+                        }
+                    }
+
                     let {teamInviteReviewList, registrationId} = this.props.teamInviteState;
                     teamInviteReviewList["registrationId"] = registrationId;
                     teamInviteReviewList["userRegId"] = this.state.userRegId;
@@ -531,7 +542,14 @@ class TeamInviteProducts extends Component{
         }catch(ex){
             console.log("Error in yourOrderView::"+ex);
         }
-    } 
+    }
+    
+    termsAndConditionsCheck = (e) => {
+        this.setState({ agreeTerm: e.target.checked });
+        if(e.target.checked){
+            this.setState({isAgreed:false})
+        }
+    }
 
     termsAndConditionsView = (getFieldDecorator) =>{
         const {termsAndConditions} = this.props.registrationProductState;
@@ -548,23 +566,22 @@ class TeamInviteProducts extends Component{
                 ))}                  
                 </div>                           
                 <div className="body-text-common mt-0" style={{display:"flex"}}>
-                <Form.Item>
-                        {getFieldDecorator(`termsAndCondition`, {
-                            rules: [{ required: true, message: ValidationConstants.termsAndCondition[0] }],
-                        })(  
                     <div>
                         <Checkbox
                                 className="single-checkbox mt-0"
                                 checked={this.state.agreeTerm}
-                                onChange={e => this.setState({ agreeTerm: e.target.checked })}>
+                                onChange={e => this.termsAndConditionsCheck(e)}>
                                 {AppConstants.agreeTerm}
                                 <span style={{marginLeft:"5px"}} ></span>
                             </Checkbox>
                     </div>
-                     )}
-                     </Form.Item> 
                     {/* <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                    */}
-                </div>                      
+                </div>
+                {this.state.isAgreed &&
+                    <div style={{color:"var(--app-red)"}}>
+                        {ValidationConstants.termsAndCondition[0]}
+                    </div>  
+                }                      
             </div>
         )
     }
@@ -587,10 +604,11 @@ class TeamInviteProducts extends Component{
     }
 
     productRightView = (termsAndConditionsView)=>{
+        const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
                 {this.yourOrderView()}
-                {this.termsAndConditionsView(termsAndConditionsView)}
+                {termsAndConditions.length > 0 && this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
             </div>
         )
