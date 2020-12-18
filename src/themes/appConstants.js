@@ -1193,7 +1193,10 @@ const AppConstants = {
   confirmPassword: 'Confirm password',
   enterConfirmPassword: 'Enter confirm password',
   invoiceCode: "Invoice Code",
-  warning: "Warning"
+  warning: "Warning",
+
+  childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
+  parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
 };
 
 export default AppConstants;

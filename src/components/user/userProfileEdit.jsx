@@ -47,7 +47,9 @@ class UserProfileEdit extends Component {
                 dateOfBirth: "",street1:"",street2:"",suburb:"",stateRefId: 1,postalCode: "",statusRefId: 0,
                 emergencyFirstName: "",emergencyLastName: "",emergencyContactNumber: "", existingMedicalCondition: "",regularMedication: "",
                 disabilityCareNumber: '', isDisability: 0,
-                disabilityTypeRefId: 0,  countryRefId: null, nationalityRefId: null,languages: ""
+                disabilityTypeRefId: 0,  countryRefId: null, nationalityRefId: null,languages: "",
+                parentUserId: 0,
+                childUserId: 0
             },
             titleLabel:"",
             section: "",
@@ -94,13 +96,24 @@ class UserProfileEdit extends Component {
                   }
               }
             }
-            else if(moduleFrom = "6"){
+            else if(moduleFrom == "6"){
                 titleLabel= AppConstants.edit + ' ' +  AppConstants.child;
                 section = "child";
+            }else if (moduleFrom == "7") {
+                titleLabel = AppConstants.addChild;
+                section = "child";
+            }
+            else if (moduleFrom == "8") {
+                titleLabel = AppConstants.addParent_guardian;
+                section = "primary";
+            }
+            let userDataTemp = this.state.userData;
+            if(moduleFrom == 7 || moduleFrom == 8){
+                userDataTemp.userId = data.userId;
             }
             console.log("DATA:::" + JSON.stringify(data));
             await this.setState({displaySection: moduleFrom,
-                userData: data,
+                userData: (moduleFrom != "7" && moduleFrom != "8") ? data : userDataTemp,
                 titleLabel: titleLabel, section: section, loadValue: true})
             setTempUserId(data.userId);
 
@@ -305,7 +318,7 @@ class UserProfileEdit extends Component {
                             format={"DD-MM-YYYY"}
                             showTime={false}
                             name={'dateOfBirth'}
-                            value={userData.dateOfBirth!= null && moment(userData.dateOfBirth) }
+                            value={userData.dateOfBirth ? moment(userData.dateOfBirth) : null}
                         />
                     </div>
                 </div>
@@ -792,27 +805,31 @@ class UserProfileEdit extends Component {
     }
     //////form content view
     contentView = (getFieldDecorator) => {
+        const { displaySection } = this.state;
 
         return (
             <div className="content-view pt-0">
  
-            {this.state.displaySection=="1"?
+            {/* {this.state.displaySection=="1"?
                 <div>{this.addressEdit(getFieldDecorator)}</div>
-            :null}
+            :null} */}
 
-            {(this.state.displaySection=="2" || this.state.displaySection=="6")?
+            {/* {(this.state.displaySection=="2" || this.state.displaySection=="6")?
                 <div>{this.primaryContactEdit(getFieldDecorator)}</div>
-            :null} 
+            :null}  */}
 
-            {this.state.displaySection=="3"?
+            {(displaySection === "1" || displaySection === "2"  || displaySection === "6" || displaySection === "7" || displaySection === "8") && <div>{this.addressEdit(getFieldDecorator)}</div>}
+
+
+            {displaySection=="3"?
                 <div>{this.emergencyContactEdit(getFieldDecorator)}</div>
             :null} 
 
-            {this.state.displaySection=="4"?
+            {displaySection=="4"?
                 <div>{this.otherInfoEdit(getFieldDecorator)}</div>
             :null}
 
-            {this.state.displaySection=="5"?
+            {displaySection=="5"?
                 <div>{this.medicalEdit(getFieldDecorator)}</div>
             :null}
 
@@ -829,6 +846,13 @@ class UserProfileEdit extends Component {
                 let userState = this.props.userState;
                 let data =  this.state.userData;
                 data["section"] = this.state.section;
+                data["organisationId"] = this.state.organisationId;
+                if(this.state.displaySection == 8 && !data.parentUserId){
+                    data["parentUserId"] = 0;
+                }
+                else if(this.state.displaySection == 7 && !data.childUserId){
+                    data["childUserId"] = 0;
+                }
                 console.log("obj"+JSON.stringify(data))
                 this.props.userProfileUpdateAction(data);
                 this.setState({saveLoad: true});

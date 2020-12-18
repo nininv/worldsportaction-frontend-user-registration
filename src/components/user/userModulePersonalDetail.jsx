@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox, Icon } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox, Icon , Modal} from 'antd';
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -15,7 +15,8 @@ import {
     getUserModuleActivityParentAction, getUserModuleActivityScorerAction,
     getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
     userPhotoUpdateAction,
-    registrationResendEmailAction
+    registrationResendEmailAction,
+    userProfileUpdateAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -408,8 +409,18 @@ const columnsPersonalPrimaryContacts = [
         dataIndex: 'parentName',
         key: 'parentName',
         render: (parentName, record) =>
-            <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.parentUserId)}>
-                {parentName}</span>
+        (
+            <div>
+                {record.status == "Linked" ? 
+                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
+                    {parentName}</span>
+                    :
+                    <span>{parentName}</span>
+                }
+
+            </div>
+
+        )
     },
     {
         title: 'Street',
@@ -440,6 +451,11 @@ const columnsPersonalPrimaryContacts = [
         title: 'Email',
         dataIndex: 'email',
         key: 'email'
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status'
     },
     {
         title: 'Action',
@@ -459,6 +475,9 @@ const columnsPersonalPrimaryContacts = [
                             <span>Edit</span>
                         </NavLink>
                     </Menu.Item>
+                    <Menu.Item key="2">
+                        <span onClick={() => this_Obj.unlinkCheckParent(record)}>{record.status == "Linked" ? "Unlink" : "Link"}</span>
+                    </Menu.Item>
                 </SubMenu>
             </Menu>
         )
@@ -470,9 +489,19 @@ const columnsPersonalChildContacts = [
         title: 'Name',
         dataIndex: 'childName',
         key: 'childName',
-        render: (childName, record) =>
-            <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
-                {childName}</span>
+        render: (childName, record) => (
+            <div>
+                {record.status == "Linked" ? 
+                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
+                    {childName}</span>
+                    :
+                    <span>{childName}</span>
+                }
+
+            </div>
+
+        )
+
     },
     {
         title: 'Street',
@@ -505,6 +534,11 @@ const columnsPersonalChildContacts = [
         key: 'email'
     },
     {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status'
+    },
+    {
         title: 'Action',
         dataIndex: 'isUser',
         key: 'isUser',
@@ -521,6 +555,9 @@ const columnsPersonalChildContacts = [
                         <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "6" } }} >
                             <span>Edit</span>
                         </NavLink>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <span onClick={() => this_Obj.unlinkCheckChild(record)}>{record.status == "Linked" ? "Unlink" : "Link"}</span>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
@@ -803,6 +840,11 @@ class UserModulePersonalDetail extends Component {
             stripeDashBoardLoad: false,
             isTablet: false,
             isCollapsedUserDetails: true,
+            unlinkOnLoad: false,
+            unlinkRecord: null,
+            showChildUnlinkConfirmPopup: false,
+            showParentUnlinkConfirmPopup: false,
+            showCannotUnlinkPopup: false
         }
     }
 
@@ -946,6 +988,17 @@ class UserModulePersonalDetail extends Component {
             if (stripeDashboardUrl) {
                 window.open(stripeDashboardUrl, '_newtab');
             }
+        }
+
+        if(this.props.userState.onUpUpdateLoad == false && this.state.unlinkOnLoad == true){
+            let personal = this.props.userState.personalData;
+            let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
+            let payload = {
+                userId: personal.userId,
+                organisationId: organisationId
+            };
+            this.props.getUserModulePersonalByCompetitionAction(payload);
+            this.setState({unlinkOnLoad: false})
         }
     }
 
@@ -1566,6 +1619,16 @@ class UserModulePersonalDetail extends Component {
                 {primaryContacts != null && primaryContacts.length > 0 &&
                     <div>
                         <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.parentOrGuardianDetail}</div>
+                        <NavLink
+                            to={{
+                                pathname: `/userProfileEdit`,
+                                state: { moduleFrom: "8", userData: userState.personalData },
+                            }}
+                        >
+                            <span className="input-heading-add-another" style={{paddingTop:"unset", marginBottom:"15px"}}>
+                                + {AppConstants.addParent_guardian}
+                            </span>
+                        </NavLink>
                         <div className="table-responsive home-dash-table-view">
                             <Table className="home-dashboard-table"
                                 columns={columnsPersonalPrimaryContacts}
@@ -1578,6 +1641,16 @@ class UserModulePersonalDetail extends Component {
                 {childContacts != null && childContacts.length > 0 &&
                     <div>
                         <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.childDetails}</div>
+                        <NavLink
+                            to={{
+                                pathname: `/userProfileEdit`,
+                                state: { moduleFrom: "7", userData: userState.personalData },
+                            }}
+                        >
+                            <span className="input-heading-add-another" style={{paddingTop:"unset", marginBottom:"15px"}}>
+                                + {AppConstants.addChild}
+                            </span>
+                        </NavLink>
                         <div className="table-responsive home-dash-table-view">
                             <Table className="home-dashboard-table"
                                 columns={columnsPersonalChildContacts}
@@ -2015,6 +2088,140 @@ class UserModulePersonalDetail extends Component {
         );
     };
 
+    parentUnLinkView = (data) => {
+        let userState = this.props.userState;
+        let personal = userState.personalData;
+        let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
+        data["section"]  = data.status == "Linked" ? "unlink" : "link";
+        data["childUserId"] = personal.userId;
+        data["organisationId"] = organisationId;
+        this.props.userProfileUpdateAction(data);
+        this.setState({unlinkOnLoad: true});
+    }
+
+    childUnLinkView = (data) => {
+        let userState = this.props.userState;
+        let personal = userState.personalData;
+        let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
+        data["section"]  = data.status == "Linked" ? "unlink" : "link";
+        data["parentUserId"] = personal.userId;
+        data["organisationId"] = organisationId;
+        this.props.userProfileUpdateAction(data);
+        this.setState({unlinkOnLoad: true});
+    }
+
+
+    unlinkCheckParent = (record) => {
+        if(record.unlinkedBy && record.status=="Unlinked"){
+            if(record.unlinkedBy == record.userId){
+                this.setState({unlinkRecord: record,showParentUnlinkConfirmPopup: true})
+            }
+            else{
+                this.setState({unlinkRecord: record,showCannotUnlinkPopup: true})
+            }
+        }
+        else{
+            this.setState({unlinkRecord: record,showParentUnlinkConfirmPopup: true})
+        }
+
+        }
+
+    unlinkCheckChild = (record) => {
+        if(record.unlinkedBy && record.status=="Unlinked"){
+            if(record.unlinkedBy == record.userId){
+             this.setState({unlinkRecord: record,showChildUnlinkConfirmPopup: true})    
+            }
+            else{
+                this.setState({unlinkRecord: record, showCannotUnlinkPopup: true})
+            }
+        }
+        else{
+            this.setState({unlinkRecord: record,showChildUnlinkConfirmPopup: true})    
+        }
+
+        }
+
+        cannotUninkPopup = () => {
+            let data = this.state.unlinkRecord;
+            return(
+                <div>
+                    
+                    <Modal
+                        className="add-membership-type-modal"
+                        title="Warning"
+                        visible={this.state.showCannotUnlinkPopup}
+                        onCancel={() => this.setState({ showCannotUnlinkPopup : false})}
+                        footer={[
+                            <Button onClick={() => this.setState({ showCannotUnlinkPopup: false })}>
+                                {AppConstants.ok}
+                            </Button>,
+                        ]}
+                        >   
+                            {data?.childName ? 
+                            <p> {AppConstants.parentUnlinkMessage}</p>
+                            :
+                            <p>{AppConstants.childUnlinkMessage}</p>
+                            }
+    
+                        </Modal>
+                </div>
+            )
+        }
+
+        unlinkChildConfirmPopup = () => {
+            let status = this.state.unlinkRecord?.status == "Linked" ? "de-link" : "link";
+            return (
+                <div>
+                    <Modal
+                        className="add-membership-type-modal"
+                        title={AppConstants.confirm}
+                        visible={this.state.showChildUnlinkConfirmPopup}
+                        onCancel={() => this.setState({ showChildUnlinkConfirmPopup: false })}
+                        footer={[
+                            <Button onClick={() => this.setState({ showChildUnlinkConfirmPopup: false })}>
+                                {AppConstants.cancel}
+                            </Button>,
+                            <Button onClick={() => {
+                                this.childUnLinkView(this.state.unlinkRecord);
+                                this.setState({ showChildUnlinkConfirmPopup: false })
+                            }}>
+                                {AppConstants.confirm}
+                            </Button>
+                        ]}
+                    >
+                       <p> {"Are you sure you want to " + status + " your account?"}</p>
+                    </Modal>
+                </div>
+            )
+        }
+    
+        unlinkParentConfirmPopup = () => {
+            let status = this.state.unlinkRecord?.status == "Linked" ? "de-link" : "link";
+            return (
+                <div>
+                    <Modal
+                        className="add-membership-type-modal"
+                        title={AppConstants.confirm}
+                        visible={this.state.showParentUnlinkConfirmPopup}
+                        onCancel={() => this.setState({ showParentUnlinkConfirmPopup: false })}
+                        footer={[
+                            <Button onClick={() => this.setState({ showParentUnlinkConfirmPopup: false })}>
+                                {AppConstants.cancel}
+                            </Button>,
+                            <Button onClick={() => {
+                                this.parentUnLinkView(this.state.unlinkRecord);
+                                this.setState({ showParentUnlinkConfirmPopup: false })
+                            }}>
+                                {AppConstants.confirm}
+                            </Button>
+                        ]}
+                    >
+                       <p> {"Are you sure you want to " + status + " your account?"}</p>
+                    </Modal>
+                </div>
+            )
+        }
+
     render() {
         let { activityPlayerList, activityManagerList, activityScorerList, scorerActivityRoster, activityParentList, personalByCompData, userRole } = this.props.userState;
         let personalDetails = personalByCompData != null ? personalByCompData : [];
@@ -2094,6 +2301,9 @@ class UserModulePersonalDetail extends Component {
                             </div>
                         </div>
                         <Loader visible={this.props.userState.onMedicalLoad} />
+                        {this.unlinkChildConfirmPopup()}
+                        {this.unlinkParentConfirmPopup()}
+                        {this.cannotUninkPopup()}
                     </Content>
                 </Layout>
             </div>
@@ -2122,7 +2332,8 @@ function mapDispatchToProps(dispatch) {
         saveStripeAccountAction,
         getStripeLoginLinkAction,
         userPhotoUpdateAction,
-        registrationResendEmailAction
+        registrationResendEmailAction,
+        userProfileUpdateAction
     }, dispatch);
 
 }
