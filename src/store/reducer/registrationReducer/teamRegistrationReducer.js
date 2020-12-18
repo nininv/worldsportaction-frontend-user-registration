@@ -181,6 +181,7 @@ const teamMemberObj = {
   // "addNewAddressFlag": true,
   // "manualEnterAddressFlag": false,
   "payingFor": 0,
+  "isRegistererAsParent": 0,
   "parentOrGuardian": [],
   "membershipProductTypes": [
     // {

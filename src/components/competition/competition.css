@@ -710,3 +710,16 @@
     padding: 20px;
   }
 }
+
+.upload-default{
+  width: 90px;
+  height: 90px;
+  padding-top: 8px;
+  background: white;
+  text-align: center;
+  align-self: center;
+  padding-top: 17px;
+  border-radius: 50%;
+  border: 1px dashed var( --app-d9d9d9);
+  cursor: pointer;
+}

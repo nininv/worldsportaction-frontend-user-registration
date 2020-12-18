@@ -600,7 +600,7 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == "dateOfBirth") {
                 if (getAge(value) < 18) {
-                    if (!isArrayNotEmpty(parents)) {
+                    if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
                         this.addParent("add");
                     }
                 } else {
@@ -799,6 +799,7 @@ class AppRegistrationFormNew extends Component {
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
+        console.log("adderssData",address)
         if (address) {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
@@ -1074,6 +1075,7 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
+            console.log("registrationObj",registrationObj);
             if (registrationObj.addNewAddressFlag &&
                 registrationObj.stateRefId == null) {
                 error = true;
@@ -1382,18 +1384,28 @@ class AppRegistrationFormNew extends Component {
                         if(values.participantMobileNumber != null && values.participantMobileNumber.length != 10)
                         {
                             // message.error(ValidationConstants.mobileLength);
+                            this.setState({hasErrorParticipitant: true})
                             return false;
                         }
                         if(values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10)
                         {
+                            this.setState({hasErrorEmergency: true})
                             return false;
                         }
+                        let hasError = this.state.hasErrorParent;
                         if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
                         {
                             for(let a in filteredSaveRegistrationObj.parentOrGuardian)
                             {
                                 if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
                                 {
+                                    hasError.push({
+                                        error : true,
+                                        parentIndex : a
+                                    });
+                                    this.setState({                        
+                                        hasErrorParent: hasError
+                                    })
                                     return false
                                 }
                             }
@@ -1462,6 +1474,7 @@ class AppRegistrationFormNew extends Component {
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
+        console.log("regostratop",registrationObj.dateOfBirth)
         return (
             <div>
                 {registrationObj.userId == -1 || registrationObj.userId == -2 ?
@@ -1470,7 +1483,7 @@ class AppRegistrationFormNew extends Component {
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 ? (
+                {getAge(registrationObj.dateOfBirth) < 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 ) : (
                         <div>
@@ -1906,7 +1919,7 @@ class AppRegistrationFormNew extends Component {
                                 </Form.Item>
                             </div>
                         )}
-                        {getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
+                        {getAge(registrationObj.dateOfBirth) < 18 && (
                             <Checkbox
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
@@ -1919,7 +1932,7 @@ class AppRegistrationFormNew extends Component {
 
                 <InputWithHead heading={AppConstants.photo} />
                 {registrationObj.photoUrl == null ?
-                    <div className="img-upload-target" onClick={() => this.selectImage()}>
+                    <div className="upload-default" onClick={() => this.selectImage()}>
                         <div style={{ fontSize: "22px" }}>
                             +
                             </div>
@@ -2435,6 +2448,11 @@ class AppRegistrationFormNew extends Component {
                             <div>
                                 <div style={{ fontWeight: "600", marginBottom: "5px" }}>{AppConstants.participant}</div>
                                 <div className="form-heading" style={{ textAlign: "start", marginRight: 10 }}>{registrationObj.firstName} {registrationObj.lastName}</div>
+                                {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
+                                    <div style={{ fontWeight: "600", marginTop: "-5px" }}>
+                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"MM-DD-YYYY").format("DD/MM/YYYY")}
+                                    </div>
+                                )}
                             </div>
                             <div className="orange-action-txt" style={{ alignSelf: "center", margin: "5px 0" }}
                                 onClick={() => this.selectAnotherParticipant()}>+{AppConstants.selectAnotherUser}
@@ -3397,7 +3415,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
 
-                    {(getAge(moment(registrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) && (
+                    {(getAge(registrationObj.dateOfBirth) < 18) && (
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>
@@ -3657,7 +3675,7 @@ class AppRegistrationFormNew extends Component {
                             <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) && "finish"} title={AppConstants.additionalInformation} />
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
-                        {/* {this.singleCompModalView()} */}
+                        {this.singleCompModalView()}
                         {this.registrationCapValidationModal()}
                     </div>
                 )}
@@ -3686,31 +3704,31 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
-    // singleCompModalView = () => {
-    //     let { saveValidationErrorMsg } = this.props.userRegistrationState;
-    //     let { saveValidationErrorCode } = this.props.userRegistrationState;
-    //     let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
-    //     let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
-    //     return (
-    //         <div>
-    //             <Modal
-    //                 className="add-membership-type-modal"
-    //                 title={title}
-    //                 visible={this.state.singleCompModalVisible}
-    //                 onCancel={() => this.setState({ singleCompModalVisible: false })}
-    //                 footer={[
-    //                     <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
-    //                         {AppConstants.ok}
-    //                     </Button>
-    //                 ]}
-    //             >
-    //                 {(errorMsg || []).map((item, index) => (
-    //                     <p key={index}> {item}</p>
-    //                 ))}
-    //             </Modal>
-    //         </div>
-    //     )
-    // }
+    singleCompModalView = () => {
+        let { saveValidationErrorMsg } = this.props.userRegistrationState;
+        let { saveValidationErrorCode } = this.props.userRegistrationState;
+        let errorMsg = saveValidationErrorMsg != null ? saveValidationErrorMsg : [];
+        let title = saveValidationErrorCode == 1 ? AppConstants.singleCompetition : AppConstants.userDetailsInvalid;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={title}
+                    visible={this.state.singleCompModalVisible}
+                    onCancel={() => this.setState({ singleCompModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ singleCompModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                    {(errorMsg || []).map((item, index) => (
+                        <p key={index}> {item}</p>
+                    ))}
+                </Modal>
+            </div>
+        )
+    }
 
     registrationCapValidationModal = () => {
         const { registrationCapValidationMessage } = this.props.commonReducerState;

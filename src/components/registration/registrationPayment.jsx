@@ -1013,21 +1013,23 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
                 },
                 body: JSON.stringify(body)
             }).then((response) => {
-                    props.onLoad(false)
                     let resp = response.json()
                     resp.then((Response) => {
                         if (response.status === 200) {
                             stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption);
                         }
                         else if (response.status === 212) {
+                            props.onLoad(false);
                             props.registrationCapModalVisible(true);
                             props.registrationCapValidationMessage(Response.message);
                             // message.error(Response.message);
                         }
                         else if (response.status === 400) {
+                            props.onLoad(false);
                             message.error(Response.message);
                         }
                         else {
+                            props.onLoad(false);
                             message.error("Something went wrong.")
                         }
     
@@ -1106,7 +1108,6 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             body: JSON.stringify(body)
         })
             .then((response) => {
-                props.onLoad(false)
                 let resp = response.json()
                 console.log(response.status, "status", paymentType)
                 resp.then((Response) => {
@@ -1115,8 +1116,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             message.success(Response.message);
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
-                            if(Response.message != AppConstants.alreadyPaid){
+                            if(perMatchSelectedOption){
                                 createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,token);
+                            }else{
+                                props.onLoad(false)
                             }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
@@ -1127,8 +1130,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         }
                         else if(paymentType =="direct_debit") {
                             if(Response.clientSecret == null){
-                                if(Response.message != AppConstants.alreadyPaid){
+                                if(perMatchSelectedOption){
                                     createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                }else{
+                                    props.onLoad(false)
                                 }
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
@@ -1140,12 +1145,15 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             else{
                                 setClientKey(Response.clientSecret)
                                 setRegId(registrationUniqueKey)
+                                props.onLoad(false)
                             }
                            // message.success(Response.message);
                         }
                         else{
-                            if(Response.message != AppConstants.alreadyPaid){
+                            if(perMatchSelectedOption){
                                 createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                            }else{
+                                props.onLoad(false)
                             }                            
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
@@ -1156,12 +1164,15 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         }
                     }
                     else if (response.status === 212) {
+                        props.onLoad(false)
                         message.error(Response.message);
                     }
                     else if (response.status === 400) {
+                        props.onLoad(false)
                         message.error(Response.message);
                     }
                     else {
+                        props.onLoad(false)
                         message.error("Something went wrong.")
                     }
 

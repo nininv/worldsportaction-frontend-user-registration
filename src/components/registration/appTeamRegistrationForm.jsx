@@ -735,9 +735,46 @@ class AppTeamRegistrationForm extends Component{
         window.scrollTo(0, 0);
     }
 
+    setRegistererDetailsAsParentInFirstPos = (isRegistererAsParent,teamMemberIndex) => {
+        try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
+            let teamMember = teamRegistrationObj.teamMembers[teamMemberIndex];
+            if(isRegistererAsParent == 1){
+                // console.log("teamMember.parentOrGuardian.length",teamMember.parentOrGuardian.length)
+                if(teamMember.parentOrGuardian.length > 0 && teamMember.parentOrGuardian[0].email){
+                    for(let i=(teamMember.parentOrGuardian.length-1); i >= 0;i--){
+                        teamMember.parentOrGuardian[i+1] = teamMember.parentOrGuardian[i];
+                    }
+                }
+                // console.log("teamMember.parentOrGuardian.length",teamMember.parentOrGuardian.length)
+                let parentTemp = {
+                    firstName: teamRegistrationObj.firstName,
+                    middleName: teamRegistrationObj.middleName,
+                    lastName: teamRegistrationObj.lastName,
+                    mobileNumber: teamRegistrationObj.mobileNumber,
+                    email: teamRegistrationObj.email
+                }
+                teamMember.parentOrGuardian[0] = parentTemp;
+            }else{
+                // console.log("teamMember.parentOrGuardian[0]",teamMember.parentOrGuardian[0])
+                teamMember.parentOrGuardian.splice(0,1);
+            }
+            // console.log("teamRegistrationObj",teamRegistrationObj)
+            this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+            setTimeout(() => {
+                this.setParticipantDetailStepFormFields();
+            },200)
+        }catch(ex){
+            console.log("Error in setRegistererDetailsAsParentInFirstPos::"+ex);
+        }
+    }
+
     onChangeTeamMemberValue = (value,key,index,subIndex) => {
-        console.log("value,key,index,subIndex",value,key,index,subIndex)
-        this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex)
+        // console.log("value,key,index,subIndex",value,key,index,subIndex)
+        this.props.updateRegistrationTeamMemberAction(value,key,index,subIndex);
+        if(key == "isRegistererAsParent"){
+            this.setRegistererDetailsAsParentInFirstPos(value,index)
+        }
     }
 
     showMemberTypeValidation = (teamMember) => {
@@ -1173,8 +1210,8 @@ class AppTeamRegistrationForm extends Component{
             }
             // console.log("personName2",personNames)
             if(isArrayNotEmpty(personNames)){
-                let fromDate = moment(selectedDivision.fromDate).format("YYYY-MM-DD");
-                let toDate = moment(selectedDivision.toDate).format("YYYY-MM-DD"); 
+                let fromDate = moment(selectedDivision.fromDate).format("DD-MM-YYYY");
+                let toDate = moment(selectedDivision.toDate).format("DD-MM-YYYY"); 
                 let personsString = '';
                 for(let i in personNames){
                     personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
@@ -1238,7 +1275,9 @@ class AppTeamRegistrationForm extends Component{
             if(referenceKey == "team"){
                 this.onChangeSetTeamValue(date, key);
                 if(getAge(date) < 18){
-                    this.addParent("add")
+                    if (!isArrayNotEmpty(teamRegistrationObj.parentOrGuardian)) {
+                        this.addParent("add")
+                    }
                 }else{
                     this.addParent("removeAllParent")
                 }
@@ -1255,8 +1294,11 @@ class AppTeamRegistrationForm extends Component{
 
     teamMemberAddingProcess = (dob,payingFor,teamMemberIndex) => {
         try{
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
             if(getAge(dob) < 18 && payingFor == 1){
-                this.addTeamMemberParent("add",teamMemberIndex)
+                if(!isArrayNotEmpty(teamRegistrationObj.teamMembers[teamMemberIndex].parentOrGuardian)){
+                    this.addTeamMemberParent("add",teamMemberIndex)
+                } 
             }else{
                 this.addTeamMemberParent("removeAllParent",teamMemberIndex)
             }
@@ -1306,7 +1348,7 @@ class AppTeamRegistrationForm extends Component{
         try{
             e.preventDefault();
             const { teamRegistrationObj } = this.props.teamRegistrationState; 
-            // console.log("teamRegis final",teamRegistrationObj)
+            console.log("teamRegis final",teamRegistrationObj)
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
             let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
             if(this.state.currentStep == 1){
@@ -2708,17 +2750,30 @@ class AppTeamRegistrationForm extends Component{
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px",marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) < 18 && 
+                            {getAge(teamRegistrationObj.dateOfBirth) >= 18 && 
+                                <Checkbox
+                                    className="single-checkbox"
+                                    checked={teamMember.isRegistererAsParent == 1 ? true : false}
+                                    onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex)}>
+                                        {AppConstants.teamMemberParentCheck}
+                                </Checkbox>
+                            }
+                            {teamMember.isRegistererAsParent == 0 ? (
                                 <div>
                                     {(teamMember.parentOrGuardian || []).map((parent,parentIndex) => (
                                         <div>{this.teamMemberParentOrGuardianView(parent,parentIndex,teamMember,teamMemberIndex,getFieldDecorator)}</div>
                                     ))}
-                                    <div className="orange-action-txt" style={{ marginTop: "10px" }}
-                                        onClick={() => { this.addTeamMemberParent("add",teamMemberIndex) }}
-                                    >+ {AppConstants.addNewParentGaurdian}</div>
                                 </div>
-                            
-                            }
+                            ) : (
+                                <div>
+                                    {(teamMember.parentOrGuardian || []).slice(1,teamMember.parentOrGuardian.length).map((parent,parentIndex) => (
+                                        <div>{this.teamMemberParentOrGuardianView(parent,parentIndex+1,teamMember,teamMemberIndex,getFieldDecorator)}</div>
+                                    ))}
+                                </div>
+                            )}
+                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                                    onClick={() => { this.addTeamMemberParent("add",teamMemberIndex) }}
+                                >+ {AppConstants.addNewParentGaurdian}</div>
                         </div>
                     )}
 
@@ -3290,7 +3345,7 @@ class AppTeamRegistrationForm extends Component{
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(moment(teamRegistrationObj.dateOfBirth).format("MM-DD-YYYY")) < 18) ? (
+                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                         <div>
