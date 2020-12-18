@@ -1155,7 +1155,7 @@ const AppConstants = {
   payCompetitionFeesForAll: "Pay Competition Fees for All",
   payCompetitionAndNominationFeesForAll: "Pay Competition Fees and Nomination Fees (if Applicable) for All",
   payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
-  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
+  howWillTheTeamFeeBePaid: "How will the Team Fee be paid? Will you...",
   pleaseSelect: "Please Select",
 
   myUmpiringAvailability: "My Umpiring Availability",
