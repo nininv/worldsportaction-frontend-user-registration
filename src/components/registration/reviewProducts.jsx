@@ -512,7 +512,7 @@ class ReviewProducts extends Component {
 
     reviewProducts = (getFieldDecorator, item, index) => {
         let paymentOptionRefId = item.selectedOptions.paymentOptionRefId;
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
                                 (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
                                 (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
                                 (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 

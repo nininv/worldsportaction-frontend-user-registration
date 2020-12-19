@@ -1613,7 +1613,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         <div className="light-grey-border-box">
                             <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                            <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringTeamTo}</div>
+                            <div className="competition-specifics-headings required-field" style={{paddingTop:'6px'}}>{AppConstants.registeringTeamTo}</div>
                             <Form.Item>
                                 {getFieldDecorator(`competitionMembershipProductTypeId`, {
                                     rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired}],
@@ -1634,7 +1634,7 @@ class AppTeamRegistrationForm extends Component{
                             </Form.Item>
                             {isArrayNotEmpty(teamRegistrationObj.divisions) && (
                                 <div>
-                                    <InputWithHead heading={AppConstants.registrationDivisions}/>
+                                    <InputWithHead heading={AppConstants.registrationDivisions} required={"required-field"}/>
                                     <Form.Item>
                                         {getFieldDecorator(`competitionMembershipProductDivisionId`, {
                                             rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired}],

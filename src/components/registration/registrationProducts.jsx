@@ -217,7 +217,7 @@ class RegistrationProducts extends Component {
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -660,7 +660,7 @@ class RegistrationProducts extends Component {
                             {(item.paymentOptions || []).map((p, pIndex) =>(  
                                 <span key={p.paymentOptionRefId}>
                                     {p.paymentOptionRefId == 1 && 
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.paySingleGame}</Radio>                    
                                     }  
                                     {p.paymentOptionRefId == 3 &&          
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
@@ -1486,7 +1486,7 @@ class RegistrationProducts extends Component {
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
-                <div className="headline-text-common mb-4" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </div>
+                <div className="headline-text-common mb-4 required-field" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </div>
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>

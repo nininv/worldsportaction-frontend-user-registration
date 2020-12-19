@@ -941,7 +941,8 @@ const AppConstants = {
   less:"LESS",
   governmentSportVouchers:"Government Sports Vouchers - ",
   hardshipPlayer:"Hardship Player Discount",
-  payAsYou:"Pay as You Go",
+  payEachMatch:"Pay each Match",
+  paySingleGame:"Pay for a Single Game",
   gameVoucher:"Game Voucher",
   payfullAmount:"Pay Full Amount",
   weeklyInstalment:"Instalment",
@@ -1104,7 +1105,7 @@ const AppConstants = {
   admin: "Admin",
   teamDetails: "Team Details",
   teamMember: "Team Member",
-  payingForMember: "I am paying for this member",
+  payingForMember: "I am paying all fees for this member",
   teamMemberParentCheck: "Check myself as a parent",
   addTeamMember: "Add Team Member",
   members: "Members",
@@ -1155,7 +1156,7 @@ const AppConstants = {
   payCompetitionFeesForAll: "Pay Competition Fees for All",
   payCompetitionAndNominationFeesForAll: "Pay Competition Fees and Nomination Fees (if Applicable) for All",
   payAllFeesForSelectedTeamMembers: "Pay All Fees for Selected Team Members",
-  howWillTheTeamFeeBePaid: "How will the Team Fee be paid?. Will you.....",
+  howWillTheTeamFeeBePaid: "How will the Team Fee be paid? Will you...",
   pleaseSelect: "Please Select",
 
   myUmpiringAvailability: "My Umpiring Availability",
@@ -1193,7 +1194,10 @@ const AppConstants = {
   confirmPassword: 'Confirm password',
   enterConfirmPassword: 'Enter confirm password',
   invoiceCode: "Invoice Code",
-  warning: "Warning"
+  warning: "Warning",
+
+  childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
+  parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
 };
 
 export default AppConstants;

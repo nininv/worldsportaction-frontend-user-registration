@@ -393,8 +393,9 @@ function getFilteredDivisions(divisions,state){
 		let filteredDivisions = [];
 		let genderRefId = state.registrationObj.genderRefId;
 		// console.log("date",state.registrationObj.dateOfBirth)
-		var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
-		// console.log("date",JSON.stringify(date))
+		// var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
+		var date = moment(state.registrationObj.dateOfBirth,"MM-DD-YYYY");
+		console.log("date",JSON.stringify(date))
 		for(let division of divisions){
 			if(division.registrationLock == 0 && division.isIndividualRegistration == 1){
 				if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
@@ -483,7 +484,9 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 				}
 			}
 			state.registrationCapValidateInputObj = validateRegistrationCapObj;
-			state.enableValidateRegistrationCapService = true;
+			if(state.registrationCapValidateInputObj.products.find(x => x.competitionId)){
+				state.enableValidateRegistrationCapService = true;
+			}
 		}
 	}catch(ex){
 	  console.log("Error in setValidateRegistrationCapObj::"+ex);
