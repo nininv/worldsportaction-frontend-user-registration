@@ -337,7 +337,8 @@ function setDivisions(state,competitionMembershipProductTypeId){
       state.teamRegistrationObj.walkingNetballFlag = (membershipProduct.shortName == "Walking Netball" || membershipProduct.shortName == "Player - Walking Netball") ? 1 : 0;
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
-      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
+      // if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
+      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
         state.teamRegistrationObj.teamMembers = [];
         state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
       }
