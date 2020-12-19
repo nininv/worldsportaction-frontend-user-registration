@@ -257,12 +257,11 @@ const CheckoutForm = (props) => {
             return;
         }
         console.log(event.target)
-        console.log("Payload", payload);
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
-        const perMatchPaymentOption = payload.singleGameSelected == 1 && perMatchSelectedPaymentOption.selectedOption != 0 ? true : false;
+        const perMatchPaymentOption = payload.singleGameSelected == 1 && props.payload.total.targetValue > 0 ? (perMatchSelectedPaymentOption.selectedOption != 0  ? true : false) : true;
         console.log(auBankAccount, card)
-        if ((auBankAccount || card || isSchoolRegistration == 1 || isHardshipEnabled == 1) && (perMatchPaymentOption || payload.singleGameSelected != 1)) {
+        if (((auBankAccount || card || props.payload.total.targetValue == 0 ) && (perMatchPaymentOption || payload.singleGameSelected != 1))) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -323,13 +322,13 @@ const CheckoutForm = (props) => {
                     // })
                 }
             }
-            else if(isSchoolRegistration || isHardshipEnabled){
+            else if(props.payload.total.targetValue == 0){
                 props.onLoad(true)
                 stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
             }
         }
         else {
-            if(!isSchoolRegistration && !isHardshipEnabled){
+            if(paymentOptions.length > 0 && !isSchoolRegistration && !isHardshipEnabled){
                 message.config({
                     maxCount: 1, duration: 0.9
                 })
@@ -591,7 +590,7 @@ const CheckoutForm = (props) => {
                 <div className="mt-5">
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
-                            {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ?
+                            {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                                 <Button
                                     style={{textTransform: "uppercase"}}
                                     className="open-reg-button"
@@ -599,7 +598,7 @@ const CheckoutForm = (props) => {
                                     type="primary">
                                     {AppConstants.submit}
                                 </Button>
-                            : null}
+                            {/* : null} */}
                         </div>
                     </div>
                 </div>
@@ -1087,14 +1086,25 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             paymentType: paymentType,
         }
     }
-    else if(props.isSchoolRegistration || props.isHardshipEnabled){
-        body = {
-            registrationId: registrationUniqueKey,
-            //invoiceId: invoiceId,
-            payload: payload,
-            paymentType: null,
-            isSchoolRegistration: 1,
-            isHardshipEnabled: 1
+    else if(props.payload.total.targetValue == 0){
+        if(props.isSchoolRegistration || props.isHardshipEnabled){
+            body = {
+                registrationId: registrationUniqueKey,
+                //invoiceId: invoiceId,
+                payload: payload,
+                paymentType: null,
+                isSchoolRegistration: 1,
+                isHardshipEnabled: 1
+            }
+
+        }
+        else{
+            body = {
+                registrationId: registrationUniqueKey,
+                //invoiceId: invoiceId,
+                payload: payload,
+                paymentType: null,
+            }
         }
     }
     console.log("body" + JSON.stringify(body));
