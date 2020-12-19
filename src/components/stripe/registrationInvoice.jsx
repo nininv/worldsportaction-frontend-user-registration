@@ -786,12 +786,10 @@ class RegistrationInvoice extends Component {
                             />
                         </label>
                     </div>
-                    <div className="col-sm pt-5 invoiceImageMain ">
+                    <div className="pt-5 invoiceImageMain ">
                         <label>
                             <img
                                 src={AppImages.netballLogoMain}
-                                height="100%"
-                                width="100%"
                                 name={'image'}
                                 onError={ev => {
                                     ev.target.src = AppImages.netballLogoMain;
