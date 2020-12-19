@@ -1110,7 +1110,7 @@ const AppConstants = {
   members: "Members",
   payingFor: "I am paying for",
   notPayingFor: "I am not paying for",
-  teamRegistrationNote: "Please note, your Team Members may be required to login and complete their registration by paying their Membership and Nomination (if applicable) fees. Some team members may have already paid their membership fees.",
+  teamRegistrationNote: "Please note, your Team Members may be required to login and complete their registration by paying their Membership (if applicable) fees. Some team members may have already paid their membership fees.",
   umpireActivity:"Umpire Activity",
   uploadBankAccnt: "Upload Bank Account",
   editBankAccount: "Edit Bank Account",
