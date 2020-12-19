@@ -74,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "860bf924-4b7f-4772-898a-844d8efab764";
+        //let registrationUniqueKey = "75555a25-7f2a-4e8f-a3ba-b2945fae9459";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -562,6 +562,22 @@ class RegistrationProducts extends Component {
         )
     }
 
+    getValueOfTeamFeeWillPay = (item) => {
+        try{
+            if(item.selectedOptions.paymentOptionRefId == 1){
+                if(item.selectedOptions.teamRegChargeTypeRefId == 3){
+                    return 1;
+                }else if(item.selectedOptions.teamRegChargeTypeRefId == 4){
+                    return 2;
+                }
+            }else{
+                return item.selectedOptions.nominationPayOptionRefId;
+            }
+        }catch(ex){
+            console.log("Error in getValueOfTeamFeeWillPay::"+ex);
+        }
+    }
+
     productsView = (item, index) =>{
         try{
             let currentDate = moment();
@@ -594,12 +610,23 @@ class RegistrationProducts extends Component {
                             <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
                             <div className="product-line">
                                 <Radio.Group 
-                                    value={item.selectedOptions.nominationPayOptionRefId}
+                                    value={this.getValueOfTeamFeeWillPay(item)}
                                     onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}> 
-                                    <div style={{display:"flex"}}>
-                                        <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
-                                        <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
-                                    </div> 
+                                    {item.selectedOptions.paymentOptionRefId == 1 ? (
+                                        <div>
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 3 && (
+                                                <Radio key={1} value={1}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                            )}
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 4 && (
+                                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                            )}
+                                        </div> 
+                                    ) : (
+                                        <div style={{display:"flex"}}>
+                                            <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                            <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                        </div> 
+                                    )}
                                 </Radio.Group>  
                             </div>
                             <div className="product-line">
