@@ -117,6 +117,12 @@ const ValidationConstants = {
         "This field is required",
     ],
     memberTypeIsRequired: "Member type is required",
+    currentPasswordRequired : "Current Password is required",
+    newPasswordRequired : "New Password is required",
+    confirmPasswordRequired : "Confirm Password is required",
+    passwordVerification: 'Password must be minimum 8 characters',
+    mobileLength: 'Contact number must be 10 digits',
+    invalidNumber : 'Invalid Number',
 };
 
 export default ValidationConstants;

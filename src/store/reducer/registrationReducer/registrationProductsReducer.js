@@ -15,7 +15,7 @@ const initialState = {
     participantAddresses: [],
     shopPickupAddresses: [],
     pickupAddressLoad: false,
-    deliveryOrBillingAddressSelected: false,
+    // deliveryOrBillingAddressSelected: false,
     deleteOnLoad: false,
     singlePaymentData: null
 }
@@ -163,17 +163,19 @@ function registrationProductsReducer(state = initialState, action){
                 }else{
                     reviewData[action.subKey][action.key] = action.value
                 }   
-            }else if(action.subKey == "shippingOptions"){
-                let organisationId = action.value;
-                reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
-                let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
-                if(action.key == "add"){
-                   reviewData.shippingOptions.push(pickupAddress);
-                }else if(action.key == "remove"){
-                    let index = reviewData.shippingOptions.indexOf(pickupAddress);
-                    reviewData.shippingOptions.splice(index,1);
-                }
-            }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
+            }
+            // else if(action.subKey == "shippingOptions"){
+            //     let organisationId = action.value;
+            //     reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
+            //     let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
+            //     if(action.key == "add"){
+            //        reviewData.shippingOptions.push(pickupAddress);
+            //     }else if(action.key == "remove"){
+            //         let index = reviewData.shippingOptions.indexOf(pickupAddress);
+            //         reviewData.shippingOptions.splice(index,1);
+            //     }
+            // }
+            else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
                 let index = action.index;
                 reviewData[action.subKey]["street1"] = state.participantAddresses[index].street1;
                 reviewData[action.subKey]["street2"] = state.participantAddresses[index].steet2;
@@ -181,10 +183,13 @@ function registrationProductsReducer(state = initialState, action){
                 reviewData[action.subKey]["postalCode"] = state.participantAddresses[index].postalCode;
                 reviewData[action.subKey]["stateRefId"] = state.participantAddresses[index].stateRefId;
                 reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
-                state.deliveryOrBillingAddressSelected = true;
-            }
-            else if(action.subKey == "total"){
-                console.log("***********************************" + action.key)
+                // state.deliveryOrBillingAddressSelected = true;
+            }else if(action.subKey == "enterManualBillingAddress"){
+                reviewData["billingAddress"][action.key] = action.value;
+            }else if(action.subKey == "enterManualDeliveryAddress"){
+                reviewData["deliveryAddress"][action.key] = action.value;
+            }else if(action.subKey == "total"){
+                // console.log("***********************************" + action.key)
                 let type = action.key;
                 let totalVal = reviewData.total.total; 
                 console.log("totalVal" + totalVal);

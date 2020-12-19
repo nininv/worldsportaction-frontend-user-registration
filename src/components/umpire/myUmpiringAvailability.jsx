@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Layout, Breadcrumb, Button, DatePicker } from 'antd';
+import history from '../../util/history'
 
 import ScheduleSelector from 'react-schedule-selector';
 import moment from 'moment';
@@ -12,7 +13,7 @@ import AppConstants from "../../themes/appConstants";
 import { getUserRole } from "../../store/actions/userAction/userAction";
 import { getUmpireAvailabilityAction, saveUmpireAvailabilityAction } from '../../store/actions/LiveScoreAction/liveScoreUmpireAction';
 
-import { getUserId, getTempUserId } from "../../util/sessionStorage";
+import { getUserId, getTempUserId, setUserId, setAuthToken, getAuthToken } from "../../util/sessionStorage";
 
 import DashboardLayout from "../../pages/dashboardLayout";
 
@@ -44,16 +45,42 @@ class MyUmpiringAvailability extends Component {
             this.setState({ userId: userId });
             localStorage.removeItem("tempUserId");
         }
+        else {
+            if (this.props.location && this.props.location.search) {
+                const query = this.queryfie(this.props.location.search);
+                let token = query.token;
+                userId = query.userId;
+                if (userId != undefined && token != undefined) {
+                    await setUserId(userId);
+                    await setAuthToken(token);
+                    this.setState({
+                        userId: userId
+                    })
+                }
+                else {
+                    let authToken = await getAuthToken();
+                    let userIdFromStorage = await getUserId();
+                    if (userIdFromStorage != undefined && authToken != undefined &&
+                        userIdFromStorage != null && authToken != null &&
+                        userIdFromStorage != "" && authToken != "" &&
+                        userIdFromStorage != 0) {
+                        userId = userIdFromStorage;
+                        token = authToken;
+                    }
+                }
+                history.push("/myUmpiringAvailability")
+            }
+        }
 
         this.apiCalls(userId);
 
-        const scheduleUnavailableStart = moment().subtract(1,'d').endOf('day');
-        const scheduleUnavailableEnd = moment().add(3, 'M').subtract(1,'d').endOf('day');
+        const scheduleUnavailableStart = moment().subtract(1, 'd').endOf('day');
+        const scheduleUnavailableEnd = moment().add(3, 'M').subtract(1, 'd').endOf('day');
 
         this.setState({ scheduleUnavailableStart, scheduleUnavailableEnd });
     }
 
-    componentDidUpdate(nextProps) {
+    async componentDidUpdate(nextProps) {
         const { liveScoreUmpireState } = this.props;
 
         const scheduleArray = liveScoreUmpireState.umpireAvailabilitySchedule.map(item => {
@@ -62,13 +89,42 @@ class MyUmpiringAvailability extends Component {
         })
 
         if (this.props.liveScoreUmpireState.umpireAvailabilitySchedule != nextProps.liveScoreUmpireState.umpireAvailabilitySchedule) {
-            this.setState({ schedule: scheduleArray});
+            this.setState({ schedule: scheduleArray });
         }
+        if (this.props.location && this.props.location.search) {
+            const query = this.queryfie(this.props.location.search);
+            let token = query.token;
+            let userId = query.userId;
+            if (userId != undefined && token != undefined) {
+                await setUserId(userId);
+                await setAuthToken(token);
+            }
+            else {
+                let authToken = await getAuthToken();
+                let userIdFromStorage = await getUserId();
+                if (userIdFromStorage != undefined && authToken != undefined &&
+                    userIdFromStorage != null && authToken != null &&
+                    userIdFromStorage != "" && authToken != "" &&
+                    userIdFromStorage != 0) {
+                    userId = userIdFromStorage;
+                    token = authToken;
+                }
+            }
+        }
+
+    }
+
+    queryfie(string) {
+        return string
+            .slice(1)
+            .split('&')
+            .map(q => q.split('='))
+            .reduce((a, c) => { a[c[0]] = c[1]; return a; }, {});
     }
 
     apiCalls = (userId) => {
         this.props.getUserRole(userId);
-        
+
         const { startDate, endDate } = this.getStartEndWeekDates(this.state.scheduleStartDate);
 
         this.props.getUmpireAvailabilityAction(userId, startDate, endDate);
@@ -86,9 +142,9 @@ class MyUmpiringAvailability extends Component {
 
         return current && current < scheduleUnavailableStart
             || current && current > scheduleUnavailableEnd;
-      }
+    }
 
-    handleChangeDate = date=> {
+    handleChangeDate = date => {
         const { userId } = this.state;
 
         if (date) {
@@ -151,7 +207,7 @@ class MyUmpiringAvailability extends Component {
 
     headerView = () => {
         return (
-            <div className="row" >
+            <div className="row mx-0" >
                 <div className="col-sm">
                     <Header className="form-header-view" style={{
                         backgroundColor: "transparent",
@@ -177,30 +233,31 @@ class MyUmpiringAvailability extends Component {
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
                         <div className="fluid-width" >
-                            <div className="row" >
+                            <div className="row mx-0" >
 
                                 <div className="col-sm-12" style={{ backgroundColor: "#f7fafc", }}>
                                     <div>{this.headerView()}</div>
-                                        <div className="inside-table-view mt-4" >
-                                            {schedule && userRole &&
-                                                <>
-                                                    <div className="table-actions">
-                                                        <WeekPicker
-                                                            onChange={this.handleChangeDate}
-                                                            disabledDate={this.disabledDate}
-                                                            format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
-                                                        />
-                                                        <Button
-                                                            className="schedule-approval-button"
-                                                            type="primary"
-                                                            htmlType="submit"
-                                                            disabled={false}
-                                                            onClick={this.handleSaveAvailability}
-                                                            disabled={this.props.liveScoreUmpireState.onLoad}
-                                                        >
-                                                            {AppConstants.save}
-                                                        </Button>
-                                                    </div>
+                                    <div className="inside-table-view mt-4" >
+                                        {schedule && userRole &&
+                                            <>
+                                                <div className="table-actions">
+                                                    <WeekPicker
+                                                        onChange={this.handleChangeDate}
+                                                        disabledDate={this.disabledDate}
+                                                        format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
+                                                    />
+                                                    <Button
+                                                        className="schedule-approval-button"
+                                                        type="primary"
+                                                        htmlType="submit"
+                                                        disabled={false}
+                                                        onClick={this.handleSaveAvailability}
+                                                        disabled={this.props.liveScoreUmpireState.onLoad}
+                                                    >
+                                                        {AppConstants.save}
+                                                    </Button>
+                                                </div>
+                                                <div>
                                                     <ScheduleSelector
                                                         selection={schedule}
                                                         numDays={7}
@@ -213,11 +270,12 @@ class MyUmpiringAvailability extends Component {
                                                         onChange={this.handleChangeSchedule}
                                                         renderDateCell={this.renderCell}
                                                     />
-                                                </>
-                                            }
+                                                </div>
+                                            </>
+                                        }
 
-                                            {((!schedule && !this.props.liveScoreUmpireState.onLoad) || !userRole) && this.noDataAvailable()}
-                                        </div>
+                                        {((!schedule && !this.props.liveScoreUmpireState.onLoad) || !userRole) && this.noDataAvailable()}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -158,7 +158,7 @@ class TeamInviteShop extends Component{
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -252,38 +252,40 @@ class TeamInviteShop extends Component{
         let types = shopProductsTypes ? shopProductsTypes : [];
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
-                <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
-                <div style={{width:"230px",marginTop: "10px",marginLeft: "auto",marginRight: "15px"}}>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1}}                  
-                        placeholder={AppConstants.all}  
-                        className="custom-dropdown"
-                        onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
-                        value={this.state.organisationUniqueKey}                                               
-                    >
-                        <Option value={-1}>All</Option> 
-                        {
-                            (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
-                            ))
-                        }    
-                    </Select>
-                </div>
-                <div style={{width:"230px",marginTop: "10px"}}>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1}}                  
-                        placeholder={AppConstants.allCategories}  
-                        className="custom-dropdown"
-                        onChange={(e) => this.onChangeSetValue("typeId", e)}
-                        value={this.state.typeId}                                               
-                    >
-                        <Option value={-1}>All categories</Option> 
-                        {
-                            (types || []).map((item, index) =>(
-                                <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
-                            ))
-                        }    
-                    </Select>
+                <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px", marginRight: 10}}> {AppConstants.merchandiseShop}</div>
+                <div style={{display:"flex", flexWrap: "wrap"}}>
+                    <div style={{width:"230px",marginTop: "10px",marginRight: "15px"}}>
+                        <Select
+                            style={{ width: "100%", paddingRight: 1}}                  
+                            placeholder={AppConstants.all}  
+                            className="custom-dropdown"
+                            onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
+                            value={this.state.organisationUniqueKey}                                               
+                        >
+                            <Option value={-1}>All</Option> 
+                            {
+                                (this.getOrganisationFilterList() || []).map((item, index) =>(
+                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                                ))
+                            }    
+                        </Select>
+                    </div>
+                    <div style={{width:"230px",marginTop: "10px"}}>
+                        <Select
+                            style={{ width: "100%", paddingRight: 1}}                  
+                            placeholder={AppConstants.allCategories}  
+                            className="custom-dropdown"
+                            onChange={(e) => this.onChangeSetValue("typeId", e)}
+                            value={this.state.typeId}                                               
+                        >
+                            <Option value={-1}>All categories</Option> 
+                            {
+                                (types || []).map((item, index) =>(
+                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
+                                ))
+                            }    
+                        </Select>
+                    </div>
                 </div>
             </div>
         );
@@ -298,10 +300,12 @@ class TeamInviteShop extends Component{
                         style={{height: "240px"}}
                         onClick={(e) => this.enableExpandView("show", item, index)}>
                             <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
-                                <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            <div className="px-4">
+                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            </div>
                         </div>
                     </div>
             </div>
@@ -389,7 +393,7 @@ class TeamInviteShop extends Component{
                     <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
                         <img style={{width: "100%" , height: "180px"}} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
-                    <div className="col-lg-8" style={{paddingRight:"15px"}}>
+                    <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
                         {(expandObj.varients || []).map((varnt, vIndex) =>(
@@ -453,7 +457,7 @@ class TeamInviteShop extends Component{
 
     shopLeftView = ()=>{
         return(
-            <div className="col-sm-12 col-md-12 col-lg-8 product-left-view outline-style" style={{cursor:"pointer" ,padding:"26px 47px"}}>
+            <div className="col-sm-12 col-md-12 col-lg-8 product-left-view outline-style registration-form-view" style={{cursor:"pointer"}}>
                 {this.headerView()}
                 {this.cardView()}
                 {/* {this.state.showCardView &&

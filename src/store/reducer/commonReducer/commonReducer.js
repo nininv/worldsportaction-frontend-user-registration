@@ -28,7 +28,8 @@ const initialState = {
     accreditationUmpireList: [],
     accreditationCoachList: [] ,
     walkingNetballQuesList: [],
-    schoolList: []		 
+    schoolList: [],
+    registrationCapValidationMessage: null		 
 };
 
 function commonReducerState(state = initialState, action) {
@@ -290,6 +291,18 @@ function commonReducerState(state = initialState, action) {
                 onLoad: false,
                 error: null
             };
+
+        case ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD:
+            return {...state,onLoad: true,error: null}
+
+        case ApiConstants.API_VALIDATE_REGISTRATION_CAP_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                registrationCapValidationMessage: action.result.message,
+                onLoad: false,
+                error : null
+            }
 
         default:
             return state;

@@ -1,6 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { setPhotoUrl } from "../../../util/sessionStorage";
 
 
 const initialState = {
@@ -134,6 +135,7 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.API_USER_MODULE_PERSONAL_DETAIL_SUCCESS:
             let personalData = action.result;
+            setPhotoUrl(personalData.photoUrl)
             let arr = [];
             if (personalData != null) {
                 let obj = {
@@ -319,6 +321,41 @@ function userReducer(state = initialState, action) {
                 allOrganisationList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
             };
+        
+        case ApiConstants.API_USER_PHOTO_UPDATE_LOAD:
+            return { ...state, userPhotoUpdate: true };
+
+        case ApiConstants.API_USER_PHOTO_UPDATE_SUCCESS:
+            let personalDataTemp = action.result;
+            setPhotoUrl(personalDataTemp.photoUrl);
+            let arrTemp = [];
+            if (personalDataTemp != null) {
+                let obj = {
+                    emergencyFirstName: personalDataTemp.emergencyFirstName,
+                    emergencyLastName: personalDataTemp.emergencyLastName,
+                    emergencyContactNumber: personalDataTemp.emergencyContactNumber,
+                    userId: personalDataTemp.userId
+                };
+                arrTemp.push(obj);
+            }
+        return {
+            ...state,
+            personalData: personalDataTemp,
+            personalEmergency: arrTemp,
+            userPhotoUpdate: false,
+            status: action.status,
+            error: null
+        };
+
+        case ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD:
+            return{...state,onLoad: true};
+          
+        case ApiConstants.API_REGISTRATION_RESEND_EMAIL_SUCCESS:
+            return{
+              ...state,
+              onLoad: false,
+              status: action.status
+            }
 
         default:
             return state;

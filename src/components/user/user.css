@@ -47,15 +47,28 @@
   margin-right: 15px;
 }
 
-.user-contact-heading {
+.user-heading {
   display: flex;
   align-content: center;
   padding-top: 20px;
   padding-bottom: 11px;
-  font-size: 15px;
-  color: var(--app-1b1b34);
+  font-size: 22px;
+  color: var(--app-414141);
   font-weight: 500;
   font-family: inter-medium;
+}
+
+.form-header-view .user-heading {
+  padding: 0;
+}
+
+
+.side-bar-profile-desc-text {
+  font-size: 15px;
+  color: var(--app-414141);
+  font-weight: 500;
+  font-family: inter-medium;
+  padding-top: 10px;
 }
 
 .user-approval-button {
@@ -241,33 +254,51 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.other-info-edit-btn
-{
+.other-info-btn {
     background-color: var(--app-color);
     border-color: var(--app-color);
     font-weight: 300;
     font-stretch: normal;
-    margin-top: 15px;
     font-style: normal;
     font-family: inter-semi-bold;
     font-size: 14px;
-    width: 65px;
     height: 30px;
     border-radius: 5px;
     background-image: var(--app-gradient-right);
+}
+
+.other-info-edit-btn {
+  width: 65px;
+  margin-top: 15px;
 }	
+
 .circular--landscape {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--app-d9d9d9);
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   overflow: hidden;
   border-radius: 50%;
 }
 
 .circular--landscape img {
   width: 100%;
-}		  
+}		
+
+.circular--landscape .user-heading {
+  font-size: 10px;
+}
+
+.status-indicator {
+  background: var(--app-f0f0f2);
+  color: var(--app-grey-button-color);
+  padding: 7px;
+  border-radius: 10px;
+  margin-left: 16px;
+}
 
 .login-btn-proceed{
   color: var(--app-1b1b34);
@@ -296,3 +327,96 @@
   padding: 0px;
 }
 
+.bg-white {
+  background: var(--app-white);
+}
+
+.user-details-info-text-wrapper {
+  width: 100px;
+  min-width: 100px;
+}
+
+.user-details-info-text {
+  font-size: 14px;
+  color: var(--app-414141);
+}
+
+.action-triple-dot-submenu .ant-menu-submenu-title {
+  padding: 0;
+}
+
+.dashboard-registration-table.home-dashboard-table .ant-table-tbody>tr>td:last-of-type {
+  vertical-align: top;
+  padding-top: 80px;
+  color: var(--app-orange);
+}
+
+.inside-table-view .ant-tabs-tab-arrow-show > span {
+  line-height: 10px;
+}
+
+.img-upload-target {
+  width: 64px;
+  height: 64px;
+  padding-top: 8px;
+}
+
+.img-upload-target-plus {
+  font-size: 22px;
+}
+
+.profile-info-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info-desc-view {
+  margin-bottom: 20px;
+}
+
+.profile-info-details-view {
+  margin-bottom: 30px;
+}
+
+.profile-info-details-view:last-of-type {
+  margin-bottom: 10px;
+}
+
+.user-orange-action-txt {
+  margin-bottom: 36px;
+  margin-top: 33px;
+}
+
+@media (max-width: 767px) {
+  .form-header-view .user-heading {
+    font-size: 22px;
+  }
+
+  .user-heading {
+    font-size: 14px;
+  }
+
+  .circular--landscape {
+    width: 48px;
+    height: 48px;
+  }
+
+  .img-upload-target {
+    width: 48px;
+    height: 48px;
+    font-size: 8px;
+  }
+
+  .img-upload-target-plus {
+    font-size: 16px;
+  }
+
+  .profile-info-view {
+    margin-top: 30px;
+  }
+
+  .user-orange-action-txt {
+    margin-top: 10px;
+    margin-bottom: 25px;
+  }
+}

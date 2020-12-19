@@ -316,7 +316,7 @@ class RegistrationReviewForm extends Component {
                 {(item.paymentOptions || []).map((p, pIndex) =>(
                 <div style={{marginTop: '15px'}}>
                     {p.paymentOptionRefId == 1 && 
-                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.paySingleGame}</Radio>                    
                     }
                     {p.paymentOptionRefId == 2 && 
                         <div>
