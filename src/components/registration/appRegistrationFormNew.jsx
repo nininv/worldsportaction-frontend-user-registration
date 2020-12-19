@@ -1422,10 +1422,12 @@ class AppRegistrationFormNew extends Component {
                                 return;
                             }
                         }
-                        let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj)
-                        this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
-                        this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
-                        return;
+                        let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
+                        if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
+                            this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
+                            this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                            return;
+                        }
                     }
                     if (this.state.currentStep != 2) {
                         this.stepNavigation(registrationObj,expiredRegistration);
