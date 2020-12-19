@@ -484,7 +484,9 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 				}
 			}
 			state.registrationCapValidateInputObj = validateRegistrationCapObj;
-			state.enableValidateRegistrationCapService = true;
+			if(state.registrationCapValidateInputObj.products.find(x => x.competitionId)){
+				state.enableValidateRegistrationCapService = true;
+			}
 		}
 	}catch(ex){
 	  console.log("Error in setValidateRegistrationCapObj::"+ex);
