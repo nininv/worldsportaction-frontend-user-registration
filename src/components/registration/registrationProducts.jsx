@@ -74,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "72906473-e097-4a42-816b-eec4dbf79bf7";
+        //let registrationUniqueKey = "d8411de0-30e9-42c8-9190-7cbaabdb18a2";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -1517,7 +1517,7 @@ class RegistrationProducts extends Component {
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>
-                         <a className="userRegLink required-field" href={item.termsAndConditions} target='_blank' >
+                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
                         Terms and Conditions for {item.name}
                         </a>
                     </div> 
@@ -1530,7 +1530,7 @@ class RegistrationProducts extends Component {
                                 checked={this.state.agreeTerm}
                                 onChange={e => this.termsAndConditionsCheck(e)}
                                 >
-                                {AppConstants.agreeTerm}
+                                <span className="required-field">{AppConstants.agreeTerm}</span>
                                 <span style={{marginLeft:"5px"}} ></span>
                         </Checkbox>
                     </div>
