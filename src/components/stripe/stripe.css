@@ -133,6 +133,9 @@ display: flex;
   display: flex;
   justify-content: flex-end
 }
+.invoiceImageMain img  {
+  height: 40px;
+}
 
 .charity-invoice-heading {
   /* display: flex; */
