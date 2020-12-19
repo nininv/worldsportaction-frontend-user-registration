@@ -74,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "75555a25-7f2a-4e8f-a3ba-b2945fae9459";
+        //let registrationUniqueKey = "72906473-e097-4a42-816b-eec4dbf79bf7";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -565,9 +565,9 @@ class RegistrationProducts extends Component {
     getValueOfTeamFeeWillPay = (item) => {
         try{
             if(item.selectedOptions.paymentOptionRefId == 1){
-                if(item.selectedOptions.teamRegChargeTypeRefId == 3){
+                if(item.selectedOptions.teamRegChargeTypeRefId == 2){
                     return 1;
-                }else if(item.selectedOptions.teamRegChargeTypeRefId == 4){
+                }else if(item.selectedOptions.teamRegChargeTypeRefId == 3){
                     return 2;
                 }
             }else{
@@ -614,10 +614,10 @@ class RegistrationProducts extends Component {
                                     onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}> 
                                     {item.selectedOptions.paymentOptionRefId == 1 ? (
                                         <div>
-                                            {item.selectedOptions.teamRegChargeTypeRefId == 3 && (
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 2 && (
                                                 <Radio key={1} value={1}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
                                             )}
-                                            {item.selectedOptions.teamRegChargeTypeRefId == 4 && (
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 3 && (
                                                 <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
                                             )}
                                         </div> 
@@ -1513,11 +1513,11 @@ class RegistrationProducts extends Component {
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
-                <div className="headline-text-common mb-4 required-field" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>
-                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                         <a className="userRegLink required-field" href={item.termsAndConditions} target='_blank' >
                         Terms and Conditions for {item.name}
                         </a>
                     </div> 
