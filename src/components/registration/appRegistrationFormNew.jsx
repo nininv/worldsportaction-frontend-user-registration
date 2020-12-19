@@ -2632,7 +2632,7 @@ class AppRegistrationFormNew extends Component {
                     </div>
                     <div className="light-grey-border-box">
                         <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                        <div className="competition-specifics-headings" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
+                        <div className="competition-specifics-headings required-field" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
                         {(competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1) || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox py-2"
@@ -2644,7 +2644,7 @@ class AppRegistrationFormNew extends Component {
 
                         {this.isPlayerActive(competition) && (
                             <div>
-                                <div className="input-style-bold">{AppConstants.registrationDivisions}</div>
+                                <div className="input-style-bold required-field">{AppConstants.registrationDivisions}</div>
                                 <div
                                     style={{ marginBottom: "10px" }}>
                                     {(competition.divisions || []).map((division, divisionIndex) => (
