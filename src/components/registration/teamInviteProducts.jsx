@@ -133,7 +133,7 @@ class TeamInviteProducts extends Component{
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -296,7 +296,7 @@ class TeamInviteProducts extends Component{
                             {(item.paymentOptions || []).map((p, pIndex) =>(  
                                 <span key={p.paymentOptionRefId}>
                                     {p.paymentOptionRefId == 1 && 
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payEachMatch}</Radio>                    
                                     }  
                                     {p.paymentOptionRefId == 3 &&          
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
