@@ -1106,7 +1106,7 @@ const AppConstants = {
   teamDetails: "Team Details",
   teamMember: "Team Member",
   payingForMember: "I am paying all fees for this member",
-  teamMemberParentCheck: "Check myself as a parent",
+  teamMemberParentCheck: "I am the Parent/ Guardian",
   addTeamMember: "Add Team Member",
   members: "Members",
   payingFor: "I am paying for",
