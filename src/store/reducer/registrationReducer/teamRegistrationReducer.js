@@ -228,9 +228,9 @@ const initialState = {
     enableValidateRegistrationCapService: false
 }
 
-function setTeamRegistrationObj(state){
+function setTeamRegistrationObj(state,existingTeamInfo){
   try{
-    state.teamRegistrationObj = deepCopyFunction(teamObj);
+    state.teamRegistrationObj = existingTeamInfo ? existingTeamInfo : deepCopyFunction(teamObj);
     let membershipProducts = deepCopyFunction(state.membershipProductInfo)
     if(getOrganisationId() != null && getCompetitonId() != null){
       state.teamRegistrationObj.organisationId = getOrganisationId();
@@ -645,12 +645,23 @@ function teamRegistrationReducer(state = initialState, action){
       
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS:
             let existingTeamInfo = action.result;
-            //teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,existingTeamInfo);
+            // teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,existingTeamInfo);
+            // if(getOrganisationId() && getCompetitonId()){
+            //   let organisatinInfoTemp = state.membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+            //   if(organisatinInfoTemp){
+            //     existingTeamInfo.organisationInfo = organisatinInfoTemp;
+            //     let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+            //     if(competitionInfoTemp){
+            //         existingTeamInfo.competitionInfo = competitionInfoTemp;
+            //     }
+            //   }
+            // }
+            setTeamRegistrationObj(state,existingTeamInfo)
             return {
               ...state,
               onExistingTeamInfoByIdLoad: false,
               status: action.status,
-              teamRegistrationObj: existingTeamInfo
+              // teamRegistrationObj: existingTeamInfo
             };
 
         case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD: 
