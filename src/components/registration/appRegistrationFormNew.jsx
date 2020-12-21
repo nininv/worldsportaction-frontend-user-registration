@@ -358,7 +358,7 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoAnyExistingMedialCondition`]: additionalInfo.existingMedicalCondition,
                     [`additionalInfoAnyRedularMedicalConditions`]: additionalInfo.regularMedication,
                     [`additionalInfoInjury`]: additionalInfo.injuryInfo,
-                    [`additionalInfoAlergies`]: additionalInfo.allergyInfo,
+                    [`additionalInfoAllergies`]: additionalInfo.allergyInfo,
                     [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo ? additionalInfo.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
@@ -3227,11 +3227,11 @@ class AppRegistrationFormNew extends Component {
                     </Form.Item>
                     {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                             <TextArea
-                                placeholder={AppConstants.anyAlergies}
+                                placeholder={AppConstants.anyAllergies}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
                                 setFieldsValue={registrationObj.additionalInfo.allergyInfo}
                                 allowClear
