@@ -761,13 +761,12 @@ class AppTeamRegistrationForm extends Component{
                     }
                 }
                 // console.log("teamMember.parentOrGuardian.length",teamMember.parentOrGuardian.length)
-                let parentTemp = {
-                    firstName: teamRegistrationObj.firstName,
-                    middleName: teamRegistrationObj.middleName,
-                    lastName: teamRegistrationObj.lastName,
-                    mobileNumber: teamRegistrationObj.mobileNumber,
-                    email: teamRegistrationObj.email
-                }
+                let parentTemp = deepCopyFunction(this.getParentObj());
+                parentTemp.firstName = teamRegistrationObj.firstName;
+                parentTemp.middleName = teamRegistrationObj.middleName;
+                parentTemp.lastName = teamRegistrationObj.lastName;
+                parentTemp.mobileNumber = teamRegistrationObj.mobileNumber;
+                parentTemp.email = teamRegistrationObj.email;
                 teamMember.parentOrGuardian[0] = parentTemp;
             }else{
                 // console.log("teamMember.parentOrGuardian[0]",teamMember.parentOrGuardian[0])
@@ -1459,7 +1458,10 @@ class AppTeamRegistrationForm extends Component{
                                 if(expiredRegistration != null){
                                     this.setState({showExpiredRegistrationView: true,showFindAnotherCompetitionview: true,organisationId:null});
                                 }else{
-                                    this.setState({showFindAnotherCompetitionview: false,organisationId: null})
+                                    this.setState({showFindAnotherCompetitionview: false,organisationId: null});
+                                    setTimeout(() => {
+                                        this.setSelectCompetitionStepFormFields();
+                                    },300)
                                 }
                             }}>{AppConstants.cancel}</div>
                         )}
