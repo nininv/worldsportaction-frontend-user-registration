@@ -110,7 +110,7 @@ const AppConstants = {
   addvoucher: "Add voucher",
 
   //agreeTerm: "I have read and agree to (Affiliates name)  ",
-  agreeTerm: "I have read and agree to all of the above Terms and Conditions  ",
+  agreeTerm: "I have read and agree to all of the above Terms and Conditions",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
