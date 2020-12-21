@@ -919,7 +919,7 @@ const AppConstants = {
   directDebit: "Direct Debit",
   creditCard: "Credit/Debit Card",
   cash: "Cash",
-  selectedPaymentOption: "Please select payment option Credit Card or Direct Debit",
+  selectedPaymentOption: "Please select a payment option",
   stripeMandate1: `By providing your bank account details and confirming this payment,
   you agree to this Direct Debit Request and the`,
   stripeMandate2: `, and authorise Stripe Payments Australia Pty Ltd ACN 160 180 343 Direct Debit User ID number 507156(“Stripe”) to debit your account through the Bulk Electronic Clearing System (BECS) on behalf of World Sport Action Pty Ltd (the "Merchant") for any amounts separately communicated to you by the Merchant.You certify that you are either
@@ -1106,7 +1106,7 @@ const AppConstants = {
   teamDetails: "Team Details",
   teamMember: "Team Member",
   payingForMember: "I am paying all fees for this member",
-  teamMemberParentCheck: "Check myself as a parent",
+  teamMemberParentCheck: "I am the Parent/ Guardian",
   addTeamMember: "Add Team Member",
   members: "Members",
   payingFor: "I am paying for",

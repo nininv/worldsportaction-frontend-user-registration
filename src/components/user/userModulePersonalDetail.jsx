@@ -66,7 +66,7 @@ const columns = [
         dataIndex: "regData",
         key: "regData",
         render: (regData, record, index) => {
-            const { expiryDate, competitionName, affiliate, membershipType } = record;
+            const { expiryDate, competitionName, affiliate, membershipType, paymentStatus } = record;
             return (
                 <div>
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
@@ -99,7 +99,7 @@ const columns = [
                                 </div> */}
                                 <div className="d-flex align-items-center py-3">
                                     <span>{membershipType}</span>
-                                    <div className="status-indicator">{AppConstants.status}</div>
+                                    <div className="status-indicator">{paymentStatus}</div>
                                 </div>
                             </div>
                         </div>
