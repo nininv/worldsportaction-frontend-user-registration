@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
+import { deepCopyFunction, getAge, isArrayNotEmpty, isNullOrEmptyString} from '../../../util/helpers';
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import moment from 'moment';
 
@@ -308,9 +308,9 @@ function setCompetitionDetails(state,details){
   }
 }
 
-function getUpdatedTeamMemberObj(state){
+function getUpdatedTeamMemberObj(state,existingTeamMember){
   try{
-    let teamMemberTemp = deepCopyFunction(teamMemberObj);
+    let teamMemberTemp = existingTeamMember ? existingTeamMember : deepCopyFunction(teamMemberObj);
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
     let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){
@@ -339,8 +339,14 @@ function setDivisions(state,competitionMembershipProductTypeId){
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
       // if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
       if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
-        state.teamRegistrationObj.teamMembers = [];
-        state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
+        if(!isArrayNotEmpty(state.teamRegistrationObj.teamMembers)){
+          state.teamRegistrationObj.teamMembers = [];
+          state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
+        }else{
+          for(let teamMember of state.teamRegistrationObj.teamMembers){
+            teamMember = getUpdatedTeamMemberObj(state,teamMember)
+          }
+        }
       }
       state.teamRegistrationObj.divisions = [];
       // let divisionInfoList = state.teamRegistrationObj.divisions;
@@ -645,17 +651,6 @@ function teamRegistrationReducer(state = initialState, action){
       
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS:
             let existingTeamInfo = action.result;
-            // teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,existingTeamInfo);
-            // if(getOrganisationId() && getCompetitonId()){
-            //   let organisatinInfoTemp = state.membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
-            //   if(organisatinInfoTemp){
-            //     existingTeamInfo.organisationInfo = organisatinInfoTemp;
-            //     let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
-            //     if(competitionInfoTemp){
-            //         existingTeamInfo.competitionInfo = competitionInfoTemp;
-            //     }
-            //   }
-            // }
             setTeamRegistrationObj(state,existingTeamInfo)
             return {
               ...state,

@@ -3287,6 +3287,7 @@ class AppTeamRegistrationForm extends Component{
     teamDetailsView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
+            console.log("teamRegistrationObj",teamRegistrationObj)
             return(
                 <div className="registration-form-view">
                     <div className="row mx-0">
