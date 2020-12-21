@@ -1198,6 +1198,7 @@ const AppConstants = {
 
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
+  somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator"
 };
 
 export default AppConstants;
