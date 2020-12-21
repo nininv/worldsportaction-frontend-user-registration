@@ -442,7 +442,7 @@ class RegistrationProducts extends Component {
 
     headerView = () =>{
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8" style={{display:"flex",flexWrap: "wrap", justifyContent: 'space-between', padding: 0 }}>
+            <div className="col-sm-12 col-md-7 col-lg-8 d-flex flex-wrap justify-content-between p-0">
                 <div className="headline-text-common" style={{padding:0, marginRight: 10 }}> {AppConstants.participants}</div>
                 <div className="add-another-button-border pointer reg-products-add-participant"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                     <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
@@ -1334,7 +1334,7 @@ class RegistrationProducts extends Component {
         let compParticipants = registrationReviewList!= null ? registrationReviewList.compParticipants : [];
         let hasTeamRegistration = compParticipants.find(x=>x.isTeamRegistration == 1);
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8" style={{ padding:0 }}>
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
                 <div className="product-left-view outline-style">
                     {this.participantDetailView(isSchoolRegistration)}
                     {isSchoolRegistration == 0 && this.charityView()}
@@ -1352,7 +1352,7 @@ class RegistrationProducts extends Component {
     productRightView = (termsAndConditionsView)=>{
         const {termsAndConditions} = this.props.registrationProductState;
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0">
                 {this.yourOrderView()}
                 {termsAndConditions.length > 0 && this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}

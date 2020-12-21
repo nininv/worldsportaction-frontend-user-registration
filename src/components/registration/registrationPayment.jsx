@@ -748,7 +748,7 @@ class RegistrationPayment extends Component {
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8 p-0" style={{marginBottom: 23}}>
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
             <div className="product-left-view outline-style mt-0">              
                 <div className="product-text-common" style={{fontSize:22}}>
                     {AppConstants.securePaymentOptions}
@@ -769,7 +769,7 @@ class RegistrationPayment extends Component {
 
     paymentRighttView = ()=>{
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 px-0 mt-0 product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0 m-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>

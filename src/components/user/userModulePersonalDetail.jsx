@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Tabs, Menu, Dropdown, Checkbox, Icon , Modal} from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon , Modal, Spin } from 'antd';
+
+import Tabs from 'rc-tabs';
+
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
@@ -772,7 +775,6 @@ const umpireActivityColumn = [
             return (
                 <div>
                     {organisationArray.length > 0 && organisationArray.map((item, index) => {
-                        console.log(item)
                         return (
                             <span key={`organisationName` + index} className='multi-column-text-aligned'>{
 
@@ -818,6 +820,12 @@ const umpireActivityColumn = [
 ]
 const umpireActivityData = []
 
+let isScrollActive = false;
+let additionalTableScrollX = 0;
+let tableScrollX = 0;
+let prevTimeTableScroll = 0;
+let prevScrollTable = 0;
+
 class UserModulePersonalDetail extends Component {
     constructor(props) {
         super(props);
@@ -844,12 +852,35 @@ class UserModulePersonalDetail extends Component {
             unlinkRecord: null,
             showChildUnlinkConfirmPopup: false,
             showParentUnlinkConfirmPopup: false,
-            showCannotUnlinkPopup: false
+            showCannotUnlinkPopup: false,
+            isPersonDetailsTabVisited: false,
+            overflowingTables: {
+                managerActivityOverflow: false,
+                playerActivityOverflow: false,
+                scorerActivityOverflow: false,
+                umpireActivityOverflow: false,
+                personalAddressOverflow: false,
+                personalPrimaryContactsOverflow: false,
+                personalChildContactsOverflow: false,
+                personalEmergencyOverflow: false,
+            },
         }
+
+        this.tableScrollDirectionRef = React.createRef(0);
+
+        this.managerActivityRef = React.createRef();
+        this.playerActivityRef = React.createRef();
+        this.scorerActivityRef = React.createRef();
+
+        this.umpireActivityRef = React.createRef();
+
+        this.personalAddressRef = React.createRef();
+        this.personalPrimaryContactsRef = React.createRef();
+        this.personalChildContactsRef = React.createRef();
+        this.personalEmergencyRef = React.createRef();
     }
 
     componentWillMount() {
-        //console.log("componentWillMount")
         let competition = this.getEmptyCompObj();
         this.setState({ competition: competition });
 
@@ -924,14 +955,6 @@ class UserModulePersonalDetail extends Component {
             this.props.getOnlyYearListAction();
             this.apiCalls(user_Id);
         }
-
-        this.checkWidth = () => {
-            const matchMedia = window.matchMedia(`(max-width: 767px)`);
-            
-            if (matchMedia) {
-                this.setState({ isTablet: matchMedia.matches });
-            }
-        };
       
         this.checkWidth();
         window.addEventListener('resize', this.checkWidth);
@@ -940,6 +963,25 @@ class UserModulePersonalDetail extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.checkWidth);
     }
+
+    checkWidth = () => {
+        const matchMedia = window.matchMedia(`(max-width: 767px)`);
+
+        const overflowingTablesCopy = { ...this.state.overflowingTables };
+
+        const isSomeOverflow = Object.values(overflowingTablesCopy).some(item => !!item);
+        
+        if (matchMedia || isSomeOverflow) {
+            for (let key in overflowingTablesCopy) {
+                overflowingTablesCopy[key] = false;
+            }
+
+            this.setState({
+                isTablet: matchMedia.matches,
+                overflowingTables: { ...overflowingTablesCopy },
+            });
+        }
+    };
 
     queryfie(string) {
         return string
@@ -1000,16 +1042,77 @@ class UserModulePersonalDetail extends Component {
             this.props.getUserModulePersonalByCompetitionAction(payload);
             this.setState({unlinkOnLoad: false})
         }
+
+        // hack to define tables overflow to display scroll arrows,
+        // without it re-render will lead to table overflow arrows absense
+
+        const { tabKey, isPersonDetailsTabVisited } = this.state;
+
+        if (!isPersonDetailsTabVisited && !userState.onPersonLoad && tabKey === "4") {
+            this.setState({ isPersonDetailsTabVisited: true })
+        }
+
+        if (tabKey == "2") {
+            this.changeOverflowState('managerActivityOverflow', this.managerActivityRef);
+            this.changeOverflowState('playerActivityOverflow', this.playerActivityRef);
+            this.changeOverflowState('scorerActivityOverflow', this.scorerActivityRef);
+        }
+        if (tabKey === "4") {
+            this.changeOverflowStatePersonalDetails();
+        }
+        if (tabKey === "7") {
+            this.changeOverflowState('umpireActivityOverflow', this.umpireActivityRef);
+        }
     }
 
-    apiCalls = (userId) => {
+    checkOverflowRef = ref => ref.current && this.checkOverflow(ref.current);
+
+    changeOverflowState = (stateOverflowKey, ref) => {
+        const prevOverflow = this.state.overflowingTables;
+
+        if (!prevOverflow[stateOverflowKey] && this.checkOverflowRef(ref)) {
+            this.setState({ 
+                overflowingTables: {
+                    ...prevOverflow,
+                    [stateOverflowKey]: true
+                }
+            });
+        }
+    }
+
+    changeOverflowStatePersonalDetails = () => {
+        const personalAddressOverflow = this.checkOverflowRef(this.personalAddressRef);
+        const personalPrimaryContactsOverflow = this.checkOverflowRef(this.personalPrimaryContactsRef);
+        const personalChildContactsOverflow = this.checkOverflowRef(this.personalChildContactsRef);
+        const personalEmergencyOverflow = this.checkOverflowRef(this.personalEmergencyRef);
+
+        const { overflowingTables } = this.state;
+
+        if (!overflowingTables.personalAddressOverflow && personalAddressOverflow 
+                || !overflowingTables.personalPrimaryContactsOverflow && personalPrimaryContactsOverflow
+                || !overflowingTables.personalChildContactsOverflow && personalChildContactsOverflow
+                || !overflowingTables.personalEmergencyOverflow && personalEmergencyOverflow
+        ) {
+            this.setState({ 
+                overflowingTables: {
+                    ...overflowingTables,
+                    personalAddressOverflow,
+                    personalPrimaryContactsOverflow,
+                    personalChildContactsOverflow,
+                    personalEmergencyOverflow,
+                }
+            });
+        }
+    }
+
+    apiCalls = async (userId) => {
         let payload = {
             userId: userId,
             organisationId: null
         }
-        this.props.getUserModulePersonalDetailsAction(payload);
-        this.props.getUserModulePersonalByCompetitionAction(payload)
-        this.props.getUserRole(userId)
+        await this.props.getUserModulePersonalDetailsAction(payload);
+        await this.props.getUserModulePersonalByCompetitionAction(payload)
+        await this.props.getUserRole(userId)
     };
 
     goToSigleGamePayment = (record) => {
@@ -1288,13 +1391,56 @@ class UserModulePersonalDetail extends Component {
                 this.props.userPhotoUpdateAction(formData);
         }
     }
+
+    checkOverflow = el => {
+        const curOverflow = el.style.overflow;
+
+        if (!curOverflow || curOverflow === "visible")
+        el.style.overflow = "hidden";
+
+        const isOverflowing = el.clientWidth < el.scrollWidth;
+
+        el.style.overflow = curOverflow;
+
+        return isOverflowing;
+    }
+
+    doTableScroll = (time, scroller) => {
+        const max = 10;
+        const f = 0.2;
+
+        let diffTime = time - prevTimeTableScroll;
+
+        if (!isScrollActive) {
+            diffTime = 80;
+            isScrollActive = true;
+        }
+        prevTimeTableScroll = time;
+      
+        additionalTableScrollX = (this.tableScrollDirectionRef.current * max * f + additionalTableScrollX * (1 - f)) * (diffTime / 20);
+        
+        tableScrollX += additionalTableScrollX;
+
+        const thisScroll = scroller.scrollLeft;
+        const nextScroll = Math.floor(thisScroll + additionalTableScrollX);
+      
+        if (Math.abs(additionalTableScrollX) > 0.5 && nextScroll !== prevScrollTable) {
+            scroller.scrollLeft = nextScroll;
+            requestAnimationFrame(time => this.doTableScroll(time, scroller));
+        } else {
+            additionalTableScrollX = 0;
+            isScrollActive = false;
+        }
+        prevScrollTable = nextScroll;
+    }
+
     headerView = () => {
         return (
             <Header className="comp-player-grades-header-view container mb-n3" >
                 <div className="row" >
                     <div className="col-sm d-flex align-content-center">
                         <Breadcrumb separator=" > ">
-                            < Breadcrumb.Item className="breadcrumb-add">{AppConstants.personalDetails}</Breadcrumb.Item>
+                            <Breadcrumb.Item className="breadcrumb-add">{AppConstants.personalDetails}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                 </div>
@@ -1408,7 +1554,7 @@ class UserModulePersonalDetail extends Component {
                                 className="orange-action-txt user-orange-action-txt"
                                 onClick={() => this.onChangeTab('4')}
                             >
-                                <span className="add-another-button-border" style={{ padding: '7px 15px' }}>{AppConstants.personalDetails}</span>
+                                <span className="add-another-button-border" style={{ padding: '7px 12px' }}>{AppConstants.personalDetails}</span>
                             </div>
 
                             <div className="profile-info-details-view">
@@ -1466,20 +1612,102 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
+    tableArrowsView = (tableRef, isOverflowingTable) => {
+        return (
+            <>
+                {isOverflowingTable && 
+                    <>
+                        <div
+                            className="d-flex justify-content-center align-items-center position-absolute"
+                            style={{
+                                top: 0,
+                                left: 1,
+                                height: '100%',
+                                width: 25,
+                                background: 'var(--app-white)',
+                                border: '1px solid #ddd',
+                                borderRadius: 10,
+                                cursor: 'w-resize',
+                                zIndex: 2,
+                            }}
+                            onMouseDown={() => {
+                                this.tableScrollDirectionRef.current = -1;
+                                if (!isScrollActive) {
+                                    requestAnimationFrame(time => this.doTableScroll(time, tableRef.current));
+                                }
+                            }}
+                            onMouseUp={() => {
+                                this.tableScrollDirectionRef.current = 0;
+                            }}
+                        >
+                            <Icon
+                                type="left"
+                                style={{
+                                    color: 'var(--app-orange)',
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            className="d-flex justify-content-center align-items-center position-absolute"
+                            style={{
+                                top: 0,
+                                right: 1,
+                                height: '100%',
+                                width: 25,
+                                background: 'var(--app-white)',
+                                border: '1px solid #ddd',
+                                borderRadius: 10,
+                                cursor: 'e-resize',
+                                zIndex: 2,
+                            }}
+                            onMouseDown={() => {
+                                this.tableScrollDirectionRef.current = 1;
+                                if (!isScrollActive) {
+                                    requestAnimationFrame(time => this.doTableScroll(time, tableRef.current));
+                                }
+                            }}
+                            onMouseUp={() => {
+                                this.tableScrollDirectionRef.current = 0;
+                            }}
+                        >
+                            <Icon 
+                                type="right"
+                                style={{
+                                    color: 'var(--app-orange)',
+                                }}
+                            />
+                        </div>
+                    </>
+                }
+            </>
+        )
+    }
+
     playerActivityView = () => {
         let userState = this.props.userState;
         let activityPlayerList = userState.activityPlayerList;
         let total = userState.activityPlayerTotalCount;
+
+        const { playerActivityOverflow } = this.state.overflowingTables;
+
         return (
-            <div className="comp-dash-table-view mt-2" style={{ backgroundColor: "#f7fafc" }}>
+            <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.playerHeading}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsPlayer}
-                        dataSource={activityPlayerList}
-                        pagination={false}
-                        loading={userState.activityPlayerOnLoad == true && true}
-                    />
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.playerActivityRef}
+                        style={playerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    >
+                        <Table className="home-dashboard-table"
+                            columns={columnsPlayer}
+                            dataSource={activityPlayerList}
+                            pagination={false}
+                            loading={userState.activityPlayerOnLoad && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.playerActivityRef, playerActivityOverflow)}
                 </div>
                 <div className="d-flex justify-content-end">
                     <Pagination
@@ -1498,7 +1726,7 @@ class UserModulePersonalDetail extends Component {
         let activityParentList = userState.activityParentList;
         let total = userState.activityParentTotalCount;
         return (
-            <div className="comp-dash-table-view mt-2" style={{ backgroundColor: "#f7fafc" }}>
+            <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.parentHeading}</div>
                 <div className="table-responsive home-dash-table-view">
                     <Table className="home-dashboard-table"
@@ -1524,16 +1752,26 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let activityScorerList = userState.scorerActivityRoster;
         let total = userState.scorerTotalCount;
+
+        const { scorerActivityOverflow } = this.state.overflowingTables;
+
         return (
-            <div className="comp-dash-table-view mt-2" style={{ backgroundColor: "#f7fafc" }}>
+            <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.scorerHeading}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsScorer}
-                        dataSource={activityScorerList}
-                        pagination={false}
-                        loading={userState.activityScorerOnLoad == true && true}
-                    />
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.scorerActivityRef}
+                        style={scorerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    >
+                        <Table className="home-dashboard-table"
+                            columns={columnsScorer}
+                            dataSource={activityScorerList}
+                            pagination={false}
+                            loading={userState.activityScorerOnLoad && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.scorerActivityRef, scorerActivityOverflow)}
                 </div>
                 <div className="d-flex justify-content-end">
                     <Pagination
@@ -1551,17 +1789,29 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let activityManagerList = userState.activityManagerList;
         let total = userState.activityScorerTotalCount;
+
+        const { managerActivityOverflow } = this.state.overflowingTables;
+
         return (
-            <div className="comp-dash-table-view mt-2" style={{ backgroundColor: "#f7fafc" }}>
+            <div className="dash-table-paddings mt-2 position-relative" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.managerHeading}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsManager}
-                        dataSource={activityManagerList}
-                        pagination={false}
-                        loading={userState.activityManagerOnLoad == true && true}
-                    />
+
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.managerActivityRef}
+                        style={managerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    > 
+                        <Table className="home-dashboard-table"
+                            columns={columnsManager}
+                            dataSource={activityManagerList}
+                            pagination={false}
+                            loading={userState.activityManagerOnLoad && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.managerActivityRef, managerActivityOverflow)}
                 </div>
+                
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
@@ -1577,23 +1827,30 @@ class UserModulePersonalDetail extends Component {
     statisticsView = () => {
         return (
             <div>
-                <h4>Statistics</h4>
+                <div className="user-module-row-heading">Statistics</div>
             </div>
         )
     }
 
     personalView = () => {
-        let userState = this.props.userState;
-        let personal = userState.personalData;
-        let personalByCompData = userState.personalByCompData != null ? userState.personalByCompData : [];
-        let primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
-        let childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
+        const { userState } = this.props;
+        const { isPersonDetailsTabVisited } = this.state;
+        const personalByCompData = isPersonDetailsTabVisited && !!userState.personalByCompData && userState.personalByCompData;
+        const primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
+        const childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
         let countryName = "";
         //let nationalityName = "";
         //let languages = "";
         let userRegId = null;
         let childrenCheckNumber = "";
         let childrenCheckExpiryDate = "";
+
+        const { 
+            personalAddressOverflow,
+            personalPrimaryContactsOverflow,
+            personalChildContactsOverflow,
+            personalEmergencyOverflow,
+        } = this.state.overflowingTables;
 
         if (personalByCompData != null && personalByCompData.length > 0) {
             countryName = personalByCompData[0].countryName;
@@ -1603,17 +1860,24 @@ class UserModulePersonalDetail extends Component {
             childrenCheckNumber = personalByCompData[0].childrenCheckNumber;
             childrenCheckExpiryDate = personalByCompData[0].childrenCheckExpiryDate;
         }
-        return (
-            <div className="comp-dash-table-view mt-2">
-                <div className="user-module-row-heading">{AppConstants.address}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsPersonalAddress}
-                        dataSource={personalByCompData}
-                        pagination={false}
-                        loading={userState.onPersonLoad == true && true}
 
-                    />
+        return (
+            <div className="dash-table-paddings mt-2">
+                <div className="user-module-row-heading">{AppConstants.address}</div>
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.personalAddressRef}
+                        style={personalAddressOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    > 
+                        <Table className="home-dashboard-table"
+                            columns={columnsPersonalAddress}
+                            dataSource={personalByCompData}
+                            pagination={false}
+                            loading={userState.onPersonLoad == true && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.personalAddressRef, personalAddressOverflow)}
                 </div>
 
                 {primaryContacts != null && primaryContacts.length > 0 &&
@@ -1629,13 +1893,20 @@ class UserModulePersonalDetail extends Component {
                                 + {AppConstants.addParent_guardian}
                             </span>
                         </NavLink>
-                        <div className="table-responsive home-dash-table-view">
-                            <Table className="home-dashboard-table"
-                                columns={columnsPersonalPrimaryContacts}
-                                dataSource={primaryContacts}
-                                pagination={false}
-                                loading={userState.onPersonLoad == true && true}
-                            />
+                        <div className="position-relative">
+                            <div
+                                className="table-responsive home-dash-table-view"
+                                ref={this.personalPrimaryContactsRef}
+                                style={personalPrimaryContactsOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                            > 
+                                <Table className="home-dashboard-table"
+                                    columns={columnsPersonalPrimaryContacts}
+                                    dataSource={primaryContacts}
+                                    pagination={false}
+                                    loading={userState.onPersonLoad == true && true}
+                                />
+                            </div>
+                            {this.tableArrowsView(this.personalPrimaryContactsRef, personalPrimaryContactsOverflow)}
                         </div>
                     </div>}
                 {childContacts != null && childContacts.length > 0 &&
@@ -1651,25 +1922,39 @@ class UserModulePersonalDetail extends Component {
                                 + {AppConstants.addChild}
                             </span>
                         </NavLink>
-                        <div className="table-responsive home-dash-table-view">
-                            <Table className="home-dashboard-table"
-                                columns={columnsPersonalChildContacts}
-                                dataSource={childContacts}
-                                pagination={false}
-                                loading={userState.onPersonLoad == true && true}
-                            />
+                        <div className="position-relative">
+                            <div
+                                className="table-responsive home-dash-table-view"
+                                ref={this.personalChildContactsRef}
+                                style={personalChildContactsOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                            >
+                                <Table className="home-dashboard-table"
+                                    columns={columnsPersonalChildContacts}
+                                    dataSource={childContacts}
+                                    pagination={false}
+                                    loading={userState.onPersonLoad == true && true}
+                                />
+                            </div>
+                            {this.tableArrowsView(this.personalChildContactsRef, personalChildContactsOverflow)}
                         </div>
                     </div>
                 }
 
                 <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.emergencyContacts}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsPersonalEmergency}
-                        dataSource={userState.personalEmergency}
-                        pagination={false}
-                        loading={userState.onPersonLoad == true && true}
-                    />
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.personalEmergencyRef}
+                        style={personalEmergencyOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    >
+                        <Table className="home-dashboard-table"
+                            columns={columnsPersonalEmergency}
+                            dataSource={userState.personalEmergency}
+                            pagination={false}
+                            loading={userState.onPersonLoad == true && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.personalEmergencyRef, personalEmergencyOverflow)}
                 </div>
                 <div className="row ">
                     <div className="col-sm user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.otherInformation}</div>
@@ -1766,7 +2051,7 @@ class UserModulePersonalDetail extends Component {
                             </div>
                             {
                                 item.isDisability == 'Yes' ?
-                                    <div className="comp-dash-table-view mt-2" style={{ paddingLeft: '0px' }}>
+                                    <div className="dash-table-paddings mt-2" style={{ paddingLeft: '0px' }}>
                                         <div className="table-responsive home-dash-table-view">
                                             <Table className="home-dashboard-table"
                                                 columns={columnsMedical}
@@ -1815,7 +2100,7 @@ class UserModulePersonalDetail extends Component {
         let registrationForm = this.state.registrationForm == null ? [] : this.state.registrationForm;
 
         return (
-            <div className="comp-dash-table-view mt-2">
+            <div className="dash-table-paddings mt-2">
                 <div className="user-module-row-heading">{AppConstants.registrationFormQuestions}</div>
                 {(registrationForm || []).map((item, index) => (
                     <div key={index} style={{ marginBottom: '15px' }}>
@@ -1904,13 +2189,28 @@ class UserModulePersonalDetail extends Component {
     noDataAvailable = () => {
         return (
             <div style={{ display: 'flex' }}>
-                <span className="inside-table-view mt-4">{AppConstants.noDataAvailable}</span>
+                <span className="inside-table-view no-data-info mt-4">{AppConstants.noDataAvailable}</span>
             </div>
         )
     }
 
+    tableLoadingView = () => (
+        <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ width: '100%', height: 200 }}
+        >
+            <Spin />
+        </div>
+    )
+
     headerView = () => {
+        const stripeConnected = getStripeAccountId() ? true : false;
+        const userEmail = this.userEmail();
+        const stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`;
+
         const { userState } = this.props;
+        const { userRole } = userState;
+        
         const personalByCompData = !!userState.personalByCompData ? userState.personalByCompData : [];
 
         return (
@@ -1960,6 +2260,26 @@ class UserModulePersonalDetail extends Component {
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
+                                        {stripeConnected ?
+                                            <Menu.Item
+                                                onClick={() => this.stripeDashboardLoginUrl()}
+                                                className="menu-item-without-selection"
+                                            >
+                                                <span>{AppConstants.editBankAccount}</span>
+                                            </Menu.Item>
+                                            :
+                                            <Menu.Item>
+                                                <a href={stripeConnectURL}>
+                                                    <span>{AppConstants.uploadBankAccnt}</span>
+                                                </a>
+                                            </Menu.Item>
+                                        }
+
+                                        {userRole &&
+                                            <Menu.Item onClick={() => history.push("/myUmpiringAvailability")} >
+                                                <span>{AppConstants.myUmpiringAvailability}</span>
+                                            </Menu.Item>
+                                        }
                                     </SubMenu>
                                 </Menu>
                             </div>
@@ -1975,7 +2295,7 @@ class UserModulePersonalDetail extends Component {
         let { userHistoryList, userHistoryPage, userHistoryTotalCount, userHistoryLoad } = this.props.userState;
 
         return (
-            <div className="comp-dash-table-view mt-2" >
+            <div className="dash-table-paddings mt-2" >
                 <div className="table-responsive home-dash-table-view">
                     <Table className="home-dashboard-table"
                         columns={columnsHistory}
@@ -2008,13 +2328,13 @@ class UserModulePersonalDetail extends Component {
     }
 
     umpireActivityView = () => {
-        let stripeConnected = getStripeAccountId() == "null" ? false : true
-        let userEmail = this.userEmail()
-        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`
         let { umpireActivityOnLoad, umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
+
+        const { umpireActivityOverflow } = this.state.overflowingTables;
+
         return (
             <div
-                className="comp-dash-table-view mt-2"
+                className="dash-table-paddings mt-2 pt-4"
                 style={{ backgroundColor: "#f7fafc" }}
             >
                 {/* <div className="transfer-image-view mb-3">
@@ -2034,42 +2354,21 @@ class UserModulePersonalDetail extends Component {
 
                 </div>
  */}
-
-                <div className="transfer-image-view mb-3">
-
-                    {stripeConnected ?
-                        <Button
-                            type="primary"
-                            className="open-reg-button"
-                            onClick={() => this.stripeDashboardLoginUrl()}
-                        >
-                            {AppConstants.editBankAccount}
-                        </Button>
-                        :
-                        <Button
-                            type="primary"
-                            className="open-reg-button"
-                        >
-                            <a href={stripeConnectURL} className="stripe-connect">
-                                <span>
-                                    {AppConstants.uploadBankAccnt}
-                                </span>
-                            </a>
-
-                        </Button>
-                    }
-
-                </div>
-
-
-                <div className="table-responsive home-dash-table-view">
-                    <Table
-                        className="home-dashboard-table"
-                        columns={umpireActivityColumn}
-                        dataSource={umpireActivityList}
-                        pagination={false}
-                        loading={umpireActivityOnLoad == true && true}
-                    />
+                <div className="position-relative">
+                    <div
+                        className="table-responsive home-dash-table-view"
+                        ref={this.umpireActivityRef}
+                        style={umpireActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                    >
+                        <Table
+                            className="home-dashboard-table"
+                            columns={umpireActivityColumn}
+                            dataSource={umpireActivityList}
+                            pagination={false}
+                            loading={umpireActivityOnLoad == true && true}
+                        />
+                    </div>
+                    {this.tableArrowsView(this.umpireActivityRef, umpireActivityOverflow)}
                 </div>
                 <div className="d-flex justify-content-end ">
                     <Pagination
@@ -2223,12 +2522,14 @@ class UserModulePersonalDetail extends Component {
         }
 
     render() {
-        let { activityPlayerList, activityManagerList, activityScorerList, scorerActivityRoster, activityParentList, personalByCompData, userRole } = this.props.userState;
+        let { activityPlayerList, activityManagerList, activityScorerList, umpireActivityList, scorerActivityRoster, activityParentList, personalByCompData, userRole } = this.props.userState;
         let personalDetails = personalByCompData != null ? personalByCompData : [];
         let userRegistrationId = null;
         if (personalDetails != null && personalDetails.length > 0) {
             userRegistrationId = personalByCompData[0].userRegistrationId
         }
+
+        const { activityManagerOnLoad, activityPlayerOnLoad, activityScorerOnLoad, umpireActivityOnLoad } = this.props.userState;
 
         const { isTablet, isCollapsedUserDetails} = this.state;
 
@@ -2260,7 +2561,17 @@ class UserModulePersonalDetail extends Component {
                                 >
                                     <div className="mt-4">{this.headerView()}</div>
                                     <div className="inside-table-view mt-4" >
-                                        <Tabs activeKey={this.state.tabKey} onChange={(e) => this.onChangeTab(e)}>
+                                        <Tabs
+                                            defaultActiveKey={this.state.tabKey}
+                                            onChange={(e) => this.onChangeTab(e)}
+                                            moreIcon={<img src={AppImages.moreTripleDotActive} />}
+                                            tabBarStyle={{
+                                                fontSize: 14,
+                                                color: "var(--app-9b9bad)",
+                                                fontFamily: 'inter',
+                                            }}
+                                            className="tabs-wrapper"
+                                        >
                                             <TabPane tab={AppConstants.registrations} key="1">
                                                 {!this.state.isRegistrationForm ?
                                                     this.registrationView() :
@@ -2268,13 +2579,18 @@ class UserModulePersonalDetail extends Component {
                                                 }
                                             </TabPane>
                                             <TabPane tab={AppConstants.activity} key="2">
-                                                {activityPlayerList != null && activityPlayerList.length > 0 && this.playerActivityView()}
-                                                {activityManagerList != null && activityManagerList.length > 0 && this.managerActivityView()}
-                                                {scorerActivityRoster != null && scorerActivityRoster.length > 0 && this.scorerActivityView()}
-                                                {/* {activityParentList!= null && activityParentList.length > 0 && this.parentActivityView()} */}
-                                                {activityPlayerList.length == 0 && activityManagerList.length == 0
-                                                    && scorerActivityRoster.length == 0 //&& activityParentList.length == 0
-                                                    && this.noDataAvailable()}
+                                                {!!activityPlayerList && !!activityPlayerList.length && this.playerActivityView()}
+                                                {!!activityManagerList && !!activityManagerList.length  && this.managerActivityView()}
+                                                {!!scorerActivityRoster && !!scorerActivityRoster.length  && this.scorerActivityView()}
+                                                {/* {!!activityParentList && !!activityParentList.length && this.parentActivityView()} */}
+                                                {!activityPlayerList.length && !activityManagerList.length
+                                                    && !scorerActivityRoster.length
+                                                    && (activityManagerOnLoad && activityPlayerOnLoad && activityScorerOnLoad)
+                                                    && this.tableLoadingView()}
+                                                {!activityPlayerList.length && !activityManagerList.length
+                                                    && !scorerActivityRoster.length //&& activityParentList.length == 0
+                                                    && !activityManagerOnLoad && !activityPlayerOnLoad && !activityScorerOnLoad
+                                                    && this.noDataAvailable()}   
                                             </TabPane>
                                             <TabPane tab={AppConstants.statistics} key="3">
                                                 {this.statisticsView()}
@@ -2292,7 +2608,9 @@ class UserModulePersonalDetail extends Component {
                                             {
                                                 userRole &&
                                                 <TabPane tab={AppConstants.umpireActivity} key="7">
-                                                    {this.umpireActivityView()}
+                                                    {!!umpireActivityList && !!umpireActivityList.length && this.umpireActivityView()}
+                                                    {!umpireActivityList.length && umpireActivityOnLoad && this.tableLoadingView()}
+                                                    {!umpireActivityList.length && !umpireActivityOnLoad && this.noDataAvailable()}
                                                 </TabPane>
                                             }
                                         </Tabs>

@@ -194,19 +194,6 @@ class DashboardLayout extends React.Component {
               <a onClick={() => this.navigateTo("/userPersonal")}>{"Profile"}</a>
             </li>
 
-            {this.props.userState.userRole &&
-              <li class="item-with-submenu">
-                <div className="acc-help-support-menu-item dropdown-toggle" >
-                  {"My Umpiring"}
-                </div>
-                <ul class="dropdown-menu item-submenu" >
-                  <li className="acc-help-support-submenu-item">
-                    <a onClick={() => this.navigateTo("/myUmpiringAvailability")}>{"My Umpiring Availability"}</a>
-                  </li>
-                </ul>
-              </li>
-            }
-
             <li>
               <a onClick={() => this.navigateTo("/managePassword")}>{"Manage Password"}</a>
             </li>
