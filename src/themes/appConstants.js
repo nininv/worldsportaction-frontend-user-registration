@@ -110,7 +110,7 @@ const AppConstants = {
   addvoucher: "Add voucher",
 
   //agreeTerm: "I have read and agree to (Affiliates name)  ",
-  agreeTerm: "I have read and agree to all of the above Terms and Conditions  ",
+  agreeTerm: "I have read and agree to all of the above Terms and Conditions",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
@@ -1196,8 +1196,10 @@ const AppConstants = {
   invoiceCode: "Invoice Code",
   warning: "Warning",
 
+  myUmpiringAvailability: 'My Umpiring Availability',
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
+  somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator"
 };
 
 export default AppConstants;

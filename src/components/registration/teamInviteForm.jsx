@@ -1584,7 +1584,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability", "userRegDetails")}
-                        value={userRegDetails.isDisability ? userRegDetails.isDisability : null}
+                        value={userRegDetails.isDisability}
                     >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>

@@ -156,7 +156,7 @@ const CheckoutForm = (props) => {
     const changePaymentOption = (e, key) => {
         console.log("Change payment option",payload)
         if (key === 'direct') {
-            props.onLoad(true)
+            // props.onLoad(true)
             setUser({
                 ...selectedPaymentOption,
                 "direct": true,
@@ -166,10 +166,10 @@ const CheckoutForm = (props) => {
                 "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
-            mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
-            setTimeout(() =>{
-                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
-            },100);
+            // mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+            // setTimeout(() =>{
+            //     stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
+            // },100);
            
         } 
         else if (key === 'cash') {
@@ -250,6 +250,7 @@ const CheckoutForm = (props) => {
     // Handle form submission.
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log("clientSecretKey", clientSecretKey);
         console.log(event)
         if (!stripe || !elements) {
             // Stripe.js has not yet loaded.
@@ -273,7 +274,7 @@ const CheckoutForm = (props) => {
                 } else {
                     setError(null);
                     // Send the token to your server.
-                    console.log("Result", result);
+                    console.log("Result1", result);
                     registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                     // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
@@ -283,48 +284,55 @@ const CheckoutForm = (props) => {
                 props.onLoad(true)
                 console.log("clientSecretKey", clientSecretKey);
 
-                // var form = document.getElementById('setup-form');
-                // props.onLoad(true)
-                // console.log(form)
-                // const accountholderName = event.target['name'];
-                // const email = event.target.email;
+                            // var form = document.getElementById('setup-form');
+                            // props.onLoad(true)
+                            // console.log(form)
+                            // const accountholderName = event.target['name'];
+                            // const email = event.target.email;
 
-                // console.log("accountholderName", accountholderName.value);
-                // console.log("email", email.value);
+                            // console.log("accountholderName", accountholderName.value);
+                            // console.log("email", email.value);
                 console.log("auBankAccount", auBankAccount);
 
-                const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
-                    payment_method: {
-                        au_becs_debit: auBankAccount,
-                        billing_details: {
-                            name:  "Club Test 1", // accountholderName.value,
-                            email: "testclub@wsa.com"  // email.value,
-                        },
-                    }
-                });
+                // const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
+                //     payment_method: {
+                //         au_becs_debit: auBankAccount,
+                //         billing_details: {
+                //             name:  "Club Test 1", // accountholderName.value,
+                //             email: "testclub@wsa.com"  // email.value,
+                //         },
+                //     }
+                // });
 
-                console.log("Result",result);
+                // console.log("Result",result);
 
-                if (result.error) {
-                    let message = result.error.message
-                    setBankError(message)
-                    props.onLoad(false)
-                } else {
-                    setBankError(null)
-                    setClientKey("")
-                    props.onLoad(true)
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
-                    // message.success("Payment status is " + result.paymentIntent.status)
-                    // history.push("/invoice", {
-                    //     registrationId: regId,
-                    //     userRegId: null,
-                    //     paymentSuccess: true
-                    // })
-                }
+                // if (result.error) {
+                //     let message = result.error.message
+                //     setBankError(message)
+                //     props.onLoad(false)
+                // } else {
+                //     setBankError(null)
+                //     setClientKey("")
+                //                 // props.onLoad(true)
+                //     registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
+                //                 // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
+                //                 // message.success("Payment status is " + result.paymentIntent.status)
+                //                 // history.push("/invoice", {
+                //                 //     registrationId: regId,
+                //                 //     userRegId: null,
+                //                 //     paymentSuccess: true
+                //                 // })
+                // }
+
+                mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+                setTimeout(() =>{
+                    stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe);
+                },100);
             }
             else if(props.payload.total.targetValue == 0){
-                props.onLoad(true)
-                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                // props.onLoad(true)
+                registrationCapValidate(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                // stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,clientSecretKey);
             }
         }
         else {
@@ -740,7 +748,7 @@ class RegistrationPayment extends Component {
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8 p-0" style={{marginBottom: 23}}>
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
             <div className="product-left-view outline-style mt-0">              
                 <div className="product-text-common" style={{fontSize:22}}>
                     {AppConstants.securePaymentOptions}
@@ -761,7 +769,7 @@ class RegistrationPayment extends Component {
 
     paymentRighttView = ()=>{
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 px-0 mt-0 product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0 m-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -1012,7 +1020,8 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
                 },
                 body: JSON.stringify(body)
             }).then((response) => {
-                    let resp = response.json()
+                    let resp = response.json();
+                    console.log("response1",response)
                     resp.then((Response) => {
                         if (response.status === 200) {
                             stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption);
@@ -1029,15 +1038,18 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
                         }
                         else {
                             props.onLoad(false);
-                            message.error("Something went wrong.")
+                            message.error(AppConstants.somethingWentWrongErrorMsg)
                         }
     
-                    })
+                    })  .catch((error) => {
+                        props.onLoad(false)
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
+                    });
     
                 })
                 .catch((error) => {
                     props.onLoad(false)
-                    console.error(error);
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
                 });
         }).then((data) => {
             console.log("data");
@@ -1049,8 +1061,33 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
     }
 }
 
+async function confirmDebitPayment(token,props,setClientKey, setRegId,selectedOption,payload, registrationUniqueKey,clientSecret,auBankAccount,setBankError,stripe){
+    try{
+        const result = await stripe.confirmAuBecsDebitPayment(clientSecret, {
+            payment_method: {
+                au_becs_debit: auBankAccount,
+                billing_details: {
+                    name:  "Club Test 1", // accountholderName.value,
+                    email: "testclub@wsa.com"  // email.value,
+                },
+            }
+        });
+          if (result.error) {
+                let message = result.error.message
+                setBankError(message)
+                props.onLoad(false)
+            } else {
+                setBankError(null)
+                setClientKey("")
+                registrationCapValidate(result.token, props, selectedOption,null, null, payload, registrationUniqueKey,2);
+            }
+    }catch(ex){
+        console.log("Error in confirmDebitPayment::"+ex)
+    }
+}
+
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
@@ -1108,6 +1145,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         }
     }
     console.log("body" + JSON.stringify(body));
+    props.onLoad(true)
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL + url}`, {
             method: 'POST',
@@ -1121,6 +1159,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                 let resp = response.json()
                 console.log(response.status, "status", paymentType)
                 resp.then((Response) => {
+                    console.log("Response",Response)
                     if (response.status === 200) {
                         if (paymentType == "card") {
                             message.success(Response.message);
@@ -1153,9 +1192,10 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 })
                             }
                             else{
-                                setClientKey(Response.clientSecret)
+                                setClientKey(Response.clientSecret);
                                 setRegId(registrationUniqueKey)
-                                props.onLoad(false)
+                                confirmDebitPayment(token,props,setClientKey, setRegId,selectedOption,payload, registrationUniqueKey,Response.clientSecret,auBankAccount,setBankError,stripe)
+                                // props.onLoad(false)
                             }
                            // message.success(Response.message);
                         }
@@ -1183,16 +1223,23 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     }
                     else {
                         props.onLoad(false)
-                        message.error("Something went wrong.")
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
                     }
 
+                }).catch((error) => {
+                    console.log("500")
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
                 })
-
             })
             .catch((error) => {
                 props.onLoad(false)
-                console.error(error);
+                message.error(AppConstants.somethingWentWrongErrorMsg)
             });
+    }).then((data) => {
+        console.log("then data in stripeTokenHandler ");
+    }).catch((data) => {
+        console.log("Error in stripeTokenHandler")
     }) 
 }
 
@@ -1230,6 +1277,7 @@ async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,pro
             }).then((response) => {
                     props.onLoad(false)
                     let resp = response.json()
+                    console.log("response3",response)
                     resp.then((Response) => {
                         if (response.status === 200) {
 
@@ -1241,15 +1289,18 @@ async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,pro
                             message.error(Response.message);
                         }
                         else {
-                            message.error("Something went wrong.")
+                            message.error(AppConstants.somethingWentWrongErrorMsg)
                         }
     
-                    })
+                    }).catch((error) => {
+                        props.onLoad(false)
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
+                    });
     
                 })
                 .catch((error) => {
                     props.onLoad(false)
-                    console.error(error);
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
                 });
         }) 
     }catch(ex){

@@ -247,7 +247,21 @@ class AppTeamRegistrationForm extends Component{
             }
 
             if(!teamRegistrationState.onExistingTeamInfoByIdLoad && this.state.onExistingTeamInfoByIdLoad){
-                this.setState({onExistingTeamInfoByIdLoad: false,showFindAnotherCompetitionview: true})
+                this.setState({onExistingTeamInfoByIdLoad: false})
+                if(getOrganisationId() == null && getCompetitonId() == null){
+                    this.setState({showFindAnotherCompetitionview: true});
+                }else{
+                    let membershipProductInfo = teamRegistrationState.membershipProductInfo;
+                    let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                    if(organisatinInfoTemp){
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        if(competitionInfoTemp == undefined){
+                            this.setState({showFindAnotherCompetitionview: true});
+                        }
+                    }else{
+                        this.setState({showFindAnotherCompetitionview: true});
+                    }
+                }
             }
 
             if(teamRegistrationState.isSavedTeam){
@@ -747,13 +761,12 @@ class AppTeamRegistrationForm extends Component{
                     }
                 }
                 // console.log("teamMember.parentOrGuardian.length",teamMember.parentOrGuardian.length)
-                let parentTemp = {
-                    firstName: teamRegistrationObj.firstName,
-                    middleName: teamRegistrationObj.middleName,
-                    lastName: teamRegistrationObj.lastName,
-                    mobileNumber: teamRegistrationObj.mobileNumber,
-                    email: teamRegistrationObj.email
-                }
+                let parentTemp = deepCopyFunction(this.getParentObj());
+                parentTemp.firstName = teamRegistrationObj.firstName;
+                parentTemp.middleName = teamRegistrationObj.middleName;
+                parentTemp.lastName = teamRegistrationObj.lastName;
+                parentTemp.mobileNumber = teamRegistrationObj.mobileNumber;
+                parentTemp.email = teamRegistrationObj.email;
                 teamMember.parentOrGuardian[0] = parentTemp;
             }else{
                 // console.log("teamMember.parentOrGuardian[0]",teamMember.parentOrGuardian[0])
@@ -1445,7 +1458,10 @@ class AppTeamRegistrationForm extends Component{
                                 if(expiredRegistration != null){
                                     this.setState({showExpiredRegistrationView: true,showFindAnotherCompetitionview: true,organisationId:null});
                                 }else{
-                                    this.setState({showFindAnotherCompetitionview: false,organisationId: null})
+                                    this.setState({showFindAnotherCompetitionview: false,organisationId: null});
+                                    setTimeout(() => {
+                                        this.setSelectCompetitionStepFormFields();
+                                    },300)
                                 }
                             }}>{AppConstants.cancel}</div>
                         )}
@@ -3271,6 +3287,7 @@ class AppTeamRegistrationForm extends Component{
     teamDetailsView = (getFieldDecorator) => {
         try{
             const { teamRegistrationObj } = this.props.teamRegistrationState;
+            console.log("teamRegistrationObj",teamRegistrationObj)
             return(
                 <div className="registration-form-view">
                     <div className="row mx-0">

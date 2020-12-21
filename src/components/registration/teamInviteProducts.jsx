@@ -555,7 +555,7 @@ class TeamInviteProducts extends Component{
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
-                <div className="headline-text-common mb-4 required-field" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>
@@ -571,7 +571,7 @@ class TeamInviteProducts extends Component{
                                 className="single-checkbox mt-0"
                                 checked={this.state.agreeTerm}
                                 onChange={e => this.termsAndConditionsCheck(e)}>
-                                {AppConstants.agreeTerm}
+                                <span className="required-field">{AppConstants.agreeTerm}</span>
                                 <span style={{marginLeft:"5px"}} ></span>
                             </Checkbox>
                     </div>

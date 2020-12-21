@@ -253,6 +253,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     componentDidMount() {
+        this.props.updateUserRegistrationObjectAction(null,"registrationObj");
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({ getMembershipLoad: true });        

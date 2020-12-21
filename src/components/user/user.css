@@ -387,6 +387,21 @@
   margin-top: 33px;
 }
 
+.menu-item-without-selection.ant-menu-item-selected {
+  color: inherit;
+}
+
+.no-data-info {
+  font-size: 15px;
+  color: var(--app-9b9bad);
+  font-family: inter;
+  font-weight: normal;
+}
+
+.dash-table-paddings {
+  padding: 10px 20px;
+}
+
 @media (max-width: 767px) {
   .form-header-view .user-heading {
     font-size: 22px;
