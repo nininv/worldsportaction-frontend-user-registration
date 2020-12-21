@@ -241,7 +241,7 @@ class AppRegistrationFormNew extends Component {
 
         if(this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true){
             if(this.props.commonReducerState.status == 4){
-                this.setState({registrationCapModalVisible: true})
+                this.setState({registrationCapModalVisible: true,validateRegistrationCapBySubmit: false})
             }else{
                 if(this.state.validateRegistrationCapBySubmit == true){
                     this.stepNavigation();
@@ -253,6 +253,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     componentDidMount() {
+        this.props.updateUserRegistrationObjectAction(null,"registrationObj");
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({ getMembershipLoad: true });        
@@ -1294,18 +1295,28 @@ class AppRegistrationFormNew extends Component {
             }
             for(let competition of registrationObj.competitions){
                 for(let productItem of competition.products){
-                    let divisions = competition.divisions.filter(x => x.competitionMembershipProductId == productItem.competitionMembershipProductId && x.competitionMembershipProductTypeId == productItem.competitionMembershipProductTypeId);
-                    if(divisions){
-                        for(let divisionItem of divisions){
-                            let product = {
-                                "competitionId": competition.competitionId,
-                                "organisationId": competition.organisationId,
-                                "competitionMembershipProductTypeId": divisionItem.competitionMembershipProductTypeId,
-                                "divisionId": divisionItem.competitionMembershipProductDivisionId
-                            }
-                            registrationCapValidateInputObjTemp.products.push(product);
-                        } 
-                    }
+                    if(productItem.isPlayer == 1){
+                        let divisions = competition.divisions.filter(x => x.competitionMembershipProductId == productItem.competitionMembershipProductId && x.competitionMembershipProductTypeId == productItem.competitionMembershipProductTypeId);
+                        if(divisions){
+                            for(let divisionItem of divisions){
+                                let product = {
+                                    "competitionId": competition.competitionId,
+                                    "organisationId": competition.organisationId,
+                                    "competitionMembershipProductTypeId": divisionItem.competitionMembershipProductTypeId,
+                                    "divisionId": divisionItem.competitionMembershipProductDivisionId
+                                }
+                                registrationCapValidateInputObjTemp.products.push(product);
+                            } 
+                        }
+                    }else{
+                        let product = {
+                            "competitionId": competition.competitionId,
+                            "organisationId": competition.organisationId,
+                            "competitionMembershipProductTypeId": productItem.competitionMembershipProductTypeId,
+                            "divisionId": null
+                        }
+                        registrationCapValidateInputObjTemp.products.push(product);
+                    } 
                 }
             }
             return registrationCapValidateInputObjTemp;
@@ -1423,6 +1434,7 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
                         let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
+                        console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
                         if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
                             this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
                             this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});

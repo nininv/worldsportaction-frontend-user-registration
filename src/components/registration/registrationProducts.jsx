@@ -74,7 +74,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "860bf924-4b7f-4772-898a-844d8efab764";
+        //let registrationUniqueKey = "d8411de0-30e9-42c8-9190-7cbaabdb18a2";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -442,7 +442,7 @@ class RegistrationProducts extends Component {
 
     headerView = () =>{
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8" style={{display:"flex",flexWrap: "wrap", justifyContent: 'space-between', padding: 0 }}>
+            <div className="col-sm-12 col-md-7 col-lg-8 d-flex flex-wrap justify-content-between p-0">
                 <div className="headline-text-common" style={{padding:0, marginRight: 10 }}> {AppConstants.participants}</div>
                 <div className="add-another-button-border pointer reg-products-add-participant"  onClick={() => this.clickAddAnotherParticipant(null,this.state.registrationUniqueKey)}>
                     <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
@@ -562,6 +562,22 @@ class RegistrationProducts extends Component {
         )
     }
 
+    getValueOfTeamFeeWillPay = (item) => {
+        try{
+            if(item.selectedOptions.paymentOptionRefId == 1){
+                if(item.selectedOptions.teamRegChargeTypeRefId == 2){
+                    return 1;
+                }else if(item.selectedOptions.teamRegChargeTypeRefId == 3){
+                    return 2;
+                }
+            }else{
+                return item.selectedOptions.nominationPayOptionRefId;
+            }
+        }catch(ex){
+            console.log("Error in getValueOfTeamFeeWillPay::"+ex);
+        }
+    }
+
     productsView = (item, index) =>{
         try{
             let currentDate = moment();
@@ -594,12 +610,23 @@ class RegistrationProducts extends Component {
                             <div className = "subtitle-text-common" style={{marginTop: '5px'}}>{AppConstants.howWillTheTeamFeeBePaid}</div>
                             <div className="product-line">
                                 <Radio.Group 
-                                    value={item.selectedOptions.nominationPayOptionRefId}
+                                    value={this.getValueOfTeamFeeWillPay(item)}
                                     onChange={(e) => this.setReviewInfo(e.target.value, "nominationPayOptionRefId", index,"selectedOptions")}> 
-                                    <div style={{display:"flex"}}>
-                                        <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
-                                        <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
-                                    </div> 
+                                    {item.selectedOptions.paymentOptionRefId == 1 ? (
+                                        <div>
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 2 && (
+                                                <Radio key={1} value={1}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                            )}
+                                            {item.selectedOptions.teamRegChargeTypeRefId == 3 && (
+                                                <Radio key={2} value={2}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                            )}
+                                        </div> 
+                                    ) : (
+                                        <div style={{display:"flex"}}>
+                                            <Radio key={1} value={1} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payCompetitionAndNominationFeesForAll}</Radio>
+                                            <Radio key={2} value={2} className="team-reg-radio-custom-style" style={{width:"50%"}}>{AppConstants.payAllFeesForSelectedTeamMembers}</Radio>
+                                        </div> 
+                                    )}
                                 </Radio.Group>  
                             </div>
                             <div className="product-line">
@@ -1307,7 +1334,7 @@ class RegistrationProducts extends Component {
         let compParticipants = registrationReviewList!= null ? registrationReviewList.compParticipants : [];
         let hasTeamRegistration = compParticipants.find(x=>x.isTeamRegistration == 1);
         return(
-            <div className="col-sm-12 col-md-8 col-lg-8" style={{ padding:0 }}>
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
                 <div className="product-left-view outline-style">
                     {this.participantDetailView(isSchoolRegistration)}
                     {isSchoolRegistration == 0 && this.charityView()}
@@ -1325,7 +1352,7 @@ class RegistrationProducts extends Component {
     productRightView = (termsAndConditionsView)=>{
         const {termsAndConditions} = this.props.registrationProductState;
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0">
                 {this.yourOrderView()}
                 {termsAndConditions.length > 0 && this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
@@ -1486,7 +1513,7 @@ class RegistrationProducts extends Component {
         const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
-                <div className="headline-text-common mb-4 required-field" style={{textAlign: "left"}}> {AppConstants.termsAndConditionsHeading} </div>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
                 <div className="pt-2">   
                 { (termsAndConditions || []).map((item, index) =>(               
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>
@@ -1503,7 +1530,7 @@ class RegistrationProducts extends Component {
                                 checked={this.state.agreeTerm}
                                 onChange={e => this.termsAndConditionsCheck(e)}
                                 >
-                                {AppConstants.agreeTerm}
+                                <span className="required-field">{AppConstants.agreeTerm}</span>
                                 <span style={{marginLeft:"5px"}} ></span>
                         </Checkbox>
                     </div>

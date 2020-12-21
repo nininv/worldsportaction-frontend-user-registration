@@ -129,9 +129,14 @@ display: flex;
     margin-right: -15px;
     margin-left: -15px;
 }
+
 .invoiceImageMain{
   display: flex;
   justify-content: flex-end
+}
+.invoiceImageMain img  {
+  height: 40px;
+  object-fit: contain;
 }
 
 .charity-invoice-heading {
@@ -318,13 +323,6 @@ input::placeholder {
 }
 
 @media (max-width: 767px) {
-  .invoiceImage{
-    display: flex;
-    justify-content: center
-  }
-  .invoiceImageMain{
-    justify-content: center
-  }
   .invoice-total{
     display: flex;
   width: 70%;
@@ -354,5 +352,12 @@ input::placeholder {
 .invoice-col-View{
   position: relative;
   width: 70%;
+  }
+}
+
+@media (max-width: 576px) {
+  .invoiceImage,
+  .invoiceImageMain {
+    justify-content: center
   }
 }

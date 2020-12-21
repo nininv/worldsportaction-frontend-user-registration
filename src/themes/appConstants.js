@@ -110,7 +110,7 @@ const AppConstants = {
   addvoucher: "Add voucher",
 
   //agreeTerm: "I have read and agree to (Affiliates name)  ",
-  agreeTerm: "I have read and agree to all of the above Terms and Conditions  ",
+  agreeTerm: "I have read and agree to all of the above Terms and Conditions",
   termsAndConditions: "Terms and Conditions",
   reviewOrder: "Review Order",
   checkOptions: "Checkout Options",
@@ -919,7 +919,7 @@ const AppConstants = {
   directDebit: "Direct Debit",
   creditCard: "Credit/Debit Card",
   cash: "Cash",
-  selectedPaymentOption: "Please select payment option Credit Card or Direct Debit",
+  selectedPaymentOption: "Please select a payment option",
   stripeMandate1: `By providing your bank account details and confirming this payment,
   you agree to this Direct Debit Request and the`,
   stripeMandate2: `, and authorise Stripe Payments Australia Pty Ltd ACN 160 180 343 Direct Debit User ID number 507156(“Stripe”) to debit your account through the Bulk Electronic Clearing System (BECS) on behalf of World Sport Action Pty Ltd (the "Merchant") for any amounts separately communicated to you by the Merchant.You certify that you are either
@@ -1106,7 +1106,7 @@ const AppConstants = {
   teamDetails: "Team Details",
   teamMember: "Team Member",
   payingForMember: "I am paying all fees for this member",
-  teamMemberParentCheck: "Check myself as a parent",
+  teamMemberParentCheck: "I am the Parent/ Guardian",
   addTeamMember: "Add Team Member",
   members: "Members",
   payingFor: "I am paying for",
@@ -1164,8 +1164,8 @@ const AppConstants = {
   emergencyContact: "Emergency Contact",
   competitionVenue:"Competition Venue",
   dueAtRegistration: "*Yearly Membership Fees may also be due at Registration",
-  registeringTeamTo: "Membership Product you are registering Team to :",
-  registeringIndividualTo: "Membership Product you are registering Individual to :",
+  registeringTeamTo: "Membership Product you are registering Team to",
+  registeringIndividualTo: "Membership Product you are registering Individual to",
   thankYouRegistering: "Thank you for registering!",
   emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
   emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
@@ -1196,8 +1196,10 @@ const AppConstants = {
   invoiceCode: "Invoice Code",
   warning: "Warning",
 
+  myUmpiringAvailability: 'My Umpiring Availability',
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
+  somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator"
 };
 
 export default AppConstants;

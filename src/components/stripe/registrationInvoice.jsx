@@ -771,14 +771,10 @@ class RegistrationInvoice extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-sm pt-5 invoiceImage">
-                        <label>
+                    <div className="col-sm pt-5 px-0 d-flex invoiceImage">
+                        <label className="d-flex align-items-center">
                             <img
                                 src={AppImages.netballImages}
-                                // alt="animated"
-                                height="100%"
-                                width="100%"
-                                // style={{ borderRadius: 60 }}
                                 name={'image'}
                                 onError={ev => {
                                     ev.target.src = AppImages.netballImages;
@@ -786,12 +782,10 @@ class RegistrationInvoice extends Component {
                             />
                         </label>
                     </div>
-                    <div className="col-sm pt-5 invoiceImageMain ">
-                        <label>
+                    <div className="col-sm pt-5 px-0 invoiceImageMain ">
+                        <label className="d-flex align-items-center">
                             <img
                                 src={AppImages.netballLogoMain}
-                                height="100%"
-                                width="100%"
                                 name={'image'}
                                 onError={ev => {
                                     ev.target.src = AppImages.netballLogoMain;
