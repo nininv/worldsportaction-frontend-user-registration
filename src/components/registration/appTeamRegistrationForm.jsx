@@ -247,7 +247,21 @@ class AppTeamRegistrationForm extends Component{
             }
 
             if(!teamRegistrationState.onExistingTeamInfoByIdLoad && this.state.onExistingTeamInfoByIdLoad){
-                this.setState({onExistingTeamInfoByIdLoad: false,showFindAnotherCompetitionview: true})
+                this.setState({onExistingTeamInfoByIdLoad: false})
+                if(getOrganisationId() == null && getCompetitonId() == null){
+                    this.setState({showFindAnotherCompetitionview: true});
+                }else{
+                    let membershipProductInfo = teamRegistrationState.membershipProductInfo;
+                    let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+                    if(organisatinInfoTemp){
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        if(competitionInfoTemp == undefined){
+                            this.setState({showFindAnotherCompetitionview: true});
+                        }
+                    }else{
+                        this.setState({showFindAnotherCompetitionview: true});
+                    }
+                }
             }
 
             if(teamRegistrationState.isSavedTeam){
