@@ -53,7 +53,7 @@ function ContentView(props) {
 
           {resetType === "sms" && (
             <p className="mt-3 mb-0">
-              We will send the SMS to your registered phone number (04xx xxx x04).
+              We will send the SMS to your registered phone number.
               Please confirm you would like to proceed.
             </p>
           )}
