@@ -1325,6 +1325,22 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
+    setReferParentEmailIfRequired = (registrationObj) => {
+        try{
+            let childEmail = registrationObj.email;
+            if(getAge(registrationObj.dateOfBirth) < 18){
+                let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
+                if(isSameWithParentEmail){
+                    this.onChangeSetParticipantValue(true, "referParentEmail")
+                }else{
+                    this.onChangeSetParticipantValue(false, "referParentEmail")
+                }
+            }
+        }catch(ex){
+            console.log("Error in setReferParentEmailIfRequried::"+ex);
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
@@ -1421,6 +1437,8 @@ class AppRegistrationFormNew extends Component {
                                 }
                             }
                         }
+
+                        this.setReferParentEmailIfRequired(registrationObj);
                     }
                     if (this.state.currentStep == 1) {
                         if (registrationObj.competitions.length == 0) {
