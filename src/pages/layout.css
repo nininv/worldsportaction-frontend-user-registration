@@ -135,44 +135,26 @@
   padding-bottom: 0 !important;
 }
 
-.user-profile-box ul.dropdown-menu .acc-help-support-submenu-item {
-  padding: 0;
-  margin-left: 15px;
-}
-
-.acc-help-support-menu-item {
-  font-size: 14px;
-  color: #4c4c6d;
-  cursor: default;
-}
-
-.acc-help-support-menu-item.dropdown-toggle::after {
-  vertical-align: middle;
-}
-
-.item-with-submenu:hover > ul.dropdown-menu {
-  display: block;
-}
-
-.item-with-submenu {
-  overflow: hidden;
-}
-
-.dropdown-menu.item-submenu {
-  width: 100%;
-  position: static;
-  box-shadow: none;
-  padding: 10px 0 0;
-  border: none;
+.netball-logo {
+  object-fit: none;
 }
 
 @media screen and (max-width: 1190px) {
   .header-wrap .logo-box {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 0 90%;
   }
+
+  .header-wrap .user-right {
+    align-self: center;
+  }
+
+  .header-wrap .user-right ul {
+    margin: 0;
+  }
+
   .header-wrap .col-sm.dashboard-layout-menu-heading-view {
-    position: relative;
-    top: 17px;
     margin-left: 0;
   }
 }
@@ -213,13 +195,13 @@
   }
   .site-header {
     width: auto;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .header-wrap .col-sm.dashboard-layout-menu-heading-view {
     display: inline-block;
     margin-left: 0;
-    width: 108px;
+    width: fit-content;
     padding-left: 0;
     ;
     border: 0px solid;

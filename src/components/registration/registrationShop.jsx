@@ -141,7 +141,7 @@ class RegistrationShop extends Component {
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -253,38 +253,46 @@ class RegistrationShop extends Component {
         let types = shopProductsTypes ? shopProductsTypes : [];
         return(
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
-                <div className="headline-text-common" style={{alignSelf:"center" , marginTop: "10px"}}> {AppConstants.merchandiseShop}</div>
-                <div style={{width:"230px",marginTop: "10px",marginLeft: "auto",marginRight: "15px"}}>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1}}                  
-                        placeholder={AppConstants.all}  
-                        className="custom-dropdown"
-                        onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
-                        value={this.state.organisationUniqueKey}                                               
+                <div className="headline-text-common px-0" style={{ height: 60, display: 'flex', alignItems: 'center', marginRight: 10}}> {AppConstants.merchandiseShop}</div>
+                <div className="px-0 shop-filters-wrapper">
+                    <div 
+                        className="my-2"
+                        style={{width: 'calc(50% - 7px', minWidth: 170 }}
                     >
-                        <Option value={-1}>All</Option> 
-                        {
-                            (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
-                            ))
-                        }    
-                    </Select>
-                </div>
-                <div style={{width:"230px",marginTop: "10px"}}>
-                    <Select
-                        style={{ width: "100%", paddingRight: 1}}                  
-                        placeholder={AppConstants.allCategories}  
-                        className="custom-dropdown"
-                        onChange={(e) => this.onChangeSetValue("typeId", e)}
-                        value={this.state.typeId}                                               
+                        <Select
+                            style={{ width: "100%", paddingRight: 1}}                  
+                            placeholder={AppConstants.all} 
+                            className="custom-dropdown"
+                            onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
+                            value={this.state.organisationUniqueKey}                                               
+                        >
+                            <Option value={-1}>All</Option> 
+                            {
+                                (this.getOrganisationFilterList() || []).map((item, index) =>(
+                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                                ))
+                            }    
+                        </Select>
+                    </div>
+                    <div
+                        className="my-2"
+                        style={{width: 'calc(50% - 7px', minWidth: 170}}
                     >
-                        <Option value={-1}>All categories</Option> 
-                        {
-                            (types || []).map((item, index) =>(
-                                <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
-                            ))
-                        }    
-                    </Select>
+                        <Select
+                            style={{ width: "100%", paddingRight: 1}}                  
+                            placeholder={AppConstants.allCategories}  
+                            className="custom-dropdown"
+                            onChange={(e) => this.onChangeSetValue("typeId", e)}
+                            value={this.state.typeId}                                               
+                        >
+                            <Option value={-1}>All categories</Option> 
+                            {
+                                (types || []).map((item, index) =>(
+                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
+                                ))
+                            }    
+                        </Select>
+                    </div>
                 </div>
             </div>
         );
@@ -311,14 +319,16 @@ class RegistrationShop extends Component {
         return (
             <div className="col-md-4">
                     <div>
-                        <div className="shop-product-text card-header-text"
+                        <div className="shop-product-text card-header-text pt-4"
                         style={{height: "240px"}}
                         onClick={(e) => this.enableExpandView("show", item, index)}>
                             <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
-                                <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
-                            <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            <div className="px-4">
+                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            </div>
                         </div>
                     </div>
             </div>
@@ -336,14 +346,16 @@ class RegistrationShop extends Component {
                 <div>
                     {(shopProductList || []).map((item, index) =>(
                         <div>
-                            <div className="shop-product-text card-header-text"
+                            <div className="shop-product-text card-header-text pt-4"
                             style={{height: "240px"}}
                             onClick={(e) => this.enableExpandView("show", item, index)}>
                                 <div style={{display: "flex", justifyContent:"center"}}>
-                                    <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                    <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                                 </div>
-                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                <div className="px-4">
+                                    <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                    <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                </div>
                             </div>
                             {this.state.showCardView && index == this.state.expandObj.sIndex &&
                                 <div>
@@ -401,9 +413,9 @@ class RegistrationShop extends Component {
                 </div>           
                 <div class="row" style={{marginTop: "17px"}}>
                     <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px"}} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
+                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
-                    <div className="col-lg-8" style={{paddingRight:"15px"}}>
+                    <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
                         {(expandObj.varients || []).map((varnt, vIndex) =>(
@@ -467,7 +479,7 @@ class RegistrationShop extends Component {
     
     contentView = () =>{
         return(
-            <div class="row">
+            <div class="row mx-0">
                 {this.shopLeftView()}
                 {this.shopRightView()}                
             </div>
@@ -476,7 +488,7 @@ class RegistrationShop extends Component {
 
     shopLeftView = ()=>{
         return(
-            <div className="col-sm-12 col-md-12 col-lg-8 product-left-view outline-style" style={{cursor:"pointer" ,padding:"26px 47px"}}>
+            <div className="col-sm-12 col-md-7 col-lg-8 mt-0 product-left-view outline-style registration-form-view" style={{cursor:"pointer", marginBottom: 23}}>
                 {this.headerView()}
                 {this.cardView()}
                 {/* {this.state.showCardView &&
@@ -490,7 +502,7 @@ class RegistrationShop extends Component {
 
     shopRightView = ()=>{
         return(
-            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft: "0px",paddingRight:0}}>
+            <div className="col-lg-4 col-md-3 col-sm-12 mt-0 product-right-view px-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -531,9 +543,11 @@ class RegistrationShop extends Component {
                                     <div  className="subtitle-text-common" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
-                                        </div>
+                                        {(mem.email !== item.email) && ( 
+                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 :
@@ -657,7 +671,7 @@ class RegistrationShop extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout className="layout-margin">
                     <Form
                         autocomplete="off"
                         scrollToFirstError={true}

@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
+import { deepCopyFunction, getAge, isArrayNotEmpty, isNullOrEmptyString} from '../../../util/helpers';
 import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
 import moment from 'moment';
 
@@ -26,6 +26,12 @@ let seasionalAndCasualFeesInputObj = {
 	"organisationId" : "",
 	"competitionId": "",
 	"competitionMembershipProductTypes": []
+}
+
+let registrationCapValidateInputObjTemp = {
+  "registrationId": "",
+  "isTeamRegistration": 0,
+  "products": []
 }
 
 const teamObj = {
@@ -74,7 +80,6 @@ const teamObj = {
     "netball_experience": 0
   },
   "personRoleRefId":null,
-  "genderRefId": null,
   "email": null,
   "suburb": null,
   "userId": null,
@@ -92,6 +97,7 @@ const teamObj = {
   "selectAddressFlag": false,
   "manualEnterAddressFlag": false,
   "mobileNumber": null,
+  "parentOrGuardian": [],
   "teamId": null,
   "teamName": null,
   "registeringAsAPlayer": null,
@@ -126,9 +132,9 @@ const teamObj = {
     "yearsPlayed": '2',
     "countryRefId": 1,
     "heardByOther": null,
-    "heardByRefId": 6,
-    "isDisability": false,
-    "identifyRefId": 3,
+    "heardByRefId": null,
+    "isDisability": null,
+    "identifyRefId": null,
     "newToUmpiring": null,
     "lastCaptainName": null,
     "otherSportsInfo": [],
@@ -140,7 +146,7 @@ const teamObj = {
     "favouriteTeamRefId": null,
     "walkingNetballInfo": null,
     "childrenCheckNumber": null,
-    "disabilityTypeRefId": 5,
+    "disabilityTypeRefId": null,
     "isParticipatedInSSP": null,
     //"walkingNetballRefId": null,
     "walkingNetball": deepCopyFunction(walkingNetballObj),
@@ -166,7 +172,17 @@ const teamMemberObj = {
   "middleName": null,
   "dateOfBirth": null,
   "mobileNumber":null,
+  // "street1":null,
+  // "street2":null,
+  // "suburb":null,
+  // "stateRefId":null,
+  // "countryRefId":1,
+  // "postalCode":null,
+  // "addNewAddressFlag": true,
+  // "manualEnterAddressFlag": false,
   "payingFor": 0,
+  "isRegistererAsParent": 0,
+  "parentOrGuardian": [],
   "membershipProductTypes": [
     // {
     //   "competitionMembershipProductId": null,
@@ -206,12 +222,15 @@ const initialState = {
     enableSeasonalAndCasualService: false,
     seasionalAndCasualFeesInputObj : null,
     teamNameValidationResultCode: null,
-    feesInfo: null
+    feesInfo: null,
+    teamCompetitionNotExist: false,
+    registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
+    enableValidateRegistrationCapService: false
 }
 
-function setTeamRegistrationObj(state){
+function setTeamRegistrationObj(state,existingTeamInfo){
   try{
-    state.teamRegistrationObj = deepCopyFunction(teamObj);
+    state.teamRegistrationObj = existingTeamInfo ? existingTeamInfo : deepCopyFunction(teamObj);
     let membershipProducts = deepCopyFunction(state.membershipProductInfo)
     if(getOrganisationId() != null && getCompetitonId() != null){
       state.teamRegistrationObj.organisationId = getOrganisationId();
@@ -289,9 +308,9 @@ function setCompetitionDetails(state,details){
   }
 }
 
-function getUpdatedTeamMemberObj(state){
+function getUpdatedTeamMemberObj(state,existingTeamMember){
   try{
-    let teamMemberTemp = deepCopyFunction(teamMemberObj);
+    let teamMemberTemp = existingTeamMember ? existingTeamMember : deepCopyFunction(teamMemberObj);
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
     let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){
@@ -310,65 +329,6 @@ function getUpdatedTeamMemberObj(state){
   }
 }
 
-// function getFilteredDivisions(divisions,state){
-// 	try{
-// 		let filteredDivisions = [];
-// 		let genderRefId = state.teamRegistrationObj.genderRefId;
-//     var date = moment(state.teamRegistrationObj.dateOfBirth, "DD/MM/YYYY");
-//     console.log("filter",genderRefId,date)
-// 		for(let division of divisions){
-// 			if(division.genderRefId != null && (division.fromDate == null || division.toDate == null)){
-// 				if(division.genderRefId == genderRefId || genderRefId == 3){
-// 					let div = {
-// 						"competitionMembershipProductId": division.competitionMembershipProductId,
-// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-// 						"divisionName": division.divisionName
-// 					}      
-// 					filteredDivisions.push(div);
-// 				}
-// 			}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
-// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
-// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
-// 				if (date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))){
-// 					let div = {
-// 						"competitionMembershipProductId": division.competitionMembershipProductId,
-// 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-// 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-// 						"divisionName": division.divisionName
-// 					}      
-// 					filteredDivisions.push(div);
-// 				}
-// 			}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
-// 				var startDate = moment(division.fromDate, "YYYY-MM-DD");
-// 				var endDate = moment(division.toDate, "YYYY-MM-DD");
-// 				if ((date.isBefore(endDate) && date.isAfter(startDate) || (date.isSame(startDate) || date.isSame(endDate))) 
-// 					&& (division.genderRefId == genderRefId || genderRefId == 3)){
-// 						let div = {
-// 							"competitionMembershipProductId": division.competitionMembershipProductId,
-// 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-// 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-// 							"divisionName": division.divisionName
-// 						}      
-// 						filteredDivisions.push(div);
-// 				}
-// 			}else{
-// 				let div = {
-// 					"competitionMembershipProductId": division.competitionMembershipProductId,
-// 					"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-// 					"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
-// 					"divisionName": division.divisionName
-// 				}      
-// 				filteredDivisions.push(div); 
-// 			}
-// 		}
-// 		console.log("filtered division",filteredDivisions)
-// 		return filteredDivisions;
-// 	}catch(ex){
-// 		console.log("Error in getFilteredDivisions in userRegistrationReducer"+ex);
-// 	}
-// }
-
 function setDivisions(state,competitionMembershipProductTypeId){
   try{
     state.teamRegistrationObj.competitionMembershipProductTypeId = competitionMembershipProductTypeId;
@@ -377,26 +337,39 @@ function setDivisions(state,competitionMembershipProductTypeId){
       state.teamRegistrationObj.walkingNetballFlag = (membershipProduct.shortName == "Walking Netball" || membershipProduct.shortName == "Player - Walking Netball") ? 1 : 0;
       state.teamRegistrationObj.competitionMembershipProductId = membershipProduct.competitionMembershipProductId;
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = membershipProduct.allowTeamRegistrationTypeRefId;
-      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
-        state.teamRegistrationObj.teamMembers = [];
-        state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
+      // if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1 && !state.teamRegistrationObj.existingTeamParticipantId){
+      if(state.teamRegistrationObj.allowTeamRegistrationTypeRefId == 1){
+        if(!isArrayNotEmpty(state.teamRegistrationObj.teamMembers)){
+          state.teamRegistrationObj.teamMembers = [];
+          state.teamRegistrationObj.teamMembers.push(getUpdatedTeamMemberObj(state));
+        }else{
+          for(let teamMember of state.teamRegistrationObj.teamMembers){
+            teamMember = getUpdatedTeamMemberObj(state,teamMember)
+          }
+        }
       }
       state.teamRegistrationObj.divisions = [];
       // let divisionInfoList = state.teamRegistrationObj.divisions;
       // divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProduct.divisions,state));
       for(let division of membershipProduct.divisions){
-        let div = {
-          "divisionName": division.divisionName,
-          "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
-			    "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId
+        if(division.registrationTeamLock == 0 && division.isTeamRegistration == 1){
+          let div = {
+            "divisionName": division.divisionName,
+            "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+            "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+            "fromDate": division.fromDate,
+            "toDate": division.toDate,
+            "genderRefId": division.genderRefId
+          }
+          state.teamRegistrationObj.divisions.push(div);
         }
-        state.teamRegistrationObj.divisions.push(div);
       }
 
       //When it has one item set defualt the first position
       if(state.teamRegistrationObj.divisions.length == 1){
         state.teamRegistrationObj.competitionMembershipProductDivisionId = state.teamRegistrationObj.divisions[0].competitionMembershipProductDivisionId;
         setSeasonalAndCasualFeesObj(state);
+        setValidateRegistrationCapObj(state);
       }else{
         state.teamRegistrationObj.competitionMembershipProductDivisionId = null;
       }
@@ -405,6 +378,27 @@ function setDivisions(state,competitionMembershipProductTypeId){
     }
   }catch(ex){
     console.log("Error in setDivisions::"+ex);
+  }
+}
+
+function setValidateRegistrationCapObj(state){
+  try{
+    let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
+    let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
+    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId ? teamRegistrationObjTemp.registrationId : "";
+    validateRegistrationCapObj.isTeamRegistration = 1;
+    validateRegistrationCapObj.products = [];
+    let product = {
+      "competitionId": teamRegistrationObjTemp.competitionId,
+      "organisationId": teamRegistrationObjTemp.organisationId,
+      "competitionMembershipProductTypeId": teamRegistrationObjTemp.competitionMembershipProductTypeId,
+      "divisionId": teamRegistrationObjTemp.competitionMembershipProductDivisionId
+    }
+    validateRegistrationCapObj.products.push(product);
+    state.registrationCapValidateInputObj = validateRegistrationCapObj;
+    state.enableValidateRegistrationCapService = true;
+  }catch(ex){
+    console.log("Error in setValidateRegistrationCapObj::"+ex);
   }
 }
 
@@ -501,10 +495,26 @@ function getTeamMembershipInfo(organisationList){
           }
 				}
 			}
-		}
+    }
 		return filteredMembershipProductInfoTemp;
 	}catch(ex){
 		console.log("Error in getIndividualMembershipInfo::"+ex)
+	}
+}
+
+function checkExistInFilteredOrgList(state,teamRegMembershipInfo){
+	try{
+		let organisation = teamRegMembershipInfo.find(x => x.organisationUniqueKey == getOrganisationId());
+		if(organisation){
+			let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+			if(competition == undefined){
+				state.teamCompetitionNotExist = true;
+			}
+		}else{
+			state.teamCompetitionNotExist = true;
+		}
+	}catch(ex){
+		console.log("Error in checkExistInFilteredOrgList::"+ex)
 	}
 }
 
@@ -522,6 +532,7 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
             let data = action.result;
             let teamRegMembershipInfo = getTeamMembershipInfo(data);
+            checkExistInFilteredOrgList(state,teamRegMembershipInfo);
             return {
               ...state,
               membershipProductInfo: teamRegMembershipInfo,
@@ -548,6 +559,7 @@ function teamRegistrationReducer(state = initialState, action){
             }else if(action.key == "competitionMembershipProductDivisionId"){
               state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
               setSeasonalAndCasualFeesObj(state);
+              setValidateRegistrationCapObj(state);
             }else if(action.key == "addTeamMember"){
               let teamMemberObj = getUpdatedTeamMemberObj(state);
               state.teamRegistrationObj.teamMembers.push(teamMemberObj);
@@ -639,12 +651,12 @@ function teamRegistrationReducer(state = initialState, action){
       
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS:
             let existingTeamInfo = action.result;
-            //teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,existingTeamInfo);
+            setTeamRegistrationObj(state,existingTeamInfo)
             return {
               ...state,
               onExistingTeamInfoByIdLoad: false,
               status: action.status,
-              teamRegistrationObj: existingTeamInfo
+              // teamRegistrationObj: existingTeamInfo
             };
 
         case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD: 

@@ -143,6 +143,28 @@ function getAllOrganisationListAction() {
   return action
 }
 
+function userPhotoUpdateAction(payload) {
+  return {
+      type: ApiConstants.API_USER_PHOTO_UPDATE_LOAD,
+      payload,
+  };
+}
+
+function registrationResendEmailAction(teamId){
+  const action = {
+      type: ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD,
+      teamId
+  } 
+  return action;
+}
+
+function userPasswordUpdateAction(payload) {
+  return {
+      type: ApiConstants.API_USER_PASSWORD_UPDATE_LOAD,
+      payload,
+  };
+}
+
 
 export {
   getRoleAction,
@@ -162,4 +184,7 @@ export {
   getScorerData,
   getUmpireActivityListAction,
   getAllOrganisationListAction,
+  userPhotoUpdateAction,
+  registrationResendEmailAction,
+  userPasswordUpdateAction
 }

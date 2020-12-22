@@ -160,6 +160,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
             this.props.form.setFieldsValue({
                 [`yourDetailsgenderRefId`]: userRegDetails.genderRefId,
                 [`yourDetailsFirstName`]: userRegDetails.firstName,
@@ -171,10 +172,34 @@ class TeamInivteForm extends Component {
                 [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
+                [`yourDetailsStreet1`] : userRegDetails.street1,
+                [`yourDetailsSuburb`] : userRegDetails.suburb,
+                [`yourDetailsStateRefId`]: userRegDetails.stateRefId,
+                [`yourDetailsPostalCode`]: userRegDetails.postCode,
+                [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
             });
+
             if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
-                this.addParent("add");
+                if(parentOrGuardians == null){
+                    this.addParent("add");
+                }
             }
+
+            (parentOrGuardians || []).map((parent, parentIndex) => {
+                this.props.form.setFieldsValue({
+                    [`parentFirstName${parentIndex}`] : parent.firstName,
+                    [`parentMiddleName${parentIndex}`] : parent.middleName,
+                    [`parentLastName${parentIndex}`] : parent.lastName,
+                    [`parentMobileNumber${parentIndex}`] : parent.mobileNumber,
+                    [`parentEmail${parentIndex}`] : parent.email,
+                    [`parentStreet1${parentIndex}`] : parent.street1,
+                    [`parentSuburb${parentIndex}`]: parent.suburb,
+                    [`parentStateRefId${parentIndex}`] : parent.stateRefId,
+                    [`parentPostalCode${parentIndex}`] : parent.postalCode,
+                    [`parentCountryRefId${parentIndex}`] : parent.countryRefId
+                })
+            })
+            
         } catch (ex) {
             console.log("Error in setYourDetailsValue::" + ex);
         }
@@ -190,7 +215,7 @@ class TeamInivteForm extends Component {
                     [`additionalInfoAnyExistingMedialCondition`]: userRegDetails.existingMedicalCondition,
                     [`additionalInfoAnyRedularMedicalConditions`]: userRegDetails.regularMedication,
                     [`additionalInfoInjury`]: userRegDetails.injuryInfo,
-                    [`additionalInfoAlergies`]: userRegDetails.allergyInfo,
+                    [`additionalInfoAllergies`]: userRegDetails.allergyInfo,
                     [`additionalInfoTeamYouFollow`]: userRegDetails.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: userRegDetails.favouriteTeamRefId,
@@ -247,8 +272,8 @@ class TeamInivteForm extends Component {
                         let obj = {
                             photoUrl1: organisationPhotos[i].photoUrl,
                             photoType1: organisationPhotos[i].photoType,
-                            photoUrl2: organisationPhotos[i + 1].photoUrl,
-                            photoType2: organisationPhotos[i + 1].photoType,
+                            photoUrl2: organisationPhotos[i + 1] && organisationPhotos[i + 1].photoUrl,
+                            photoType2: organisationPhotos[i + 1] && organisationPhotos[i + 1].photoType,
                         }
                         organisationPhotosTemp.push(obj);
                     }
@@ -284,7 +309,7 @@ class TeamInivteForm extends Component {
         }
     }
 
-    handlePlacesAutocomplete = (addressData, key) => {
+    handlePlacesAutocomplete = (addressData, key, parentIndex) => {
         try {
             console.log("addressdata", addressData)
             const { stateList, countryList } = this.props.commonReducerState;
@@ -301,6 +326,13 @@ class TeamInivteForm extends Component {
                     if (stateRefId) {
                         this.getSchoolList(stateRefId)
                     }
+                }
+                else if(key == "parent"){
+                    this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
+                    this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
+                    this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
+                    this.onChangeSetParentValue(address.postcode, "postalCode", parentIndex);
+                    this.onChangeSetParentValue(countryRefId ? countryRefId : null, "countryRefId", parentIndex);
                 }
             }
         } catch (ex) {
@@ -378,6 +410,8 @@ class TeamInivteForm extends Component {
         parentOrGuardians[parentIndex]["stateRefId"] = null;
         parentOrGuardians[parentIndex]["countryRefId"] = null;
         parentOrGuardians[parentIndex]["postalCode"] = null;
+        parentOrGuardians[parentIndex]["searchAddressFlag"] = true;
+        parentOrGuardians[parentIndex]["manualEnterAddressFlag"] = false;
         this.props.updateInviteMemberInfoAction(iniviteMemberInfo, "iniviteMemberInfo", null, null)
     }
 
@@ -530,15 +564,15 @@ class TeamInivteForm extends Component {
         const { iniviteMemberInfo } = this.props.teamInviteState;
         let competitionDetails = iniviteMemberInfo?.competitionDetails;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
-        let contactDetails = competitionDetails.replyName || competitionDetails.replyPhone || competitionDetails.replyEmail ?
-            competitionDetails.replyName + ' ' + competitionDetails.replyPhone + ' ' + competitionDetails.replyEmail : '';
-        let organisationPhotos = this.getOrganisationPhotos(competitionDetails.organisationPhotos);
+        let contactDetails = competitionDetails?.replyName || competitionDetails?.replyPhone || competitionDetails?.replyEmail ?
+            competitionDetails?.replyName + ' ' + competitionDetails?.replyPhone + ' ' + competitionDetails?.replyEmail : '';
+        let organisationPhotos = competitionDetails?.organisationPhotos ? this.getOrganisationPhotos(competitionDetails?.organisationPhotos) : [];
         try {
             return (
                 <div className="registration-form-view">
                     <div className="row" style={{ marginLeft: "0px", marginRight: "0px" }}>
                         <div className="col-sm-1.5">
-                            <img style={{ height: "60px", borderRadius: "50%" }} src={competitionDetails.compLogoUrl} />
+                            <img style={{ height: "60px", borderRadius: "50%" }} src={competitionDetails?.compLogoUrl} />
                         </div>
                         <div className="col">
                             <div className="form-heading" style={{ paddingBottom: "0px" }}>{competitionDetails.organisationName}</div>
@@ -647,46 +681,8 @@ class TeamInivteForm extends Component {
             const { stateList, countryList } = this.props.commonReducerState;
             return (
                 <div>
-                    {/* {teamRegistrationObj.selectAddressFlag && (
-                        <div>
-                            <div className="form-heading" 
-                            style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
-                            <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
-                            <Form.Item >
-                                {getFieldDecorator(`yourDetailsSelectAddress`, {
-                                    rules: [{ required: true, message: ValidationConstants.selectAddressRequired}],
-                                })(
-                                <Select
-                                    style={{ width: "100%" }}
-                                    placeholder={AppConstants.select}
-                                    onChange={(e) => this.onChangeSetTeamValue(e, "addOrRemoveAddressBySelect")}
-                                    setFieldsValue={this.getAddress(user)}>
-                                    {(this.getSelectAddressDropdown(user) || []).map((item) => (
-                                        <Option key={item.userId} value={item.userId}> {this.getAddress(item)}</Option>
-                                    ))}
-                                </Select>
-                                )}
-                            </Form.Item> 
-                            <div className="orange-action-txt" style={{marginTop: "10px"}}
-                            onClick={() => {
-                                this.onChangeSetParticipantValue(true,"addNewAddressFlag")
-                                this.onChangeSetParticipantValue(false,"selectAddressFlag");
-                                this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
-                            }}
-                            >+ {AppConstants.addNewAddress}</div>	
-                        </div>
-                    )}  */}
-
                     {this.state.searchAddressFlag && (
                         <div>
-                            {/* {!newUser && (
-                                <div className="orange-action-txt" style={{marginTop: "20px",marginBottom: "10px"}}
-                                onClick={() => {
-                                    this.onChangeSetParticipantValue(true,"selectAddressFlag");
-                                    this.onChangeSetParticipantValue(false,"addNewAddressFlag");
-                                }}
-                                >{AppConstants.returnToSelectAddress}</div>
-                            )} */}
                             <div className="form-heading"
                                 style={{ paddingBottom: "0px", marginBottom: "-20px", marginTop: "20px" }}>{AppConstants.findAddress}</div>
                             <div>
@@ -816,7 +812,7 @@ class TeamInivteForm extends Component {
             const { genderList } = this.props.commonReducerState;
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let resgistererDetails = userRegDetails.resgistererDetails;
+            let resgistererDetails = userRegDetails?.resgistererDetails;
             return (
                 <div className="registration-form-view">
                     <div className="form-heading" 
@@ -1111,7 +1107,7 @@ class TeamInivteForm extends Component {
     parentOrGuardianView = (getFieldDecorator) => {
         const { iniviteMemberInfo } = this.props.teamInviteState;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
-        let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+        let parentOrGuardians = userRegDetails?.parentOrGaurdianDetails;
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
@@ -1313,7 +1309,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let dateFormat = moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY");
+            let dateFormat = moment(userRegDetails?.dateOfBirth).format("MM-DD-YYYY");
             return (
                 <div>
                     <div>{this.competitionDetailView()}</div>
@@ -1322,7 +1318,7 @@ class TeamInivteForm extends Component {
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
-                                {userRegDetails.dateOfBirth && (
+                                {userRegDetails?.dateOfBirth && (
                                     <div>{this.emergencyContactView(getFieldDecorator)}</div>
                                 )}
                             </div>
@@ -1522,7 +1518,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "identifyRefId", "userRegDetails")}
-                        value={userRegDetails.identifyRefId ? userRegDetails.identifyRefId : 3}
+                        value={userRegDetails.identifyRefId ? userRegDetails.identifyRefId : null}
                     >
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
@@ -1569,11 +1565,11 @@ class TeamInivteForm extends Component {
                     </Form.Item>
                     {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                         <TextArea
-                            placeholder={AppConstants.anyAlergies}
+                            placeholder={AppConstants.anyAllergies}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
                             setFieldsValue={userRegDetails.allergyInfo}
                             allowClear
@@ -1588,7 +1584,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "isDisability", "userRegDetails")}
-                        value={userRegDetails.isDisability ? userRegDetails.isDisability : 0}
+                        value={userRegDetails.isDisability}
                     >
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
@@ -1613,7 +1609,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId", "userRegDetails")}
-                                value={userRegDetails.disabilityTypeRefId ? userRegDetails.disabilityTypeRefId : 5}>
+                                value={userRegDetails.disabilityTypeRefId ? userRegDetails.disabilityTypeRefId : null}>
                                 {(disabilityList || []).map((dis, disIndex) => (
                                     <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
                                 ))}
@@ -1697,7 +1693,7 @@ class TeamInivteForm extends Component {
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId", "userRegDetails")}
-                        value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : 6}
+                        value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : null}
                     >
                         {(heardByList || []).map((heard, index) => (
                             <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
@@ -1705,7 +1701,7 @@ class TeamInivteForm extends Component {
                     </Radio.Group>
                     {/* )}
                     </Form.Item>  */}
-                    {(userRegDetails.heardByRefId == null || userRegDetails.heardByRefId == 6) && (
+                    {(userRegDetails.heardByRefId == 6) && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
                                 placeholder={AppConstants.other}

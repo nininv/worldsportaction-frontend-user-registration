@@ -110,13 +110,19 @@ const ValidationConstants = {
         "Existing medical condition field is required",
         "Regular medication field is required",
         "Injury field is required",
-        "Alergies field is required",
-        "Disability care Number is required",
+        "Allergies field is required",
+        "Disability Care Number is required",
         "This field is required",
-        "Favourite Firebird is required",
+        "This field is required",
         "This field is required",
     ],
     memberTypeIsRequired: "Member type is required",
+    currentPasswordRequired : "Current Password is required",
+    newPasswordRequired : "New Password is required",
+    confirmPasswordRequired : "Confirm Password is required",
+    passwordVerification: 'Password must be minimum 8 characters',
+    mobileLength: 'Contact number must be 10 digits',
+    invalidNumber : 'Invalid Number',
 };
 
 export default ValidationConstants;

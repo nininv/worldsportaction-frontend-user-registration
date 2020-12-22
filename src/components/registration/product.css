@@ -126,7 +126,6 @@
 }
 
 .tab-view {
-  /* background-color: var(--app-ffa033); */
   width: 70%;
   margin: auto;
 }
@@ -147,10 +146,9 @@
 .form-heading {
   display: flex;
   align-content: flex-start;
-  text-align: center;
   font-size: 22px;
   color: var(--app-1b1b34);
-  padding-bottom: 7.5px;
+  padding-bottom: 5px;
   font-weight: 500;
   font-family: inter-medium;
 }
@@ -628,43 +626,44 @@ img.bg {
   margin-top: 12vh;
 }
 
-@media screen and (max-width: 1024px) { 
-  img.bg {
-    left: 50%;
-    margin-left: -512px;  
-  }
+.registration-form-wrapper {
+  width: 70%;
+  margin: auto;
 }
 
-@media (max-width: 767px) {
-  .reg-add-save-button {
-    display: flex;
-    justify-content: center;
-  }
-  .reg-payment-layuot-view {
-    padding: 0 5%;
-    background-color: var(--app-f7fafc);
-  }
-  .formView {
-    width: 87%;
-    margin: auto;
-    background-color: white;
-    border-radius: 10px;
-  }
-  .header-view {
-    padding-left: 7%;
-  }
-  .tab-view {
-    /* background-color: var(--app-ffa033); */
-    width: 87%;
-    margin: auto;
-  }
-  .login-formView {
-    width: 100%;
-  }
-  .success-screen-view {
-    width: 95%;
-    margin-top: 18vh;
-  }
+.form-registration-action {
+  width: 70%;
+  margin: 24px auto;
+  padding-bottom: 50px;
+}
+
+.form-registration-action span {
+  display: block;
+  word-wrap:break-word;
+  white-space: normal
+}
+
+.postal-code-button {
+  color: white;
+  text-transform: uppercase;
+  margin-top: 60px;
+  float: right;
+  padding: 0 50px;
+}
+
+.organisation-info-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.organisation-info-wrapper > *:not(first-child) {
+  margin-left: 20px;
+}
+
+.registration-competition-venue-form-wrapper {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .another-competition{
@@ -944,7 +943,6 @@ img.bg {
   font-family: sans-serif ;
 }
 .shop-product-text{
-  padding: 20px;
   border: 1px solid var(--app-d9d9d9);
   border-radius: 10px;
 }
@@ -954,7 +952,6 @@ img.bg {
   border-radius: 10px;
 }
 .shop-product-text:hover{
-  padding: 20px;
   border: 1px solid var(--app-color);
   border-radius: 10px;
   background-color: var(--app-f4f2e863);
@@ -1112,4 +1109,141 @@ input:focus, .StripeElement--focus {
   text-align: center;
   line-height: 20px;
   cursor: pointer;
+}
+
+.layout-margin {
+  margin: 32px 40px 10px !important;
+}
+
+.reg-products-add-participant {
+  margin-right: 25px;
+}
+
+.team-details-actions {
+  display: flex; 
+  justify-content: flex-end;
+}
+
+.shop-filters-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 475px;
+  max-width: 475px;
+}
+
+@media screen and (max-width: 1024px) { 
+  img.bg {
+    left: 50%;
+    margin-left: -512px;  
+  }
+}
+
+@media (max-width: 991px) {
+  .registration-competition-venue-form-wrapper {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .team-details-actions {
+    justify-content: flex-start; 
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 767px) {
+  .reg-add-save-button {
+    display: flex;
+    justify-content: center;
+  }
+  .reg-payment-layuot-view {
+    padding: 0 5%;
+    background-color: var(--app-f7fafc);
+  }
+  .formView {
+    width: 87%;
+    margin: auto;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .header-view {
+    padding-left: 0;
+    width: calc(100% - 40px);
+    align-self: center;
+  }
+  .tab-view {
+    /* background-color: var(--app-ffa033); */
+    width: 87%;
+    margin: auto;
+  }
+  .login-formView {
+    width: 100%;
+  }
+  .success-screen-view {
+    width: 95%;
+    margin-top: 18vh;
+  }
+
+  .registration-form-wrapper,
+  .form-registration-action {
+    width: calc(100% - 40px);
+  }
+
+  .reg-products-add-participant {
+    margin-right: 0;
+  }
+
+  .product-left-view{
+    padding: 20px;
+    margin-right: 0;
+  }
+
+  .layout-margin {
+    margin: 32px 20px 10px !important;
+  }
+
+  .media-input-mb {
+    margin-bottom: 15px;
+  }
+
+  .shop-filters-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .shop-filters-wrapper > * {
+    flex: 0 0 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .postal-code-button {
+    margin-top: 20px;
+    padding: 0 35px;
+    float: left;
+  }
+
+  .post-code-input {
+    flex: 0 0 100%;
+  }
+
+  .organisation-info-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .organisation-info-wrapper > *:not(first-child) {
+    margin: 10px 0 0;
+  }
+}
+
+.team-reg-radio-custom-style{
+  white-space: break-spaces !important;
+  display: flex !important;
+}
+
+.team-reg-radio-custom-style .ant-radio{
+  margin-top: 5px;
 }

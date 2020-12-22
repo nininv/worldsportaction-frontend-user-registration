@@ -104,6 +104,11 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
+    const [perMatchSelectedPaymentOption,setPerMatchSelectedPaymentOption] = useState({
+        singleCash: false,
+        singleCredit: false,
+        selectedOption: 0
+    })
 
     
     const stripe = useStripe();
@@ -149,8 +154,9 @@ const CheckoutForm = (props) => {
     }
 
     const changePaymentOption = (e, key) => {
+        console.log("Change payment option",payload)
         if (key === 'direct') {
-            props.onLoad(true)
+            // props.onLoad(true)
             setUser({
                 ...selectedPaymentOption,
                 "direct": true,
@@ -160,10 +166,10 @@ const CheckoutForm = (props) => {
                 "cashCredit": false,
                 "selectedOption": "direct_debit"
             });
-            mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
-            setTimeout(() =>{
-                stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
-            },100);
+            // mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+            // setTimeout(() =>{
+            //     stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
+            // },100);
            
         } 
         else if (key === 'cash') {
@@ -217,11 +223,34 @@ const CheckoutForm = (props) => {
         }
     }
 
+    const changeSinglePaymentOption = (e,key) => {
+        try{
+            if (key === 'credit') {
+                setPerMatchSelectedPaymentOption({
+                    ...perMatchSelectedPaymentOption,
+                    "singleCredit": true,
+                    "singleCash": false,
+                    "selectedOption": "card"
+                });
+            }else if(key === "cash") {
+                setPerMatchSelectedPaymentOption({
+                    ...perMatchSelectedPaymentOption,
+                    "singleCredit": false,
+                    "singleCash": true,
+                    "selectedOption": "cash"
+                });
+            }
+        }catch(ex){
+            console.log("Error in changeSinglePaymentOption::"+ex)
+        }
+    }
+
 
 
     // Handle form submission.
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log("clientSecretKey", clientSecretKey);
         console.log(event)
         if (!stripe || !elements) {
             // Stripe.js has not yet loaded.
@@ -229,11 +258,11 @@ const CheckoutForm = (props) => {
             return;
         }
         console.log(event.target)
-        console.log("Payload", payload);
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
+        const perMatchPaymentOption = payload.singleGameSelected == 1 && props.payload.total.targetValue > 0 ? (perMatchSelectedPaymentOption.selectedOption != 0  ? true : false) : true;
         console.log(auBankAccount, card)
-        if (auBankAccount || card || isSchoolRegistration == 1 || isHardshipEnabled == 1) {
+        if (((auBankAccount || card || props.payload.total.targetValue == 0 ) && (perMatchPaymentOption || payload.singleGameSelected != 1))) {
             if (card) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -245,8 +274,9 @@ const CheckoutForm = (props) => {
                 } else {
                     setError(null);
                     // Send the token to your server.
-                    console.log("Result", result);
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                    console.log("Result1", result);
+                    registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
+                    // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
 
             }
@@ -254,52 +284,59 @@ const CheckoutForm = (props) => {
                 props.onLoad(true)
                 console.log("clientSecretKey", clientSecretKey);
 
-                // var form = document.getElementById('setup-form');
-                // props.onLoad(true)
-                // console.log(form)
-                // const accountholderName = event.target['name'];
-                // const email = event.target.email;
+                            // var form = document.getElementById('setup-form');
+                            // props.onLoad(true)
+                            // console.log(form)
+                            // const accountholderName = event.target['name'];
+                            // const email = event.target.email;
 
-                // console.log("accountholderName", accountholderName.value);
-                // console.log("email", email.value);
+                            // console.log("accountholderName", accountholderName.value);
+                            // console.log("email", email.value);
                 console.log("auBankAccount", auBankAccount);
 
-                const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
-                    payment_method: {
-                        au_becs_debit: auBankAccount,
-                        billing_details: {
-                            name:  "Club Test 1", // accountholderName.value,
-                            email: "testclub@wsa.com"  // email.value,
-                        },
-                    }
-                });
+                // const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
+                //     payment_method: {
+                //         au_becs_debit: auBankAccount,
+                //         billing_details: {
+                //             name:  "Club Test 1", // accountholderName.value,
+                //             email: "testclub@wsa.com"  // email.value,
+                //         },
+                //     }
+                // });
 
-                console.log("Result",result);
+                // console.log("Result",result);
 
-                if (result.error) {
-                    let message = result.error.message
-                    setBankError(message)
-                    props.onLoad(false)
-                } else {
-                    setBankError(null)
-                    setClientKey("")
-                    props.onLoad(true)
-                    stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
-                    // message.success("Payment status is " + result.paymentIntent.status)
-                    // history.push("/invoice", {
-                    //     registrationId: regId,
-                    //     userRegId: null,
-                    //     paymentSuccess: true
-                    // })
-                }
+                // if (result.error) {
+                //     let message = result.error.message
+                //     setBankError(message)
+                //     props.onLoad(false)
+                // } else {
+                //     setBankError(null)
+                //     setClientKey("")
+                //                 // props.onLoad(true)
+                //     registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
+                //                 // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,2);
+                //                 // message.success("Payment status is " + result.paymentIntent.status)
+                //                 // history.push("/invoice", {
+                //                 //     registrationId: regId,
+                //                 //     userRegId: null,
+                //                 //     paymentSuccess: true
+                //                 // })
+                // }
+
+                mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
+                setTimeout(() =>{
+                    stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe);
+                },100);
             }
-            else if(isSchoolRegistration || isHardshipEnabled){
-                props.onLoad(true)
-                stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+            else if(props.payload.total.targetValue == 0){
+                // props.onLoad(true)
+                registrationCapValidate(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                // stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,clientSecretKey);
             }
         }
         else {
-            if(!isSchoolRegistration && !isHardshipEnabled){
+            if(paymentOptions.length > 0 && !isSchoolRegistration && !isHardshipEnabled){
                 message.config({
                     maxCount: 1, duration: 0.9
                 })
@@ -313,7 +350,7 @@ const CheckoutForm = (props) => {
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
                 {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) ?
-                <div className="content-view pt-5">
+                <div className="pt-5">
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
                         {pay.securePaymentOptionRefId == 2 && 
@@ -322,7 +359,7 @@ const CheckoutForm = (props) => {
                                     <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
                                         className="payment-type-radio-style"
                                         checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                        {selectedPaymentOption.credit == true && 
+                                        {selectedPaymentOption.credit == true && (
                                             <div className="pt-5">
                                                 <CardElement
                                                     id="card-element"
@@ -333,7 +370,7 @@ const CheckoutForm = (props) => {
                                                 <div className="card-errors" role="alert">{error}</div>
                                                 <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
                                             </div>   
-                                        }
+                                        )}
                                 </div>
                             </div>
                         }
@@ -344,7 +381,7 @@ const CheckoutForm = (props) => {
                                 className="payment-type-radio-style"
                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
-                                    <div>
+                                    <div className="pt-5">
                                         <div class="sr-root">
                                             <div class="sr-main">
                                                 {/* <div class="sr-combo-inputs-row">
@@ -412,7 +449,7 @@ const CheckoutForm = (props) => {
                                                 </div> */}
                                             </div>
                                         </div>
-                                        <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
+                                        <div style={{marginTop: "10px", padding: "0 15px 20px 0"}}>{AppConstants.directDebitMsg}</div>
                                     </div>
                                 }
                             </div>
@@ -501,7 +538,59 @@ const CheckoutForm = (props) => {
                         } */}
                     </div>
                     ))}
-                </div> : 
+                    {payload.singleGameSelected == 1 && (
+                        <div>
+                            <div className="product-text-common" style={{fontSize:22,marginTop: 30,marginBottom: 30}}>
+                                {AppConstants.perMatchFees}
+                            </div>  
+                            {(paymentOptions || []).map((paymentOption, paymentOptionIndex) =>(
+                                <div>
+                                    {paymentOption.securePaymentOptionRefId == 2 && (
+                                        <div className="row">
+                                            <div className='col-sm'>
+                                                <Radio className="payment-type-radio-style"
+                                                disabled={selectedPaymentOption.selectedOption == 0}
+                                                key={"1"}
+                                                checked={perMatchSelectedPaymentOption.singleCredit}
+                                                onChange={(e) => changeSinglePaymentOption(e,"credit")}>
+                                                    {AppConstants.creditCard}
+                                                </Radio>
+                                                {selectedPaymentOption.credit == false && perMatchSelectedPaymentOption.singleCredit == true ? (
+                                                    <div className="pt-5">
+                                                        <CardElement
+                                                            id="card-element"
+                                                            options={CARD_ELEMENT_OPTIONS}
+                                                            onChange={handleChange}
+                                                            className='StripeElement'
+                                                        />
+                                                        <div className="card-errors" role="alert">{error}</div>
+                                                        <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
+                                                    </div>   
+                                                ) : (
+                                                    <div>
+                                                        {selectedPaymentOption.credit == true && perMatchSelectedPaymentOption.singleCredit == true && (
+                                                            <div  className="product-text-common">{AppConstants.asAbove}</div>
+                                                        )}
+                                                    </div>                                                )}
+                                            </div>
+                                        </div>
+                                    )}   
+                                    {paymentOption.securePaymentOptionRefId == 3 && (
+                                        <Radio className="payment-type-radio-style"
+                                        key={"2"}
+                                        disabled={selectedPaymentOption.selectedOption == 0}
+                                        checked={perMatchSelectedPaymentOption.singleCash}
+                                        onChange={(e) => changeSinglePaymentOption(e,"cash")}>
+                                            {AppConstants.cash}
+                                        </Radio>
+                                    )}
+                                </div>
+                                    
+                            ))}
+                        </div>
+                    )}
+                </div> 
+                : 
                 <div className="content-view pt-5 secure-payment-msg">
                     {AppConstants.securePaymentMsg}
                 </div>
@@ -509,7 +598,7 @@ const CheckoutForm = (props) => {
                 <div className="mt-5">
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"flex-end"}}>
-                            {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ?
+                            {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                                 <Button
                                     style={{textTransform: "uppercase"}}
                                     className="open-reg-button"
@@ -517,7 +606,7 @@ const CheckoutForm = (props) => {
                                     type="primary">
                                     {AppConstants.submit}
                                 </Button>
-                            : null}
+                            {/* : null} */}
                         </div>
                     </div>
                 </div>
@@ -535,7 +624,9 @@ class RegistrationPayment extends Component {
             registrationUniqueKey: null,  
             productModalVisible: false ,
             id: null,
-            onLoad: false                  
+            onLoad: false,
+            registrationCapModalVisible: false ,
+            registrationCapValidationMessage: null                 
         };
     }
 
@@ -570,7 +661,7 @@ class RegistrationPayment extends Component {
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -616,12 +707,37 @@ class RegistrationPayment extends Component {
         }
     }
 
+    registrationCapValidationModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.registrationCapModalVisible}
+                    onCancel={() => this.setState({ registrationCapModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ registrationCapModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                     <p> { this.state.registrationCapValidationMessage }</p>
+                </Modal>
+            </div>
+        )
+    }
+
     
     contentView = () =>{
+        console.log("content view displayed")
         return(
-            <div style={{display:"flex"}}>
+            <div 
+                className="row"
+                style={{margin: 0}}
+            >
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}                
+                {this.paymentRighttView()}  
+                {this.registrationCapValidationModal()}        
             </div>
         );
     }
@@ -632,7 +748,8 @@ class RegistrationPayment extends Component {
         let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
         return(
-            <div className="col-sm-8 product-left-view outline-style">              
+            <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
+            <div className="product-left-view outline-style mt-0">              
                 <div className="product-text-common" style={{fontSize:22}}>
                     {AppConstants.securePaymentOptions}
                 </div>  
@@ -641,16 +758,18 @@ class RegistrationPayment extends Component {
                         <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
                         payload={registrationReviewList} registrationUniqueKey = {this.state.registrationUniqueKey}
                         isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}
-                        mainProps={this.props}/>
+                        mainProps={this.props} registrationCapModalVisible={(status) => this.setState({registrationCapModalVisible: status})}
+                        registrationCapValidationMessage={(error) => this.setState({registrationCapValidationMessage: error})} />
                     </Elements>
                </div>              
+            </div>
             </div>
         )
     }
 
     paymentRighttView = ()=>{
         return(
-            <div className="product-right-view">
+            <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0 m-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
             </div>
@@ -691,9 +810,11 @@ class RegistrationPayment extends Component {
                                     <div  className="subtitle-text-common" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
-                                        </div>
+                                        {(mem.email !== item.email) && ( 
+                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 :
@@ -841,7 +962,7 @@ class RegistrationPayment extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout className="layout-margin">
                     <Form
                         // autocomplete="off"
                         // scrollToFirstError={true}
@@ -876,12 +997,97 @@ function mapDispatchToProps(dispatch)
 
 function mapStatetoProps(state){
     return {
-        registrationProductState: state.RegistrationProductState
+        registrationProductState: state.RegistrationProductState,
+        commonReducerState: state.CommonReducerState
+    }
+}
+
+async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption){
+    try{
+        let url =  "/api/registrationcap/validate";
+        let body = {
+            "registrationId": registrationUniqueKey
+            // "isTeamRegistration": payload.compParticipants.find(x => x.isTeamRegistration == 1) ? 1 : 0,
+            // "products": []
+        };
+        
+        return await new Promise((resolve, reject) => {
+            fetch(`${StripeKeys.apiURL + url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.token,
+                },
+                body: JSON.stringify(body)
+            }).then((response) => {
+                    let resp = response.json();
+                    console.log("response1",response)
+                    resp.then((Response) => {
+                        if (response.status === 200) {
+                            stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption);
+                        }
+                        else if (response.status === 212) {
+                            props.onLoad(false);
+                            props.registrationCapModalVisible(true);
+                            props.registrationCapValidationMessage(Response.message);
+                            // message.error(Response.message);
+                        }
+                        else if (response.status === 400) {
+                            props.onLoad(false);
+                            message.error(Response.message);
+                        }
+                        else {
+                            props.onLoad(false);
+                            message.error(AppConstants.somethingWentWrongErrorMsg)
+                        }
+    
+                    })  .catch((error) => {
+                        props.onLoad(false)
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
+                    });
+    
+                })
+                .catch((error) => {
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
+                });
+        }).then((data) => {
+            console.log("data");
+        }).catch((data) => {
+            console.log("Error")
+        }) 
+    }catch(ex){
+        console.log("Error occured in createPerMatchPayments::"+ex)
+    }
+}
+
+async function confirmDebitPayment(token,props,setClientKey, setRegId,selectedOption,payload, registrationUniqueKey,clientSecret,auBankAccount,setBankError,stripe){
+    try{
+        const result = await stripe.confirmAuBecsDebitPayment(clientSecret, {
+            payment_method: {
+                au_becs_debit: auBankAccount,
+                billing_details: {
+                    name:  "Club Test 1", // accountholderName.value,
+                    email: "testclub@wsa.com"  // email.value,
+                },
+            }
+        });
+          if (result.error) {
+                let message = result.error.message
+                setBankError(message)
+                props.onLoad(false)
+            } else {
+                setBankError(null)
+                setClientKey("")
+                registrationCapValidate(result.token, props, selectedOption,null, null, payload, registrationUniqueKey,2);
+            }
+    }catch(ex){
+        console.log("Error in confirmDebitPayment::"+ex)
     }
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
@@ -917,17 +1123,29 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             paymentType: paymentType,
         }
     }
-    else if(props.isSchoolRegistration || props.isHardshipEnabled){
-        body = {
-            registrationId: registrationUniqueKey,
-            //invoiceId: invoiceId,
-            payload: payload,
-            paymentType: null,
-            isSchoolRegistration: 1,
-            isHardshipEnabled: 1
+    else if(props.payload.total.targetValue == 0){
+        if(props.isSchoolRegistration || props.isHardshipEnabled){
+            body = {
+                registrationId: registrationUniqueKey,
+                //invoiceId: invoiceId,
+                payload: payload,
+                paymentType: null,
+                isSchoolRegistration: 1,
+                isHardshipEnabled: 1
+            }
+
+        }
+        else{
+            body = {
+                registrationId: registrationUniqueKey,
+                //invoiceId: invoiceId,
+                payload: payload,
+                paymentType: null,
+            }
         }
     }
     console.log("body" + JSON.stringify(body));
+    props.onLoad(true)
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL + url}`, {
             method: 'POST',
@@ -938,15 +1156,20 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             body: JSON.stringify(body)
         })
             .then((response) => {
-                props.onLoad(false)
                 let resp = response.json()
                 console.log(response.status, "status", paymentType)
                 resp.then((Response) => {
+                    console.log("Response",Response)
                     if (response.status === 200) {
-                        if (paymentType == "card" || paymentType == "cash_card") {
+                        if (paymentType == "card") {
                             message.success(Response.message);
                             
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
+                            if(perMatchSelectedOption){
+                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,token);
+                            }else{
+                                props.onLoad(false)
+                            }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
                                 userRegId: null,
@@ -954,8 +1177,13 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 paymentType: paymentType
                             })
                         }
-                        else if(paymentType =="direct_debit" || paymentType =="cash_direct_debit") {
+                        else if(paymentType =="direct_debit") {
                             if(Response.clientSecret == null){
+                                if(perMatchSelectedOption){
+                                    createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                }else{
+                                    props.onLoad(false)
+                                }
                                 history.push("/invoice", {
                                     registrationId: registrationUniqueKey,
                                     userRegId: null,
@@ -964,12 +1192,19 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 })
                             }
                             else{
-                                setClientKey(Response.clientSecret)
+                                setClientKey(Response.clientSecret);
                                 setRegId(registrationUniqueKey)
+                                confirmDebitPayment(token,props,setClientKey, setRegId,selectedOption,payload, registrationUniqueKey,Response.clientSecret,auBankAccount,setBankError,stripe)
+                                // props.onLoad(false)
                             }
                            // message.success(Response.message);
                         }
                         else{
+                            if(perMatchSelectedOption){
+                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                            }else{
+                                props.onLoad(false)
+                            }                            
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
                                 userRegId: null,
@@ -979,22 +1214,98 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         }
                     }
                     else if (response.status === 212) {
+                        props.onLoad(false)
                         message.error(Response.message);
                     }
                     else if (response.status === 400) {
+                        props.onLoad(false)
                         message.error(Response.message);
                     }
                     else {
-                        message.error("Something went wrong.")
+                        props.onLoad(false)
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
                     }
 
+                }).catch((error) => {
+                    console.log("500")
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
                 })
-
             })
             .catch((error) => {
                 props.onLoad(false)
-                console.error(error);
+                message.error(AppConstants.somethingWentWrongErrorMsg)
             });
+    }).then((data) => {
+        console.log("then data in stripeTokenHandler ");
+    }).catch((data) => {
+        console.log("Error in stripeTokenHandler")
     }) 
 }
+
+async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,props,registrationUniqueKey,token){
+    try{
+        console.log("invoice id",invoiceId)
+        let url =  "/api/payments/createpermatchpayments";
+        let body = null;
+        if(perMatchSeletedPaymentOption == 'card'){
+            let stripeToken = token.id
+            body = {
+                invoiceId: invoiceId,
+                subPaymentType: perMatchSeletedPaymentOption,
+                registrationId: registrationUniqueKey,
+                token: {
+                    id: stripeToken
+                }
+            }
+        }else{
+            body = {
+                invoiceId: invoiceId,
+                subPaymentType: perMatchSeletedPaymentOption,
+                registrationId: registrationUniqueKey
+            }
+        }
+        
+        return await new Promise((resolve, reject) => {
+            fetch(`${StripeKeys.apiURL + url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.token,
+                },
+                body: JSON.stringify(body)
+            }).then((response) => {
+                    props.onLoad(false)
+                    let resp = response.json()
+                    console.log("response3",response)
+                    resp.then((Response) => {
+                        if (response.status === 200) {
+
+                        }
+                        else if (response.status === 212) {
+                            message.error(Response.message);
+                        }
+                        else if (response.status === 400) {
+                            message.error(Response.message);
+                        }
+                        else {
+                            message.error(AppConstants.somethingWentWrongErrorMsg)
+                        }
+    
+                    }).catch((error) => {
+                        props.onLoad(false)
+                        message.error(AppConstants.somethingWentWrongErrorMsg)
+                    });
+    
+                })
+                .catch((error) => {
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
+                });
+        }) 
+    }catch(ex){
+        console.log("Error occured in createPerMatchPayments::"+ex)
+    }
+}
+
 export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);

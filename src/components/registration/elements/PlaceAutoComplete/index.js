@@ -40,13 +40,15 @@ const mapAddressInfo = (addressComponents) => {
         country = addressComponents[i].short_name;
       }
     }
-    return {
+    let addressData = {
       addressOne: streetNumber ? streetNumber + ' ' + address : address,
       suburb: suburb,
       state: state,
       postcode: postCode,
       country: country
     }
+    console.log("AddressData",addressData)
+    return addressData;
   }
   return null;
 };

@@ -3991,7 +3991,7 @@ class AppRegistrationForm extends Component {
                     <div key={"friend" + friendIndex} className="inside-container-view pt-0">
                         <div className="row" >
                             <div className="col-sm" >
-                                <span className="user-contact-heading">{"FRIEND " + (friendIndex + 1)}</span>
+                                <span className="user-heading">{"FRIEND " + (friendIndex + 1)}</span>
                             </div>
                             <div className="transfer-image-view pointer" onClick={() =>
                                 this.deleteEnableOrDisablePopup(participantOrProduct, true, index, productIndex, friendIndex, AppConstants.friendDeleteConfirmMsg, "Friend")}>
@@ -4033,7 +4033,7 @@ class AppRegistrationForm extends Component {
                     <div key={"referFriend" + friendIndex} className="inside-container-view pt-0">
                         <div className="row" >
                             <div className="col-sm" >
-                                <span className="user-contact-heading">{"FRIEND " + (friendIndex + 1)}</span>
+                                <span className="user-heading">{"FRIEND " + (friendIndex + 1)}</span>
                             </div>
                             <div className="transfer-image-view pointer" onClick={() =>
                                 this.deleteEnableOrDisablePopup(participantOrProduct, true, index, productIndex, friendIndex, AppConstants.friendDeleteConfirmMsg, "ReferFriend")}>
@@ -4336,7 +4336,7 @@ class AppRegistrationForm extends Component {
                             <div key={voc.tempParticipantId} className="inside-container-view pt-0">
                                 <div className="row" >
                                     <div className="col-sm" >
-                                        <span className="user-contact-heading">{"VOUCHER " + (index + 1)}</span>
+                                        <span className="user-heading">{"VOUCHER " + (index + 1)}</span>
                                     </div>
                                     <div className="transfer-image-view pointer" onClick={() =>
                                         this.deleteEnableOrDisablePopup("voucher", true, 0, 0, index, AppConstants.voucherDeleteConfirmMsg)}>

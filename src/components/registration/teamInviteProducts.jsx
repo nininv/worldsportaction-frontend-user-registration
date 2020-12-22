@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import {
     Layout,
     Button, 
-    Form, 
+    Form,
+    Checkbox, 
     Input,
     Select,
     Radio, Modal, message
@@ -27,8 +28,10 @@ import {
     getTeamInviteReviewAction,saveTeamInviteReviewAction,
     updateTeamInviteAction
 } from '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationShopProductAction } from 
+import {getRegistrationShopProductAction, getTermsAndConditionsAction } from 
             '../../store/actions/registrationAction/registrationProductsAction';
+import ValidationConstants from "../../themes/validationConstant";
+
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -44,6 +47,8 @@ class TeamInviteProducts extends Component{
             userRegId: null,
             productModalVisible: false,
             loading: false,
+            agreeTerm: false,
+            isAgreed: false
         }
     }
 
@@ -87,6 +92,7 @@ class TeamInviteProducts extends Component{
             userRegId: userRegId
         }
         this.props.getTeamInviteReviewAction(payload);
+        this.props.getTermsAndConditionsAction(payload);
         this.getShopProducts(userRegId, 1, -1, -1);
     }
 
@@ -127,7 +133,7 @@ class TeamInviteProducts extends Component{
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payAsYou : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
         (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
@@ -174,9 +180,18 @@ class TeamInviteProducts extends Component{
 
     teamInviteProductSave = (e) => {
         try{
+            const {termsAndConditions} = this.props.registrationProductState;
             e.preventDefault();
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if(!err){
+
+                    if(termsAndConditions.length > 0){
+                        if(this.state.agreeTerm == false){
+                            this.setState({isAgreed:true})
+                            return;
+                        }
+                    }
+
                     let {teamInviteReviewList, registrationId} = this.props.teamInviteState;
                     teamInviteReviewList["registrationId"] = registrationId;
                     teamInviteReviewList["userRegId"] = this.state.userRegId;
@@ -281,7 +296,7 @@ class TeamInviteProducts extends Component{
                             {(item.paymentOptions || []).map((p, pIndex) =>(  
                                 <span key={p.paymentOptionRefId}>
                                     {p.paymentOptionRefId == 1 && 
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payAsYou}</Radio>                    
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payEachMatch}</Radio>                    
                                     }  
                                     {p.paymentOptionRefId == 3 &&          
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
@@ -527,7 +542,49 @@ class TeamInviteProducts extends Component{
         }catch(ex){
             console.log("Error in yourOrderView::"+ex);
         }
-    } 
+    }
+    
+    termsAndConditionsCheck = (e) => {
+        this.setState({ agreeTerm: e.target.checked });
+        if(e.target.checked){
+            this.setState({isAgreed:false})
+        }
+    }
+
+    termsAndConditionsView = (getFieldDecorator) =>{
+        const {termsAndConditions} = this.props.registrationProductState;
+        return(
+            <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
+                <div className="headline-text-common mb-4" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
+                <div className="pt-2">   
+                { (termsAndConditions || []).map((item, index) =>(               
+                    <div className="pb-4 link-text-common" style={{marginLeft:0}}>
+                         <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
+                        Terms and Conditions for {item.name}
+                        </a>
+                    </div> 
+                ))}                  
+                </div>                           
+                <div className="body-text-common mt-0" style={{display:"flex"}}>
+                    <div>
+                        <Checkbox
+                                className="single-checkbox mt-0"
+                                checked={this.state.agreeTerm}
+                                onChange={e => this.termsAndConditionsCheck(e)}>
+                                <span className="required-field">{AppConstants.agreeTerm}</span>
+                                <span style={{marginLeft:"5px"}} ></span>
+                            </Checkbox>
+                    </div>
+                    {/* <span style={{marginLeft:"5px"}}> {AppConstants.agreeTerm}</span>                    */}
+                </div>
+                {this.state.isAgreed &&
+                    <div style={{color:"var(--app-red)"}}>
+                        {ValidationConstants.termsAndCondition[0]}
+                    </div>  
+                }                      
+            </div>
+        )
+    }
 
     buttonView = () => {
         try{
@@ -547,9 +604,11 @@ class TeamInviteProducts extends Component{
     }
 
     productRightView = (termsAndConditionsView)=>{
+        const {termsAndConditions} = this.props.registrationProductState;
         return(
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view" style={{paddingLeft:0,paddingRight:0}}>
                 {this.yourOrderView()}
+                {termsAndConditions.length > 0 && this.termsAndConditionsView(termsAndConditionsView)}
                 {this.buttonView()}
             </div>
         )
@@ -596,7 +655,8 @@ function mapDispatchToProps(dispatch){
         getTeamInviteReviewAction,
         saveTeamInviteReviewAction,
         updateTeamInviteAction,
-        getRegistrationShopProductAction
+        getRegistrationShopProductAction,
+        getTermsAndConditionsAction  
     }, dispatch);
 
 }

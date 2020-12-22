@@ -12,7 +12,7 @@ import {
   setOrganisationData,
   getOrganisationData,
   getUserId,
-  getName,getPhotoUrl
+  getName, getPhotoUrl
 } from "../util/sessionStorage";
 
 const { Option } = Select;
@@ -46,8 +46,8 @@ class DashboardLayout extends React.Component {
 
   setOrganisationKey() {
     let organisationData = getOrganisationData()
-   console.log("organisationData::" + organisationData);
-   console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
+    console.log("organisationData::" + organisationData);
+    console.log("%%%%%%%%%%" + this.props.userState.getUserOrganisation.length);
     if (!organisationData) {
       this.props.userState.getUserOrganisation.length == 0 && this.props.getUserOrganisationAction()
       this.setState({ dataOnload: true })
@@ -118,12 +118,12 @@ class DashboardLayout extends React.Component {
     history.push(pathData)
   }
 
-  clearLocalStorage =  () => {
+  clearLocalStorage = () => {
     localStorage.removeItem("isUserRegistration");
     localStorage.removeItem("registeringYourselfRefId");
     localStorage.removeItem("existingUserRefId");
     localStorage.removeItem("userRegId");
-}
+  }
 
 
   ///////user profile dropdown
@@ -132,9 +132,9 @@ class DashboardLayout extends React.Component {
     let selectedOrgData = getOrganisationData()
     // let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
     //     getPhotoUrl() : AppImages.defaultUser)
-    let userImage = ((getPhotoUrl() && getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null')? getPhotoUrl() : AppImages.defaultUser)
-   
-   
+    let userImage = ((getPhotoUrl() && getPhotoUrl() != null && getPhotoUrl() != undefined && getPhotoUrl() != 'null') ? getPhotoUrl() : AppImages.defaultUser)
+
+
     return (
       <div className="dropdown">
         {!this.props.isUserTabNotVisible && (
@@ -150,7 +150,7 @@ class DashboardLayout extends React.Component {
         )}
 
         <ul className="dropdown-menu">
-          <li style={{paddingBottom: '0px'}}>
+          <li style={{ paddingBottom: '0px' }}>
             <div className="media">
               <div className="media-left">
                 <figure className="user-img-wrap">
@@ -165,7 +165,7 @@ class DashboardLayout extends React.Component {
                   <span className="user-name">
                     {getName()}
                   </span>
-                 }
+                }
                 {/* <span className="user-name-btm pt-3">
                   {selectedOrgData ?
                     <span style={{ textTransform: "capitalize" }}>
@@ -189,28 +189,18 @@ class DashboardLayout extends React.Component {
               })}
             </div>
             : null} */}
-           <div className="acc-help-support-list-view">
+          <div className="acc-help-support-list-view">
             <li>
               <a onClick={() => this.navigateTo("/userPersonal")}>{"Profile"}</a>
             </li>
 
-            {this.props.userState.userRole &&
-              <li class="item-with-submenu">
-                <div className="acc-help-support-menu-item dropdown-toggle" >
-                  {"My Umpiring"}
-                </div>
-                <ul class="dropdown-menu item-submenu" >
-                  <li className="acc-help-support-submenu-item">
-                    <a onClick={() => this.navigateTo("/myUmpiringAvailability")}>{"My Umpiring Availability"}</a>
-                  </li>
-                </ul>
-              </li>
-            }
-
+            <li>
+              <a onClick={() => this.navigateTo("/managePassword")}>{"Manage Password"}</a>
+            </li>
             {/* <li>
               <a href="#"> {"Help & Support"}</a>
             </li> */}
-          </div> 
+          </div>
           <li className="log-out">
             <a onClick={() => this.logout()}>{"Log Out"}</a>
           </li>
@@ -223,20 +213,21 @@ class DashboardLayout extends React.Component {
 
   render() {
     let menuName = this.props.menuName;
-    let logoDisable = (menuName === AppConstants.liveScoreSeasonFixture || menuName === AppConstants.competitionladders) ? true : false
     return (
       <header className="site-header">
         <div className="header-wrap">
-          <div className="row m-0-res">
-            <div className="col-sm-12 d-flex">
+          <div
+            className="d-flex"
+          >
+            <div className="col-sm-12 d-flex p-0">
               <div className="logo-box">
                 {/* <NavLink to="/" className="site-brand"> */}
-                 {!logoDisable && <img src={AppImages.netballLogo1} alt="" />}
+                <img src={AppImages.netballLogo1} alt="" className="netball-logo" />
                 {/* </NavLink> */}
                 <div className="col-sm dashboard-layout-menu-heading-view">
-                {!logoDisable && <span className="dashboard-layout-menu-heading">
+                  <span className="dashboard-layout-menu-heading">
                     {this.props.menuHeading}
-                </span>}
+                  </span>
                 </div>
                 {/* <div className="col-sm width_200 mt-1">
                   <div
@@ -447,7 +438,7 @@ class DashboardLayout extends React.Component {
                   </li> */}
                   <li>
                     <div className="user-profile-box">
-                      {getUserId()!= 0 && getUserId()!= undefined && getUserId!= "" && this.userProfileDropdown()}
+                      {getUserId() != 0 && getUserId() != undefined && getUserId != "" && this.userProfileDropdown()}
                     </div>
                   </li>
                 </ul>

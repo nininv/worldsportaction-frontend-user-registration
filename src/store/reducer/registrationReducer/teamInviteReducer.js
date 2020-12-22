@@ -18,6 +18,36 @@ const initialState = {
     teamInviteCount: null
 }
 
+function updateInviteMemberInfo(iniviteMemberInfoTemp){
+    try{
+        let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
+        let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
+        if(userRegDetails.parentOrGaurdianDetails){
+            for(let parent of userRegDetails.parentOrGaurdianDetails){
+                let parentAddress = parent.street1 + parent.street2 + parent.suburb + parent.postalCode + parent.stateRefId + parent.countryRefId;
+                if(parent.stateRefId){
+                    if(registererAddress === parentAddress){
+                        parent["isSameAddress"] = true;
+                        parent["searchAddressFlag"] = false;
+                        parent["manualEnterAddressFlag"] = false;
+                    }else{
+                        parent["isSameAddress"] = false;
+                        parent["searchAddressFlag"] = true;
+                        parent["manualEnterAddressFlag"] = false;
+                    }
+                }else{
+                    parent["isSameAddress"] = false;
+                    parent["searchAddressFlag"] = true;
+                    parent["manualEnterAddressFlag"] = false;
+                }
+            }
+        }
+        return iniviteMemberInfoTemp;
+    }catch(ex){
+        console.log("Error in updateInviteMemberInfo::"+ex)
+    }
+}
+
 function teamInviteReducer(state = initialState, action){
     switch(action.type){
         case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
@@ -28,8 +58,8 @@ function teamInviteReducer(state = initialState, action){
             return {
               ...state,
               status: action.status,
+              iniviteMemberInfo : updateInviteMemberInfo(iniviteMemberInfoTemp),
               inviteOnLoad: false,
-              iniviteMemberInfo : iniviteMemberInfoTemp
             };
 
         case ApiConstants.UPDATE_INVITE_MEMBER_INFO_ACTION:
@@ -193,17 +223,18 @@ function teamInviteReducer(state = initialState, action){
             //         reviewData[action.subKey][action.key] = action.value
             //     }   
             // }
-            else if(action.subKey == "shippingOptions"){
-                let organisationId = action.value;
-                reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
-                let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
-                if(action.key == "add"){
-                    reviewData.shippingOptions.push(pickupAddress);
-                }else if(action.key == "remove"){
-                    let index = reviewData.shippingOptions.indexOf(pickupAddress);
-                    reviewData.shippingOptions.splice(index,1);
-                }
-            }else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
+            // else if(action.subKey == "shippingOptions"){
+            //     let organisationId = action.value;
+            //     reviewData.shippingOptions = reviewData.shippingOptions ? reviewData.shippingOptions : [];
+            //     let pickupAddress = state.shopPickupAddresses.find(x => x.organisationId === organisationId);
+            //     if(action.key == "add"){
+            //         reviewData.shippingOptions.push(pickupAddress);
+            //     }else if(action.key == "remove"){
+            //         let index = reviewData.shippingOptions.indexOf(pickupAddress);
+            //         reviewData.shippingOptions.splice(index,1);
+            //     }
+            // }
+            else if(action.subKey == "deliveryAddress" || action.subKey == "billingAddress"){
                 let index = action.index;
                 reviewData[action.subKey]["street1"] = state.participantAddresses[index].street1;
                 reviewData[action.subKey]["street2"] = state.participantAddresses[index].steet2;
@@ -211,7 +242,11 @@ function teamInviteReducer(state = initialState, action){
                 reviewData[action.subKey]["postalCode"] = state.participantAddresses[index].postalCode;
                 reviewData[action.subKey]["stateRefId"] = state.participantAddresses[index].stateRefId;
                 reviewData[action.subKey]["countryRefId"] = state.participantAddresses[index].countryRefId;
-                state.deliveryOrBillingAddressSelected = true;
+                // state.deliveryOrBillingAddressSelected = true;
+            }else if(action.subKey == "enterManualBillingAddress"){
+                reviewData["billingAddress"][action.key] = action.value;
+            }else if(action.subKey == "enterManualDeliveryAddress"){
+                reviewData["deliveryAddress"][action.key] = action.value;
             }
             else if(action.subKey == "total"){
                 console.log("***********************************" + action.key)
