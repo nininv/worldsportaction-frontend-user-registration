@@ -215,7 +215,7 @@ class TeamInivteForm extends Component {
                     [`additionalInfoAnyExistingMedialCondition`]: userRegDetails.existingMedicalCondition,
                     [`additionalInfoAnyRedularMedicalConditions`]: userRegDetails.regularMedication,
                     [`additionalInfoInjury`]: userRegDetails.injuryInfo,
-                    [`additionalInfoAlergies`]: userRegDetails.allergyInfo,
+                    [`additionalInfoAllergies`]: userRegDetails.allergyInfo,
                     [`additionalInfoTeamYouFollow`]: userRegDetails.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: userRegDetails.otherSportsInfo ? userRegDetails.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: userRegDetails.favouriteTeamRefId,
@@ -1565,11 +1565,11 @@ class TeamInivteForm extends Component {
                     </Form.Item>
                     {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                         <TextArea
-                            placeholder={AppConstants.anyAlergies}
+                            placeholder={AppConstants.anyAllergies}
                             onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
                             setFieldsValue={userRegDetails.allergyInfo}
                             allowClear

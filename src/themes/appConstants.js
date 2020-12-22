@@ -1062,7 +1062,7 @@ const AppConstants = {
   injury: "Please list any injury which is current or recurring or requires surgery? ",
   anyInjury: "Any Injury",
   alergy: "Please detail any allergies (medical or food) or illnesses?",
-  anyAlergies: "Any Alergies", 
+  anyAllergies: "Any Allergies", 
   teamYouFollow: "Which Suncorp Super Netball Team do you follow?",
   otherSports: "otherSports",
   playingOtherParticipantSports: "Are you playing any other participation sport?",

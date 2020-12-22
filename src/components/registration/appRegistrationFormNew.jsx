@@ -359,7 +359,7 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoAnyExistingMedialCondition`]: additionalInfo.existingMedicalCondition,
                     [`additionalInfoAnyRedularMedicalConditions`]: additionalInfo.regularMedication,
                     [`additionalInfoInjury`]: additionalInfo.injuryInfo,
-                    [`additionalInfoAlergies`]: additionalInfo.allergyInfo,
+                    [`additionalInfoAllergies`]: additionalInfo.allergyInfo,
                     [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo ? additionalInfo.otherSportsInfo : [],
                     [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
@@ -1325,6 +1325,22 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
+    setReferParentEmailIfRequired = (registrationObj) => {
+        try{
+            let childEmail = registrationObj.email;
+            if(getAge(registrationObj.dateOfBirth) < 18){
+                let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
+                if(isSameWithParentEmail){
+                    this.onChangeSetParticipantValue(true, "referParentEmail")
+                }else{
+                    this.onChangeSetParticipantValue(false, "referParentEmail")
+                }
+            }
+        }catch(ex){
+            console.log("Error in setReferParentEmailIfRequried::"+ex);
+        }
+    }
+
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
@@ -1421,6 +1437,8 @@ class AppRegistrationFormNew extends Component {
                                 }
                             }
                         }
+
+                        this.setReferParentEmailIfRequired(registrationObj);
                     }
                     if (this.state.currentStep == 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -2464,7 +2482,7 @@ class AppRegistrationFormNew extends Component {
                                 <div className="form-heading" style={{ textAlign: "start", marginRight: 10 }}>{registrationObj.firstName} {registrationObj.lastName}</div>
                                 {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                     <div style={{ fontWeight: "600", marginTop: "-5px" }}>
-                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : 'Male')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"MM-DD-YYYY").format("DD/MM/YYYY")}
+                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : registrationObj.genderRefId == 2 ? 'Male' : 'Non-Binary')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"MM-DD-YYYY").format("DD/MM/YYYY")}
                                     </div>
                                 )}
                             </div>
@@ -3239,11 +3257,11 @@ class AppRegistrationFormNew extends Component {
                     </Form.Item>
                     {/* <InputWithHead heading={AppConstants.alergy} required={"required-field"}/>
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoAlergies`, {
+                        {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
                         })( 
                             <TextArea
-                                placeholder={AppConstants.anyAlergies}
+                                placeholder={AppConstants.anyAllergies}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
                                 setFieldsValue={registrationObj.additionalInfo.allergyInfo}
                                 allowClear
