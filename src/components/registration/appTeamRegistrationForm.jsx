@@ -1313,7 +1313,7 @@ class AppTeamRegistrationForm extends Component{
                 this.onChangeTeamMemberValue(date,key, teamMemberIndex);
                 this.teamMemberAddingProcess(date,teamRegistrationObj.teamMembers[teamMemberIndex].payingFor,teamMemberIndex)
             }else if(referenceKey == "additionalInfo"){
-                this.onChangeSetAdditionalInfo(f, key)
+                this.onChangeSetAdditionalInfo(date, key)
             }
         }catch(ex){
             console.log("Error in dateConversion::"+ex)
