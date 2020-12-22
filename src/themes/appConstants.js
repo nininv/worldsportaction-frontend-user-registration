@@ -1199,7 +1199,8 @@ const AppConstants = {
   myUmpiringAvailability: 'My Umpiring Availability',
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
-  somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator"
+  somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator",
+  _sms: "SMS",
 };
 
 export default AppConstants;
