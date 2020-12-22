@@ -57,13 +57,12 @@ function SelectResetType(props) {
         </div> */}
 
         <Radio.Group
-            className="registration-radio-group"
-            style={{justifyContent: "space-around"}}
+            className="registration-radio-group forgot-password-radio"
             onChange={(e) => onChangeType(e)}
             value={resetType}
         >
-            <Radio value="email">{AppConstants.email}</Radio>
-            <Radio value="sms">{AppConstants._sms}</Radio>
+            <Radio value="email"><label className="mt-2" htmlFor="email">{AppConstants.email}</label></Radio>
+            <Radio value="sms"><label className="mt-2" htmlFor="sms">{AppConstants._sms}</label></Radio>
         </Radio.Group>
 
         <div className={`comp-finals-button-view d-flex justify-content-${source !== "mobile" ? "between" : "center"} mt-4`}>
