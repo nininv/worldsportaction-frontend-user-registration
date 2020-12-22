@@ -1508,8 +1508,22 @@ class UserModulePersonalDetail extends Component {
 
                         <div style={{ color: 'var(--app-color)' }}>
                             {isCollapsedUserDetails 
-                                ? <Icon type="down" onClick={() => this.setState({ isCollapsedUserDetails: false})}/>
-                                : <Icon type="up" onClick={() => this.setState({ isCollapsedUserDetails: true})}/>
+                                ? <Icon 
+                                    type="down"
+                                    style={{
+                                        color: 'var(--app-orange)',
+                                        fontSize: 20
+                                    }}
+                                    onClick={() => this.setState({ isCollapsedUserDetails: false})}
+                                    />
+                                : <Icon
+                                    type="up"
+                                    style={{
+                                        color: 'var(--app-orange)',
+                                        fontSize: 20
+                                    }}
+                                    onClick={() => this.setState({ isCollapsedUserDetails: true})}
+                                    />
                             }
                         </div>
                     </div>
@@ -1624,9 +1638,9 @@ class UserModulePersonalDetail extends Component {
                                 left: 1,
                                 height: '100%',
                                 width: 25,
-                                background: 'var(--app-white)',
-                                border: '1px solid #ddd',
-                                borderRadius: 10,
+                                borderTopLeftRadius: 10,
+                                borderBottomLeftRadius: 10,
+                                boxShadow: 'inset 10px 0 8px 2px rgba(0,0,0,.15)',
                                 cursor: 'w-resize',
                                 zIndex: 2,
                             }}
@@ -1644,6 +1658,7 @@ class UserModulePersonalDetail extends Component {
                                 type="left"
                                 style={{
                                     color: 'var(--app-orange)',
+                                    fontSize: 22
                                 }}
                             />
                         </div>
@@ -1655,9 +1670,9 @@ class UserModulePersonalDetail extends Component {
                                 right: 1,
                                 height: '100%',
                                 width: 25,
-                                background: 'var(--app-white)',
-                                border: '1px solid #ddd',
-                                borderRadius: 10,
+                                borderTopRightRadius: 10,
+                                borderBottomRightRadius: 10,
+                                boxShadow: 'inset -10px 0 8px 2px rgba(0,0,0,.15)',
                                 cursor: 'e-resize',
                                 zIndex: 2,
                             }}
@@ -1675,6 +1690,7 @@ class UserModulePersonalDetail extends Component {
                                 type="right"
                                 style={{
                                     color: 'var(--app-orange)',
+                                    fontSize: 22
                                 }}
                             />
                         </div>
@@ -1698,7 +1714,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.playerActivityRef}
-                        style={playerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     >
                         <Table className="home-dashboard-table"
                             columns={columnsPlayer}
@@ -1762,7 +1778,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.scorerActivityRef}
-                        style={scorerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     >
                         <Table className="home-dashboard-table"
                             columns={columnsScorer}
@@ -1800,7 +1816,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.managerActivityRef}
-                        style={managerActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     > 
                         <Table className="home-dashboard-table"
                             columns={columnsManager}
@@ -1868,7 +1884,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.personalAddressRef}
-                        style={personalAddressOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     > 
                         <Table className="home-dashboard-table"
                             columns={columnsPersonalAddress}
@@ -1897,7 +1913,7 @@ class UserModulePersonalDetail extends Component {
                             <div
                                 className="table-responsive home-dash-table-view"
                                 ref={this.personalPrimaryContactsRef}
-                                style={personalPrimaryContactsOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                                style={{ width: '100%' }}
                             > 
                                 <Table className="home-dashboard-table"
                                     columns={columnsPersonalPrimaryContacts}
@@ -1926,7 +1942,7 @@ class UserModulePersonalDetail extends Component {
                             <div
                                 className="table-responsive home-dash-table-view"
                                 ref={this.personalChildContactsRef}
-                                style={personalChildContactsOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                                style={{ width: '100%' }}
                             >
                                 <Table className="home-dashboard-table"
                                     columns={columnsPersonalChildContacts}
@@ -1945,7 +1961,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.personalEmergencyRef}
-                        style={personalEmergencyOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     >
                         <Table className="home-dashboard-table"
                             columns={columnsPersonalEmergency}
@@ -2358,7 +2374,7 @@ class UserModulePersonalDetail extends Component {
                     <div
                         className="table-responsive home-dash-table-view"
                         ref={this.umpireActivityRef}
-                        style={umpireActivityOverflow ? { width: 'calc(100% - 50px)', margin: '0 auto' } : { width: '100%' }}
+                        style={{ width: '100%' }}
                     >
                         <Table
                             className="home-dashboard-table"

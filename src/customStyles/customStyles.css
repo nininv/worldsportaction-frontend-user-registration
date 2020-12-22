@@ -329,7 +329,8 @@
     padding: 0 7%;
   }
 
-  .home-dashboard-table .ant-table-tbody>tr>td {
-    padding: 16px;
+  .home-dashboard-table .ant-table-tbody>tr>td,
+  .home-dashboard-table .ant-table-thead>tr>th {
+    padding: 18px;
   }
 }
