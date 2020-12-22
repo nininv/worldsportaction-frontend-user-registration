@@ -111,7 +111,7 @@ const ValidationConstants = {
         "Regular medication field is required",
         "Injury field is required",
         "Allergies field is required",
-        "Disability care Number is required",
+        "Disability Care Number is required",
         "This field is required",
         "Other participation is required",
         "This field is required",
