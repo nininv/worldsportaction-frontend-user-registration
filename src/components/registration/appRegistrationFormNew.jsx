@@ -1328,7 +1328,7 @@ class AppRegistrationFormNew extends Component {
     setReferParentEmailIfRequired = (registrationObj) => {
         try{
             let childEmail = registrationObj.email;
-            if(getAge(registrationObj.dateOfBirth) < 18){
+            if(getAge(registrationObj.dateOfBirth) < 18 && childEmail){
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
                 if(isSameWithParentEmail){
                     this.onChangeSetParticipantValue(true, "referParentEmail")
