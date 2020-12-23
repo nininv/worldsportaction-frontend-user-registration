@@ -698,11 +698,12 @@ class RegistrationProducts extends Component {
                             )) }
                         </div>
                     }
-                                   
-                    <div className="subtitle-text-common" style={{marginTop: "16px"}}>
-                        {AppConstants.wouldYouLikeTopay}
-                    </div>
-                    <div style={{marginTop:6}}>
+                    {item.paymentOptions.length > 1 && (
+                        <div className="subtitle-text-common" style={{marginTop: "16px"}}>
+                            {AppConstants.wouldYouLikeTopay}
+                        </div>
+                    )}     
+                    <div style={item.paymentOptions.length > 1 ? {marginTop:6} : {marginTop:12}}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
