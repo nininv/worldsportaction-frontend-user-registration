@@ -114,7 +114,9 @@ class AppRegistrationFormNew extends Component {
             hasErrorEmergency: false,
             registrationCapModalVisible: false,
             validateRegistrationCapOnLoad: false,
-            validateRegistrationCapBySubmit: false
+            validateRegistrationCapBySubmit: false,
+            sameEmailValidationModalVisible: false,
+            sameSomeoneEmailValidationModalVisible: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -1327,15 +1329,29 @@ class AppRegistrationFormNew extends Component {
 
     setReferParentEmailIfRequired = (registrationObj) => {
         try{
+            const {userInfo} = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
             if(getAge(registrationObj.dateOfBirth) < 18 && childEmail){
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
                 if(isSameWithParentEmail){
-                    this.onChangeSetParticipantValue(true, "referParentEmail")
+                    this.setState({sameEmailValidationModalVisible: true});
+                    return false;
                 }else{
-                    this.onChangeSetParticipantValue(false, "referParentEmail")
+                    this.onChangeSetParticipantValue(false, "referParentEmail");
                 }
             }
+            if(registrationObj.registeringYourself == 3){
+                if(getUserId() != 0){
+                    let user = userInfo?.find(x => x.id == getUserId());
+                    if(user){
+                        if(user.email === registrationObj.email){
+                            this.setState({sameSomeoneEmailValidationModalVisible: true})
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }catch(ex){
             console.log("Error in setReferParentEmailIfRequried::"+ex);
         }
@@ -1438,7 +1454,10 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
 
-                        this.setReferParentEmailIfRequired(registrationObj);
+                        let isSame = this.setReferParentEmailIfRequired(registrationObj);
+                        if(!isSame){
+                            return;
+                        }
                     }
                     if (this.state.currentStep == 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -3709,6 +3728,8 @@ class AppRegistrationFormNew extends Component {
                         {this.stepsContentView(getFieldDecorator)}
                         {this.singleCompModalView()}
                         {this.registrationCapValidationModal()}
+                        {this.sameEmailValidationModal()}
+                        {this.sameSomeOneEmailValidationModal()}
                     </div>
                 )}
             </div>
@@ -3781,6 +3802,63 @@ class AppRegistrationFormNew extends Component {
                 </Modal>
             </div>
         )
+    }
+
+    sameEmailValidationModal = () => {
+        const {registrationObj,expiredRegistration} = this.props.userRegistrationState;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.sameEmailValidationModalVisible}
+                    onCancel={() => this.setState({ sameEmailValidationModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ sameEmailValidationModalVisible: false })}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button 
+                        className="other-info-btn color-white"
+                        onClick={() => {
+                            this.onChangeSetParticipantValue(true, "referParentEmail");
+                            this.setState({sameEmailValidationModalVisible: false})
+                            this.stepNavigation(registrationObj,expiredRegistration);
+                            setTimeout(() => {
+                                this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
+                            }, 100);
+                        }}>
+                            {AppConstants.confirm}
+                        </Button>
+                    ]}
+                >
+                   <p> { AppConstants.sameEmailValidationMessage }</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    sameSomeOneEmailValidationModal = () => {
+        try{
+            return (
+                <div>
+                    <Modal
+                        className="add-membership-type-modal"
+                        title={AppConstants.warning}
+                        visible={this.state.sameSomeoneEmailValidationModalVisible}
+                        onCancel={() => this.setState({ sameSomeoneEmailValidationModalVisible: false })}
+                        footer={[
+                            <Button onClick={() => this.setState({ sameSomeoneEmailValidationModalVisible: false })}>
+                                {AppConstants.ok}
+                            </Button>
+                        ]}
+                    >
+                       <p> {AppConstants.sameSomeoneEmailValidationMessage}</p>
+                    </Modal>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in sameSomeOneEmailValidationModal::"+ex);
+        }
     }
 
     render() {
