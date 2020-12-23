@@ -241,7 +241,7 @@ class RegistrationProducts extends Component {
             this.callSaveRegistrationProducts("school", registrationReview)
         }
         else if(key == "voucher"){
-            this.callSaveRegistrationProducts(key, registrationReview)
+            this.callSaveRegistrationProducts(key, registrationReview, 1)
         }
         else if(key == "removeVoucher"){
             this.callSaveRegistrationProducts("voucher", registrationReview);
@@ -251,11 +251,11 @@ class RegistrationProducts extends Component {
         }
     }
 
-    callSaveRegistrationProducts = (key, registrationReview) =>{
+    callSaveRegistrationProducts = (key, registrationReview, govtVoucherFlag) =>{
         try{
             registrationReview["key"] = key;
             console.log("registrationReview" , registrationReview);
-            this.props.saveRegistrationReview(registrationReview);
+            this.props.saveRegistrationReview(registrationReview, govtVoucherFlag);
             this.setState({loading: true, buttonPressed: key});
         }catch(ex){
             console.log("Error in callSaveRegistrationProducts::"+ex);
@@ -943,11 +943,11 @@ class RegistrationProducts extends Component {
                                 <img class="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>    
-                        {gov.isValid == 0 && 
+                        {/* {gov.isValid == 0 && 
                         <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
                             {gov.message}
                         </div>
-                        }                          
+                        }                           */}
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
