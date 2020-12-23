@@ -78,8 +78,8 @@ class RegistrationInvoice extends Component {
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            // let registrationId = null;
-            // let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+            // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
+            // let userRegId = null;
             // let invoiceId = null;
             this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
@@ -614,7 +614,8 @@ class RegistrationInvoice extends Component {
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
-                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
+                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0) - 
+                                 Number(mem.governmentVoucherAmount!= null ? mem.governmentVoucherAmount : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
@@ -679,7 +680,7 @@ class RegistrationInvoice extends Component {
                                                 <div className="col-sm invoice-right-column pr-0">
                                                     <InputWithHead
                                                         required="invoice"
-                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
+                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "$0.00"}
                                                     />
                                                 </div> 
                                             </div>
