@@ -75,7 +75,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "096f0992-3d97-40c5-b91b-258b68f39d7c";
+        //let registrationUniqueKey = "9d822566-2892-4c34-8452-5873d840c82a";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -156,7 +156,7 @@ class RegistrationProducts extends Component {
         try{
             let registrationReview = this.props.registrationProductState.registrationReviewList;
             if(isArrayNotEmpty(registrationReview.compParticipants)){
-                let sameUser = registrationReview.compParticipants.find(x => x.email == registrationReview.yourInfo.email);
+                let sameUser = registrationReview.compParticipants.find(x => x.email == registrationReview.yourInfo.email && x.registeringYourselfRefId == 3);
                 if(sameUser){
                     this.setState({sameSomeoneEmailValidationModalVisible: true})
                     return false;
