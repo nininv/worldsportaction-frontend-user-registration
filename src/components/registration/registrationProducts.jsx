@@ -65,6 +65,7 @@ class RegistrationProducts extends Component {
            competitionUniqueKey: null,
            teamName: null,
            isAgreed: false,
+           sameSomeoneEmailValidationModalVisible: false
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -74,7 +75,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "d8411de0-30e9-42c8-9190-7cbaabdb18a2";
+        //let registrationUniqueKey = "9d822566-2892-4c34-8452-5873d840c82a";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -151,6 +152,22 @@ class RegistrationProducts extends Component {
         }
     }
 
+    checkIsSameEmail = () => {
+        try{
+            let registrationReview = this.props.registrationProductState.registrationReviewList;
+            if(isArrayNotEmpty(registrationReview.compParticipants)){
+                let sameUser = registrationReview.compParticipants.find(x => x.email == registrationReview.yourInfo.email && x.registeringYourselfRefId == 3);
+                if(sameUser){
+                    this.setState({sameSomeoneEmailValidationModalVisible: true})
+                    return false;
+                }
+            }
+            return true;
+        }catch(ex){
+            console.log("Error in checkIsSameEmail::"+ex)
+        }
+    }
+
 
     saveReviewForm = (e) =>{
         e.preventDefault();
@@ -176,6 +193,11 @@ class RegistrationProducts extends Component {
                         this.setState({isAgreed:true})
                         return;
                     }
+                }
+
+                let isSame = this.checkIsSameEmail();
+                if(!isSame){
+                    return;
                 }
 
                 console.log(this.state.searchAddressFlag,yourInfo.stateRefId);
@@ -241,7 +263,7 @@ class RegistrationProducts extends Component {
             this.callSaveRegistrationProducts("school", registrationReview)
         }
         else if(key == "voucher"){
-            this.callSaveRegistrationProducts(key, registrationReview)
+            this.callSaveRegistrationProducts(key, registrationReview, 1)
         }
         else if(key == "removeVoucher"){
             this.callSaveRegistrationProducts("voucher", registrationReview);
@@ -251,11 +273,11 @@ class RegistrationProducts extends Component {
         }
     }
 
-    callSaveRegistrationProducts = (key, registrationReview) =>{
+    callSaveRegistrationProducts = (key, registrationReview, govtVoucherFlag) =>{
         try{
             registrationReview["key"] = key;
             console.log("registrationReview" , registrationReview);
-            this.props.saveRegistrationReview(registrationReview);
+            this.props.saveRegistrationReview(registrationReview, govtVoucherFlag);
             this.setState({loading: true, buttonPressed: key});
         }catch(ex){
             console.log("Error in callSaveRegistrationProducts::"+ex);
@@ -943,11 +965,11 @@ class RegistrationProducts extends Component {
                                 <img class="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>    
-                        {gov.isValid == 0 && 
+                        {/* {gov.isValid == 0 && 
                         <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
                             {gov.message}
                         </div>
-                        }                          
+                        }                           */}
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
@@ -1558,6 +1580,30 @@ class RegistrationProducts extends Component {
             </div>
         )
     }
+
+    sameSomeOneEmailValidationModal = () => {
+        try{
+            return (
+                <div>
+                    <Modal
+                        className="add-membership-type-modal"
+                        title={AppConstants.warning}
+                        visible={this.state.sameSomeoneEmailValidationModalVisible}
+                        onCancel={() => this.setState({ sameSomeoneEmailValidationModalVisible: false })}
+                        footer={[
+                            <Button onClick={() => this.setState({ sameSomeoneEmailValidationModalVisible: false })}>
+                                {AppConstants.ok}
+                            </Button>
+                        ]}
+                    >
+                       <p> {AppConstants.sameSomeoneEmailValidationMessage}</p>
+                    </Modal>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in sameSomeOneEmailValidationModal::"+ex);
+        }
+    }
     
     
     render() {
@@ -1584,6 +1630,7 @@ class RegistrationProducts extends Component {
                                 {this.contentView(getFieldDecorator)}
                                 {this.deleteParticiantModalView()}
                                 {this.deleteProductModalView()}
+                                {this.sameSomeOneEmailValidationModal()}
                             </div>
                         </Content>
                     </Form>

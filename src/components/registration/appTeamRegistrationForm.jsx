@@ -189,11 +189,26 @@ class AppTeamRegistrationForm extends Component {
                 teamRegistrationObj.suburb = user.suburb;
                 teamRegistrationObj.stateRefId = user.stateRefId;
                 teamRegistrationObj.countryRefId = user.countryRefId;
-                teamRegistrationObj.addNewAddressFlag = false;
+                teamRegistrationObj.addNewAddressFlag = true;
                 teamRegistrationObj.selectAddressFlag = false;
-                teamRegistrationObj.manualEnterAddressFlag = true;
-                console.log("team", teamRegistrationObj)
-                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
+                teamRegistrationObj.manualEnterAddressFlag = false;
+                teamRegistrationObj.emergencyContactNumber = user.emergencyContactNumber;
+                teamRegistrationObj.emergencyFirstName = user.emergencyFirstName;
+                teamRegistrationObj.emergencyLastName = user.emergencyLastName;
+                teamRegistrationObj.additionalInfo.countryRefId = user.additionalInfo.countryRefId;
+                teamRegistrationObj.additionalInfo.existingMedicalCondition = user.additionalInfo.existingMedicalCondition;
+                teamRegistrationObj.additionalInfo.regularMedication = user.additionalInfo.regularMedication;
+                teamRegistrationObj.additionalInfo.injuryInfo = user.additionalInfo.injuryInfo;
+                teamRegistrationObj.additionalInfo.allergyInfo = user.additionalInfo.allergyInfo;
+                teamRegistrationObj.additionalInfo.favouriteTeamRefId = user.additionalInfo.favouriteTeamRefId;
+                teamRegistrationObj.additionalInfo.identifyRefId = user.additionalInfo.identifyRefId;
+                teamRegistrationObj.additionalInfo.otherSportsInfo = user.additionalInfo.otherSportsInfo ? user.additionalInfo.otherSportsInfo : [];
+                teamRegistrationObj.additionalInfo.isDisability = user.additionalInfo.isDisability;
+                teamRegistrationObj.additionalInfo.disabilityCareNumber = user.additionalInfo.disabilityCareNumber;
+                teamRegistrationObj.additionalInfo.heardByRefId = user.additionalInfo.heardByRefId;
+                teamRegistrationObj.additionalInfo.isYearsPlayed = user.additionalInfo.isYearsPlayed;
+                console.log("team",teamRegistrationObj)
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj,"teamRegistrationObj")
             }
         } catch (ex) {
             console.log("Error in setUser::" + ex)
@@ -1465,11 +1480,11 @@ class AppTeamRegistrationForm extends Component {
                 } else {
                     this.addParent("removeAllParent")
                 }
-            } else if (referenceKey == "teamMember") {
-                this.onChangeTeamMemberValue(date, key, teamMemberIndex);
-                this.teamMemberAddingProcess(date, teamRegistrationObj.teamMembers[teamMemberIndex].payingFor, teamMemberIndex)
-            } else if (referenceKey == "additionalInfo") {
-                this.onChangeSetAdditionalInfo(f, key)
+            }else if(referenceKey == "teamMember"){
+                this.onChangeTeamMemberValue(date,key, teamMemberIndex);
+                this.teamMemberAddingProcess(date,teamRegistrationObj.teamMembers[teamMemberIndex].payingFor,teamMemberIndex)
+            }else if(referenceKey == "additionalInfo"){
+                this.onChangeSetAdditionalInfo(date, key)
             }
         } catch (ex) {
             console.log("Error in dateConversion::" + ex)

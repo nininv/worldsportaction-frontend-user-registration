@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Button } from "antd";
+import { Button,Radio } from "antd";
 
 import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
@@ -28,7 +28,7 @@ function SelectResetType(props) {
           Would you like this link to sent via SMS or Email?
         </p>
 
-        <div className="d-flex justify-content-around">
+        {/* <div className="d-flex justify-content-around">
           <div style={{display:"flex", width:"13.5%", alignItems:"center"}}>
             <input
               className="radioBtn"
@@ -39,7 +39,6 @@ function SelectResetType(props) {
               checked={resetType === "email"}
               onChange={onChangeType}
             />
-            {/* <input type="radio"></input> */}
             <label className="ml-3 mt-2" htmlFor="email">Email</label>
           </div>
 
@@ -55,7 +54,16 @@ function SelectResetType(props) {
             />
             <label className="ml-3 mt-2" htmlFor="sms">SMS</label>
           </div>
-        </div>
+        </div> */}
+
+        <Radio.Group
+            className="registration-radio-group forgot-password-radio"
+            onChange={(e) => onChangeType(e)}
+            value={resetType}
+        >
+            <Radio value="email"><label className="mt-2" htmlFor="email">{AppConstants.email}</label></Radio>
+            <Radio value="sms"><label className="mt-2" htmlFor="sms">{AppConstants._sms}</label></Radio>
+        </Radio.Group>
 
         <div className={`comp-finals-button-view d-flex justify-content-${source !== "mobile" ? "between" : "center"} mt-4`}>
           {source !== "mobile" && (
