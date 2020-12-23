@@ -9,10 +9,11 @@ function getRegistrationReviewAction(payload){
     return action;
 }
 
-function saveRegistrationReview(payload){
+function saveRegistrationReview(payload, govtVoucherFlag){
     const action = {
         type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_LOAD,
-        payload: payload
+        payload: payload,
+        govtVoucherFlag : govtVoucherFlag
     }
 
     return action;
