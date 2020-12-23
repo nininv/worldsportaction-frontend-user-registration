@@ -1201,7 +1201,8 @@ const AppConstants = {
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator",
   _sms: "SMS",
-  sameEmailValidationMessage: "You have elected to use the same email for your Child and yourself. You child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address",
+  sameEmailValidationMessage: "You have elected to use the same email for your Child and yourself. You child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
+  sameSomeoneEmailValidationMessage2: "You have elected to use the same email for your Child and the parent/ guardian. The child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
   sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering."
 };
 
