@@ -674,6 +674,9 @@ function checkByDateOfBirth(state,dateOfBirth){
 		state.registrationObj.dateOfBirth = dateOfBirth;
 		if(getAge(dateOfBirth) < 18){
 			state.registrationObj.referParentEmail = true;
+			if(state.registrationObj.userId != getUserId()){
+				state.registrationObj.email = null;
+			}
 		}else{
 			state.registrationObj.referParentEmail = false;
 		}
@@ -812,6 +815,11 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
+			}else if(key == "referParentEmail"){
+				state.registrationObj[key] = value;
+				if(state.registrationObj.userId != getUserId() && value == true){
+					state.registrationObj.email = null;
+				}
 			}else if(key == "registeringYourself"){
 				state.registrationObj[key] = value;
 				if(getUserId() != 0){
