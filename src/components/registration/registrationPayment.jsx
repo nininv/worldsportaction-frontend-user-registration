@@ -324,9 +324,11 @@ const CheckoutForm = (props) => {
                 //                 // })
                 // }
 
+
                 mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
                 setTimeout(() =>{
-                    stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
+                    // stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
+                    registrationCapValidate("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
                 },100);
             }
             else if(props.payload.total.targetValue == 0){
@@ -1002,7 +1004,7 @@ function mapStatetoProps(state){
     }
 }
 
-async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,card,stripe,setError){
+async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe,card,setError){
     try{
         let url =  "/api/registrationcap/validate";
         let body = {
@@ -1024,7 +1026,8 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
                     console.log("response1",response)
                     resp.then((Response) => {
                         if (response.status === 200) {
-                            stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,null,null,stripe,card,setError);
+                            // stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,null,null,stripe,card,setError);
+                            stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe,card,setError);
                         }
                         else if (response.status === 212) {
                             props.onLoad(false);
@@ -1079,7 +1082,9 @@ async function confirmDebitPayment(confirmDebitPaymentInput){
             } else {
                 confirmDebitPaymentInput.setBankError(null)
                 // setClientKey("")
-                registrationCapValidate(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption,null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey,2,confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.card,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.setError);
+                // registrationCapValidate(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption,null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey,2,confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.card,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.setError);
+                stripeTokenHandler(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption, null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey, 2, confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.auBankAccount,confirmDebitPaymentInput.setBankError,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.card,confirmDebitPaymentInput.setError);
+
             }
     }catch(ex){
         confirmDebitPaymentInput.props.onLoad(false)

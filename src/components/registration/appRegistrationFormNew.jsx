@@ -1292,6 +1292,7 @@ class AppRegistrationFormNew extends Component {
         try{
             let registrationCapValidateInputObjTemp = {
                 registrationId: registrationObj.registrationId ? registrationObj.registrationId : "",
+                participantId: registrationObj.participantId ? registrationObj.participantId : "",
                 isTeamRegistration: 0,
                 products: []
             }
