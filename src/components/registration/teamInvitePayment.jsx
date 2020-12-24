@@ -128,8 +128,8 @@ const CheckoutForm = (props) => {
                         console.log("card", card)
                         const cardToken = await stripe.createToken(card);
                         if (cardToken.token == undefined) {
-                            message.error(cardToken.error.message);
-                            setError(cardToken.error.message);
+                            message.error(cardToken?.error?.message);
+                            setError(cardToken?.error?.message);
                         }
                         else if (cardToken.token != undefined) {
                             const country = cardToken.token.card.country;
@@ -336,8 +336,10 @@ const CheckoutForm = (props) => {
                                                         onChange={handleChange}
                                                         className='StripeElement'
                                                     />
-                                                    <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{ marginTop: "-10px" }}>{AppConstants.creditCardMsg}</div>
+                                                    {error && <div className="card-errors" role="alert">{error}</div>}
+                                                    <div
+                                                        style={{ marginTop: "5px" }}
+                                                    >{AppConstants.creditCardMsg}</div>
                                                 </div>
                                             }
                                         </div>

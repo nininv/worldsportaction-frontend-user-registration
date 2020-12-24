@@ -1898,24 +1898,22 @@ class AppTeamRegistrationForm extends Component {
                             )}
 
                             <div className="row">
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (teamRegistrationObj.fees.totalCasualFee)) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
+                                <div className="col-sm-12 col-md-6">
+                                    <div className="input-style-bold">{AppConstants.payAtRegistration}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId ? teamRegistrationObj.fees.payAtRegistration : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
                                         <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
-                                        <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
+                                {this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId != 1 ?
+                                    <div className="col-sm-12 col-md-6">
+                                        <div className="input-style-bold">{this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? AppConstants.payAtMatch : AppConstants.payAtMatchPerPlayer}</div>
+                                        <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId ? teamRegistrationObj.fees.payAtMatch : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
+                                            <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
-                                        <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
-                                    </div>
-                                </div>
+                                    :
+                                    null
+                                }
                             </div>
                             <div className="input-style-bold pt-1 pb-0">{AppConstants.dueAtRegistration}</div>
                         </div>
