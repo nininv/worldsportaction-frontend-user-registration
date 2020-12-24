@@ -293,6 +293,8 @@ function setCompetitionDetails(state,details){
       setDivisions(state,state.teamRegistrationObj.membershipProductList[0].competitionMembershipProductTypeId);
       state.teamRegistrationObj.fees.totalCasualFee = "0.00";
       state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+      state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+      state.teamRegistrationObj.fees.payAtMatch = "0.00";
     }else{
       state.teamRegistrationObj.competitionMembershipProductTypeId = null;
       state.teamRegistrationObj.divisions = [];
@@ -301,6 +303,8 @@ function setCompetitionDetails(state,details){
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = null;
       state.teamRegistrationObj.fees.totalCasualFee = "0.00";
       state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+      state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+      state.teamRegistrationObj.fees.payAtMatch = "0.00";
     }
 
     state.hasCompetitionSelected = true;
@@ -558,6 +562,8 @@ function teamRegistrationReducer(state = initialState, action){
               setDivisions(state,action.data);
               state.teamRegistrationObj.fees.totalCasualFee = "0.00";
               state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+              state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+              state.teamRegistrationObj.fees.payAtMatch = "0.00";
             }else if(action.key == "competitionMembershipProductDivisionId"){
               state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
               setSeasonalAndCasualFeesObj(state);
@@ -718,6 +724,8 @@ function teamRegistrationReducer(state = initialState, action){
         let feesTemp = action.result;
         state.teamRegistrationObj.fees.totalCasualFee = feesTemp.totalCasualTeamFees;
         state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
+        state.teamRegistrationObj.fees.payAtRegistration = feesTemp.payAtRegistration;
+        state.teamRegistrationObj.fees.payAtMatch = feesTemp.payAtMatch;
         return {
           ...state,
           feesInfo: feesTemp,

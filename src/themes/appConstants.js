@@ -1163,7 +1163,7 @@ const AppConstants = {
   noOfMatches: "No of Matches",
   emergencyContact: "Emergency Contact",
   competitionVenue:"Competition Venue",
-  dueAtRegistration: "*Yearly Membership Fees may also be due at Registration",
+  dueAtRegistration: "*Membership Fees may also be due at Registration",
   registeringTeamTo: "Membership Product you are registering Team to",
   registeringIndividualTo: "Membership Product you are registering Individual to",
   thankYouRegistering: "Thank you for registering!",
@@ -1203,7 +1203,11 @@ const AppConstants = {
   _sms: "SMS",
   sameEmailValidationMessage: "You have elected to use the same email for your Child and yourself. You child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
   sameSomeoneEmailValidationMessage2: "You have elected to use the same email for your Child and the parent/ guardian. The child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
-  sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering."
+  sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering.",
+
+  payAtMatch: "Pay At Match",
+  payAtRegistration: "Pay At Registration",
+  payAtMatchPerPlayer: "Pay At Match Per Player"
 };
 
 export default AppConstants;
