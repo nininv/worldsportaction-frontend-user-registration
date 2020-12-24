@@ -75,7 +75,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
+        //let registrationUniqueKey = "5b0639c9-ae35-49c5-9d50-37b3f0e10303";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -966,11 +966,11 @@ class RegistrationProducts extends Component {
                                 <img class="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>    
-                        {/* {gov.isValid == 0 && 
+                        {gov.isValid == 0 && 
                         <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
                             {gov.message}
                         </div>
-                        }                           */}
+                        }                          
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>

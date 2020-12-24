@@ -143,6 +143,7 @@ class AppRegistrationFormNew extends Component {
             this.setState({ participantId: participantId, registrationId: registrationId });
             if (participantId && registrationId) {
                 this.props.getParticipantInfoById(participantId, '');
+                this.props.updateUserRegistrationStateVarAction("participantId", participantId);
                 this.setState({ getParticipantByIdLoad: true })
             } else {
                 if (registrationId) {
