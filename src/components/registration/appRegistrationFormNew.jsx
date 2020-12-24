@@ -283,7 +283,17 @@ class AppRegistrationFormNew extends Component {
     // }
 
     changeStep = (current) => {
+        const {registrationObj} = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
+            if(this.state.currentStep == 1 && this.state.registrationId && this.state.participantId){
+                let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
+                console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
+                if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
+                    this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
+                    this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                    return;
+                }
+            }
             this.setState({ currentStep: current });
             this.scrollToTop();
         }
@@ -1362,7 +1372,8 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;            
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState; 
+            console.log("regisrationObj",registrationObj)           
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)            
    

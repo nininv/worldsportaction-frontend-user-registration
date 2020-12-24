@@ -620,6 +620,11 @@ class AppTeamRegistrationForm extends Component {
     onChangeStep = (current) => {
         try {
             if (this.state.enabledSteps.includes(current)) {
+                if (this.state.currentStep == 0 && this.state.registrationId && this.state.participantId) {
+                    this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
+                    this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
+                    return;
+                }
                 this.setState({ currentStep: current });
                 this.scrollToTop();
             }
