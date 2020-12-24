@@ -140,14 +140,14 @@ class AppRegistrationFormNew extends Component {
             this.setState({ organisations: registrationState.membershipProductInfo });
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            this.props.updateUserRegistrationStateVarAction("participantId", participantId);
+            this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
             this.setState({ participantId: participantId, registrationId: registrationId });
             if (participantId && registrationId) {
                 this.props.getParticipantInfoById(participantId, '');
-                this.props.updateUserRegistrationStateVarAction("participantId", participantId);
                 this.setState({ getParticipantByIdLoad: true })
             } else {
                 if (registrationId) {
-                    this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
                     this.props.getParticipantInfoById('', registrationId);
                     this.setState({ getParticipantByIdLoad: true })
                 }
@@ -1292,8 +1292,8 @@ class AppRegistrationFormNew extends Component {
     getRegistrationCapValidationInputObj = (registrationObj) => {
         try{
             let registrationCapValidateInputObjTemp = {
-                registrationId: registrationObj.registrationId ? registrationObj.registrationId : "",
-                participantId: registrationObj.participantId ? registrationObj.participantId : "",
+                registrationId: this.props.userRegistrationState.registrationId ? this.props.userRegistrationState.registrationId : "",
+                participantId: this.props.userRegistrationState.participantId ? this.props.userRegistrationState.participantId : "",
                 isTeamRegistration: 0,
                 products: []
             }
