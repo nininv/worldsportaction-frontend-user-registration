@@ -638,15 +638,14 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.API_GET_TEAM_BY_ID_SUCCESS:
             let responseData = action.result;
             let participantId = action.participantId;
-            let teamRegistrationObjTemp = null;
             if(isNullOrEmptyString(participantId)){
-              teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,responseData);
+              state.teamRegistrationObj = updateTeamInfoByIdByMembershipInfo(state,responseData);
+              setValidateRegistrationCapObj(state);
             }
             return {
               ...state,
               onTeamInfoByIdLoad: false,
-              status: action.status,
-              teamRegistrationObj: teamRegistrationObjTemp
+              status: action.status
             };
 
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD:
