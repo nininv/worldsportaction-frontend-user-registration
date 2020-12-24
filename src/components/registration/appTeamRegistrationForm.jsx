@@ -383,6 +383,8 @@ class AppTeamRegistrationForm extends Component {
         try {
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            this.props.updateTeamRegistrationStateVarAction(registrationId,"registrationId");
+            this.props.updateTeamRegistrationStateVarAction(participantId,"participantId");
             let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
             this.setState({ participantId: participantId, registrationId: registrationId, existingTeamParticipantId: existingTeamParticipantId });
             // console.log("registrationid",registrationId)
@@ -618,6 +620,11 @@ class AppTeamRegistrationForm extends Component {
     onChangeStep = (current) => {
         try {
             if (this.state.enabledSteps.includes(current)) {
+                if (this.state.currentStep == 0 && this.state.registrationId && this.state.participantId) {
+                    this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
+                    this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
+                    return;
+                }
                 this.setState({ currentStep: current });
                 this.scrollToTop();
             }

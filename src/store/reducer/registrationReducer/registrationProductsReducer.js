@@ -67,18 +67,18 @@ function registrationProductsReducer(state = initialState, action){
 
         case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
             let regReviewSaveData = action.result.response;
-            let govtVoucherFlag = action.govtVoucherFlag;
-            let compParticipants = regReviewSaveData.compParticipants
-            if(govtVoucherFlag){
-                for(let participant of compParticipants){
-                    let vouchers = participant.selectedOptions.vouchers
-                    for(let voucher of vouchers){
-                        if(voucher.isValid == 0){
-                            message.error(voucher.message)
-                        }
-                    }
-                }
-            }
+            // let govtVoucherFlag = action.govtVoucherFlag;
+            // let compParticipants = regReviewSaveData.compParticipants
+            // if(govtVoucherFlag){
+            //     for(let participant of compParticipants){
+            //         let vouchers = participant.selectedOptions.vouchers
+            //         for(let voucher of vouchers){
+            //             if(voucher.isValid == 0){
+            //                 message.error(voucher.message)
+            //             }
+            //         }
+            //     }
+            // }
             return {
                 ...state,
                 onRegReviewLoad: false,

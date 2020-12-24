@@ -1,11 +1,11 @@
-import React, {useState, Component } from "react";
+import React, { useState, Component } from "react";
 import {
     Layout,
     Breadcrumb,
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
     Radio, Form, Modal, InputNumber, message
@@ -16,25 +16,27 @@ import {
     useElements,
     useStripe, AuBankAccountElement,
 } from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
- import "./product.css";
- import "../user/user.css";
- import '../competition/competition.css';
- import moment from 'moment';
+import { loadStripe } from '@stripe/stripe-js';
+import "./product.css";
+import "../user/user.css";
+import '../competition/competition.css';
+import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
-import {isArrayNotEmpty} from '../../util/helpers';
+import { isArrayNotEmpty } from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getRegistrationByIdAction, deleteRegistrationProductAction, 
-    updateReviewInfoAction} from 
-            '../../store/actions/registrationAction/registrationProductsAction';
-            import StripeKeys from "../stripe/stripeKeys";
+import {
+    getRegistrationByIdAction, deleteRegistrationProductAction,
+    updateReviewInfoAction
+} from
+    '../../store/actions/registrationAction/registrationProductsAction';
+import StripeKeys from "../stripe/stripeKeys";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -104,13 +106,13 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
-    const [perMatchSelectedPaymentOption,setPerMatchSelectedPaymentOption] = useState({
+    const [perMatchSelectedPaymentOption, setPerMatchSelectedPaymentOption] = useState({
         singleCash: false,
         singleCredit: false,
         selectedOption: 0
     })
 
-    
+
     const stripe = useStripe();
     const elements = useElements();
     let paymentOptions = props.paymentOptions;
@@ -119,32 +121,38 @@ const CheckoutForm = (props) => {
     let payload = props.payload;
     let registrationUniqueKey = props.registrationUniqueKey;
     let mainProps = props.mainProps;
-    
+
     // Handle real-time validation errors from the card Element.
-    
+
 
     const handleChange = async (event) => {
         if (event.error) {
             setError(event.error.message);
         } else {
-            if(event.complete){
-                if(elements){
+            if (event.complete) {
+                if (elements) {
                     const card = elements.getElement(CardElement);
-                    if(card){
+                    if (card != undefined) {
+                        console.log("card", card)
                         const cardToken = await stripe.createToken(card);
-                        console.log("cardToken", cardToken.token);
-                        const country = cardToken.token.card.country;
-                        const brand = cardToken.token.card.brand;
-                        if(country!= "AU"){
-                            if(brand == "American Express"){
-                                mainProps.updateReviewInfoAction(1, "International_AE", 0, "total",null);
-                            }
-                            else{
-                                mainProps.updateReviewInfoAction(1, "International_CC", 0, "total",null);
-                            }
+                        if (cardToken.token == undefined) {
+                            message.error(cardToken?.error?.message);
+                            setError(cardToken?.error?.message);
                         }
-                        else{
-                            mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total",null);
+                        else if (cardToken.token != undefined) {
+                            const country = cardToken.token.card.country;
+                            const brand = cardToken.token.card.brand;
+                            if (country != "AU") {
+                                if (brand == "American Express") {
+                                    mainProps.updateReviewInfoAction(1, "International_AE", 0, "total", null);
+                                }
+                                else {
+                                    mainProps.updateReviewInfoAction(1, "International_CC", 0, "total", null);
+                                }
+                            }
+                            else {
+                                mainProps.updateReviewInfoAction(1, "DOMESTIC_CC", 0, "total", null);
+                            }
                         }
                     }
                 }
@@ -154,7 +162,7 @@ const CheckoutForm = (props) => {
     }
 
     const changePaymentOption = (e, key) => {
-        console.log("Change payment option",payload)
+        console.log("Change payment option", payload)
         if (key === 'direct') {
             // props.onLoad(true)
             setUser({
@@ -170,8 +178,8 @@ const CheckoutForm = (props) => {
             // setTimeout(() =>{
             //     stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1);
             // },100);
-           
-        } 
+
+        }
         else if (key === 'cash') {
             setClientKey("")
             setUser({
@@ -184,7 +192,7 @@ const CheckoutForm = (props) => {
                 "selectedOption": ""
             });
         }
-        else if(key == "cash_direct_debit"){
+        else if (key == "cash_direct_debit") {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
@@ -196,7 +204,7 @@ const CheckoutForm = (props) => {
                 "selectedOption": "cash_direct_debit"
             });
         }
-        else if(key == "cash_card"){
+        else if (key == "cash_card") {
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
@@ -208,8 +216,8 @@ const CheckoutForm = (props) => {
                 "selectedOption": "cash_card"
             });
         }
-         else {
-           
+        else {
+
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
@@ -223,8 +231,8 @@ const CheckoutForm = (props) => {
         }
     }
 
-    const changeSinglePaymentOption = (e,key) => {
-        try{
+    const changeSinglePaymentOption = (e, key) => {
+        try {
             if (key === 'credit') {
                 setPerMatchSelectedPaymentOption({
                     ...perMatchSelectedPaymentOption,
@@ -232,7 +240,7 @@ const CheckoutForm = (props) => {
                     "singleCash": false,
                     "selectedOption": "card"
                 });
-            }else if(key === "cash") {
+            } else if (key === "cash") {
                 setPerMatchSelectedPaymentOption({
                     ...perMatchSelectedPaymentOption,
                     "singleCredit": false,
@@ -240,8 +248,8 @@ const CheckoutForm = (props) => {
                     "selectedOption": "cash"
                 });
             }
-        }catch(ex){
-            console.log("Error in changeSinglePaymentOption::"+ex)
+        } catch (ex) {
+            console.log("Error in changeSinglePaymentOption::" + ex)
         }
     }
 
@@ -260,9 +268,9 @@ const CheckoutForm = (props) => {
         console.log(event.target)
         const auBankAccount = elements.getElement(AuBankAccountElement);
         const card = elements.getElement(CardElement);
-        const perMatchPaymentOption = payload.singleGameSelected == 1 && props.payload.total.targetValue > 0 ? (perMatchSelectedPaymentOption.selectedOption != 0  ? true : false) : true;
+        const perMatchPaymentOption = payload.singleGameSelected == 1 && props.payload.total.targetValue > 0 ? (perMatchSelectedPaymentOption.selectedOption != 0 ? true : false) : true;
         console.log(auBankAccount, card)
-        if (((auBankAccount || card || props.payload.total.targetValue == 0 ) && (perMatchPaymentOption || payload.singleGameSelected != 1))) {
+        if (((auBankAccount || card || props.payload.total.targetValue == 0) && (perMatchPaymentOption || payload.singleGameSelected != 1))) {
             if (card && !auBankAccount) {
                 const result = await stripe.createToken(card)
                 props.onLoad(true)
@@ -275,23 +283,23 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result1", result);
-                    registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
+                    registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption);
                     // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
 
             }
-            else if(auBankAccount){
+            else if (auBankAccount) {
                 props.onLoad(true)
                 console.log("clientSecretKey", clientSecretKey);
 
-                            // var form = document.getElementById('setup-form');
-                            // props.onLoad(true)
-                            // console.log(form)
-                            // const accountholderName = event.target['name'];
-                            // const email = event.target.email;
+                // var form = document.getElementById('setup-form');
+                // props.onLoad(true)
+                // console.log(form)
+                // const accountholderName = event.target['name'];
+                // const email = event.target.email;
 
-                            // console.log("accountholderName", accountholderName.value);
-                            // console.log("email", email.value);
+                // console.log("accountholderName", accountholderName.value);
+                // console.log("email", email.value);
                 console.log("auBankAccount", auBankAccount);
 
                 // const result = await stripe.confirmAuBecsDebitPayment(clientSecretKey, {
@@ -325,20 +333,20 @@ const CheckoutForm = (props) => {
                 // }
 
 
-                mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total",null);
-                setTimeout(() =>{
+                mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total", null);
+                setTimeout(() => {
                     // stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
-                    registrationCapValidate("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
-                },100);
+                    registrationCapValidate("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption, auBankAccount, setBankError, stripe, card, setError);
+                }, 100);
             }
-            else if(props.payload.total.targetValue == 0){
+            else if (props.payload.total.targetValue == 0) {
                 // props.onLoad(true)
-                registrationCapValidate(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1);
+                registrationCapValidate(null, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1);
                 // stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,clientSecretKey);
             }
         }
         else {
-            if(paymentOptions.length > 0 && !isSchoolRegistration && !isHardshipEnabled){
+            if (paymentOptions.length > 0 && !isSchoolRegistration && !isHardshipEnabled) {
                 message.config({
                     maxCount: 1, duration: 0.9
                 })
@@ -351,42 +359,44 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {(paymentOptions.length > 0  && !isSchoolRegistration  && !isHardshipEnabled) ?
-                <div className="pt-5">
-                    {(paymentOptions || []).map((pay, pIndex) =>(
-                    <div>
-                        {pay.securePaymentOptionRefId == 2 && 
-                            <div className="row">
-                                <div className='col-sm'>
-                                    <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
-                                        className="payment-type-radio-style"
-                                        checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                        {selectedPaymentOption.credit == true && (
-                                            <div className="pt-5">
-                                                <CardElement
-                                                    id="card-element"
-                                                    options={CARD_ELEMENT_OPTIONS}
-                                                    onChange={handleChange}
-                                                    className='StripeElement'
-                                                />
-                                                <div className="card-errors" role="alert">{error}</div>
-                                                <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
-                                            </div>   
-                                        )}
-                                </div>
-                            </div>
-                        }
-                        {pay.securePaymentOptionRefId == 1 && 
-                        <div className="row">
-                            <div className='col-sm'>
-                                <Radio key={"2"} 
-                                className="payment-type-radio-style"
-                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
-                                {selectedPaymentOption.direct == true &&
-                                    <div className="pt-5">
-                                        <div class="sr-root">
-                                            <div class="sr-main">
-                                                {/* <div class="sr-combo-inputs-row">
+                {(paymentOptions.length > 0 && !isSchoolRegistration && !isHardshipEnabled) ?
+                    <div className="pt-5">
+                        {(paymentOptions || []).map((pay, pIndex) => (
+                            <div>
+                                {pay.securePaymentOptionRefId == 2 &&
+                                    <div className="row">
+                                        <div className='col-sm'>
+                                            <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                                className="payment-type-radio-style"
+                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                            {selectedPaymentOption.credit == true && (
+                                                <div className="pt-5">
+                                                    <CardElement
+                                                        id="card-element"
+                                                        options={CARD_ELEMENT_OPTIONS}
+                                                        onChange={handleChange}
+                                                        className='StripeElement'
+                                                    />
+                                                    {error && <div className="card-errors" role="alert">{error}</div>}
+                                                    <div
+                                                        style={{ marginTop: "5px" }}
+                                                    >{AppConstants.creditCardMsg}</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                }
+                                {pay.securePaymentOptionRefId == 1 &&
+                                    <div className="row">
+                                        <div className='col-sm'>
+                                            <Radio key={"2"}
+                                                className="payment-type-radio-style"
+                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                            {selectedPaymentOption.direct == true &&
+                                                <div className="pt-5">
+                                                    <div class="sr-root">
+                                                        <div class="sr-main">
+                                                            {/* <div class="sr-combo-inputs-row">
                                                     <div class="col">
                                                         <label htmlFor="name">
                                                             Name
@@ -416,47 +426,47 @@ const CheckoutForm = (props) => {
                                                         />
                                                     </div>
                                                 </div> */}
-                                                <div class="sr-combo-inputs-row">
-                                                    <div class="col">
-                                                        <label htmlFor="au-bank-account-element">
-                                                            Bank Account
+                                                            <div class="sr-combo-inputs-row">
+                                                                <div class="col">
+                                                                    <label htmlFor="au-bank-account-element">
+                                                                        Bank Account
                                                     </label>
-                                                        <div id="au-bank-account-element">
-                                                            <AuBankAccountElement
-                                                                id="au-bank-account-element"
-                                                                options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
-                                                                className='StripeElement'
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="bank-name"></div>
-                                                <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
-                                                <div class="col pt-3" id="mandate-acceptance">
-                                                    {AppConstants.stripeMandate1} <a> </a>
-                                                    <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        Direct Debit Request service agreement
+                                                                    <div id="au-bank-account-element">
+                                                                        <AuBankAccountElement
+                                                                            id="au-bank-account-element"
+                                                                            options={AU_BANK_ACCOUNT_ELEMENT_OPTIONS}
+                                                                            className='StripeElement'
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="bank-name"></div>
+                                                            <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
+                                                            <div class="col pt-3" id="mandate-acceptance">
+                                                                {AppConstants.stripeMandate1} <a> </a>
+                                                                <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    Direct Debit Request service agreement
                                                     </a>
-                                                    {AppConstants.stripeMandate2}
-                                                </div>
-                                                {/* </form> */}
-                                                {/* <div class="sr-result hidden">
+                                                                {AppConstants.stripeMandate2}
+                                                            </div>
+                                                            {/* </form> */}
+                                                            {/* <div class="sr-result hidden">
                                                     <p>Response<br /></p>
                                                     <pre>
                                                         <code></code>
                                                     </pre>
                                                 </div> */}
-                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ marginTop: "10px", padding: "0 15px 20px 0" }}>{AppConstants.directDebitMsg}</div>
+                                                </div>
+                                            }
                                         </div>
-                                        <div style={{marginTop: "10px", padding: "0 15px 20px 0"}}>{AppConstants.directDebitMsg}</div>
-                                    </div>
-                                }
-                            </div>
-                        </div>}
-                        {/* {pay.securePaymentOptionRefId == 3 && 
+                                    </div>}
+                                {/* {pay.securePaymentOptionRefId == 3 && 
                         <div>
                             <div className="row">
                                 <div className='col-sm'>
@@ -538,76 +548,76 @@ const CheckoutForm = (props) => {
                             </div>
                         </div>
                         } */}
-                    </div>
-                    ))}
-                    {payload.singleGameSelected == 1 && (
-                        <div>
-                            <div className="product-text-common" style={{fontSize:22,marginTop: 30,marginBottom: 30}}>
-                                {AppConstants.perMatchFees}
-                            </div>  
-                            {(paymentOptions || []).map((paymentOption, paymentOptionIndex) =>(
-                                <div>
-                                    {paymentOption.securePaymentOptionRefId == 2 && (
-                                        <div className="row">
-                                            <div className='col-sm'>
-                                                <Radio className="payment-type-radio-style"
-                                                disabled={selectedPaymentOption.selectedOption == 0}
-                                                key={"1"}
-                                                checked={perMatchSelectedPaymentOption.singleCredit}
-                                                onChange={(e) => changeSinglePaymentOption(e,"credit")}>
-                                                    {AppConstants.creditCard}
-                                                </Radio>
-                                                {selectedPaymentOption.credit == false && perMatchSelectedPaymentOption.singleCredit == true ? (
-                                                    <div className="pt-5">
-                                                        <CardElement
-                                                            id="card-element"
-                                                            options={CARD_ELEMENT_OPTIONS}
-                                                            onChange={handleChange}
-                                                            className='StripeElement'
-                                                        />
-                                                        <div className="card-errors" role="alert">{error}</div>
-                                                        <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
-                                                    </div>   
-                                                ) : (
-                                                    <div>
-                                                        {selectedPaymentOption.credit == true && perMatchSelectedPaymentOption.singleCredit == true && (
-                                                            <div  className="product-text-common">{AppConstants.asAbove}</div>
-                                                        )}
-                                                    </div>                                                )}
-                                            </div>
-                                        </div>
-                                    )}   
-                                    {paymentOption.securePaymentOptionRefId == 3 && (
-                                        <Radio className="payment-type-radio-style"
-                                        key={"2"}
-                                        disabled={selectedPaymentOption.selectedOption == 0}
-                                        checked={perMatchSelectedPaymentOption.singleCash}
-                                        onChange={(e) => changeSinglePaymentOption(e,"cash")}>
-                                            {AppConstants.cash}
-                                        </Radio>
-                                    )}
+                            </div>
+                        ))}
+                        {payload.singleGameSelected == 1 && (
+                            <div>
+                                <div className="product-text-common" style={{ fontSize: 22, marginTop: 30, marginBottom: 30 }}>
+                                    {AppConstants.perMatchFees}
                                 </div>
-                                    
-                            ))}
-                        </div>
-                    )}
-                </div> 
-                : 
-                <div className="content-view pt-5 secure-payment-msg">
-                    {AppConstants.securePaymentMsg}
-                </div>
+                                {(paymentOptions || []).map((paymentOption, paymentOptionIndex) => (
+                                    <div>
+                                        {paymentOption.securePaymentOptionRefId == 2 && (
+                                            <div className="row">
+                                                <div className='col-sm'>
+                                                    <Radio className="payment-type-radio-style"
+                                                        disabled={selectedPaymentOption.selectedOption == 0}
+                                                        key={"1"}
+                                                        checked={perMatchSelectedPaymentOption.singleCredit}
+                                                        onChange={(e) => changeSinglePaymentOption(e, "credit")}>
+                                                        {AppConstants.creditCard}
+                                                    </Radio>
+                                                    {selectedPaymentOption.credit == false && perMatchSelectedPaymentOption.singleCredit == true ? (
+                                                        <div className="pt-5">
+                                                            <CardElement
+                                                                id="card-element"
+                                                                options={CARD_ELEMENT_OPTIONS}
+                                                                onChange={handleChange}
+                                                                className='StripeElement'
+                                                            />
+                                                            <div className="card-errors" role="alert">{error}</div>
+                                                            <div style={{ marginTop: "-10px" }}>{AppConstants.creditCardMsg}</div>
+                                                        </div>
+                                                    ) : (
+                                                            <div>
+                                                                {selectedPaymentOption.credit == true && perMatchSelectedPaymentOption.singleCredit == true && (
+                                                                    <div className="product-text-common">{AppConstants.asAbove}</div>
+                                                                )}
+                                                            </div>)}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {paymentOption.securePaymentOptionRefId == 3 && (
+                                            <Radio className="payment-type-radio-style"
+                                                key={"2"}
+                                                disabled={selectedPaymentOption.selectedOption == 0}
+                                                checked={perMatchSelectedPaymentOption.singleCash}
+                                                onChange={(e) => changeSinglePaymentOption(e, "cash")}>
+                                                {AppConstants.cash}
+                                            </Radio>
+                                        )}
+                                    </div>
+
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    :
+                    <div className="content-view pt-5 secure-payment-msg">
+                        {AppConstants.securePaymentMsg}
+                    </div>
                 }
                 <div className="mt-5">
-                    <div style={{padding:0}}>
-                        <div style={{display:"flex" , justifyContent:"flex-end"}}>
+                    <div style={{ padding: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
-                                <Button
-                                    style={{textTransform: "uppercase"}}
-                                    className="open-reg-button"
-                                    htmlType="submit"
-                                    type="primary">
-                                    {AppConstants.submit}
-                                </Button>
+                            <Button
+                                style={{ textTransform: "uppercase" }}
+                                className="open-reg-button"
+                                htmlType="submit"
+                                type="primary">
+                                {AppConstants.submit}
+                            </Button>
                             {/* : null} */}
                         </div>
                     </div>
@@ -622,90 +632,90 @@ class RegistrationPayment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showCardView:false,
-            registrationUniqueKey: null,  
-            productModalVisible: false ,
+            showCardView: false,
+            registrationUniqueKey: null,
+            productModalVisible: false,
             id: null,
             onLoad: false,
-            registrationCapModalVisible: false ,
-            registrationCapValidationMessage: null                 
+            registrationCapModalVisible: false,
+            registrationCapValidationMessage: null
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        this.setState({registrationUniqueKey: registrationUniqueKey});
+        this.setState({ registrationUniqueKey: registrationUniqueKey });
 
         this.getApiInfo(registrationUniqueKey);
     }
-    componentDidUpdate(nextProps){
+    componentDidUpdate(nextProps) {
 
-    }  
+    }
 
     getApiInfo = (registrationUniqueKey) => {
         let payload = {
             registrationId: registrationUniqueKey
         }
-        console.log("payload",payload);
+        console.log("payload", payload);
         this.props.getRegistrationByIdAction(payload);
     }
 
-    goToShipping = () =>{
-        history.push({pathname: '/registrationShipping', state: {registrationId: this.state.registrationUniqueKey}})
+    goToShipping = () => {
+        history.push({ pathname: '/registrationShipping', state: { registrationId: this.state.registrationUniqueKey } })
     }
 
-    goToShop = () =>{
-        history.push({pathname: '/registrationShop', state: {registrationId: this.state.registrationUniqueKey}})
+    goToShop = () => {
+        history.push({ pathname: '/registrationShop', state: { registrationId: this.state.registrationUniqueKey } })
     }
 
-    goToRegistrationProducts = () =>{
-        history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
+    goToRegistrationProducts = () => {
+        history.push({ pathname: '/registrationProducts', state: { registrationId: this.state.registrationUniqueKey } })
     }
 
-    getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
-        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
+    getPaymentOptionText = (paymentOptionRefId) => {
+        let paymentOptionTxt = paymentOptionRefId == 1 ? AppConstants.paySingleGame :
+            (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+                (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+                    (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
+                        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration : ""))));
 
         return paymentOptionTxt;
     }
 
-    removeFromCart = (index, key, subKey) =>{
-        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+    removeFromCart = (index, key, subKey) => {
+        this.props.updateReviewInfoAction(null, key, index, subKey, null);
     }
 
-    removeProductModal = (key, id) =>{
-        if(key == "show"){
-            this.setState({productModalVisible: true, id: id});
+    removeProductModal = (key, id) => {
+        if (key == "show") {
+            this.setState({ productModalVisible: true, id: id });
         }
-        else if(key == "ok"){
-            this.setState({productModalVisible: false});
+        else if (key == "ok") {
+            this.setState({ productModalVisible: false });
             let payload = {
-                registrationId : this.state.registrationUniqueKey,
+                registrationId: this.state.registrationUniqueKey,
                 orgRegParticipantId: this.state.id
             }
             this.props.deleteRegistrationProductAction(payload);
-            this.setState({loading: true});
+            this.setState({ loading: true });
         }
-        else if(key == "cancel"){
-            this.setState({productModalVisible: false});
+        else if (key == "cancel") {
+            this.setState({ productModalVisible: false });
         }
     }
 
     back = () => {
-        try{
-            const {registrationReviewList,shopProductList} = this.props.registrationProductState;
-            if(!isArrayNotEmpty(shopProductList)){
+        try {
+            const { registrationReviewList, shopProductList } = this.props.registrationProductState;
+            if (!isArrayNotEmpty(shopProductList)) {
                 this.goToRegistrationProducts();
-            }else if(isArrayNotEmpty(registrationReviewList.shopProducts)){
+            } else if (isArrayNotEmpty(registrationReviewList.shopProducts)) {
                 this.goToShipping();
-            }else{
+            } else {
                 this.goToShop();
             }
-        }catch(ex){
-            console.log("Error in back::"+ex);
+        } catch (ex) {
+            console.log("Error in back::" + ex);
         }
     }
 
@@ -723,54 +733,54 @@ class RegistrationPayment extends Component {
                         </Button>
                     ]}
                 >
-                     <p> { this.state.registrationCapValidationMessage }</p>
+                    <p> {this.state.registrationCapValidationMessage}</p>
                 </Modal>
             </div>
         )
     }
 
-    
-    contentView = () =>{
+
+    contentView = () => {
         console.log("content view displayed")
-        return(
-            <div 
+        return (
+            <div
                 className="row"
-                style={{margin: 0}}
+                style={{ margin: 0 }}
             >
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}  
-                {this.registrationCapValidationModal()}        
+                {this.paymentRighttView()}
+                {this.registrationCapValidationModal()}
             </div>
         );
     }
 
-    paymentLeftView = ()=>{
-        const {registrationReviewList} = this.props.registrationProductState;
-        let securePaymentOptions = registrationReviewList!= null ? registrationReviewList.securePaymentOptions : [];
-        let isSchoolRegistration = registrationReviewList!= null ? registrationReviewList.isSchoolRegistration : 0;
-        let isHardshipEnabled = registrationReviewList!= null ? registrationReviewList.isHardshipEnabled : 0;
-        return(
+    paymentLeftView = () => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        let securePaymentOptions = registrationReviewList != null ? registrationReviewList.securePaymentOptions : [];
+        let isSchoolRegistration = registrationReviewList != null ? registrationReviewList.isSchoolRegistration : 0;
+        let isHardshipEnabled = registrationReviewList != null ? registrationReviewList.isHardshipEnabled : 0;
+        return (
             <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
-            <div className="product-left-view outline-style mt-0">              
-                <div className="product-text-common" style={{fontSize:22}}>
-                    {AppConstants.securePaymentOptions}
-                </div>  
-                <div>
-                    <Elements stripe={stripePromise} >
-                        <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
-                        payload={registrationReviewList} registrationUniqueKey = {this.state.registrationUniqueKey}
-                        isSchoolRegistration={isSchoolRegistration} isHardshipEnabled = {isHardshipEnabled}
-                        mainProps={this.props} registrationCapModalVisible={(status) => this.setState({registrationCapModalVisible: status})}
-                        registrationCapValidationMessage={(error) => this.setState({registrationCapValidationMessage: error})} />
-                    </Elements>
-               </div>              
-            </div>
+                <div className="product-left-view outline-style mt-0">
+                    <div className="product-text-common" style={{ fontSize: 22 }}>
+                        {AppConstants.securePaymentOptions}
+                    </div>
+                    <div>
+                        <Elements stripe={stripePromise} >
+                            <CheckoutForm onLoad={(status) => this.setState({ onLoad: status })} paymentOptions={securePaymentOptions}
+                                payload={registrationReviewList} registrationUniqueKey={this.state.registrationUniqueKey}
+                                isSchoolRegistration={isSchoolRegistration} isHardshipEnabled={isHardshipEnabled}
+                                mainProps={this.props} registrationCapModalVisible={(status) => this.setState({ registrationCapModalVisible: status })}
+                                registrationCapValidationMessage={(error) => this.setState({ registrationCapValidationMessage: error })} />
+                        </Elements>
+                    </div>
+                </div>
             </div>
         )
     }
 
-    paymentRighttView = ()=>{
-        return(
+    paymentRighttView = () => {
+        return (
             <div className="col-lg-4 col-md-4 col-sm-12 product-right-view px-0 m-0">
                 {this.yourOrderView()}
                 {this.buttonView()}
@@ -778,144 +788,145 @@ class RegistrationPayment extends Component {
         )
     }
 
-    yourOrderView = () =>{
-        const {registrationReviewList} = this.props.registrationProductState;
-        let compParticipants = registrationReviewList!= null ? 
-                    isArrayNotEmpty(registrationReviewList.compParticipants) ?
-                    registrationReviewList.compParticipants : [] : [];
-        let total = registrationReviewList!= null ? registrationReviewList.total : null;
-        let shopProducts = registrationReviewList!= null ? 
-                isArrayNotEmpty(registrationReviewList.shopProducts) ?
+    yourOrderView = () => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        let compParticipants = registrationReviewList != null ?
+            isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                registrationReviewList.compParticipants : [] : [];
+        let total = registrationReviewList != null ? registrationReviewList.total : null;
+        let shopProducts = registrationReviewList != null ?
+            isArrayNotEmpty(registrationReviewList.shopProducts) ?
                 registrationReviewList.shopProducts : [] : [];
-        return(
-            <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
-                <div className="product-text-common" style={{fontSize: 21}}>
+        return (
+            <div className="outline-style " style={{ padding: "36px 36px 22px 20px" }}>
+                <div className="product-text-common" style={{ fontSize: 21 }}>
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
                     let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
-                    return(
-                    <div style={{paddingBottom:12}} key={item.participantId}>
-                       {item.isTeamRegistration == 1  ? 
-                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
-                                {item.teamName +' - ' + item.competitionName}
-                            </div> :
-                            <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
-                            {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                            </div> 
-                        }
-                        {(item.membershipProducts || []).map((mem, memIndex) =>(
-                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                               {item.isTeamRegistration == 1 ?
-                                <div>
-                                    <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName }</div>
-                                    <div  className="subtitle-text-common" style={{display:"flex"}}>
-                                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
-                                        <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        {(mem.email !== item.email) && ( 
-                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                    return (
+                        <div style={{ paddingBottom: 12 }} key={item.participantId}>
+                            {item.isTeamRegistration == 1 ?
+                                <div className="inter-medium-w500" style={{ marginTop: "17px" }}>
+                                    {item.teamName + ' - ' + item.competitionName}
+                                </div> :
+                                <div className="inter-medium-w500" style={{ marginTop: "17px" }}>
+                                    {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
+                                </div>
+                            }
+                            {(item.membershipProducts || []).map((mem, memIndex) => (
+                                <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                    {item.isTeamRegistration == 1 ?
+                                        <div>
+                                            <div className="subtitle-text-common mt-10" > {mem.firstName + ' ' + mem.lastName}</div>
+                                            <div className="subtitle-text-common" style={{ display: "flex" }}>
+                                                <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{mem.membershipTypeName + (mem.divisionId != null ? ' - ' + mem.divisionName : '')}</div>
+                                                <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${mem.feesToPay}</div>
+                                                {(mem.email !== item.email) && (
+                                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                </div>
-                                :
-                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                    <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
-                                        <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
-                                    </div>
-                                </div>
-                                }
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
-                                </div>
-                                }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
-                                </div>
-                                }
-                                {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
+                                        </div>
+                                        :
+                                        <div className="subtitle-text-common mt-10" style={{ display: "flex" }}>
+                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{mem.membershipTypeName + (mem.divisionId != null ? ' - ' + mem.divisionName : '')}</div>
+                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${mem.feesToPay}</div>
+                                            <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
+                                                <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon} /></span>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    {mem.discountsToDeduct != "0.00" &&
+                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
+                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.discount}</div>
+                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.discountsToDeduct}</div>
+                                        </div>
+                                    }
+                                    {mem.childDiscountsToDeduct != "0.00" &&
+                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
+                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.familyDiscount}</div>
+                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.childDiscountsToDeduct}</div>
+                                        </div>
+                                    }
+                                    {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
                                 </div>  */}
+                                </div>
+                            ))}
+                            <div className="payment-option-txt">
+                                {paymentOptionTxt}
+                                <span className="link-text-common pointer"
+                                    onClick={() => this.goToRegistrationProducts()}
+                                    style={{ margin: "0px 15px 0px 20px" }}>
+                                    {AppConstants.edit}
+                                </span>
                             </div>
-                        ))}
-                        <div className="payment-option-txt">
-                            {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
-                            onClick={() => this.goToRegistrationProducts()}
-                            style={{margin: "0px 15px 0px 20px"}}>
-                                {AppConstants.edit}
-                            </span>
+                            {item.governmentVoucherAmount != "0.00" &&
+                                <div className="product-text-common mr-4 pb-4" style={{ display: "flex", fontWeight: 500, }}>
+                                    <div className="alignself-center pt-2" style={{ marginRight: "auto" }}> {AppConstants.governmentSportsVoucher}</div>
+                                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${item.governmentVoucherAmount}</div>
+                                </div>
+                            }
                         </div>
-                        {item.governmentVoucherAmount != "0.00" && 
-                        <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
-                            <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                            <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                        </div> 
-                        }
-                    </div> 
-                    )}
+                    )
+                }
                 )}
-                {(shopProducts).map((shop, index) =>(
-                    <div  className="product-text-common" style={{display:"flex" , fontWeight:500 ,borderBottom:"1px solid var(--app-e1e1f5)" , borderTop:"1px solid var(--app-e1e1f5)"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto" , display: "flex",marginTop: "12px" , padding: "8px"}}>
+                {(shopProducts).map((shop, index) => (
+                    <div className="product-text-common" style={{ display: "flex", fontWeight: 500, borderBottom: "1px solid var(--app-e1e1f5)", borderTop: "1px solid var(--app-e1e1f5)" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto", display: "flex", marginTop: "12px", padding: "8px" }}>
                             <div>
-                                <img style={{width:'50px'}} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon}/>
+                                <img style={{ width: '50px' }} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon} />
                             </div>
-                            <div style={{marginLeft:"6px",fontFamily:"inter-medium"}}>
+                            <div style={{ marginLeft: "6px", fontFamily: "inter-medium" }}>
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
+                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
-                        <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
-                        <div style={{paddingTop:26}} onClick ={() => this.removeFromCart(index,'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon}/></span>
+                        <div className="alignself-center pt-5" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
+                        <div style={{ paddingTop: 26 }} onClick={() => this.removeFromCart(index, 'removeShopProduct', 'shopProducts')}>
+                            <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
-                ))} 
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)",marginTop: "-5px"}}>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
+                ))}
+                <div style={{ borderBottom: "1px solid var(--app-e1e1f5)", marginTop: "-5px" }}>
+                    <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.subTotal}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.shipping}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.shipping}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.shipping}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.shipping}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex" }}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.gst}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.charityRoundUp}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
-                <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                <div style={{ borderBottom: "1px solid var(--app-e1e1f5)" }}>
+                    <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.total}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.transactionFee}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.transactionFee}</div>
                     </div>
                 </div>
-                
-                <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+
+                <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                    <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.targetValue}</div>
                 </div>
             </div>
         )
@@ -924,38 +935,38 @@ class RegistrationPayment extends Component {
     deleteProductModalView = () => {
         return (
             <div>
-              <Modal
-                className="add-membership-type-modal"
-                title="Registration Product"
-                visible={this.state.productModalVisible}
-                onOk={() => this.removeProductModal("ok")}
-                onCancel={() => this.removeProductModal("cancel")}>
-                  <p>{AppConstants.deleteProductMsg}</p>
-              </Modal>
+                <Modal
+                    className="add-membership-type-modal"
+                    title="Registration Product"
+                    visible={this.state.productModalVisible}
+                    onOk={() => this.removeProductModal("ok")}
+                    onCancel={() => this.removeProductModal("cancel")}>
+                    <p>{AppConstants.deleteProductMsg}</p>
+                </Modal>
             </div>
-          );
+        );
     }
 
-    buttonView = () =>{
-        const {registrationReviewList} = this.props.registrationProductState;
-        return(
-            <div style={{marginTop:23}}>
+    buttonView = () => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        return (
+            <div style={{ marginTop: 23 }}>
                 {/* <div>
                     <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
                         {AppConstants.continue}
                     </Button>
                 </div>                  */}
-                <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
-                     onClick={() => this.back()}>
+                <div style={{ marginTop: 23 }}>
+                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                        onClick={() => this.back()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
-            </div>            
+                    </Button>
+                </div>
+            </div>
         )
     }
-    
-    
+
+
     render() {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
@@ -966,10 +977,10 @@ class RegistrationPayment extends Component {
                 <InnerHorizontalMenu />
                 <Layout className="layout-margin">
                     <Form
-                        // autocomplete="off"
-                        // scrollToFirstError={true}
-                        // onSubmit={this.saveRegistrationForm}
-                        // noValidate="noValidate"
+                    // autocomplete="off"
+                    // scrollToFirstError={true}
+                    // onSubmit={this.saveRegistrationForm}
+                    // noValidate="noValidate"
                     >
                         <Content>
                             <div>
@@ -977,7 +988,7 @@ class RegistrationPayment extends Component {
                                 {this.deleteProductModalView()}
                             </div>
                             <Loader visible={this.props.registrationProductState.onRegReviewLoad ||
-                             this.state.onLoad} />
+                                this.state.onLoad} />
                         </Content>
                     </Form>
                 </Layout>
@@ -987,32 +998,31 @@ class RegistrationPayment extends Component {
 
 }
 
-function mapDispatchToProps(dispatch)
-{
+function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getRegistrationByIdAction,
         deleteRegistrationProductAction,
-        updateReviewInfoAction								 
+        updateReviewInfoAction
     }, dispatch);
 
 }
 
-function mapStatetoProps(state){
+function mapStatetoProps(state) {
     return {
         registrationProductState: state.RegistrationProductState,
         commonReducerState: state.CommonReducerState
     }
 }
 
-async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe,card,setError){
-    try{
-        let url =  "/api/registrationcap/validate";
+async function registrationCapValidate(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption, auBankAccount, setBankError, stripe, card, setError) {
+    try {
+        let url = "/api/registrationcap/validate";
         let body = {
             "registrationId": registrationUniqueKey
             // "isTeamRegistration": payload.compParticipants.find(x => x.isTeamRegistration == 1) ? 1 : 0,
             // "products": []
         };
-        
+
         return await new Promise((resolve, reject) => {
             fetch(`${StripeKeys.apiURL + url}`, {
                 method: 'POST',
@@ -1022,34 +1032,34 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
                 },
                 body: JSON.stringify(body)
             }).then((response) => {
-                    let resp = response.json();
-                    console.log("response1",response)
-                    resp.then((Response) => {
-                        if (response.status === 200) {
-                            // stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,null,null,stripe,card,setError);
-                            stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe,card,setError);
-                        }
-                        else if (response.status === 212) {
-                            props.onLoad(false);
-                            props.registrationCapModalVisible(true);
-                            props.registrationCapValidationMessage(Response.message);
-                            // message.error(Response.message);
-                        }
-                        else if (response.status === 400) {
-                            props.onLoad(false);
-                            message.error(Response.message);
-                        }
-                        else {
-                            props.onLoad(false);
-                            message.error(AppConstants.somethingWentWrongErrorMsg)
-                        }
-    
-                    })  .catch((error) => {
-                        props.onLoad(false)
+                let resp = response.json();
+                console.log("response1", response)
+                resp.then((Response) => {
+                    if (response.status === 200) {
+                        // stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,null,null,stripe,card,setError);
+                        stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption, auBankAccount, setBankError, stripe, card, setError);
+                    }
+                    else if (response.status === 212) {
+                        props.onLoad(false);
+                        props.registrationCapModalVisible(true);
+                        props.registrationCapValidationMessage(Response.message);
+                        // message.error(Response.message);
+                    }
+                    else if (response.status === 400) {
+                        props.onLoad(false);
+                        message.error(Response.message);
+                    }
+                    else {
+                        props.onLoad(false);
                         message.error(AppConstants.somethingWentWrongErrorMsg)
-                    });
-    
-                })
+                    }
+
+                }).catch((error) => {
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
+                });
+
+            })
                 .catch((error) => {
                     props.onLoad(false)
                     message.error(AppConstants.somethingWentWrongErrorMsg)
@@ -1058,63 +1068,63 @@ async function registrationCapValidate(token, props, selectedOption, setClientKe
             console.log("data");
         }).catch((data) => {
             console.log("Error")
-        }) 
-    }catch(ex){
-        console.log("Error occured in createPerMatchPayments::"+ex)
+        })
+    } catch (ex) {
+        console.log("Error occured in createPerMatchPayments::" + ex)
     }
 }
 
-async function confirmDebitPayment(confirmDebitPaymentInput){
-    try{
+async function confirmDebitPayment(confirmDebitPaymentInput) {
+    try {
         const result = await confirmDebitPaymentInput.stripe.confirmAuBecsDebitPayment(confirmDebitPaymentInput.clientSecret, {
             payment_method: {
                 au_becs_debit: confirmDebitPaymentInput.auBankAccount,
                 billing_details: {
-                    name:  "Club Test 1", // accountholderName.value,
+                    name: "Club Test 1", // accountholderName.value,
                     email: "testclub@wsa.com"  // email.value,
                 },
             }
         });
-          if (result.error) {
-                let message = result.error.message
-                confirmDebitPaymentInput.setBankError(message)
-                confirmDebitPaymentInput.props.onLoad(false)
-            } else {
-                confirmDebitPaymentInput.setBankError(null)
-                // setClientKey("")
-                // registrationCapValidate(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption,null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey,2,confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.card,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.setError);
-                stripeTokenHandler(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption, null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey, 2, confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.auBankAccount,confirmDebitPaymentInput.setBankError,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.card,confirmDebitPaymentInput.setError);
+        if (result.error) {
+            let message = result.error.message
+            confirmDebitPaymentInput.setBankError(message)
+            confirmDebitPaymentInput.props.onLoad(false)
+        } else {
+            confirmDebitPaymentInput.setBankError(null)
+            // setClientKey("")
+            // registrationCapValidate(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption,null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey,2,confirmDebitPaymentInput.perMatchSelectedOption,confirmDebitPaymentInput.card,confirmDebitPaymentInput.stripe,confirmDebitPaymentInput.setError);
+            stripeTokenHandler(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption, null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.registrationUniqueKey, 2, confirmDebitPaymentInput.perMatchSelectedOption, confirmDebitPaymentInput.auBankAccount, confirmDebitPaymentInput.setBankError, confirmDebitPaymentInput.stripe, confirmDebitPaymentInput.card, confirmDebitPaymentInput.setError);
 
-            }
-    }catch(ex){
+        }
+    } catch (ex) {
         confirmDebitPaymentInput.props.onLoad(false)
-        console.log("Error in confirmDebitPayment::"+ex)
+        console.log("Error in confirmDebitPayment::" + ex)
     }
 }
 
 // POST the token ID to your backend.
-async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption,auBankAccount,setBankError,stripe,card,setError) {
+async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption, auBankAccount, setBankError, stripe, card, setError) {
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
-   // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
-   console.log("Payload::" + JSON.stringify(payload.total));
-   console.log("Payload222::",setClientKey, setRegId,);
+    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
+    console.log("Payload::" + JSON.stringify(payload.total));
+    console.log("Payload222::", setClientKey, setRegId,);
 
-   let url;
-   if(urlFlag == 1){
-       url =  "/api/payments/createpayments";
-   }
-   else{
-       url =  "/api/payments/createpayments/directdebit";
-   }
-  
+    let url;
+    if (urlFlag == 1) {
+        url = "/api/payments/createpayments";
+    }
+    else {
+        url = "/api/payments/createpayments/directdebit";
+    }
+
     let body;
     if (paymentType === "card" || paymentType == "cash_card") {
         let stripeToken = token.id
         body = {
             registrationId: registrationUniqueKey,
-           // invoiceId: invoiceId,
+            // invoiceId: invoiceId,
             paymentType: paymentType,
             payload: payload,
             token: {
@@ -1122,7 +1132,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
         }
     }
-    else if(paymentType === "direct_debit" || paymentType == "cash_direct_debit"){
+    else if (paymentType === "direct_debit" || paymentType == "cash_direct_debit") {
         body = {
             registrationId: registrationUniqueKey,
             //invoiceId: invoiceId,
@@ -1130,8 +1140,8 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             paymentType: paymentType,
         }
     }
-    else if(props.payload.total.targetValue == 0){
-        if(props.isSchoolRegistration || props.isHardshipEnabled){
+    else if (props.payload.total.targetValue == 0) {
+        if (props.isSchoolRegistration || props.isHardshipEnabled) {
             body = {
                 registrationId: registrationUniqueKey,
                 //invoiceId: invoiceId,
@@ -1142,7 +1152,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
 
         }
-        else{
+        else {
             body = {
                 registrationId: registrationUniqueKey,
                 //invoiceId: invoiceId,
@@ -1165,16 +1175,16 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             .then((response) => {
                 let resp = response.json()
                 console.log(response.status, "status", paymentType)
-                resp.then(async(Response) => {
-                    console.log("Response",Response)
+                resp.then(async (Response) => {
+                    console.log("Response", Response)
                     if (response.status === 200) {
                         if (paymentType == "card") {
                             message.success(Response.message);
-                            
-                            console.log("registrationUniqueKey"+ registrationUniqueKey);
-                            if(perMatchSelectedOption){
-                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,token);
-                            }else{
+
+                            console.log("registrationUniqueKey" + registrationUniqueKey);
+                            if (perMatchSelectedOption) {
+                                createPerMatchPayments(Response.invoiceId, perMatchSelectedOption, props, registrationUniqueKey, token);
+                            } else {
                                 props.onLoad(false)
                             }
                             history.push("/invoice", {
@@ -1184,12 +1194,12 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 paymentType: paymentType
                             })
                         }
-                        else if(paymentType =="direct_debit") {
-                            if(Response.clientSecret == null){
-                                console.log("perMatchSelectedOption",perMatchSelectedOption)
-                                if(perMatchSelectedOption){
-                                    console.log("card",card)
-                                    if(card){
+                        else if (paymentType == "direct_debit") {
+                            if (Response.clientSecret == null) {
+                                console.log("perMatchSelectedOption", perMatchSelectedOption)
+                                if (perMatchSelectedOption) {
+                                    console.log("card", card)
+                                    if (card) {
                                         const result = await stripe.createToken(card)
                                         if (result.error) {
                                             let message = result.error.message
@@ -1197,16 +1207,16 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                             props.onLoad(false)
                                         } else {
                                             setError(null);
-                                            if(perMatchSelectedOption == 'card'){
-                                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey,result.token);
+                                            if (perMatchSelectedOption == 'card') {
+                                                createPerMatchPayments(Response.invoiceId, perMatchSelectedOption, props, registrationUniqueKey, result.token);
                                             }
                                         }
-                                    }else{
-                                        if(perMatchSelectedOption == 'cash'){
-                                            createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
+                                    } else {
+                                        if (perMatchSelectedOption == 'cash') {
+                                            createPerMatchPayments(Response.invoiceId, perMatchSelectedOption, props, registrationUniqueKey);
                                         }
                                     }
-                                }else{
+                                } else {
                                     props.onLoad(false)
                                 }
                                 history.push("/invoice", {
@@ -1216,7 +1226,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                     paymentType: paymentType
                                 })
                             }
-                            else{
+                            else {
                                 // setClientKey(Response.clientSecret);
                                 // setRegId(registrationUniqueKey)
                                 let confirmDebitPaymentInput = {
@@ -1235,14 +1245,14 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 confirmDebitPayment(confirmDebitPaymentInput);
                                 // props.onLoad(false)
                             }
-                           // message.success(Response.message);
+                            // message.success(Response.message);
                         }
-                        else{
-                            if(perMatchSelectedOption){
-                                createPerMatchPayments(Response.invoiceId,perMatchSelectedOption,props,registrationUniqueKey);
-                            }else{
+                        else {
+                            if (perMatchSelectedOption) {
+                                createPerMatchPayments(Response.invoiceId, perMatchSelectedOption, props, registrationUniqueKey);
+                            } else {
                                 props.onLoad(false)
-                            }                            
+                            }
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,
                                 userRegId: null,
@@ -1265,7 +1275,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     }
 
                 }).catch((error) => {
-                    console.log("500",error)
+                    console.log("500", error)
                     props.onLoad(false)
                     message.error(AppConstants.somethingWentWrongErrorMsg)
                 })
@@ -1278,15 +1288,15 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         console.log("then data in stripeTokenHandler ");
     }).catch((data) => {
         console.log("Error in stripeTokenHandler")
-    }) 
+    })
 }
 
-async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,props,registrationUniqueKey,token){
-    try{
-        console.log("invoice id",invoiceId)
-        let url =  "/api/payments/createpermatchpayments";
+async function createPerMatchPayments(invoiceId, perMatchSeletedPaymentOption, props, registrationUniqueKey, token) {
+    try {
+        console.log("invoice id", invoiceId)
+        let url = "/api/payments/createpermatchpayments";
         let body = null;
-        if(perMatchSeletedPaymentOption == 'card'){
+        if (perMatchSeletedPaymentOption == 'card') {
             let stripeToken = token.id
             body = {
                 invoiceId: invoiceId,
@@ -1296,14 +1306,14 @@ async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,pro
                     id: stripeToken
                 }
             }
-        }else{
+        } else {
             body = {
                 invoiceId: invoiceId,
                 subPaymentType: perMatchSeletedPaymentOption,
                 registrationId: registrationUniqueKey
             }
         }
-        
+
         return await new Promise((resolve, reject) => {
             fetch(`${StripeKeys.apiURL + url}`, {
                 method: 'POST',
@@ -1313,37 +1323,37 @@ async function createPerMatchPayments(invoiceId,perMatchSeletedPaymentOption,pro
                 },
                 body: JSON.stringify(body)
             }).then((response) => {
-                    props.onLoad(false)
-                    let resp = response.json()
-                    console.log("response3",response)
-                    resp.then((Response) => {
-                        if (response.status === 200) {
+                props.onLoad(false)
+                let resp = response.json()
+                console.log("response3", response)
+                resp.then((Response) => {
+                    if (response.status === 200) {
 
-                        }
-                        else if (response.status === 212) {
-                            message.error(Response.message);
-                        }
-                        else if (response.status === 400) {
-                            message.error(Response.message);
-                        }
-                        else {
-                            message.error(AppConstants.somethingWentWrongErrorMsg)
-                        }
-    
-                    }).catch((error) => {
-                        props.onLoad(false)
+                    }
+                    else if (response.status === 212) {
+                        message.error(Response.message);
+                    }
+                    else if (response.status === 400) {
+                        message.error(Response.message);
+                    }
+                    else {
                         message.error(AppConstants.somethingWentWrongErrorMsg)
-                    });
-    
-                })
+                    }
+
+                }).catch((error) => {
+                    props.onLoad(false)
+                    message.error(AppConstants.somethingWentWrongErrorMsg)
+                });
+
+            })
                 .catch((error) => {
                     props.onLoad(false)
                     message.error(AppConstants.somethingWentWrongErrorMsg)
                 });
-        }) 
-    }catch(ex){
-        console.log("Error occured in createPerMatchPayments::"+ex)
+        })
+    } catch (ex) {
+        console.log("Error occured in createPerMatchPayments::" + ex)
     }
 }
 
-export default connect(mapStatetoProps,mapDispatchToProps)(RegistrationPayment);
+export default connect(mapStatetoProps, mapDispatchToProps)(RegistrationPayment);
