@@ -187,6 +187,7 @@ const initialState = {
 	membershipProductInfo: [],
 	addCompetitionFlag: false,
 	registrationId: null,
+	participantId: null,
 	isSavedParticipant: false,
 	saveValidationErrorMsg: null,
 	saveValidationErrorCode: null,
@@ -458,8 +459,8 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
 		let competition = registrationObjTemp.competitions[competitionIndex];
 		let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
-		validateRegistrationCapObj.registrationId = registrationObjTemp.registrationId ? registrationObjTemp.registrationId : "";
-		validateRegistrationCapObj.participantId = registrationObjTemp.participantId ? registrationObjTemp.participantId : "";
+		validateRegistrationCapObj.registrationId = state.registrationId ? state.registrationId : "";
+		validateRegistrationCapObj.participantId = state.participantId ? state.participantId : "";
 		validateRegistrationCapObj.isTeamRegistration = 0;
 		validateRegistrationCapObj.products = [];
 		if(fromNonProductsOrDivisions == 2 || isPlayer != 1){

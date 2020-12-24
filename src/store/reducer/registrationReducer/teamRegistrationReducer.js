@@ -209,6 +209,7 @@ const initialState = {
     saveValidationErrorCode: null,
     onSaveLoad: false,
     registrationId: null,
+    participantId: null,
     onTeamInfoByIdLoad: false,
     onExistingTeamInfoByIdLoad: false,
     expiredRegistrationFlag: false,
@@ -386,8 +387,8 @@ function setValidateRegistrationCapObj(state){
   try{
     let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
     let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
-    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId ? teamRegistrationObjTemp.registrationId : "";
-    validateRegistrationCapObj.participantId = teamRegistrationObjTemp.participantId ? teamRegistrationObjTemp.participantId : "";
+    validateRegistrationCapObj.registrationId = state.registrationId ? state.registrationId : "";
+    validateRegistrationCapObj.participantId = state.participantId ? state.participantId : "";
     validateRegistrationCapObj.isTeamRegistration = 1;
     validateRegistrationCapObj.products = [];
     let product = {

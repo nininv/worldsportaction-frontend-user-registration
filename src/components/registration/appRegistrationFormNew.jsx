@@ -140,13 +140,14 @@ class AppRegistrationFormNew extends Component {
             this.setState({ organisations: registrationState.membershipProductInfo });
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            this.props.updateUserRegistrationStateVarAction("participantId", participantId);
+            this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
             this.setState({ participantId: participantId, registrationId: registrationId });
             if (participantId && registrationId) {
                 this.props.getParticipantInfoById(participantId, '');
                 this.setState({ getParticipantByIdLoad: true })
             } else {
                 if (registrationId) {
-                    this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
                     this.props.getParticipantInfoById('', registrationId);
                     this.setState({ getParticipantByIdLoad: true })
                 }
@@ -282,7 +283,17 @@ class AppRegistrationFormNew extends Component {
     // }
 
     changeStep = (current) => {
+        const {registrationObj} = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
+            if(this.state.currentStep == 1 && this.state.registrationId && this.state.participantId){
+                let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
+                console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
+                if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
+                    this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
+                    this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                    return;
+                }
+            }
             this.setState({ currentStep: current });
             this.scrollToTop();
         }
@@ -1291,8 +1302,8 @@ class AppRegistrationFormNew extends Component {
     getRegistrationCapValidationInputObj = (registrationObj) => {
         try{
             let registrationCapValidateInputObjTemp = {
-                registrationId: registrationObj.registrationId ? registrationObj.registrationId : "",
-                participantId: registrationObj.participantId ? registrationObj.participantId : "",
+                registrationId: this.props.userRegistrationState.registrationId ? this.props.userRegistrationState.registrationId : "",
+                participantId: this.props.userRegistrationState.participantId ? this.props.userRegistrationState.participantId : "",
                 isTeamRegistration: 0,
                 products: []
             }
@@ -1361,7 +1372,8 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;            
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState; 
+            console.log("regisrationObj",registrationObj)           
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)            
    
