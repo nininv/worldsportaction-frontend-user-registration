@@ -75,7 +75,7 @@ const columns = [
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
                         <span className='year-select-heading mr-3'>{AppConstants.validUntil}</span>
                         <span className="user-details-info-text">
-                            {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : "-"}
+                            {expiryDate != null ? (expiryDate != 'Single Use' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
                         </span>
                     </div>
                     <div className="d-flex flex-wrap">
