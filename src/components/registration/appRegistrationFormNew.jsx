@@ -1292,6 +1292,7 @@ class AppRegistrationFormNew extends Component {
         try{
             let registrationCapValidateInputObjTemp = {
                 registrationId: registrationObj.registrationId ? registrationObj.registrationId : "",
+                participantId: registrationObj.participantId ? registrationObj.participantId : "",
                 isTeamRegistration: 0,
                 products: []
             }
@@ -3828,11 +3829,11 @@ class AppRegistrationFormNew extends Component {
                                 this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
                             }, 100);
                         }}>
-                            {AppConstants.confirm}
+                            {AppConstants.continue}
                         </Button>
                     ]}
                 >
-                   <p> { AppConstants.sameEmailValidationMessage }</p>
+                   <p> { registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2 }</p>
                 </Modal>
             </div>
         )

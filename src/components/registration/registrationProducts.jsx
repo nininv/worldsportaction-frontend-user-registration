@@ -75,7 +75,7 @@ class RegistrationProducts extends Component {
     componentDidMount(){
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "9d822566-2892-4c34-8452-5873d840c82a";
+        //let registrationUniqueKey = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
         this.setState({registrationUniqueKey: registrationUniqueKey});
         this.getApiInfo(registrationUniqueKey);
     }
@@ -698,11 +698,12 @@ class RegistrationProducts extends Component {
                             )) }
                         </div>
                     }
-                                   
-                    <div className="subtitle-text-common" style={{marginTop: "16px"}}>
-                        {AppConstants.wouldYouLikeTopay}
-                    </div>
-                    <div style={{marginTop:6}}>
+                    {item.paymentOptions.length > 1 && (
+                        <div className="subtitle-text-common" style={{marginTop: "16px"}}>
+                            {AppConstants.wouldYouLikeTopay}
+                        </div>
+                    )}     
+                    <div style={item.paymentOptions.length > 1 ? {marginTop:6} : {marginTop:12}}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  

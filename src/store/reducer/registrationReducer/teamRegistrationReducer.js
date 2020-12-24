@@ -30,6 +30,7 @@ let seasionalAndCasualFeesInputObj = {
 
 let registrationCapValidateInputObjTemp = {
   "registrationId": "",
+  "participantId": "",
   "isTeamRegistration": 0,
   "products": []
 }
@@ -386,6 +387,7 @@ function setValidateRegistrationCapObj(state){
     let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
     let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
     validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId ? teamRegistrationObjTemp.registrationId : "";
+    validateRegistrationCapObj.participantId = teamRegistrationObjTemp.participantId ? teamRegistrationObjTemp.participantId : "";
     validateRegistrationCapObj.isTeamRegistration = 1;
     validateRegistrationCapObj.products = [];
     let product = {

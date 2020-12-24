@@ -31,6 +31,7 @@ let seasionalAndCasualFeesInputObj = {
 
 let registrationCapValidateInputObjTemp = {
 	"registrationId": "",
+	"participantId": "",
 	"isTeamRegistration": 0,
 	"products": []
   }
@@ -458,6 +459,7 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 		let competition = registrationObjTemp.competitions[competitionIndex];
 		let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
 		validateRegistrationCapObj.registrationId = registrationObjTemp.registrationId ? registrationObjTemp.registrationId : "";
+		validateRegistrationCapObj.participantId = registrationObjTemp.participantId ? registrationObjTemp.participantId : "";
 		validateRegistrationCapObj.isTeamRegistration = 0;
 		validateRegistrationCapObj.products = [];
 		if(fromNonProductsOrDivisions == 2 || isPlayer != 1){

@@ -1608,7 +1608,7 @@ class AppTeamRegistrationForm extends Component {
                                 if (filteredTeamRegistrationObj.teamMembers[a].mobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].mobileNumber.length != 10) {
                                     return false
                                 }
-                                if (filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber.length != null && filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber.length != 10) {
+                                if (filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != null && filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != 10) {
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian.length > 0) {
