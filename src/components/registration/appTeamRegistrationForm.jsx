@@ -345,7 +345,7 @@ class AppTeamRegistrationForm extends Component {
 
             if (this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true) {
                 if (this.props.commonReducerState.status == 4) {
-                    this.setState({ registrationCapModalVisible: true })
+                    this.setState({ registrationCapModalVisible: true,validateRegistrationCapBySubmit: false })
                 } else {
                     if (this.state.validateRegistrationCapBySubmit == true) {
                         this.stepNavigation();
@@ -620,7 +620,7 @@ class AppTeamRegistrationForm extends Component {
     onChangeStep = (current) => {
         try {
             if (this.state.enabledSteps.includes(current)) {
-                if (this.state.currentStep == 0 && this.state.registrationId && this.state.participantId) {
+                if (this.state.currentStep == 0 && this.state.enabledSteps.includes(1)) {
                     this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
                     this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
                     return;

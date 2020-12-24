@@ -285,7 +285,7 @@ class AppRegistrationFormNew extends Component {
     changeStep = (current) => {
         const {registrationObj} = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
-            if(this.state.currentStep == 1 && this.state.registrationId && this.state.participantId){
+            if(this.state.currentStep == 1 && this.state.enabledSteps.includes(2)){
                 let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
                 console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
                 if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
