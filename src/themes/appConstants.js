@@ -1203,7 +1203,10 @@ const AppConstants = {
   _sms: "SMS",
   sameEmailValidationMessage: "You have elected to use the same email for your Child and yourself. You child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
   sameSomeoneEmailValidationMessage2: "You have elected to use the same email for your Child and the parent/ guardian. The child will not get their own log-in. If you would like them to have their own log-in please give them a seperate email address.",
-  sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering."
+  sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering.",
+  // found matched user to continue registration
+  userAlreadyExists: "We have found a matching user with email: {{email}} and mobile number {{phone}}. In order to verify your identity, we will send you an authentication code via",
+  enterXDigitCode: "Enter {{number}} digit code"
 };
 
 export default AppConstants;

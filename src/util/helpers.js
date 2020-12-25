@@ -104,5 +104,29 @@ const regexNumberExpression = (number) => {
   }
 };
 
-module.exports = { isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction,formatValue,
-  isNullOrUndefined, feeIsNull , captializedString, getCurrentYear, reverseArray , regexNumberExpression}
+const getStringWithPassedValues = (string = '', values = {}) => {
+  try {
+    const list = Object.entries(values); 
+    return list.reduce((acc, [key, value]) => {
+      const val = acc.replace(`{{${key}}}`, value);
+      return val;
+    }, string);
+  } catch (err) {
+    console.log('Error "getStringWithPassedValues"', err.message);
+  }
+}
+
+module.exports = { 
+  isArrayNotEmpty, 
+  isNullOrEmptyString, 
+  getAge, 
+  deepCopyFunction,
+  formatValue,
+  isNullOrUndefined, 
+  feeIsNull, 
+  captializedString, 
+  getCurrentYear, 
+  reverseArray, 
+  regexNumberExpression,
+  getStringWithPassedValues,
+};
