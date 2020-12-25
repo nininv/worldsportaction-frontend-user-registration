@@ -171,6 +171,14 @@
   width: 225px;
 }
 
+.other-info-text {
+  font-size: 15px;
+  color: var(--app-414141);
+  font-weight: 500;
+  font-family: inter-medium;
+  padding: 10px 20px 0;
+}
+
 .other-info-font{
   font-family: inter !important;
 }
