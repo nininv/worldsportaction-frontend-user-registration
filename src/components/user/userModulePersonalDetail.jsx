@@ -22,7 +22,21 @@ import {
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId, setOrganistaionId, setCompetitionID, setSourceSystemFlag, setAuthToken, getAuthToken, setIsUserRegistration } from "../../util/sessionStorage";
+import {
+    getUserId, 
+    setUserId, 
+    getTempUserId, 
+    setTempUserId, 
+    getOrganisationData, 
+    getStripeAccountId, 
+    getStripeAccountConnectId,
+    setOrganistaionId, 
+    setCompetitionID, 
+    setSourceSystemFlag, 
+    setAuthToken, 
+    getAuthToken, 
+    setIsUserRegistration
+} from "../../util/sessionStorage";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate, getTime } from '../../themes/dateformate';
@@ -868,7 +882,7 @@ class UserModulePersonalDetail extends Component {
             await this.setState({ tabKey: tabKey });
         }
         let urlSplit = this.props.location.search.split("?code=")
-        let stripeConnected = getStripeAccountId() == "null" ? false : true
+        let stripeConnected = getStripeAccountConnectId()
         if (stripeConnected) {
             console.log("stripe connected")
         }
@@ -1938,6 +1952,7 @@ class UserModulePersonalDetail extends Component {
 
     headerView = () => {
         const stripeConnected = getStripeAccountId() ? true : false;
+        const stripeConnectId = getStripeAccountConnectId() ? true : false;
         const userEmail = this.userEmail();
         const stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`;
 
@@ -1993,7 +2008,7 @@ class UserModulePersonalDetail extends Component {
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
-                                        {stripeConnected ?
+                                        {stripeConnectId ?
                                             <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
                                                 className="menu-item-without-selection"
@@ -2363,7 +2378,7 @@ class UserModulePersonalDetail extends Component {
                                                 {!activityPlayerList.length && !activityManagerList.length
                                                     && !scorerActivityRoster.length //&& activityParentList.length == 0
                                                     && !activityManagerOnLoad && !activityPlayerOnLoad && !activityScorerOnLoad
-                                                    && this.noDataAvailable()}  
+                                                    && this.noDataAvailable()}   
                                             </>
                                         }
                                         {this.state.tabKey=== "3" && this.statisticsView()}
