@@ -3220,6 +3220,7 @@ class AppRegistrationFormNew extends Component {
             let hasOtherParticipantSports = registrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
             let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"YYYY-MM-DD") : null;
             let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"YYYY-MM-DD") : null;
+            console.log("accreditationCoachExpiryDate",accreditationCoachExpiryDate)
             let accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "YYYY-MM-DD") : null;
             return (
                 <div className="registration-form-view">
