@@ -296,12 +296,12 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.additionalInfo.isParticipatedInSSP = selectedUser.additionalInfo.isParticipatedInSSP;
 			registrationObj.additionalInfo.accreditationLevelUmpireRefId = selectedUser.additionalInfo.accreditationLevelUmpireRefId;
 			registrationObj.additionalInfo.associationLevelInfo = selectedUser.additionalInfo.associationLevelInfo;
-			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate;
+			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate ? moment(selectedUser.additionalInfo.accreditationUmpireExpiryDate).format("MM-DD-YYYY") : null;;;
 			registrationObj.additionalInfo.isPrerequestTrainingComplete = selectedUser.additionalInfo.isPrerequestTrainingComplete;
 			registrationObj.additionalInfo.accreditationLevelCoachRefId = selectedUser.additionalInfo.accreditationLevelCoachRefId;
-			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate;
+			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate ? moment(selectedUser.additionalInfo.accreditationCoachExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.childrenCheckNumber = selectedUser.additionalInfo.childrenCheckNumber;
-			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate;
+			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate ? moment(selectedUser.additionalInfo.childrenCheckExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.walkingNetballRefId = selectedUser.additionalInfo.walkingNetballRefId;
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;
