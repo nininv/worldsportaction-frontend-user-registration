@@ -221,6 +221,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 		}
 		if((action.data != -1) || (getUserId() != 0 && registrationObj.registeringYourself == 1)){
 			let selectedUser = state.userInfo.find((user) => user.id == action.data);
+			registrationObj.userId = selectedUser.id;
 			registrationObj.firstName = selectedUser.firstName;
 			registrationObj.lastName = selectedUser.lastName;
 			registrationObj.email = selectedUser.email;
@@ -230,7 +231,11 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;
-            registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.referParentEmail = selectedUser.isInActive ? true : false;
+			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail == true){
+				registrationObj.email = null;
+			}
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.addNewAddressFlag = false;
