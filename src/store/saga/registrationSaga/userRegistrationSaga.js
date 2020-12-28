@@ -1,7 +1,9 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import AxiosApi from "../../http/registrationHttp/registrationAxios";
+import userHttpApi from "../../http/userHttp/userAxiosApi";
 import { message } from "antd";
+import * as moment from "moment";
 
 function* failSaga(result) {
   yield put({
@@ -154,6 +156,33 @@ export function* getSeasonalCasualFeesSaga(action) {
     } else {
       yield call(failSaga, result)
     }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* getUserExists(action) {
+  try {
+    const {payload} = action;
+    payload.dateOfBirth = moment(payload.dateOfBirth).format('YYYY-MM-DD')
+    const result = yield call(userHttpApi.checkUserMatch, payload);
+    yield put({
+      type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* sendDigitCode(action) {
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.sendDigitCode, payload);
+    yield put({
+      type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+      result,
+    });
   } catch (error) {
     yield call(errorSaga, error)
   }

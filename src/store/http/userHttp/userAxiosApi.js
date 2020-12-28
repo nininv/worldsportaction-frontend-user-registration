@@ -127,6 +127,21 @@ let userHttpApi = {
     const url = `users/updatePassword`;
     return Method.dataPatch(url, token, payload);        
   },
+
+  checkUserMatch(payload) {
+    const url = `api/user/existing`;
+    return Method.dataPost(url, token, payload);
+  },
+
+  sendAuthenticationCodeType(payload) {
+    const url = `api/user/existing-auth-code`;
+    return Method.dataPost(url, token, payload);
+  },
+
+  sendDigitCode(payload) {
+    const url = `api/user/existing-digit-code`;
+    return Method.dataPost(url, token, payload);
+  },
 }
 
 let Method = {

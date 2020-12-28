@@ -1206,6 +1206,7 @@ const AppConstants = {
   sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering.",
   // found matched user to continue registration
   userAlreadyExists: "We have found a matching user with email: {{email}} and mobile number {{phone}}. In order to verify your identity, we will send you an authentication code via",
+  userAlreadyExistsNoContact: "We have found a matching user but your details don’t match. Please contact your competition organiser.",
   enterXDigitCode: "Enter {{number}} digit code"
 };
 

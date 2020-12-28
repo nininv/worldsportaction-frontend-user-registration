@@ -62,7 +62,8 @@ import {
     getParticipantInfoById,
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
-    getSeasonalAndCasualFees
+    getSeasonalAndCasualFees,
+    getUserExists,
 } from '../../../store/actions/registrationAction/userRegistrationAction';
 import {
     getAge,
@@ -1456,6 +1457,8 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
+                        this.props.getUserExists(registrationObj);
+                        return;
                     }
                     if (this.state.currentStep == 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -1522,7 +1525,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     participantDetailsStepView = (getFieldDecorator) => {
-        const { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj, userAlreadyExist } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
@@ -1533,8 +1536,8 @@ class AppRegistrationFormNew extends Component {
                 {participantWithoutProfile && this.addedParticipantView()}
                 {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                 {this.participantDetailView(getFieldDecorator)}
-                <UserAlreadyExists />
-                <EnterCode />
+                {userAlreadyExist.firstStep && (<UserAlreadyExists email={userAlreadyExist.email} phone={userAlreadyExist.phone} />)}
+                {userAlreadyExist.secondStep && (<EnterCode />)}
                 {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                 {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
             </>
@@ -3935,7 +3938,8 @@ function mapDispatchToProps(dispatch) {
         registrationExpiryCheckAction,
         getSeasonalAndCasualFees,
         getSchoolListAction,
-        validateRegistrationCapAction
+        validateRegistrationCapAction,
+        getUserExists
     }, dispatch);
 }
 

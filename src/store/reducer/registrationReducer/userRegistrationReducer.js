@@ -97,7 +97,6 @@ let registrationObjTemp = {
 		"favouriteFireBird": null,
 		"isConsentPhotosGiven": false,
 		"isDisability": null,
-		"disabilityCareNumber": null,
 		"childrenCheckNumber": null,
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
@@ -206,7 +205,13 @@ const initialState = {
 	seasonalAndCasualFeesCompetitionIndex: null,
 	individualCompetitionNotExist: false,
 	registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
-    enableValidateRegistrationCapService: false
+  enableValidateRegistrationCapService: false,
+	userAlreadyExist: {
+		firstStep: false,
+		secondStep: false,
+		phone: false,
+		email: false,
+	}
 }
 
 function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
@@ -1004,8 +1009,17 @@ function userRegistrationReducer(state = initialState, action){
 					console.log("Error in API_GET_SEASONAL_CASUAL_FEES_SUCCESS::"+ex);
 				}
 
-        default:
-            return state;
+			case ApiConstants.API_GET_USER_EXIST_SUCCESS:
+				return {
+					...state,
+					userAlreadyExist: {
+						firstStep: true,
+						phone: action.result.result.data.phone,
+						email: action.result.result.data.email,
+					},
+				}
+      default:
+        return state;
     }
 }
 

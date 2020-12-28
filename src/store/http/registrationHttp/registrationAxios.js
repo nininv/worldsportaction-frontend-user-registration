@@ -266,12 +266,6 @@ let AxiosApi = {
         var url = `api/registrationcap/validate`;
         return Method.dataPost(url, token, payload);
     },
-
-    // TODO: in progress
-    checkUserMatch(payload) {
-        const url = `api/userMerge/matches/${payload.userId}`;
-        return Method.dataGet(url, token, payload);
-    },
 };
 
 const Method = {

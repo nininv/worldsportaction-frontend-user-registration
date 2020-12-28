@@ -107,6 +107,14 @@ function getSeasonalAndCasualFees(payload){
     return action;
 }
 
+function getUserExists(payload){
+    const action = {
+        type: ApiConstants.API_GET_USER_EXIST,
+        payload
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -119,5 +127,6 @@ export{
     updateParticipantAdditionalInfoAction,
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
-    getSeasonalAndCasualFees
+    getSeasonalAndCasualFees,
+    getUserExists,
 }
