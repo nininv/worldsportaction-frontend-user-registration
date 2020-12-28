@@ -37,6 +37,7 @@ import {
 } from '../../store/actions/commonAction/commonAction';
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { captializedString } from "../../util/helpers";
+import Tooltip from 'react-png-tooltip';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -238,10 +239,10 @@ class RegistrationProducts extends Component {
         }
     }
 
-    getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
+    getPaymentOptionText = (paymentOptionRefId, isTeamRegistration) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+        (paymentOptionRefId == 3 ? AppConstants.allMatches : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
@@ -700,20 +701,39 @@ class RegistrationProducts extends Component {
                     }
                     {item.paymentOptions.length > 1 && (
                         <div className="subtitle-text-common" style={{marginTop: "16px"}}>
-                            {AppConstants.wouldYouLikeTopay}
+                            {AppConstants.whatWouldYouLikeToPay}
                         </div>
                     )}     
                     <div style={item.paymentOptions.length > 1 ? {marginTop:6} : {marginTop:12}}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
-                            onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
+                            onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}
+                            style={{display: "flex"}}>  
                             {(item.paymentOptions || []).map((p, pIndex) =>(  
                                 <span key={p.paymentOptionRefId}>
                                     {p.paymentOptionRefId == 1 && 
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.paySingleGame}</Radio>                    
+                                        <div className="contextualHelp-RowDirection">
+                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                            {item.isTeamRegistration == 0 ? 
+                                                <div style={{ marginLeft: -20, marginRight: 17}}>
+                                                        <Tooltip placement='bottom' background="#ff8237">
+                                                            <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                        </Tooltip>
+                                                </div>
+                                                :
+                                                null
+                                            }
+                                        </div>
                                     }  
-                                    {p.paymentOptionRefId == 3 &&          
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
+                                    {p.paymentOptionRefId == 3 &&     
+                                        <div className="contextualHelp-RowDirection">
+                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
+                                            <div style={{ marginLeft: -20, marginRight: 17}}>
+                                                    <Tooltip placement='bottom' background="#ff8237">
+                                                        <span>{AppConstants.allMatchesTipMsg}</span>
+                                                    </Tooltip>
+                                            </div>
+                                        </div>     
                                     }
                                     { p.paymentOptionRefId == 4 &&          
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
@@ -732,10 +752,14 @@ class RegistrationProducts extends Component {
                             <div className="subtitle-text-common">{AppConstants.payNow}</div>
                             <div>{"$" + item.payNow}</div>
                         </div>
-                        <div className="col-sm-3">
-                            <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
-                            <div>{"$" + item.payPerMatch}</div>
-                        </div>
+                        {item.isTeamRegistration == 1 ? 
+                            <div className="col-sm-3">
+                                <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
+                                <div>{"$" + item.payPerMatch}</div>
+                            </div>
+                            :
+                            null
+                        }
                     </div>
                     }
                     {item.selectedOptions.paymentOptionRefId == 4 &&
@@ -1398,7 +1422,7 @@ class RegistrationProducts extends Component {
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId, item.isTeamRegistration)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId + "#" + index}>
                         {item.isTeamRegistration == 1  ? 
