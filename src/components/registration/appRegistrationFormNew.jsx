@@ -1981,7 +1981,7 @@ class AppRegistrationFormNew extends Component {
                                         />
                                     )}
                                 </Form.Item>
-                                {registrationObj.isInActive ?
+                                {registrationObj.isInActive && registrationObj.email == null ?
                                     <div style={{color:"var(--app-red)"}}>
                                         {AppConstants.userLoginEmailChangeMessage}
                                     </div>
