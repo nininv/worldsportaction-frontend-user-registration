@@ -1207,7 +1207,8 @@ const AppConstants = {
 
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",
-  payAtMatchPerPlayer: "Pay At Match Per Player"
+  payAtMatchPerPlayer: "Pay At Match Per Player",
+  please_sel_umpire_unavailable_time: "Please select the dates/times you are unavailable to umpire and click Save."
 };
 
 export default AppConstants;

@@ -16,7 +16,6 @@
 .table-actions {
   display: flex;
   width: fit-content;
-  margin: 0 0 30px auto;
 }
 
 .table-actions .ant-input {

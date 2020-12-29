@@ -397,6 +397,12 @@
   font-family: inter;
   font-weight: normal;
 }
+.umpireAvailablityMessage{
+  font-size: 17px;
+  color: rgba(79,79,79,1);
+  font-family: inter;
+  font-weight: normal;
+}
 
 .dash-table-paddings {
   padding: 10px 20px;
