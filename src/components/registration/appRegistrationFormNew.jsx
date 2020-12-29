@@ -1981,6 +1981,13 @@ class AppRegistrationFormNew extends Component {
                                         />
                                     )}
                                 </Form.Item>
+                                {registrationObj.isInActive && registrationObj.email == null ?
+                                    <div style={{color:"var(--app-red)"}}>
+                                        {AppConstants.userLoginEmailChangeMessage}
+                                    </div>
+                                    :
+                                    null 
+                                }
                             </div>
                         )}
                         {getAge(registrationObj.dateOfBirth) < 18 && (

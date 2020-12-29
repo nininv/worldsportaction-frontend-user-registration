@@ -14,7 +14,9 @@ const initialState = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  }
+  },
+  forgotPasswordSuccess: false,
+  forgotPasswordMessage: ''
 };
 
 function login(state = initialState, action) {
@@ -92,6 +94,16 @@ function login(state = initialState, action) {
         status: action.status,
         error: null
       };
+
+    case ApiConstants.ACTION_TO_CLEAR_AUTHENTICATION_REDUCER:
+      if (action.key == "clearPasswordSuccess") {
+        state.forgotPasswordSuccess = false
+      }
+      return {
+        ...state,
+        onLoad: false,
+
+      }
 
     default:
       return state;
