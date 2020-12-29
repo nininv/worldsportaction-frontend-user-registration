@@ -1598,14 +1598,23 @@ class AppTeamRegistrationForm extends Component {
                             return;
                         }
                         if (values.yourDetailsMobileNumber != null && values.yourDetailsMobileNumber.length != 10) {
+                            this.setState({hasErrorYourDetails: true})
                             return false;
                         }
                         if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                            this.setState({hasErrorEmergency: true})
                             return false;
                         }
                         if (filteredTeamRegistrationObj.parentOrGuardian != null && filteredTeamRegistrationObj.parentOrGuardian.length > 0) {
                             for (let a in filteredTeamRegistrationObj.parentOrGuardian) {
                                 if (filteredTeamRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                    this.state.hasErrorParent.push({
+                                        error: true,
+                                        parentIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorParent: this.state.hasErrorParent
+                                    })
                                     return false
                                 }
                             }
@@ -1613,14 +1622,36 @@ class AppTeamRegistrationForm extends Component {
                         if (filteredTeamRegistrationObj.teamMembers != null && filteredTeamRegistrationObj.teamMembers.length > 0) {
                             for (let a in filteredTeamRegistrationObj.teamMembers) {
                                 if (filteredTeamRegistrationObj.teamMembers[a].mobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].mobileNumber.length != 10) {
+                                    this.state.hasErrorTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorTeamMember: this.state.hasErrorTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != null && filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != 10) {
+                                    this.state.hasErrorEmergencyTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorEmergencyTeamMember: this.state.hasErrorEmergencyTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian.length > 0) {
                                     for (let b in filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian) {
                                         if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber.length != 10) {
+                                            this.state.hasErrorTeamMemberParent.push({
+                                                error: true,
+                                                parentIndex: a,
+                                                teamMemberIndex: b
+                                            })
+                                            this.setState({
+                                                hasErrorTeamMemberParent: this.state.hasErrorTeamMemberParent
+                                            })
                                             return false
                                         }
                                     }
