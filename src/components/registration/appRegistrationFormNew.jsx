@@ -175,7 +175,7 @@ class AppRegistrationFormNew extends Component {
             }
         }
 
-        if (registrationState.addCompetitionFlag) {            
+        if (registrationState.addCompetitionFlag) {
             //calling setting service after added competition
             let payload = {
                 "organisationUniqueKey": this.state.organisationId,
@@ -236,30 +236,30 @@ class AppRegistrationFormNew extends Component {
             this.props.updateUserRegistrationStateVarAction("individualCompetitionNotExist", false);
         }
 
-        if(registrationState.enableValidateRegistrationCapService == true){
+        if (registrationState.enableValidateRegistrationCapService == true) {
             this.props.validateRegistrationCapAction(registrationState.registrationCapValidateInputObj);
-            this.setState({validateRegistrationCapOnLoad: true})
-            this.props.updateUserRegistrationStateVarAction("enableValidateRegistrationCapService",false)
+            this.setState({ validateRegistrationCapOnLoad: true })
+            this.props.updateUserRegistrationStateVarAction("enableValidateRegistrationCapService", false)
         }
 
-        if(this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true){
-            if(this.props.commonReducerState.status == 4){
-                this.setState({registrationCapModalVisible: true,validateRegistrationCapBySubmit: false})
-            }else{
-                if(this.state.validateRegistrationCapBySubmit == true){
+        if (this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true) {
+            if (this.props.commonReducerState.status == 4) {
+                this.setState({ registrationCapModalVisible: true, validateRegistrationCapBySubmit: false })
+            } else {
+                if (this.state.validateRegistrationCapBySubmit == true) {
                     this.stepNavigation();
-                    this.setState({validateRegistrationCapBySubmit: false});
+                    this.setState({ validateRegistrationCapBySubmit: false });
                 }
             }
-            this.setState({validateRegistrationCapOnLoad: false})
+            this.setState({ validateRegistrationCapOnLoad: false })
         }
     }
 
     componentDidMount() {
-        this.props.updateUserRegistrationObjectAction(null,"registrationObj");
+        this.props.updateUserRegistrationObjectAction(null, "registrationObj");
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
-        this.setState({ getMembershipLoad: true });        
+        this.setState({ getMembershipLoad: true });
         if (getOrganisationId() != null && getCompetitonId() != null) {
             this.setState({
                 showAddAnotherCompetitionView: false,
@@ -283,14 +283,14 @@ class AppRegistrationFormNew extends Component {
     // }
 
     changeStep = (current) => {
-        const {registrationObj} = this.props.userRegistrationState;
+        const { registrationObj } = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
-            if(this.state.currentStep == 1 && this.state.enabledSteps.includes(2)){
+            if (this.state.currentStep == 1 && this.state.enabledSteps.includes(2)) {
                 let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
-                console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
-                if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
+                console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
+                if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
                     this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
-                    this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                    this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
                     return;
                 }
             }
@@ -326,7 +326,7 @@ class AppRegistrationFormNew extends Component {
             if (registrationObj) {
                 this.props.form.setFieldsValue({
                     [`genderRefId`]: registrationObj.genderRefId,
-                    [`dateOfBirth`]: registrationObj.dateOfBirth ? moment(registrationObj.dateOfBirth,"MM-DD-YYYY") : null,
+                    [`dateOfBirth`]: registrationObj.dateOfBirth ? moment(registrationObj.dateOfBirth, "MM-DD-YYYY") : null,
                     [`participantFirstName`]: registrationObj.firstName,
                     [`participantMiddleName`]: registrationObj.middleName,
                     [`participantLastName`]: registrationObj.lastName,
@@ -738,15 +738,14 @@ class AppRegistrationFormNew extends Component {
                 if (value.length === 10) {
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
-                    if(obj != undefined)
-                    {
-                        hasError.splice(hasError.indexOf(obj) , 1);
-                    }                                        
+                    if (obj != undefined) {
+                        hasError.splice(hasError.indexOf(obj), 1);
+                    }
                     // hasError.push({
                     //     error : false,
                     //     parentIndex : parentIndex
                     // })
-                    this.setState({                        
+                    this.setState({
                         hasErrorParent: hasError
                     })
                     registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
@@ -757,20 +756,19 @@ class AppRegistrationFormNew extends Component {
                     // this.setState({
                     //     hasErrorParent: true
                     // })
-                    console.log('obj ' , this.state.hasErrorParent , parentIndex)
+                    console.log('obj ', this.state.hasErrorParent, parentIndex)
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
-                    console.log('obj ' , obj)
-                    if(obj == undefined )
-                    {
+                    console.log('obj ', obj)
+                    if (obj == undefined) {
                         hasError.push({
-                            error : true,
-                            parentIndex : parentIndex
+                            error: true,
+                            parentIndex: parentIndex
                         })
                     };
 
-                    
-                    this.setState({                        
+
+                    this.setState({
                         hasErrorParent: hasError
                     })
 
@@ -807,13 +805,13 @@ class AppRegistrationFormNew extends Component {
     handlePlacesAutocomplete = (addressData, key, parentIndex) => {
         const { registrationObj } = this.props.userRegistrationState;
         const { stateList, countryList } = this.props.commonReducerState;
-        const address = addressData;        
+        const address = addressData;
         // if (!address.addressOne) {
         //     this.setState({searchAddressError: ValidationConstants.addressDetailsError});
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
-        console.log("adderssData",address)
+        console.log("adderssData", address)
         if (address) {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
@@ -1089,7 +1087,7 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            console.log("registrationObj",registrationObj);
+            console.log("registrationObj", registrationObj);
             if (registrationObj.addNewAddressFlag &&
                 registrationObj.stateRefId == null) {
                 error = true;
@@ -1152,7 +1150,7 @@ class AppRegistrationFormNew extends Component {
 
     onChangeSetOrganisation = (organisationId) => {
         try {
-            let { membershipProductInfo } = this.props.userRegistrationState;            
+            let { membershipProductInfo } = this.props.userRegistrationState;
             this.setState({
                 organisationId: organisationId,
                 currentCompetitions: 1
@@ -1270,8 +1268,8 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
-    stepNavigation = (registrationObj,expiredRegistration) => {
-        try{
+    stepNavigation = (registrationObj, expiredRegistration) => {
+        try {
             let nextStep = this.state.currentStep + 1;
             this.scrollToTop();
             if (nextStep == 1) {
@@ -1294,25 +1292,25 @@ class AppRegistrationFormNew extends Component {
                 enabledSteps: this.state.enabledSteps,
                 completedSteps: this.state.completedSteps
             });
-        }catch(ex){
-            console.log("Error in stepNavigation::"+ex);
+        } catch (ex) {
+            console.log("Error in stepNavigation::" + ex);
         }
     }
 
     getRegistrationCapValidationInputObj = (registrationObj) => {
-        try{
+        try {
             let registrationCapValidateInputObjTemp = {
                 registrationId: this.props.userRegistrationState.registrationId ? this.props.userRegistrationState.registrationId : "",
                 participantId: this.props.userRegistrationState.participantId ? this.props.userRegistrationState.participantId : "",
                 isTeamRegistration: 0,
                 products: []
             }
-            for(let competition of registrationObj.competitions){
-                for(let productItem of competition.products){
-                    if(productItem.isPlayer == 1){
+            for (let competition of registrationObj.competitions) {
+                for (let productItem of competition.products) {
+                    if (productItem.isPlayer == 1) {
                         let divisions = competition.divisions.filter(x => x.competitionMembershipProductId == productItem.competitionMembershipProductId && x.competitionMembershipProductTypeId == productItem.competitionMembershipProductTypeId);
-                        if(divisions){
-                            for(let divisionItem of divisions){
+                        if (divisions) {
+                            for (let divisionItem of divisions) {
                                 let product = {
                                     "competitionId": competition.competitionId,
                                     "organisationId": competition.organisationId,
@@ -1320,9 +1318,9 @@ class AppRegistrationFormNew extends Component {
                                     "divisionId": divisionItem.competitionMembershipProductDivisionId
                                 }
                                 registrationCapValidateInputObjTemp.products.push(product);
-                            } 
+                            }
                         }
-                    }else{
+                    } else {
                         let product = {
                             "competitionId": competition.competitionId,
                             "organisationId": competition.organisationId,
@@ -1330,106 +1328,101 @@ class AppRegistrationFormNew extends Component {
                             "divisionId": null
                         }
                         registrationCapValidateInputObjTemp.products.push(product);
-                    } 
+                    }
                 }
             }
             return registrationCapValidateInputObjTemp;
-        }catch(ex){
-            console.log("Error in getRegistrationCapValidationInputObj::"+ex)
+        } catch (ex) {
+            console.log("Error in getRegistrationCapValidationInputObj::" + ex)
         }
     }
 
     setReferParentEmailIfRequired = (registrationObj) => {
-        try{
-            const {userInfo} = this.props.userRegistrationState;
+        try {
+            const { userInfo } = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
-            if(getAge(registrationObj.dateOfBirth) < 18 && childEmail){
+            if (getAge(registrationObj.dateOfBirth) < 18 && childEmail) {
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
-                if(isSameWithParentEmail){
-                    this.setState({sameEmailValidationModalVisible: true});
+                if (isSameWithParentEmail) {
+                    this.setState({ sameEmailValidationModalVisible: true });
                     return false;
-                }else{
+                } else {
                     this.onChangeSetParticipantValue(false, "referParentEmail");
                 }
             }
-            if(registrationObj.registeringYourself == 3){
-                if(getUserId() != 0){
+            if (registrationObj.registeringYourself == 3) {
+                if (getUserId() != 0) {
                     let user = userInfo?.find(x => x.id == getUserId());
-                    if(user){
-                        if(user.email === registrationObj.email){
-                            this.setState({sameSomeoneEmailValidationModalVisible: true})
+                    if (user) {
+                        if (user.email === registrationObj.email) {
+                            this.setState({ sameSomeoneEmailValidationModalVisible: true })
                             return false;
                         }
                     }
                 }
             }
             return true;
-        }catch(ex){
-            console.log("Error in setReferParentEmailIfRequried::"+ex);
+        } catch (ex) {
+            console.log("Error in setReferParentEmailIfRequried::" + ex);
         }
     }
 
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState; 
-            console.log("regisrationObj",registrationObj)           
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+            console.log("regisrationObj", registrationObj)
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
-            let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)            
-   
+            let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
+
             this.props.form.validateFieldsAndScroll((err, values) => {
-                if(err)
-                {                        
-                        if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
-                        {
-                            for(let a in filteredSaveRegistrationObj.parentOrGuardian)
-                            {
-                                if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null ||filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
-                                {
-                                    if(this.state.hasErrorParent.length > 0)
-                                    {
-                                        let item = this.state.hasErrorParent.find(element => element.parentIndex == a);
-                                        if(item != undefined)
-                                        {
-                                            let hasErrors = this.state.hasErrorParent;
-                                            hasErrors[a].error = true;
-                                            this.setState({
-                                                hasErrorParent : hasErrors
-                                            })
-                                        }                                    
-                                        else{
-                                            let hasErrors = this.state.hasErrorParent;
-                                            hasErrors.push({
-                                                error : true,
-                                                parentIndex : a
-                                            })
-                                            this.setState({
-                                                hasErrorParent : hasErrors
-                                            })
-                                        }
+                if (err) {
+                    message.error(AppConstants.pleaseReview)
+                    if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0) {
+                        for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
+                            if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null || filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                if (this.state.hasErrorParent.length > 0) {
+                                    let item = this.state.hasErrorParent.find(element => element.parentIndex == a);
+                                    if (item != undefined) {
+                                        let hasErrors = this.state.hasErrorParent;
+                                        hasErrors[a].error = true;
+                                        this.setState({
+                                            hasErrorParent: hasErrors
+                                        })
                                     }
-                                    else{
+                                    else {
                                         let hasErrors = this.state.hasErrorParent;
                                         hasErrors.push({
-                                            error : true,
-                                            parentIndex : a
+                                            error: true,
+                                            parentIndex: a
                                         })
                                         this.setState({
-                                            hasErrorParent : hasErrors
+                                            hasErrorParent: hasErrors
                                         })
                                     }
-
                                 }
+                                else {
+                                    let hasErrors = this.state.hasErrorParent;
+                                    hasErrors.push({
+                                        error: true,
+                                        parentIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorParent: hasErrors
+                                    })
+                                }
+
                             }
                         }
-                      
+                    }
+
                 }
                 if (!err) {
                     // if(registrationObj.photoUrl == null){
                     //     message.error(ValidationConstants.userPhotoIsRequired);
                     //     return;
                     // }
-               
+
                     if (this.state.currentStep == 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
@@ -1437,29 +1430,27 @@ class AppRegistrationFormNew extends Component {
                             return;
                         };
 
-                        if(values.participantMobileNumber != null && values.participantMobileNumber.length != 10)
-                        {
+                        if (values.participantMobileNumber != null && values.participantMobileNumber.length != 10) {
                             // message.error(ValidationConstants.mobileLength);
-                            this.setState({hasErrorParticipitant: true})
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorParticipitant: true })
                             return false;
                         }
-                        if(values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10)
-                        {
-                            this.setState({hasErrorEmergency: true})
+                        if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorEmergency: true })
                             return false;
                         }
                         let hasError = this.state.hasErrorParent;
-                        if(filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0)
-                        {
-                            for(let a in filteredSaveRegistrationObj.parentOrGuardian)
-                            {
-                                if(filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10)
-                                {
+                        if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0) {
+                            for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
+                                if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
                                     hasError.push({
-                                        error : true,
-                                        parentIndex : a
+                                        error: true,
+                                        parentIndex: a
                                     });
-                                    this.setState({                        
+                                    this.setState({
                                         hasErrorParent: hasError
                                     })
                                     return false
@@ -1468,7 +1459,7 @@ class AppRegistrationFormNew extends Component {
                         }
 
                         let isSame = this.setReferParentEmailIfRequired(registrationObj);
-                        if(!isSame){
+                        if (!isSame) {
                             return;
                         }
                     }
@@ -1484,15 +1475,15 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
                         let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
-                        console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)",registrationCapValidationInputObj.products.find(x => x.competitionId))
-                        if(registrationCapValidationInputObj.products.find(x => x.competitionId)){
+                        console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
+                        if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
                             this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
-                            this.setState({validateRegistrationCapBySubmit: true,validateRegistrationCapOnLoad: true});
+                            this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
                             return;
                         }
                     }
                     if (this.state.currentStep != 2) {
-                        this.stepNavigation(registrationObj,expiredRegistration);
+                        this.stepNavigation(registrationObj, expiredRegistration);
                     }
                     setTimeout(() => {
                         this.setState({
@@ -1504,7 +1495,7 @@ class AppRegistrationFormNew extends Component {
                     if (this.state.currentStep == 2) {
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
-                        formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));                     
+                        formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
                         this.props.saveParticipantInfo(formData);
                     }
                 }
@@ -1538,7 +1529,7 @@ class AppRegistrationFormNew extends Component {
 
     participantDetailsStepView = (getFieldDecorator) => {
         let { registrationObj } = this.props.userRegistrationState;
-        console.log("regostratop",registrationObj.dateOfBirth)
+        console.log("regostratop", registrationObj.dateOfBirth)
         return (
             <div>
                 {registrationObj.userId == -1 || registrationObj.userId == -2 ?
@@ -1662,7 +1653,7 @@ class AppRegistrationFormNew extends Component {
     participantAddressView = (getFieldDecorator) => {
         let userRegistrationstate = this.props.userRegistrationState;
         let registrationObj = userRegistrationstate.registrationObj;
-        let userInfo = deepCopyFunction(userRegistrationstate.userInfo);        
+        let userInfo = deepCopyFunction(userRegistrationstate.userInfo);
         let user = userInfo.find(x => x.id == registrationObj.userId);
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
@@ -1982,11 +1973,11 @@ class AppRegistrationFormNew extends Component {
                                     )}
                                 </Form.Item>
                                 {registrationObj.isInActive && registrationObj.email == null ?
-                                    <div style={{color:"var(--app-red)"}}>
+                                    <div style={{ color: "var(--app-red)" }}>
                                         {AppConstants.userLoginEmailChangeMessage}
                                     </div>
                                     :
-                                    null 
+                                    null
                                 }
                             </div>
                         )}
@@ -2253,10 +2244,9 @@ class AppRegistrationFormNew extends Component {
                 {(registrationObj.parentOrGuardian || []).map((parent, parentIndex) => {
                     let hasErrorParentviaIndex = hasErrorParent.find(element => element.parentIndex == parentIndex);
                     let hasError = false;
-                    if(hasErrorParentviaIndex != undefined )
-                    {
+                    if (hasErrorParentviaIndex != undefined) {
                         hasError = hasErrorParentviaIndex.error;
-                    }                    
+                    }
                     return (
                         <div key={"parent" + parentIndex} className="light-grey-border-box">
                             {(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) && (
@@ -2521,7 +2511,7 @@ class AppRegistrationFormNew extends Component {
                                 <div className="form-heading" style={{ textAlign: "start", marginRight: 10 }}>{registrationObj.firstName} {registrationObj.lastName}</div>
                                 {(registrationObj.genderRefId || registrationObj.dateOfBirth) && (
                                     <div style={{ fontWeight: "600", marginTop: "-5px" }}>
-                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : registrationObj.genderRefId == 2 ? 'Male' : 'Non-Binary')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth,"MM-DD-YYYY").format("DD/MM/YYYY")}
+                                        {registrationObj.genderRefId && (registrationObj.genderRefId == 1 ? 'Female' : registrationObj.genderRefId == 2 ? 'Male' : 'Non-Binary')}, {registrationObj.dateOfBirth && moment(registrationObj.dateOfBirth, "MM-DD-YYYY").format("DD/MM/YYYY")}
                                     </div>
                                 )}
                             </div>
@@ -2544,7 +2534,7 @@ class AppRegistrationFormNew extends Component {
             return (
                 <div className="registration-form-view">
                     <div style={{ display: "flex", alignItems: "center" }}>
-                        <div className="form-heading" style={{ marginRight: 10}}>{AppConstants.findACompetition}</div>
+                        <div className="form-heading" style={{ marginRight: 10 }}>{AppConstants.findACompetition}</div>
                         <div className="orange-action-txt"
                             style={{ marginLeft: "auto", paddingBottom: "7.5px" }}
                             onClick={() => this.setState({ showAddAnotherCompetitionView: false, organisationId: null })}>{AppConstants.cancel}</div>
@@ -2583,10 +2573,10 @@ class AppRegistrationFormNew extends Component {
                         </Select>
                         {organisationInfo && (
                             <div className="organisation-info-wrapper">
-                                {organisationInfo.organisationLogoUrl?
-                                <img className="profile-img" src={organisationInfo.organisationLogoUrl}/>
-                                :
-                                <img className="profile-img" style={{borderRadius:"20%"}} src={AppImages.compDefaultIcon}/>
+                                {organisationInfo.organisationLogoUrl ?
+                                    <img className="profile-img" src={organisationInfo.organisationLogoUrl} />
+                                    :
+                                    <img className="profile-img" style={{ borderRadius: "20%" }} src={AppImages.compDefaultIcon} />
                                 }
                                 <div style={{ width: "170px" }}>{organisationInfo.street1} {organisationInfo.street2} {organisationInfo.suburb} {organisationInfo.state} {organisationInfo.postalCode}</div>
                                 {organisationInfo.mobileNumber && (
@@ -2597,7 +2587,7 @@ class AppRegistrationFormNew extends Component {
                     </div>
                     <div className="row" style={{ marginTop: "30px" }}>
                         {(this.state.competitions || []).map((competition, competitionIndex) => (
-                            <div 
+                            <div
                                 className="col-md-6 col-sm-12 pointer"
                                 onClick={() => this.addAnotherCompetition(competition)}
                                 key={competition.competitionUniqueKey}
@@ -2620,13 +2610,13 @@ class AppRegistrationFormNew extends Component {
                                                 overflow: "hidden",
                                                 objectFit: 'contain'
                                             }}
-                                            src={competition.heroImageUrl} 
+                                            src={competition.heroImageUrl}
                                         />
                                     </div>
                                     <div className="form-heading" style={{ marginTop: "20px", textAlign: "start" }}>{competition.competitionName}</div>
-                                    <div style={{fontWeight: "600", marginBottom:"10px"}}>{competition.compOrgName}</div>
-                                    <div style={{ fontWeight: "600", display: 'flex', alignItems: 'center'  }}>
-                                        <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> 
+                                    <div style={{ fontWeight: "600", marginBottom: "10px" }}>{competition.compOrgName}</div>
+                                    <div style={{ fontWeight: "600", display: 'flex', alignItems: 'center' }}>
+                                        <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} />
                                         <div>{competition.registrationOpenDate} - {competition.registrationCloseDate}</div>
                                     </div>
                                 </div>
@@ -2677,19 +2667,19 @@ class AppRegistrationFormNew extends Component {
                 <div>
                     <div className="row" style={competitionInfo.heroImageUrl ? { marginTop: "30px", marginLeft: "0px", marginRight: "0px" } : { marginLeft: "0px", marginRight: "0px" }}>
                         <div className="col-sm-1.5 mr-4" style={{ display: "flex", alignItems: 'center' }}>
-                            {competition.organisationInfo.organisationLogoUrl?
-                                <img className="profile-img" src={competition.organisationInfo.organisationLogoUrl}/>
+                            {competition.organisationInfo.organisationLogoUrl ?
+                                <img className="profile-img" src={competition.organisationInfo.organisationLogoUrl} />
                                 :
-                                <img className="profile-img" style={{borderRadius:"20%"}} src={AppImages.compDefaultIcon}/>
+                                <img className="profile-img" style={{ borderRadius: "20%" }} src={AppImages.compDefaultIcon} />
                             }
                         </div>
-                        <div className="col" style={{padding: 0 }}>
+                        <div className="col" style={{ padding: 0 }}>
                             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div>
                                     <div className="form-heading">{competition.competitionInfo.organisationName}</div>
                                     <div style={{ textAlign: "start", fontWeight: "600", marginRight: 10, marginBottom: 5 }}>{competition.competitionInfo.stateOrgName} - {competition.competitionInfo.competitionName}</div>
                                     <div style={{ fontWeight: "600", display: 'flex', alignItems: 'center' }}>
-                                        <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> 
+                                        <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} />
                                         <div>{competition.competitionInfo.registrationOpenDate} - {competition.competitionInfo.registrationCloseDate}</div>
                                     </div>
                                 </div>
@@ -2702,8 +2692,8 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     </div>
                     <div className="light-grey-border-box">
-                        <div className="form-heading" style={{marginTop:'20px'}}>{AppConstants.membershipDetails}</div>
-                        <div className="competition-specifics-headings required-field" style={{paddingTop:'6px'}}>{AppConstants.registeringIndividualTo}</div>
+                        <div className="form-heading" style={{ marginTop: '20px' }}>{AppConstants.membershipDetails}</div>
+                        <div className="competition-specifics-headings required-field" style={{ paddingTop: '6px' }}>{AppConstants.registeringIndividualTo}</div>
                         {(competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1) || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
                                 className="membership-product-checkbox py-2"
@@ -2779,7 +2769,7 @@ class AppRegistrationFormNew extends Component {
                             <div className="input-style-bold" style={{ paddingTop: '0px' }}>{AppConstants.training}</div>
                             <div
                                 className="competition-specifics-information">
-                                 {competition.competitionInfo.training ?
+                                {competition.competitionInfo.training ?
                                     competition.competitionInfo.training :
                                     AppConstants.noInformationProvided}
                             </div>
@@ -2808,10 +2798,10 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             {/* <InputWithHead heading={AppConstants.contactDetails}/> */}
                             <div className="input-style-bold">{AppConstants.contactDetails}</div>
-                            <div 
+                            <div
                                 className="competition-specifics-information">
                                 {contactDetails ? contactDetails :
-                                AppConstants.noInformationProvided}
+                                    AppConstants.noInformationProvided}
                             </div>
                         </div>
                         <div className="col-sm-12 col-lg-8 mt-5">
@@ -2825,7 +2815,7 @@ class AppRegistrationFormNew extends Component {
                                 {(organisationPhotos || []).map((photo, photoIndex) => (
                                     <div>
                                         <div className="registration-competition-venue-form-wrapper">
-                                            <div style={{marginRight: "25px", marginBottom: "10px"}}>
+                                            <div style={{ marginRight: "25px", marginBottom: "10px" }}>
                                                 <div className="font-bold-carosal" style={{ marginBottom: "10px" }}>{photo.photoType1}</div>
                                                 <img style={{ height: "158px", margin: "auto", fontWeight: "500" }} src={photo.photoUrl1} />
                                             </div>
@@ -3015,7 +3005,7 @@ class AppRegistrationFormNew extends Component {
                         <div className="form-heading" style={{ paddingBottom: "0px" }}>{expiredRegistration.organisationName}</div>
                         <div style={{ fontWeight: "600", color: "black" }}>{expiredRegistration.stateOrgName} - {expiredRegistration.competitionName}</div>
                         <div style={{ fontWeight: "600", marginTop: "5px", display: 'flex', alignItems: 'center' }}>
-                            <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> 
+                            <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} />
                             <div>{expiredRegistration.registrationOpenDate} - {expiredRegistration.registrationCloseDate}</div>
                         </div>
                     </div>
@@ -3054,7 +3044,7 @@ class AppRegistrationFormNew extends Component {
                     <div className="col-sm-1.5 mr-4" style={{ display: "flex", alignItems: 'center' }}>
                         <img style={{ height: "60px", borderRadius: "50%" }} src={competition.competitionInfo.compLogoUrl} />
                     </div>
-                    <div className="col" style={{padding: 0 }}>
+                    <div className="col" style={{ padding: 0 }}>
                         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div className="form-heading">{competition.competitionInfo.organisationName}</div>
@@ -3078,12 +3068,12 @@ class AppRegistrationFormNew extends Component {
                             </div>
 
                             <div style={{ margin: "5px 0", display: "flex" }}>
-                                    <div className="orange-action-txt"
-                                        onClick={() => this.setState({ currentStep: 1 })}>{AppConstants.edit}</div>
-                                    <span className="remove-edit-icon"><img src={AppImages.editIcon} /></span>
-                                    <div className="orange-action-txt" style={{ marginLeft: "20px" }}
-                                        onClick={() => this.removeCompetition(competition.competitionId)}>{AppConstants.remove}</div>
-                                    <span className="remove-edit-icon"><img src={AppImages.removeIcon} /></span>
+                                <div className="orange-action-txt"
+                                    onClick={() => this.setState({ currentStep: 1 })}>{AppConstants.edit}</div>
+                                <span className="remove-edit-icon"><img src={AppImages.editIcon} /></span>
+                                <div className="orange-action-txt" style={{ marginLeft: "20px" }}
+                                    onClick={() => this.removeCompetition(competition.competitionId)}>{AppConstants.remove}</div>
+                                <span className="remove-edit-icon"><img src={AppImages.removeIcon} /></span>
                             </div>
                         </div>
                     </div>
@@ -3225,9 +3215,9 @@ class AppRegistrationFormNew extends Component {
             let walkingNetballQuesKeys = Object.keys(registrationObj.additionalInfo.walkingNetball);
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => registrationObj.additionalInfo.walkingNetball[key] == 1);
             let hasOtherParticipantSports = registrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
-            let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY") : null;
-            console.log("childrenCheckExpiryDate",childrenCheckExpiryDate)
-            let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate,"MM-DD-YYYY") : null;
+            let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "MM-DD-YYYY") : null;
+            console.log("childrenCheckExpiryDate", childrenCheckExpiryDate)
+            let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "MM-DD-YYYY") : null;
             let accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "MM-DD-YYYY") : null;
             return (
                 <div className="registration-form-view">
@@ -3820,14 +3810,14 @@ class AppRegistrationFormNew extends Component {
                         </Button>
                     ]}
                 >
-                   <p> { registrationCapValidationMessage }</p>
+                    <p> {registrationCapValidationMessage}</p>
                 </Modal>
             </div>
         )
     }
 
     sameEmailValidationModal = () => {
-        const {registrationObj,expiredRegistration} = this.props.userRegistrationState;
+        const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
         return (
             <div>
                 <Modal
@@ -3839,28 +3829,28 @@ class AppRegistrationFormNew extends Component {
                         <Button onClick={() => this.setState({ sameEmailValidationModalVisible: false })}>
                             {AppConstants.cancel}
                         </Button>,
-                        <Button 
-                        className="other-info-btn color-white"
-                        onClick={() => {
-                            this.onChangeSetParticipantValue(true, "referParentEmail");
-                            this.setState({sameEmailValidationModalVisible: false})
-                            this.stepNavigation(registrationObj,expiredRegistration);
-                            setTimeout(() => {
-                                this.setState({submitButtonText: AppConstants.addCompetitionAndMembership});
-                            }, 100);
-                        }}>
+                        <Button
+                            className="other-info-btn color-white"
+                            onClick={() => {
+                                this.onChangeSetParticipantValue(true, "referParentEmail");
+                                this.setState({ sameEmailValidationModalVisible: false })
+                                this.stepNavigation(registrationObj, expiredRegistration);
+                                setTimeout(() => {
+                                    this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
+                                }, 100);
+                            }}>
                             {AppConstants.continue}
                         </Button>
                     ]}
                 >
-                   <p> { registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2 }</p>
+                    <p> {registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2}</p>
                 </Modal>
             </div>
         )
     }
 
     sameSomeOneEmailValidationModal = () => {
-        try{
+        try {
             return (
                 <div>
                     <Modal
@@ -3874,12 +3864,12 @@ class AppRegistrationFormNew extends Component {
                             </Button>
                         ]}
                     >
-                       <p> {AppConstants.sameSomeoneEmailValidationMessage}</p>
+                        <p> {AppConstants.sameSomeoneEmailValidationMessage}</p>
                     </Modal>
                 </div>
             )
-        }catch(ex){
-            console.log("Error in sameSomeOneEmailValidationModal::"+ex);
+        } catch (ex) {
+            console.log("Error in sameSomeOneEmailValidationModal::" + ex);
         }
     }
 
@@ -3909,7 +3899,7 @@ class AppRegistrationFormNew extends Component {
                         </Content>
                         <div>{this.actionView()}</div>
                         <Loader visible={
-                            this.props.userRegistrationState.onMembershipLoad || 
+                            this.props.userRegistrationState.onMembershipLoad ||
                             this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
                             this.props.userRegistrationState.onSaveLoad
