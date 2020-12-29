@@ -1211,7 +1211,7 @@ const AppConstants = {
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",
   payAtMatchPerPlayer: "Pay At Match Per Player",
-
+  please_sel_umpire_unavailable_time: "Please select the dates/times you are unavailable to umpire and click Save.",
   oneMatchOnlyTipMsg: "For those wanting to play a single match in this competition",
   allMatchesTipMsg: "For those who want to play the entire Competition",
 
