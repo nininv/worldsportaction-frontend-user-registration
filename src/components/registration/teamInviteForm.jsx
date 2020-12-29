@@ -1047,9 +1047,16 @@ class TeamInivteForm extends Component {
                                             />
                                         )}
                                     </Form.Item>
+                                    {userRegDetails.isInActive && (userRegDetails.email == null)?
+                                        <div style={{color:"var(--app-red)"}}>
+                                            {AppConstants.userLoginEmailChangeMessage}
+                                        </div>
+                                        :
+                                        null 
+                                    }
                                 </div>
                             )}
-                            {getAge(userRegDetails.dateOfBirth) < 18 && (
+                            {getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={userRegDetails.referParentEmail}

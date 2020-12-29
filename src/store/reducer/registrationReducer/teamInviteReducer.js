@@ -21,6 +21,7 @@ const initialState = {
 function updateInviteMemberInfo(iniviteMemberInfoTemp){
     try{
         let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
+        userRegDetails.referParentEmail = userRegDetails.isInActive ? true : false;
         let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
         if(userRegDetails.parentOrGaurdianDetails){
             for(let parent of userRegDetails.parentOrGaurdianDetails){
@@ -67,6 +68,9 @@ function teamInviteReducer(state = initialState, action){
             let inviteMemberInfoKey = action.key;
             let inviteMemberInfoSubKey= action.subKey;
             let inviteMemberInfoParentIndex = action.parentIndex;
+            if(state.iniviteMemberInfo.userRegDetails.referParentEmail == true){
+                state.iniviteMemberInfo.userRegDetails.email = null;
+            }
             if(inviteMemberInfoSubKey == "userRegDetails"){
                 if(inviteMemberInfoKey == "isYearsPlayed"){
                     if(inviteMemberInfoData == 1){
