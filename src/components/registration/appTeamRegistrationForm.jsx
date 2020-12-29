@@ -207,8 +207,8 @@ class AppTeamRegistrationForm extends Component {
                 teamRegistrationObj.additionalInfo.disabilityCareNumber = user.additionalInfo.disabilityCareNumber;
                 teamRegistrationObj.additionalInfo.heardByRefId = user.additionalInfo.heardByRefId;
                 teamRegistrationObj.additionalInfo.isYearsPlayed = user.additionalInfo.isYearsPlayed;
-                console.log("team",teamRegistrationObj)
-                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj,"teamRegistrationObj")
+                console.log("team", teamRegistrationObj)
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
             }
         } catch (ex) {
             console.log("Error in setUser::" + ex)
@@ -345,7 +345,7 @@ class AppTeamRegistrationForm extends Component {
 
             if (this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true) {
                 if (this.props.commonReducerState.status == 4) {
-                    this.setState({ registrationCapModalVisible: true,validateRegistrationCapBySubmit: false })
+                    this.setState({ registrationCapModalVisible: true, validateRegistrationCapBySubmit: false })
                 } else {
                     if (this.state.validateRegistrationCapBySubmit == true) {
                         this.stepNavigation();
@@ -383,8 +383,8 @@ class AppTeamRegistrationForm extends Component {
         try {
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            this.props.updateTeamRegistrationStateVarAction(registrationId,"registrationId");
-            this.props.updateTeamRegistrationStateVarAction(participantId,"participantId");
+            this.props.updateTeamRegistrationStateVarAction(registrationId, "registrationId");
+            this.props.updateTeamRegistrationStateVarAction(participantId, "participantId");
             let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
             this.setState({ participantId: participantId, registrationId: registrationId, existingTeamParticipantId: existingTeamParticipantId });
             // console.log("registrationid",registrationId)
@@ -1167,7 +1167,45 @@ class AppTeamRegistrationForm extends Component {
                 } else {
                     this.clearTeamMemberParentAddress(parentIndex, teamMemberIndex);
                 }
-            } else {
+            }
+            else if (key == "mobileNumber") {
+                if (value.length === 10) {
+                    let hasError = this.state.hasErrorTeamMemberParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex && element.teamMemberIndex == teamMemberIndex);
+                    if (obj != undefined) {
+                        hasError.splice(hasError.indexOf(obj), 1);
+                    }
+                    this.setState({
+                        hasErrorTeamMemberParent: hasError
+                    })
+                    teamMember.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+
+                } else if (value.length < 10) {
+                    teamMember.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    if (obj == undefined) {
+                        hasError.push({
+                            error: true,
+                            parentIndex: parentIndex,
+                            teamMemberIndex: teamMemberIndex
+                        })
+                    };
+                    this.setState({
+                        hasErrorTeamMemberParent: hasError
+                    })
+                }
+                if (!regexNumberExpression(value)) {
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`teamMemberParentMobileNumber${teamMemberIndex}${parentIndex}`]: null,
+                        });
+                    }, 300);
+                }
+            }
+            else {
                 teamMember.parentOrGuardian[parentIndex][key] = value;
                 this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
             }
@@ -1487,10 +1525,10 @@ class AppTeamRegistrationForm extends Component {
                 } else {
                     this.addParent("removeAllParent")
                 }
-            }else if(referenceKey == "teamMember"){
-                this.onChangeTeamMemberValue(date,key, teamMemberIndex);
-                this.teamMemberAddingProcess(date,teamRegistrationObj.teamMembers[teamMemberIndex].payingFor,teamMemberIndex)
-            }else if(referenceKey == "additionalInfo"){
+            } else if (referenceKey == "teamMember") {
+                this.onChangeTeamMemberValue(date, key, teamMemberIndex);
+                this.teamMemberAddingProcess(date, teamRegistrationObj.teamMembers[teamMemberIndex].payingFor, teamMemberIndex)
+            } else if (referenceKey == "additionalInfo") {
                 this.onChangeSetAdditionalInfo(date, key)
             }
         } catch (ex) {
@@ -1565,11 +1603,16 @@ class AppTeamRegistrationForm extends Component {
                 this.setState({ buttonSubmitted: true });
                 for (let teamMember of teamRegistrationObj.teamMembers) {
                     if (this.showMemberTypeValidation(teamMember)) {
+                        message.error(AppConstants.pleaseReview)
                         return;
                     }
                 }
             }
             this.props.form.validateFieldsAndScroll((err, values) => {
+                if (err) {
+                    message.error(AppConstants.pleaseReview)
+                    return false;
+                }
                 if (!err) {
                     if (this.state.currentStep == 0) {
                         // let productAdded = this.productValidation();
@@ -1598,14 +1641,26 @@ class AppTeamRegistrationForm extends Component {
                             return;
                         }
                         if (values.yourDetailsMobileNumber != null && values.yourDetailsMobileNumber.length != 10) {
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorYourDetails: true })
                             return false;
                         }
                         if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorEmergency: true })
                             return false;
                         }
                         if (filteredTeamRegistrationObj.parentOrGuardian != null && filteredTeamRegistrationObj.parentOrGuardian.length > 0) {
                             for (let a in filteredTeamRegistrationObj.parentOrGuardian) {
                                 if (filteredTeamRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorParent.push({
+                                        error: true,
+                                        parentIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorParent: this.state.hasErrorParent
+                                    })
                                     return false
                                 }
                             }
@@ -1613,14 +1668,39 @@ class AppTeamRegistrationForm extends Component {
                         if (filteredTeamRegistrationObj.teamMembers != null && filteredTeamRegistrationObj.teamMembers.length > 0) {
                             for (let a in filteredTeamRegistrationObj.teamMembers) {
                                 if (filteredTeamRegistrationObj.teamMembers[a].mobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].mobileNumber.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorTeamMember: this.state.hasErrorTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != null && filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorEmergencyTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorEmergencyTeamMember: this.state.hasErrorEmergencyTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian.length > 0) {
                                     for (let b in filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian) {
                                         if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber.length != 10) {
+                                            message.error(AppConstants.pleaseReview)
+                                            this.state.hasErrorTeamMemberParent.push({
+                                                error: true,
+                                                parentIndex: a,
+                                                teamMemberIndex: b
+                                            })
+                                            this.setState({
+                                                hasErrorTeamMemberParent: this.state.hasErrorTeamMemberParent
+                                            })
                                             return false
                                         }
                                     }
