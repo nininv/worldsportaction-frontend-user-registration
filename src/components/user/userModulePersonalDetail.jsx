@@ -427,7 +427,7 @@ const columnsPersonalPrimaryContacts = [
         (
             <div>
                 {record.status == "Linked" ? 
-                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
+                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.parentUserId)}>
                     {parentName}</span>
                     :
                     <span>{parentName}</span>
@@ -516,7 +516,6 @@ const columnsPersonalChildContacts = [
             </div>
 
         )
-
     },
     {
         title: 'Street',
@@ -860,6 +859,7 @@ class UserModulePersonalDetail extends Component {
             showParentUnlinkConfirmPopup: false,
             showCannotUnlinkPopup: false,
             isPersonDetailsTabVisited: false,
+            isUserLoading: false,
         }
     }
 
@@ -873,8 +873,7 @@ class UserModulePersonalDetail extends Component {
         let user_Id = this.state.userId;
         if (this.state.tempUserId != undefined && this.state.tempUserId != null) {
             user_Id = this.state.tempUserId;
-            await this.setState({ userId: user_Id });
-            localStorage.removeItem("tempUserId");
+            this.setState({ userId: user_Id });
         }
 
         if (this.props.location.state != null && this.props.location.state != undefined) {
@@ -1017,6 +1016,10 @@ class UserModulePersonalDetail extends Component {
             this.setState({unlinkOnLoad: false})
         }
 
+        if (this.props.userState.personalData !== nextProps.userState.personalData) {
+            this.setState({ isUserLoading: false });
+        }
+
         // hack to define tables overflow to display scroll arrows,
         // without it re-render will lead to table overflow arrows absense
 
@@ -1032,6 +1035,8 @@ class UserModulePersonalDetail extends Component {
             userId: userId,
             organisationId: null
         }
+
+        this.setState({ isUserLoading: true });
         await this.props.getUserModulePersonalDetailsAction(payload);
         await this.props.getUserModulePersonalByCompetitionAction(payload)
         await this.props.getUserRole(userId)
@@ -1275,10 +1280,12 @@ class UserModulePersonalDetail extends Component {
         history.push(screen)
     }
 
-    loadAnotherUser = async (userId) => {
-        await setTempUserId(userId);
-        //history.push({pathname: '/userPersonal'})
-        window.location.reload();
+    loadAnotherUser = userId => {
+        setTempUserId(userId);
+        this.setState({ userId, isUserLoading: true });
+        this.apiCalls(userId);
+        // history.replace({ pathname: '/userPersonal' });
+        // window.location.reload();
     }
 
     viewRegForm = async (item) => {
@@ -1307,12 +1314,18 @@ class UserModulePersonalDetail extends Component {
     }
 
     setImage = (data, key) => {
-        let userState = this.props.userState;
-        let personal = userState.personalData;
-        if (data.files[0] !== undefined) {
-                const formData = new FormData();
-                formData.append("profile_photo", data.files[0]);
-                this.props.userPhotoUpdateAction(formData);
+        const userState = this.props.userState;
+        const { userId } = userState.personalData;
+        const { personalByCompData } = userState;
+
+        const file = data.files[0];
+
+        const isUserChild = !!personalByCompData.length && !!personalByCompData[0].childContacts.length ? false: true;
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("profile_photo", file);
+            isUserChild ? this.props.userPhotoUpdateAction(formData, userId) : this.props.userPhotoUpdateAction(formData);
         }
     }
 
@@ -1334,10 +1347,17 @@ class UserModulePersonalDetail extends Component {
         const personal = this.props.userState.personalData;
 
         return (
-            <div className={`${!this.state.isTablet ? 'align-self-center' : ''} circular--landscape`}>
+            <div
+                className={`${!this.state.isTablet ? "align-self-center" : ""} circular--landscape`}
+                role="button"
+            >
                 {
-                    personal.photoUrl ?
+                    personal.photoUrl && !this.props.userState.userPhotoUpdate ?
                         <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
+
+                        : personal.photoUrl && !!this.props.userState.userPhotoUpdate ?
+                        <div>{AppConstants.loading}</div>
+
                         :
                         <div 
                             className="img-upload-target" 
@@ -1366,29 +1386,30 @@ class UserModulePersonalDetail extends Component {
         let personal = userState.personalData;
         let compititionId = this.state.competition != null ? this.state.competition.competitionUniqueKey : null;
 
-        const { isTablet, isCollapsedUserDetails } = this.state;
+        const { isTablet, isCollapsedUserDetails, isUserLoading } = this.state;
 
         return (
-            <div className="fluid-width" >
+            <div className="fluid-width" style={{ minHeight: `${isTablet ? 'unset' : 'calc(100vh - 175px'}`}}>
 
-                {isTablet && 
+                {isTablet &&
                     <div
                         className="d-flex justify-content-between align-items-center"
                         style={{
-                            minHeight: 48,
+                            minHeight: 80,
                             padding: '16px 20px',
+                            boxSizing: 'border-box',
                             borderBottom: '1px solid rgba(27, 27, 52, 0.07)'
                         }}
                     >
-                        <div className='d-flex align-items-center'>
+                        {!isUserLoading && <div className='d-flex align-items-center'>
                             {this.personalPhotoView()}
                             <div className='d-flex flex-column align-items-start justify-content-center' style={{ marginLeft: 16 }}>
                                 <span className="user-heading p-0">{personal.firstName + " " + personal.lastName}</span>
                                 <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                             </div>
-                        </div>
+                        </div>}
 
-                        <div style={{ color: 'var(--app-color)' }}>
+                        <div style={{ color: 'var(--app-color)', marginLeft: 'auto' }}>
                             {isCollapsedUserDetails 
                                 ? <Icon 
                                     type="down"
@@ -1411,7 +1432,7 @@ class UserModulePersonalDetail extends Component {
                     </div>
                 }
 
-                {(!isCollapsedUserDetails || !isTablet) &&
+                {(!isCollapsedUserDetails || !isTablet) && !isUserLoading &&
                     <>
                         {!isTablet && 
                             <div className='profile-image-view' style={{ marginTop: 40, marginBottom: 23 }}>
@@ -2290,7 +2311,7 @@ class UserModulePersonalDetail extends Component {
             userRegistrationId = personalByCompData[0].userRegistrationId
         }
 
-        const { isTablet, isCollapsedUserDetails, isPersonDetailsTabVisited } = this.state;
+        const { isTablet, isCollapsedUserDetails, isPersonDetailsTabVisited, isUserLoading } = this.state;
 
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
@@ -2308,7 +2329,7 @@ class UserModulePersonalDetail extends Component {
                                 <div
                                     className={`${isTablet ? "col-sm-12 px-0" : "col-sm-3 content-view-padding"} bg-white`}
                                     style={{
-                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '7%'}`,
+                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '50px'}`,
                                     }}
                                 >
                                     {this.leftHandSideView()}
@@ -2355,13 +2376,13 @@ class UserModulePersonalDetail extends Component {
                                             }
                                         </Menu>
 
-                                        {this.state.tabKey=== "1" && 
+                                        {this.state.tabKey=== "1" && !isUserLoading &&
                                             <>
                                                 {!this.state.isRegistrationForm ?
                                                     <>
                                                         {!!userRegistrationList && !!userRegistrationList.length && !userRegistrationOnLoad && this.registrationView()}
-                                                        {(userRegistrationOnLoad || onPersonLoad || !personalData?.userId) && this.tableLoadingView()}
-                                                        {!userRegistrationList.length && !userRegistrationOnLoad && !onPersonLoad && !!personalData?.userId && this.noDataAvailable()}
+                                                        {(userRegistrationOnLoad || onPersonLoad || !personalByCompData[0]?.userId) && this.tableLoadingView()}
+                                                        {!userRegistrationList.length && !userRegistrationOnLoad && !onPersonLoad && (!!personalData?.userId || !!personalByCompData[0]?.userId) && this.noDataAvailable()}
                                                     </> 
                                                     : this.registrationFormView()
                                                 }
@@ -2382,7 +2403,7 @@ class UserModulePersonalDetail extends Component {
                                             </>
                                         }
                                         {this.state.tabKey=== "3" && this.statisticsView()}
-                                        {this.state.tabKey=== "4" && 
+                                        {this.state.tabKey=== "4" && !isUserLoading &&
                                             <>
                                                 {isPersonDetailsTabVisited && !!personalByCompData && !!personalByCompData.length && !onPersonLoad && this.personalView()}
                                                 {onPersonLoad && this.tableLoadingView()}
@@ -2414,6 +2435,7 @@ class UserModulePersonalDetail extends Component {
                                 </div>
                             </div>
                         </div>
+                        <Loader visible={this.props.userState.userPhotoUpdate || isUserLoading} />
                         {this.unlinkChildConfirmPopup()}
                         {this.unlinkParentConfirmPopup()}
                         {this.cannotUninkPopup()}

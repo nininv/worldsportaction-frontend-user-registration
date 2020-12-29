@@ -344,7 +344,7 @@ export function* getAllOrganisationListSaga(action) {
 
 export function* saveUserPhotosSaga(action) {
     try {
-      const result = yield call(userHttpApi.saveUserPhoto, action.payload);
+      const result = yield call(userHttpApi.saveUserPhoto, action.payload, action.userId);
   
       if (result.status === 1) {
         yield put({

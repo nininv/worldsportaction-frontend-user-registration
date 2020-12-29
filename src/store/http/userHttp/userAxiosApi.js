@@ -109,8 +109,8 @@ let userHttpApi = {
     return Method.dataGet(url, token);
   },
 
-  saveUserPhoto(payload) {
-    const url = `users/photo`;
+  saveUserPhoto(payload, userId) {
+    const url = userId ? `users/photo?userId=${userId}` : `users/photo`;
     return Method.dataPost(url, token, payload);
   },
   registrationResendEmail(teamId){

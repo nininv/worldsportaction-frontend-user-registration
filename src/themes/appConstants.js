@@ -34,6 +34,7 @@ const AppConstants = {
   requestApproval: "Request for Approval",
   cancel: "Cancel",
   save: "Save",
+  loading: "Loading...",
   association: "Association",
   addAffiliates: "Add Affiliates",
   updateAffiliates: "Update",
