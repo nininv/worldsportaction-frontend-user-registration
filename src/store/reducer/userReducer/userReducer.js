@@ -326,7 +326,8 @@ function userReducer(state = initialState, action) {
             return { ...state, userPhotoUpdate: true };
 
         case ApiConstants.API_USER_PHOTO_UPDATE_SUCCESS:
-            let personalDataTemp = action.result;
+            let personalDataTemp = { ...action.result};
+            personalDataTemp.userId = personalDataTemp.id;
             setPhotoUrl(personalDataTemp.photoUrl);
             let arrTemp = [];
             if (personalDataTemp != null) {

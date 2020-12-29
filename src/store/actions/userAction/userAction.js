@@ -143,10 +143,11 @@ function getAllOrganisationListAction() {
   return action
 }
 
-function userPhotoUpdateAction(payload) {
+function userPhotoUpdateAction(payload, userId) {
   return {
       type: ApiConstants.API_USER_PHOTO_UPDATE_LOAD,
       payload,
+      userId
   };
 }
 
