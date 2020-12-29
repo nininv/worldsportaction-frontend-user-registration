@@ -232,6 +232,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;
 			registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.isInActive = selectedUser.isInActive;
 			registrationObj.referParentEmail = selectedUser.isInActive ? true : false;
 			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail == true){
 				registrationObj.email = null;

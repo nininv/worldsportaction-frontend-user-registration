@@ -1213,7 +1213,9 @@ const AppConstants = {
   payAtMatchPerPlayer: "Pay At Match Per Player",
 
   oneMatchOnlyTipMsg: "For those wanting to play a single match in this competition",
-  allMatchesTipMsg: "For those who want to play the entire Competition"
+  allMatchesTipMsg: "For those who want to play the entire Competition",
+
+  userLoginEmailChangeMessage: "This will change the user’s login"
 };
 
 export default AppConstants;
