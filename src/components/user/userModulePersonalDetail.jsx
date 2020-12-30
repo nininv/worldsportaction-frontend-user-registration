@@ -2060,14 +2060,14 @@ class UserModulePersonalDetail extends Component {
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
                                         {stripeConnectId ?
-                                            <Menu.Item
+                                            userRole && <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
                                                 className="menu-item-without-selection"
                                             >
                                                 <span>{AppConstants.editBankAccount}</span>
                                             </Menu.Item>
                                             :
-                                            <Menu.Item>
+                                            userRole && <Menu.Item>
                                                 <a href={stripeConnectURL}>
                                                     <span>{AppConstants.uploadBankAccnt}</span>
                                                 </a>
