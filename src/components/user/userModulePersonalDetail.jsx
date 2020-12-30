@@ -1973,6 +1973,7 @@ class UserModulePersonalDetail extends Component {
 
     headerView = () => {
         const stripeConnected = getStripeAccountId() ? true : false;
+        const stripeConnectId = getStripeAccountConnectId() ? true : false;
         let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&redirect_uri=${StripeKeys.url}`;
         if (true) {
             let userDetail = null
