@@ -87,7 +87,7 @@ const columns = [
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
                         <span className='year-select-heading mr-3'>{AppConstants.validUntil}</span>
                         <span className="user-details-info-text">
-                            {expiryDate != null ? (expiryDate != 'Single Use' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
+                            {expiryDate != null ? (expiryDate != 'Single Use' && expiryDate!== 'Single Game' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
                         </span>
                     </div>
                     <div className="d-flex flex-wrap">
@@ -2000,8 +2000,38 @@ class UserModulePersonalDetail extends Component {
     headerView = () => {
         const stripeConnected = getStripeAccountId() ? true : false;
         const stripeConnectId = getStripeAccountConnectId() ? true : false;
-        const userEmail = this.userEmail();
-        const stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`;
+        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&redirect_uri=${StripeKeys.url}`;
+        if (true) {
+            let userDetail = null
+            if (this.props && this.props.userState && this.props.userState.personalData) {
+                userDetail = this.props.userState.personalData
+            }
+            if(userDetail) {
+                stripeConnectURL += '&stripe_user[country]=AU' // Hardcode country to Australia
+                stripeConnectURL += `&stripe_user[first_name]=${userDetail.firstName}`
+                stripeConnectURL += `&stripe_user[last_name]=${userDetail.lastName}`
+
+                if (userDetail.email) {
+                    stripeConnectURL += `&stripe_user[email]=${encodeURIComponent(userDetail.email)}`
+                }
+
+                if (userDetail.mobileNumber) {
+                    stripeConnectURL += `&stripe_user[phone_number]=${encodeURIComponent(userDetail.mobileNumber)}`
+                }
+
+                if (userDetail.dateOfBirth) {
+                    const dob = new Date(userDetail.dateOfBirth)
+                    const day = dob.getDate()
+                    const month = dob.getMonth() + 1;
+                    const year = dob.getFullYear()
+                    stripeConnectURL += `&stripe_user[dob_day]=${day}`
+                    stripeConnectURL += `&stripe_user[dob_month]=${month}`
+                    stripeConnectURL += `&stripe_user[dob_year]=${year}`
+                }
+
+                stripeConnectURL += `&stripe_user[product_description]=${encodeURIComponent('Receiving payments for umpire payments after matches are played')}`
+            }
+        }
 
         const { userState } = this.props;
         const { userRole } = userState;
@@ -2056,14 +2086,14 @@ class UserModulePersonalDetail extends Component {
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
                                         {stripeConnectId ?
-                                            <Menu.Item
+                                            userRole && <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
                                                 className="menu-item-without-selection"
                                             >
                                                 <span>{AppConstants.editBankAccount}</span>
                                             </Menu.Item>
                                             :
-                                            <Menu.Item>
+                                            userRole && <Menu.Item>
                                                 <a href={stripeConnectURL}>
                                                     <span>{AppConstants.uploadBankAccnt}</span>
                                                 </a>

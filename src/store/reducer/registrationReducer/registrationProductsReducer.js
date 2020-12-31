@@ -225,7 +225,7 @@ function registrationProductsReducer(state = initialState, action){
                             transactionVal = 3.50;
                         }
                     }
-                    console.log("TransVal" + transactionVal);
+                    console.log("TransVal" + feeIsNull(transactionVal));
                     targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
                     reviewData["total"]["targetValue"] = formatValue(targetVal);
                     reviewData["total"]["transactionFee"] = formatValue(transactionVal);
