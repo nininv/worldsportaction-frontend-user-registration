@@ -865,7 +865,10 @@ class AppTeamRegistrationForm extends Component {
         }
     }
 
-    onChangeTeamMemberValue = (value, key, index, subIndex) => {
+    onChangeTeamMemberValue = (value, key, index, subIndex, parentIndex) => {
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        let teamMember = teamRegistrationObj.teamMembers[index];
+        console.log("Hai All" , key)
         if (key == 'mobileNumber') {
             if (value.length == 10) {
                 this.props.updateRegistrationTeamMemberAction(value, key, index, subIndex)
@@ -942,6 +945,24 @@ class AppTeamRegistrationForm extends Component {
                 }
             }
 
+        }
+        else if (key === "isRegistererAsParent"){
+            if(value){
+                teamMember.parentOrGuardian[parentIndex]["firstName"] = teamRegistrationObj.firstName;
+                teamMember.parentOrGuardian[parentIndex]["lastName"] = teamRegistrationObj.lastName;
+                teamMember.parentOrGuardian[parentIndex]["middleName"] = teamRegistrationObj.middleName;
+                teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = teamRegistrationObj.dateOfBirth;
+                teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = teamRegistrationObj.mobileNumber;
+                teamMember.parentOrGuardian[parentIndex]["postalCode"] = teamRegistrationObj.postalCode;
+                teamMember.parentOrGuardian[parentIndex]["stateRefId"] = teamRegistrationObj.stateRefId;
+                teamMember.parentOrGuardian[parentIndex]["street1"] = teamRegistrationObj.street1;
+                teamMember.parentOrGuardian[parentIndex]["street2"] = teamRegistrationObj.street2;
+                teamMember.parentOrGuardian[parentIndex]["suburb"] = teamRegistrationObj.suburb;
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+            }
+            else{
+                this.clearTeamMemberParentDetails(teamMember, parentIndex);
+            }
         }
         this.props.updateRegistrationTeamMemberAction(value, key, index, subIndex)
     }
@@ -1233,6 +1254,17 @@ class AppTeamRegistrationForm extends Component {
         teamMember.parentOrGuardian[parentIndex]["stateRefId"] = null;
         teamMember.parentOrGuardian[parentIndex]["countryRefId"] = null;
         teamMember.parentOrGuardian[parentIndex]["postalCode"] = null;
+        this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+    }
+
+    clearTeamMemberParentDetails = (teamMember, parentIndex) => {
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        teamMember.parentOrGuardian[parentIndex]["firstName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["lastName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["middleName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = null;
+        teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = null;
+        teamMember.parentOrGuardian[parentIndex]["email"] = null;
         this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
     }
 
@@ -3107,7 +3139,7 @@ class AppTeamRegistrationForm extends Component {
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={teamMember.isRegistererAsParent == 1 ? true : false}
-                                    onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex)}>
+                                    onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex, null , 0)}>
                                     {AppConstants.teamMemberParentCheck}
                                 </Checkbox>
                             }
