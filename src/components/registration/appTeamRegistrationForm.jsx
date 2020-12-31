@@ -868,7 +868,6 @@ class AppTeamRegistrationForm extends Component {
     onChangeTeamMemberValue = (value, key, index, subIndex, parentIndex) => {
         const { teamRegistrationObj } = this.props.teamRegistrationState;
         let teamMember = teamRegistrationObj.teamMembers[index];
-        console.log("Hai All" , key)
         if (key == 'mobileNumber') {
             if (value.length == 10) {
                 this.props.updateRegistrationTeamMemberAction(value, key, index, subIndex)
