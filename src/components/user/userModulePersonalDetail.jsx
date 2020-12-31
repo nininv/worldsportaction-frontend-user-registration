@@ -1522,6 +1522,32 @@ class UserModulePersonalDetail extends Component {
                                 ))}
                                 {/* <span className="side-bar-profile-desc-text">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
                             </div>
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <div className="live-score-icon-view">
+                                        <img src={AppImages.whistleIcon} alt="" height="16" width="16" />
+                                    </div>
+                                    <span className="year-select-heading ml-3">
+                                        {AppConstants.umpireAccreditation}
+                                    </span>
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="year-select-heading  ml-3">
+                                            {AppConstants.expiry}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className='live-score-title-icon-view ml-5'>
+                                    <span className="desc-text-style  side-bar-profile-data">
+                                        {personal.accrediationLevel}
+                                    </span>
+
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="desc-text-style  side-bar-profile-data">
+                                            {personal.accreditationUmpireExpiryDate && moment(personal.accreditationUmpireExpiryDate).format("DD-MM-YYYY")}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </>
                 }
