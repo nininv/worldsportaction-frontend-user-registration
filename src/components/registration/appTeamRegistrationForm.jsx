@@ -951,6 +951,7 @@ class AppTeamRegistrationForm extends Component {
                 teamMember.parentOrGuardian[parentIndex]["firstName"] = teamRegistrationObj.firstName;
                 teamMember.parentOrGuardian[parentIndex]["lastName"] = teamRegistrationObj.lastName;
                 teamMember.parentOrGuardian[parentIndex]["middleName"] = teamRegistrationObj.middleName;
+                teamMember.parentOrGuardian[parentIndex]["email"] = teamRegistrationObj.email;
                 teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = teamRegistrationObj.dateOfBirth;
                 teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = teamRegistrationObj.mobileNumber;
                 teamMember.parentOrGuardian[parentIndex]["postalCode"] = teamRegistrationObj.postalCode;
