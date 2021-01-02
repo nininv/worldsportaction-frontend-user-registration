@@ -128,31 +128,36 @@ const columns = [
         dataIndex: "regForm",
         key: "regForm",
         width: 52,
-        render: (regForm, e) => (
-            <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
-                style={{ lineHeight: "8px" }}
-            >
-                <SubMenu
-                    key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                        alt="" width="16" height="16" />
-                    }>
-                    <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
-                        <span>View</span>
-                    </Menu.Item>
-                    {e.expiryDate == "Single Game" &&
-                        <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
-                            <span>Purchase Single Game(s)</span>
+        render: (regForm, e) => {
+            let compEndDate = moment(e.competitionEndDate).format("DD/MM/YYYY");
+            let currentDate = moment().format("DD/MM/YYYY");
+            return(
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
+                    style={{ lineHeight: "8px" }}
+                >
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }>
+                        <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
+                            <span>View</span>
                         </Menu.Item>
-                    }
-                    {/* {e.teamId &&
-                        <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
-                            <span>Resend Email</span>
-                        </Menu.Item>
-                    } */}
-                </SubMenu>
-            </Menu>
-        )
+                        {e.expiryDate == "Single Game" && (compEndDate >= currentDate) &&
+                            <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
+                                <span>Purchase Single Game(s)</span>
+                            </Menu.Item>
+                        }
+                        {/* {e.teamId &&
+                            <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
+                                <span>Resend Email</span>
+                            </Menu.Item>
+                        } */}
+                    </SubMenu>
+                </Menu>
+            )
+
+        }
     }
 ];
 
