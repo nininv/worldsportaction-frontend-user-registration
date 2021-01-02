@@ -140,7 +140,7 @@ const columns = [
                     <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
                         <span>View</span>
                     </Menu.Item>
-                    {e.expiryDate == "Single Use" &&
+                    {e.expiryDate == "Single Game" &&
                         <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
                             <span>Purchase Single Game(s)</span>
                         </Menu.Item>
