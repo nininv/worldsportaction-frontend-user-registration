@@ -125,7 +125,7 @@ class RegistrationInvoice extends Component {
     ///top header view
     topView = (result) => {
         let {invoiceData, getAffiliteDetailData} = this.props.stripeState;
-        let userDetail = invoiceData!= null ? invoiceData.billTo: null;
+        let userDetail = invoiceData != null ? invoiceData.billTo: null;
         let organisationLogo = invoiceData!= null ? invoiceData.organisationLogo : null;
         let invoiceDisabled = this.state.invoiceDisabled;
         let isSchoolRegistrationApplied = invoiceData!= null ? invoiceData.isSchoolRegistrationApplied: 0;
@@ -667,7 +667,8 @@ class RegistrationInvoice extends Component {
     totalInvoiceView = (result) => {
         let {invoiceData} = this.props.stripeState;
         let total = invoiceData!= null ? invoiceData.total: null;
-        let paymentType = this.props.location.state ? this.props.location.state.paymentType : null
+        let paymentType = this.props.location.state ? this.props.location.state.paymentType : null;
+        let userDetail = invoiceData != null ? invoiceData.billTo: null;
         return (
             <div className="content-view">
                 <div className="drop-reverse" >
@@ -773,6 +774,7 @@ class RegistrationInvoice extends Component {
                 <div className="row">
                     <div className="col-sm pt-5 px-0 d-flex invoiceImage">
                         <label className="d-flex align-items-center">
+                            {userDetail && userDetail.state != "New South Wales" && 
                             <img
                                 src={AppImages.netballImages}
                                 name={'image'}
@@ -780,6 +782,7 @@ class RegistrationInvoice extends Component {
                                     ev.target.src = AppImages.netballImages;
                                 }}
                             />
+                            }
                         </label>
                     </div>
                     <div className="col-sm pt-5 px-0 invoiceImageMain ">
