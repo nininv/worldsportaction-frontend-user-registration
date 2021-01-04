@@ -116,7 +116,8 @@ class AppRegistrationFormNew extends Component {
             validateRegistrationCapOnLoad: false,
             validateRegistrationCapBySubmit: false,
             sameEmailValidationModalVisible: false,
-            sameSomeoneEmailValidationModalVisible: false
+            sameSomeoneEmailValidationModalVisible: false,
+            hasChecked: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -612,6 +613,11 @@ class AppRegistrationFormNew extends Component {
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
                 });
             });
+            if (key == 'referParentEmail' && value == true) {
+                this.setState({
+                    sameEmailValidationModalVisible: true
+                })
+            }
             if (key == "dateOfBirth") {
                 if (getAge(value) < 18) {
                     if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
@@ -3833,7 +3839,7 @@ class AppRegistrationFormNew extends Component {
                             className="other-info-btn color-white"
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
-                                this.setState({ sameEmailValidationModalVisible: false })
+                                this.setState({ sameEmailValidationModalVisible: false, hasChecked: false })
                                 this.stepNavigation(registrationObj, expiredRegistration);
                                 setTimeout(() => {
                                     this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
