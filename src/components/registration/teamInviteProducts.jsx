@@ -85,6 +85,10 @@ class TeamInviteProducts extends Component{
         history.push({pathname: '/teamInviteShop', state: {userRegId: this.state.userRegId}})
     }
 
+    removeFromCart = (index, key, subKey) => {
+        this.props.updateTeamInviteAction(null, key, index, subKey, null);
+    }
+
      
     getApiInfo = (userRegId) => {
         this.setState({onLoading: true});

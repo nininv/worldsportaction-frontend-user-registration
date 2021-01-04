@@ -197,23 +197,27 @@ function teamInviteReducer(state = initialState, action){
                         reviewData[action.subKey].splice(index,1);
                     }
                     reviewData[action.subKey].push(action.value);
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
-                                            feeIsNull(action.value.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
-                                            feeIsNull(action.value.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) +
-                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+                    reviewData["total"]["subTotal"] = (feeIsNull(reviewData["total"]["subTotal"]) +
+                                            feeIsNull(action.value.amount)).toFixed(2);
+                    reviewData["total"]["gst"] = (feeIsNull(reviewData["total"]["gst"]) +
+                                            feeIsNull(action.value.tax)).toFixed(2);
+                    reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) +
+                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax)).toFixed(2);
 
-                                            
+                    reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) + 
+                    feeIsNull(action.value.amount) -  feeIsNull(action.value.tax)).toFixed(2);                                    
                 }
                 else if(action.key == "removeShopProduct"){
                     let shopData = reviewData[action.subKey][action.index];
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) -
-                                                feeIsNull(shopData.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) -
-                                        feeIsNull(shopData.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
-                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
+                    reviewData["total"]["subTotal"] = (feeIsNull(reviewData["total"]["subTotal"]) -
+                                                feeIsNull(shopData.amount)).toFixed(2);
+                    reviewData["total"]["gst"] = (feeIsNull(reviewData["total"]["gst"]) -
+                                        feeIsNull(shopData.tax)).toFixed(2);
+                    reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) -
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax)).toFixed(2);
+                    
+                    reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) - 
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax)).toFixed(2);
                     
                     reviewData[action.subKey].splice(action.index,1);
                 }
