@@ -1214,11 +1214,13 @@ const AppConstants = {
   payAtMatchPerPlayer: "Pay At Match Per Player",
   please_sel_umpire_unavailable_time: "Please select the dates/times you are unavailable to umpire and click Save.",
   oneMatchOnlyTipMsg: "For those wanting to play a single match in this competition",
-  allMatchesTipMsg: "For those who want to play the entire Competition",
+
+  allMatchesTipMsg: "For those who want to play the entire competition and pay fees now",
   userLoginEmailChangeMessage: "This will change the user’s login",
   pleaseReview: "Please review this page and correct any errors before submitting again",
   umpireAccreditation: "Umpire Accreditation",
   expiry: "Expiry",
+  instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment"
 
 };
 
