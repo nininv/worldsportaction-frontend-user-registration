@@ -317,6 +317,7 @@ function setCompetitionDetails(state,details){
 function getUpdatedTeamMemberObj(state,existingTeamMember){
   try{
     let teamMemberTemp = existingTeamMember ? existingTeamMember : deepCopyFunction(teamMemberObj);
+    teamMemberTemp.membershipProductTypes = [];
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
     let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){

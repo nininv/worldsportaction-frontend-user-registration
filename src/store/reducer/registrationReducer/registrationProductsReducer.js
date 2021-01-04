@@ -360,7 +360,7 @@ function registrationProductsReducer(state = initialState, action){
                 if(action.subKey == "total"){
                     let type = action.key;
                     if(type == "noOfMatch"){
-                        let existingVal = singleGameData[action.subKey][type];
+                        let existingVal = singleGameData[action.subKey][type] ? singleGameData[action.subKey][type] : 1;
                         let gst =  feeIsNull(singleGameData[action.subKey]["gst"]) / existingVal;
                         let total = feeIsNull(singleGameData[action.subKey]["total"]) / existingVal;
                         let subTotal = feeIsNull(singleGameData[action.subKey]["subTotal"]) / existingVal;
@@ -382,7 +382,7 @@ function registrationProductsReducer(state = initialState, action){
                         else{
                             singleGameData[action.subKey][type] = action.value;
                         }
-                        let newVal = singleGameData[action.subKey][type];
+                        let newVal = singleGameData[action.subKey][type] ? singleGameData[action.subKey][type] : 1;
                         singleGameData[action.subKey]["gst"] = formatValue(gst * newVal);
                         singleGameData[action.subKey]["total"] = formatValue(total * newVal);
                         singleGameData[action.subKey]["subTotal"] = formatValue(subTotal * newVal);

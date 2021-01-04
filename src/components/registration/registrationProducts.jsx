@@ -76,9 +76,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount() {
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey" + registrationUniqueKey);
-        //let registrationUniqueKey = "211c5808-af5a-498d-9aa8-c6b0e53aa9bb";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "aaad7e8a-726d-482f-ae23-2bbbe6113a72";
         this.setState({ registrationUniqueKey: registrationUniqueKey });
         this.getApiInfo(registrationUniqueKey);
     }
@@ -464,13 +464,14 @@ class RegistrationProducts extends Component {
     }
 
 
-    headerView = () => {
+    headerView = (isTeamRegistration) => {
         return (
             <div className="col-sm-12 col-md-7 col-lg-8 d-flex flex-wrap justify-content-between p-0">
                 <div className="headline-text-common" style={{ padding: 0, marginRight: 10 }}> {AppConstants.participants}</div>
-                <div className="add-another-button-border pointer reg-products-add-participant" onClick={() => this.clickAddAnotherParticipant(null, this.state.registrationUniqueKey)}>
+                {!isTeamRegistration && <div className="add-another-button-border pointer reg-products-add-participant"
+                    onClick={() => this.clickAddAnotherParticipant(null, this.state.registrationUniqueKey)}>
                     <div className="link-text-common ">+ {AppConstants.addAnotherParticipant}</div>
-                </div>
+                </div>}
             </div>
         );
 
@@ -614,7 +615,7 @@ class RegistrationProducts extends Component {
             //     if(item.isSeasonalUponReg){
             //         instalmentCount = 2;
             //     }
-            // }   
+            // }
             if ((item.isTeamRegistration == 1 && item.isTeamSeasonalUponReg == 1) || item.isSeasonalUponReg == 1) {
                 let currentDateExist = item.instalmentDates.find(x => moment(x.instalmentDate).format("DD/MM/YYYY") === moment(currentDate).format("DD/MM/YYYY"));
                 if (!currentDateExist) {
@@ -700,11 +701,13 @@ class RegistrationProducts extends Component {
                             ))}
                         </div>
                     }
-                    {item.paymentOptions.length > 1 && (
-                        <div className="subtitle-text-common" style={{ marginTop: "16px" }}>
-                            {AppConstants.whatWouldYouLikeToPay}
-                        </div>
-                    )}
+                    {
+                        item.paymentOptions.length > 1 && (
+                            <div className="subtitle-text-common" style={{ marginTop: "16px" }}>
+                                {AppConstants.whatWouldYouLikeToPay}
+                            </div>
+                        )
+                    }
                     <div style={item.paymentOptions.length > 1 ? { marginTop: 6 } : { marginTop: 12 }}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
@@ -736,7 +739,7 @@ class RegistrationProducts extends Component {
                                             </div>
                                         </div>
                                     }
-                                    { p.paymentOptionRefId == 4 &&
+                                    {p.paymentOptionRefId == 4 &&
                                         <div className="contextualHelp-RowDirection">
                                             <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
 
@@ -747,7 +750,7 @@ class RegistrationProducts extends Component {
                                             </div>
                                         </div>
                                     }
-                                    { p.paymentOptionRefId == 5 &&
+                                    {p.paymentOptionRefId == 5 &&
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
                                     }
 
@@ -763,9 +766,10 @@ class RegistrationProducts extends Component {
                             </div>
                             {item.isTeamRegistration == 1 ?
                                 <div className="col-sm-3">
-                                    <div className="subtitle-text-common">{AppConstants.payPerMatch}</div>
-                                    <div>{"$" + item.payPerMatch}</div>
+                                    <div className="subtitle-text-common">{AppConstants.payNow}</div>
+                                    <div>{"$" + item.payNow}</div>
                                 </div>
+
                                 :
                                 null
                             }
@@ -868,7 +872,7 @@ class RegistrationProducts extends Component {
                             </div>
                         }
                     </div>}
-            </div>
+            </div >
         )
     }
 
@@ -903,7 +907,7 @@ class RegistrationProducts extends Component {
                             {item.selectedOptions.invalidSchoolRegCode == 1 &&
                                 <div className="ml-4 discount-validation" style={{ alignSelf: "center" }}>
                                     Invalid code
-                            </div>
+                                    </div>
                             }
                         </div>
                     </div>
@@ -1004,8 +1008,9 @@ class RegistrationProducts extends Component {
                                 {gov.message}
                             </div>
                         }
-                    </div>
-                ))}
+                    </div >
+                ))
+                }
                 <div style={{ display: 'flex', flexWrap: "wrap", justifyContent: "space-between", width: "99%" }}>
                     {isArrayNotEmpty(item.governmentVouchers) && (
                         <div style={{ marginTop: "13px", alignSelf: "center" }}>
@@ -1213,7 +1218,7 @@ class RegistrationProducts extends Component {
                                              < Option key={item.id} value={item.id}> {item.name}</Option>
                                         </Select>
                                         )}
-                                    </Form.Item> 
+                                    </Form.Item>
                                     <div className="btn-text-common pointer" style={{marginTop: "10px"}}
                                     onClick={() => {
                                         this.setState({
@@ -1221,7 +1226,7 @@ class RegistrationProducts extends Component {
                                             searchAddressFlag: true
                                         });
                                     }}
-                                    >+ {AppConstants.addNewAddress}</div>	
+                                    >+ {AppConstants.addNewAddress}</div>
                                 </div>
                             )}  */}
 
@@ -1368,9 +1373,9 @@ class RegistrationProducts extends Component {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </div >
                 }
-            </div>
+            </div >
         )
     }
 
@@ -1643,6 +1648,12 @@ class RegistrationProducts extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { registrationReviewList } = this.props.registrationProductState;
+        const compParticipants = registrationReviewList !== null ?
+            isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                registrationReviewList.compParticipants : [] : [];
+        const isTeamRegistration = compParticipants[0] ? compParticipants[0].isTeamRegistration : true;
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
@@ -1651,7 +1662,7 @@ class RegistrationProducts extends Component {
                 />
                 <InnerHorizontalMenu />
                 <Layout className="layout-margin">
-                    {this.headerView()}
+                    {this.headerView(isTeamRegistration)}
                     <Form
                         autocomplete="off"
                         scrollToFirstError={true}
@@ -1670,7 +1681,7 @@ class RegistrationProducts extends Component {
                         </Content>
                     </Form>
                 </Layout>
-            </div>
+            </div >
         );
     }
 

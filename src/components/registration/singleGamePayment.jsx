@@ -265,7 +265,7 @@ class SingleGamePayment extends Component {
     }
 
     goBack = () => {
-        history.push({ pathname: '/userPersonal', state: { tabKey: "5" } });
+        history.push({ pathname: '/userPersonal', state: { tabKey: "1" } });
     }
     contentView = () => {
         return (
@@ -333,8 +333,10 @@ class SingleGamePayment extends Component {
                                                     <InputWithHead
                                                         style={{ height: '40px', width: '73px' }}
                                                         value={total.noOfMatch}
-                                                        placeholder={AppConstants.noOfMatches}
-                                                        onChange={(e) => this.props.updateSingleFeeAction(e.target.value, "noOfMatch", 0, "total", null)}
+                                                        placeholder=" "
+                                                        type={"number"}
+                                                        min="1"
+                                                        onChange={(e) => this.props.updateSingleFeeAction(e.target.value ? e.target.value : 1, "noOfMatch", 0, "total", null)}
                                                     />
                                                 </div>
                                                 <div class="counter">

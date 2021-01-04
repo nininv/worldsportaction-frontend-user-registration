@@ -111,7 +111,7 @@ const CheckoutForm = (props) => {
         singleCredit: false,
         selectedOption: 0
     })
-
+    const [disabled, setDisabled] = useState(false)
 
     const stripe = useStripe();
     const elements = useElements();
@@ -257,6 +257,7 @@ const CheckoutForm = (props) => {
 
     // Handle form submission.
     const handleSubmit = async (event) => {
+        setDisabled(true);
         event.preventDefault();
         console.log("clientSecretKey", clientSecretKey);
         console.log(event)
@@ -353,6 +354,7 @@ const CheckoutForm = (props) => {
                 message.error(AppConstants.selectedPaymentOption)
             }
         }
+        setDisabled(false);
     }
 
     return (
@@ -612,6 +614,7 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                             <Button
+                                disabled={disabled}
                                 style={{ textTransform: "uppercase" }}
                                 className="open-reg-button"
                                 htmlType="submit"
