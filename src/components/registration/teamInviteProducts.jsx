@@ -54,8 +54,8 @@ class TeamInviteProducts extends Component{
 
     componentDidMount(){
         try{
-            //let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            let userRegId = "40f5dce2-a23a-4795-ba6e-93f8f4d01e09"
+            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+            // let userRegId = "40f5dce2-a23a-4795-ba6e-93f8f4d01e09"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -83,6 +83,10 @@ class TeamInviteProducts extends Component{
 
     goToShop = () =>{
         history.push({pathname: '/teamInviteShop', state: {userRegId: this.state.userRegId}})
+    }
+
+    removeFromCart = (index, key, subKey) => {
+        this.props.updateTeamInviteAction(null, key, index, subKey, null);
     }
 
      

@@ -122,7 +122,7 @@ class TeamInviteShipping extends Component{
     }
 
     removeFromCart = (index, key, subKey) =>{
-        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+        this.props.updateTeamInviteAction(null,key, index, subKey,null);
     }
 
     getAddress = (addressObject) => {
