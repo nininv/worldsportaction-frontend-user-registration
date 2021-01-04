@@ -97,6 +97,7 @@ function login(state = initialState, action) {
 
     case ApiConstants.ACTION_TO_CLEAR_AUTHENTICATION_REDUCER:
       if (action.key == "clearPasswordSuccess") {
+        localStorage.clear('ForgotPasswordEmail')
         state.forgotPasswordSuccess = false
       }
       return {
