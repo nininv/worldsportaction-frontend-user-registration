@@ -339,10 +339,14 @@ class RegistrationShipping extends Component {
                                         <span>{item.pickupInstruction}</span>
                                     </Tooltip>
                                 </div> */}
-                                <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
-                                <div className="subtitle-text-common" style={{marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
-                                <div style={{marginTop: "5px" }}>{item.pickupInstruction}</div>
-                            </div>    
+                                <div style={{ marginTop: "5px" }}>{item.pickupAddress}</div>
+                                {item.pickupInstruction && (
+                                    <>
+                                        <div className="subtitle-text-common" style={{ marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
+                                        <div style={{ marginTop: "5px" }}>{item.pickupInstruction}</div>
+                                    </>
+                                )}
+                            </div>
                         )}
                     </div>
                 ))}

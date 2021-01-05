@@ -49,7 +49,8 @@ import {
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
     getSchoolListAction,
-    validateRegistrationCapAction
+    validateRegistrationCapAction,
+    netSetGoTshirtSizeAction
 } from '../../store/actions/commonAction/commonAction';
 import {
     getUserRegistrationUserInfoAction,
@@ -133,6 +134,7 @@ class AppRegistrationFormNew extends Component {
         this.props.accreditationUmpireReferenceAction();
         this.props.accreditationCoachReferenceAction();
         this.props.walkingNetballQuesReferenceAction();
+        this.props.netSetGoTshirtSizeAction();
     }
 
     componentDidUpdate(nextProps) {
@@ -306,6 +308,11 @@ class AppRegistrationFormNew extends Component {
         } else if (current == 1) {
             if (this.state.enabledSteps.includes(1)) {
                 this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
+                setTimeout(() => {
+                    for(let i in registrationObj.competitions){
+                        this.props.form.setFieldsValue({[`tShirtSizeRefId${i}`] : registrationObj.competitions[i].tShirtSizeRefId});
+                    }
+                }, 300);
             }
         } else {
             if (this.state.enabledSteps.includes(2)) {
@@ -1134,6 +1141,24 @@ class AppRegistrationFormNew extends Component {
             return check;
         } catch (ex) {
             console.log("Error in checkProductEitherAddOrNot" + ex);
+        }
+    }
+
+    isNetSetGo = (competition, competitionIndex) => {
+        try{
+            let value = true;
+            if(isArrayNotEmpty(competition.products)){
+                let checkedPlayerProduct = competition.products.find(x => x.isChecked == true && x.membershipTypeName == "Player - NetSetGo");
+                if(checkedPlayerProduct == undefined) {
+                    value = false
+                }
+            }
+            else{
+                value = false;
+            }
+            return value;
+        } catch (ex) {
+            console.log("Error in isNetSetGo" + ex);
         }
     }
 
@@ -2658,7 +2683,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
-        const { playerPositionList } = this.props.commonReducerState;
+        const { playerPositionList, tShirtSizeList } = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
@@ -2708,6 +2733,29 @@ class AppRegistrationFormNew extends Component {
                                 onChange={(e) => this.onChangeSetCompetitionValue(e.target.checked, "products", competitionIndex, membershipProductIndex)}>
                                 {membershipProduct.shortName}</Checkbox>
                         ))}
+
+                        {this.isNetSetGo(competition, competitionIndex) && (
+                            <div>
+                               <div className="input-style-bold required-field">{AppConstants.tShirtSize}</div>
+                               <Form.Item>
+                               {getFieldDecorator(`tShirtSizeRefId${competitionIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.fillTshirtSizeInformation }],
+                                })(
+                                    <Select
+                                        style={{ width: "30%", paddingRight: 1 }}
+                                        placeholder={AppConstants.select}
+                                        setFieldsValue={competition.tShirtSizeRefId}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e, "tShirtSizeRefId", competitionIndex)}
+                                    >
+                                        {(tShirtSizeList || []).map((tShirtSize, tShirtSizeListIndex) => (
+                                            <Option key={"division" + tShirtSize.id}
+                                                value={tShirtSize.id}>{tShirtSize.name}</Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                </Form.Item> 
+                            </div>
+                        )}
 
                         {this.isPlayerActive(competition) && (
                             <div>
@@ -3945,7 +3993,8 @@ function mapDispatchToProps(dispatch) {
         registrationExpiryCheckAction,
         getSeasonalAndCasualFees,
         getSchoolListAction,
-        validateRegistrationCapAction
+        validateRegistrationCapAction,
+        netSetGoTshirtSizeAction
     }, dispatch);
 
 }

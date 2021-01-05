@@ -1221,6 +1221,10 @@ const AppConstants = {
   umpireAccreditation: "Umpire Accreditation",
   expiry: "Expiry",
   instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
+  coachAccreditation: "Coach Accreditation",
+  tShirtSizeList: "TShirtSize",
+
+
   registeredBy: "Registered By",
   ownRegistration: "Own Registration",
   teamRegistration: "Team Registration",

@@ -367,3 +367,20 @@ export function* validateRegistrationCapSaga(action){
     }
 }
 
+export function* netSetGoTshirtSizeSaga(){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.tShirtSizeList);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_NETSETGO_TSHIRT_SIZE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
