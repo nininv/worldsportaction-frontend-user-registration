@@ -1220,8 +1220,8 @@ const AppConstants = {
   pleaseReview: "Please review this page and correct any errors before submitting again",
   umpireAccreditation: "Umpire Accreditation",
   expiry: "Expiry",
-  instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment"
-
+  instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
+  coachAccreditation: "Coach Accreditation",
 };
 
 export default AppConstants;
