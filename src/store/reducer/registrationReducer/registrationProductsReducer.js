@@ -139,20 +139,25 @@ function registrationProductsReducer(state = initialState, action){
             else if(action.subKey == "shopProducts"){
                 if(action.key == "addShopProduct"){
                     console.log("action.value", action.value);
+                    console.log("action.value", action.value.quantity);
                     let sameProduct = reviewData[action.subKey].find(x => x.productId == action.value.productId && x.variantOptionId == action.value.variantOptionId);
+                    console.log("sameProd",sameProduct.quantity)
                     if(sameProduct){
                         let index = reviewData[action.subKey].indexOf(sameProduct);
                         reviewData[action.subKey].splice(index,1);
                     }
                     reviewData[action.subKey].push(action.value);
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
-                                            feeIsNull(action.value.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
-                                            feeIsNull(action.value.tax);
-                    console.log("total amount",reviewData["total"]["total"],action.value.amount,action.value.tax)
-                    let total = feeIsNull(reviewData["total"]["total"]) +
-                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
-                    reviewData["total"]["total"] = total.toFixed(2);
+                    if(!sameProduct || (sameProduct && (sameProduct.quantity != action.value.quantity))){
+                        reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
+                        feeIsNull(action.value.amount);
+                        reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
+                        feeIsNull(action.value.tax);
+                        console.log("total amount",reviewData["total"]["total"],action.value.amount,action.value.tax)
+                        let total = feeIsNull(reviewData["total"]["total"]) +
+                        feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+                        reviewData["total"]["total"] = total.toFixed(2);
+                    }
+
 
                                             
                 }
@@ -164,7 +169,8 @@ function registrationProductsReducer(state = initialState, action){
                                         feeIsNull(shopData.tax);
                     reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
                     feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
-                    
+                    reviewData["total"]["total"] = feeIsNull(reviewData["total"]["total"]) - 
+                    feeIsNull(shopData.amount) - feeIsNull(shopData.tax);
                     reviewData[action.subKey].splice(action.index,1);
                 }
                 
