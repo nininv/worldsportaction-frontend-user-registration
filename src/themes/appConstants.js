@@ -1220,8 +1220,16 @@ const AppConstants = {
   pleaseReview: "Please review this page and correct any errors before submitting again",
   umpireAccreditation: "Umpire Accreditation",
   expiry: "Expiry",
-  instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment"
-
+  instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
+  registeredBy: "Registered By",
+  ownRegistration: "Own Registration",
+  teamRegistration: "Team Registration",
+  otherRegistration: "Other Registration",
+  childRegistration: "Child Registration",
+  feePaid: "Fee Paid",
+  addTeamMembers: "Add Team Members",
+  Registrations: "Registrations",
+  teamMembers: "Team Members"
 };
 
 export default AppConstants;
