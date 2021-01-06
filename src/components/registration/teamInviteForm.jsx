@@ -1514,7 +1514,7 @@ class TeamInivteForm extends Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "identifyRefId", "userRegDetails")}
@@ -1605,7 +1605,7 @@ class TeamInivteForm extends Component {
                                         style={{ marginBottom: '15px' }} />
                                 )}
                             </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId", "userRegDetails")}
@@ -1638,7 +1638,7 @@ class TeamInivteForm extends Component {
                         </div>
                         {userRegDetails.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -1789,7 +1789,7 @@ class TeamInivteForm extends Component {
 
                     {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{ flexDirection: "column" }}
@@ -1816,7 +1816,7 @@ class TeamInivteForm extends Component {
 
                     {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"} />
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead

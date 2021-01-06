@@ -3571,7 +3571,7 @@ class AppTeamRegistrationForm extends Component{
                         </Select>
                       )}
                       </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs}/>
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
@@ -3662,7 +3662,7 @@ class AppTeamRegistrationForm extends Component{
                                     style={{marginBottom:'15px'}}/>
                                 )}
                             </Form.Item>   
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")} 
@@ -3695,7 +3695,7 @@ class AppTeamRegistrationForm extends Component{
                         </div>
                         {teamRegistrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -3849,7 +3849,7 @@ class AppTeamRegistrationForm extends Component{
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach}/>
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{flexDirection: "column"}}
@@ -3876,7 +3876,7 @@ class AppTeamRegistrationForm extends Component{
                     
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}required={"required-field"}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead 

@@ -372,7 +372,8 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
+                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber
                 });
             }
         } catch (ex) {
@@ -3189,16 +3190,16 @@ class AppRegistrationFormNew extends Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
                         value={registrationObj.additionalInfo.identifyRefId}>
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
-                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"} />
+                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[1] }],
@@ -3278,7 +3279,7 @@ class AppRegistrationFormNew extends Component {
                                         style={{ marginBottom: '15px' }} />
                                 )}
                             </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
@@ -3311,7 +3312,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -3488,7 +3489,7 @@ class AppRegistrationFormNew extends Component {
                     <div>
                         {registrationObj.umpireFlag == 1 && (
                             <div>
-                                <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} />
+                                <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required={"required-field"} />
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")}
@@ -3547,7 +3548,7 @@ class AppRegistrationFormNew extends Component {
                                         }
                                     </div>
                                 )}
-                                <InputWithHead heading={AppConstants.haveCompletedPrerequisites} />
+                                <InputWithHead heading={AppConstants.haveCompletedPrerequisites} required={"required-field"} />
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")}
@@ -3561,7 +3562,7 @@ class AppRegistrationFormNew extends Component {
 
                         {registrationObj.coachFlag == 1 && (
                             <div>
-                                <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                                <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                                 <Radio.Group
                                     style={{ flexDirection: "column" }}
                                     className="registration-radio-group"
@@ -3588,16 +3589,27 @@ class AppRegistrationFormNew extends Component {
 
                         {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
-                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
+                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"}/>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6 media-input-mb">
+                                    <Form.Item>
+                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                        })(
+                                            
                                         <InputWithHead
                                             placeholder={AppConstants.childrenNumber}
                                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                             value={registrationObj.additionalInfo.childrenCheckNumber}
                                         />
+                                        )}
+                                     </Form.Item>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
+                                        <Form.Item>
+                                            {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                                  rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                             })(
                                         <DatePicker
                                             size="large"
                                             placeholder={AppConstants.expiryDate}
@@ -3607,6 +3619,8 @@ class AppRegistrationFormNew extends Component {
                                             showTime={false}
                                             value={childrenCheckExpiryDate}
                                         />
+                                          )}
+                                        </Form.Item>
                                     </div>
                                 </div>
                             </div>

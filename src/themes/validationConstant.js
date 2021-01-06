@@ -113,7 +113,7 @@ const ValidationConstants = {
         "Allergies field is required",
         "Disability Care Number is required",
         "This field is required",
-        "This field is required",
+        "Other participation is required",
         "This field is required",
     ],
     memberTypeIsRequired: "Member type is required",
