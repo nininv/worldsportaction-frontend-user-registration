@@ -158,6 +158,24 @@ export function* getUserModuleRegistrationDataSaga(action) {
     }
 }
 
+export function* getUserModuleTeamMembersDataSaga(action) {
+    try {
+      const result = yield call(userHttpApi.getUserModuleTeamMembersData, action.payload);
+  
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
+
 /* Get the User Module Activity Player */
 export function* getUserModuleActivityPlayerSaga(action) {
     try {
@@ -344,7 +362,7 @@ export function* getAllOrganisationListSaga(action) {
 
 export function* saveUserPhotosSaga(action) {
     try {
-      const result = yield call(userHttpApi.saveUserPhoto, action.payload);
+      const result = yield call(userHttpApi.saveUserPhoto, action.payload, action.userId);
   
       if (result.status === 1) {
         yield put({

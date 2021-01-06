@@ -143,10 +143,11 @@ function getAllOrganisationListAction() {
   return action
 }
 
-function userPhotoUpdateAction(payload) {
+function userPhotoUpdateAction(payload, userId) {
   return {
       type: ApiConstants.API_USER_PHOTO_UPDATE_LOAD,
       payload,
+      userId
   };
 }
 
@@ -163,6 +164,13 @@ function userPasswordUpdateAction(payload) {
       type: ApiConstants.API_USER_PASSWORD_UPDATE_LOAD,
       payload,
   };
+}
+
+function getUserModuleTeamMembersAction(payload){
+  return {
+      type: ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD,
+      payload: payload
+  }
 }
 
 
@@ -186,5 +194,6 @@ export {
   getAllOrganisationListAction,
   userPhotoUpdateAction,
   registrationResendEmailAction,
-  userPasswordUpdateAction
+  userPasswordUpdateAction,
+  getUserModuleTeamMembersAction
 }

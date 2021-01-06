@@ -123,6 +123,8 @@ const ValidationConstants = {
     passwordVerification: 'Password must be minimum 8 characters',
     mobileLength: 'Contact number must be 10 digits',
     invalidNumber : 'Invalid Number',
+
+    fillTshirtSizeInformation: "Please choose a T'Shirt Size"
 };
 
 export default ValidationConstants;

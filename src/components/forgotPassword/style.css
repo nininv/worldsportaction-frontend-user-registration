@@ -20,3 +20,8 @@
 .radioBtn:focus{
   box-shadow: 0 0px 0px ;
 }
+
+.forgot-password-radio{
+  justify-content: space-around;
+  margin: 20px 0px;
+}

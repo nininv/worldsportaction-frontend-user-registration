@@ -78,8 +78,8 @@ class RegistrationInvoice extends Component {
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            // let registrationId = null;
-            // let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+            // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
+            // let userRegId = null;
             // let invoiceId = null;
             this.props.getInvoice(registrationId, userRegId, invoiceId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
@@ -125,7 +125,7 @@ class RegistrationInvoice extends Component {
     ///top header view
     topView = (result) => {
         let {invoiceData, getAffiliteDetailData} = this.props.stripeState;
-        let userDetail = invoiceData!= null ? invoiceData.billTo: null;
+        let userDetail = invoiceData != null ? invoiceData.billTo: null;
         let organisationLogo = invoiceData!= null ? invoiceData.organisationLogo : null;
         let invoiceDisabled = this.state.invoiceDisabled;
         let isSchoolRegistrationApplied = invoiceData!= null ? invoiceData.isSchoolRegistrationApplied: 0;
@@ -261,6 +261,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={'$' + (Number(membershipDetail.feesToPayGST)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -269,7 +275,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) -
-                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -319,6 +325,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={'$' + (Number(competitionDetails.feesToPayGST)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -327,7 +339,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
-                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -360,6 +372,12 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={'$' + (Number(competitionDetails.nominationFeeToPay)).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
+                                    heading={'$' + "0.00"}
                                     required={"input-align-right"}
                                 />
                             </div>
@@ -432,6 +450,14 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
                                     < InputWithHead
                                         heading={'$' + (Number(affiliateDetail.feesToPayGST)).toFixed(2)}
                                         required={"input-align-right"}
@@ -442,7 +468,7 @@ class RegistrationInvoice extends Component {
                                     < InputWithHead
                                         required="invoice"
                                         heading={'$' + (parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
-                                            parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                            parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                     />}
                             </div>
 
@@ -479,6 +505,14 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     <InputWithHead
                                         heading={'$' + (Number(affiliateDetail.nominationFeeToPay)).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + "0.00"}
                                         required={"input-align-right"}
                                     />
                                 }
@@ -549,6 +583,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={"Government Voucher"}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={"GST"}
                                     required={"input-align-right"}
                                 />
@@ -574,7 +614,8 @@ class RegistrationInvoice extends Component {
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
-                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
+                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0) - 
+                                 Number(mem.governmentVoucherAmount!= null ? mem.governmentVoucherAmount : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
@@ -639,7 +680,7 @@ class RegistrationInvoice extends Component {
                                                 <div className="col-sm invoice-right-column pr-0">
                                                     <InputWithHead
                                                         required="invoice"
-                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
+                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "$0.00"}
                                                     />
                                                 </div> 
                                             </div>
@@ -667,7 +708,8 @@ class RegistrationInvoice extends Component {
     totalInvoiceView = (result) => {
         let {invoiceData} = this.props.stripeState;
         let total = invoiceData!= null ? invoiceData.total: null;
-        let paymentType = this.props.location.state ? this.props.location.state.paymentType : null
+        let paymentType = this.props.location.state ? this.props.location.state.paymentType : null;
+        let userDetail = invoiceData != null ? invoiceData.billTo: null;
         return (
             <div className="content-view">
                 <div className="drop-reverse" >
@@ -773,6 +815,7 @@ class RegistrationInvoice extends Component {
                 <div className="row">
                     <div className="col-sm pt-5 px-0 d-flex invoiceImage">
                         <label className="d-flex align-items-center">
+                            {userDetail && userDetail.state != "New South Wales" && 
                             <img
                                 src={AppImages.netballImages}
                                 name={'image'}
@@ -780,6 +823,7 @@ class RegistrationInvoice extends Component {
                                     ev.target.src = AppImages.netballImages;
                                 }}
                             />
+                            }
                         </label>
                     </div>
                     <div className="col-sm pt-5 px-0 invoiceImageMain ">

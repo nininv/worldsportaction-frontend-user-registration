@@ -31,6 +31,7 @@ let seasionalAndCasualFeesInputObj = {
 
 let registrationCapValidateInputObjTemp = {
 	"registrationId": "",
+	"participantId": "",
 	"isTeamRegistration": 0,
 	"products": []
   }
@@ -186,6 +187,7 @@ const initialState = {
 	membershipProductInfo: [],
 	addCompetitionFlag: false,
 	registrationId: null,
+	participantId: null,
 	isSavedParticipant: false,
 	saveValidationErrorMsg: null,
 	saveValidationErrorCode: null,
@@ -219,6 +221,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 		}
 		if((action.data != -1) || (getUserId() != 0 && registrationObj.registeringYourself == 1)){
 			let selectedUser = state.userInfo.find((user) => user.id == action.data);
+			registrationObj.userId = selectedUser.id;
 			registrationObj.firstName = selectedUser.firstName;
 			registrationObj.lastName = selectedUser.lastName;
 			registrationObj.email = selectedUser.email;
@@ -228,7 +231,12 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;
-            registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.isInActive = selectedUser.isInActive;
+			registrationObj.referParentEmail = selectedUser.isInActive ? true : false;
+			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail == true){
+				registrationObj.email = null;
+			}
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.addNewAddressFlag = false;
@@ -289,12 +297,12 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.additionalInfo.isParticipatedInSSP = selectedUser.additionalInfo.isParticipatedInSSP;
 			registrationObj.additionalInfo.accreditationLevelUmpireRefId = selectedUser.additionalInfo.accreditationLevelUmpireRefId;
 			registrationObj.additionalInfo.associationLevelInfo = selectedUser.additionalInfo.associationLevelInfo;
-			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate;
+			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate ? moment(selectedUser.additionalInfo.accreditationUmpireExpiryDate).format("MM-DD-YYYY") : null;;;
 			registrationObj.additionalInfo.isPrerequestTrainingComplete = selectedUser.additionalInfo.isPrerequestTrainingComplete;
 			registrationObj.additionalInfo.accreditationLevelCoachRefId = selectedUser.additionalInfo.accreditationLevelCoachRefId;
-			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate;
+			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate ? moment(selectedUser.additionalInfo.accreditationCoachExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.childrenCheckNumber = selectedUser.additionalInfo.childrenCheckNumber;
-			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate;
+			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate ? moment(selectedUser.additionalInfo.childrenCheckExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.walkingNetballRefId = selectedUser.additionalInfo.walkingNetballRefId;
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;
@@ -457,7 +465,8 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
 		let competition = registrationObjTemp.competitions[competitionIndex];
 		let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
-		validateRegistrationCapObj.registrationId = registrationObjTemp.registrationId ? registrationObjTemp.registrationId : "";
+		validateRegistrationCapObj.registrationId = state.registrationId ? state.registrationId : "";
+		validateRegistrationCapObj.participantId = state.participantId ? state.participantId : "";
 		validateRegistrationCapObj.isTeamRegistration = 0;
 		validateRegistrationCapObj.products = [];
 		if(fromNonProductsOrDivisions == 2 || isPlayer != 1){
@@ -674,6 +683,9 @@ function checkByDateOfBirth(state,dateOfBirth){
 		state.registrationObj.dateOfBirth = dateOfBirth;
 		if(getAge(dateOfBirth) < 18){
 			state.registrationObj.referParentEmail = true;
+			if(state.registrationObj.userId != getUserId()){
+				state.registrationObj.email = null;
+			}
 		}else{
 			state.registrationObj.referParentEmail = false;
 		}
@@ -812,6 +824,11 @@ function userRegistrationReducer(state = initialState, action){
 				checkByDateOfBirth(state,value);
 			}else if(key == "genderRefId"){
 				checkByGender(state,value);
+			}else if(key == "referParentEmail"){
+				state.registrationObj[key] = value;
+				if(state.registrationObj.userId != getUserId() && value == true){
+					state.registrationObj.email = null;
+				}
 			}else if(key == "registeringYourself"){
 				state.registrationObj[key] = value;
 				if(getUserId() != 0){

@@ -157,10 +157,10 @@ class RegistrationShipping extends Component {
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
-    getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
+    getPaymentOptionText = (paymentOptionRefId , isTeamRegistration) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) : 
         (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
+        (paymentOptionRefId == 3 ? AppConstants.allMatches : 
         (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
@@ -339,10 +339,14 @@ class RegistrationShipping extends Component {
                                         <span>{item.pickupInstruction}</span>
                                     </Tooltip>
                                 </div> */}
-                                <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
-                                <div className="subtitle-text-common" style={{marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
-                                <div style={{marginTop: "5px" }}>{item.pickupInstruction}</div>
-                            </div>    
+                                <div style={{ marginTop: "5px" }}>{item.pickupAddress}</div>
+                                {item.pickupInstruction && (
+                                    <>
+                                        <div className="subtitle-text-common" style={{ marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
+                                        <div style={{ marginTop: "5px" }}>{item.pickupInstruction}</div>
+                                    </>
+                                )}
+                            </div>
                         )}
                     </div>
                 ))}
@@ -808,7 +812,7 @@ class RegistrationShipping extends Component {
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId , item.isTeamRegistration)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
                        {item.isTeamRegistration == 1  ? 

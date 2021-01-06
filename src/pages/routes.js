@@ -39,6 +39,7 @@ import TeamInviteShipping from "../components/registration/teamInviteShipping";
 import SingleGamePayment from "../components/registration/singleGamePayment";
 
 import MyUmpiringAvailability from "../components/umpire/myUmpiringAvailability";
+import AddTeamMember from "../components/user/addTeamMember";
 
 // changePassword 
 import ManagePassword from './Accounts/password';
@@ -200,6 +201,10 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/managePassword"
           component={lazyLoad(ManagePassword)}
+          />
+        <PrivateRoute
+          path="/addTeamMember"
+          component={lazyLoad(AddTeamMember)}
           />
 
         <Route path="/" component={lazyLoad(NotFound)} />

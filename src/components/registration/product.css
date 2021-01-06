@@ -577,6 +577,7 @@
   background-color: transparent;
   border-bottom: none;
   width: fit-content;
+  min-width: 45px;
 }
 
 .reg-form-multple-select .ant-select-selection {
