@@ -395,7 +395,7 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
                     [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
                     [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
-                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
+                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate ? moment(additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY") : null
                 });
             }
         } catch (ex) {
@@ -3735,15 +3735,15 @@ class AppRegistrationFormNew extends Component {
                                             {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
                                                   rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                              })(
-                                        <DatePicker
-                                            size="large"
-                                            placeholder={AppConstants.expiryDate}
-                                            style={{ width: "100%" }}
-                                            onChange={(e, f) => this.dateConversion(f, "childrenCheckExpiryDate", "additionalInfo")}
-                                            format={"DD-MM-YYYY"}
-                                            showTime={false}
-                                            value={childrenCheckExpiryDate}
-                                        />
+                                            <DatePicker
+                                                size="large"
+                                                placeholder={AppConstants.expiryDate}
+                                                style={{ width: "100%" }}
+                                                onChange={(e, f) => this.dateConversion(f, "childrenCheckExpiryDate", "additionalInfo")}
+                                                format={"DD-MM-YYYY"}
+                                                showTime={false}
+                                                setFieldsValue={childrenCheckExpiryDate}
+                                            />
                                           )}
                                         </Form.Item>
                                     </div>
