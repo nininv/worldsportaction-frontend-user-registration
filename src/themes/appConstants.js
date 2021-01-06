@@ -933,7 +933,7 @@ const AppConstants = {
   expiryDate: "Expiry Date",
   addedToCart: "Product added to cart",
 
-  // RegistrationReviewForm 
+  // RegistrationReviewForm
 
   individualRegistration: "Individual Registration",
   participantName: "Participant Name",
@@ -955,7 +955,7 @@ const AppConstants = {
   governmentSportsVoucher: "Government Sports Voucher",
   support: "Support",
   confidentGirlsFoundation: "Confident Girls Foundation",
-  // review products 
+  // review products
   reviewProducts: "Review Products",
   subTotal: "Sub-total",
   shipping: "Shipping",
@@ -1201,6 +1201,9 @@ const AppConstants = {
   warning: "Warning",
 
   myUmpiringAvailability: 'My Umpiring Availability',
+  // CM-2026
+  banIndividualTeamMixRegistrationMessageTitle: "Cannot add team",
+  banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator",

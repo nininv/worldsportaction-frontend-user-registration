@@ -16,7 +16,7 @@ import {
     Tag,
     Pagination,
     Carousel,
-    Spin
+    Spin, notification
 } from "antd";
 import "./product.css";
 import "../user/user.css";
@@ -1224,6 +1224,26 @@ class AppRegistrationFormNew extends Component {
     }
 
     goToTeamRegistrationForm = (uniqueKey, registrationId) => {
+        // console.log(registrationId, uniqueKey);
+
+        const { registrationReviewList } = this.props.registrationProductState;
+        const compParticipants = registrationReviewList !== null ?
+            isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                registrationReviewList.compParticipants : [] : [];
+        const isTeamRegistration = compParticipants[0] ? compParticipants[0].isTeamRegistration : false;
+
+        // CM-2026
+        // if not team registration (is individual registration) and registrationId is present
+        // then prevent adding a team to cart
+        if (!isTeamRegistration && this.state.registrationId) {
+            notification.open({
+                message: AppConstants.banIndividualTeamMixRegistrationMessageTitle,
+                description:
+                  AppConstants.banIndividualTeamMixRegistrationMessage,
+              });
+            return
+        }
+
         if (uniqueKey) {
             history.push({ pathname: '/appTeamRegistrationForm', state: { existingTeamParticipantId: uniqueKey, registrationId: registrationId } });
         } else {
@@ -2753,7 +2773,7 @@ class AppRegistrationFormNew extends Component {
                                         ))}
                                     </Select>
                                 )}
-                                </Form.Item> 
+                                </Form.Item>
                             </div>
                         )}
 
@@ -2763,10 +2783,10 @@ class AppRegistrationFormNew extends Component {
                                 <div
                                     style={{ marginBottom: "10px" }}>
                                     {(competition.divisions || []).map((division, divisionIndex) => (
-                                        // <Tag 
-                                        // key={division.competitionMembershipProductDivisionId + divisionIndex} 
+                                        // <Tag
+                                        // key={division.competitionMembershipProductDivisionId + divisionIndex}
                                         // style={{marginBottom: "10px"}}
-                                        // closable 
+                                        // closable
                                         // color="volcano"
                                         // onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
                                         <span style={{
@@ -3344,7 +3364,7 @@ class AppRegistrationFormNew extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
-                        })( 
+                        })(
                             <TextArea
                                 placeholder={AppConstants.anyAllergies}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
@@ -3720,7 +3740,7 @@ class AppRegistrationFormNew extends Component {
                                 <div className="form-heading" style={{ marginTop: "40px", paddingBottom: "20px" }}>{AppConstants.walkingNetball2}</div>
                                 {/* <Radio.Group
                                     className="registration-radio-group"
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballRefId")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballRefId")}
                                     value={registrationObj.additionalInfo.walkingNetballRefId}
                                     >
                                     {(walkingNetballQuesList || []).map((ques,quesIndex) => (
@@ -4001,6 +4021,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStatetoProps(state) {
     return {
+        registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
         commonReducerState: state.CommonReducerState
     }
