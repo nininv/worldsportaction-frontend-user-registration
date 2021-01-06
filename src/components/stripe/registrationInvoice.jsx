@@ -641,14 +641,14 @@ class RegistrationInvoice extends Component {
                                                                     + ", Team - " + item.teamName + ", " + item.competitionName
                                                                 :
                                                                 mem.divisionName ?
-                                                                    tShirtName ?
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
                                                                     regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
                                                                     + " - " + tShirtName + ", " + item.competitionName + " - "+ mem.divisionName
                                                                     :
                                                                     regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                     + ", " + item.competitionName + " - "+ mem.divisionName
                                                                     :
-                                                                    tShirtName ?
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
                                                                     regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
                                                                     + " - " + tShirtName + ", " + item.competitionName
                                                                     :
