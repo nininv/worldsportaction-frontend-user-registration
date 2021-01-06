@@ -16,7 +16,7 @@ import {
     Tag,
     Pagination,
     Carousel,
-    Spin
+    Spin, notification
 } from "antd";
 import "./product.css";
 import "../user/user.css";
@@ -49,7 +49,8 @@ import {
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
     getSchoolListAction,
-    validateRegistrationCapAction
+    validateRegistrationCapAction,
+    netSetGoTshirtSizeAction
 } from '../../store/actions/commonAction/commonAction';
 import {
     getUserRegistrationUserInfoAction,
@@ -133,6 +134,7 @@ class AppRegistrationFormNew extends Component {
         this.props.accreditationUmpireReferenceAction();
         this.props.accreditationCoachReferenceAction();
         this.props.walkingNetballQuesReferenceAction();
+        this.props.netSetGoTshirtSizeAction();
     }
 
     componentDidUpdate(nextProps) {
@@ -306,6 +308,11 @@ class AppRegistrationFormNew extends Component {
         } else if (current == 1) {
             if (this.state.enabledSteps.includes(1)) {
                 this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
+                setTimeout(() => {
+                    for(let i in registrationObj.competitions){
+                        this.props.form.setFieldsValue({[`tShirtSizeRefId${i}`] : registrationObj.competitions[i].tShirtSizeRefId});
+                    }
+                }, 300);
             }
         } else {
             if (this.state.enabledSteps.includes(2)) {
@@ -386,7 +393,9 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
+                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
+                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
                 });
             }
         } catch (ex) {
@@ -1148,6 +1157,24 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
+    isNetSetGo = (competition, competitionIndex) => {
+        try{
+            let value = true;
+            if(isArrayNotEmpty(competition.products)){
+                let checkedPlayerProduct = competition.products.find(x => x.isChecked == true && x.membershipTypeName == "Player - NetSetGo");
+                if(checkedPlayerProduct == undefined) {
+                    value = false
+                }
+            }
+            else{
+                value = false;
+            }
+            return value;
+        } catch (ex) {
+            console.log("Error in isNetSetGo" + ex);
+        }
+    }
+
     isPlayerActive = (competition) => {
         try {
             let value = true;
@@ -1210,6 +1237,26 @@ class AppRegistrationFormNew extends Component {
     }
 
     goToTeamRegistrationForm = (uniqueKey, registrationId) => {
+        // console.log(registrationId, uniqueKey);
+
+        const { registrationReviewList } = this.props.registrationProductState;
+        const compParticipants = registrationReviewList !== null ?
+            isArrayNotEmpty(registrationReviewList.compParticipants) ?
+                registrationReviewList.compParticipants : [] : [];
+        const isTeamRegistration = compParticipants[0] ? compParticipants[0].isTeamRegistration : false;
+
+        // CM-2026
+        // if not team registration (is individual registration) and registrationId is present
+        // then prevent adding a team to cart
+        if (!isTeamRegistration && this.state.registrationId) {
+            notification.open({
+                message: AppConstants.banIndividualTeamMixRegistrationMessageTitle,
+                description:
+                  AppConstants.banIndividualTeamMixRegistrationMessage,
+              });
+            return
+        }
+
         if (uniqueKey) {
             history.push({ pathname: '/appTeamRegistrationForm', state: { existingTeamParticipantId: uniqueKey, registrationId: registrationId } });
         } else {
@@ -2669,7 +2716,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     competitionDetailView = (competition, competitionIndex, getFieldDecorator) => {
-        const { playerPositionList } = this.props.commonReducerState;
+        const { playerPositionList, tShirtSizeList } = this.props.commonReducerState;
         let competitionInfo = competition.competitionInfo;
         let contactDetails = competitionInfo.replyName || competitionInfo.replyPhone || competitionInfo.replyEmail ?
             competitionInfo.replyName + ' ' + competitionInfo.replyPhone + ' ' + competitionInfo.replyEmail : '';
@@ -2720,16 +2767,39 @@ class AppRegistrationFormNew extends Component {
                                 {membershipProduct.shortName}</Checkbox>
                         ))}
 
+                        {this.isNetSetGo(competition, competitionIndex) && (
+                            <div>
+                               <div className="input-style-bold required-field">{AppConstants.tShirtSize}</div>
+                               <Form.Item>
+                               {getFieldDecorator(`tShirtSizeRefId${competitionIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.fillTshirtSizeInformation }],
+                                })(
+                                    <Select
+                                        style={{ width: "30%", paddingRight: 1 }}
+                                        placeholder={AppConstants.select}
+                                        setFieldsValue={competition.tShirtSizeRefId}
+                                        onChange={(e) => this.onChangeSetCompetitionValue(e, "tShirtSizeRefId", competitionIndex)}
+                                    >
+                                        {(tShirtSizeList || []).map((tShirtSize, tShirtSizeListIndex) => (
+                                            <Option key={"division" + tShirtSize.id}
+                                                value={tShirtSize.id}>{tShirtSize.name}</Option>
+                                        ))}
+                                    </Select>
+                                )}
+                                </Form.Item>
+                            </div>
+                        )}
+
                         {this.isPlayerActive(competition) && (
                             <div>
                                 <div className="input-style-bold required-field">{AppConstants.registrationDivisions}</div>
                                 <div
                                     style={{ marginBottom: "10px" }}>
                                     {(competition.divisions || []).map((division, divisionIndex) => (
-                                        // <Tag 
-                                        // key={division.competitionMembershipProductDivisionId + divisionIndex} 
+                                        // <Tag
+                                        // key={division.competitionMembershipProductDivisionId + divisionIndex}
                                         // style={{marginBottom: "10px"}}
-                                        // closable 
+                                        // closable
                                         // color="volcano"
                                         // onClose={(e) => this.onChangeSetCompetitionValue(e,"divisions",competitionIndex,divisionIndex)}>{division.divisionName}</Tag>
                                         <span style={{
@@ -3255,16 +3325,16 @@ class AppRegistrationFormNew extends Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
                     <Radio.Group
                         className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
+                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
                         value={registrationObj.additionalInfo.identifyRefId}>
                         {(identifyAsList || []).map((identification, identificationIndex) => (
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
-                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"} />
+                    <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[1] }],
@@ -3307,7 +3377,7 @@ class AppRegistrationFormNew extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
-                        })( 
+                        })(
                             <TextArea
                                 placeholder={AppConstants.anyAllergies}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
@@ -3344,7 +3414,7 @@ class AppRegistrationFormNew extends Component {
                                         style={{ marginBottom: '15px' }} />
                                 )}
                             </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
@@ -3377,7 +3447,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         {registrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -3554,7 +3624,7 @@ class AppRegistrationFormNew extends Component {
                     <div>
                         {registrationObj.umpireFlag == 1 && (
                             <div>
-                                <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} />
+                                <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required={"required-field"} />
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")}
@@ -3613,7 +3683,7 @@ class AppRegistrationFormNew extends Component {
                                         }
                                     </div>
                                 )}
-                                <InputWithHead heading={AppConstants.haveCompletedPrerequisites} />
+                                <InputWithHead heading={AppConstants.haveCompletedPrerequisites} required={"required-field"} />
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")}
@@ -3627,7 +3697,7 @@ class AppRegistrationFormNew extends Component {
 
                         {registrationObj.coachFlag == 1 && (
                             <div>
-                                <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                                <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                                 <Radio.Group
                                     style={{ flexDirection: "column" }}
                                     className="registration-radio-group"
@@ -3654,16 +3724,26 @@ class AppRegistrationFormNew extends Component {
 
                         {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
-                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
+                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"}/>
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6 media-input-mb">
+                                    <Form.Item>
+                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                        })(
                                         <InputWithHead
                                             placeholder={AppConstants.childrenNumber}
                                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                             value={registrationObj.additionalInfo.childrenCheckNumber}
                                         />
+                                        )}
+                                     </Form.Item>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
+                                        <Form.Item>
+                                            {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
+                                                  rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                             })(
                                         <DatePicker
                                             size="large"
                                             placeholder={AppConstants.expiryDate}
@@ -3673,6 +3753,8 @@ class AppRegistrationFormNew extends Component {
                                             showTime={false}
                                             value={childrenCheckExpiryDate}
                                         />
+                                          )}
+                                        </Form.Item>
                                     </div>
                                 </div>
                             </div>
@@ -3683,7 +3765,7 @@ class AppRegistrationFormNew extends Component {
                                 <div className="form-heading" style={{ marginTop: "40px", paddingBottom: "20px" }}>{AppConstants.walkingNetball2}</div>
                                 {/* <Radio.Group
                                     className="registration-radio-group"
-                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballRefId")} 
+                                    onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "walkingNetballRefId")}
                                     value={registrationObj.additionalInfo.walkingNetballRefId}
                                     >
                                     {(walkingNetballQuesList || []).map((ques,quesIndex) => (
@@ -3959,13 +4041,15 @@ function mapDispatchToProps(dispatch) {
         registrationExpiryCheckAction,
         getSeasonalAndCasualFees,
         getSchoolListAction,
-        validateRegistrationCapAction
+        validateRegistrationCapAction,
+        netSetGoTshirtSizeAction
     }, dispatch);
 
 }
 
 function mapStatetoProps(state) {
     return {
+        registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
         commonReducerState: state.CommonReducerState
     }

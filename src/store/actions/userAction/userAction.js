@@ -166,6 +166,13 @@ function userPasswordUpdateAction(payload) {
   };
 }
 
+function getUserModuleTeamMembersAction(payload){
+  return {
+      type: ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD,
+      payload: payload
+  }
+}
+
 
 export {
   getRoleAction,
@@ -187,5 +194,6 @@ export {
   getAllOrganisationListAction,
   userPhotoUpdateAction,
   registrationResendEmailAction,
-  userPasswordUpdateAction
+  userPasswordUpdateAction,
+  getUserModuleTeamMembersAction
 }
