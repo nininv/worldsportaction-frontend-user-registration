@@ -394,7 +394,8 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
                     [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
-                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber
+                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
+                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
                 });
             }
         } catch (ex) {
@@ -3719,7 +3720,6 @@ class AppRegistrationFormNew extends Component {
                                         {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
                                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                         })(
-                                            
                                         <InputWithHead
                                             placeholder={AppConstants.childrenNumber}
                                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
@@ -3730,7 +3730,7 @@ class AppRegistrationFormNew extends Component {
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <Form.Item>
-                                            {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                            {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
                                                   rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                              })(
                                         <DatePicker

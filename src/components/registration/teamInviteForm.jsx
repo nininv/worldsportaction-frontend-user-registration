@@ -232,7 +232,9 @@ class TeamInivteForm extends Component {
                     [`additionalInfoPhysicalActivity`]: userRegDetails.walkingNetball?.physicalActivity,
                     [`additionalInfoPregnant`]: userRegDetails.walkingNetball?.pregnant,
                     [`additionalInfoLowerBackProblem`]: userRegDetails.walkingNetball?.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: userRegDetails?.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: userRegDetails?.walkingNetballInfo,
+                    [`additionalInfoWorkingWithChildrenCheckNumber`]: userRegDetails.childrenCheckNumber,
+                    [`additionalInfoChildrenCheckExpiryDate`]: userRegDetails.childrenCheckExpiryDate,
                 });
             }
         } catch (ex) {
@@ -1943,13 +1945,23 @@ class TeamInivteForm extends Component {
                             <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"} />
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
+                                <Form.Item>
+                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                        })(
                                     <InputWithHead
                                         placeholder={AppConstants.childrenNumber}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "childrenCheckNumber", "userRegDetails")}
                                         value={userRegDetails.childrenCheckNumber}
                                     />
+                                    )}
+                                </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
+                                    <Form.Item>
+                                            {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
+                                                  rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                             })(
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
@@ -1959,6 +1971,8 @@ class TeamInivteForm extends Component {
                                         showTime={false}
                                         value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate, "YYYY-MM-DD")}
                                     />
+                                        )}
+                                    </Form.Item>
                                 </div>
                             </div>
                         </div>
