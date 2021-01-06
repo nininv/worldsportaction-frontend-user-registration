@@ -630,15 +630,6 @@ class AppRegistrationFormNew extends Component {
             }
 
             if (key == "dateOfBirth") {
-
-                if (registrationObj != null) {
-                    setTimeout(() => {
-                        this.setState({
-                            sameEmailValidationModalVisible: registrationObj.referParentEmail
-                        })
-                    }, 800);
-                }
-
                 if (getAge(value) < 18) {
                     if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
                         this.addParent("add");
@@ -3929,16 +3920,16 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.cancel}
                         </Button>,
                         <Button
-                            htmlType="submit"
-                            type="primary"
+                            // htmlType="submit"
+                            // type="primary"
                             className="other-info-btn color-white"
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
                                 this.setState({ sameEmailValidationModalVisible: false, hasChecked: false })
-                                // this.stepNavigation(registrationObj, expiredRegistration);
-                                // setTimeout(() => {
-                                //     this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
-                                // }, 100);
+                                this.stepNavigation(registrationObj, expiredRegistration);
+                                setTimeout(() => {
+                                    this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
+                                }, 100);
                             }}
                         >
                             {AppConstants.continue}
