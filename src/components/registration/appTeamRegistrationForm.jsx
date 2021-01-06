@@ -3954,7 +3954,6 @@ class AppTeamRegistrationForm extends Component {
                         {getFieldDecorator(`additionalInfoCountryRefId`, {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
-<<<<<<< HEAD
                         <Select
                             style={{ width: "100%" }}
                             placeholder={AppConstants.select}
@@ -3967,20 +3966,6 @@ class AppTeamRegistrationForm extends Component {
                       )}
                       </Form.Item>
                     <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
-=======
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "countryRefId")}
-                                setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
-                                {countryList.length > 0 && countryList.map((item) => (
-                                    < Option key={item.id} value={item.id}> {item.description}</Option>
-                                ))}
-                            </Select>
-                        )}
-                    </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
->>>>>>> 90016035956f4415be09384752f388224307e606
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
@@ -4070,13 +4055,8 @@ class AppTeamRegistrationForm extends Component {
                                         setFieldsValue={teamRegistrationObj.additionalInfo.disabilityCareNumber}
                                         style={{ marginBottom: '15px' }} />
                                 )}
-<<<<<<< HEAD
                             </Form.Item>   
                             <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
-=======
-                            </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
->>>>>>> 90016035956f4415be09384752f388224307e606
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
@@ -4263,11 +4243,7 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-<<<<<<< HEAD
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
-=======
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
->>>>>>> 90016035956f4415be09384752f388224307e606
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{ flexDirection: "column" }}
@@ -4294,11 +4270,7 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-<<<<<<< HEAD
                             <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}required={"required-field"}/>
-=======
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
->>>>>>> 90016035956f4415be09384752f388224307e606
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead

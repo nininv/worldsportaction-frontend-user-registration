@@ -913,21 +913,12 @@ class UserProfileEdit extends Component {
                         onChange={(e) => this.onChangeSetValue(e.target.value, "isDisability")}
                         value={userData.isDisability}>
                         <Radio value={1}>{AppConstants.yes}</Radio>
-<<<<<<< HEAD
                             {userData.isDisability == 1 ? 
                             <div style={{marginLeft: '25px'}}>
                                 <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "disabilityCareNumber" )}
                                     value={userData.disabilityCareNumber}/>
                                 <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
-=======
-                        {userData.isDisability == 1 ?
-                            <div style={{ marginLeft: '25px' }}>
-                                <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber}
-                                    onChange={(e) => this.onChangeSetValue(e.target.value, "disabilityCareNumber")}
-                                    value={userData.disabilityCareNumber} />
-                                <InputWithHead heading={AppConstants.typeOfDisability} />
->>>>>>> 90016035956f4415be09384752f388224307e606
                                 <Radio.Group
                                     className="reg-competition-radio"
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "disabilityTypeRefId")}
