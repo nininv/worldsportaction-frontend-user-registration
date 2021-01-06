@@ -610,7 +610,7 @@ class RegistrationInvoice extends Component {
                 {data && data.length > 0 && data.map((item, participantIndex) => {
                      let isTeamReg = (item.isTeamRegistration != undefined ? item.isTeamRegistration : 0);
                      let regName = isTeamReg == 1 ? AppConstants.teamRegistration : AppConstants.registration;
-                     let tShirtDetails = tShirtSizeList.find(x => x.id == item.tShirtSizeRefId);
+                     let tShirtDetails = tShirtSizeList ? tShirtSizeList.find(x => x.id == item.tShirtSizeRefId) : null;
                      let tShirtName = tShirtDetails ? tShirtDetails.name : null;
                     return(
                         <div>
