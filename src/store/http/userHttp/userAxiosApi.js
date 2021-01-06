@@ -67,6 +67,10 @@ let userHttpApi = {
     var url = `api/user/registration`;
     return Method.dataPost(url, token, payload);
   },
+  getUserModuleTeamMembersData(payload) {
+    const url = `/api/user/registration/team`;
+    return Method.dataPost(url, token, payload);
+  },
   getUserModuleActivityPlayer(payload) {
     var url = `api/user/activity/player`;
     return Method.dataPost(url, token, payload);

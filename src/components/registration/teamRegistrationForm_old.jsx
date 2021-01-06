@@ -737,7 +737,7 @@ class TeamRegistrationForm extends Component {
 
                 {item.favouriteTeamRefId === 6 ? (
                     <div>
-                        <InputWithHead heading={AppConstants.who_fav_bird} />
+                        <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                         <Select
                             style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
                             onChange={(e) => this.onChangeSetRegSettingValue(e, "favouriteFireBird")}
@@ -770,7 +770,7 @@ class TeamRegistrationForm extends Component {
                                     <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber}
                                         onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "disabilityCareNumber")}
                                         value={item.disabilityCareNumber} />
-                                    <InputWithHead heading={AppConstants.typeOfDisability} />
+                                    <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                                     <Radio.Group
                                         className="reg-competition-radio"
                                         onChange={(e) => this.onChangeSetRegSettingValue(e.target.value, "disabilityTypeRefId")}

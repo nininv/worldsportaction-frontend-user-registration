@@ -113,7 +113,7 @@ const ValidationConstants = {
         "Allergies field is required",
         "Disability Care Number is required",
         "This field is required",
-        "This field is required",
+        "Other participation is required",
         "This field is required",
     ],
     memberTypeIsRequired: "Member type is required",
@@ -123,6 +123,8 @@ const ValidationConstants = {
     passwordVerification: 'Password must be minimum 8 characters',
     mobileLength: 'Contact number must be 10 digits',
     invalidNumber : 'Invalid Number',
+
+    fillTshirtSizeInformation: "Please choose a T'Shirt Size"
 };
 
 export default ValidationConstants;

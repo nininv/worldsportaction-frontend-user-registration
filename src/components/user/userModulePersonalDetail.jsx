@@ -17,7 +17,8 @@ import {
     getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
     userPhotoUpdateAction,
     registrationResendEmailAction,
-    userProfileUpdateAction
+    userProfileUpdateAction,
+    getUserModuleTeamMembersAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -37,6 +38,7 @@ import {
     getAuthToken, 
     setIsUserRegistration
 } from "../../util/sessionStorage";
+import {isArrayNotEmpty} from "../../util/helpers";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate, getTime } from '../../themes/dateformate';
@@ -153,6 +155,143 @@ const columns = [
                                 <span>Resend Email</span>
                             </Menu.Item>
                         } */}
+                    </SubMenu>
+                </Menu>
+            )
+
+        }
+    }
+];
+
+const teamRegistrationColumns = [
+    {
+        title: "",
+        dataIndex: "regData",
+        key: "regData",
+        render: (regData, record, index) => {
+            const { registeredBy, competitionName, teamName, productName, status, organisationName } = record;
+            return (
+                <div>
+                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                        <span className='year-select-heading mr-3'>{AppConstants.registeredBy}</span>
+                        <span className="user-details-info-text">{registeredBy} </span>
+                    </div>
+                    <div className="d-flex flex-wrap">
+                        <div>
+                            <div className="form-heading p-0">{teamName}</div>
+                            <div style={{ textAlign: "start" }}>{competitionName}</div>
+                            <div className="d-flex flex-wrap align-items-center">
+                                <div className="d-flex align-items-center py-3">
+                                    <span>{productName}</span>
+                                    <div className="status-indicator">{status}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    },
+    {
+        title: "Action",
+        dataIndex: "regForm",
+        key: "regForm",
+        width: 52,
+        render: (regForm,record) => {
+            return(
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
+                    style={{ lineHeight: "8px" }}
+                >
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }>
+                        <Menu.Item key="1" onClick={() => this_Obj.showTeamMembers(record,1)}>
+                            <span>View</span>
+                        </Menu.Item>
+                    </SubMenu>
+                </Menu>
+            )
+
+        }
+    }
+];
+
+const teamMembersColumns = [
+    {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+    },
+    {
+        title: "Status",
+        dataIndex: "name",
+        key: "name",
+    },
+    {
+        title: "Paid Fee",
+        dataIndex: "paidFee",
+        key: "paidFee",
+    },
+    {
+        title: "Pending Fee",
+        dataIndex: "pendingFee",
+        key: "pendingFee",
+    },
+    {
+        title: "Action",
+        key: "action",
+    },
+]
+
+const childOrOtherRegistrationColumns = [
+    {
+        title: "",
+        dataIndex: "regData",
+        key: "regData",
+        render: (regData, record, index) => {
+            const { dateOfBirth,name,email,feePaid } = record;
+            return (
+                <div>
+                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                        <span className='year-select-heading mr-3'>{AppConstants.dateOfBirth}</span>
+                        <span className="user-details-info-text">{moment(dateOfBirth).format("DD/MM/YYYY")} </span>
+                    </div>
+                    <div className="d-flex flex-wrap">
+                        <div>
+                            <div className="form-heading p-0">{name}</div>
+                            <div style={{ textAlign: "start" }}>{email}</div>
+                            <div className="d-flex flex-wrap align-items-center">
+                                <div className="d-flex align-items-center py-3">
+                                    <span>{AppConstants.feePaid}</span>
+                                    <div className="status-indicator">{feePaid}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    },
+    {
+        title: "Action",
+        dataIndex: "regForm",
+        key: "regForm",
+        width: 52,
+        render: (regForm, e) => {
+            return(
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
+                    style={{ lineHeight: "8px" }}
+                >
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }>
+                        <Menu.Item key="1">
+                            <span>View</span>
+                        </Menu.Item>
                     </SubMenu>
                 </Menu>
             )
@@ -865,6 +1004,12 @@ class UserModulePersonalDetail extends Component {
             showCannotUnlinkPopup: false,
             isPersonDetailsTabVisited: false,
             isUserLoading: false,
+            myRegCurrentPage: 1,
+            otherRegCurrentPage: 1,
+            childRegCurrentPage: 1,
+            teamRegCurrentPage: 1,
+            isShowRegistrationTeamMembers: false,
+            registrationTeam: null
         }
     }
 
@@ -1252,19 +1397,62 @@ class UserModulePersonalDetail extends Component {
 
     }
 
-    handleRegistrationTableList = (page, userId, competition, yearRefId) => {
-        let filter =
-        {
-            competitionId: competition.competitionUniqueKey,
-            userId: userId,
-            organisationId: null,
-            yearRefId: yearRefId,
-            paging: {
-                limit: 10,
-                offset: (page ? (10 * (page - 1)) : 0)
+    showTeamMembers = (record,page) => {
+        try{
+            this.setState({isShowRegistrationTeamMembers: true,registrationTeam: record})
+            let payload = {
+                userId: record.userId,
+                teamId: record.teamId,
+                teamMemberPaging: {
+                    limit:10,
+                    offset: page ? 10 * (page - 1) : 0,
+                }
             }
+            this.props.getUserModuleTeamMembersAction(payload);
+        }catch(ex){
+            console.log("Error in showTeamMember::"+ex);
         }
-        this.props.getUserModuleRegistrationAction(filter)
+    }
+
+    gotoAddTeamMembers = () => {
+        history.push("/addTeamMember")
+    }
+
+    handleRegistrationTableList = (page, userId, competition, yearRefId, key) => {
+       if(key == 'myRegistrations'){
+            this.setState({myRegCurrentPage: page})
+        }else if(key == 'otherRegistrations'){
+            this.setState({otherRegCurrentPage: page})
+        }else if(key == 'teamRegistrations'){
+            this.setState({teamRegCurrentPage: page})
+        }else if(key == 'childRegistrations'){
+            this.setState({childRegCurrentPage: page})
+        }
+        setTimeout(() => {
+            let filter = {
+                competitionId: competition.competitionUniqueKey,
+                userId: userId,
+                organisationId: null,
+                yearRefId,
+                myRegPaging:{
+                    limit: 10,
+                    offset: this.state.myRegCurrentPage ? 10 * (this.state.myRegCurrentPage - 1) : 0,
+                },
+                otherRegPaging:{
+                    limit: 10,
+                    offset: this.state.otherRegCurrentPage ? 10 * (this.state.otherRegCurrentPage - 1) : 0,
+                },
+                teamRegPaging:{
+                    limit: 10,
+                    offset: this.state.teamRegCurrentPage ? 10 * (this.state.teamRegCurrentPage - 1) : 0,
+                },
+                childRegPaging:{
+                    limit: 10,
+                    offset: this.state.childRegCurrentPage ? 10 * (this.state.childRegCurrentPage - 1) : 0,
+                }
+            };
+            this.props.getUserModuleRegistrationAction(filter);
+        }, 300);
     };
 
     ////pagination handling for umpire activity table list
@@ -1549,6 +1737,33 @@ class UserModulePersonalDetail extends Component {
                                     <div className='col-sm d-flex justify-content-end'>
                                         <span className="desc-text-style  side-bar-profile-data">
                                             {personal.accreditationUmpireExpiryDate && moment(personal.accreditationUmpireExpiryDate).format("DD-MM-YYYY")}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Coach Accrediation */}
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <div className="live-score-icon-view">
+                                        <img src={AppImages.whistleIcon} alt="" height="16" width="16" />
+                                    </div>
+                                    <span className="year-select-heading ml-3">
+                                        {AppConstants.coachAccreditation}
+                                    </span>
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="year-select-heading  ml-3">
+                                            {AppConstants.expiry}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className='live-score-title-icon-view ml-5'>
+                                    <span className="desc-text-style  side-bar-profile-data">
+                                        {personal.coachAccreditationLevel}
+                                    </span>
+
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="desc-text-style  side-bar-profile-data">
+                                            {personal.accreditationCoachExpiryDate && moment(personal.accreditationCoachExpiryDate).format("DD-MM-YYYY")}
                                         </span>
                                     </div>
                                 </div>
@@ -1873,24 +2088,154 @@ class UserModulePersonalDetail extends Component {
     registrationView = () => {
         let userState = this.props.userState;
         let userRegistrationList = userState.userRegistrationList;
-        let total = userState.userRegistrationDataTotalCount;
+        // let total = userState.userRegistrationDataTotalCount;
+        let myRegistrations = userRegistrationList?.myRegistrations.registrationDetails ? userRegistrationList?.myRegistrations.registrationDetails : [];
+        let myRegistrationsCurrentPage = userRegistrationList?.myRegistrations.page ? userRegistrationList?.myRegistrations.page.currentPage : 1; 
+        let myRegistrationsTotalCount = userRegistrationList?.myRegistrations.page.totalCount; 
+        let otherRegistrations = userRegistrationList?.otherRegistrations.registrationYourDetails ? userRegistrationList?.otherRegistrations.registrationYourDetails : [];
+        let otherRegistrationsCurrentPage = userRegistrationList?.otherRegistrations.page ? userRegistrationList?.otherRegistrations.page.currentPage : 1; 
+        let otherRegistrationsTotalCount = userRegistrationList?.otherRegistrations.page.totalCount; 
+        let teamRegistrations = userRegistrationList?.teamRegistrations.registrationTeamDetails ? userRegistrationList?.teamRegistrations.registrationTeamDetails : [];
+        let teamRegistrationsCurrentPage = userRegistrationList?.teamRegistrations.page ? userRegistrationList?.teamRegistrations.page.currentPage : 1; 
+        let teamRegistrationsTotalCount = userRegistrationList?.teamRegistrations.page.totalCount;
+        let childRegistrations = userRegistrationList?.childRegistrations.childRegistrationDetails ? userRegistrationList?.childRegistrations.childRegistrationDetails : [];
+        let childRegistrationsCurrentPage = userRegistrationList?.childRegistrations.page ? userRegistrationList?.childRegistrations.page.currentPage : 1; 
+        let childRegistrationsTotalCount = userRegistrationList?.childRegistrations.page.totalCount;  
+        let teamMembers = userState.teamMembersDetails ? userState.teamMembersDetails.teamMembers : [];
+        let teamMembersCurrentPage = userState.teamMembersDetails?.page ? userState.teamMembersDetails?.page.currentPage : 1; 
+        let teamMembersTotalCount = userState.teamMembersDetails?.page.totalCount;
         return (
-            <div className="mt-2">
-                <TableWithScrollArrows
-                    className="home-dashboard-table dashboard-registration-table"
-                    columns={columns}
-                    showHeader={false}
-                    dataSource={userRegistrationList}
-                    pagination={false}
-                />
-                <div className="d-flex justify-content-end">
-                    <Pagination
-                        className="antd-pagination"
-                        current={userState.userRegistrationDataPage}
-                        total={total}
-                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId)}
-                    />
-                </div>
+            <div>
+                 {this.state.isShowRegistrationTeamMembers == false ? (
+                    <div>
+                        {isArrayNotEmpty(myRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.ownRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={columns}
+                                    showHeader={false}
+                                    dataSource={myRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={myRegistrationsCurrentPage}
+                                        total={myRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "myRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(otherRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.otherRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={childOrOtherRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={otherRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={otherRegistrationsCurrentPage}
+                                        total={otherRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "otherRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(childRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.childRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={childOrOtherRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={childRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={childRegistrationsCurrentPage}
+                                        total={childRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "childRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(teamRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.teamRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={teamRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={teamRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={teamRegistrationsCurrentPage}
+                                        total={teamRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "teamRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                 ) : (
+                    <div className="comp-dash-table-view mt-2">
+                       <div className="row">
+                            <div className="col-sm d-flex align-content-center">
+                                <Breadcrumb separator=" > ">
+                                    <Breadcrumb.Item className="breadcrumb-add font-18 pointer" onClick={() => this.setState({isShowRegistrationTeamMembers: false})}>
+                                        {AppConstants.Registrations}
+                                    </Breadcrumb.Item>
+                                    <Breadcrumb.Item className="breadcrumb-add font-18">
+                                        {AppConstants.teamMembers}
+                                    </Breadcrumb.Item>
+                                </Breadcrumb>
+                            </div>
+                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
+                                + {AppConstants.addTeamMembers}
+                            </div>
+                        </div>
+                        <div className="user-module-row-heading font-18 mt-2">
+                            {AppConstants.team + ": " + this.state.registrationTeam.teamName}
+                        </div>
+                        <div className="table-responsive home-dash-table-view">
+                            <Table
+                                className="home-dashboard-table"
+                                columns={teamMembersColumns}
+                                dataSource={teamMembers}
+                                pagination={false}
+                                loading={
+                                    this.props.userState.getTeamMembersOnLoad
+                                }
+                            />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                            <Pagination
+                                className="antd-pagination pb-3"
+                                current={teamMembersCurrentPage}
+                                total={teamMembersTotalCount}
+                                onChange={(page) =>
+                                    this.showTeamMembers(
+                                        this.state.registrationTeam,
+                                        page
+                                    )
+                                }
+                                showSizeChanger={false}
+                            />
+                        </div>
+                    </div>
+                 )}
             </div>
         )
     }
@@ -2441,9 +2786,9 @@ class UserModulePersonalDetail extends Component {
                                             <>
                                                 {!this.state.isRegistrationForm ?
                                                     <>
-                                                        {!!userRegistrationList && !!userRegistrationList.length && !userRegistrationOnLoad && this.registrationView()}
+                                                        {!!userRegistrationList && !userRegistrationOnLoad && this.registrationView()}
                                                         {(userRegistrationOnLoad || onPersonLoad || !personalByCompData[0]?.userId) && this.tableLoadingView()}
-                                                        {!userRegistrationList.length && !userRegistrationOnLoad && !onPersonLoad && (!!personalData?.userId || !!personalByCompData[0]?.userId) && this.noDataAvailable()}
+                                                        {!userRegistrationList && !userRegistrationOnLoad && !onPersonLoad && (!!personalData?.userId || !!personalByCompData[0]?.userId) && this.noDataAvailable()}
                                                     </> 
                                                     : this.registrationFormView()
                                                 }
@@ -2529,7 +2874,8 @@ function mapDispatchToProps(dispatch) {
         getStripeLoginLinkAction,
         userPhotoUpdateAction,
         registrationResendEmailAction,
-        userProfileUpdateAction
+        userProfileUpdateAction,
+        getUserModuleTeamMembersAction
     }, dispatch);
 
 }

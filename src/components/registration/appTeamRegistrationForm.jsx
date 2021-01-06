@@ -609,7 +609,9 @@ class AppTeamRegistrationForm extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
+                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
+                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
                 });
             }
         } catch (ex) {
@@ -3954,18 +3956,18 @@ class AppTeamRegistrationForm extends Component {
                         {getFieldDecorator(`additionalInfoCountryRefId`, {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "countryRefId")}
-                                setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
-                                {countryList.length > 0 && countryList.map((item) => (
-                                    < Option key={item.id} value={item.id}> {item.description}</Option>
-                                ))}
-                            </Select>
-                        )}
-                    </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder={AppConstants.select}
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
+                            setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
+                            {countryList.length > 0 && countryList.map((item) => (
+                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                            ))}
+                        </Select>
+                      )}
+                      </Form.Item>
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
@@ -4055,8 +4057,8 @@ class AppTeamRegistrationForm extends Component {
                                         setFieldsValue={teamRegistrationObj.additionalInfo.disabilityCareNumber}
                                         style={{ marginBottom: '15px' }} />
                                 )}
-                            </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            </Form.Item>   
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
@@ -4089,7 +4091,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                         {teamRegistrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -4243,7 +4245,7 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{ flexDirection: "column" }}
@@ -4270,16 +4272,26 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}required={"required-field"}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
+                                <Form.Item>
+                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
+                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                        })(
                                     <InputWithHead
                                         placeholder={AppConstants.childrenNumber}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                         value={teamRegistrationObj.additionalInfo.childrenCheckNumber}
                                     />
+                                    )}
+                                </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
+                                    <Form.Item>
+                                        {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
+                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
+                                         })(
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
@@ -4289,6 +4301,8 @@ class AppTeamRegistrationForm extends Component {
                                         showTime={false}
                                         value={childrenCheckExpiryDate}
                                     />
+                                        )}
+                                    </Form.Item>
                                 </div>
                             </div>
                         </div>
