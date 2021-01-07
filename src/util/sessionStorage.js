@@ -164,6 +164,14 @@ const getStripeAccountId = () => {
     return localStorage.stripeCustomerAccountId
 }
 
+const getStripeAccountConnectId = () => {
+    return localStorage.stripeAccountId
+}
+
+const setStripeAccountConnectId = stripeAccountId => {
+    localStorage.setItem("stripeAccountId", stripeAccountId || "")
+}
+
 module.exports = {
     setCompetitionID, getCompetitonId,
     setAuthToken, getAuthToken,
@@ -192,4 +200,6 @@ module.exports = {
     setSourceSystemFlag,getSourceSystemFlag,
     setStripeAccountId,
     getStripeAccountId,
+    getStripeAccountConnectId,
+    setStripeAccountConnectId
 }

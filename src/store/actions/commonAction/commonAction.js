@@ -163,6 +163,13 @@ function validateRegistrationCapAction(payload){
     return action;
 }
 
+function netSetGoTshirtSizeAction(){
+    const action = {
+        type: ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -185,5 +192,6 @@ export {
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
     getSchoolListAction,
-    validateRegistrationCapAction		
+    validateRegistrationCapAction,
+    netSetGoTshirtSizeAction		
 }

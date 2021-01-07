@@ -30,6 +30,7 @@ let seasionalAndCasualFeesInputObj = {
 
 let registrationCapValidateInputObjTemp = {
   "registrationId": "",
+  "participantId": "",
   "isTeamRegistration": 0,
   "products": []
 }
@@ -208,6 +209,7 @@ const initialState = {
     saveValidationErrorCode: null,
     onSaveLoad: false,
     registrationId: null,
+    participantId: null,
     onTeamInfoByIdLoad: false,
     onExistingTeamInfoByIdLoad: false,
     expiredRegistrationFlag: false,
@@ -292,6 +294,8 @@ function setCompetitionDetails(state,details){
       setDivisions(state,state.teamRegistrationObj.membershipProductList[0].competitionMembershipProductTypeId);
       state.teamRegistrationObj.fees.totalCasualFee = "0.00";
       state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+      state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+      state.teamRegistrationObj.fees.payAtMatch = "0.00";
     }else{
       state.teamRegistrationObj.competitionMembershipProductTypeId = null;
       state.teamRegistrationObj.divisions = [];
@@ -300,6 +304,8 @@ function setCompetitionDetails(state,details){
       state.teamRegistrationObj.allowTeamRegistrationTypeRefId = null;
       state.teamRegistrationObj.fees.totalCasualFee = "0.00";
       state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+      state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+      state.teamRegistrationObj.fees.payAtMatch = "0.00";
     }
 
     state.hasCompetitionSelected = true;
@@ -311,6 +317,7 @@ function setCompetitionDetails(state,details){
 function getUpdatedTeamMemberObj(state,existingTeamMember){
   try{
     let teamMemberTemp = existingTeamMember ? existingTeamMember : deepCopyFunction(teamMemberObj);
+    teamMemberTemp.membershipProductTypes = [];
     let competitionInfo = state.teamRegistrationObj.competitionInfo;
     let filteredTeamMembershipProducts =  competitionInfo.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
     for(let product of filteredTeamMembershipProducts){
@@ -385,7 +392,8 @@ function setValidateRegistrationCapObj(state){
   try{
     let teamRegistrationObjTemp = deepCopyFunction(state.teamRegistrationObj);
     let validateRegistrationCapObj = deepCopyFunction(state.registrationCapValidateInputObj);
-    validateRegistrationCapObj.registrationId = teamRegistrationObjTemp.registrationId ? teamRegistrationObjTemp.registrationId : "";
+    validateRegistrationCapObj.registrationId = state.registrationId ? state.registrationId : "";
+    validateRegistrationCapObj.participantId = state.participantId ? state.participantId : "";
     validateRegistrationCapObj.isTeamRegistration = 1;
     validateRegistrationCapObj.products = [];
     let product = {
@@ -556,6 +564,8 @@ function teamRegistrationReducer(state = initialState, action){
               setDivisions(state,action.data);
               state.teamRegistrationObj.fees.totalCasualFee = "0.00";
               state.teamRegistrationObj.fees.totalSeasonalFee = "0.00";
+              state.teamRegistrationObj.fees.payAtRegistration = "0.00";
+              state.teamRegistrationObj.fees.payAtMatch = "0.00";
             }else if(action.key == "competitionMembershipProductDivisionId"){
               state.teamRegistrationObj.competitionMembershipProductDivisionId = action.data;
               setSeasonalAndCasualFeesObj(state);
@@ -635,15 +645,14 @@ function teamRegistrationReducer(state = initialState, action){
         case ApiConstants.API_GET_TEAM_BY_ID_SUCCESS:
             let responseData = action.result;
             let participantId = action.participantId;
-            let teamRegistrationObjTemp = null;
             if(isNullOrEmptyString(participantId)){
-              teamRegistrationObjTemp = updateTeamInfoByIdByMembershipInfo(state,responseData);
+              state.teamRegistrationObj = updateTeamInfoByIdByMembershipInfo(state,responseData);
+              setValidateRegistrationCapObj(state);
             }
             return {
               ...state,
               onTeamInfoByIdLoad: false,
-              status: action.status,
-              teamRegistrationObj: teamRegistrationObjTemp
+              status: action.status
             };
 
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD:
@@ -716,6 +725,8 @@ function teamRegistrationReducer(state = initialState, action){
         let feesTemp = action.result;
         state.teamRegistrationObj.fees.totalCasualFee = feesTemp.totalCasualTeamFees;
         state.teamRegistrationObj.fees.totalSeasonalFee = feesTemp.totalSeasonalTeamFees;
+        state.teamRegistrationObj.fees.payAtRegistration = feesTemp.payAtRegistration;
+        state.teamRegistrationObj.fees.payAtMatch = feesTemp.payAtMatch;
         return {
           ...state,
           feesInfo: feesTemp,

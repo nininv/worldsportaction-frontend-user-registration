@@ -1,11 +1,11 @@
-import React, {useState, Component } from "react";
+import React, { useState, Component } from "react";
 import {
     Layout,
     Breadcrumb,
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
     Radio, Form, Modal, InputNumber, message
@@ -16,24 +16,24 @@ import {
     useElements,
     useStripe, AuBankAccountElement,
 } from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
- import "./product.css";
- import "../user/user.css";
- import '../competition/competition.css';
- import moment from 'moment';
+import { loadStripe } from '@stripe/stripe-js';
+import "./product.css";
+import "../user/user.css";
+import '../competition/competition.css';
+import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
-import {isArrayNotEmpty} from '../../util/helpers';
+import { isArrayNotEmpty } from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import {getSingleGameDataAction, updateSingleFeeAction	} from 
-            '../../store/actions/registrationAction/registrationProductsAction';
-            import StripeKeys from "../stripe/stripeKeys";
+import { getSingleGameDataAction, updateSingleFeeAction } from
+    '../../store/actions/registrationAction/registrationProductsAction';
+import StripeKeys from "../stripe/stripeKeys";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -79,36 +79,43 @@ const CheckoutForm = (props) => {
         selectedOption: 0
     });
 
-    
+
     const stripe = useStripe();
     const elements = useElements();
     let paymentOptions = props.paymentOptions;
     let payload = props.payload;
     let mainProps = props.mainProps;
     let registrationUniqueKey = props.registrationUniqueKey;
-    
+
     const handleChange = async (event) => {
         if (event.error) {
             setError(event.error.message);
         } else {
-            if(event.complete){
-                if(elements){
+            if (event.complete) {
+                if (elements) {
                     const card = elements.getElement(CardElement);
-                    if(card){
+                    if (card != undefined) {
+                        console.log("card", card)
                         const cardToken = await stripe.createToken(card);
-                        console.log("cardToken", cardToken.token);
-                        const country = cardToken.token.card.country;
-                        const brand = cardToken.token.card.brand;
-                        if(country!= "AU"){
-                            if(brand == "American Express"){
-                                mainProps.updateSingleFeeAction(1, "International_AE", 0, "total",null);
-                            }
-                            else{
-                                mainProps.updateSingleFeeAction(1, "International_CC", 0, "total",null);
-                            }
+                        if (cardToken.token == undefined) {
+                            message.error(cardToken?.error?.message);
+                            setError(cardToken?.error?.message);
                         }
-                        else{
-                            mainProps.updateSingleFeeAction(1, "DOMESTIC_CC", 0, "total",null);
+                        else if (cardToken.token != undefined) {
+
+                            const country = cardToken.token.card.country;
+                            const brand = cardToken.token.card.brand;
+                            if (country != "AU") {
+                                if (brand == "American Express") {
+                                    mainProps.updateSingleFeeAction(1, "International_AE", 0, "total", null);
+                                }
+                                else {
+                                    mainProps.updateSingleFeeAction(1, "International_CC", 0, "total", null);
+                                }
+                            }
+                            else {
+                                mainProps.updateSingleFeeAction(1, "DOMESTIC_CC", 0, "total", null);
+                            }
                         }
                     }
                 }
@@ -118,8 +125,8 @@ const CheckoutForm = (props) => {
     }
 
     const changePaymentOption = (e, key) => {
-        if(key === "credit") {
-           
+        if (key === "credit") {
+
             setClientKey("")
             setUser({
                 ...selectedPaymentOption,
@@ -158,7 +165,7 @@ const CheckoutForm = (props) => {
                 setError(null);
                 // Send the token to your server.
                 console.log("Result", result);
-                stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey);
+                stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey);
             }
         }
         else {
@@ -174,49 +181,52 @@ const CheckoutForm = (props) => {
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
                 {(paymentOptions.length > 0) ?
-                <div className="content-view pt-5">
-                    {(paymentOptions || []).map((pay, pIndex) =>(
-                    <div>
-                        {pay.securePaymentOptionRefId == 2 && 
-                            <div className="row">
-                                <div className='col-sm'>
-                                    <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
-                                        className="payment-type-radio-style"
-                                        checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
-                                        {selectedPaymentOption.credit == true && 
-                                            <div className="pt-5">
-                                                <CardElement
-                                                    id="card-element"
-                                                    options={CARD_ELEMENT_OPTIONS}
-                                                    onChange={handleChange}
-                                                    className='StripeElement'
-                                                />
-                                                <div className="card-errors" role="alert">{error}</div>
-                                                <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
-                                            </div>   
-                                        }
-                                </div>
+                    <div className="content-view pt-5">
+                        {(paymentOptions || []).map((pay, pIndex) => (
+                            <div>
+                                {pay.securePaymentOptionRefId == 2 &&
+                                    <div className="row">
+                                        <div className='col-sm'>
+                                            <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                                className="payment-type-radio-style"
+                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                            {selectedPaymentOption.credit == true &&
+                                                <div className="pt-5">
+                                                    <CardElement
+                                                        id="card-element"
+                                                        options={CARD_ELEMENT_OPTIONS}
+                                                        onChange={handleChange}
+                                                        className='StripeElement'
+                                                    />
+                                                    {error && <div className="card-errors" role="alert">{error}</div>}
+                                                    <div
+                                                        style={{ marginTop: "5px" }}
+                                                    >{AppConstants.creditCardMsg}</div>
+                                                </div>
+
+                                            }
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                        }
+                        ))}
+                    </div> :
+                    <div className="content-view pt-5 secure-payment-msg">
+                        {AppConstants.securePaymentMsg}
                     </div>
-                    ))}
-                </div> : 
-                <div className="content-view pt-5 secure-payment-msg">
-                    {AppConstants.securePaymentMsg}
-                </div>
                 }
                 <div className="mt-5">
-                    <div style={{padding:0}}>
-                        <div style={{display:"flex" , justifyContent:"flex-end"}}>
+                    <div style={{ padding: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {(paymentOptions.length > 0) ?
                                 <Button
-                                    style={{textTransform: "uppercase"}}
+                                    style={{ textTransform: "uppercase" }}
                                     className="open-reg-button"
                                     htmlType="submit"
                                     type="primary">
                                     {AppConstants.submit}
                                 </Button>
-                            : null}
+                                : null}
                         </div>
                     </div>
                 </div>
@@ -230,63 +240,63 @@ class SingleGamePayment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showCardView:false,
-            payload: null,  
-            productModalVisible: false ,
-            registrationUniqueKey: null,  
+            showCardView: false,
+            payload: null,
+            productModalVisible: false,
+            registrationUniqueKey: null,
             id: null,
-            onLoad: false                  
+            onLoad: false
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let payload = this.props.location.state ? this.props.location.state.data : null;
-        this.setState({payload: payload, registrationUniqueKey: payload.registrationId});
+        this.setState({ payload: payload, registrationUniqueKey: payload.registrationId });
         this.getApiInfo(payload);
     }
-    componentDidUpdate(nextProps){
+    componentDidUpdate(nextProps) {
 
-    }  
+    }
 
     getApiInfo = (payload) => {
-       
-        console.log("payload",payload);
+
+        console.log("payload", payload);
         this.props.getSingleGameDataAction(payload);
     }
 
-    goBack = () =>{
-        history.push({pathname:'/userPersonal', state: {tabKey: "5"}});
+    goBack = () => {
+        history.push({ pathname: '/userPersonal', state: { tabKey: "1" } });
     }
-    contentView = () =>{
-        return(
-            <div style={{display:"flex"}}>
+    contentView = () => {
+        return (
+            <div style={{ display: "flex" }}>
                 {this.paymentLeftView()}
-                {this.paymentRighttView()}                
+                {this.paymentRighttView()}
             </div>
         );
     }
 
-    paymentLeftView = ()=>{
-        const {singlePaymentData} = this.props.registrationProductState;
-        let securePaymentOptions = singlePaymentData!= null ? singlePaymentData.securePaymentOptions : [];
-       
-        return(
-            <div className="col-sm-8 product-left-view outline-style">              
-                <div className="product-text-common" style={{fontSize:22}}>
+    paymentLeftView = () => {
+        const { singlePaymentData } = this.props.registrationProductState;
+        let securePaymentOptions = singlePaymentData != null ? singlePaymentData.securePaymentOptions : [];
+
+        return (
+            <div className="col-sm-8 product-left-view outline-style">
+                <div className="product-text-common" style={{ fontSize: 22 }}>
                     {AppConstants.securePaymentOptions}
-                </div>  
+                </div>
                 <div>
                     <Elements stripe={stripePromise} >
-                        <CheckoutForm onLoad={(status)=>this.setState({onLoad: status})} paymentOptions={securePaymentOptions}
-                        payload={singlePaymentData} mainProps={this.props} registrationUniqueKey = {this.state.registrationUniqueKey}/>
+                        <CheckoutForm onLoad={(status) => this.setState({ onLoad: status })} paymentOptions={securePaymentOptions}
+                            payload={singlePaymentData} mainProps={this.props} registrationUniqueKey={this.state.registrationUniqueKey} />
                     </Elements>
-               </div>              
+                </div>
             </div>
         )
     }
 
-    paymentRighttView = ()=>{
-        return(
+    paymentRighttView = () => {
+        return (
             <div className="product-right-view">
                 {this.yourOrderView()}
                 {this.buttonView()}
@@ -294,121 +304,124 @@ class SingleGamePayment extends Component {
         )
     }
 
-    yourOrderView = () =>{
-        const {singlePaymentData} = this.props.registrationProductState;
-        let compParticipants = singlePaymentData!= null ? 
-                    isArrayNotEmpty(singlePaymentData.compParticipants) ?
-                    singlePaymentData.compParticipants : [] : [];
-        let total = singlePaymentData!= null ? singlePaymentData.total : null;
-      
-        return(
-            <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>
-                <div className="product-text-common" style={{fontSize: 21}}>
+    yourOrderView = () => {
+        const { singlePaymentData } = this.props.registrationProductState;
+        let compParticipants = singlePaymentData != null ?
+            isArrayNotEmpty(singlePaymentData.compParticipants) ?
+                singlePaymentData.compParticipants : [] : [];
+        let total = singlePaymentData != null ? singlePaymentData.total : null;
+
+        return (
+            <div className="outline-style " style={{ padding: "36px 36px 22px 20px" }}>
+                <div className="product-text-common" style={{ fontSize: 21 }}>
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    return(
-                    <div style={{paddingBottom:12}} key={item.participantId}>
-                        
-                        <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
-                            {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                        </div> 
-                        {(item.membershipProducts || []).map((mem, memIndex) =>(
-                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
-                                <div  className="subtitle-text-common mt-10" style={{display:"flex"}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
-                                    <div className="pr-5">
-                                        <div style={{display: 'flex'}}>
-                                            <div> 
-                                                <InputWithHead
-                                                    style={{height: '40px', width: '73px'}}
-                                                    value={total.noOfMatch}
-                                                    placeholder={AppConstants.noOfMatches}
-                                                    onChange={(e) => this.props.updateSingleFeeAction(e.target.value, "noOfMatch", 0, "total",null)}
-                                                />
-                                            </div>
-                                            <div class = "counter">
-                                                <span className="plus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total","increment")}>+</span>
-                                                <span className="minus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total","decrement")}>-</span>
+                    return (
+                        <div style={{ paddingBottom: 12 }} key={item.participantId}>
+
+                            <div className="inter-medium-w500" style={{ marginTop: "17px" }}>
+                                {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
+                            </div>
+                            {(item.membershipProducts || []).map((mem, memIndex) => (
+                                <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
+                                    <div className="subtitle-text-common mt-10" style={{ display: "flex" }}>
+                                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{mem.membershipTypeName + (mem.divisionId != null ? ' - ' + mem.divisionName : '')}</div>
+                                        <div className="pr-5">
+                                            <div style={{ display: 'flex' }}>
+                                                <div>
+                                                    <InputWithHead
+                                                        style={{ height: '40px', width: '73px' }}
+                                                        value={total.noOfMatch}
+                                                        placeholder=" "
+                                                        type={"number"}
+                                                        min="1"
+                                                        onChange={(e) => this.props.updateSingleFeeAction(e.target.value ? e.target.value : 1, "noOfMatch", 0, "total", null)}
+                                                    />
+                                                </div>
+                                                <div class="counter">
+                                                    <span className="plus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "increment")}>+</span>
+                                                    <span className="minus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "decrement")}>-</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="alignself-center pt-2" style={{ marginRight: '25px' }}>${mem.feesToPay}</div>
                                     </div>
-                                    <div className="alignself-center pt-2" style={{marginRight:'25px'}}>${mem.feesToPay}</div>
+
+                                    {mem.discountsToDeduct != "0.00" &&
+                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
+                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.discount}</div>
+                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.discountsToDeduct}</div>
+                                        </div>
+                                    }
+                                    {mem.childDiscountsToDeduct != "0.00" &&
+                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
+                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.familyDiscount}</div>
+                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.childDiscountsToDeduct}</div>
+                                        </div>
+                                    }
+
                                 </div>
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
-                                </div>
-                                }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
-                                <div  className="product-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
-                                </div>
-                                }
-                            
-                            </div>
-                        ))}
-                    </div> 
-                    )}
+                            ))}
+                        </div>
+                    )
+                }
                 )}
-                
-                <div style={{borderBottom:"1px solid var(--app-e1e1f5)",marginTop: "-5px"}}>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.subTotal}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.subTotal}</div>
+
+                <div style={{ borderBottom: "1px solid var(--app-e1e1f5)", marginTop: "-5px" }}>
+                    <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.subTotal}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.subTotal}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex" }}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.gst}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.gst}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.gst}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.gst}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.charityRoundUp}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.charityValue}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.charityRoundUp}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
-                <div  style={{borderBottom:"1px solid var(--app-e1e1f5)"}}>
-                    <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.total}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
+                <div style={{ borderBottom: "1px solid var(--app-e1e1f5)" }}>
+                    <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.total}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.total}</div>
                     </div>
-                    <div  className="product-text-common-light mt-10 mr-4" style={{display:"flex"}}>
-                        <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.transactionFee}</div>
-                        <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.transactionFee}</div>
+                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
+                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.transactionFee}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.transactionFee}</div>
                     </div>
                 </div>
-                
-                <div  className="product-text-common mt-10 mr-4 font-w600" style={{display:"flex"}}>
-                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.targetValue}</div>
+
+                <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
+                    <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.totalPaymentDue}</div>
+                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.targetValue}</div>
                 </div>
             </div>
         )
     }
 
-    buttonView = () =>{
-        const {registrationReviewList} = this.props.registrationProductState;
-        return(
-            <div style={{marginTop:23}}>
+    buttonView = () => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        return (
+            <div style={{ marginTop: 23 }}>
                 {/* <div>
                     <Button className="open-reg-button" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}>
                         {AppConstants.continue}
                     </Button>
                 </div>                  */}
-                <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text" style={{boxShadow: "0px 1px 3px 0px" , width:"100%",textTransform: "uppercase"}}
-                     onClick={() => this.goBack()}>
+                <div style={{ marginTop: 23 }}>
+                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                        onClick={() => this.goBack()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
-            </div>            
+                    </Button>
+                </div>
+            </div>
         )
     }
-    
-    
+
+
     render() {
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
@@ -417,19 +430,19 @@ class SingleGamePayment extends Component {
                     menuName={AppConstants.home}
                 />
                 <InnerHorizontalMenu />
-                <Layout style={{margin: "32px 40px 10px 40px"}}>
+                <Layout style={{ margin: "32px 40px 10px 40px" }}>
                     <Form
-                        // autocomplete="off"
-                        // scrollToFirstError={true}
-                        // onSubmit={this.saveRegistrationForm}
-                        // noValidate="noValidate"
+                    // autocomplete="off"
+                    // scrollToFirstError={true}
+                    // onSubmit={this.saveRegistrationForm}
+                    // noValidate="noValidate"
                     >
                         <Content>
                             <div>
                                 {this.contentView()}
                             </div>
                             <Loader visible={this.props.registrationProductState.onLoad ||
-                             this.state.onLoad} />
+                                this.state.onLoad} />
                         </Content>
                     </Form>
                 </Layout>
@@ -439,16 +452,15 @@ class SingleGamePayment extends Component {
 
 }
 
-function mapDispatchToProps(dispatch)
-{
+function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getSingleGameDataAction,
-        updateSingleFeeAction								 
+        updateSingleFeeAction
     }, dispatch);
 
 }
 
-function mapStatetoProps(state){
+function mapStatetoProps(state) {
     return {
         registrationProductState: state.RegistrationProductState
     }
@@ -459,11 +471,11 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     console.log(token, props, screenProps)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
-   // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
-   console.log("Payload::" + JSON.stringify(payload.total));
+    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
+    console.log("Payload::" + JSON.stringify(payload.total));
 
-   let  url =  "/api/payments/createsinglegame";
-  
+    let url = "/api/payments/createsinglegame";
+
     let body;
     if (paymentType === "card") {
         let stripeToken = token.id
@@ -476,7 +488,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
         }
     }
-    
+
     console.log("body" + JSON.stringify(body));
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL + url}`, {
@@ -495,8 +507,8 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     if (response.status === 200) {
                         if (paymentType == "card") {
                             message.success(Response.message);
-                            
-                            console.log("response",Response);
+
+                            console.log("response", Response);
                             history.push("/invoice", {
                                 registrationId: Response.registrationId,
                                 userRegId: null,
@@ -523,6 +535,6 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                 props.onLoad(false)
                 console.error(error);
             });
-    }) 
+    })
 }
-export default connect(mapStatetoProps,mapDispatchToProps)(SingleGamePayment);
+export default connect(mapStatetoProps, mapDispatchToProps)(SingleGamePayment);

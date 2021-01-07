@@ -67,6 +67,10 @@ let userHttpApi = {
     var url = `api/user/registration`;
     return Method.dataPost(url, token, payload);
   },
+  getUserModuleTeamMembersData(payload) {
+    const url = `/api/user/registration/team`;
+    return Method.dataPost(url, token, payload);
+  },
   getUserModuleActivityPlayer(payload) {
     var url = `api/user/activity/player`;
     return Method.dataPost(url, token, payload);
@@ -109,8 +113,8 @@ let userHttpApi = {
     return Method.dataGet(url, token);
   },
 
-  saveUserPhoto(payload) {
-    const url = `users/photo`;
+  saveUserPhoto(payload, userId) {
+    const url = userId ? `users/photo?userId=${userId}` : `users/photo`;
     return Method.dataPost(url, token, payload);
   },
   registrationResendEmail(teamId){

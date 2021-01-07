@@ -154,7 +154,16 @@ class TeamInviteShop extends Component{
     }
 
     goToTeamInviteProducts = () =>{
-        history.push({pathname: '/teamInviteProductsReview', state: {userRegId: this.state.userRegId}})
+        let {teamInviteReviewList, registrationId} = this.props.teamInviteState;
+        if(teamInviteReviewList){
+            teamInviteReviewList["registrationId"] = registrationId;
+            teamInviteReviewList["userRegId"] = this.state.userRegId;
+            teamInviteReviewList["key"] = "shop";
+            this.callSaveRegistrationProducts("shop", teamInviteReviewList);
+        }
+        setTimeout(() => {
+            history.push({pathname: '/teamInviteProductsReview', state: {userRegId: this.state.userRegId}})
+        }, 300)
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{

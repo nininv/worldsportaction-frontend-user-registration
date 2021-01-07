@@ -4,14 +4,16 @@ import { NavLink } from "react-router-dom";
 import InputWithHead from "../customComponents/InputWithHead";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import {loginAction} from "../store/actions/authentication"
+import { loginAction, clearReducerAction } from "../store/actions/authentication"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import history from "../util/history";
 import AppConstants from "../themes/appConstants";
 import AppImages from "../themes/appImages";
-import { getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId, 
-    getAuthToken, getUserId, setUserId, setAuthToken } from '../util/sessionStorage'
+import {
+    getExistingUserRefId, getRegisteringYourselfRefId, getUserRegId,
+    getAuthToken, getUserId, setUserId, setAuthToken
+} from '../util/sessionStorage'
 
 const { Header, Content } = Layout;
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9578a18b0605ead797aee4263a4cb6a10d5c65747ce2197239ea4f6fe9d001110857f75cb4e47dfef3defcace5a0999d4750f7d8b42d02462b71f0c7dee3972ee46d417e8b1249017f16e17f1b3cc0f04eef15d12ab0191991fc8bd7d7d299acbdfd0911854c68d7cbc6812d823d9b108e4dc7aeb99184f804e020d5f9a213107d5b853f5bbcdda9165dfefb966ef288be908670c28c8e2227af1db6d6a65ffb86';
@@ -33,8 +35,8 @@ class Login extends Component {
     componentDidMount() {
         let isUserRegistration = this.props.location.state ? this.props.location.state.isUserRegistration : null;
         let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-        this.setState({isUserRegistration: isUserRegistration,userRegId: userRegId});
-        if(getUserId() == 0){
+        this.setState({ isUserRegistration: isUserRegistration, userRegId: userRegId });
+        if (getUserId() == 0) {
             localStorage.removeItem("userId");
             localStorage.removeItem("token");
             localStorage.removeItem("isUserRegistration")
@@ -48,16 +50,16 @@ class Login extends Component {
     componentDidUpdate(nextProps) {
         let loginstate = this.props.loginstate;
         if (loginstate.onLoad == false && this.state.loginButton == false) {
-            
-            if(loginstate.status == 1 && getAuthToken()){
+
+            if (loginstate.status == 1 && getAuthToken()) {
                 //this.setState({loginButton: true});
                 // if(getExistingUserRefId() && getRegisteringYourselfRefId() && getUserRegId()){
                 //     history.push("/teamRegistrationForm");
                 // }
-                if(this.state.userRegId){
+                if (this.state.userRegId) {
                     history.push("/teamRegistrationForm");
                 }
-                else if(this.state.isUserRegistration == 1){
+                else if (this.state.isUserRegistration == 1) {
                     history.push('/appRegistrationForm');
                 }
                 else {
@@ -67,12 +69,12 @@ class Login extends Component {
         }
     }
 
-    redirect = async() =>{
+    redirect = async () => {
         setUserId(userId);
         setAuthToken(token);
-        if(this.state.userRegId){
+        if (this.state.userRegId) {
             history.push('/teamRegistrationForm');
-        }else{
+        } else {
             history.push('/appRegistrationForm');
         }
     }
@@ -119,27 +121,27 @@ class Login extends Component {
                 {errors.password && touched.password && (
                     <span className="form-err">{errors.password}</span>
                 )}
-                 <NavLink to={{ pathname: `/forgotPassword`, state: { email: values.userName } }}>
-                    <span  className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
+                <NavLink onClick={() => this.props.clearReducerAction("clearPasswordSuccess")} to={{ pathname: `/forgotPassword`, state: { email: values.userName } }}>
+                    <span className="forgot-password-link-text">{AppConstants.forgotResetPassword}</span>
                 </NavLink>
 
                 {/* {this.state.isUserRegistration == 1 || this.state.userRegId ? */}
                 <div className="row pt-5" >
                     <div className="col-sm" >
-                        <div style={{display:'flex'}}>
-                            <Button className="ant-btn-proceed-text login-btn-login-proceed"  htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.loginAndProceedRegistration}</Button>
+                        <div style={{ display: 'flex' }}>
+                            <Button className="ant-btn-proceed-text login-btn-login-proceed" htmlType="submit" type="primary" disabled={this.state.loginButton}>{AppConstants.loginAndProceedRegistration}</Button>
                         </div>
-                        <div style={{display: 'flex'}}>
+                        <div style={{ display: 'flex' }}>
                             <div className="login-or-border"></div>
                             <div className="login-or">or</div>
                             <div className="login-or-border"></div>
                         </div>
-                        <div style={{display:'flex'}}>
+                        <div style={{ display: 'flex' }}>
                             <Button className="ant-btn-proceed-text login-btn-proceed" onClick={() => this.redirect()} type="primary" disabled={this.state.loginButton}>{AppConstants.proceedToRegistration}</Button>
                         </div>
                     </div>
                 </div>
-                 {/* :
+                {/* :
                 <div className="row pt-5" >
                     <div className="col-sm" >
                         <div className="comp-finals-button-view">
@@ -204,13 +206,13 @@ class Login extends Component {
                                 isSubmitting,
                                 setFieldValue
                             }) => (
-                                    <Form onSubmit={handleSubmit}>
-                                        <div className="login-formView" style={{ zIndex: 15 }}>
-                                            {this.contentView(values, errors, setFieldValue, touched, handleChange, handleBlur)}
-                                        </div>
-                                        {/* {this.footerView(isSubmitting)} */}
-                                    </Form>
-                                )}
+                                <Form onSubmit={handleSubmit}>
+                                    <div className="login-formView" style={{ zIndex: 15 }}>
+                                        {this.contentView(values, errors, setFieldValue, touched, handleChange, handleBlur)}
+                                    </div>
+                                    {/* {this.footerView(isSubmitting)} */}
+                                </Form>
+                            )}
                         </Formik>
                     </Content>
                 </Layout>
@@ -220,7 +222,7 @@ class Login extends Component {
     }
 }
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ loginAction }, dispatch)
+    return bindActionCreators({ loginAction, clearReducerAction }, dispatch)
 }
 
 function mapStatetoProps(state) {

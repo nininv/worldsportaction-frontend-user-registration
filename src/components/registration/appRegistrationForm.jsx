@@ -4145,7 +4145,7 @@ class AppRegistrationForm extends Component {
 
                 {item.favouriteTeamRefId === 6 ? (
                     <div>
-                        <InputWithHead heading={AppConstants.who_fav_bird} />
+                        <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                         {/* <Form.Item>
                             {getFieldDecorator(`favouriteFireBird${index}`, {
                                 rules: [{ required: item.favouriteTeamRefId === 6, message: ValidationConstants.firebirdField[0] }],
@@ -4184,7 +4184,7 @@ class AppRegistrationForm extends Component {
                                     <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber}
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityCareNumber", index)}
                                         value={item.disabilityCareNumber} />
-                                    <InputWithHead heading={AppConstants.typeOfDisability} />
+                                    <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                                     <Radio.Group
                                         className="reg-competition-radio"
                                         onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "disabilityTypeRefId", index)}

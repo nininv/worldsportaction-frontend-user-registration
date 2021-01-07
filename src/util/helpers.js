@@ -20,7 +20,7 @@ const  isNullOrUndefined = (e) => {
 }
 
 const feeIsNull = (fee) => {
-  return ((fee === null||fee===undefined) ? 0 : (stringTOFloatNumber(fee)));
+  return ((fee === null||fee===undefined) ? 0 : (stringTOFloatNumberReg(fee)));
 }
 
 const getAge = (birthDate) => {

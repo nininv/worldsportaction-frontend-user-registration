@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "antd";
 
@@ -17,8 +17,9 @@ function ContentView(props) {
     // setFieldValue,
     handleChange,
     handleBlur,
+    emailSearch,
   } = props;
-
+  console.log(props.source)
   return (
     <div className="content-view">
       <div className="d-flex justify-content-center">
@@ -29,7 +30,7 @@ function ContentView(props) {
         <div>
           <InputWithHead heading={loginState.forgotPasswordMessage} />
 
-          {source !== "mobile" && (
+          {source && (
             <div className="forgot-password-success-button-div">
               <NavLink to={{ pathname: "/login" }}>
                 <Button className="open-reg-button" type="primary">{AppConstants.returnToLogin}</Button>
@@ -38,56 +39,57 @@ function ContentView(props) {
           )}
         </div>
       ) : (
-        <div>
-          <InputWithHead
-            heading={AppConstants.username}
-            placeholder={AppConstants.username}
-            name="userName"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.userName}
-          />
-          {errors.userName && touched.userName && (
-            <span className="form-err">{errors.userName}</span>
-          )}
+          <div>
+            <InputWithHead
+              heading={AppConstants.username}
+              placeholder={AppConstants.username}
+              name="userName"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              // value={emailSearch ? decodeURIComponent(emailSearch) : values.userName}
+              value={emailSearch}
+            />
+            {errors.userName && touched.userName && !emailSearch && (
+              <span className="form-err">{errors.userName}</span>
+            )}
 
-          {resetType === "sms" && (
-            <p className="mt-3 mb-0">
-              We will send the SMS to your registered phone number.
-              Please confirm you would like to proceed.
-            </p>
-          )}
+            {resetType === "sms" && (
+              <p className="mt-3 mb-0">
+                We will send the SMS to your registered phone number.
+                Please confirm you would like to proceed.
+              </p>
+            )}
 
-          <div className="row pt-5">
-            <div className="col-sm">
-              <div className="comp-finals-button-view d-flex justify-content-between">
-                {source !== "mobile" && (
-                  <div className="pr-5">
-                    <NavLink to={{ pathname: "/login" }}>
-                      <Button
-                        className="open-reg-button"
-                        type="primary" 
-                        disabled={loginState.onLoad}
-                      >
-                        {AppConstants.returnToLogin}
-                      </Button>
-                    </NavLink>
-                  </div>
-                )}
+            <div className="row pt-5">
+              <div className="col-sm">
+                <div className={`comp-finals-button-view d-flex ${!source ? 'justify-content-between' : 'justify-content-center'}`}>
+                  {!source && (
+                    <div className="pr-5">
+                      <NavLink to={{ pathname: "/login" }}>
+                        <Button
+                          className="open-reg-button"
+                          type="primary"
+                          disabled={loginState.onLoad}
+                        >
+                          {AppConstants.returnToLogin}
+                        </Button>
+                      </NavLink>
+                    </div>
+                  )}
 
-                <Button
-                  className="open-reg-button"
-                  htmlType="submit"
-                  type="primary"
-                  disabled={loginState.onLoad}
-                >
-                  {AppConstants.submit}
-                </Button>
+                  <Button
+                    className="open-reg-button"
+                    htmlType="submit"
+                    type="primary"
+                    disabled={loginState.onLoad}
+                  >
+                    {AppConstants.submit}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

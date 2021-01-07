@@ -1,3 +1,4 @@
+import { message } from "antd";
 import ApiConstants from "../../../themes/apiConstants";
 import { feeIsNull, formatValue } from "../../../util/helpers";
 
@@ -66,6 +67,18 @@ function registrationProductsReducer(state = initialState, action){
 
         case ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS:
             let regReviewSaveData = action.result.response;
+            // let govtVoucherFlag = action.govtVoucherFlag;
+            // let compParticipants = regReviewSaveData.compParticipants
+            // if(govtVoucherFlag){
+            //     for(let participant of compParticipants){
+            //         let vouchers = participant.selectedOptions.vouchers
+            //         for(let voucher of vouchers){
+            //             if(voucher.isValid == 0){
+            //                 message.error(voucher.message)
+            //             }
+            //         }
+            //     }
+            // }
             return {
                 ...state,
                 onRegReviewLoad: false,
@@ -212,7 +225,7 @@ function registrationProductsReducer(state = initialState, action){
                             transactionVal = 3.50;
                         }
                     }
-                    console.log("TransVal" + transactionVal);
+                    console.log("TransVal" + feeIsNull(transactionVal));
                     targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
                     reviewData["total"]["targetValue"] = formatValue(targetVal);
                     reviewData["total"]["transactionFee"] = formatValue(transactionVal);
@@ -347,7 +360,7 @@ function registrationProductsReducer(state = initialState, action){
                 if(action.subKey == "total"){
                     let type = action.key;
                     if(type == "noOfMatch"){
-                        let existingVal = singleGameData[action.subKey][type];
+                        let existingVal = singleGameData[action.subKey][type] ? singleGameData[action.subKey][type] : 1;
                         let gst =  feeIsNull(singleGameData[action.subKey]["gst"]) / existingVal;
                         let total = feeIsNull(singleGameData[action.subKey]["total"]) / existingVal;
                         let subTotal = feeIsNull(singleGameData[action.subKey]["subTotal"]) / existingVal;
@@ -369,7 +382,7 @@ function registrationProductsReducer(state = initialState, action){
                         else{
                             singleGameData[action.subKey][type] = action.value;
                         }
-                        let newVal = singleGameData[action.subKey][type];
+                        let newVal = singleGameData[action.subKey][type] ? singleGameData[action.subKey][type] : 1;
                         singleGameData[action.subKey]["gst"] = formatValue(gst * newVal);
                         singleGameData[action.subKey]["total"] = formatValue(total * newVal);
                         singleGameData[action.subKey]["subTotal"] = formatValue(subTotal * newVal);

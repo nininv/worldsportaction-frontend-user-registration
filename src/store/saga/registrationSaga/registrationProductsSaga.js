@@ -55,6 +55,7 @@ export function* saveRegistrationReviewSaga(action) {
     if (result.status === 1) {
       yield put({
         type: ApiConstants.API_SAVE_REGISTRATION_REVIEW_SUCCESS,
+        govtVoucherFlag: action.govtVoucherFlag,
         result: result.result.data,
         status: result.status
       });
