@@ -135,6 +135,7 @@ function upateTeamMembersSave(state){
         let membershipProducts = state.membershipProductInfo;
         let organisation = membershipProducts[0];
         let competition  = organisation.competitions[0];
+        state.teamMembersSave.registrationRestrictionTypeRefId = competition.registrationRestrictionTypeRefId;
         state.teamMembersSave.teamMembers.push(getUpdatedTeamMemberObj(competition));
         console.log("state",state.teamMembersSave.teamMembers)
     }catch(ex){

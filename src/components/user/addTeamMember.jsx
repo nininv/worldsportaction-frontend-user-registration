@@ -31,7 +31,7 @@ import {
 import { bindActionCreators } from 'redux';
 import history from '../../util/history'
 import Loader from '../../customComponents/loader';
-import { setTempUserId, getUserId } from "../../util/sessionStorage";
+import { setTempUserId, getUserId,getName } from "../../util/sessionStorage";
 import { regexNumberExpression } from '../../util/helpers';
 import PlacesAutocomplete from "../registration/elements/PlaceAutoComplete";
 import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString,captializedString } from '../../util/helpers';
@@ -190,10 +190,16 @@ class AddTeamMember extends Component {
 
     getUpdateTeamMembersSave = (teamMembersSave) => {
         try{
+            const {personalData} = this.props.userState;
             teamMembersSave.organisationId = this.state.organisationId;
             teamMembersSave.competitionId = this.state.competitionId;
             teamMembersSave.teamId = this.state.teamId;
+            teamMembersSave.teamName = this.state.teamName;
+            teamMembersSave.userId = getUserId();
+            teamMembersSave.name = getName();
+            teamMembersSave.mobileNumber = personalData.mobileNumber;
             teamMembersSave.registrationId = this.state.registrationId;
+            return teamMembersSave;
         }catch(ex){
             console.log("Error in getUpdatedTeamMembersSave::"+ex);
         }
