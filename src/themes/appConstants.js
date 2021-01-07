@@ -1237,7 +1237,7 @@ const AppConstants = {
   addTeamMembers: "Add Team Members",
   Registrations: "Registrations",
   teamMembers: "Team Members",
-  umpireAvailabilityMessage:"Complete your umpiring availability and bank account details for any umpire payments using the Action menu",
+  umpireAvailabilityMessage: "Please complete your Umpiring Availability and enter your Bank Account details (for Umpire Payments) by clicking on the Action menu.",
 };
 
 export default AppConstants;
