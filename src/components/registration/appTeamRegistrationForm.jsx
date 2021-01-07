@@ -609,9 +609,7 @@ class AppTeamRegistrationForm extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
-                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
-                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
                 });
             }
         } catch (ex) {
@@ -4272,26 +4270,16 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}required={"required-field"}/>
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
-                                <Form.Item>
-                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                        })(
                                     <InputWithHead
                                         placeholder={AppConstants.childrenNumber}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                         value={teamRegistrationObj.additionalInfo.childrenCheckNumber}
                                     />
-                                    )}
-                                </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
-                                    <Form.Item>
-                                        {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                         })(
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
@@ -4301,8 +4289,6 @@ class AppTeamRegistrationForm extends Component {
                                         showTime={false}
                                         value={childrenCheckExpiryDate}
                                     />
-                                        )}
-                                    </Form.Item>
                                 </div>
                             </div>
                         </div>
