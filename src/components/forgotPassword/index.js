@@ -39,14 +39,22 @@ function ForgotPassword(props) {
   let search_data = props.location.search
   let filterData = null
   if (search_data.length > 0) {
-    filterData = search_data.split('?email=')
-    localStorage.setItem('ForgotPasswordEmail', decodeURIComponent(filterData[1]))
+    filterData = search_data.slice(1)
+      .split('&')
+      .map(q => q.split('='))
+      .reduce((a, c) => { a[c[0]] = c[1]; return a; }, {});
+    console.log(filterData)
+    localStorage.setItem('ForgotPasswordEmail', decodeURIComponent(filterData.email))
+    localStorage.setItem('channel', filterData.channel)
+
   }
 
   let getEmailId = localStorage.getItem('ForgotPasswordEmail')
+  let getMobileCheked = localStorage.getItem('channel')
   // localStorage.clear('ForgotPasswordEmail')
 
   let emailValues = getEmailId ? getEmailId : location.state ? location.state.email : ''
+  let mobileChecked = getMobileCheked ? getMobileCheked : false
   const [emailField, setEmailField] = useState(emailValues)
 
   useEffect(() => {
@@ -60,7 +68,7 @@ function ForgotPassword(props) {
       <Layout>
         <Content className="container" style={{ zIndex: 15 }}>
           {step === 1 && (
-            <SelectResetType source={source} submitType={onSubmitType} />
+            <SelectResetType source={mobileChecked} submitType={onSubmitType} />
           )}
 
           {step === 2 && (
@@ -74,7 +82,7 @@ function ForgotPassword(props) {
               onSubmit={(values, { setSubmitting }) => {
                 if (loginState.onLoad === false) {
                   // forgotPasswordAction(values.userName, resetType);
-                  forgotPasswordAction(emailField, resetType);
+                  forgotPasswordAction(emailField, resetType, mobileChecked);
                 }
               }}
             >
@@ -88,24 +96,24 @@ function ForgotPassword(props) {
                 // isSubmitting,
                 setFieldValue
               }) => (
-                  <Form onSubmit={handleSubmit}>
-                    <div className="auth-form login-formView" style={{ zIndex: 15 }}>
-                      <ContentView
-                        values={emailField}
-                        errors={errors}
-                        touched={touched}
-                        source={source}
-                        loginState={loginState}
-                        resetType={resetType}
-                        setFieldValue={setFieldValue}
-                        handleChange={(e) => setEmailField(e.target.value)}
-                        handleBlur={handleBlur}
-                        // emailSearch={filterData ? filterData[1] : null}
-                        emailSearch={emailField}
-                      />
-                    </div>
-                  </Form>
-                )}
+                <Form onSubmit={handleSubmit}>
+                  <div className="auth-form login-formView" style={{ zIndex: 15 }}>
+                    <ContentView
+                      values={emailField}
+                      errors={errors}
+                      touched={touched}
+                      source={mobileChecked}
+                      loginState={loginState}
+                      resetType={resetType}
+                      setFieldValue={setFieldValue}
+                      handleChange={(e) => setEmailField(e.target.value)}
+                      handleBlur={handleBlur}
+                      // emailSearch={filterData ? filterData[1] : null}
+                      emailSearch={emailField}
+                    />
+                  </div>
+                </Form>
+              )}
             </Formik>
           )}
 
