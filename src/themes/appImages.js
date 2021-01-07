@@ -54,6 +54,7 @@ const AppImages = {
   teamLoadDefualtWhite: require("../images/team-logo-default-white.svg"),
   wentWrong: require("../images/went_wrong.jpg"),
   whistleIcon: require("../images/whistle.png"),
+  ringing: require("../images/ringing.png"),
 };
 
 export default AppImages;

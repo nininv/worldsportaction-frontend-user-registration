@@ -241,11 +241,13 @@ class RegistrationProducts extends Component {
     }
 
     getPaymentOptionText = (paymentOptionRefId, isTeamRegistration) => {
-        let paymentOptionTxt = paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) :
-            (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        let paymentOptionTxt =
+            paymentOptionRefId == 2 ? AppConstants.gameVoucher :
                 (paymentOptionRefId == 3 ? AppConstants.allMatches :
                     (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
-                        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration : ""))));
+                        (paymentOptionRefId == 5 ? AppConstants.schoolRegistration :
+                            (paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) : ""
+                            ))));
 
         return paymentOptionTxt;
     }
@@ -491,7 +493,7 @@ class RegistrationProducts extends Component {
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index, isSchoolRegistration)}
                         {item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item, index)}
-                        {this.governmentVoucherView(item, index)}
+                        {item.isTeamRegistration == 0 && this.governmentVoucherView(item, index)}
                     </div>
                 ))}
 
@@ -603,6 +605,22 @@ class RegistrationProducts extends Component {
         }
     }
 
+    //payment options
+    getUpdatedPaymentOptions = (paymentOption) => {
+
+        let matchIndex = paymentOption.findIndex((x) => x.paymentOptionRefId == 1)
+
+        if (matchIndex > -1) {
+            let newObj = paymentOption[matchIndex]
+            paymentOption.splice(matchIndex, 1)
+
+            paymentOption.push(newObj)
+        }
+
+        return paymentOption
+
+    }
+
     productsView = (item, index) => {
         try {
             let currentDate = moment();
@@ -701,62 +719,63 @@ class RegistrationProducts extends Component {
                             ))}
                         </div>
                     }
-                    {
-                        item.paymentOptions.length > 1 && (
-                            <div className="subtitle-text-common" style={{ marginTop: "16px" }}>
-                                {AppConstants.whatWouldYouLikeToPay}
-                            </div>
-                        )
+                    {item.paymentOptions.length > 1 && (
+                        <div className="subtitle-text-common" style={{ marginTop: "16px" }}>
+                            {AppConstants.whatWouldYouLikeToPay}
+                        </div>
+                    )
                     }
                     <div style={item.paymentOptions.length > 1 ? { marginTop: 6 } : { marginTop: 12 }}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index, "selectedOptions")}
                             style={{ display: "flex" }}>
-                            {(item.paymentOptions || []).map((p, pIndex) => (
-                                <span key={p.paymentOptionRefId}>
+                            {(this.getUpdatedPaymentOptions(item.paymentOptions) || []).map((p, pIndex) => {
+                                return (
+                                    <span key={p.paymentOptionRefId}>
 
-                                    {p.paymentOptionRefId == 3 &&
-                                        <div className="contextualHelp-RowDirection">
-                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
-                                            <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                <Tooltip placement='bottom' background="#ff8237">
-                                                    <span>{AppConstants.allMatchesTipMsg}</span>
-                                                </Tooltip>
-                                            </div>
-                                        </div>
-                                    }
-                                    {p.paymentOptionRefId == 4 &&
-                                        <div className="contextualHelp-RowDirection">
-                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-
-                                            <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                <Tooltip placement='bottom' background="#ff8237">
-                                                    <span>{AppConstants.instalmentTipMessage}</span>
-                                                </Tooltip>
-                                            </div>
-                                        </div>
-                                    }
-                                    {p.paymentOptionRefId == 5 &&
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
-                                    }
-                                    {p.paymentOptionRefId == 1 &&
-                                        <div className="contextualHelp-RowDirection">
-                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
-                                            {item.isTeamRegistration == 0 ?
+                                        {p.paymentOptionRefId == 3 &&
+                                            <div className="contextualHelp-RowDirection">
+                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
                                                 <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                     <Tooltip placement='bottom' background="#ff8237">
-                                                        <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                        <span>{AppConstants.allMatchesTipMsg}</span>
                                                     </Tooltip>
                                                 </div>
-                                                :
-                                                null
-                                            }
-                                        </div>
-                                    }
+                                            </div>
+                                        }
+                                        {p.paymentOptionRefId == 4 &&
+                                            <div className="contextualHelp-RowDirection">
+                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
 
-                                </span>
-                            ))}
+                                                <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                    <Tooltip placement='bottom' background="#ff8237">
+                                                        <span>{AppConstants.instalmentTipMessage}</span>
+                                                    </Tooltip>
+                                                </div>
+                                            </div>
+                                        }
+                                        {p.paymentOptionRefId == 5 &&
+                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                        }
+                                        {p.paymentOptionRefId == 1 &&
+                                            <div className="contextualHelp-RowDirection">
+                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                                {item.isTeamRegistration == 0 ?
+                                                    <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                        <Tooltip placement='bottom' background="#ff8237">
+                                                            <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                        </Tooltip>
+                                                    </div>
+                                                    :
+                                                    null
+                                                }
+                                            </div>
+                                        }
+
+                                    </span>
+                                )
+                            })}
                         </Radio.Group>
                     </div>
                     {item.selectedOptions.paymentOptionRefId == 1 &&

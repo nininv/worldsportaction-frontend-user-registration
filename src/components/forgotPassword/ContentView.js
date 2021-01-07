@@ -17,9 +17,9 @@ function ContentView(props) {
     // setFieldValue,
     handleChange,
     handleBlur,
-    emailSearch
+    emailSearch,
   } = props;
-
+  console.log(props.source)
   return (
     <div className="content-view">
       <div className="d-flex justify-content-center">
@@ -30,7 +30,7 @@ function ContentView(props) {
         <div>
           <InputWithHead heading={loginState.forgotPasswordMessage} />
 
-          {source !== "mobile" && (
+          {source && (
             <div className="forgot-password-success-button-div">
               <NavLink to={{ pathname: "/login" }}>
                 <Button className="open-reg-button" type="primary">{AppConstants.returnToLogin}</Button>
@@ -57,13 +57,13 @@ function ContentView(props) {
               <p className="mt-3 mb-0">
                 We will send the SMS to your registered phone number.
                 Please confirm you would like to proceed.
-            </p>
+              </p>
             )}
 
             <div className="row pt-5">
               <div className="col-sm">
-                <div className="comp-finals-button-view d-flex justify-content-between">
-                  {source !== "mobile" && (
+                <div className={`comp-finals-button-view d-flex ${!source ? 'justify-content-between' : 'justify-content-center'}`}>
+                  {!source && (
                     <div className="pr-5">
                       <NavLink to={{ pathname: "/login" }}>
                         <Button

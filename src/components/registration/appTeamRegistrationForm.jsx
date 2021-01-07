@@ -609,9 +609,7 @@ class AppTeamRegistrationForm extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
-                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
-                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
                 });
             }
         } catch (ex) {
@@ -1552,7 +1550,7 @@ class AppTeamRegistrationForm extends Component {
             console.log("Date", date)
             if (referenceKey == "team") {
                 this.onChangeSetTeamValue(date, key);
-                if (getAge(date) < 18) {
+                if (getAge(date) <= 18) {
                     if (!isArrayNotEmpty(teamRegistrationObj.parentOrGuardian)) {
                         this.addParent("add")
                     }
@@ -1573,7 +1571,7 @@ class AppTeamRegistrationForm extends Component {
     teamMemberAddingProcess = (dob, payingFor, teamMemberIndex) => {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            if (getAge(dob) < 18 && payingFor == 1) {
+            if (getAge(dob) <= 18 && payingFor == 1) {
                 if (!isArrayNotEmpty(teamRegistrationObj.teamMembers[teamMemberIndex].parentOrGuardian)) {
                     this.addTeamMemberParent("add", teamMemberIndex)
                 }
@@ -3137,7 +3135,7 @@ class AppTeamRegistrationForm extends Component {
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px", marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(teamRegistrationObj.dateOfBirth) >= 18 &&
+                            {getAge(teamRegistrationObj.dateOfBirth) > 18 &&
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={teamMember.isRegistererAsParent == 1 ? true : false}
@@ -3164,7 +3162,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 && (
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) > 18 && teamMember.payingFor == 1 && (
                         <div>
                             {teamMember.dateOfBirth && (
                                 <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
@@ -3758,7 +3756,7 @@ class AppTeamRegistrationForm extends Component {
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) ? (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
@@ -4196,7 +4194,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) && (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) && (
                         <div>
                             {teamRegistrationObj.regSetting.school_standard == 1 && (
                                 <div>
@@ -4272,26 +4270,16 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}required={"required-field"}/>
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
-                                <Form.Item>
-                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                        })(
                                     <InputWithHead
                                         placeholder={AppConstants.childrenNumber}
                                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                         value={teamRegistrationObj.additionalInfo.childrenCheckNumber}
                                     />
-                                    )}
-                                </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
-                                    <Form.Item>
-                                        {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                         })(
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
@@ -4301,8 +4289,6 @@ class AppTeamRegistrationForm extends Component {
                                         showTime={false}
                                         value={childrenCheckExpiryDate}
                                     />
-                                        )}
-                                    </Form.Item>
                                 </div>
                             </div>
                         </div>

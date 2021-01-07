@@ -393,9 +393,7 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
-                    [`additionalInfoWorkingWithChildrenCheckNumber`]: additionalInfo.childrenCheckNumber,
-                    [`additionalInfoChildrenCheckExpiryDate`]: additionalInfo.childrenCheckExpiryDate ? moment(additionalInfo.childrenCheckExpiryDate,"MM-DD-YYYY") : null
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
                 });
             }
         } catch (ex) {
@@ -624,13 +622,13 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == 'referParentEmail' && value == true) {
 
-                this.setState({
-                    sameEmailValidationModalVisible: true
-                })
+                // this.setState({
+                //     sameEmailValidationModalVisible: true
+                // })
             }
 
             if (key == "dateOfBirth") {
-                if (getAge(value) < 18) {
+                if (getAge(value) <= 18) {
                     if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
                         this.addParent("add");
                     }
@@ -1396,7 +1394,7 @@ class AppRegistrationFormNew extends Component {
         try {
             const { userInfo } = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
-            if (getAge(registrationObj.dateOfBirth) < 18 && childEmail) {
+            if (getAge(registrationObj.dateOfBirth) <= 18 && childEmail) {
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
@@ -1426,7 +1424,6 @@ class AppRegistrationFormNew extends Component {
         try {
             e.preventDefault();
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
-            console.log("regisrationObj", registrationObj)
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
 
@@ -1530,7 +1527,6 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
                         let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
-                        console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
                         if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
                             this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
                             this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
@@ -1538,7 +1534,10 @@ class AppRegistrationFormNew extends Component {
                         }
                     }
                     if (this.state.currentStep != 2) {
-                        this.stepNavigation(registrationObj, expiredRegistration);
+                        if(this.state.currentStep==0){
+                            this.setState({sameEmailValidationModalVisible:true})
+                        }
+                        // this.stepNavigation(registrationObj, expiredRegistration);
                     }
                     setTimeout(() => {
                         this.setState({
@@ -1593,7 +1592,7 @@ class AppRegistrationFormNew extends Component {
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 ? (
+                {getAge(registrationObj.dateOfBirth) <= 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 ) : (
                         <div>
@@ -2036,7 +2035,7 @@ class AppRegistrationFormNew extends Component {
                                 }
                             </div>
                         )}
-                        {getAge(registrationObj.dateOfBirth) < 18 && (
+                        {getAge(registrationObj.dateOfBirth) <= 18 && (
                             <Checkbox
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
@@ -3556,7 +3555,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
 
-                    {(getAge(registrationObj.dateOfBirth) < 18) && (
+                    {(getAge(registrationObj.dateOfBirth) <= 18) && (
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>
@@ -3715,26 +3714,16 @@ class AppRegistrationFormNew extends Component {
 
                         {(registrationObj.umpireFlag == 1 || registrationObj.coachFlag == 1) && (
                             <div>
-                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"}/>
+                                <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6 media-input-mb">
-                                    <Form.Item>
-                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                        })(
                                         <InputWithHead
                                             placeholder={AppConstants.childrenNumber}
                                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "childrenCheckNumber")}
                                             value={registrationObj.additionalInfo.childrenCheckNumber}
                                         />
-                                        )}
-                                     </Form.Item>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
-                                        <Form.Item>
-                                            {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
-                                                  rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                             })(
                                             <DatePicker
                                                 size="large"
                                                 placeholder={AppConstants.expiryDate}
@@ -3744,8 +3733,6 @@ class AppRegistrationFormNew extends Component {
                                                 showTime={false}
                                                 setFieldsValue={childrenCheckExpiryDate}
                                             />
-                                          )}
-                                        </Form.Item>
                                     </div>
                                 </div>
                             </div>

@@ -183,7 +183,7 @@ class TeamInivteForm extends Component {
                 [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
             });
 
-            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18) {
                 if (parentOrGuardians == null) {
                     this.addParent("add");
                 }
@@ -232,9 +232,7 @@ class TeamInivteForm extends Component {
                     [`additionalInfoPhysicalActivity`]: userRegDetails.walkingNetball?.physicalActivity,
                     [`additionalInfoPregnant`]: userRegDetails.walkingNetball?.pregnant,
                     [`additionalInfoLowerBackProblem`]: userRegDetails.walkingNetball?.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: userRegDetails?.walkingNetballInfo,
-                    [`additionalInfoWorkingWithChildrenCheckNumber`]: userRegDetails.childrenCheckNumber,
-                    [`additionalInfoChildrenCheckExpiryDate`]: userRegDetails.childrenCheckExpiryDate,
+                    [`additionalInfoProvideFurtherDetails`]: userRegDetails?.walkingNetballInfo
                 });
             }
         } catch (ex) {
@@ -357,7 +355,7 @@ class TeamInivteForm extends Component {
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             this.props.updateInviteMemberInfoAction(value, key, subKey, null);
             if (key == "dateOfBirth") {
-                if (getAge(value) < 18) {
+                if (getAge(value) <= 18) {
                     if (!isArrayNotEmpty(userRegDetails.parentOrGaurdianDetails)) {
                         this.addParent("add");
                     }
@@ -1058,7 +1056,7 @@ class TeamInivteForm extends Component {
                                     }
                                 </div>
                             )}
-                            {getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18 && (
+                            {getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18 && (
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={userRegDetails.referParentEmail}
@@ -1440,7 +1438,7 @@ class TeamInivteForm extends Component {
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {getAge(dateFormat) < 18 ? (
+                    {getAge(dateFormat) <= 18 ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
@@ -1869,7 +1867,7 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
 
-                    {(getAge(userRegDetails.dateOfBirth) < 18) && (
+                    {(getAge(userRegDetails.dateOfBirth) <= 18) && (
                         <div>
                             {inviteMemberRegSettings.school_standard == 1 && (
                                 <div>
@@ -1942,26 +1940,16 @@ class TeamInivteForm extends Component {
 
                     {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} required={"required-field"} />
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
-                                <Form.Item>
-                                        {getFieldDecorator(`additionalInfoWorkingWithChildrenCheckNumber`, {
-                                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                        })(
                                     <InputWithHead
                                         placeholder={AppConstants.childrenNumber}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "childrenCheckNumber", "userRegDetails")}
                                         value={userRegDetails.childrenCheckNumber}
                                     />
-                                    )}
-                                </Form.Item>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
-                                    <Form.Item>
-                                            {getFieldDecorator(`additionalInfoChildrenCheckExpiryDate`, {
-                                                  rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
-                                             })(
                                     <DatePicker
                                         size="large"
                                         placeholder={AppConstants.expiryDate}
@@ -1971,8 +1959,6 @@ class TeamInivteForm extends Component {
                                         showTime={false}
                                         value={userRegDetails.childrenCheckExpiryDate && moment(userRegDetails.childrenCheckExpiryDate, "YYYY-MM-DD")}
                                     />
-                                        )}
-                                    </Form.Item>
                                 </div>
                             </div>
                         </div>
