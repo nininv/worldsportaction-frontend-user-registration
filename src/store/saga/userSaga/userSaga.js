@@ -1,6 +1,7 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import userHttpApi from "../../http/userHttp/userAxiosApi";
+import registrationAxiosApi from "../../http/registrationHttp/registrationAxios";
 import livescoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
 
 function* failSaga(result) {
@@ -395,3 +396,20 @@ export function* registrationResendEmailSaga(action){
       yield call(errorSaga, error);
     }
 }
+
+export function* teamMembersSaveSaga(action) {
+    try {
+      const result = yield call(registrationAxiosApi.teamMembersSave, action.payload);
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }

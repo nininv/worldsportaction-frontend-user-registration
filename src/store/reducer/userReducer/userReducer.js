@@ -1,8 +1,41 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
+import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { setPhotoUrl } from "../../../util/sessionStorage";
 
+const teamMemberObj = {
+    "genderRefId": null,
+    "email": null,
+    "lastName": null,
+    "firstName": null,
+    "middleName": null,
+    "dateOfBirth": null,
+    "mobileNumber":null,
+    "payingFor": 0,
+    "emergencyFirstName": null,
+    "emergencyLastName": null,
+    "emergencyContactNumber": null,
+    "isRegistererAsParent": 0,
+    "parentOrGuardian": [],
+    "membershipProductTypes": []
+  }
+
+const teamMembersSaveTemp = {
+    "competitionId": null,
+    "organisationId": null,
+    "registrationId": null,
+    "teamMemberRegId": null,
+    "existingUserId": null,
+    "teamId": null,
+    "userId": null,
+    "name": null,
+    "countryRefId": null,
+    "mobileNumber": null,
+    "teamName": null,
+    "divisions": [],
+    "teamMembers": [],
+    "registrationRestrictionTypeRefId": null
+}
 
 const initialState = {
     onLoad: false,
@@ -55,7 +88,10 @@ const initialState = {
     umpireActivityTotalCount: 0,
     allOrganisationList: [],
     getTeamMembersOnLoad: false,
-    teamMembersDetails: null
+    teamMembersDetails: null,
+    teamMembersSave: deepCopyFunction(teamMembersSaveTemp),
+    membershipProductsInfo: null,
+    onMembershipLoad: false
 };
 
 //get User Role
@@ -71,6 +107,39 @@ function getUserRole(userRoleData) {
         }
     }
     return userRole
+}
+
+function getUpdatedTeamMemberObj(competition){
+    try{
+      let teamMemberTemp = deepCopyFunction(teamMemberObj);
+      teamMemberTemp.membershipProductTypes = [];
+      let filteredTeamMembershipProducts =  competition.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
+      for(let product of filteredTeamMembershipProducts){
+        let obj = {
+          "competitionMembershipProductId": product.competitionMembershipProductId,
+          "competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
+          "isPlayer": product.isPlayer,
+          "productTypeName": product.shortName,
+          "isChecked": false
+        }
+        teamMemberTemp.membershipProductTypes.push(obj);
+      }
+      return teamMemberTemp;
+    }catch(ex){
+      console.log("Error in getUpdatedTeamMemberObj::"+ex);
+    }
+  }
+
+function upateTeamMembersSave(state){
+    try{
+        let membershipProducts = state.membershipProductInfo;
+        let organisation = membershipProducts[0];
+        let competition  = organisation.competitions[0];
+        state.teamMembersSave.teamMembers.push(getUpdatedTeamMemberObj(competition));
+        console.log("state",state.teamMembersSave.teamMembers)
+    }catch(ex){
+        console.log("Error in updateTeamMemberSave::"+ex);
+    }
 }
 
 function userReducer(state = initialState, action) {
@@ -370,6 +439,46 @@ function userReducer(state = initialState, action) {
               ...state,
               onLoad: false,
               status: action.status
+            }
+
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
+            return { ...state, onMembershipLoad: true };
+
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
+            state.membershipProductInfo = action.result;
+            upateTeamMembersSave(state)
+            return {
+                ...state,
+                onMembershipLoad: false,
+                status: action.status,
+            };
+        
+        case ApiConstants.TEAM_MEMBER_SAVE_UPDATE_ACTION:
+            if(action.key == "teamMembersSave"){
+                state.teamMembersSave = action.data;
+            }else if(action.key == "teamMember"){
+                if(action.index == undefined){
+                    upateTeamMembersSave(state)
+                }else{
+                    state.teamMembersSave.teamMembers.splice(action.index,1);
+                }
+            }else if(action.key == "membershipProductTypes"){
+                state.teamMembersSave.teamMembers[action.index].membershipProductTypes[action.subIndex].isChecked = action.data;
+            }else{
+                state.teamMembersSave.teamMembers[action.index][action.key] = action.data;
+            }
+            return{
+                ...state
+            }
+        
+        case ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD:
+            return{...state,teamMembersSaveOnLoad: false}
+    
+        case ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS: 
+            return {
+                status: action.status,
+                teamMembersSaveOnLoad: false,
+                ...state
             }
 
         default:

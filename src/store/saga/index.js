@@ -295,7 +295,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
   yield takeEvery(ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD, userSaga.getUserModuleTeamMembersDataSaga);
 
-  yield takeEvery(ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD, netSetGoTshirtSizeSaga)
+  yield takeEvery(ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD, netSetGoTshirtSizeSaga);
+  yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
 
 
 }

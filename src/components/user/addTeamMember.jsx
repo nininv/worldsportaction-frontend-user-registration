@@ -16,7 +16,10 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
-import { userProfileUpdateAction } from '../../store/actions/userAction/userAction'
+import { 
+    teamMemberSaveUpdateAction,
+    teamMembersSaveAction 
+} from '../../store/actions/userAction/userAction'
 import ValidationConstants from "../../themes/validationConstant";
 import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
@@ -31,7 +34,10 @@ import Loader from '../../customComponents/loader';
 import { setTempUserId, getUserId } from "../../util/sessionStorage";
 import { regexNumberExpression } from '../../util/helpers';
 import PlacesAutocomplete from "../registration/elements/PlaceAutoComplete";
-import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '../../util/helpers';
+import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString,captializedString } from '../../util/helpers';
+import {
+    membershipProductEndUserRegistrationAction
+} from '../../store/actions/registrationAction/userRegistrationAction';
 
 
 const { Header, Footer, Content } = Layout;
@@ -43,60 +49,168 @@ class AddTeamMember extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            teamMembers: [
-                {
-                    "genderRefId": null,
-                    "email": null,
-                    "lastName": null,
-                    "firstName": null,
-                    "middleName": null,
-                    "dateOfBirth": null,
-                    "mobileNumber":null,
-                    "payingFor": 0,
-                    "membershipProductTypes": [
-                        {
-                            "competitionMembershipProductId": null,
-                            "competitionMembershipProductTypeId": null,
-                            "isPlayer": null,
-                            "productTypeName": null,
-                            "isChecked": null
-                        }
-                    ],
-                    "parentOrGuardian": [
-                        {
-                            "userId": 0,
-                            "firstName": null,
-                            "middleName": null,
-                            "lastName": null,
-                            "mobileNumber": null,
-                            "email": null,
-                            "street1": null,
-                            "street2": null,
-                            "suburb": null,
-                            "stateRefId": null,
-                            "countryRefId": 1,
-                            "postalCode": null,
-                        }
-                    ]
-                }
-            ]
+            organisationId: this.props.location.state ? this.props.location.state.registrationTeam.organisationUniqueKey : null,
+            competitionId: this.props.location.state ? this.props.location.state.registrationTeam.competitionUniqueKey : null,
+            teamId: this.props.location.state ? this.props.location.state.registrationTeam.teamId : null,
+            registrationId: this.props.location.state ? this.props.location.state.registrationTeam.registrationUniqueKey : null,
+            teamName: this.props.location.state ? this.props.location.state.registrationTeam.teamName : null,
+            userId: this.props.location.state ? this.props.location.state.registrationTeam.userId : null,
+            getMembershipProductsInfoOnLoad: false
         }
         this.formRef = React.createRef();
         this.props.genderReferenceAction();
     }
 
     componentDidMount() {
+        this.getMembershipProductsInfo()
     }
 
     componentDidUpdate(nextProps) {
+        try{
+            let userState = this.props.userState;
+            if(userState != nextProps){
+            }
+        }catch(ex){
+            console.log("Error in componentDidUpdate::"+ex);
+        }
     }
 
-    dateConversion = (f, key, referenceKey, teamMemberIndex) => {
+    getMembershipProductsInfo = () => {
+        try{
+            let payload = {
+                organisationUniqueKey: this.state.organisationId,
+                competitionUniqueKey: this.state.competitionId
+            }
+            this.props.membershipProductEndUserRegistrationAction(payload);
+            this.setState({getMembershipProductsInfoOnLoad: true})
+        }catch(ex){
+            console.log("Error in getMembershipProductsInfo::"+ex);
+        }
+    }
+
+    showMemberTypeValidation = (teamMember) => {
+        try {
+            let error = false;
+            if (teamMember.membershipProductTypes.find(x => x.isChecked == true)) {
+                error = false;
+            } else {
+                error = true;
+            }
+            return error;
+        } catch (ex) {
+            console.log("Error in showMemberTypeValidation::" + ex)
+        }
+    }
+
+    onChangeTeamMemberSaveUpdate(data,key,index,subIndex){
+        this.props.teamMemberSaveUpdateAction(data,key,index,subIndex);
+    }
+
+    getParentObj = () => {
+        let parentObj = {
+            "tempParentId": null,
+            "userId": 0,
+            "firstName": null,
+            "middleName": null,
+            "lastName": null,
+            "mobileNumber": null,
+            "email": null,
+            "street1": null,
+            "street2": null,
+            "suburb": null,
+            "stateRefId": null,
+            "countryRefId": 1,
+            "postalCode": null,
+            "isSameAddress": false,
+            // "selectAddressFlag": true,
+            "addNewAddressFlag": true,
+            "manualEnterAddressFlag": false
+        }
+        return parentObj;
+    }
+
+    addTeamMemberParent = (key, teamMemberIndex, teamMemberParentIndex) => {
+        try {
+            const {teamMembersSave} = this.props.userState;
+            let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
+            let teamMember = teamMembers[teamMemberIndex];
+            if (key == "add") {
+                let parentObj = deepCopyFunction(this.getParentObj());
+                parentObj.tempParentId = teamMember.parentOrGuardian.length + 1;
+                teamMember.parentOrGuardian.push(parentObj);
+            }
+            if (key == "remove") {
+                teamMember.parentOrGuardian.splice(teamMemberParentIndex, 1);
+            }
+            if (key == "removeAllParent") {
+                teamMember.parentOrGuardian = [];
+            }
+            this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave")
+        } catch (ex) {
+            console.log("Error in addTeamMemberParent::" + ex)
+        }
+    }
+
+    teamMemberAddingProcess = (dob, payingFor, teamMember, teamMemberIndex) => {
+        try {
+            if (getAge(dob) <= 18 && payingFor == 1) {
+                if (!isArrayNotEmpty(teamMember.parentOrGuardian)) {
+                    this.addTeamMemberParent("add", teamMemberIndex)
+                }
+            } else {
+                this.addTeamMemberParent("removeAllParent", teamMemberIndex)
+            }
+        } catch (ex) {
+            console.log("Error in teamMemberAddingProcess::" + ex)
+        }
+    }
+
+    dateConversion = (f, key, teamMember, teamMemberIndex) => {
         try {
             let date = moment(f, "DD-MM-YYYY").format("MM-DD-YYYY");
-           
+            this.onChangeTeamMemberSaveUpdate(date,key,teamMemberIndex)
+            this.teamMemberAddingProcess(date, teamMember.payingFor,teamMember, teamMemberIndex)
         } catch (ex) {
             console.log("Error in dateConversion::" + ex)
+        }
+    }
+
+    onChangeSetTeamMemberParentValue = (data,key,index,subIndex) => {
+        try{
+            const {teamMembersSave} = this.props.userState;
+            let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
+            let teamMember = teamMembers[index];
+            let parent = teamMember.parentOrGuardian[subIndex];
+            parent[key] = data;
+            this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave")
+        }catch(ex){
+            console.log("Error in onChangeSetTeamMemberParentValue::"+ex);
+        }
+    }
+
+    getUpdateTeamMembersSave = (teamMembersSave) => {
+        try{
+            teamMembersSave.organisationId = this.state.organisationId;
+            teamMembersSave.competitionId = this.state.competitionId;
+            teamMembersSave.teamId = this.state.teamId;
+            teamMembersSave.registrationId = this.state.registrationId;
+        }catch(ex){
+            console.log("Error in getUpdatedTeamMembersSave::"+ex);
+        }
+    }
+
+    onSaveClick = (e) => {
+        try {
+            e.preventDefault();
+            this.props.form.validateFieldsAndScroll((err, values) => {
+                if(!err) {
+                    const {teamMembersSave} = this.props.userState;
+                    let teamMembersSaveTemp = this.getUpdateTeamMembersSave(teamMembersSave);
+                    this.props.teamMembersSaveAction(teamMembersSaveTemp);
+                }
+            });
+        }catch(ex){
+            console.log("Error in onSaveClick::"+ex);
         }
     }
 
@@ -148,11 +262,11 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.firstName}
                                             placeholder={AppConstants.firstName}
-                                            // onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "firstName", parentIndex, teamMemberIndex)}
-                                            // setFieldsValue={parent.firstName}
-                                            // onBlur={(i) => this.props.form.setFieldsValue({
-                                            //     [`teamMemberParentFirstName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
-                                            // })}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "firstName",teamMemberIndex, parentIndex )}
+                                            setFieldsValue={parent.firstName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                [`teamMemberParentFirstName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
+                                            })}
                                         />
                                     )}
                                 </Form.Item>
@@ -166,11 +280,11 @@ class AddTeamMember extends Component {
                                             required={"pt-0 pb-0"}
                                             heading={AppConstants.middleName}
                                             placeholder={AppConstants.middleName}
-                                            // onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "middleName", parentIndex, teamMemberIndex)}
-                                            // setFieldsValue={parent.middleName}
-                                            // onBlur={(i) => this.props.form.setFieldsValue({
-                                            //     [`teamMemberParentMiddleName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
-                                            // })}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "middleName", parentIndex, teamMemberIndex)}
+                                            setFieldsValue={parent.middleName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                [`teamMemberParentMiddleName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
+                                            })}
                                         />
                                     )}
                                 </Form.Item>
@@ -184,11 +298,11 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.lastName}
                                             placeholder={AppConstants.lastName}
-                                            // onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "lastName", parentIndex, teamMemberIndex)}
-                                            // setFieldsValue={parent.lastName}
-                                            // onBlur={(i) => this.props.form.setFieldsValue({
-                                            //     [`teamMemberParentLastName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
-                                            // })}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "lastName", parentIndex, teamMemberIndex)}
+                                            setFieldsValue={parent.lastName}
+                                            onBlur={(i) => this.props.form.setFieldsValue({
+                                                [`teamMemberParentLastName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
+                                            })}
                                         />
                                     )}
                                 </Form.Item>
@@ -202,8 +316,8 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.mobile}
                                             placeholder={AppConstants.mobile}
-                                            // onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "mobileNumber", parentIndex, teamMemberIndex)}
-                                            // setFieldsValue={parent.mobileNumber}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "mobileNumber", parentIndex, teamMemberIndex)}
+                                            setFieldsValue={parent.mobileNumber}
                                             maxLength={10}
                                         />
                                     )}
@@ -223,8 +337,8 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.email}
                                             placeholder={AppConstants.email}
-                                            //onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "email", parentIndex, teamMemberIndex)}
-                                            //setFieldsValue={parent.email}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "email", parentIndex, teamMemberIndex)}
+                                            setFieldsValue={parent.email}
                                         />
                                     )}
                                 </Form.Item>
@@ -238,38 +352,109 @@ class AddTeamMember extends Component {
         }
     }
 
+    teamMemberEmergencyContactView = (teamMember,teamMemberIndex, getFieldDecorator) => {
+        try {
+            return (
+                <div className="registration-form-view">
+                    <div className="form-heading">{AppConstants.emergencyContact}</div>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`teamMemberEmergencyFirstName${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.firstName}
+                                        placeholder={AppConstants.firstName}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "emergencyFirstName", teamMemberIndex)}
+                                        setFieldsValue={teamMember.emergencyFirstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyFirstName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item>
+                                {getFieldDecorator(`teamMemberEmergencyLastName${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.nameField[1] }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.lastName}
+                                        placeholder={AppConstants.lastName}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "emergencyLastName", teamMemberIndex)}
+                                        setFieldsValue={teamMember.emergencyLastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyLastName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <Form.Item >
+                                {getFieldDecorator(`teamMemberEmergencyContactNumber${teamMemberIndex}`, {
+                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                })(
+                                    <InputWithHead
+                                        required={"required-field"}
+                                        heading={AppConstants.mobileNumber}
+                                        placeholder={AppConstants.mobileNumber}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "emergencyContactNumber", teamMemberIndex)}
+                                        setFieldsValue={teamMember.emergencyContactNumber}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberEmergencyContactNumber${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
+                                        maxLength={10}
+                                    />
+                                )}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+            )
+        } catch (ex) {
+            console.log("Error in emergencyContactView::" + ex)
+        }
+    }
+
     teamMemberView = (teamMember,teamMemberIndex,getFieldDecorator) => {
         try{
             const { genderList } = this.props.commonReducerState;
+            const {teamMembersSave} = this.props.userState;
+            let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
             return(
                 <div className="light-grey-border-box mt-0">
                     <div style={{ display: "flex", marginTop: "30px" }}>
                         <div className="form-heading">{AppConstants.teamMember}</div>
-                        {teamMemberIndex != 0 && (
+                        {teamMembers.length > 1 && (
                             <img
-                                onClick={() => { this.onChangeSetTeamValue(teamMemberIndex, "removeTeamMember") }}
+                                onClick={() => { this.onChangeTeamMemberSaveUpdate(null, "teamMember",teamMemberIndex) }}
                                 style={{ marginLeft: "auto", width: "25px" }}
                                 src={AppImages.removeIcon} />
                         )}
                     </div>
                     <InputWithHead heading={AppConstants.type} required={"required-field"} />
-                    {/* {(membershipProductTypes || []).map((product, productIndex) => (
+                    {(teamMember.membershipProductTypes || []).map((product, productIndex) => (
                         <Checkbox
                             className="py-2"
                             checked={product.isChecked}
                             key={product.competitionMembershipProductTypeId}
                             onChange={(e) => {
                                 let prodIndexTemp = teamMember.membershipProductTypes.findIndex(x => x.competitionMembershipProductTypeId === product.competitionMembershipProductTypeId && x.competitionMembershipProductId === product.competitionMembershipProductId);
-                                this.onChangeTeamMemberValue(e.target.checked, "membershipProductTypes", teamMemberIndex, prodIndexTemp)
+                                this.onChangeTeamMemberSaveUpdate(e.target.checked, "membershipProductTypes", teamMemberIndex, prodIndexTemp)
                             }}>
                             {product.productTypeName}
                         </Checkbox>
-                    ))} */}
-                    {/* {this.showMemberTypeValidation(teamMember) && this.state.buttonSubmitted && (
+                    ))}
+                    {this.showMemberTypeValidation(teamMember) && this.state.buttonSubmitted && (
                         <div style={{ color: "var(--app-red)" }}>
                             {ValidationConstants.memberTypeIsRequired}
                         </div>
-                    )} */}
+                    )}
 
                     <InputWithHead heading={AppConstants.gender} required={"required-field"} />
                     <Form.Item >
@@ -278,8 +463,8 @@ class AddTeamMember extends Component {
                         })(
                             <Radio.Group
                                 className="registration-radio-group"
-                                // onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "genderRefId", teamMemberIndex)}
-                                // setFieldsValue={teamMember.genderRefId}
+                                onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "genderRefId", teamMemberIndex)}
+                                setFieldsValue={teamMember.genderRefId}
                             >
                                 {(genderList || []).map((gender, genderIndex) => (
                                     <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
@@ -296,11 +481,11 @@ class AddTeamMember extends Component {
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
-                                        // onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "firstName", teamMemberIndex)}
-                                        // setFieldsValue={teamMember.firstName}
-                                        // onBlur={(i) => this.props.form.setFieldsValue({
-                                        //     [`teamMemberFirstName${teamMemberIndex}`]: captializedString(i.target.value)
-                                        // })}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(captializedString(e.target.value), "firstName", teamMemberIndex)}
+                                        setFieldsValue={teamMember.firstName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberFirstName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -313,11 +498,11 @@ class AddTeamMember extends Component {
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
-                                        // onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "middleName", teamMemberIndex)}
-                                        // setFieldsValue={teamMember.middleName}
-                                        // onBlur={(i) => this.props.form.setFieldsValue({
-                                        //     [`teamMemberMiddleName${teamMemberIndex}`]: captializedString(i.target.value)
-                                        // })}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(captializedString(e.target.value), "middleName", teamMemberIndex)}
+                                        setFieldsValue={teamMember.middleName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberMiddleName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -330,11 +515,11 @@ class AddTeamMember extends Component {
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
-                                        // onChange={(e) => this.onChangeTeamMemberValue(captializedString(e.target.value), "lastName", teamMemberIndex)}
-                                        // setFieldsValue={teamMember.lastName}
-                                        // onBlur={(i) => this.props.form.setFieldsValue({
-                                        //     [`teamMemberLastName${teamMemberIndex}`]: captializedString(i.target.value)
-                                        // })}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(captializedString(e.target.value), "lastName", teamMemberIndex)}
+                                        setFieldsValue={teamMember.lastName}
+                                        onBlur={(i) => this.props.form.setFieldsValue({
+                                            [`teamMemberLastName${teamMemberIndex}`]: captializedString(i.target.value)
+                                        })}
                                     />
                                 )}
                             </Form.Item>
@@ -349,7 +534,7 @@ class AddTeamMember extends Component {
                                         size="large"
                                         placeholder={"dd-mm-yyyy"}
                                         style={{ width: "100%" }}
-                                        onChange={(e, f) => this.dateConversion(f, "dateOfBirth", "teamMember", teamMemberIndex)}
+                                        onChange={(e, f) => this.dateConversion(f, "dateOfBirth", teamMember, teamMemberIndex)}
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
@@ -365,8 +550,8 @@ class AddTeamMember extends Component {
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.phone}
-                                        // onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "mobileNumber", teamMemberIndex)}
-                                        // setFieldsValue={teamMember.mobileNumber}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "mobileNumber", teamMemberIndex)}
+                                        setFieldsValue={teamMember.mobileNumber}
                                         maxLength={10}
                                     />
                                 )}
@@ -385,8 +570,8 @@ class AddTeamMember extends Component {
                                 })(
                                     <InputWithHead
                                         placeholder={AppConstants.email}
-                                        // onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "email", teamMemberIndex)}
-                                        // setFieldsValue={teamMember.email}
+                                        onChange={(e) => this.onChangeTeamMemberSaveUpdate(e.target.value, "email", teamMemberIndex)}
+                                        setFieldsValue={teamMember.email}
                                     />
                                 )}
                             </Form.Item>
@@ -397,8 +582,8 @@ class AddTeamMember extends Component {
                             className="single-checkbox"
                             checked={teamMember.payingFor == 1 ? true : false}
                             onChange={e => {
-                                this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)
-                                this.teamMemberAddingProcess(teamMember.dateOfBirth, e.target.checked ? 1 : 0, teamMemberIndex)
+                                this.onChangeTeamMemberSaveUpdate(e.target.checked ? 1 : 0, "payingFor", teamMemberIndex)
+                                this.teamMemberAddingProcess(teamMember.dateOfBirth, e.target.checked ? 1 : 0, teamMember, teamMemberIndex)
                             }}>
                             {AppConstants.payingForMember}
                         </Checkbox>
@@ -406,21 +591,18 @@ class AddTeamMember extends Component {
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px", marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                                    <div>
-                                        {(teamMember.parentOrGuardian || []).slice(1, teamMember.parentOrGuardian.length).map((parent, parentIndex) => (
-                                            <div>{this.teamMemberParentOrGuardianView(parent, parentIndex + 1, teamMember, teamMemberIndex, getFieldDecorator)}</div>
-                                        ))}
-                                    </div>
-                            {/* <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                            {(teamMember.parentOrGuardian || []).map((parent, parentIndex) => (
+                                <div>{this.teamMemberParentOrGuardianView(parent, parentIndex, teamMember, teamMemberIndex, getFieldDecorator)}</div>
+                            ))}
+                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
                                 onClick={() => { this.addTeamMemberParent("add", teamMemberIndex) }}
-                            >+ {AppConstants.addNewParentGaurdian}</div> */}
+                            >+ {AppConstants.addNewParentGaurdian}</div>
                         </div>
                     )}
-
-                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 && (
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) > 18 && teamMember.payingFor == 1 && (
                         <div>
                             {teamMember.dateOfBirth && (
-                                <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
+                                <div>{this.teamMemberEmergencyContactView(teamMember,teamMemberIndex, getFieldDecorator)}</div>
                             )}
                         </div>
                     )}
@@ -431,19 +613,21 @@ class AddTeamMember extends Component {
         }
     }
 
-    //////form content view
     contentView = (getFieldDecorator) => {
+        const {teamMembersSave} = this.props.userState;
+        let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
         return (
             <div className="content-view">
-                {(this.state.teamMembers || []).map((teamMember,teamMemberIndex) => {
+                {(teamMembers || []).map((teamMember,teamMemberIndex) => {
                     return(
-                        <div>{this.teamMemberView(teamMember,teamMemberIndex,getFieldDecorator)}</div>
+                        <div className="mb-5">{this.teamMemberView(teamMember,teamMemberIndex,getFieldDecorator)}</div>
                     )
                 })}
                 <div className="orange-action-txt"
                     style={{ marginTop: "25px" }}
-                    // onClick={() => {this.onChangeSetTeamValue(null, "addTeamMember")}}
-                    ><span className="add-another-button-border">+ {AppConstants.addTeamMember}</span></div>
+                    onClick={() => this.onChangeTeamMemberSaveUpdate(null, "teamMember")}>
+                        <span className="add-another-button-border">+ {AppConstants.addTeamMember}</span>
+                </div>
             </div>
         );
     };
@@ -476,10 +660,8 @@ class AddTeamMember extends Component {
         );
     };
 
-    /////main render method
     render() {
         const { getFieldDecorator } = this.props.form;
-
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user}/>
@@ -504,7 +686,10 @@ class AddTeamMember extends Component {
 }
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        genderReferenceAction
+        genderReferenceAction,
+        membershipProductEndUserRegistrationAction,
+        teamMemberSaveUpdateAction,
+        teamMembersSaveAction
     }, dispatch)
 }
 
@@ -512,7 +697,6 @@ function mapStatetoProps(state) {
     return {
         commonReducerState: state.CommonReducerState,
         userState: state.UserState,
-
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(AddTeamMember));

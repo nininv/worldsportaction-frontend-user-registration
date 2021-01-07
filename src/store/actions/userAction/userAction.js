@@ -173,6 +173,25 @@ function getUserModuleTeamMembersAction(payload){
   }
 }
 
+function teamMemberSaveUpdateAction(data,key,index,subIndex){
+  const action = {
+    type: ApiConstants.TEAM_MEMBER_SAVE_UPDATE_ACTION,
+    data,
+    key,
+    index,
+    subIndex
+  }
+  return action;
+}
+
+function teamMembersSaveAction(payload){
+  const action = {
+    type: ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD,
+    payload
+  }
+  return action;
+}
+
 
 export {
   getRoleAction,
@@ -195,5 +214,7 @@ export {
   userPhotoUpdateAction,
   registrationResendEmailAction,
   userPasswordUpdateAction,
-  getUserModuleTeamMembersAction
+  getUserModuleTeamMembersAction,
+  teamMemberSaveUpdateAction,
+  teamMembersSaveAction
 }
