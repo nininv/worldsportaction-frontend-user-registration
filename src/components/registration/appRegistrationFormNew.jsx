@@ -622,9 +622,9 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == 'referParentEmail' && value == true) {
 
-                // this.setState({
-                //     sameEmailValidationModalVisible: true
-                // })
+                this.setState({
+                    sameEmailValidationModalVisible: true
+                })
             }
 
             if (key == "dateOfBirth") {
@@ -1534,10 +1534,10 @@ class AppRegistrationFormNew extends Component {
                         }
                     }
                     if (this.state.currentStep != 2) {
-                        if(this.state.currentStep==0){
-                            this.setState({sameEmailValidationModalVisible:true})
-                        }
-                        // this.stepNavigation(registrationObj, expiredRegistration);
+                        // if(this.state.currentStep==0){
+                        //     this.setState({sameEmailValidationModalVisible:true})
+                        // }
+                        this.stepNavigation(registrationObj, expiredRegistration);
                     }
                     setTimeout(() => {
                         this.setState({
