@@ -628,7 +628,7 @@ class AppRegistrationFormNew extends Component {
             }
 
             if (key == "dateOfBirth") {
-                if (getAge(value) < 18) {
+                if (getAge(value) <= 18) {
                     if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
                         this.addParent("add");
                     }
@@ -1394,7 +1394,7 @@ class AppRegistrationFormNew extends Component {
         try {
             const { userInfo } = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
-            if (getAge(registrationObj.dateOfBirth) < 18 && childEmail) {
+            if (getAge(registrationObj.dateOfBirth) <= 18 && childEmail) {
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
@@ -1591,7 +1591,7 @@ class AppRegistrationFormNew extends Component {
                     <div>{this.addedParticipantWithProfileView()}</div>
                 }
                 <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) < 18 ? (
+                {getAge(registrationObj.dateOfBirth) <= 18 ? (
                     <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                 ) : (
                         <div>
@@ -2034,7 +2034,7 @@ class AppRegistrationFormNew extends Component {
                                 }
                             </div>
                         )}
-                        {getAge(registrationObj.dateOfBirth) < 18 && (
+                        {getAge(registrationObj.dateOfBirth) <= 18 && (
                             <Checkbox
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
@@ -3554,7 +3554,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
 
-                    {(getAge(registrationObj.dateOfBirth) < 18) && (
+                    {(getAge(registrationObj.dateOfBirth) <= 18) && (
                         <div>
                             {registrationObj.regSetting.school_standard == 1 && (
                                 <div>

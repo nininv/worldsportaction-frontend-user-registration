@@ -1550,7 +1550,7 @@ class AppTeamRegistrationForm extends Component {
             console.log("Date", date)
             if (referenceKey == "team") {
                 this.onChangeSetTeamValue(date, key);
-                if (getAge(date) < 18) {
+                if (getAge(date) <= 18) {
                     if (!isArrayNotEmpty(teamRegistrationObj.parentOrGuardian)) {
                         this.addParent("add")
                     }
@@ -1571,7 +1571,7 @@ class AppTeamRegistrationForm extends Component {
     teamMemberAddingProcess = (dob, payingFor, teamMemberIndex) => {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            if (getAge(dob) < 18 && payingFor == 1) {
+            if (getAge(dob) <= 18 && payingFor == 1) {
                 if (!isArrayNotEmpty(teamRegistrationObj.teamMembers[teamMemberIndex].parentOrGuardian)) {
                     this.addTeamMemberParent("add", teamMemberIndex)
                 }
@@ -3135,7 +3135,7 @@ class AppTeamRegistrationForm extends Component {
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px", marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(teamRegistrationObj.dateOfBirth) >= 18 &&
+                            {getAge(teamRegistrationObj.dateOfBirth) > 18 &&
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={teamMember.isRegistererAsParent == 1 ? true : false}
@@ -3162,7 +3162,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 && (
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) > 18 && teamMember.payingFor == 1 && (
                         <div>
                             {teamMember.dateOfBirth && (
                                 <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
@@ -3756,7 +3756,7 @@ class AppTeamRegistrationForm extends Component {
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) ? (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
@@ -4194,7 +4194,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) && (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) && (
                         <div>
                             {teamRegistrationObj.regSetting.school_standard == 1 && (
                                 <div>

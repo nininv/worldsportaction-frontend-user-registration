@@ -417,7 +417,7 @@ class AddTeamMember extends Component {
                         </div>
                     )}
 
-                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 && (
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) > 18 && teamMember.payingFor == 1 && (
                         <div>
                             {teamMember.dateOfBirth && (
                                 <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
