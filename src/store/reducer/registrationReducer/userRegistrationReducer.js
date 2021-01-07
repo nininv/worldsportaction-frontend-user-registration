@@ -682,7 +682,7 @@ function updateParticipantByIdByMembershipInfo(state,participantData){
 function checkByDateOfBirth(state,dateOfBirth){
 	try{
 		state.registrationObj.dateOfBirth = dateOfBirth;
-		if(getAge(dateOfBirth) < 18){
+		if(getAge(dateOfBirth) <= 18){
 			state.registrationObj.referParentEmail = true;
 			if(state.registrationObj.userId != getUserId()){
 				state.registrationObj.email = null;
