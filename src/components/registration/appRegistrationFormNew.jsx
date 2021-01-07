@@ -622,9 +622,9 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == 'referParentEmail' && value == true) {
 
-                this.setState({
-                    sameEmailValidationModalVisible: true
-                })
+                // this.setState({
+                //     sameEmailValidationModalVisible: true
+                // })
             }
 
             if (key == "dateOfBirth") {
@@ -1424,7 +1424,6 @@ class AppRegistrationFormNew extends Component {
         try {
             e.preventDefault();
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
-            console.log("regisrationObj", registrationObj)
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
 
@@ -1528,7 +1527,6 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
                         let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
-                        console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
                         if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
                             this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
                             this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
@@ -1536,7 +1534,10 @@ class AppRegistrationFormNew extends Component {
                         }
                     }
                     if (this.state.currentStep != 2) {
-                        this.stepNavigation(registrationObj, expiredRegistration);
+                        if(this.state.currentStep==0){
+                            this.setState({sameEmailValidationModalVisible:true})
+                        }
+                        // this.stepNavigation(registrationObj, expiredRegistration);
                     }
                     setTimeout(() => {
                         this.setState({
