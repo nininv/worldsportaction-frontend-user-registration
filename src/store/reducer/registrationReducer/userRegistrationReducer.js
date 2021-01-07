@@ -303,6 +303,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate ? moment(selectedUser.additionalInfo.accreditationCoachExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.childrenCheckNumber = selectedUser.additionalInfo.childrenCheckNumber;
 			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate ? moment(selectedUser.additionalInfo.childrenCheckExpiryDate).format("MM-DD-YYYY") : null;
+			console.log("registrationObj.additionalInfo.childrenCheckExpiryDate",registrationObj.additionalInfo.childrenCheckExpiryDate)
 			registrationObj.additionalInfo.walkingNetballRefId = selectedUser.additionalInfo.walkingNetballRefId;
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;

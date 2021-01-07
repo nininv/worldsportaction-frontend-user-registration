@@ -20,6 +20,7 @@ import history from "../../util/history";
 import Doc from '../../util/DocService';
 import PdfContainer from '../../util/PdfContainer';
 import {getUserId } from '../../util/sessionStorage'
+import {netSetGoTshirtSizeAction} from '../../store/actions/commonAction/commonAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -36,6 +37,7 @@ class RegistrationInvoice extends Component {
             checkStatusLoad: false,
             invoiceDisabled: false,
         }
+        this.props.netSetGoTshirtSizeAction();
     }
 
 
@@ -550,6 +552,7 @@ class RegistrationInvoice extends Component {
 
     ////////form content view
     contentView = (result) => {
+        const { tShirtSizeList } = this.props.commonReducerState;
         let {invoiceData} = this.props.stripeState;
         let data = invoiceData!= null ? invoiceData.compParticipants : []
         return (
@@ -607,6 +610,8 @@ class RegistrationInvoice extends Component {
                 {data && data.length > 0 && data.map((item, participantIndex) => {
                      let isTeamReg = (item.isTeamRegistration != undefined ? item.isTeamRegistration : 0);
                      let regName = isTeamReg == 1 ? AppConstants.teamRegistration : AppConstants.registration;
+                     let tShirtDetails = tShirtSizeList ? tShirtSizeList.find(x => x.id == item.tShirtSizeRefId) : null;
+                     let tShirtName = tShirtDetails ? tShirtDetails.name : null;
                     return(
                         <div>
                             {(item.membershipProducts || []).map((mem, memIndex) =>{
@@ -636,12 +641,19 @@ class RegistrationInvoice extends Component {
                                                                     + ", Team - " + item.teamName + ", " + item.competitionName
                                                                 :
                                                                 mem.divisionName ?
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
+                                                                    regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
+                                                                    + " - " + tShirtName + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
                                                                     regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                     + ", " + item.competitionName + " - "+ mem.divisionName
                                                                     :
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
+                                                                    regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
+                                                                    + " - " + tShirtName + ", " + item.competitionName
+                                                                    :
                                                                     regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                     + ", " + item.competitionName
-                                                                
 
                                                             }
                                                             required={"justify-content-start"}
@@ -1005,12 +1017,14 @@ function mapDispatchToProps(dispatch) {
         onChangeCharityAction,
         saveInvoiceAction,
         getInvoiceStatusAction,
+        netSetGoTshirtSizeAction
     }, dispatch)
 }
 
 function mapStatetoProps(state) {
     return {
         stripeState: state.StripeState,
+        commonReducerState: state.CommonReducerState
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(RegistrationInvoice);
