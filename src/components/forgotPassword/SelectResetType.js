@@ -65,7 +65,7 @@ function SelectResetType(props) {
         </Radio.Group>
 
         <div className={`comp-finals-button-view d-flex justify-content-${source !== "mobile" ? "between" : "center"} mt-4`}>
-          {source !== "mobile" && (
+          {!source && (
             <div className="pr-5">
               <NavLink to={{ pathname: "/login" }}>
                 <Button className="open-reg-button" type="primary">

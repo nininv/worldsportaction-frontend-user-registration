@@ -69,6 +69,14 @@ function login(state = initialState, action) {
       return { ...state, onLoad: true };
 
     case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
+      if (action.source == "true") {
+        localStorage.removeItem("channel")
+        localStorage.removeItem("ForgotPasswordEmail")
+      }
+      else {
+        localStorage.setItem("channel", false)
+        localStorage.removeItem("ForgotPasswordEmail")
+      }
       return {
         ...state,
         forgotPasswordMessage: action.result.message ? action.result.message : '',

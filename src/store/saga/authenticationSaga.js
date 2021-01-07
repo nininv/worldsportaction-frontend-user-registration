@@ -56,6 +56,7 @@ export function* forgotPasswordSaga(action) {
         type: ApiConstants.API_FORGOT_PASSWORD_SUCCESS,
         result: result.result.data,
         status: result.status,
+        source: action.source
       });
     } else {
       yield put({ type: ApiConstants.API_LOGIN_FAIL });
