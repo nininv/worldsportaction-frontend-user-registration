@@ -69,13 +69,8 @@ function login(state = initialState, action) {
       return { ...state, onLoad: true };
 
     case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
-      if (action.source == "true") {
+      if (action.source !== "mobile") {
         localStorage.removeItem("channel")
-        localStorage.removeItem("ForgotPasswordEmail")
-      }
-      else {
-        localStorage.setItem("channel", false)
-        localStorage.removeItem("ForgotPasswordEmail")
       }
       return {
         ...state,
@@ -105,13 +100,12 @@ function login(state = initialState, action) {
 
     case ApiConstants.ACTION_TO_CLEAR_AUTHENTICATION_REDUCER:
       if (action.key == "clearPasswordSuccess") {
-        localStorage.clear('ForgotPasswordEmail')
         state.forgotPasswordSuccess = false
       }
+      localStorage.removeItem("channel")
       return {
         ...state,
         onLoad: false,
-
       }
 
     default:

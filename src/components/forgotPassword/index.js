@@ -29,7 +29,7 @@ function ForgotPassword(props) {
     source = new URLSearchParams(location.search).get('source');
   }
 
-  const [step, setStep] = useState(props.location.search.length > 0 ? 2 : 1);
+  const [step, setStep] = useState(1);
   const [resetType, setResetType] = useState("email");
 
   const onSubmitType = (type) => {
@@ -44,17 +44,14 @@ function ForgotPassword(props) {
       .map(q => q.split('='))
       .reduce((a, c) => { a[c[0]] = c[1]; return a; }, {});
     console.log(filterData)
-    localStorage.setItem('ForgotPasswordEmail', decodeURIComponent(filterData.email))
     localStorage.setItem('channel', filterData.channel)
-
   }
 
-  let getEmailId = localStorage.getItem('ForgotPasswordEmail')
   let getMobileCheked = localStorage.getItem('channel')
   // localStorage.clear('ForgotPasswordEmail')
 
-  let emailValues = getEmailId ? getEmailId : location.state ? location.state.email : ''
-  let mobileChecked = getMobileCheked ? getMobileCheked : false
+  let emailValues = location.state ? location.state.email : ''
+  let mobileChecked = getMobileCheked ? getMobileCheked : ''
   const [emailField, setEmailField] = useState(emailValues)
 
   useEffect(() => {

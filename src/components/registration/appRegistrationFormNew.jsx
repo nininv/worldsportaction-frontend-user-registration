@@ -116,9 +116,12 @@ class AppRegistrationFormNew extends Component {
             registrationCapModalVisible: false,
             validateRegistrationCapOnLoad: false,
             validateRegistrationCapBySubmit: false,
+            hasChecked: false,
+
+            // modals
             sameEmailValidationModalVisible: false,
+            banIndividualTeamMixModalVisible: false,
             sameSomeoneEmailValidationModalVisible: false,
-            hasChecked: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -288,7 +291,7 @@ class AppRegistrationFormNew extends Component {
     changeStep = (current) => {
         const { registrationObj } = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
-            if (this.state.currentStep == 1 && this.state.enabledSteps.includes(2)) {
+            if (this.state.currentStep === 1 && this.state.enabledSteps.includes(2)) {
                 let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
                 console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
                 if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
@@ -1238,12 +1241,7 @@ class AppRegistrationFormNew extends Component {
         // if not team registration (is individual registration) and registrationId is present
         // then prevent adding a team to cart
         if (!isTeamRegistration && this.state.registrationId) {
-            notification.open({
-                message: AppConstants.banIndividualTeamMixRegistrationMessageTitle,
-                description:
-                  AppConstants.banIndividualTeamMixRegistrationMessage,
-              });
-            return
+            return this.setState({banIndividualTeamMixModalVisible: true})
         }
 
         if (uniqueKey) {
@@ -1475,7 +1473,7 @@ class AppRegistrationFormNew extends Component {
                     //     return;
                     // }
 
-                    if (this.state.currentStep == 0) {
+                    if (this.state.currentStep === 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
                             message.error(ValidationConstants.addressDetailsIsRequired);
@@ -1515,7 +1513,7 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
                     }
-                    if (this.state.currentStep == 1) {
+                    if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
                             message.error(ValidationConstants.competitionField);
                             return;
@@ -1533,7 +1531,7 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
                     }
-                    if (this.state.currentStep != 2) {
+                    if (this.state.currentStep !== 2) {
                         // if(this.state.currentStep==0){
                         //     this.setState({sameEmailValidationModalVisible:true})
                         // }
@@ -1541,12 +1539,12 @@ class AppRegistrationFormNew extends Component {
                     }
                     setTimeout(() => {
                         this.setState({
-                            submitButtonText: this.state.currentStep == 1 ?
+                            submitButtonText: this.state.currentStep === 1 ?
                                 AppConstants.addCompetitionAndMembership :
                                 AppConstants.signupToCompetition
                         });
                     }, 100);
-                    if (this.state.currentStep == 2) {
+                    if (this.state.currentStep === 2) {
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
                         formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
@@ -3780,13 +3778,13 @@ class AppRegistrationFormNew extends Component {
     stepsContentView = (getFieldDecorator) => {
         return (
             <div>
-                {this.state.currentStep == 0 &&
+                {this.state.currentStep === 0 &&
                     <div>{this.participantDetailsStepView(getFieldDecorator)}</div>
                 }
-                {this.state.currentStep == 1 &&
+                {this.state.currentStep === 1 &&
                     <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
                 }
-                {this.state.currentStep == 2 &&
+                {this.state.currentStep === 2 &&
                     <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
                 }
             </div>
@@ -3821,14 +3819,15 @@ class AppRegistrationFormNew extends Component {
                         {this.sameSomeOneEmailValidationModal()}
                     </div>
                 )}
+                {this.banIndividualTeamMixModal()}
             </div>
         )
     }
 
     actionView = () => {
         let { registrationObj, expiredRegistration } = this.props.userRegistrationState;
-        let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
-        let showAddAnotherCompetitionViewTemp = (this.state.currentStep == 1 && this.state.showAddAnotherCompetitionView) ? true : false;
+        let expiredRegistrationExist = (this.state.currentStep === 1 && expiredRegistration != null) ? true : false;
+        let showAddAnotherCompetitionViewTemp = (this.state.currentStep === 1 && this.state.showAddAnotherCompetitionView) ? true : false;
         return (
             <div>
                 {registrationObj != null && registrationObj.registeringYourself &&
@@ -3924,6 +3923,36 @@ class AppRegistrationFormNew extends Component {
                     ]}
                 >
                     <p> {registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2}</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    banIndividualTeamMixModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.banIndividualTeamMixModalVisible}
+                    onCancel={() => this.setState({ banIndividualTeamMixModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ banIndividualTeamMixModalVisible: false })}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button
+                            // htmlType="submit"
+                            // type="primary"
+                            className="other-info-btn color-white"
+                            onClick={() => {
+                                this.setState({ banIndividualTeamMixModalVisible: false })
+                            }}
+                        >
+                            {AppConstants.continue}
+                        </Button>
+                    ]}
+                >
+                    <p> {AppConstants.banIndividualTeamMixRegistrationMessage}</p>
                 </Modal>
             </div>
         )
