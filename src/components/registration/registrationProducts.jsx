@@ -181,7 +181,7 @@ class RegistrationProducts extends Component {
         const { termsAndConditions } = this.props.registrationProductState;
         let participantUsers = this.props.registrationProductState.participantUsers;
         if (incompletePaymentMessage != '') {
-            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            incompletePaymentMessage = "Team Registrations have not been enabled for the " + incompletePaymentMessage + "Competition.";
             message.error(incompletePaymentMessage);
             return;
         } else {
