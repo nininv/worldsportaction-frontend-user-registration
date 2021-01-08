@@ -1531,7 +1531,7 @@ class RegistrationProducts extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>
+                                <div>{shop.optionName && `(${shop.optionName})`}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5 subtitle-text-common" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
