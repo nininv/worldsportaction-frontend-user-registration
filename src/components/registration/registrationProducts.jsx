@@ -493,7 +493,7 @@ class RegistrationProducts extends Component {
                         {this.productsView(item, index)}
                         {this.discountcodeView(item, index, isSchoolRegistration)}
                         {item.selectedOptions.paymentOptionRefId == 5 && this.schoolRegistrationView(item, index)}
-                        {this.governmentVoucherView(item, index)}
+                        {item.isTeamRegistration == 0 && this.governmentVoucherView(item, index)}
                     </div>
                 ))}
 

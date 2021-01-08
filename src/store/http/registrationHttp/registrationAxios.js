@@ -265,6 +265,11 @@ let AxiosApi = {
     validateRegistrationCap(payload){
         var url = `api/registrationcap/validate`;
         return Method.dataPost(url,token,payload)
+    },
+
+    teamMembersSave(payload){
+        var url = `api/registration/teamparticipant`;
+        return Method.dataPost(url,token,payload)
     }
 };
 

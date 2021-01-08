@@ -1202,7 +1202,6 @@ const AppConstants = {
 
   myUmpiringAvailability: 'My Umpiring Availability',
   // CM-2026
-  banIndividualTeamMixRegistrationMessageTitle: "Cannot add team",
   banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",

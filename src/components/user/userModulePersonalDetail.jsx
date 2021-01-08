@@ -1422,7 +1422,8 @@ class UserModulePersonalDetail extends Component {
     }
 
     gotoAddTeamMembers = () => {
-        history.push("/addTeamMember")
+        const { registrationTeam } = this.state;
+        history.push("/addTeamMember",{registrationTeam: registrationTeam})
     }
 
     handleRegistrationTableList = (page, userId, competition, yearRefId, key) => {
