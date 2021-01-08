@@ -26,8 +26,9 @@ const teamMembersSaveTemp = {
     "registrationId": null,
     "teamMemberRegId": null,
     "existingUserId": null,
+    "registeringYourself": 4,
     "teamId": null,
-    "userId": null,
+    "registeringPersonUserId": null,
     "name": null,
     "countryRefId": null,
     "mobileNumber": null,
@@ -466,6 +467,7 @@ function userReducer(state = initialState, action) {
             }else if(action.key == "membershipProductTypes"){
                 state.teamMembersSave.teamMembers[action.index].membershipProductTypes[action.subIndex].isChecked = action.data;
             }else{
+                console.log("sdfsdfd",action.index,action.key)
                 state.teamMembersSave.teamMembers[action.index][action.key] = action.data;
             }
             return{
@@ -479,6 +481,17 @@ function userReducer(state = initialState, action) {
             return {
                 status: action.status,
                 teamMembersSaveOnLoad: false,
+                ...state
+            }
+
+        case ApiConstants.API_GET_TEAM_MEMBERS_LOAD:
+            return{...state,onLoad: false}
+    
+        case ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS: 
+            return {
+                status: action.status,
+                teamMembersSave: action.data,
+                onLoad: false,
                 ...state
             }
 

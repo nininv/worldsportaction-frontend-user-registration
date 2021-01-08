@@ -270,6 +270,11 @@ let AxiosApi = {
     teamMembersSave(payload){
         var url = `api/registration/teamparticipant`;
         return Method.dataPost(url,token,payload)
+    },
+
+    getTeamMembers(){
+        var url = `api/registration/teamparticipant`;
+        return Method.dataGet(url, token);
     }
 };
 

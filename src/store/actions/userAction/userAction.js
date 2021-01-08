@@ -192,6 +192,14 @@ function teamMembersSaveAction(payload){
   return action;
 }
 
+function getTeamMembersAction(){
+  const action = {
+    type: ApiConstants.API_GET_TEAM_MEMBERS_LOAD
+  }
+  return action;
+}
+
+
 
 export {
   getRoleAction,
@@ -216,5 +224,6 @@ export {
   userPasswordUpdateAction,
   getUserModuleTeamMembersAction,
   teamMemberSaveUpdateAction,
-  teamMembersSaveAction
+  teamMembersSaveAction,
+  getTeamMembersAction
 }

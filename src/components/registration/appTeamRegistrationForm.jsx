@@ -947,6 +947,7 @@ class AppTeamRegistrationForm extends Component {
         }
         else if (key === "isRegistererAsParent"){
             if(value){
+                teamMember.parentOrGuardian[parentIndex][key] = value;
                 teamMember.parentOrGuardian[parentIndex]["firstName"] = teamRegistrationObj.firstName;
                 teamMember.parentOrGuardian[parentIndex]["lastName"] = teamRegistrationObj.lastName;
                 teamMember.parentOrGuardian[parentIndex]["middleName"] = teamRegistrationObj.middleName;
