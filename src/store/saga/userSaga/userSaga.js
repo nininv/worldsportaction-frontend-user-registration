@@ -413,3 +413,20 @@ export function* teamMembersSaveSaga(action) {
       yield call(errorSaga, error);
     }
   }
+
+export function* getTeamMembersSaga() {
+    try {
+        const result = yield call(registrationAxiosApi.getTeamMembers);
+        if (result.status === 1) {
+        yield put({
+            type: ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS,
+            result: result.result.data,
+            status: result.status,
+        });
+        } else {
+        yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}

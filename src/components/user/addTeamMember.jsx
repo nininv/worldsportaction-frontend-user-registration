@@ -18,7 +18,8 @@ import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import { 
     teamMemberSaveUpdateAction,
-    teamMembersSaveAction 
+    teamMembersSaveAction,
+    getUserModulePersonalDetailsAction 
 } from '../../store/actions/userAction/userAction'
 import ValidationConstants from "../../themes/validationConstant";
 import AppImages from "../../themes/appImages";
@@ -49,19 +50,19 @@ class AddTeamMember extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            organisationId: this.props.location.state ? this.props.location.state.registrationTeam.organisationUniqueKey : null,
-            competitionId: this.props.location.state ? this.props.location.state.registrationTeam.competitionUniqueKey : null,
-            teamId: this.props.location.state ? this.props.location.state.registrationTeam.teamId : null,
-            registrationId: this.props.location.state ? this.props.location.state.registrationTeam.registrationUniqueKey : null,
-            teamName: this.props.location.state ? this.props.location.state.registrationTeam.teamName : null,
-            userId: this.props.location.state ? this.props.location.state.registrationTeam.userId : null,
+            team: this.props.location.state ? this.props.location.state.registrationTeam : null,
             getMembershipProductsInfoOnLoad: false
         }
         this.formRef = React.createRef();
         this.props.genderReferenceAction();
+        this.props.getUserModulePersonalDetailsAction({
+            userId: getUserId(),
+            organisationId: null
+        });
     }
 
     componentDidMount() {
+        console.log("team",this.state.team)
         this.getMembershipProductsInfo()
     }
 
@@ -78,8 +79,8 @@ class AddTeamMember extends Component {
     getMembershipProductsInfo = () => {
         try{
             let payload = {
-                organisationUniqueKey: this.state.organisationId,
-                competitionUniqueKey: this.state.competitionId
+                organisationUniqueKey: this.state.team.organisationUniqueKey,
+                competitionUniqueKey: this.state.team.competitionUniqueKey
             }
             this.props.membershipProductEndUserRegistrationAction(payload);
             this.setState({getMembershipProductsInfoOnLoad: true})
@@ -102,8 +103,34 @@ class AddTeamMember extends Component {
         }
     }
 
+    clearTeamMemberParentDetails = (teamMember, parentIndex) => {
+        const {teamMembersSave} = this.props.userState;
+        teamMember.parentOrGuardian[parentIndex]["firstName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["lastName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["middleName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = null;
+        teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = null;
+        teamMember.parentOrGuardian[parentIndex]["email"] = null;
+        this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave")
+    }
+
     onChangeTeamMemberSaveUpdate(data,key,index,subIndex){
         this.props.teamMemberSaveUpdateAction(data,key,index,subIndex);
+        const {teamMembersSave,personalData} = this.props.userState;
+        if (key === "isRegistererAsParent"){
+            if(data){
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["firstName"] = personalData.firstName;
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["lastName"] = personalData.lastName;
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["middleName"] = personalData.middleName;
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["email"] = personalData.email;
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["dateOfBirth"] = personalData.dateOfBirth;
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["mobileNumber"] = personalData.mobileNumber;
+                this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave")
+            }
+            else{
+                this.clearTeamMemberParentDetails(teamMembersSave.teamMembers[index], subIndex);
+            }
+        }
     }
 
     getParentObj = () => {
@@ -180,28 +207,156 @@ class AddTeamMember extends Component {
             const {teamMembersSave} = this.props.userState;
             let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
             let teamMember = teamMembers[index];
-            let parent = teamMember.parentOrGuardian[subIndex];
+            let parent = teamMember?.parentOrGuardian[subIndex];
             parent[key] = data;
-            this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave")
+            this.props.teamMemberSaveUpdateAction(teamMembersSave, "teamMembersSave");
         }catch(ex){
             console.log("Error in onChangeSetTeamMemberParentValue::"+ex);
+        }
+    }
+
+    getDivisions = () => {
+        try{
+            const {membershipProductInfo} = this.props.userState;
+            const {team} = this.state;
+            let membershipProducts = membershipProductInfo[0].competitions[0].membershipProducts;
+            let membershipProduct = membershipProducts.find(x => x.competitionMembershipProductId == team.competitionMembershipProductId && x.competitionMembershipProductTypeId == team.competitionMembershipProductTypeId);
+            let division = membershipProduct.divisions.find(x => x.competitionMembershipProductDivisionId == team.competitionMembershipProductDivisionId);
+            if(division){
+                let divisions = [{
+                    "divisionName": division.divisionName,
+                    "competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
+                    "competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
+                    "fromDate": division.fromDate,
+                    "toDate": division.toDate,
+                    "genderRefId": division.genderRefId
+                }];
+                return divisions;
+            }
+        }catch(ex){
+            console.log("Error in getDivisions::"+ex);
         }
     }
 
     getUpdateTeamMembersSave = (teamMembersSave) => {
         try{
             const {personalData} = this.props.userState;
-            teamMembersSave.organisationId = this.state.organisationId;
-            teamMembersSave.competitionId = this.state.competitionId;
-            teamMembersSave.teamId = this.state.teamId;
-            teamMembersSave.teamName = this.state.teamName;
-            teamMembersSave.userId = getUserId();
+            teamMembersSave.divisions = this.getDivisions()
+            teamMembersSave.organisationId = this.state.team.organisationUniqueKey;
+            teamMembersSave.competitionId = this.state.team.competitionUniqueKey;
+            teamMembersSave.teamId = this.state.team.teamId;
+            teamMembersSave.teamName = this.state.team.teamName;
+            teamMembersSave.registeringPersonUserId = getUserId();
             teamMembersSave.name = getName();
             teamMembersSave.mobileNumber = personalData.mobileNumber;
-            teamMembersSave.registrationId = this.state.registrationId;
+            teamMembersSave.registrationId = this.state.team.registrationUniqueKey;
             return teamMembersSave;
         }catch(ex){
             console.log("Error in getUpdatedTeamMembersSave::"+ex);
+        }
+    }
+
+    checkIsPlayer = (membershipProductTypes) => {
+        try {
+            let exist = false;
+            let isPlayer = membershipProductTypes.find(x => x.isPlayer == 1 && x.isChecked == true);
+            if (isPlayer) {
+                exist = true;
+            }
+            return exist;
+        } catch (ex) {
+            console.log("Error in checkIsPlayer::" + ex);
+        }
+    }
+
+    checkGenderDivisionRestriction = (teamMembersSaveTemp) => {
+        try {
+            const {membershipProductInfo} = this.props.userState;
+            let competitionName = '';
+            for (let org of membershipProductInfo) {
+                let competition = org.competitions.find(x => x.competitionUniqueKey == teamMembersSaveTemp.competitionId);
+                if (competition) {
+                    competitionName = competition.competitionName;
+                }
+            }
+            let selectedDivision = teamMembersSaveTemp.divisions[0];
+            let gender = selectedDivision.genderRefId == 1 ? "Female" : selectedDivision.genderRefId == 2 ? "Male" : "Non-binary";
+            let personNames = [];
+            let errorMessage = '';
+            if (isArrayNotEmpty(teamMembersSaveTemp.teamMembers)) {
+                for (let member of teamMembersSaveTemp.teamMembers) {
+                    let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
+                    if (isPlayer) {
+                        let genderRefId = member.genderRefId;
+                        if (selectedDivision.genderRefId) {
+                            if (genderRefId != selectedDivision.genderRefId) {
+                                let name = member.firstName + ' ' + member.lastName;
+                                let filteredNames = personNames.filter(x => x != name);
+                                personNames = filteredNames;
+                                personNames.push(name)
+                            }
+                        }
+                    }
+                }
+            }
+            // console.log("personName",personNames)
+            if (isArrayNotEmpty(personNames)) {
+                let personsString = '';
+                for (let i in personNames) {
+                    personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
+                }
+                errorMessage = competitionName + " is a " + gender + " only competition." + personsString + " is not allowed to register to this competition."
+            }
+            // console.log("errr",errorMessage)
+            return errorMessage;
+        } catch (ex) {
+            console.log("Error in checkGenderDivisionRestriction::" + ex);
+        }
+    }
+
+    checkDobDivisionRestriction = (teamMembersSaveTemp) => {
+        try {
+            const {membershipProductInfo} = this.props.userState;
+            let competitionName = '';
+            for (let org of membershipProductInfo) {
+                let competition = org.competitions.find(x => x.competitionUniqueKey == teamMembersSaveTemp.competitionId);
+                if (competition) {
+                    competitionName = competition.competitionName;
+                }
+            }
+            let selectedDivision = teamMembersSaveTemp.divisions[0]
+            let personNames = [];
+            let errorMessage = '';
+            if (isArrayNotEmpty(teamMembersSaveTemp.teamMembers)) {
+                for (let member of teamMembersSaveTemp.teamMembers) {
+                    let isPlayer = this.checkIsPlayer(member.membershipProductTypes);
+                    if (isPlayer) {
+                        let dob = moment(member.dateOfBirth,"MM-DD-YYYY").format("YYYY-MM-DD");
+                        if (selectedDivision.fromDate && selectedDivision.toDate) {
+                            if (!(moment(dob).isAfter(selectedDivision.fromDate) && moment(dob).isBefore(selectedDivision.toDate))) {
+                                let name = member.firstName + ' ' + member.lastName;
+                                let filteredNames = personNames.filter(x => x != name);
+                                personNames = filteredNames;
+                                personNames.push(name)
+                            }
+                        }
+                    }
+                }
+            }
+            // console.log("personName2",personNames)
+            if (isArrayNotEmpty(personNames)) {
+                let fromDate = moment(selectedDivision.fromDate).format("DD-MM-YYYY");
+                let toDate = moment(selectedDivision.toDate).format("DD-MM-YYYY");
+                let personsString = '';
+                for (let i in personNames) {
+                    personsString += personNames[i] + (personNames.length - 1 != i ? ' and ' : ' ');
+                }
+                errorMessage = competitionName + " has a DOB restriction of " + fromDate + " to " + toDate + "." + personsString + " is not allowed to register to this competition."
+            }
+            // console.log("errr2",errorMessage)
+            return errorMessage;
+        } catch (ex) {
+            console.log("Error in checkGenderDivisionRestriction::" + ex);
         }
     }
 
@@ -212,6 +367,16 @@ class AddTeamMember extends Component {
                 if(!err) {
                     const {teamMembersSave} = this.props.userState;
                     let teamMembersSaveTemp = this.getUpdateTeamMembersSave(teamMembersSave);
+                    let isGenderDivisionRestrictionError = this.checkGenderDivisionRestriction(teamMembersSaveTemp);
+                    if (isGenderDivisionRestrictionError != '') {
+                        message.error(isGenderDivisionRestrictionError);
+                        return;
+                    }
+                    let isDobDivisionRestrictionError = this.checkDobDivisionRestriction(teamMembersSaveTemp);
+                    if (isDobDivisionRestrictionError != '') {
+                        message.error(isDobDivisionRestrictionError);
+                        return;
+                    }
                     this.props.teamMembersSaveAction(teamMembersSaveTemp);
                 }
             });
@@ -430,8 +595,9 @@ class AddTeamMember extends Component {
     teamMemberView = (teamMember,teamMemberIndex,getFieldDecorator) => {
         try{
             const { genderList } = this.props.commonReducerState;
-            const {teamMembersSave} = this.props.userState;
+            const {teamMembersSave,personalData} = this.props.userState;
             let teamMembers = teamMembersSave?.teamMembers ? teamMembersSave?.teamMembers : [];
+            let dateOfBirth = personalData.dateOfBirth ? moment(personalData.dateOfBirth,"YYYY-MM-DD").format("MM-DD-YYYY") : null;
             return(
                 <div className="light-grey-border-box mt-0">
                     <div style={{ display: "flex", marginTop: "30px" }}>
@@ -597,9 +763,30 @@ class AddTeamMember extends Component {
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px", marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
+                            {getAge(dateOfBirth) > 18 &&
+                                <Checkbox
+                                    className="single-checkbox"
+                                    checked={teamMember.isRegistererAsParent == 1 ? true : false}
+                                    onChange={e => this.onChangeTeamMemberSaveUpdate(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex, 0)}>
+                                    {AppConstants.teamMemberParentCheck}
+                                </Checkbox>
+                            }
                             {(teamMember.parentOrGuardian || []).map((parent, parentIndex) => (
                                 <div>{this.teamMemberParentOrGuardianView(parent, parentIndex, teamMember, teamMemberIndex, getFieldDecorator)}</div>
                             ))}
+                            {/* {teamMember.isRegistererAsParent == 0 ? (
+                                <div>
+                                    {(teamMember.parentOrGuardian || []).map((parent, parentIndex) => (
+                                        <div>{this.teamMemberParentOrGuardianView(parent, parentIndex, teamMember, teamMemberIndex, getFieldDecorator)}</div>
+                                    ))}
+                                </div>
+                            ) : (
+                                    <div>
+                                        {(teamMember.parentOrGuardian || []).slice(1, teamMember.parentOrGuardian.length).map((parent, parentIndex) => (
+                                            <div>{this.teamMemberParentOrGuardianView(parent, parentIndex + 1, teamMember, teamMemberIndex, getFieldDecorator)}</div>
+                                        ))}
+                                    </div>
+                                )} */}
                             <div className="orange-action-txt" style={{ marginTop: "10px" }}
                                 onClick={() => { this.addTeamMemberParent("add", teamMemberIndex) }}
                             >+ {AppConstants.addNewParentGaurdian}</div>
@@ -695,7 +882,8 @@ function mapDispatchToProps(dispatch) {
         genderReferenceAction,
         membershipProductEndUserRegistrationAction,
         teamMemberSaveUpdateAction,
-        teamMembersSaveAction
+        teamMembersSaveAction,
+        getUserModulePersonalDetailsAction
     }, dispatch)
 }
 
