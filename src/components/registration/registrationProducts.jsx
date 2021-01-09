@@ -59,7 +59,7 @@ class RegistrationProducts extends Component {
             id: null,
             agreeTerm: false,
             loading: false,
-            //    newYourDetails: false,
+            newYourDetails: true,
             searchAddressFlag: true,
             manualEnterAddressFlag: false,
             onLoading: false,
@@ -181,7 +181,7 @@ class RegistrationProducts extends Component {
         const { termsAndConditions } = this.props.registrationProductState;
         let participantUsers = this.props.registrationProductState.participantUsers;
         if (incompletePaymentMessage != '') {
-            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            incompletePaymentMessage = "Team Registrations have not been enabled for the " + incompletePaymentMessage + "Competition.";
             message.error(incompletePaymentMessage);
             return;
         } else {
@@ -1531,7 +1531,7 @@ class RegistrationProducts extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName})</div>
+                                <div>{shop.optionName && `(${shop.optionName})`}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5 subtitle-text-common" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>

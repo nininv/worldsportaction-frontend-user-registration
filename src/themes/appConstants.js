@@ -1202,15 +1202,17 @@ const AppConstants = {
 
   myUmpiringAvailability: 'My Umpiring Availability',
   // CM-2026
-  banIndividualTeamMixRegistrationMessageTitle: "Cannot add team",
   banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   parentUnlinkMessage: "Your Child needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
   somethingWentWrongErrorMsg: "Something went wrong.Please contact Administrator",
   _sms: "SMS",
-  sameEmailValidationMessage: "You have elected to use the same email for your child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a seperate email address.",
-  sameSomeoneEmailValidationMessage2: "You have elected to use the same email for the child and the parent/ guardian. The child will not get their own login. If you would like them to have their own login please give them a seperate email address.",
+  sameEmailValidationMessage: "You have elected to use the same email for your child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a separate email address.",
+  sameSomeoneEmailValidationMessage2: "You have elected to use the same email for the child and the parent/ guardian. The child will not get their own login. If you would like them to have their own login please give them a separate email address.",
   sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering.",
+
+  // CM-2062
+  switchChildParentMessage: "As you are using the same email address for the child, this login will be switched over to the parent. You will still be able to access your child’s profile from the Personal Details tab. If you would like the child to have their own login please use a separate email address for them.",
 
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",

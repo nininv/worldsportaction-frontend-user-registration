@@ -70,7 +70,7 @@ import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
+import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, setAuthToken, setUserId } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { get } from "jquery";
@@ -78,6 +78,7 @@ import { captializedString } from "../../util/helpers";
 import { nearByOrganisations } from "../../util/geocode";
 import ApiConstants from "../../themes/apiConstants";
 import { regexNumberExpression } from '../../util/helpers';
+import userAxiosApi from "../../store/http/userHttp/userAxiosApi";
 // import zipcodes from  'zipcodes';
 
 const { Header, Footer, Content } = Layout;
@@ -116,9 +117,16 @@ class AppRegistrationFormNew extends Component {
             registrationCapModalVisible: false,
             validateRegistrationCapOnLoad: false,
             validateRegistrationCapBySubmit: false,
+            hasChecked: false,
+
+            // modals
+            switchChildParentModalVisible: false, // CM-2062
             sameEmailValidationModalVisible: false,
+            banIndividualTeamMixModalVisible: false,
             sameSomeoneEmailValidationModalVisible: false,
-            hasChecked: false
+
+            // local loading states
+            switchChildParentLoading: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -288,7 +296,7 @@ class AppRegistrationFormNew extends Component {
     changeStep = (current) => {
         const { registrationObj } = this.props.userRegistrationState;
         if (this.state.enabledSteps.includes(current)) {
-            if (this.state.currentStep == 1 && this.state.enabledSteps.includes(2)) {
+            if (this.state.currentStep === 1 && this.state.enabledSteps.includes(2)) {
                 let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
                 console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
                 if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
@@ -393,7 +401,14 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
+                    [`accreditationLevelCoachRefId`]:additionalInfo.accreditationLevelCoachRefId,
+                    [`isPrerequestTrainingComplete`]:additionalInfo.isPrerequestTrainingComplete,
+                    [`accreditationLevelUmpireRefId`]:additionalInfo.accreditationLevelUmpireRefId,
+                    [`heardByRefId`]: additionalInfo.heardByRefId,
+                    [`isDisability`]: additionalInfo.isDisability,
+                    [`identifyRefId`]: additionalInfo.identifyRefId,
+
                 });
             }
         } catch (ex) {
@@ -721,7 +736,19 @@ class AppRegistrationFormNew extends Component {
     onChangeSetParentValue = (value, key, parentIndex) => {
         try {
             const { registrationObj, userInfo } = this.props.userRegistrationState;
-            if (key == "isSameAddress") {
+            // console.log(key, value, registrationObj.email, registrationObj.registeringYourself);
+
+            // CM-2062 Handle switching child / parent
+            if (key === "email") {
+                if (this.props.auth.loggedIn) {
+                    if ([1, 2].includes(registrationObj.registeringYourself)) {
+                        if (value === registrationObj.email) {
+                            this.setState({switchChildParentModalVisible: true})
+                            return false
+                        }
+                    }
+            }
+            } else if (key === "isSameAddress") {
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
                 if (value) {
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
@@ -734,7 +761,7 @@ class AppRegistrationFormNew extends Component {
                 } else {
                     this.clearParentAddress(registrationObj, parentIndex);
                 }
-            } else if (key == "addOrRemoveAddressBySelect") {
+            } else if (key === "addOrRemoveAddressBySelect") {
                 if (value) {
                     let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
                     let parentAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
@@ -749,7 +776,7 @@ class AppRegistrationFormNew extends Component {
                     this.clearParentAddress(registrationObj, parentIndex);
                 }
             }
-            else if (key == "mobileNumber") {
+            else if (key === "mobileNumber") {
                 if (value.length === 10) {
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
@@ -1238,12 +1265,7 @@ class AppRegistrationFormNew extends Component {
         // if not team registration (is individual registration) and registrationId is present
         // then prevent adding a team to cart
         if (!isTeamRegistration && this.state.registrationId) {
-            notification.open({
-                message: AppConstants.banIndividualTeamMixRegistrationMessageTitle,
-                description:
-                  AppConstants.banIndividualTeamMixRegistrationMessage,
-              });
-            return
+            return this.setState({banIndividualTeamMixModalVisible: true})
         }
 
         if (uniqueKey) {
@@ -1475,7 +1497,7 @@ class AppRegistrationFormNew extends Component {
                     //     return;
                     // }
 
-                    if (this.state.currentStep == 0) {
+                    if (this.state.currentStep === 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
                             message.error(ValidationConstants.addressDetailsIsRequired);
@@ -1515,7 +1537,7 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
                     }
-                    if (this.state.currentStep == 1) {
+                    if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
                             message.error(ValidationConstants.competitionField);
                             return;
@@ -1533,7 +1555,7 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
                     }
-                    if (this.state.currentStep != 2) {
+                    if (this.state.currentStep !== 2) {
                         // if(this.state.currentStep==0){
                         //     this.setState({sameEmailValidationModalVisible:true})
                         // }
@@ -1541,12 +1563,12 @@ class AppRegistrationFormNew extends Component {
                     }
                     setTimeout(() => {
                         this.setState({
-                            submitButtonText: this.state.currentStep == 1 ?
+                            submitButtonText: this.state.currentStep === 1 ?
                                 AppConstants.addCompetitionAndMembership :
                                 AppConstants.signupToCompetition
                         });
                     }, 100);
-                    if (this.state.currentStep == 2) {
+                    if (this.state.currentStep === 2) {
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
                         formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
@@ -3316,6 +3338,10 @@ class AppRegistrationFormNew extends Component {
                         )}
                     </Form.Item>
                     <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`identifyRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[0] }],
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
@@ -3324,6 +3350,8 @@ class AppRegistrationFormNew extends Component {
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
+                     )}
+                     </Form.Item>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
@@ -3377,10 +3405,10 @@ class AppRegistrationFormNew extends Component {
                         )}
                     </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"} />
-                    {/* <Form.Item>
+                    <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
-                        })(  */}
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
@@ -3388,8 +3416,8 @@ class AppRegistrationFormNew extends Component {
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    {/* )}
-                    </Form.Item>    */}
+                    )}
+                    </Form.Item>
                     {registrationObj.additionalInfo.isDisability == 1 ?
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber} />
@@ -3494,10 +3522,10 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"} />
-                    {/* <Form.Item>
+                    <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })(  */}
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
@@ -3506,8 +3534,8 @@ class AppRegistrationFormNew extends Component {
                             <Radio style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
                         ))}
                     </Radio.Group>
-                    {/* )}
-                    </Form.Item>    */}
+                     )}
+                    </Form.Item>
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
@@ -3615,6 +3643,10 @@ class AppRegistrationFormNew extends Component {
                         {registrationObj.umpireFlag == 1 && (
                             <div>
                                 <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required={"required-field"} />
+                                <Form.Item>
+                                 {getFieldDecorator(`accreditationLevelUmpireRefId`, {
+                                  rules: [{ required: true, message: ValidationConstants.accreditationLevelUmpire }],
+                                  })(
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")}
@@ -3624,6 +3656,8 @@ class AppRegistrationFormNew extends Component {
                                         <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
+                                )}
+                                </Form.Item>
                                 {(registrationObj.additionalInfo.accreditationLevelUmpireRefId != null) && (
                                     <div>
                                         {registrationObj.additionalInfo.accreditationLevelUmpireRefId == 1 ?
@@ -3674,6 +3708,10 @@ class AppRegistrationFormNew extends Component {
                                     </div>
                                 )}
                                 <InputWithHead heading={AppConstants.haveCompletedPrerequisites} required={"required-field"} />
+                                <Form.Item>
+                                 {getFieldDecorator(`isPrerequestTrainingComplete`, {
+                                  rules: [{ required: true, message: ValidationConstants.prerequisitesTrainingUmpire}],
+                                  })(
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")}
@@ -3682,12 +3720,18 @@ class AppRegistrationFormNew extends Component {
                                     <Radio value={1}>{AppConstants.yes}</Radio>
                                     <Radio value={0}>{AppConstants.no}</Radio>
                                 </Radio.Group>
+                                 )}
+                                 </Form.Item>
                             </div>
                         )}
 
                         {registrationObj.coachFlag == 1 && (
                             <div>
                                 <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
+                                <Form.Item>
+                                {getFieldDecorator(`accreditationLevelCoachRefId`, {
+                                rules: [{ required: true, message: ValidationConstants.accreditationLevelCoach }],
+                                })(
                                 <Radio.Group
                                     style={{ flexDirection: "column" }}
                                     className="registration-radio-group"
@@ -3698,6 +3742,8 @@ class AppRegistrationFormNew extends Component {
                                         <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
+                                 )}
+                                 </Form.Item>
                                 {(registrationObj.additionalInfo.accreditationLevelCoachRefId != 1 && registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
                                     <DatePicker
                                         size="large"
@@ -3780,13 +3826,13 @@ class AppRegistrationFormNew extends Component {
     stepsContentView = (getFieldDecorator) => {
         return (
             <div>
-                {this.state.currentStep == 0 &&
+                {this.state.currentStep === 0 &&
                     <div>{this.participantDetailsStepView(getFieldDecorator)}</div>
                 }
-                {this.state.currentStep == 1 &&
+                {this.state.currentStep === 1 &&
                     <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
                 }
-                {this.state.currentStep == 2 &&
+                {this.state.currentStep === 2 &&
                     <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
                 }
             </div>
@@ -3821,14 +3867,16 @@ class AppRegistrationFormNew extends Component {
                         {this.sameSomeOneEmailValidationModal()}
                     </div>
                 )}
+                {this.banIndividualTeamMixModal()}
+                {this.switchChildParentModal()}
             </div>
         )
     }
 
     actionView = () => {
         let { registrationObj, expiredRegistration } = this.props.userRegistrationState;
-        let expiredRegistrationExist = (this.state.currentStep == 1 && expiredRegistration != null) ? true : false;
-        let showAddAnotherCompetitionViewTemp = (this.state.currentStep == 1 && this.state.showAddAnotherCompetitionView) ? true : false;
+        let expiredRegistrationExist = (this.state.currentStep === 1 && expiredRegistration != null) ? true : false;
+        let showAddAnotherCompetitionViewTemp = (this.state.currentStep === 1 && this.state.showAddAnotherCompetitionView) ? true : false;
         return (
             <div>
                 {registrationObj != null && registrationObj.registeringYourself &&
@@ -3906,6 +3954,7 @@ class AppRegistrationFormNew extends Component {
                         <Button onClick={() => this.setState({ sameEmailValidationModalVisible: false })}>
                             {AppConstants.cancel}
                         </Button>,
+                        // CM-2062 => Below will proceed the form incorrectly, fixed by removing navigation
                         <Button
                             // htmlType="submit"
                             // type="primary"
@@ -3913,7 +3962,7 @@ class AppRegistrationFormNew extends Component {
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
                                 this.setState({ sameEmailValidationModalVisible: false, hasChecked: false })
-                                this.stepNavigation(registrationObj, expiredRegistration);
+                                // this.stepNavigation(registrationObj, expiredRegistration);
                                 setTimeout(() => {
                                     this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
                                 }, 100);
@@ -3924,6 +3973,91 @@ class AppRegistrationFormNew extends Component {
                     ]}
                 >
                     <p> {registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2}</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    banIndividualTeamMixModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.banIndividualTeamMixModalVisible}
+                    onCancel={() => this.setState({ banIndividualTeamMixModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ banIndividualTeamMixModalVisible: false })}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button
+                            // htmlType="submit"
+                            // type="primary"
+                            className="other-info-btn color-white"
+                            onClick={() => {
+                                this.setState({ banIndividualTeamMixModalVisible: false })
+                            }}
+                        >
+                            {AppConstants.continue}
+                        </Button>
+                    ]}
+                >
+                    <p> {AppConstants.banIndividualTeamMixRegistrationMessage}</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    // CM-2062
+    async cancelSwitchChildParent() {
+        this.setState({ switchChildParentModalVisible: false })
+
+        // clear email input if modal is cancelled, preventing the rego. Other emails are going to be intact
+        const registrationObj = {
+            ...this.props.registrationObj,
+            parentOrGuardian: this.props.registrationObj.parentOrGuardian.map(
+                p => ({...p, email: p.email === this.props.registrationObj.email ? '' : p.email}
+            ))
+        }
+        this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+    }
+    async confirmSwitchChildParent() {
+        const response = await userAxiosApi.switchParentChild()
+        const {authToken, user} = response.data
+        const {id} = user
+
+        // magically replace logged-in token and uid to new user
+        setAuthToken(authToken);
+        setUserId(id);
+
+        // `registering yourself` needs to be changed to 2, e.g. always registering for child, if this is confirmed
+        this.props.updateUserRegistrationObjectAction({
+            ...this.props.registrationObj,
+            registeringYourself: 2
+        }, "registrationObj");
+
+        this.setState({ switchChildParentModalVisible: false })
+    }
+
+    // CM-2062 Switch confirm modal
+    switchChildParentModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.switchChildParentModalVisible}
+                    onCancel={this.cancelSwitchChildParent}
+                    footer={[
+                        <Button onClick={this.cancelSwitchChildParent}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button className="other-info-btn color-white" onClick={this.confirmSwitchChildParent}>
+                            {AppConstants.continue}
+                        </Button>
+                    ]}
+                >
+                    <p> {AppConstants.switchChildParentMessage}</p>
                 </Modal>
             </div>
         )
@@ -3982,7 +4116,8 @@ class AppRegistrationFormNew extends Component {
                             this.props.userRegistrationState.onMembershipLoad ||
                             this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
-                            this.props.userRegistrationState.onSaveLoad
+                            this.props.userRegistrationState.onSaveLoad ||
+                            this.state.switchChildParentLoading // CM-2062
                         } />
                     </Form>
                 </Layout>
@@ -4025,12 +4160,13 @@ function mapDispatchToProps(dispatch) {
 
 }
 
-function mapStatetoProps(state) {
+function mapStateToProps(state) {
     return {
         registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
-        commonReducerState: state.CommonReducerState
+        commonReducerState: state.CommonReducerState,
+        auth: state.LoginState
     }
 }
 
-export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
+export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));

@@ -1,5 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from "../../../util/helpers";
+import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString,feeIsNull,formatValue } from "../../../util/helpers";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { setPhotoUrl } from "../../../util/sessionStorage";
 
@@ -26,8 +26,10 @@ const teamMembersSaveTemp = {
     "registrationId": null,
     "teamMemberRegId": null,
     "existingUserId": null,
+    "registeringYourself": 4,
+    "competitionMembershipProductDivisionId": null,
     "teamId": null,
-    "userId": null,
+    "registeringPersonUserId": null,
     "name": null,
     "countryRefId": null,
     "mobileNumber": null,
@@ -36,6 +38,152 @@ const teamMembersSaveTemp = {
     "teamMembers": [],
     "registrationRestrictionTypeRefId": null
 }
+
+const teamMemberRegReviewTemp = {
+    "total": {
+      "gst": "20.90",
+      "total": "229.90",
+      "shipping": "0.00",
+      "subTotal": "209.00",
+      "targetValue": "229.90",
+      "charityValue": "0.00",
+      "transactionFee": "0.00"
+    },
+    "yourInfo": {
+      "email": "manager12345@gmail.com",
+      "suburb": "Melbourne",
+      "userId": 13367,
+      "street1": "123 Queen St",
+      "street2": null,
+      "lastName": "12",
+      "firstName": "Manager123",
+      "postalCode": "3000",
+      "stateRefId": 7,
+      "countryRefId": 1,
+      "mobileNumber": "2323289348"
+    },
+    "compParticipants": [
+      {
+        "email": "manager12345@gmail.com",
+        "gender": "Female",
+        "payNow": "229.90",
+        "userId": 0,
+        "lastName": "12",
+        "teamName": "team 98765",
+        "firstName": "Manager123",
+        "dateOfBirth": "1990-01-17T00:00:00.000Z",
+        "noOfPlayers": null,
+        "payPerMatch": "0.00",
+        "teamMembers": {
+          "payingForList": [],
+          "notPayingForList": []
+        },
+        "mobileNumber": "2323289348",
+        "participantId": "2440df41-76b3-4209-9b13-e9d86fb3d2ea",
+        "paymentOptions": [
+          {
+            "feesTypeRefId": 2,
+            "paymentOptionRefId": 3
+          },
+          {
+            "feesTypeRefId": 1,
+            "paymentOptionRefId": 1
+          }
+        ],
+        "competitionName": "Single game fee test 1",
+        "selectedOptions": {
+          "vouchers": [],
+          "discountCodes": [],
+          "gameVoucherValue": null,
+          "selectedDiscounts": [],
+          "paymentOptionRefId": 1,
+          "isHardshipCodeApplied": 0,
+          "selectedSchoolRegCode": null,
+          "isSchoolRegCodeApplied": 0,
+          "nominationPayOptionRefId": 1,
+          "selectedGovernmentVouchers": []
+        },
+        "organisationName": "Netball NSW",
+        "orgRegistrationId": 6205,
+        "competitionEndDate": "2021-03-27T00:00:00.000Z",
+        "competitionLogoUrl": "https://www.googleapis.com/download/storage/v1/b/world-sport-action-dev-c1019.appspot.com/o/competitions%2Flogo_comp_f5f531f9-720d-4bf3-8074-dfe14730d9db_1607903705789.png?generation=1607903708831697&alt=media",
+        "isTeamRegistration": 1,
+        "membershipProducts": [
+          {
+            "fees": {
+              "affiliateFee": null,
+              "membershipFee": {
+                "name": "Netball NSW",
+                "emailId": "netball@nsw.gov.au",
+                "phoneNo": "039009000",
+                "casualFee": 0,
+                "casualGST": 0,
+                "feesToPay": 89,
+                "seasonalFee": 89,
+                "seasonalGST": 8.9,
+                "feesToPayGST": 8.9,
+                "organisationId": "b540171a-27b3-4c69-991f-b4bf0be28159",
+                "discountsToDeduct": 0,
+                "membershipMappingId": 1138,
+                "childDiscountsToDeduct": 0,
+                "governmentVoucherAmount": 0
+              },
+              "competitionOrganisorFee": {
+                "name": "Netball NSW",
+                "emailId": "netball@nsw.gov.au",
+                "phoneNo": "039009000",
+                "casualFee": 10,
+                "casualGST": 1,
+                "feesToPay": 0,
+                "seasonalFee": 120,
+                "seasonalGST": 12,
+                "feesToPayGST": 0,
+                "nominationFee": 0,
+                "nominationGST": 0,
+                "organisationId": "b540171a-27b3-4c69-991f-b4bf0be28159",
+                "discountsToDeduct": 0,
+                "nominationFeeToPay": 10,
+                "nominationGSTToPay": 1,
+                "membershipMappingId": 1138,
+                "childDiscountsToDeduct": 0,
+                "governmentVoucherAmount": 0
+              }
+            },
+            "email": "virat015@gmail.com.invalid",
+            "isPlayer": 1,
+            "lastName": "A",
+            "feesToPay": "229.90",
+            "firstName": "Virat017",
+            "divisionId": 3948,
+            "divisionName": "D1",
+            "mobileNumber": "1212211221",
+            "discountsToDeduct": "0.00",
+            "membershipTypeName": "Player",
+            "membershipMappingId": 1138,
+            "orgRegParticipantId": 9927,
+            "membershipProductName": "Single game fee",
+            "childDiscountsToDeduct": "0.00",
+            "governmentVoucherAmount": null,
+            "competitionMembershipProductTypeId": 5502
+          }
+        ],
+        "competitionUniqueKey": "18e47b5f-4ab3-4c77-9ff8-e32436388497",
+        "isTeamSeasonalUponReg": 0,
+        "organisationUniqueKey": "9971815e-d9cb-4d44-bba2-f5be2e12c120",
+        "governmentVoucherAmount": "0.00",
+        "registeringYourselfRefId": 1,
+        "competitionMembershipProductTypeIdCoach": null
+      }
+    ],
+    "securePaymentOptions": [
+      {
+        "securePaymentOptionRefId": 1
+      },
+      {
+        "securePaymentOptionRefId": 2
+      }
+    ]
+  }
 
 const initialState = {
     onLoad: false,
@@ -91,7 +239,12 @@ const initialState = {
     teamMembersDetails: null,
     teamMembersSave: deepCopyFunction(teamMembersSaveTemp),
     membershipProductsInfo: null,
-    onMembershipLoad: false
+    onMembershipLoad: false,
+    teamMemberRegReviewList: null,
+    getTeamMembersReviewOnLoad: false,
+    teamMembersSaveErrorMsg: null,
+    teamMemberRegId : null,
+    teamMembersSaveOnLoad: false
 };
 
 //get User Role
@@ -135,6 +288,7 @@ function upateTeamMembersSave(state){
         let membershipProducts = state.membershipProductInfo;
         let organisation = membershipProducts[0];
         let competition  = organisation.competitions[0];
+        state.teamMembersSave.registrationRestrictionTypeRefId = competition.registrationRestrictionTypeRefId;
         state.teamMembersSave.teamMembers.push(getUpdatedTeamMemberObj(competition));
         console.log("state",state.teamMembersSave.teamMembers)
     }catch(ex){
@@ -446,7 +600,9 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
             state.membershipProductInfo = action.result;
-            upateTeamMembersSave(state)
+            if(!state.teamMemberRegId){
+                upateTeamMembersSave(state);
+            }
             return {
                 ...state,
                 onMembershipLoad: false,
@@ -464,7 +620,10 @@ function userReducer(state = initialState, action) {
                 }
             }else if(action.key == "membershipProductTypes"){
                 state.teamMembersSave.teamMembers[action.index].membershipProductTypes[action.subIndex].isChecked = action.data;
+            }else if(action.key == "teamMemberRegId"){
+                state.teamMemberRegId = action.data;
             }else{
+                console.log("sdfsdfd",action.index,action.key)
                 state.teamMembersSave.teamMembers[action.index][action.key] = action.data;
             }
             return{
@@ -472,13 +631,76 @@ function userReducer(state = initialState, action) {
             }
         
         case ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD:
-            return{...state,teamMembersSaveOnLoad: false}
+            return{...state,teamMembersSaveOnLoad: true}
     
         case ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS: 
+            state.teamMembersSaveOnLoad = false;
+            state.teamMembersSaveErrorMsg = action.result.errorMsg ? action.result.errorMsg : null;
+            state.teamMemberRegId = action.result.id ? action.result.id : null;
             return {
+                ...state,
+                status: action.status,           
+            }
+
+        case ApiConstants.API_GET_TEAM_MEMBERS_LOAD:
+            return{...state,onLoad: true}
+    
+        case ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS: 
+            return {
+                ...state,
                 status: action.status,
-                teamMembersSaveOnLoad: false,
-                ...state
+                teamMembersSave: action.result,
+                onLoad: false,
+            }
+
+        case ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD:
+            return{...state,getTeamMembersReviewOnLoad: true}
+        
+        case ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_SUCCESS:
+            return{
+                ...state,
+                teamMemberRegReviewList: action.result,
+                status: action.status,
+                getTeamMembersReviewOnLoad: false
+            }
+
+        case ApiConstants.UPDATE_TEAM_MEMBER_REVIEW_INFO:
+            let reviewData = state.teamMemberRegReviewList;
+            if(action.subKey == "total"){
+                let type = action.key;
+                let totalVal = reviewData.total.total; 
+                let transactionVal = 0;
+                let targetVal = 0;
+                if(action.value == 1){
+                    if(type == "International_CC"){
+                        transactionVal = (totalVal * 3.0/100) + 0.30;
+                    }
+                    if(type == "International_AE"){
+                        transactionVal = (totalVal * 2.7/100) + 0.30;
+                    }
+                    else if(type == "DOMESTIC_CC"){
+                        transactionVal = (totalVal * 2.25/100)  + 0.30;
+                    }
+                    else if(type == "direct_debit"){
+                        transactionVal = (totalVal * 1.5/100) + 0.30;
+                        console.log("transactionVal DD" + transactionVal);
+                        if(transactionVal > 3.50){
+                            transactionVal = 3.50;
+                        }
+                    }
+                    targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
+                    reviewData["total"]["targetValue"] = formatValue(targetVal);
+                    reviewData["total"]["transactionFee"] = formatValue(transactionVal);
+                }
+                else{
+                    reviewData["total"]["targetValue"] = "0.00";
+                    reviewData["total"]["transactionFee"] = "0.00";
+                }
+               
+            }
+            return {
+                ...state,
+                error: null
             }
 
         default:

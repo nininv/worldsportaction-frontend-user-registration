@@ -19,7 +19,6 @@ function ContentView(props) {
     handleBlur,
     emailSearch,
   } = props;
-  console.log(props.source)
   return (
     <div className="content-view">
       <div className="d-flex justify-content-center">
@@ -28,9 +27,9 @@ function ContentView(props) {
 
       {loginState.forgotPasswordSuccess ? (
         <div>
-          <InputWithHead heading={loginState.forgotPasswordMessage} />
+          <span className={`input-style-bold justify-content-center`}> {loginState.forgotPasswordMessage} </span>
 
-          {source && (
+          {source !== "mobile" && (
             <div className="forgot-password-success-button-div">
               <NavLink to={{ pathname: "/login" }}>
                 <Button className="open-reg-button" type="primary">{AppConstants.returnToLogin}</Button>
@@ -62,8 +61,8 @@ function ContentView(props) {
 
             <div className="row pt-5">
               <div className="col-sm">
-                <div className={`comp-finals-button-view d-flex ${!source ? 'justify-content-between' : 'justify-content-center'}`}>
-                  {!source && (
+                <div className={`comp-finals-button-view d-flex justify-content-${source !== "mobile" ? "between" : "center"}`}>
+                  {source !== "mobile" && (
                     <div className="pr-5">
                       <NavLink to={{ pathname: "/login" }}>
                         <Button

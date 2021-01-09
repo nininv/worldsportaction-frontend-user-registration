@@ -286,8 +286,13 @@ function setCompetitionDetails(state,details){
     state.teamRegistrationObj.competitionInfo = deepCopyFunction(details.competitionInfo);
     state.teamRegistrationObj.competitionId = state.teamRegistrationObj.competitionInfo.competitionUniqueKey;
     state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId; 
-    let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1 && x.isTeamRegistration == 1);
-    state.teamRegistrationObj.membershipProductList = filteredPayerAndTeamMembershipProducts;
+    let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1);
+    for(let productType of filteredPayerAndTeamMembershipProducts){
+      let filteredTeamDivision = productType.divisions.find(x => x.isTeamRegistration == 1);
+      if(filteredTeamDivision){
+        state.teamRegistrationObj.membershipProductList.push(productType);
+      } 
+    }
 
     //When it has one item set defualt the first position
     if(state.teamRegistrationObj.membershipProductList.length == 1){

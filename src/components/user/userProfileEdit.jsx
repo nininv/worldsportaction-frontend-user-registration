@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
 import {
     getCommonRefData, countryReferenceAction, nationalityReferenceAction,
-    genderReferenceAction, disabilityReferenceAction
+    genderReferenceAction, disabilityReferenceAction, combinedAccreditationUmpieCoachRefrence
 } from '../../store/actions/commonAction/commonAction';
 import { bindActionCreators } from 'redux';
 import history from '../../util/history'
@@ -54,7 +54,11 @@ class UserProfileEdit extends Component {
                 disabilityCareNumber: '', isDisability: 0,
                 disabilityTypeRefId: 0, countryRefId: null, nationalityRefId: null, languages: "",
                 parentUserId: 0,
-                childUserId: 0
+                childUserId: 0,
+                accreditationLevelUmpireRefId: null,
+                accreditationLevelCoachRefId: null,
+                accreditationUmpireExpiryDate: null,
+                accreditationCoachExpiryDate: null
             },
             titleLabel: "",
             section: "",
@@ -65,12 +69,13 @@ class UserProfileEdit extends Component {
             venueAddressError: '',
             manualAddress: false
         }
-        this.props.getCommonRefData();
+        // this.props.getCommonRefData();
         this.props.countryReferenceAction();
         this.props.nationalityReferenceAction();
         this.props.genderReferenceAction();
         this.props.disabilityReferenceAction();
         this.formRef = React.createRef();
+        this.props.combinedAccreditationUmpieCoachRefrence()
     }
 
     async componentDidMount() {
@@ -217,6 +222,14 @@ class UserProfileEdit extends Component {
 
     setOtherInfoFormField = () => {
         let userData = this.state.userData;
+        let personalData = this.props.location.state ? this.props.location.state.personalData ? this.props.location.state.personalData : null : null
+        if (personalData) {
+            userData['accreditationCoachExpiryDate'] = personalData.accreditationCoachExpiryDate
+            userData['accreditationLevelCoachRefId'] = personalData.accreditationLevelCoachRefId
+            userData['accreditationLevelUmpireRefId'] = personalData.accreditationLevelUmpireRefId
+            userData['accreditationUmpireExpiryDate'] = personalData.accreditationUmpireExpiryDate
+        }
+        userData['childrenCheckExpiryDate'] = null
         this.props.form.setFieldsValue({
             genderRefId: userData.genderRefId != null ? parseInt(userData.genderRefId) : 0
         })
@@ -286,6 +299,15 @@ class UserProfileEdit extends Component {
                 }
             }
         }
+
+        if (key === 'accreditationLevelUmpireRefId') {
+            data['accreditationUmpireExpiryDate'] = value == 1 && null
+        }
+
+        if (key === 'accreditationLevelCoachRefId') {
+            data['accreditationCoachExpiryDate'] = value == 1 && null
+        }
+
         data[key] = value;
 
         this.setState({ userData: data });
@@ -806,8 +828,7 @@ class UserProfileEdit extends Component {
 
     otherInfoEdit = (getFieldDecorator) => {
         let userData = this.state.userData
-        const { countryList, nationalityList, genderList } = this.props.commonReducerState;
-
+        const { countryList, nationalityList, genderList, umpireAccreditation, coachAccreditation } = this.props.commonReducerState;
         return (
             <div className="content-view pt-0">
                 <div className="row">
@@ -829,6 +850,58 @@ class UserProfileEdit extends Component {
                                 )}
                             </Form.Item>
                         </div>
+
+                        <div>
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required={"required-field"} />
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelUmpireRefId")}
+                                value={userData.accreditationLevelUmpireRefId}
+                            >
+                                {(umpireAccreditation || []).map((accreditaiton, accreditationIndex) => (
+                                    <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                ))}
+                            </Radio.Group>
+
+                            {(userData.accreditationLevelUmpireRefId != 1 && userData.accreditationLevelUmpireRefId != null) && (
+                                <DatePicker
+                                    size="large"
+                                    placeholder={AppConstants.expiryDate}
+                                    style={{ width: "100%", marginTop: "20px" }}
+                                    onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationUmpireExpiryDate")}
+                                    format={"DD-MM-YYYY"}
+                                    showTime={false}
+                                    value={userData.accreditationUmpireExpiryDate && moment(userData.accreditationUmpireExpiryDate)}
+                                />
+                            )}
+                        </div>
+
+                        <div>
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
+                            <Radio.Group
+                                style={{ display: "flex", flexDirection: "column" }}
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelCoachRefId")}
+                                value={userData.accreditationLevelCoachRefId}
+                            >
+                                {(coachAccreditation || []).map((accreditaiton, accreditationIndex) => (
+                                    <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                ))}
+                            </Radio.Group>
+
+                            {(userData.accreditationLevelCoachRefId != 1 && userData.accreditationLevelCoachRefId != null) && (
+                                <DatePicker
+                                    size="large"
+                                    placeholder={AppConstants.expiryDate}
+                                    style={{ width: "100%", marginTop: "20px" }}
+                                    onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationCoachExpiryDate")}
+                                    format={"DD-MM-YYYY"}
+                                    showTime={false}
+                                    value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
+                                />
+                            )}
+                        </div>
+
                     </div>
                 </div>
                 {userData.userRegistrationId != null &&
@@ -913,11 +986,11 @@ class UserProfileEdit extends Component {
                         onChange={(e) => this.onChangeSetValue(e.target.value, "isDisability")}
                         value={userData.isDisability}>
                         <Radio value={1}>{AppConstants.yes}</Radio>
-                            {userData.isDisability == 1 ? 
-                            <div style={{marginLeft: '25px'}}>
-                                <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber} 
-                                    onChange={(e) => this.onChangeSetValue(e.target.value, "disabilityCareNumber" )}
-                                    value={userData.disabilityCareNumber}/>
+                        {userData.isDisability == 1 ?
+                            <div style={{ marginLeft: '25px' }}>
+                                <InputWithHead heading={AppConstants.disabilityCareNumber} placeholder={AppConstants.disabilityCareNumber}
+                                    onChange={(e) => this.onChangeSetValue(e.target.value, "disabilityCareNumber")}
+                                    value={userData.disabilityCareNumber} />
                                 <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                                 <Radio.Group
                                     className="reg-competition-radio"
@@ -1068,7 +1141,8 @@ function mapDispatchToProps(dispatch) {
         countryReferenceAction,
         nationalityReferenceAction,
         genderReferenceAction,
-        disabilityReferenceAction
+        disabilityReferenceAction,
+        combinedAccreditationUmpieCoachRefrence
     }, dispatch)
 }
 
