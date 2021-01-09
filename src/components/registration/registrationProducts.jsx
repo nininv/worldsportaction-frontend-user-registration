@@ -59,7 +59,7 @@ class RegistrationProducts extends Component {
             id: null,
             agreeTerm: false,
             loading: false,
-            //    newYourDetails: false,
+            newYourDetails: true,
             searchAddressFlag: true,
             manualEnterAddressFlag: false,
             onLoading: false,

@@ -192,13 +192,33 @@ function teamMembersSaveAction(payload){
   return action;
 }
 
-function getTeamMembersAction(){
+function getTeamMembersAction(teamMemberRegId){
   const action = {
-    type: ApiConstants.API_GET_TEAM_MEMBERS_LOAD
+    type: ApiConstants.API_GET_TEAM_MEMBERS_LOAD,
+    teamMemberRegId
   }
   return action;
 }
+function updateReviewInfoAction(value, key, index, subkey, subIndex){
+  const action = {
+      type: ApiConstants.UPDATE_TEAM_MEMBER_REVIEW_INFO,
+      value: value,
+      key: key,
+      index: index,
+      subKey: subkey,
+      subIndex: subIndex
+  }
 
+  return action;
+}
+
+function getTeamMembersReviewAction(payload){
+  const action = {
+    type: ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD,
+    payload
+  }
+  return action;
+}
 
 
 export {
@@ -225,5 +245,7 @@ export {
   getUserModuleTeamMembersAction,
   teamMemberSaveUpdateAction,
   teamMembersSaveAction,
-  getTeamMembersAction
+  getTeamMembersAction,
+  updateReviewInfoAction,
+  getTeamMembersReviewAction
 }
