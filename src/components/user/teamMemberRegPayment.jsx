@@ -349,12 +349,11 @@ class TeamMemberRegPayment extends Component {
             // registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
             registrationId: "d011b947-9d84-4566-b693-d40b239c19f7",
             teamMemberRegId: "326fd356-6c3e-4a24-80f6-a4ef0a307968",
-
         }
     }
 
     componentDidMount(){
-        this.getApiInfo();
+        // this.getApiInfo();
     }
 
     componentDidUpdate(){
@@ -396,8 +395,9 @@ class TeamMemberRegPayment extends Component {
         return (
             <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
                 <div className="product-left-view outline-style mt-0">
-                    <div className="product-text-common" style={{ fontSize: 22 }}>
-                        {AppConstants.securePaymentOptions}
+                    <div className="d-flex center-align">
+                        <div className="product-text-common" style={{ fontSize: 22 }}>{AppConstants.securePaymentOptions}</div>
+                        <div className="orange-action-txt margin-left-auto" style={{ fontSize: 16 }} onclick={() => this.back()}>{AppConstants.edit}</div>
                     </div>
                     <div>
                         <Elements stripe={stripePromise} >

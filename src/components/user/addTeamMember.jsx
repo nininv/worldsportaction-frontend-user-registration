@@ -19,7 +19,8 @@ import AppConstants from "../../themes/appConstants";
 import { 
     teamMemberSaveUpdateAction,
     teamMembersSaveAction,
-    getUserModulePersonalDetailsAction 
+    getUserModulePersonalDetailsAction ,
+    getTeamMembersAction
 } from '../../store/actions/userAction/userAction'
 import ValidationConstants from "../../themes/validationConstant";
 import AppImages from "../../themes/appImages";
@@ -51,6 +52,7 @@ class AddTeamMember extends Component {
         super(props);
         this.state = {
             team: this.props.location.state ? this.props.location.state.registrationTeam : null,
+            teamMemberRegId: this.props.location.state ? this.props.location.state.teamMemberRegId: null,
             getMembershipProductsInfoOnLoad: false,
             teamMembersSaveOnLoad: false
         }
@@ -63,7 +65,9 @@ class AddTeamMember extends Component {
     }
 
     componentDidMount() {
-        console.log("team",this.state.team)
+        if(this.state.teamMemberRegId){
+            this.props.getTeamMembersAction(this.state.teamMemberRegId);
+        }
         this.getMembershipProductsInfo()
     }
 
@@ -72,12 +76,14 @@ class AddTeamMember extends Component {
             let userState = this.props.userState;
             if(userState != nextProps){
                 if(userState.teamMembersSaveOnLoad == false && this.state.teamMembersSaveOnLoad == true){
-                    this.setState({teamMembersSaveOnLoad: false})
-                    if(userState.teamMembersSaveErrorMsg){
+                    this.setState({teamMembersSaveOnLoad: false});
+                    if(userState.status == 1){
+                        if(userState.teamMembersSaveErrorMsg){
 
-                    }else{
-                        history.push('/teamMemberRegPayment',{registrtionId: this.state.team.registrationUniqueKey,teamMemberRefId: userState.teamMemberRefId})
-                    }
+                        }else{
+                            history.push('/teamMemberRegPayment',{registrtionId: this.state.team.registrationUniqueKey,teamMemberRefId: userState.teamMemberRefId})
+                        }
+                    } 
                 }
             }
         }catch(ex){
@@ -251,7 +257,8 @@ class AddTeamMember extends Component {
     getUpdateTeamMembersSave = (teamMembersSave) => {
         try{
             const {personalData} = this.props.userState;
-            teamMembersSave.divisions = this.getDivisions()
+            teamMembersSave.divisions = this.getDivisions();
+            teamMembersSave.competitionMembershipProductDivisionId = this.state.team.competitionMembershipProductDivisionId; 
             teamMembersSave.organisationId = this.state.team.organisationUniqueKey;
             teamMembersSave.competitionId = this.state.team.competitionUniqueKey;
             teamMembersSave.teamId = this.state.team.teamId;
@@ -894,7 +901,8 @@ function mapDispatchToProps(dispatch) {
         membershipProductEndUserRegistrationAction,
         teamMemberSaveUpdateAction,
         teamMembersSaveAction,
-        getUserModulePersonalDetailsAction
+        getUserModulePersonalDetailsAction,
+        getTeamMembersAction
     }, dispatch)
 }
 
