@@ -135,7 +135,7 @@ class RegistrationReviewForm extends Component {
         let registrationReviewList = registrationState.registrationReviewList;
         let incompletePaymentMessage = this.checkPayment(registrationReviewList);
         if(incompletePaymentMessage != ''){
-            incompletePaymentMessage = "Payment Options are not configured for " + incompletePaymentMessage + ". Please contact administrator.";
+            incompletePaymentMessage = "Team Registrations have not been enabled for the " + incompletePaymentMessage + "Competition.";
             message.error(incompletePaymentMessage);
             return;
         }else{
