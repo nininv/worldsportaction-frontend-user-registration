@@ -223,12 +223,26 @@ class RegistrationShop extends Component {
     }
 
     renderPrice = (item) => {
-        const max = Math.max(...item.variants.map(elem => {
-           return Math.max(...elem.variantOptions.map(({ price }) => price));
-        }))
-        const min = Math.min(...item.variants.map(elem => {
-            return Math.min(...elem.variantOptions.map(({ price }) => price));
-        }))
+        let max=0
+        let min=0
+        if(!isArrayNotEmpty(item.variants)){
+            let price = (item.productSKU.price + feeIsNull(item.tax)).toFixed(2);
+            return `$${price}`
+        }
+        if(isArrayNotEmpty(item.variants)){
+            max = Math.max(...item.variants.map(elem => {
+                if(isArrayNotEmpty(elem.variantOptions)){
+                    return Math.max(...elem.variantOptions.map(({ price }) => price));
+                }
+            }))
+        }
+        if(isArrayNotEmpty(item.variants)){
+            min = Math.min(...item.variants.map(elem => {
+                if(isArrayNotEmpty(elem.variantOptions)){
+                    return Math.min(...elem.variantOptions.map(({ price }) => price));
+                }
+            }))
+        }
 
         const price = (min + feeIsNull(item.tax)).toFixed(2);
         if (min !== max) {

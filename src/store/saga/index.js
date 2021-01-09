@@ -12,7 +12,7 @@ import {
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
   identificationReferenceSaga, otherSportsReferenceSaga, accreditationUmpireReferenceSaga,
   accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga, getSchoolsSaga, validateRegistrationCapSaga,
-  netSetGoTshirtSizeSaga
+  netSetGoTshirtSizeSaga, accreditationUmpireCoachReferenceSaga
 } from "./commonSaga/commonSaga";
 
 // UserSaga
@@ -298,6 +298,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD, netSetGoTshirtSizeSaga);
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
+
+  yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
 
 
 }

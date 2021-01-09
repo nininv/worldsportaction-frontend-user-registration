@@ -1898,6 +1898,7 @@ class UserModulePersonalDetail extends Component {
 
     personalView = () => {
         const { userState } = this.props;
+        let personal = userState.personalData;
         const personalByCompData = !!userState.personalByCompData && userState.personalByCompData;
         const primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
         const childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
@@ -1984,7 +1985,7 @@ class UserModulePersonalDetail extends Component {
                     <div className="col-sm user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.otherInformation}</div>
                     <div className="col-sm d-flex justify-content-end align-items-end" style={{ marginTop: 7, marginBottom: 10 }}>
                         <div className="comp-buttons-view m-0">
-                            <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4" } }} >
+                            <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4",personalData:personal } }} >
                                 <Button className="other-info-btn other-info-edit-btn m-0" type="primary" >
                                     {AppConstants.edit}
                                 </Button>
