@@ -163,6 +163,20 @@ function validateRegistrationCapAction(payload){
     return action;
 }
 
+function netSetGoTshirtSizeAction(){
+    const action = {
+        type: ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD,
+    };
+    return action;
+}
+
+function combinedAccreditationUmpieCoachRefrence() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -185,5 +199,7 @@ export {
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
     getSchoolListAction,
-    validateRegistrationCapAction		
+    validateRegistrationCapAction,
+    netSetGoTshirtSizeAction,
+    combinedAccreditationUmpieCoachRefrence
 }

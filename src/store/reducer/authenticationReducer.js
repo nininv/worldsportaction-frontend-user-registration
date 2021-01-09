@@ -2,7 +2,7 @@ import ApiConstants from "../../themes/apiConstants";
 import { Encrypt, Decrypt } from "../../util/encryption";
 import { JwtEncrypt, JwtDecrypt } from "../../util/jwt";
 import history from "../../util/history";
-import { setAuthToken, setUserId, setName, setPhotoUrl, setStripeAccountId } from '../../util/sessionStorage'
+import { setAuthToken, setUserId, setName, setPhotoUrl, setStripeAccountId, setStripeAccountConnectId } from '../../util/sessionStorage'
 
 const initialState = {
   onLoad: false,
@@ -14,7 +14,9 @@ const initialState = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  }
+  },
+  forgotPasswordSuccess: false,
+  forgotPasswordMessage: ''
 };
 
 function login(state = initialState, action) {
@@ -31,6 +33,7 @@ function login(state = initialState, action) {
       setName(name);
       setPhotoUrl(action.result.user.photoUrl);
       setStripeAccountId(action.result.user.stripeCustomerAccountId)
+      setStripeAccountConnectId(action.result.user.stripeAccountId)
       // localStorage.setItem("token", action.result.authToken);
       // let jwtEncrypt = JwtEncrypt(action.result.result.data.user_data)
       // let encryptText = Encrypt(jwtEncrypt)
@@ -66,6 +69,9 @@ function login(state = initialState, action) {
       return { ...state, onLoad: true };
 
     case ApiConstants.API_FORGOT_PASSWORD_SUCCESS:
+      if (action.source !== "mobile") {
+        localStorage.removeItem("channel")
+      }
       return {
         ...state,
         forgotPasswordMessage: action.result.message ? action.result.message : '',
@@ -91,6 +97,16 @@ function login(state = initialState, action) {
         status: action.status,
         error: null
       };
+
+    case ApiConstants.ACTION_TO_CLEAR_AUTHENTICATION_REDUCER:
+      if (action.key == "clearPasswordSuccess") {
+        state.forgotPasswordSuccess = false
+      }
+      localStorage.removeItem("channel")
+      return {
+        ...state,
+        onLoad: false,
+      }
 
     default:
       return state;

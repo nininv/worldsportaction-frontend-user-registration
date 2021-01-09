@@ -5,7 +5,7 @@ import {
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
     Radio, Form, Modal, InputNumber
@@ -25,12 +25,12 @@ import ValidationConstants from "../../themes/validationConstant";
 import {isArrayNotEmpty,deepCopyFunction} from '../../util/helpers';
 import {getRegistrationByIdAction, deleteRegistrationProductAction, updateReviewInfoAction,
     saveRegistrationReview, getRegistrationShopPickupAddressAction, getRegParticipantAddressAction
- } from 
+ } from
             '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import { 
+import {
     getCommonRefData,
     countryReferenceAction
 } from '../../store/actions/commonAction/commonAction';
@@ -47,7 +47,7 @@ class RegistrationShipping extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            registrationUniqueKey: null, 
+            registrationUniqueKey: null,
             productModalVisible: false ,
             id: null,
             loading: false ,
@@ -58,7 +58,7 @@ class RegistrationShipping extends Component {
             deliveryOrBillingAddressSelected: false,
             onlyDeliveryAddressFlag: false,
             deliveryAddressManualEnterAddressFlag: false,
-            billingAddressManualEnterAddressFlag: false                  
+            billingAddressManualEnterAddressFlag: false
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -77,7 +77,7 @@ class RegistrationShipping extends Component {
                 this.goToRegistrationPayments();
             }
         }
-        if(registrationProductState.onRegReviewLoad == false && 
+        if(registrationProductState.onRegReviewLoad == false &&
             registrationProductState.pickupAddressLoad == false && this.state.apiOnLoad){
             this.setShippingOptions();
             this.setState({apiOnLoad: false});
@@ -90,7 +90,7 @@ class RegistrationShipping extends Component {
         //     }
         //     this.setState({deliveryOrBillingAddressSelected: false});
         // }
-    }  
+    }
 
     getApiInfo = (registrationUniqueKey) => {
         let payload = {
@@ -129,7 +129,7 @@ class RegistrationShipping extends Component {
             let shopProducts = registrationReviewList != null ? isArrayNotEmpty(registrationReviewList.shopProducts) ?
                                       deepCopyFunction(registrationReviewList.shopProducts) : [] : [];
             for(let item of shopProducts){
-                let buyingProduct = shopProductList.find(x => x.productId == item.productId); 
+                let buyingProduct = shopProductList.find(x => x.productId == item.productId);
                 if(buyingProduct){
                     buyingProduct["organisationId"] = item.organisationId;
                     let pickupAddress = shopPickupAddresses.find(x => x.organisationId == item.organisationId);
@@ -157,11 +157,11 @@ class RegistrationShipping extends Component {
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
-    getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
+    getPaymentOptionText = (paymentOptionRefId , isTeamRegistration) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) :
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        (paymentOptionRefId == 3 ? AppConstants.allMatches :
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -199,12 +199,12 @@ class RegistrationShipping extends Component {
                 const country = countryList.length > 0 && addressObject.countryRefId > 0
                 ? countryList.find((country) => country.id === addressObject.countryRefId).name
                 : null;
-    
+
                 let defaultAddress = '';
                 if(addressObject.street1 && addressObject.suburb && state){
-                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') +
                     (addressObject.suburb ? addressObject.suburb + ', ': '') +
-                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') +
                     (state ? state + ', ': '') +
                     (country ? country + '.': '');
                 }
@@ -320,11 +320,11 @@ class RegistrationShipping extends Component {
                         <div style={{marginTop:6}}>
                             <Radio.Group className="product-radio-group"
                             //onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-                            value={item.deliveryType == "pickup" ? 1 : 2}>                           
+                            value={item.deliveryType == "pickup" ? 1 : 2}>
                                 <Radio disabled={(item.deliveryType == "pickup" && item.deliveryType != "") ? false : true} value={1}>{AppConstants.Pickup}</Radio>
                                 <Radio disabled={(item.deliveryType == "shipping" || item.deliveryType == "") ? false : true} value={2}>{AppConstants.Delivery}</Radio>
                             </Radio.Group>
-                        </div>  
+                        </div>
                         {item.deliveryType == "pickup" && (
                             <div style={{
                                 background: "var(--app-fdfdfe)",
@@ -339,10 +339,14 @@ class RegistrationShipping extends Component {
                                         <span>{item.pickupInstruction}</span>
                                     </Tooltip>
                                 </div> */}
-                                <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
-                                <div className="subtitle-text-common" style={{marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
-                                <div style={{marginTop: "5px" }}>{item.pickupInstruction}</div>
-                            </div>    
+                                <div style={{ marginTop: "5px" }}>{item.pickupAddress}</div>
+                                {item.pickupInstruction && (
+                                    <>
+                                        <div className="subtitle-text-common" style={{ marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
+                                        <div style={{ marginTop: "5px" }}>{item.pickupInstruction}</div>
+                                    </>
+                                )}
+                            </div>
                         )}
                     </div>
                 ))}
@@ -363,11 +367,11 @@ class RegistrationShipping extends Component {
     //                     <div style={{marginTop:6}}>
     //                         <Radio.Group className="product-radio-group"
     //                         onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-    //                         value={this.getShippingOptionValue(item.organisationId)}>                           
+    //                         value={this.getShippingOptionValue(item.organisationId)}>
     //                             <Radio value={1}>{AppConstants.Pickup}</Radio>
     //                             <Radio value={2}>{AppConstants.Delivery}</Radio>
     //                         </Radio.Group>
-    //                     </div>  
+    //                     </div>
     //                     {item.pickupOrDelivery == 1 && (
     //                         <div style={{
     //                             background: "var(--app-fdfdfe)",
@@ -385,7 +389,7 @@ class RegistrationShipping extends Component {
     //                                 </div>
     //                             </div>
     //                             <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
-    //                         </div>    
+    //                         </div>
     //                     )}
     //                 </div>
     //             ))}
@@ -405,13 +409,13 @@ class RegistrationShipping extends Component {
     //             <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
     //             {this.state.useDiffDeliveryAddressFlag && (
     //                 <div style={{marginTop: "10px"}}>
-    //                     <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+    //                     <div className="body-text-common">{AppConstants.deliveryAddress}</div>
     //                     <div className="row">
     //                         {participantAddresses != null && participantAddresses.map((item,index) => (
-    //                             <div className="col-sm-12 col-md-6" 
+    //                             <div className="col-sm-12 col-md-6"
     //                             onClick={() => this.addAddress(index,"deliveryAddress")}>
     //                                 <div className="address-border-box">
-    //                                     <div className="headline-text-common" 
+    //                                     <div className="headline-text-common"
     //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
     //                                 </div>
     //                             </div>
@@ -427,13 +431,13 @@ class RegistrationShipping extends Component {
     //             )}
     //              {this.state.useDiffBillingAddressFlag && (
     //                 <div style={{marginTop: "10px"}}>
-    //                     <div className="body-text-common">{AppConstants.billingAddress}</div>  
+    //                     <div className="body-text-common">{AppConstants.billingAddress}</div>
     //                     <div className="row">
     //                         {participantAddresses != null && participantAddresses.map((item,index) => (
-    //                             <div className="col-sm-12 col-md-6" 
+    //                             <div className="col-sm-12 col-md-6"
     //                             onClick={() => this.addAddress(index,"billingAddress")}>
     //                                 <div className="address-border-box">
-    //                                     <div className="headline-text-common" 
+    //                                     <div className="headline-text-common"
     //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
     //                                 </div>
     //                             </div>
@@ -450,13 +454,13 @@ class RegistrationShipping extends Component {
     //             <div class="row">
     //                 {!this.state.useDiffDeliveryAddressFlag && (
     //                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-    //                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-    //                         <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>   
+    //                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>
+    //                         <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>
     //                         {participantAddresses.length > 1 && (
     //                             <div className="link-text-common"
-    //                             onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-    //                         )}   
-    //                     </div>  
+    //                             onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div>
+    //                         )}
+    //                     </div>
     //                 )}
     //                 {!this.state.useDiffBillingAddressFlag && (
     //                      <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
@@ -464,14 +468,14 @@ class RegistrationShipping extends Component {
     //                         <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
     //                         {participantAddresses.length > 1 && (
     //                             <div className="link-text-common"
-    //                             onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-    //                         )}   
-    //                     </div>  
+    //                             onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div>
+    //                         )}
+    //                     </div>
     //                 )}
     //             </div>
     //         </div>
     //     )
-    // } 
+    // }
 
     getAddressDropDownValue = (address) => {
         try{
@@ -498,7 +502,7 @@ class RegistrationShipping extends Component {
             console.log("Exception occured in showAddressSection::"+ex);
         }
     }
-    
+
 
     billingManualEnterAddressView = (getFieldDecorator) => {
         try{
@@ -714,7 +718,7 @@ class RegistrationShipping extends Component {
             return(
                 <div>
                     <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
-                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div> 
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div>
                     {!this.state.billingAddressManualEnterAddressFlag ? (
                         <div>
                             <Select
@@ -734,7 +738,7 @@ class RegistrationShipping extends Component {
                     ) : (
                         <div>{this.billingManualEnterAddressView(getFieldDecorator)}</div>
                     )}
-                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.deliveryAddress}</div> 
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.deliveryAddress}</div>
                     {!this.state.deliveryAddressManualEnterAddressFlag ? (
                         <div>
                             <Select
@@ -760,13 +764,13 @@ class RegistrationShipping extends Component {
             console.log("Error in deliveryAndBillingAddressView::"+ex)
         }
     }
-  
-  
+
+
     contentView = (getFieldDecorator) =>{
         return(
             <div class="row m-0">
                 {this.shippingLeftView(getFieldDecorator)}
-                {this.shippingRightView()}                
+                {this.shippingRightView()}
             </div>
         );
     }
@@ -778,9 +782,9 @@ class RegistrationShipping extends Component {
                     <div>{this.shippingOption()}</div>
                 )}
                 {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
-                    <div>{this.deliveryAndBillingView(getFieldDecorator)}</div> 
+                    <div>{this.deliveryAndBillingView(getFieldDecorator)}</div>
                 )}
-                </div>            
+                </div>
             </div>
         )
     }
@@ -795,11 +799,11 @@ class RegistrationShipping extends Component {
 
     yourOrderView = () =>{
         const {registrationReviewList} = this.props.registrationProductState;
-        let compParticipants = registrationReviewList!= null ? 
+        let compParticipants = registrationReviewList!= null ?
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
         let total = registrationReviewList!= null ? registrationReviewList.total : null;
-        let shopProducts = registrationReviewList!= null ? 
+        let shopProducts = registrationReviewList!= null ?
                 isArrayNotEmpty(registrationReviewList.shopProducts) ?
                 registrationReviewList.shopProducts : [] : [];
         return(
@@ -808,16 +812,16 @@ class RegistrationShipping extends Component {
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId , item.isTeamRegistration)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                       {item.isTeamRegistration == 1  ? 
+                       {item.isTeamRegistration == 1  ?
                             <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                                 {item.teamName +' - ' + item.competitionName}
                             </div> :
                             <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                            </div> 
+                            </div>
                         }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
@@ -841,14 +845,14 @@ class RegistrationShipping extends Component {
                                     </div>
                                 </div>
                                 }
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
+
+                                {mem.discountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
+                                {mem.childDiscountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
@@ -862,19 +866,19 @@ class RegistrationShipping extends Component {
                         ))}
                         <div className="payment-option-txt">
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer"
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 20px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
-                        {item.governmentVoucherAmount != "0.00" && 
+                        {item.governmentVoucherAmount != "0.00" &&
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                             <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                        </div> 
+                        </div>
                         }
-                    </div> 
+                    </div>
                     )}
                 )}
                  {(shopProducts).map((shop, index) =>(
@@ -887,7 +891,7 @@ class RegistrationShipping extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -930,19 +934,19 @@ class RegistrationShipping extends Component {
                      type="primary">
                         {AppConstants.continue}
                     </Button>
-                </div>                 
-                <div style={{marginTop:23}}> 
+                </div>
+                <div style={{marginTop:23}}>
                     <Button className="back-btn-text btn-inner-view"
                     onClick={() => this.goToShop()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
+                    </Button>
+                </div>
             </div>
-            
+
         )
     }
-    
-    
+
+
     render() {
         const { getFieldDecorator } = this.props.form;
         return (

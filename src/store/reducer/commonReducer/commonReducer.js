@@ -26,10 +26,12 @@ const initialState = {
     identifyAsList: [],
     otherSportsList: [],
     accreditationUmpireList: [],
-    accreditationCoachList: [] ,
+    accreditationCoachList: [],
     walkingNetballQuesList: [],
     schoolList: [],
-    registrationCapValidationMessage: null		 
+    registrationCapValidationMessage: null,
+    umpireAccreditation: [],
+    coachAccreditation: []
 };
 
 function commonReducerState(state = initialState, action) {
@@ -303,6 +305,34 @@ function commonReducerState(state = initialState, action) {
                 onLoad: false,
                 error : null
             }
+
+        case ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD:
+            return { ...state, onLoad: true, error: null };
+        
+        case ApiConstants.API_NETSETGO_TSHIRT_SIZE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                tShirtSizeList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
+        ///////get the other accreditation umpire and coach list
+        case ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD:
+            return {
+                ...state, onLoad: true, error: null
+            };
+
+        case ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                umpireAccreditation: action.result.accreditationUmpire,
+                coachAccreditation: action.result.accreditationCoach,
+                onLoad: false,
+                error: null
+            };
 
         default:
             return state;

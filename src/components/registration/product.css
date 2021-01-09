@@ -577,6 +577,7 @@
   background-color: transparent;
   border-bottom: none;
   width: fit-content;
+  min-width: 45px;
 }
 
 .reg-form-multple-select .ant-select-selection {
@@ -1246,4 +1247,12 @@ input:focus, .StripeElement--focus {
 
 .team-reg-radio-custom-style .ant-radio{
   margin-top: 5px;
+}
+
+.center-align{
+  align-items: center;
+}
+
+.margin-left-auto{
+  margin-left: auto;
 }

@@ -20,6 +20,7 @@ import history from "../../util/history";
 import Doc from '../../util/DocService';
 import PdfContainer from '../../util/PdfContainer';
 import {getUserId } from '../../util/sessionStorage'
+import {netSetGoTshirtSizeAction} from '../../store/actions/commonAction/commonAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -36,6 +37,7 @@ class RegistrationInvoice extends Component {
             checkStatusLoad: false,
             invoiceDisabled: false,
         }
+        this.props.netSetGoTshirtSizeAction();
     }
 
 
@@ -51,12 +53,13 @@ class RegistrationInvoice extends Component {
     getInvoiceStatusAPI = () => {
        // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+       let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
        let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
     //    let registrationId = null;
     //    let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
     //    let invoiceId = null;
-       this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId);
+       this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId, teamMemberRegId);
         //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
         this.setState({ checkStatusLoad: true });
     }
@@ -76,12 +79,13 @@ class RegistrationInvoice extends Component {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
             let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            // let registrationId = null;
-            // let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
+            // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
+            // let userRegId = null;
             // let invoiceId = null;
-            this.props.getInvoice(registrationId, userRegId, invoiceId)
+            this.props.getInvoice(registrationId, userRegId, invoiceId, teamMemberRegId)
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
     }
@@ -261,6 +265,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={'$' + (Number(membershipDetail.feesToPayGST)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -269,7 +279,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (parseFloat((membershipDetail.feesToPay).toFixed(2)) + parseFloat((membershipDetail.feesToPayGST).toFixed(2)) - parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) -
-                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </ div>
@@ -319,6 +329,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={'$' + (Number(competitionDetails.feesToPayGST)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -327,7 +343,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required="invoice"
                                     heading={'$' + (  parseFloat((competitionDetails.feesToPay).toFixed(2)) + parseFloat((competitionDetails.feesToPayGST).toFixed(2)) - parseFloat((competitionDetails.discountsToDeduct).toFixed(2)) -
-                                        parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -339,6 +355,8 @@ class RegistrationInvoice extends Component {
     }
 
     nominationCompOrgView = (competitionDetails) => {
+        let nominationGVAmount = competitionDetails.nominationGVAmount!= null ? 
+        competitionDetails.nominationGVAmount : 0;
         return (
             <div className="row" >
                 <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
@@ -371,6 +389,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={'$' + (parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={'$' + (Number(competitionDetails.nominationGSTToPay)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -378,7 +402,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2))).toFixed(2)}
+                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -432,6 +456,14 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + (parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
                                     < InputWithHead
                                         heading={'$' + (Number(affiliateDetail.feesToPayGST)).toFixed(2)}
                                         required={"input-align-right"}
@@ -442,7 +474,7 @@ class RegistrationInvoice extends Component {
                                     < InputWithHead
                                         required="invoice"
                                         heading={'$' + (parseFloat((affiliateDetail.feesToPay).toFixed(2)) + parseFloat((affiliateDetail.feesToPayGST).toFixed(2)) - parseFloat((affiliateDetail.discountsToDeduct).toFixed(2)) -
-                                            parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                            parseFloat((childDiscountsToDeduct).toFixed(2)) - parseFloat((governmentVoucherAmount).toFixed(2))).toFixed(2)}
                                     />}
                             </div>
 
@@ -455,6 +487,8 @@ class RegistrationInvoice extends Component {
     }
 
     nominationAffiliateView = (affiliateDetail) => {
+        let nominationGVAmount = affiliateDetail.nominationGVAmount!= null ? 
+        affiliateDetail.nominationGVAmount : 0;
         return (
             <div className="row" >
                 <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
@@ -493,6 +527,14 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
+                                    <InputWithHead
+                                        heading={'$' + (parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
+                                        required={"input-align-right"}
+                                    />
+                                }
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                {affiliateDetail &&
                                     < InputWithHead
                                         heading={'$' + (Number(affiliateDetail.nominationGSTToPay)).toFixed(2)}
                                         required={"input-align-right"}
@@ -502,7 +544,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2))).toFixed(2)}
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
                                     />}
                             </div>
 
@@ -516,6 +558,7 @@ class RegistrationInvoice extends Component {
 
     ////////form content view
     contentView = (result) => {
+        const { tShirtSizeList } = this.props.commonReducerState;
         let {invoiceData} = this.props.stripeState;
         let data = invoiceData!= null ? invoiceData.compParticipants : []
         return (
@@ -549,6 +592,12 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
+                                    heading={"Government Voucher"}
+                                    required={"input-align-right"}
+                                />
+                            </div>
+                            <div className="col-sm invoice-description" >
+                                <InputWithHead
                                     heading={"GST"}
                                     required={"input-align-right"}
                                 />
@@ -567,6 +616,8 @@ class RegistrationInvoice extends Component {
                 {data && data.length > 0 && data.map((item, participantIndex) => {
                      let isTeamReg = (item.isTeamRegistration != undefined ? item.isTeamRegistration : 0);
                      let regName = isTeamReg == 1 ? AppConstants.teamRegistration : AppConstants.registration;
+                     let tShirtDetails = tShirtSizeList ? tShirtSizeList.find(x => x.id == item.tShirtSizeRefId) : null;
+                     let tShirtName = tShirtDetails ? tShirtDetails.name : null;
                     return(
                         <div>
                             {(item.membershipProducts || []).map((mem, memIndex) =>{
@@ -574,7 +625,8 @@ class RegistrationInvoice extends Component {
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
                                  let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
-                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0));
+                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0) - 
+                                 Number(mem.governmentVoucherAmount!= null ? mem.governmentVoucherAmount : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
@@ -595,12 +647,19 @@ class RegistrationInvoice extends Component {
                                                                     + ", Team - " + item.teamName + ", " + item.competitionName
                                                                 :
                                                                 mem.divisionName ?
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
+                                                                    regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
+                                                                    + " - " + tShirtName + ", " + item.competitionName + " - "+ mem.divisionName
+                                                                    :
                                                                     regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                     + ", " + item.competitionName + " - "+ mem.divisionName
                                                                     :
+                                                                    mem.membershipTypeName == "Player - NetSetGo" ?
+                                                                    regName + " - " + typeName + " " + "T Shirt" + " - " + mem.firstName + " " + mem.lastName
+                                                                    + " - " + tShirtName + ", " + item.competitionName
+                                                                    :
                                                                     regName + " - " + typeName + " " + mem.firstName + " " + mem.lastName
                                                                     + ", " + item.competitionName
-                                                                
 
                                                             }
                                                             required={"justify-content-start"}
@@ -639,7 +698,7 @@ class RegistrationInvoice extends Component {
                                                 <div className="col-sm invoice-right-column pr-0">
                                                     <InputWithHead
                                                         required="invoice"
-                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
+                                                        heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "$0.00"}
                                                     />
                                                 </div> 
                                             </div>
@@ -964,12 +1023,14 @@ function mapDispatchToProps(dispatch) {
         onChangeCharityAction,
         saveInvoiceAction,
         getInvoiceStatusAction,
+        netSetGoTshirtSizeAction
     }, dispatch)
 }
 
 function mapStatetoProps(state) {
     return {
         stripeState: state.StripeState,
+        commonReducerState: state.CommonReducerState
     }
 }
 export default connect(mapStatetoProps, mapDispatchToProps)(RegistrationInvoice);

@@ -5,7 +5,7 @@ import {
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
     Radio, Form, Modal, InputNumber
@@ -24,7 +24,7 @@ import { NavLink } from "react-router-dom";
 import {isArrayNotEmpty, feeIsNull} from '../../util/helpers';
 import ValidationConstants from "../../themes/validationConstant";
 import {getRegistrationByIdAction, deleteRegistrationProductAction,
-    getRegistrationShopProductAction, updateReviewInfoAction,saveRegistrationReview } from 
+    getRegistrationShopProductAction, updateReviewInfoAction,saveRegistrationReview } from
             '../../store/actions/registrationAction/registrationProductsAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
@@ -44,7 +44,7 @@ class RegistrationShop extends Component {
             width:  800,
             height: 182,
             showCardView:false,
-            registrationUniqueKey: null,   
+            registrationUniqueKey: null,
             productModalVisible: false ,
             id: null,
             typeId: -1,
@@ -82,7 +82,7 @@ class RegistrationShop extends Component {
                 this.goToRegistrationPayments();
             }
         }
-    } 
+    }
 
     updateDimensions() {
     if(window.innerWidth < 500) {
@@ -104,7 +104,7 @@ class RegistrationShop extends Component {
     }
 
     getRegistrationProducts = (registrationId, page, typeId, organisationUniqueKey) =>{
-        
+
         let payload = {
             registrationId: registrationId,
             typeId: typeId,
@@ -125,7 +125,7 @@ class RegistrationShop extends Component {
         }else if(key == "organisationUniqueKey"){
             this.setState({organisationUniqueKey: value});
             this.getRegistrationProducts(this.state.registrationUniqueKey , 1, this.state.typeId,value);
-        } 
+        }
     }
 
     goToShipping = () =>{
@@ -140,11 +140,11 @@ class RegistrationShop extends Component {
         history.push({pathname: '/registrationProducts', state: {registrationId: this.state.registrationUniqueKey}})
     }
 
-    getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
+    getPaymentOptionText = (paymentOptionRefId , isTeamRegistration) =>{
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) :
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        (paymentOptionRefId == 3 ? AppConstants.allMatches :
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -188,7 +188,7 @@ class RegistrationShop extends Component {
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateReviewInfoAction(obj,key, null, subKey,null);
         this.setState({showCardView:false, expandObj: null, variantOptionId: null,
-            quantity: null}); 
+            quantity: null});
     }
 
     removeFromCart = (index, key, subKey) =>{
@@ -210,7 +210,7 @@ class RegistrationShop extends Component {
                 // else{
                 //     this.goToRegistrationPayments();
                 // }
-               
+
             }
         });
     }
@@ -222,20 +222,49 @@ class RegistrationShop extends Component {
         this.setState({loading: true, buttonPressed: key});
     }
 
+    renderPrice = (item) => {
+        let max=0
+        let min=0
+        if(!isArrayNotEmpty(item.variants)){
+            let price = (item.productSKU.price + feeIsNull(item.tax)).toFixed(2);
+            return `$${price}`
+        }
+        if(isArrayNotEmpty(item.variants)){
+            max = Math.max(...item.variants.map(elem => {
+                if(isArrayNotEmpty(elem.variantOptions)){
+                    return Math.max(...elem.variantOptions.map(({ price }) => price));
+                }
+            }))
+        }
+        if(isArrayNotEmpty(item.variants)){
+            min = Math.min(...item.variants.map(elem => {
+                if(isArrayNotEmpty(elem.variantOptions)){
+                    return Math.min(...elem.variantOptions.map(({ price }) => price));
+                }
+            }))
+        }
+
+        const price = (min + feeIsNull(item.tax)).toFixed(2);
+        if (min !== max) {
+            return `From  $${price}`;
+        }
+        return `$${price}`
+    }
+
     enableExpandView = (key, item, index) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item,quantity: 1, shopSelectedRow: index}); 
-        } 
+            this.setState({showCardView:true, expandObj: item, variantOptionId: null, quantity: 1, shopSelectedRow: index});
+        }
         else {
             this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
-                quantity: null}); 
+                quantity: null});
         }
     }
 
     getOrganisationFilterList = () => {
         try{
             const {registrationReviewList} = this.props.registrationProductState;
-            let compParticipants = registrationReviewList!= null ? 
+            let compParticipants = registrationReviewList!= null ?
                         isArrayNotEmpty(registrationReviewList.compParticipants) ?
                         registrationReviewList.compParticipants : [] : [];
             let organisationList = Array.from(new Set(compParticipants.map(a => a.organisationUniqueKey))).
@@ -255,23 +284,23 @@ class RegistrationShop extends Component {
             <div style={{display:"flex" , justifyContent:"space-between" , paddingRight:0 ,flexWrap: "wrap"}}>
                 <div className="headline-text-common px-0" style={{ height: 60, display: 'flex', alignItems: 'center', marginRight: 10}}> {AppConstants.merchandiseShop}</div>
                 <div className="px-0 shop-filters-wrapper">
-                    <div 
+                    <div
                         className="my-2"
                         style={{width: 'calc(50% - 7px', minWidth: 170 }}
                     >
                         <Select
-                            style={{ width: "100%", paddingRight: 1}}                  
-                            placeholder={AppConstants.all} 
+                            style={{ width: "100%", paddingRight: 1}}
+                            placeholder={AppConstants.all}
                             className="custom-dropdown"
                             onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
-                            value={this.state.organisationUniqueKey}                                               
+                            value={this.state.organisationUniqueKey}
                         >
-                            <Option value={-1}>All</Option> 
+                            <Option value={-1}>All</Option>
                             {
                                 (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
                                 ))
-                            }    
+                            }
                         </Select>
                     </div>
                     <div
@@ -279,18 +308,18 @@ class RegistrationShop extends Component {
                         style={{width: 'calc(50% - 7px', minWidth: 170}}
                     >
                         <Select
-                            style={{ width: "100%", paddingRight: 1}}                  
-                            placeholder={AppConstants.allCategories}  
+                            style={{ width: "100%", paddingRight: 1}}
+                            placeholder={AppConstants.allCategories}
                             className="custom-dropdown"
                             onChange={(e) => this.onChangeSetValue("typeId", e)}
-                            value={this.state.typeId}                                               
+                            value={this.state.typeId}
                         >
-                            <Option value={-1}>All categories</Option> 
+                            <Option value={-1}>All categories</Option>
                             {
                                 (types || []).map((item, index) =>(
-                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
+                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option>
                                 ))
-                            }    
+                            }
                         </Select>
                     </div>
                 </div>
@@ -327,7 +356,7 @@ class RegistrationShop extends Component {
                             </div>
                             <div className="px-4">
                                 <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                <div class="subtitle-text-common">{this.renderPrice(item)}</div>
                             </div>
                         </div>
                     </div>
@@ -354,31 +383,31 @@ class RegistrationShop extends Component {
                                 </div>
                                 <div className="px-4">
                                     <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                    <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                    <div class="subtitle-text-common">{this.renderPrice(item)}</div>
                                 </div>
                             </div>
                             {this.state.showCardView && index == this.state.expandObj.sIndex &&
                                 <div>
                                     {this.cardExpandView()}
-                                </div>                
+                                </div>
                             }
                         </div>
                     ))}
                 </div> :
                     <div >
                         {(shopProductListTemp  || []).map((item, index)=> (
-                            <div className="row">
+                            <div className="row" key={index}>
                                 {this.shopProductColumnView(item.shopProduct1, index)}
                                 {item.shopProduct2 && this.shopProductColumnView(item.shopProduct2, index)}
                                 {item.shopProduct3 && this.shopProductColumnView(item.shopProduct3, index)}
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
                                 <div className="col-md-12">
                                     {this.cardExpandView()}
-                                </div>                
+                                </div>
                                 }
                              </div>
 
-                        
+
 
                             // <div className="col-sm-12 col-md-4 " >
                             //     <div className="shop-product-text card-header-text"
@@ -388,11 +417,11 @@ class RegistrationShop extends Component {
                             //             <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             //         </div>
                             //         <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                            //         <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                            //         <div class="subtitle-text-common">${ (feeIsNull(item.variants[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
                             //     </div>
-                            // </div>  
+                            // </div>
                          ))
-                    
+
                         }
                     </div>
 
@@ -400,17 +429,18 @@ class RegistrationShop extends Component {
             </div>
 
         )
-    } 
-  
+    }
+
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
         console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
+        const isNullVariants =isArrayNotEmpty(expandObj.variants)&&!expandObj.variants[0].variantId;
         return(
-            <div class = "expand-product-text"  style={{marginTop: "23px"}}>     
+            <div class = "expand-product-text"  style={{marginTop: "23px"}}>
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
-                </div>           
+                </div>
                 <div class="row" style={{marginTop: "17px"}}>
                     <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
                         <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
@@ -418,70 +448,70 @@ class RegistrationShop extends Component {
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
-                        {(expandObj.varients || []).map((varnt, vIndex) =>(
+                        {(expandObj.variants || []).map((varnt, vIndex) =>(
                             <div>
                             <div style={{display:"flex", flexWrap:"wrap"}}>
-                                <div class="col-lg-6" style={{marginTop:27,padding:0}}>
+                                {!isNullVariants && <div class="col-lg-6" style={{marginTop: 27, padding: 0}}>
                                     <div className="subtitle-text-common">
                                         {"Select " + varnt.name}
                                     </div>
-                                    <div style={{marginTop:7}}>
+                                    <div style={{marginTop: 7}}>
                                         <Select
-                                            style={{ padding:0}}                  
-                                            placeholder={AppConstants.allCategories}  
-                                            className="body-text-common col-lg-11" 
-                                            value={this.state.variantOptionId}   
-                                            onChange={(e)=> this.setState({variantOptionId: e})}                                                 
+                                            style={{padding: 0}}
+                                            placeholder={AppConstants.allCategories}
+                                            className="body-text-common col-lg-11"
+                                            value={this.state.variantOptionId}
+                                            onChange={(e) => this.setState({variantOptionId: e})}
                                         >
-                                            {(varnt.variantOptions || []).map((varOpt, vOptIndex) =>(
+                                            {(varnt.variantOptions || []).map((varOpt, vOptIndex) => (
                                                 <Option key={varOpt.variantOptionId} value={varOpt.variantOptionId}>
-                                                    {varOpt.optionName}</Option>  
-                                            ))}  
+                                                    {varOpt.optionName}</Option>
+                                            ))}
                                         </Select>
                                     </div>
-                                </div>
+                                </div>}
                                 <div style={{marginTop:27,padding:0}} className="col-lg-6">
                                     <div className="subtitle-text-common">
                                         {AppConstants.quantity}
                                     </div>
-                                    <div style={{marginTop:7,fontFamily: "inter"}}>                                    
+                                    <div style={{marginTop:7,fontFamily: "inter"}}>
                                         <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
                                         onChange={(e)=> this.setState({quantity: e})}
                                         value= {this.state.quantity}
                                         className="col-lg-11 body-text-common"
                                         />
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                             <div class = "row" style={{margin:0}}>
                                 <div class = "col-lg-8 col-12" style={{padding:0,marginTop:23, marginRight: 22}}>
                                     <Button className="open-reg-button addToCart"
-                                    disabled={this.state.quantity == null || this.state.variantOptionId == null}
+                                    disabled={this.state.quantity == null || (this.state.variantOptionId == null && !isNullVariants)}
                                     onClick={() => this.addToCart(expandObj, varnt,'addShopProduct', 'shopProducts')}>
                                         {AppConstants.addToCart}
-                                    </Button> 
+                                    </Button>
                                 </div>
                                 <div class = "col-lg-3 col-12" style={{padding:0,marginTop:23}}>
                                     <Button className="cancel-button-text" style={{height: "49px"}}
                                      onClick = {() => this.enableExpandView('hide')}>
                                         {AppConstants.cancel}
-                                    </Button> 
-                                </div>                       
-                            </div> 
+                                    </Button>
+                                </div>
+                            </div>
                             </div>
                         ))}
-                    </div>                   
-                </div> 
-                   
+                    </div>
+                </div>
+
             </div>
         )
     }
-    
+
     contentView = () =>{
         return(
             <div class="row mx-0">
                 {this.shopLeftView()}
-                {this.shopRightView()}                
+                {this.shopRightView()}
             </div>
         );
     }
@@ -494,7 +524,7 @@ class RegistrationShop extends Component {
                 {/* {this.state.showCardView &&
                     <div>
                         {this.cardExpandView()}
-                    </div>                
+                    </div>
                 } */}
             </div>
         )
@@ -511,11 +541,11 @@ class RegistrationShop extends Component {
 
     yourOrderView = () =>{
         const {registrationReviewList} = this.props.registrationProductState;
-        let compParticipants = registrationReviewList!= null ? 
+        let compParticipants = registrationReviewList!= null ?
                     isArrayNotEmpty(registrationReviewList.compParticipants) ?
                     registrationReviewList.compParticipants : [] : [];
         let total = registrationReviewList!= null ? registrationReviewList.total : null;
-        let shopProducts = registrationReviewList!= null ? 
+        let shopProducts = registrationReviewList!= null ?
                 isArrayNotEmpty(registrationReviewList.shopProducts) ?
                 registrationReviewList.shopProducts : [] : [];
         return(
@@ -524,16 +554,16 @@ class RegistrationShop extends Component {
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId , item.isTeamRegistration)
                     return(
                     <div style={{paddingBottom:12}} key={item.participantId}>
-                        {item.isTeamRegistration == 1  ? 
+                        {item.isTeamRegistration == 1  ?
                             <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                                 {item.teamName +' - ' + item.competitionName}
                             </div> :
                             <div className = "inter-medium-w500" style={{marginTop: "17px"}}>
                             {item.firstName + ' ' + item.lastName + ' - ' + item.competitionName}
-                            </div> 
+                            </div>
                         }
                         {(item.membershipProducts || []).map((mem, memIndex) =>(
                             <div key={mem.competitionMembershipProductTypeId + "#" + memIndex}>
@@ -543,7 +573,7 @@ class RegistrationShop extends Component {
                                     <div  className="subtitle-text-common" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
-                                        {(mem.email !== item.email) && ( 
+                                        {(mem.email !== item.email) && (
                                             <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
                                                 <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                             </div>
@@ -559,14 +589,14 @@ class RegistrationShop extends Component {
                                     </div>
                                 </div>
                                 }
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
+
+                                {mem.discountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                 </div>
                                 }
-                                {mem.childDiscountsToDeduct!= "0.00" && 
+                                {mem.childDiscountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.childDiscountsToDeduct}</div>
@@ -580,19 +610,19 @@ class RegistrationShop extends Component {
                         ))}
                         <div className="payment-option-txt">
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer"
                             onClick={() => this.goToRegistrationProducts()}
                             style={{margin: "0px 15px 0px 20px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
-                        {item.governmentVoucherAmount != "0.00" && 
+                        {item.governmentVoucherAmount != "0.00" &&
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                             <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                        </div> 
+                        </div>
                         }
-                    </div> 
+                    </div>
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
@@ -605,7 +635,7 @@ class RegistrationShop extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5 subtitle-text-common" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -616,7 +646,7 @@ class RegistrationShop extends Component {
                         </div>
                     </div>
                 ))}
-               
+
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && feeIsNull(total.total).toFixed(2)}</div>
@@ -649,19 +679,19 @@ class RegistrationShop extends Component {
                       type="primary">
                         {AppConstants.continue}
                     </Button>
-                </div>                 
-                <div style={{marginTop:23}}> 
+                </div>
+                <div style={{marginTop:23}}>
                     <Button className="back-btn-text btn-inner-view"
                      onClick={()=> this.goToRegistrationProducts()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
+                    </Button>
+                </div>
             </div>
-            
+
         )
     }
-    
-    
+
+
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
@@ -700,7 +730,7 @@ function mapDispatchToProps(dispatch)
         deleteRegistrationProductAction,
         getRegistrationShopProductAction,
         updateReviewInfoAction,
-        saveRegistrationReview 
+        saveRegistrationReview
     }, dispatch);
 
 }

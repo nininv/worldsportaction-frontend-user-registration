@@ -2,3 +2,5 @@
 /build
 build
 .env
+# ide stuff
+.idea/

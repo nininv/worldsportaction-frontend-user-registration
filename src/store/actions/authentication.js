@@ -11,11 +11,12 @@ function loginAction(payload) {
 }
 
 // forgot password
-function forgotPasswordAction(email, resetType) {
+function forgotPasswordAction(email, resetType, source) {
   return {
     type: ApiConstants.API_FORGOT_PASSWORD_LOAD,
     email,
     resetType,
+    source
   };
 }
 
@@ -28,7 +29,7 @@ function clearReducerAction(key) {
 }
 
 // change password fields
-function updatePasswordFieldsAction(key , value) {
+function updatePasswordFieldsAction(key, value) {
   return {
     type: ApiConstants.ACTION_TO_UPDATE_PASSWORD_FIELDS,
     key,
@@ -44,9 +45,9 @@ function updatePasswordAction(data) {
 }
 
 export {
-   loginAction,
-   forgotPasswordAction,
-   clearReducerAction,
-   updatePasswordFieldsAction,
-   updatePasswordAction
+  loginAction,
+  forgotPasswordAction,
+  clearReducerAction,
+  updatePasswordFieldsAction,
+  updatePasswordAction
 }

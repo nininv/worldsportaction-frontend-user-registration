@@ -61,6 +61,7 @@ import {
 } from '../../store/actions/commonAction/commonAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";
+import { regexNumberExpression } from '../../util/helpers';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -79,7 +80,10 @@ class TeamInivteForm extends Component {
             searchAddressFlag: true,
             manualEnterAddressFlag: false,
             showMoreInformation: true,
-            buttonSaveOnLoad: false
+            buttonSaveOnLoad: false,
+            hasErrorYourDetails: false,
+            hasErrorParent: [],
+            hasErrorEmergency: false
         }
         this.props.genderReferenceAction();
         this.props.getCommonRefData();
@@ -124,10 +128,10 @@ class TeamInivteForm extends Component {
                 this.setState({ inviteOnLoad: false });
             }
             if (!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad) {
-                if(teamInviteState.teamInviteCount > 0){
+                if (teamInviteState.teamInviteCount > 0) {
                     history.push({ pathname: "/teamInviteProductsReview", state: { userRegId: getUserRegId() } })
-                }else{
-                    history.push({ pathname: "/teamInvitePayment", state: { userRegId: getUserRegId()}})
+                } else {
+                    history.push({ pathname: "/teamInvitePayment", state: { userRegId: getUserRegId() } })
                 }
             }
         } catch (ex) {
@@ -172,34 +176,34 @@ class TeamInivteForm extends Component {
                 [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
-                [`yourDetailsStreet1`] : userRegDetails.street1,
-                [`yourDetailsSuburb`] : userRegDetails.suburb,
+                [`yourDetailsStreet1`]: userRegDetails.street1,
+                [`yourDetailsSuburb`]: userRegDetails.suburb,
                 [`yourDetailsStateRefId`]: userRegDetails.stateRefId,
                 [`yourDetailsPostalCode`]: userRegDetails.postCode,
                 [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
             });
 
-            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) < 18) {
-                if(parentOrGuardians == null){
+            if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18) {
+                if (parentOrGuardians == null) {
                     this.addParent("add");
                 }
             }
 
             (parentOrGuardians || []).map((parent, parentIndex) => {
                 this.props.form.setFieldsValue({
-                    [`parentFirstName${parentIndex}`] : parent.firstName,
-                    [`parentMiddleName${parentIndex}`] : parent.middleName,
-                    [`parentLastName${parentIndex}`] : parent.lastName,
-                    [`parentMobileNumber${parentIndex}`] : parent.mobileNumber,
-                    [`parentEmail${parentIndex}`] : parent.email,
-                    [`parentStreet1${parentIndex}`] : parent.street1,
+                    [`parentFirstName${parentIndex}`]: parent.firstName,
+                    [`parentMiddleName${parentIndex}`]: parent.middleName,
+                    [`parentLastName${parentIndex}`]: parent.lastName,
+                    [`parentMobileNumber${parentIndex}`]: parent.mobileNumber,
+                    [`parentEmail${parentIndex}`]: parent.email,
+                    [`parentStreet1${parentIndex}`]: parent.street1,
                     [`parentSuburb${parentIndex}`]: parent.suburb,
-                    [`parentStateRefId${parentIndex}`] : parent.stateRefId,
-                    [`parentPostalCode${parentIndex}`] : parent.postalCode,
-                    [`parentCountryRefId${parentIndex}`] : parent.countryRefId
+                    [`parentStateRefId${parentIndex}`]: parent.stateRefId,
+                    [`parentPostalCode${parentIndex}`]: parent.postalCode,
+                    [`parentCountryRefId${parentIndex}`]: parent.countryRefId
                 })
             })
-            
+
         } catch (ex) {
             console.log("Error in setYourDetailsValue::" + ex);
         }
@@ -327,7 +331,7 @@ class TeamInivteForm extends Component {
                         this.getSchoolList(stateRefId)
                     }
                 }
-                else if(key == "parent"){
+                else if (key == "parent") {
                     this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                     this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                     this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
@@ -351,7 +355,7 @@ class TeamInivteForm extends Component {
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             this.props.updateInviteMemberInfoAction(value, key, subKey, null);
             if (key == "dateOfBirth") {
-                if (getAge(value) < 18) {
+                if (getAge(value) <= 18) {
                     if (!isArrayNotEmpty(userRegDetails.parentOrGaurdianDetails)) {
                         this.addParent("add");
                     }
@@ -370,6 +374,45 @@ class TeamInivteForm extends Component {
             }
             if (key == "stateRefId") {
                 this.getSchoolList(value)
+            }
+            else if (key == "mobileNumber") {
+                if (value.length === 10) {
+                    this.setState({
+                        hasErrorYourDetails: false
+                    })
+                    this.props.updateInviteMemberInfoAction(regexNumberExpression(value), key, subKey, null);
+                } else if (value.length < 10) {
+                    this.props.updateInviteMemberInfoAction(regexNumberExpression(value), key, subKey, null);
+                    this.setState({
+                        hasErrorYourDetails: true
+                    })
+                }
+                setTimeout(() => {
+                    this.props.form.setFieldsValue({
+                        [`yourDetailsMobileNumber`]: userRegDetails.mobileNumber,
+                    });
+                }, 300);
+            }
+            else if (key == 'emergencyContactNumber') {
+                if (value.length === 10) {
+                    this.setState({
+                        hasErrorEmergency: false
+                    })
+                    this.props.updateInviteMemberInfoAction(regexNumberExpression(value), key, subKey, null);
+                } else if (value.length < 10) {
+                    this.props.updateInviteMemberInfoAction(regexNumberExpression(value), key, subKey, null);
+                    this.setState({
+                        hasErrorEmergency: true
+                    })
+                }
+
+                if (!regexNumberExpression(value)) {
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`emergencyContactNumber`]: null,
+                        });
+                    }, 300);
+                }
             }
         } catch (ex) {
             console.log("Error in onChangeSetMemberInfoValue::" + ex);
@@ -394,7 +437,46 @@ class TeamInivteForm extends Component {
                 } else {
                     this.clearParentAddress(parentOrGuardians, parentIndex);
                 }
-            } else {
+            }
+            else if (key == "mobileNumber") {
+                if (value.length === 10) {
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    if (obj != undefined) {
+                        hasError.splice(hasError.indexOf(obj), 1);
+                    }
+                    this.setState({
+                        hasErrorParent: hasError
+                    })
+
+                    iniviteMemberInfo.parentOrGuardian[parentIndex]["mobileNumber"] = regexNumberExpression(value);
+                    this.props.updateInviteMemberInfoAction(iniviteMemberInfo, "iniviteMemberInfo", null, null)
+                } else if (value.length < 10) {
+                    iniviteMemberInfo.parentOrGuardian[parentIndex]["mobileNumber"] = regexNumberExpression(value);
+                    this.props.updateInviteMemberInfoAction(iniviteMemberInfo, "iniviteMemberInfo", null, null)
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    console.log('obj ', obj)
+                    if (obj == undefined) {
+                        hasError.push({
+                            error: true,
+                            parentIndex: parentIndex
+                        })
+                    };
+                    this.setState({
+                        hasErrorParent: hasError
+                    })
+                }
+
+                if (!regexNumberExpression(value)) {
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`parentMobileNumber${parentIndex}`]: null,
+                        });
+                    }, 300);
+                }
+            }
+            else {
                 this.props.updateInviteMemberInfoAction(value, key, "parentOrGaurdianDetails", parentIndex);
             }
         } catch (ex) {
@@ -468,22 +550,22 @@ class TeamInivteForm extends Component {
         try {
             let error = false;
             const { iniviteMemberInfo } = this.props.teamInviteState;
-            console.log("Memberinfo",iniviteMemberInfo)
+            console.log("Memberinfo", iniviteMemberInfo)
             if (this.state.searchAddressFlag &&
-        
+
                 iniviteMemberInfo.userRegDetails.stateRefId == null) {
                 error = true;
-                console.log("StateRefId",iniviteMemberInfo.userRegDetails.stateRefId)
+                console.log("StateRefId", iniviteMemberInfo.userRegDetails.stateRefId)
             }
             if (isArrayNotEmpty(iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails)) {
                 let parent = iniviteMemberInfo.userRegDetails.parentOrGaurdianDetails.find(x => x.searchAddressFlag == true &&
                     x.stateRefId == null);
                 if (parent != undefined) {
-                    console.log("Parent",parent)
+                    console.log("Parent", parent)
                     error = true;
                 }
             }
-            console.log("error",error)
+            console.log("error", error)
             return error;
         } catch (ex) {
             console.log("Error in addressSearchValidation" + ex);
@@ -503,6 +585,19 @@ class TeamInivteForm extends Component {
                         if (addressSearchError) {
                             message.error(ValidationConstants.addressDetailsIsRequired);
                             return;
+                        }
+                        if (values.participantMobileNumber != null && values.participantMobileNumber.length != 10) {
+                            return false;
+                        }
+                        if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                            return false;
+                        }
+                        if (inviteMemberInfoTemp.parentOrGuardian != null && inviteMemberInfoTemp.parentOrGuardian.length > 0) {
+                            for (let a in inviteMemberInfoTemp.parentOrGuardian) {
+                                if (inviteMemberInfoTemp.parentOrGuardian[a].mobileNumber != null && inviteMemberInfoTemp.parentOrGuardian[a].mobileNumber.length != 10) {
+                                    return false
+                                }
+                            }
                         }
                     }
                     if (this.state.currentStep != 1) {
@@ -813,17 +908,18 @@ class TeamInivteForm extends Component {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
             let resgistererDetails = userRegDetails?.resgistererDetails;
+            let hasErrorYourDetails = this.state.hasErrorYourDetails;
             return (
                 <div className="registration-form-view">
-                    <div className="form-heading" 
-                    style={{paddingBottom: "0px"}}>{AppConstants.yourDetails}</div>
-                    <InputWithHead heading={AppConstants.personRegisteringRole}/>
-                    <div 
-                    className="inter-medium-font" 
-                    style={{fontSize: "13px"}}>
-                        {userRegDetails.membershipProductTypeName ? 
-                        userRegDetails.membershipProductTypeName : 
-                        AppConstants.noInformationProvided}
+                    <div className="form-heading"
+                        style={{ paddingBottom: "0px" }}>{AppConstants.yourDetails}</div>
+                    <InputWithHead heading={AppConstants.personRegisteringRole} />
+                    <div
+                        className="inter-medium-font"
+                        style={{ fontSize: "13px" }}>
+                        {userRegDetails.membershipProductTypeName ?
+                            userRegDetails.membershipProductTypeName :
+                            AppConstants.noInformationProvided}
                     </div>
                     <InputWithHead heading={AppConstants.gender} required={"required-field"} />
                     <Form.Item >
@@ -913,7 +1009,11 @@ class TeamInivteForm extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.phone} required={"required-field"} />
-                            <Form.Item >
+                            <Form.Item
+                                rules={[{ required: true, message: ValidationConstants.contactField }]}
+                                help={hasErrorYourDetails && ValidationConstants.mobileLength}
+                                validateStatus={hasErrorYourDetails ? "error" : 'validating'}
+                            >
                                 {getFieldDecorator(`yourDetailsMobileNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.contactField }],
                                 })(
@@ -921,6 +1021,7 @@ class TeamInivteForm extends Component {
                                         placeholder={AppConstants.phone}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "mobileNumber", "userRegDetails")}
                                         setFieldsValue={userRegDetails.mobileNumber}
+                                        maxLength={10}
                                     />
                                 )}
                             </Form.Item>
@@ -946,9 +1047,16 @@ class TeamInivteForm extends Component {
                                             />
                                         )}
                                     </Form.Item>
+                                    {userRegDetails.isInActive && (userRegDetails.email == null)?
+                                        <div style={{color:"var(--app-red)"}}>
+                                            {AppConstants.userLoginEmailChangeMessage}
+                                        </div>
+                                        :
+                                        null 
+                                    }
                                 </div>
                             )}
-                            {getAge(userRegDetails.dateOfBirth) < 18 && (
+                            {getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18 && (
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={userRegDetails.referParentEmail}
@@ -1108,11 +1216,17 @@ class TeamInivteForm extends Component {
         const { iniviteMemberInfo } = this.props.teamInviteState;
         let userRegDetails = iniviteMemberInfo?.userRegDetails;
         let parentOrGuardians = userRegDetails?.parentOrGaurdianDetails;
+        let hasErrorParent = this.state.hasErrorParent;
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
 
                 {(parentOrGuardians || []).map((parent, parentIndex) => {
+                    let hasErrorParentviaIndex = hasErrorParent.find(element => element.parentIndex == parentIndex);
+                    let hasError = false;
+                    if (hasErrorParentviaIndex != undefined) {
+                        hasError = hasErrorParentviaIndex.error;
+                    }
                     return (
                         <div key={"parent" + parentIndex} className="light-grey-border-box">
                             {(parentOrGuardians.length != 1) && (
@@ -1181,7 +1295,11 @@ class TeamInivteForm extends Component {
                                     </Form.Item>
                                 </div>
                                 <div className="col-sm-6">
-                                    <Form.Item>
+                                    <Form.Item
+                                        rules={[{ required: true, message: ValidationConstants.contactField }]}
+                                        help={hasError && ValidationConstants.mobileLength}
+                                        validateStatus={hasError ? "error" : 'validating'}
+                                    >
                                         {getFieldDecorator(`parentMobileNumber${parentIndex}`, {
                                             rules: [{ required: true, message: ValidationConstants.contactField }],
                                         })(
@@ -1191,6 +1309,7 @@ class TeamInivteForm extends Component {
                                                 placeholder={AppConstants.mobile}
                                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber", parentIndex)}
                                                 setFieldsValue={parent.mobileNumber}
+                                                maxLength={10}
                                             />
                                         )}
                                     </Form.Item>
@@ -1239,6 +1358,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
+            let hasErrorEmergency = this.state.hasErrorEmergency;
             return (
                 <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.emergencyContact}</div>
@@ -1280,7 +1400,10 @@ class TeamInivteForm extends Component {
                             </Form.Item>
                         </div>
                         <div className="col-sm-12 col-md-6">
-                            <Form.Item>
+                            <Form.Item
+                                help={hasErrorEmergency && ValidationConstants.mobileLength}
+                                validateStatus={hasErrorEmergency ? "error" : 'validating'}
+                            >
                                 {getFieldDecorator(`emergencyContactNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
                                 })(
@@ -1293,6 +1416,7 @@ class TeamInivteForm extends Component {
                                         onBlur={(i) => this.props.form.setFieldsValue({
                                             [`emergencyContactNumber`]: captializedString(i.target.value)
                                         })}
+                                        maxLength={10}
                                     />
                                 )}
                             </Form.Item>
@@ -1314,7 +1438,7 @@ class TeamInivteForm extends Component {
                 <div>
                     <div>{this.competitionDetailView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {getAge(dateFormat) < 18 ? (
+                    {getAge(dateFormat) <= 18 ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
@@ -1342,7 +1466,7 @@ class TeamInivteForm extends Component {
                         <div className="orange-action-txt" style={{ marginLeft: "auto" }}
                             onClick={() => this.onChangeStep(0)}>{AppConstants.edit}</div>
                     </div>
-                    <div className="inter-medium-font" style={{fontSize: "13px"}}>
+                    <div className="inter-medium-font" style={{ fontSize: "13px" }}>
                         {userRegDetails.membershipProductTypeName}
                     </div>
                 </div>
@@ -1514,7 +1638,7 @@ class TeamInivteForm extends Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"}/>
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "identifyRefId", "userRegDetails")}
@@ -1605,7 +1729,7 @@ class TeamInivteForm extends Component {
                                         style={{ marginBottom: '15px' }} />
                                 )}
                             </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "disabilityTypeRefId", "userRegDetails")}
@@ -1638,7 +1762,7 @@ class TeamInivteForm extends Component {
                         </div>
                         {userRegDetails.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -1743,7 +1867,7 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
 
-                    {(getAge(userRegDetails.dateOfBirth) < 18) && (
+                    {(getAge(userRegDetails.dateOfBirth) <= 18) && (
                         <div>
                             {inviteMemberRegSettings.school_standard == 1 && (
                                 <div>
@@ -1789,7 +1913,7 @@ class TeamInivteForm extends Component {
 
                     {(userRegDetails.products.find(x => x.membershipProductTypeName == "Coach")) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{ flexDirection: "column" }}

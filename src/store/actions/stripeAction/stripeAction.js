@@ -1,12 +1,13 @@
 import ApiConstants from "../../../themes/apiConstants";
 
 /////get invoice 
-function getInvoice(registrationid, userRegId, invoiceId) {
+function getInvoice(registrationid, userRegId, invoiceId, teamMemberRegId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_LOAD,
         registrationid,
         userRegId,
-        invoiceId
+        invoiceId,
+        teamMemberRegId
     }
     return action
 }
@@ -31,12 +32,13 @@ function saveInvoiceAction(payload) {
 }
 
 ///////get invoice status
-function getInvoiceStatusAction(registrationid, userRegId, invoiceId) {
+function getInvoiceStatusAction(registrationid, userRegId, invoiceId,teamMemberRegId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_STATUS_LOAD,
         registrationid,
         userRegId,
-        invoiceId
+        invoiceId,
+        teamMemberRegId
     }
     return action
 }
