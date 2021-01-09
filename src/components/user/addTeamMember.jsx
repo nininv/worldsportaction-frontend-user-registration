@@ -54,8 +54,10 @@ class AddTeamMember extends Component {
             team: this.props.location.state ? this.props.location.state.registrationTeam : null,
             teamMemberRegId: this.props.location.state ? this.props.location.state.teamMemberRegId: null,
             getMembershipProductsInfoOnLoad: false,
-            teamMembersSaveOnLoad: false
+            teamMembersSaveOnLoad: false,
+            getTeamMembersOnLoad: false
         }
+        this.props.teamMemberSaveUpdateAction(this.state.teamMemberRegId, "teamMemberRegId")
         this.formRef = React.createRef();
         this.props.genderReferenceAction();
         this.props.getUserModulePersonalDetailsAction({
@@ -67,6 +69,7 @@ class AddTeamMember extends Component {
     componentDidMount() {
         if(this.state.teamMemberRegId){
             this.props.getTeamMembersAction(this.state.teamMemberRegId);
+            this.setState({getTeamMembersOnLoad: true})
         }
         this.getMembershipProductsInfo()
     }
@@ -81,9 +84,15 @@ class AddTeamMember extends Component {
                         if(userState.teamMembersSaveErrorMsg){
 
                         }else{
-                            history.push('/teamMemberRegPayment',{registrtionId: this.state.team.registrationUniqueKey,teamMemberRefId: userState.teamMemberRefId})
+                            if(userState.teamMemberRegId){
+                                history.push('/teamMemberRegPayment',{team: this.state.team,teamMemberRegId: userState.teamMemberRegId})
+                            }
                         }
                     } 
+                }
+                if(userState.onLoad == false && this.state.getTeamMembersOnLoad == true){
+                    this.setState({getTeamMembersOnLoad: false});
+                    this.setTeamMembersFormFieldsValue();
                 }
             }
         }catch(ex){
@@ -91,8 +100,51 @@ class AddTeamMember extends Component {
         }
     }
 
+    setTeamMembersParentsFormFieldsValue = (index,parentIndex,parent) => {
+        try{
+            this.props.form.setFieldsValue({
+                [`teamMemberParentFirstName${index}${parentIndex}`] : parent.firstName,
+                [`teamMemberParentMiddleName${index}${parentIndex}`] : parent.middleName,
+                [`teamMemberParentLastName${index}${parentIndex}`] : parent.lastName,
+                [`teamMemberParentMobileNumber${index}${parentIndex}`] : parent.mobileNumber,
+                [`teamMemberParentEmail${index}${parentIndex}`] : parent.email,
+            })
+        }catch(ex){
+            console.log("Error in setTeamMembersParentsFormFieldsValue::"+ex);
+        }
+    }
+
+    setTeamMembersFormFieldsValue = () => {
+        try{
+            const {teamMembersSave} = this.props.userState;
+            let teamMembers = teamMembersSave.teamMembers ? teamMembersSave.teamMembers : [];
+            for(let i in teamMembers){
+                this.props.form.setFieldsValue({
+                    [`teamMemberGenderRefId${i}`]: teamMembers[i].genderRefId,
+                    [`teamMemberFirstName${i}`]: teamMembers[i].firstName,
+                    [`teamMemberMiddleName${i}`]: teamMembers[i].midddleName,
+                    [`teamMemberLastName${i}`]: teamMembers[i].lastName,
+                    [`teamMemberDateOfBirth${i}`]: teamMembers[i].dateOfBirth ? moment(teamMembers[i].dateOfBirth,"MM-DD-YYYY") : null,
+                    [`teamMemberMobileNumber${i}`]: teamMembers[i].mobileNumber,
+                    [`teamMemberEmail${i}`]: teamMembers[i].email,
+                    [`teamMemberEmergencyFirstName${i}`]: teamMembers[i].emergencyFirstName,
+                    [`teamMemberEmergencyLastName${i}`]: teamMembers[i].emergencyLastName,
+                    [`teamMemberEmergencyContactNumber${i}`]: teamMembers[i].emergencyContactNumber,  
+                });
+                if(isArrayNotEmpty(teamMembers[i].parentOrGuardian)){
+                    for(let j in teamMembers[i].parentOrGuardian){
+                        this.setTeamMembersParentsFormFieldsValue(i,j,teamMembers[i].parentOrGuardian[j])
+                    }
+                }
+            }
+        }catch(ex){
+            console.log("Error in setTeamMembersFormFieldsValue::"+ex);
+        }
+    }
+
     getMembershipProductsInfo = () => {
         try{
+            console.log("tem",this.state.team)
             let payload = {
                 organisationUniqueKey: this.state.team.organisationUniqueKey,
                 competitionUniqueKey: this.state.team.competitionUniqueKey
@@ -146,6 +198,9 @@ class AddTeamMember extends Component {
             else{
                 this.clearTeamMemberParentDetails(teamMembersSave.teamMembers[index], subIndex);
             }
+            setTimeout(() => {
+                this.setTeamMembersParentsFormFieldsValue(index,subIndex,teamMembersSave.teamMembers[index].parentOrGuardian[subIndex])
+            },500)
         }
     }
 
@@ -469,7 +524,7 @@ class AddTeamMember extends Component {
                                             required={"pt-0 pb-0"}
                                             heading={AppConstants.middleName}
                                             placeholder={AppConstants.middleName}
-                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "middleName", parentIndex, teamMemberIndex)}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "middleName",teamMemberIndex, parentIndex)}
                                             setFieldsValue={parent.middleName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
                                                 [`teamMemberParentMiddleName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
@@ -487,7 +542,7 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.lastName}
                                             placeholder={AppConstants.lastName}
-                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "lastName", parentIndex, teamMemberIndex)}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(captializedString(e.target.value), "lastName",teamMemberIndex, parentIndex)}
                                             setFieldsValue={parent.lastName}
                                             onBlur={(i) => this.props.form.setFieldsValue({
                                                 [`teamMemberParentLastName${teamMemberIndex}${parentIndex}`]: captializedString(i.target.value)
@@ -505,7 +560,7 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.mobile}
                                             placeholder={AppConstants.mobile}
-                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "mobileNumber", parentIndex, teamMemberIndex)}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "mobileNumber",teamMemberIndex, parentIndex)}
                                             setFieldsValue={parent.mobileNumber}
                                             maxLength={10}
                                         />
@@ -526,7 +581,7 @@ class AddTeamMember extends Component {
                                             required={"required-field pt-0 pb-0"}
                                             heading={AppConstants.email}
                                             placeholder={AppConstants.email}
-                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "email", parentIndex, teamMemberIndex)}
+                                            onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "email",teamMemberIndex, parentIndex)}
                                             setFieldsValue={parent.email}
                                         />
                                     )}
@@ -885,7 +940,10 @@ class AddTeamMember extends Component {
                     >
                         <Content>
                             <div className="formView">{this.contentView(getFieldDecorator)}</div>
-                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad} />
+                            <Loader visible={this.props.commonReducerState.onLoad || 
+                                this.state.teamMembersSaveOnLoad || 
+                                this.state.getTeamMembersOnLoad ||
+                                this.props.userState.onMembershipLoad} />
                         </Content>
 
                         <Footer >{this.footerView()}</Footer>

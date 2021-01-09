@@ -9,7 +9,8 @@ import {
     Input,
     Radio,
     Form,
-    message
+    message,
+    Modal
 } from "antd";
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
@@ -222,7 +223,7 @@ const CheckoutForm = (props) => {
                 }, 100);
             }
             else if (props.payload.total.targetValue == 0) {
-                // props.onLoad(true)
+                props.onLoad(true)
                 registrationCapValidate(null, props, selectedPaymentOption.selectedOption, null, null, payload, teamMemberRegId,registrationId, 1);
             }
         }
@@ -345,15 +346,18 @@ class TeamMemberRegPayment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // teamMemberRegId: this.props.location.state ? this.props.location.state.teamMemberRegId : null,
-            // registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-            registrationId: "d011b947-9d84-4566-b693-d40b239c19f7",
-            teamMemberRegId: "326fd356-6c3e-4a24-80f6-a4ef0a307968",
+            teamMemberRegId: this.props.location.state ? this.props.location.state.teamMemberRegId : null,
+            //teamMemberRegId: "d011b947-9d84-4566-b693-d40b239c19f7",
+            team: this.props.location.state ? this.props.location.state.team : null,
+            // teamMemberRegId: "326fd356-6c3e-4a24-80f6-a4ef0a307968",
+            registrationCapModalVisible: false,
+            registrationCapValidationMessage: null,
+            onLoad: false,
         }
     }
 
     componentDidMount(){
-        // this.getApiInfo();
+        this.getApiInfo();
     }
 
     componentDidUpdate(){
@@ -362,7 +366,7 @@ class TeamMemberRegPayment extends Component {
 
     getApiInfo = () => {
         let payload = {
-            registrationId: this.state.registrationId,
+            registrationId: this.state.team.registrationUniqueKey,
             teamMemberRegId: this.state.teamMemberRegId
         }
         this.props.getTeamMembersReviewAction(payload);
@@ -370,7 +374,7 @@ class TeamMemberRegPayment extends Component {
 
     back = () => {
         try {
-            history.push("/addTeamMember",{teamMemberRegId: this.state.teamMemberRegId})
+            history.push("/addTeamMember",{teamMemberRegId: this.state.teamMemberRegId,registrationTeam: this.state.team})
         } catch (ex) {
             console.log("Error in back::" + ex);
         }
@@ -397,7 +401,7 @@ class TeamMemberRegPayment extends Component {
                 <div className="product-left-view outline-style mt-0">
                     <div className="d-flex center-align">
                         <div className="product-text-common" style={{ fontSize: 22 }}>{AppConstants.securePaymentOptions}</div>
-                        <div className="orange-action-txt margin-left-auto" style={{ fontSize: 16 }} onclick={() => this.back()}>{AppConstants.edit}</div>
+                        <div className="orange-action-txt margin-left-auto" style={{ fontSize: 16 }} onClick={() => this.back()}>{AppConstants.edit}</div>
                     </div>
                     <div>
                         <Elements stripe={stripePromise} >
@@ -405,7 +409,7 @@ class TeamMemberRegPayment extends Component {
                                 onLoad={(status) => this.setState({ onLoad: status })} 
                                 paymentOptions={securePaymentOptions}
                                 payload={teamMemberRegReviewList}
-                                registrationId = {this.state.registrationId} 
+                                registrationId = {this.state.team.registrationUniqueKey} 
                                 teamMemberRegId={this.state.teamMemberRegId}
                                 isSchoolRegistration={isSchoolRegistration} 
                                 isHardshipEnabled={isHardshipEnabled}
@@ -426,16 +430,12 @@ class TeamMemberRegPayment extends Component {
             isArrayNotEmpty(teamMemberRegReviewList.compParticipants) ?
                 teamMemberRegReviewList.compParticipants : [] : [];
         let total = teamMemberRegReviewList != null ? teamMemberRegReviewList.total : null;
-        let shopProducts = teamMemberRegReviewList != null ?
-            isArrayNotEmpty(teamMemberRegReviewList.shopProducts) ?
-                teamMemberRegReviewList.shopProducts : [] : [];
         return (
             <div className="outline-style " style={{ padding: "36px 36px 22px 20px" }}>
                 <div className="product-text-common" style={{ fontSize: 21 }}>
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId, item.isTeamRegistration)
                     return (
                         <div style={{ paddingBottom: 12 }} key={item.participantId}>
                             {item.isTeamRegistration == 1 ?
@@ -454,11 +454,11 @@ class TeamMemberRegPayment extends Component {
                                             <div className="subtitle-text-common" style={{ display: "flex" }}>
                                                 <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{mem.membershipTypeName + (mem.divisionId != null ? ' - ' + mem.divisionName : '')}</div>
                                                 <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${mem.feesToPay}</div>
-                                                {(mem.email !== item.email) && (
+                                                {/* {(mem.email !== item.email) && (
                                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId)}>
                                                         <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
                                         :
@@ -470,78 +470,20 @@ class TeamMemberRegPayment extends Component {
                                             </div>
                                         </div>
                                     }
-
-                                    {mem.discountsToDeduct != "0.00" &&
-                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
-                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.discount}</div>
-                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.discountsToDeduct}</div>
-                                        </div>
-                                    }
-                                    {mem.childDiscountsToDeduct != "0.00" &&
-                                        <div className="product-text-common mr-4" style={{ display: "flex", fontWeight: 500 }}>
-                                            <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.familyDiscount}</div>
-                                            <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${mem.childDiscountsToDeduct}</div>
-                                        </div>
-                                    }
-                                    {/* <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
-                                    <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
-                                    <div className="alignself-center pt-2" style={{marginRight:10}}>-$20</div>
-                                </div>  */}
                                 </div>
                             ))}
-                            <div className="payment-option-txt">
-                                {paymentOptionTxt}
-                                <span className="link-text-common pointer"
-                                    onClick={() => this.goToRegistrationProducts()}
-                                    style={{ margin: "0px 15px 0px 20px" }}>
-                                    {AppConstants.edit}
-                                </span>
-                            </div>
-                            {item.governmentVoucherAmount != "0.00" &&
-                                <div className="product-text-common mr-4 pb-4" style={{ display: "flex", fontWeight: 500, }}>
-                                    <div className="alignself-center pt-2" style={{ marginRight: "auto" }}> {AppConstants.governmentSportsVoucher}</div>
-                                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>- ${item.governmentVoucherAmount}</div>
-                                </div>
-                            }
                         </div>
                     )
                 }
                 )}
-                {(shopProducts).map((shop, index) => (
-                    <div className="product-text-common" style={{ display: "flex", fontWeight: 500, borderBottom: "1px solid var(--app-e1e1f5)", borderTop: "1px solid var(--app-e1e1f5)" }}>
-                        <div className="alignself-center pt-2" style={{ marginRight: "auto", display: "flex", marginTop: "12px", padding: "8px" }}>
-                            <div>
-                                <img style={{ width: '50px' }} src={shop.productImgUrl ? shop.productImgUrl : AppImages.userIcon} />
-                            </div>
-                            <div style={{ marginLeft: "6px", fontFamily: "inter-medium" }}>
-                                <div>
-                                    {shop.productName}
-                                </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>
-                            </div>
-                        </div>
-                        <div className="alignself-center pt-5" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
-                        <div style={{ paddingTop: 26 }} onClick={() => this.removeFromCart(index, 'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><img src={AppImages.removeIcon} /></span>
-                        </div>
-                    </div>
-                ))}
                 <div style={{ borderBottom: "1px solid var(--app-e1e1f5)", marginTop: "-5px" }}>
                     <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.subTotal}</div>
                         <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.subTotal}</div>
                     </div>
                     <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
-                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.shipping}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.shipping}</div>
-                    </div>
-                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.gst}</div>
                         <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.gst}</div>
-                    </div>
-                    <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
-                        <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.charityRoundUp}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.charityValue}</div>
                     </div>
                 </div>
 
@@ -586,6 +528,26 @@ class TeamMemberRegPayment extends Component {
         )
     }
 
+    registrationCapValidationModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.registrationCapModalVisible}
+                    onCancel={() => this.setState({ registrationCapModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ registrationCapModalVisible: false })}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]}
+                >
+                    <p> {this.state.registrationCapValidationMessage}</p>
+                </Modal>
+            </div>
+        )
+    }
+
     contentView = () => {
         return (
             <div
@@ -594,7 +556,7 @@ class TeamMemberRegPayment extends Component {
             >
                 {this.paymentLeftView()}
                 {this.paymentRightView()}
-                {/* {this.registrationCapValidationModal()} */}
+                {this.registrationCapValidationModal()}
             </div>
         );
     }
@@ -614,8 +576,7 @@ class TeamMemberRegPayment extends Component {
                                 {this.contentView()}
                                 {/* {this.deleteProductModalView()} */}
                             </div>
-                            {/* <Loader visible={this.props.registrationProductState.onRegReviewLoad ||
-                                this.state.onLoad} /> */}
+                            <Loader visible={this.props.userState.getTeamMembersReviewOnLoad ||  this.state.onLoad} />
                         </Content>
                     </Form>
                 </Layout>
@@ -788,7 +749,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         }
     }
     console.log("body" + JSON.stringify(body));
-    props.onLoad(true)
+    // props.onLoad(true)
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL + url}`, {
             method: 'POST',
@@ -805,6 +766,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     console.log("Response", Response)
                     if (response.status === 200) {
                         if (paymentType == "card") {
+                            props.onLoad(false)
                             message.success(Response.message);
                             history.push("/invoice", {
                                 registrationId: registrationId,
@@ -816,6 +778,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                         }
                         else if (paymentType == "direct_debit") {
                             if (Response.clientSecret == null) {
+                                props.onLoad(false)
                                 history.push("/invoice", {
                                     registrationId: registrationId,
                                     teamMemberRegId: teamMemberRegId,
@@ -843,6 +806,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                             }
                         }
                         else {
+                            props.onLoad(false)
                             history.push("/invoice", {
                                 registrationId: registrationId,
                                 teamMemberRegId: teamMemberRegId,
