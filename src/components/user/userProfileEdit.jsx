@@ -229,6 +229,7 @@ class UserProfileEdit extends Component {
             userData['accreditationLevelUmpireRefId'] = personalData.accreditationLevelUmpireRefId
             userData['accreditationUmpireExpiryDate'] = personalData.accreditationUmpireExpiryDate
         }
+        userData['childrenCheckExpiryDate'] = null
         this.props.form.setFieldsValue({
             genderRefId: userData.genderRefId != null ? parseInt(userData.genderRefId) : 0
         })
@@ -828,7 +829,6 @@ class UserProfileEdit extends Component {
     otherInfoEdit = (getFieldDecorator) => {
         let userData = this.state.userData
         const { countryList, nationalityList, genderList, umpireAccreditation, coachAccreditation } = this.props.commonReducerState;
-
         return (
             <div className="content-view pt-0">
                 <div className="row">
