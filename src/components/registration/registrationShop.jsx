@@ -421,7 +421,7 @@ class RegistrationShop extends Component {
         let expandObj = this.state.expandObj;
         console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
-        const isNullVariants = !expandObj.variants[0].variantId;
+        const isNullVariants =isArrayNotEmpty(expandObj.variants)&&!expandObj.variants[0].variantId;
         return(
             <div class = "expand-product-text"  style={{marginTop: "23px"}}>
                 <div style={{textAlign:"right"}}>
