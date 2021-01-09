@@ -27,6 +27,7 @@ const teamMembersSaveTemp = {
     "teamMemberRegId": null,
     "existingUserId": null,
     "registeringYourself": 4,
+    "competitionMembershipProductDivisionId": null,
     "teamId": null,
     "registeringPersonUserId": null,
     "name": null,
@@ -241,7 +242,8 @@ const initialState = {
     onMembershipLoad: false,
     teamMemberRegReviewList: teamMemberRegReviewTemp,
     teamMembersSaveErrorMsg: null,
-    teamMemberRegId : null
+    teamMemberRegId : null,
+    teamMembersSaveOnLoad: false
 };
 
 //get User Role
@@ -624,7 +626,7 @@ function userReducer(state = initialState, action) {
             }
         
         case ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD:
-            return{...state,teamMembersSaveOnLoad: false}
+            return{...state,teamMembersSaveOnLoad: true}
     
         case ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS: 
             return {
