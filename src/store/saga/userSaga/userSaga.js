@@ -414,12 +414,29 @@ export function* teamMembersSaveSaga(action) {
     }
   }
 
-export function* getTeamMembersSaga() {
+export function* getTeamMembersSaga(action) {
     try {
-        const result = yield call(registrationAxiosApi.getTeamMembers);
+        const result = yield call(registrationAxiosApi.getTeamMembers,action.teamMemberRegId);
         if (result.status === 1) {
         yield put({
             type: ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS,
+            result: result.result.data,
+            status: result.status,
+        });
+        } else {
+        yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
+export function* getTeamMembersReviewSaga(action) {
+    try {
+        const result = yield call(registrationAxiosApi.getTeamMembersReview,action.payload);
+        if (result.status === 1) {
+        yield put({
+            type: ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_SUCCESS,
             result: result.result.data,
             status: result.status,
         });

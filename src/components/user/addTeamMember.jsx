@@ -51,7 +51,8 @@ class AddTeamMember extends Component {
         super(props);
         this.state = {
             team: this.props.location.state ? this.props.location.state.registrationTeam : null,
-            getMembershipProductsInfoOnLoad: false
+            getMembershipProductsInfoOnLoad: false,
+            teamMembersSaveOnLoad: false
         }
         this.formRef = React.createRef();
         this.props.genderReferenceAction();
@@ -70,6 +71,14 @@ class AddTeamMember extends Component {
         try{
             let userState = this.props.userState;
             if(userState != nextProps){
+                if(userState.teamMembersSaveOnLoad == false && this.state.teamMembersSaveOnLoad == true){
+                    this.setState({teamMembersSaveOnLoad: false})
+                    if(userState.teamMembersSaveErrorMsg){
+
+                    }else{
+                        history.push('/teamMemberRegPayment',{registrtionId: this.state.team.registrationUniqueKey,teamMemberRefId: userState.teamMemberRefId})
+                    }
+                }
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);
@@ -119,6 +128,7 @@ class AddTeamMember extends Component {
         const {teamMembersSave,personalData} = this.props.userState;
         if (key === "isRegistererAsParent"){
             if(data){
+                teamMembersSave.teamMembers[index].parentOrGuardian[subIndex][key] = data;
                 teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["firstName"] = personalData.firstName;
                 teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["lastName"] = personalData.lastName;
                 teamMembersSave.teamMembers[index].parentOrGuardian[subIndex]["middleName"] = personalData.middleName;
@@ -378,6 +388,7 @@ class AddTeamMember extends Component {
                         return;
                     }
                     this.props.teamMembersSaveAction(teamMembersSaveTemp);
+                    this.setState({teamMembersSaveOnLoad: true});
                 }
             });
         }catch(ex){
