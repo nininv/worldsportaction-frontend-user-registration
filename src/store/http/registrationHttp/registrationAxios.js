@@ -272,8 +272,13 @@ let AxiosApi = {
         return Method.dataPost(url,token,payload)
     },
 
-    getTeamMembers(){
-        var url = `api/registration/teamparticipant`;
+    getTeamMembers(teamMemberRegId){
+        var url = `api/registration/teamparticipant?teamMemberRegId=${teamMemberRegId}`;
+        return Method.dataGet(url, token);
+    },
+
+    getTeamMembersReview(payload){
+        var url = `api/registration/teamparticipant/review?registrationId=${payload.registrationId}&teamMemberRegId=${payload.teamMemberRegId}`;
         return Method.dataGet(url, token);
     }
 };

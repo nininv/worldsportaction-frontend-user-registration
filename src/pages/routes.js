@@ -43,6 +43,7 @@ import AddTeamMember from "../components/user/addTeamMember";
 
 // changePassword 
 import ManagePassword from './Accounts/password';
+import TeamMemberRegPayment from "../components/user/teamMemberRegPayment";
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -206,6 +207,8 @@ class Routes extends React.Component {
           path="/addTeamMember"
           component={lazyLoad(AddTeamMember)}
           />
+        
+        <PrivateRoute path="/teamMemberRegPayment" component={lazyLoad(TeamMemberRegPayment)}/>
 
         <Route path="/" component={lazyLoad(NotFound)} />
         <Redirect from="*" to="/404" />
