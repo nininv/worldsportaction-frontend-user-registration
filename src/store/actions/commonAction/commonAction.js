@@ -170,6 +170,13 @@ function netSetGoTshirtSizeAction(){
     return action;
 }
 
+function combinedAccreditationUmpieCoachRefrence() {
+    const action = {
+        type: ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -193,5 +200,6 @@ export {
     walkingNetballQuesReferenceAction,
     getSchoolListAction,
     validateRegistrationCapAction,
-    netSetGoTshirtSizeAction		
+    netSetGoTshirtSizeAction,
+    combinedAccreditationUmpieCoachRefrence
 }

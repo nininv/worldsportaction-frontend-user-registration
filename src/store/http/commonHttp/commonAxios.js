@@ -156,7 +156,7 @@ let AxiosApi = {
         let url = `/common/reference/${referenceName}`;
         return Method.dataGet(url, token)
     },
-    getSchools(stateRefId){
+    getSchools(stateRefId) {
         let url = `/common/schools?stateRefId=${stateRefId}`;
         return Method.dataGet(url, token)
     },
@@ -165,6 +165,14 @@ let AxiosApi = {
     getVenuesList(payload) {
         let url = `/api/venue/list?userId=${userId}`;
         return Method.dataPost(url, token, payload);
+    },
+    getCombinedUmpireCoachAccreditationReference() {
+        let body = {
+            accreditationUmpire: "accreditationUmpire",
+            accreditationCoach: "accreditationCoach",
+        }
+        let url = `/common/references`;
+        return Method.dataPost(url, token, body)
     },
 
 };
