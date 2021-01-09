@@ -396,7 +396,14 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoPhysicalActivity`]: additionalInfo.walkingNetball.physicalActivity,
                     [`additionalInfoPregnant`]: additionalInfo.walkingNetball.pregnant,
                     [`additionalInfoLowerBackProblem`]: additionalInfo.walkingNetball.lowerBackProblem,
-                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo
+                    [`additionalInfoProvideFurtherDetails`]: additionalInfo.walkingNetballInfo,
+                    [`accreditationLevelCoachRefId`]:additionalInfo.accreditationLevelCoachRefId,
+                    [`isPrerequestTrainingComplete`]:additionalInfo.isPrerequestTrainingComplete,
+                    [`accreditationLevelUmpireRefId`]:additionalInfo.accreditationLevelUmpireRefId,
+                    [`heardByRefId`]: additionalInfo.heardByRefId,
+                    [`isDisability`]: additionalInfo.isDisability,
+                    [`identifyRefId`]: additionalInfo.identifyRefId,
+
                 });
             }
         } catch (ex) {
@@ -3314,6 +3321,10 @@ class AppRegistrationFormNew extends Component {
                         )}
                     </Form.Item>
                     <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
+                    <Form.Item>
+                        {getFieldDecorator(`identifyRefId`, {
+                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[0] }],
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
@@ -3322,6 +3333,8 @@ class AppRegistrationFormNew extends Component {
                             <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
                         ))}
                     </Radio.Group>
+                     )}
+                     </Form.Item>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAnyExistingMedialCondition`, {
@@ -3375,10 +3388,10 @@ class AppRegistrationFormNew extends Component {
                         )}
                     </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"} />
-                    {/* <Form.Item>
+                    <Form.Item>
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
-                        })(  */}
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
@@ -3386,8 +3399,8 @@ class AppRegistrationFormNew extends Component {
                         <Radio value={1}>{AppConstants.yes}</Radio>
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
-                    {/* )}
-                    </Form.Item>    */}
+                    )}
+                    </Form.Item>    
                     {registrationObj.additionalInfo.isDisability == 1 ?
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber} />
@@ -3492,10 +3505,10 @@ class AppRegistrationFormNew extends Component {
                         </div>
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"} />
-                    {/* <Form.Item>
+                    <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })(  */}
+                        })( 
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
@@ -3504,8 +3517,8 @@ class AppRegistrationFormNew extends Component {
                             <Radio style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
                         ))}
                     </Radio.Group>
-                    {/* )}
-                    </Form.Item>    */}
+                     )}
+                    </Form.Item>   
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
@@ -3613,6 +3626,10 @@ class AppRegistrationFormNew extends Component {
                         {registrationObj.umpireFlag == 1 && (
                             <div>
                                 <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required={"required-field"} />
+                                <Form.Item>
+                                 {getFieldDecorator(`accreditationLevelUmpireRefId`, {
+                                  rules: [{ required: true, message: ValidationConstants.accreditationLevelUmpire }],
+                                  })(
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "accreditationLevelUmpireRefId")}
@@ -3622,6 +3639,8 @@ class AppRegistrationFormNew extends Component {
                                         <Radio key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
+                                )}
+                                </Form.Item>
                                 {(registrationObj.additionalInfo.accreditationLevelUmpireRefId != null) && (
                                     <div>
                                         {registrationObj.additionalInfo.accreditationLevelUmpireRefId == 1 ?
@@ -3672,6 +3691,10 @@ class AppRegistrationFormNew extends Component {
                                     </div>
                                 )}
                                 <InputWithHead heading={AppConstants.haveCompletedPrerequisites} required={"required-field"} />
+                                <Form.Item>
+                                 {getFieldDecorator(`isPrerequestTrainingComplete`, {
+                                  rules: [{ required: true, message: ValidationConstants.prerequisitesTrainingUmpire}],
+                                  })(
                                 <Radio.Group
                                     className="registration-radio-group"
                                     onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isPrerequestTrainingComplete")}
@@ -3680,12 +3703,18 @@ class AppRegistrationFormNew extends Component {
                                     <Radio value={1}>{AppConstants.yes}</Radio>
                                     <Radio value={0}>{AppConstants.no}</Radio>
                                 </Radio.Group>
+                                 )}
+                                 </Form.Item>
                             </div>
                         )}
 
                         {registrationObj.coachFlag == 1 && (
                             <div>
                                 <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
+                                <Form.Item>
+                                {getFieldDecorator(`accreditationLevelCoachRefId`, {
+                                rules: [{ required: true, message: ValidationConstants.accreditationLevelCoach }],
+                                })(
                                 <Radio.Group
                                     style={{ flexDirection: "column" }}
                                     className="registration-radio-group"
@@ -3696,6 +3725,8 @@ class AppRegistrationFormNew extends Component {
                                         <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
                                     ))}
                                 </Radio.Group>
+                                 )}
+                                 </Form.Item>
                                 {(registrationObj.additionalInfo.accreditationLevelCoachRefId != 1 && registrationObj.additionalInfo.accreditationLevelCoachRefId != null) && (
                                     <DatePicker
                                         size="large"

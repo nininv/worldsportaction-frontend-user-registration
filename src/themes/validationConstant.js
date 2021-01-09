@@ -124,7 +124,10 @@ const ValidationConstants = {
     mobileLength: 'Contact number must be 10 digits',
     invalidNumber : 'Invalid Number',
 
-    fillTshirtSizeInformation: "Please choose a T'Shirt Size"
+    fillTshirtSizeInformation: "Please choose a T'Shirt Size",
+    accreditationLevelUmpire: "National accreditation level umpire is required.",
+    prerequisitesTrainingUmpire:"Prerequisites training umpire is required.",
+    accreditationLevelCoach: "National accreditation level coach is required.",
 };
 
 export default ValidationConstants;

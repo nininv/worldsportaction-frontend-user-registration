@@ -424,22 +424,22 @@ const CheckoutForm = (props) => {
                                             }
                                         </div>
                                     </div>}
-                                {/* {pay.securePaymentOptionRefId == 3 && 
+                                {/* {pay.securePaymentOptionRefId == 3 &&
                         <div>
                             <div className="row">
                                 <div className='col-sm'>
-                                    <Radio key={"3"} 
+                                    <Radio key={"3"}
                                     className="payment-type-radio-style"
                                     onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
                                 </div>
                             </div>
                             <div className="row pl-4">
                                 <div className='col-sm'>
-                                    {selectedPaymentOption.cash == true && 
+                                    {selectedPaymentOption.cash == true &&
                                         <div className="pt-0">
-                                            <Radio key={"4"} 
+                                            <Radio key={"4"}
                                             className="payment-type-radio-style"
-                                            onChange={(e) => changePaymentOption(e, "cash_direct_debit")} 
+                                            onChange={(e) => changePaymentOption(e, "cash_direct_debit")}
                                                     checked={selectedPaymentOption.cashDirect}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.cashDirect == true &&
                                                 <div>
@@ -476,19 +476,19 @@ const CheckoutForm = (props) => {
                                                     <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
                                                 </div>
                                             }
-                                        </div>   
+                                        </div>
                                     }
                                 </div>
                             </div>
                             <div className="row pl-4">
                                 <div className='col-sm'>
-                                    {selectedPaymentOption.cash == true && 
+                                    {selectedPaymentOption.cash == true &&
                                         <div className="pt-0">
-                                            <Radio key={"5"} 
+                                            <Radio key={"5"}
                                             className="payment-type-radio-style"
                                             onChange={(e) => changePaymentOption(e, "cash_card")}
                                                     checked={selectedPaymentOption.cashCredit}>{AppConstants.creditCard}</Radio>
-                                                {selectedPaymentOption.cashCredit == true && 
+                                                {selectedPaymentOption.cashCredit == true &&
                                                 <div className="pt-4">
                                                     <CardElement
                                                         id="card-element"
@@ -498,9 +498,9 @@ const CheckoutForm = (props) => {
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
                                                     <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
-                                                </div>   
+                                                </div>
                                                 }
-                                        </div>   
+                                        </div>
                                     }
                                 </div>
                             </div>
@@ -708,7 +708,7 @@ class TeamInvitePayment extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
