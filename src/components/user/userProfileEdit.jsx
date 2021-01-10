@@ -13,7 +13,6 @@ import {
 } from "antd";
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
-import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
 import { userProfileUpdateAction } from '../../store/actions/userAction/userAction'
@@ -48,11 +47,32 @@ class UserProfileEdit extends Component {
             saveLoad: false,
             tabKey: "4",
             userData: {
-                genderRefId: 0, firstName: "", lastName: "", mobileNumber: "", email: "", middleName: "",
-                dateOfBirth: "", street1: "", street2: "", suburb: "", stateRefId: 1, postalCode: "", statusRefId: 0,
-                emergencyFirstName: "", emergencyLastName: "", emergencyContactNumber: "", existingMedicalCondition: "", regularMedication: "",
-                disabilityCareNumber: '', isDisability: 0,
-                disabilityTypeRefId: 0, countryRefId: null, nationalityRefId: null, languages: "",
+                genderRefId: 0,
+                firstName: "",
+                lastName: "",
+                mobileNumber: "",
+                email: "",
+                middleName: "",
+                dateOfBirth: null,
+                street1: "",
+                street2: "",
+                suburb: "",
+                stateRefId: 1,
+                postalCode: "",
+                statusRefId: 0,
+                emergencyFirstName: "",
+                emergencyLastName: "",
+                emergencyContactNumber: "",
+                existingMedicalCondition: "",
+                regularMedication: "",
+                disabilityCareNumber: '',
+                isDisability: 0,
+                disabilityTypeRefId: 0,
+                countryRefId: null,
+                nationalityRefId: null,
+                languages: "",
+                childrenCheckNumber: "",
+                childrenCheckExpiryDate: "",
                 parentUserId: 0,
                 childUserId: 0,
                 accreditationLevelUmpireRefId: null,
@@ -126,7 +146,6 @@ class UserProfileEdit extends Component {
             if (moduleFrom == 7 || moduleFrom == 8) {
                 userDataTemp.userId = data.userId;
             }
-            console.log("DATA:::" + JSON.stringify(data));
             await this.setState({
                 displaySection: moduleFrom,
                 userData: (moduleFrom != "7" && moduleFrom != "8") ? data : userDataTemp,
@@ -221,15 +240,16 @@ class UserProfileEdit extends Component {
     }
 
     setOtherInfoFormField = () => {
+
         let userData = this.state.userData;
         let personalData = this.props.location.state ? this.props.location.state.personalData ? this.props.location.state.personalData : null : null
+        console.log(personalData)
         if (personalData) {
             userData['accreditationCoachExpiryDate'] = personalData.accreditationCoachExpiryDate
             userData['accreditationLevelCoachRefId'] = personalData.accreditationLevelCoachRefId
             userData['accreditationLevelUmpireRefId'] = personalData.accreditationLevelUmpireRefId
             userData['accreditationUmpireExpiryDate'] = personalData.accreditationUmpireExpiryDate
         }
-        userData['childrenCheckExpiryDate'] = null
         this.props.form.setFieldsValue({
             genderRefId: userData.genderRefId != null ? parseInt(userData.genderRefId) : 0
         })
@@ -533,7 +553,7 @@ class UserProfileEdit extends Component {
                                 heading={AppConstants.addressOne}
                                 placeholder={AppConstants.addressOne}
                                 name={'street1'}
-                                value={userData ?.street1}
+                                value={userData?.street1}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "street1")}
                             // readOnly
                             />
@@ -546,7 +566,7 @@ class UserProfileEdit extends Component {
                                 heading={AppConstants.addressTwo}
                                 placeholder={AppConstants.addressTwo}
                                 name={'street2'}
-                                value={userData ?.street2}
+                                value={userData?.street2}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "street2")}
                             />
                         </div>
@@ -563,7 +583,7 @@ class UserProfileEdit extends Component {
                                 placeholder={AppConstants.suburb}
                                 // required="required-field"
                                 name={'suburb'}
-                                value={userData ?.suburb}
+                                value={userData?.suburb}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "suburb")}
                             // readOnly
                             />
@@ -576,7 +596,7 @@ class UserProfileEdit extends Component {
                                 style={{ width: '100%', paddingRight: 1, minWidth: 182 }}
                                 placeholder={AppConstants.select}
                                 // required="required-field"
-                                value={userData ?.stateRefId}
+                                value={userData?.stateRefId}
                                 name="stateRefId"
                                 onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
                             // readOnly
@@ -597,7 +617,7 @@ class UserProfileEdit extends Component {
                                 heading={AppConstants.postCode}
                                 placeholder={AppConstants.postCode}
                                 name={'postalCode'}
-                                value={userData ?.postalCode}
+                                value={userData?.postalCode}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "postalCode")}
                                 maxLength={4}
                             // readOnly
@@ -894,7 +914,7 @@ class UserProfileEdit extends Component {
                                     size="large"
                                     placeholder={AppConstants.expiryDate}
                                     style={{ width: "100%", marginTop: "20px" }}
-                                    onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationCoachExpiryDate")}
+                                    onChange={(e, f) => this.onChangeSetValue(e, "accreditationCoachExpiryDate")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
@@ -924,7 +944,8 @@ class UserProfileEdit extends Component {
                                 </Select>
                             </div>
                         </div>
-                        <div className="row" >
+
+                        {/* <div className="row" >
                             <div className="col-sm" >
                                 <div style={{ paddingTop: "11px", paddingBottom: "10px" }}>
                                     <InputWithHead heading={AppConstants.nationalityReference} />
@@ -949,6 +970,33 @@ class UserProfileEdit extends Component {
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "languages")}
                                     value={userData.languages}
                                     name={'languages'}
+                                />
+                            </div>
+                        </div>*/}
+
+                        <div className="row">
+                            <div className="col-sm">
+                                <InputWithHead
+                                    heading={AppConstants.childrenNumber}
+                                    placeholder={AppConstants.childrenNumber}
+                                    onChange={(e) => this.onChangeSetValue(e.target.value, "childrenCheckNumber")}
+                                    value={userData.childrenCheckNumber}
+                                    name={'childrenCheckNumber'}
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-sm">
+                                <InputWithHead heading={AppConstants.checkExpiryDate} />
+                                <DatePicker
+                                    size="large"
+                                    style={{ width: '100%', marginTop: 9, }}
+                                    onChange={e => this.onChangeSetValue(e, "childrenCheckExpiryDate")}
+                                    format="DD-MM-YYYY"
+                                    showTime={false}
+                                    value={userData.childrenCheckExpiryDate !== null && moment(userData.childrenCheckExpiryDate)}
+                                    placeholder="dd-mm-yyyy"
+                                    name={'childrenCheckExpiryDate'}
                                 />
                             </div>
                         </div>
@@ -1110,11 +1158,9 @@ class UserProfileEdit extends Component {
     /////main render method
     render() {
         const { getFieldDecorator } = this.props.form;
-
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} onMenuHeadingClick={() => history.push("./userTextualDashboard")} />
-                {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"5"} /> */}
                 <Layout>
                     {this.headerView()}
                     <Form
