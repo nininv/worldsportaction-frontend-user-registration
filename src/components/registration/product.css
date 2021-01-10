@@ -1249,3 +1249,9 @@ input:focus, .StripeElement--focus {
 .margin-left-auto{
   margin-left: auto;
 }
+
+.out-of-stock.ant-btn, .out-of-stock.ant-btn:hover {
+  background-color: var(--app-grey-button-color);
+  background-image: var(--app-grey-button-color);
+    color: var(--app-ff6c4f);
+}
