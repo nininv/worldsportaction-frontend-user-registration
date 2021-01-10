@@ -5,7 +5,9 @@ import { message } from "antd";
 import ValidationConstants from "../../../themes/validationConstant";
 import { getUserId, getAuthToken, getOrganisationData } from "../../../util/sessionStorage"
 
+
 let token = getAuthToken();
+let userId = getUserId()
 
 async function logout() {
   await localStorage.clear();
@@ -14,13 +16,14 @@ async function logout() {
 
 let userHttpApi = {
 
+
   Login(payload) {
-    const base64 = require("base-64");
-    const md5 = require("md5");
+    var base64 = require("base-64");
+    var md5 = require("md5");
     let authorization = base64.encode(
       payload.userName + ":" + md5(payload.password)
     );
-    const url = "/users/loginWithEmailPassword";
+    var url = "/users/loginWithEmailPassword";
     return Method.dataGet(url, authorization);
   },
 
@@ -31,37 +34,37 @@ let userHttpApi = {
   },
   //role Api
   role() {
-    const url = "/ref/roles";
+    var url = "/ref/roles";
     return Method.dataGet(url, token);
   },
   // User Role Entity Api
   ure() {
-    const url = "/ure";
+    var url = "/ure";
     return Method.dataGet(url, token);
   },
 
-  //// get particular user organisation
+  //// get particular user organisation 
   async getUserOrganisation() {
     let userId =  await getUserId()
     if(userId!= 0){
-      const url = `api/userorganisation?userId=${userId}`;
+      var url = `api/userorganisation?userId=${userId}`;
       return Method.dataGet(url, token)
     }
   },
   getUserModulePersonalData(payload) {
-    const url = `api/user/personaldetails?userId=${payload.userId}&organisationId=${payload.organisationId != null ? payload.organisationId : ''}`;
+    var url = `api/user/personaldetails?userId=${payload.userId}&organisationId=${payload.organisationId!= null ? payload.organisationId: '' }`;
     return Method.dataGet(url, token);
   },
   getUserModulePersonalByCompData(payload) {
-    const url = `api/user/personaldetails/competition`;
+    var url = `api/user/personaldetails/competition`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleMedicalInfo(payload) {
-    const url = `api/user/medical`;
+    var url = `api/user/medical`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleRegistrationData(payload) {
-    const url = `api/user/registration`;
+    var url = `api/user/registration`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleTeamMembersData(payload) {
@@ -69,25 +72,25 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityPlayer(payload) {
-    const url = `api/user/activity/player`;
+    var url = `api/user/activity/player`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityParent(payload) {
-    const url = `api/user/activity/parent`;
+    var url = `api/user/activity/parent`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityScorer(payload) {
-    const url = `api/user/activity/scorer`;
+    var url = `api/user/activity/scorer`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityManager(payload) {
-    const url = `api/user/activity/manager`;
+    var url = `api/user/activity/manager`;
     return Method.dataPost(url, token, payload);
   },
 
 
   updateUserProfile(payload) {
-    const url = `api/userprofile/update?section=${payload.section}`;
+    var url = `api/userprofile/update?section=${payload.section}`;
     return Method.dataPost(url, token, payload);
   },
   getUserHistory(payload) {
@@ -98,7 +101,7 @@ let userHttpApi = {
     const url = `ure/byUserId?userId=${userId}`;
     return Method.dataGet(url, token);
   },
-
+  
   getScorerActivityData(payload, roleId, matchStatus) {
     const url = `api/user/activity/roster?roleId=${roleId}&matchStatus=${matchStatus}`;
     return Method.dataPost(url, token, payload);
@@ -126,13 +129,7 @@ let userHttpApi = {
     }
     console.log(payload)
     const url = `users/updatePassword`;
-    return Method.dataPatch(url, token, payload);
-  },
-
-  // CM-2062 switchParentChild
-  switchParentChild(payload) {
-    const url = `api/users/switchParentChild`;
-    return Method.dataPost(url, token, payload);
+    return Method.dataPatch(url, token, payload);        
   },
 }
 
@@ -353,7 +350,7 @@ let Method = {
     const url = newUrl;
     return await new Promise((resolve, reject) => {
       userHttp
-        .patch(url, body, {
+        .patch(url, body, {    
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
