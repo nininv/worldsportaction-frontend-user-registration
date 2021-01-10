@@ -273,7 +273,7 @@ let AxiosApi = {
     },
 
     getTeamMembers(teamMemberRegId){
-        var url = `api/registration/teamparticipant?teamMemberRegId=${teamMemberRegId}`;
+        var url = `api/registration/teamparticipantdata?teamMemberRegId=${teamMemberRegId}`;
         return Method.dataGet(url, token);
     },
 
