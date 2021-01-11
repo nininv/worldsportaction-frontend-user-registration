@@ -70,7 +70,7 @@ import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, setAuthToken, setUserId } from "../../util/sessionStorage";
+import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
 import CSVReader from 'react-csv-reader'
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import { get } from "jquery";
@@ -78,7 +78,6 @@ import { captializedString } from "../../util/helpers";
 import { nearByOrganisations } from "../../util/geocode";
 import ApiConstants from "../../themes/apiConstants";
 import { regexNumberExpression } from '../../util/helpers';
-import userAxiosApi from "../../store/http/userHttp/userAxiosApi";
 // import zipcodes from  'zipcodes';
 
 const { Header, Footer, Content } = Layout;
@@ -120,13 +119,9 @@ class AppRegistrationFormNew extends Component {
             hasChecked: false,
 
             // modals
-            switchChildParentModalVisible: false, // CM-2062
             sameEmailValidationModalVisible: false,
             banIndividualTeamMixModalVisible: false,
             sameSomeoneEmailValidationModalVisible: false,
-
-            // local loading states
-            switchChildParentLoading: false
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -736,19 +731,7 @@ class AppRegistrationFormNew extends Component {
     onChangeSetParentValue = (value, key, parentIndex) => {
         try {
             const { registrationObj, userInfo } = this.props.userRegistrationState;
-            // console.log(key, value, registrationObj.email, registrationObj.registeringYourself);
-
-            // CM-2062 Handle switching child / parent
-            if (key === "email") {
-                if (this.props.auth.loggedIn) {
-                    if ([1, 2].includes(registrationObj.registeringYourself)) {
-                        if (value === registrationObj.email) {
-                            this.setState({switchChildParentModalVisible: true})
-                            return false
-                        }
-                    }
-            }
-            } else if (key === "isSameAddress") {
+            if (key == "isSameAddress") {
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
                 if (value) {
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
@@ -761,7 +744,7 @@ class AppRegistrationFormNew extends Component {
                 } else {
                     this.clearParentAddress(registrationObj, parentIndex);
                 }
-            } else if (key === "addOrRemoveAddressBySelect") {
+            } else if (key == "addOrRemoveAddressBySelect") {
                 if (value) {
                     let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
                     let parentAddress = this.getSelectAddressDropdown(user).find(x => x.userId == value);
@@ -776,7 +759,7 @@ class AppRegistrationFormNew extends Component {
                     this.clearParentAddress(registrationObj, parentIndex);
                 }
             }
-            else if (key === "mobileNumber") {
+            else if (key == "mobileNumber") {
                 if (value.length === 10) {
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
@@ -3417,7 +3400,7 @@ class AppRegistrationFormNew extends Component {
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     )}
-                    </Form.Item>
+                    </Form.Item>    
                     {registrationObj.additionalInfo.isDisability == 1 ?
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber} />
@@ -3525,7 +3508,7 @@ class AppRegistrationFormNew extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })(
+                        })( 
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
@@ -3535,7 +3518,7 @@ class AppRegistrationFormNew extends Component {
                         ))}
                     </Radio.Group>
                      )}
-                    </Form.Item>
+                    </Form.Item>   
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
@@ -3868,7 +3851,6 @@ class AppRegistrationFormNew extends Component {
                     </div>
                 )}
                 {this.banIndividualTeamMixModal()}
-                {this.switchChildParentModal()}
             </div>
         )
     }
@@ -3954,7 +3936,6 @@ class AppRegistrationFormNew extends Component {
                         <Button onClick={() => this.setState({ sameEmailValidationModalVisible: false })}>
                             {AppConstants.cancel}
                         </Button>,
-                        // CM-2062 => Below will proceed the form incorrectly, fixed by removing navigation
                         <Button
                             // htmlType="submit"
                             // type="primary"
@@ -3962,7 +3943,7 @@ class AppRegistrationFormNew extends Component {
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
                                 this.setState({ sameEmailValidationModalVisible: false, hasChecked: false })
-                                // this.stepNavigation(registrationObj, expiredRegistration);
+                                this.stepNavigation(registrationObj, expiredRegistration);
                                 setTimeout(() => {
                                     this.setState({ submitButtonText: AppConstants.addCompetitionAndMembership });
                                 }, 100);
@@ -4003,61 +3984,6 @@ class AppRegistrationFormNew extends Component {
                     ]}
                 >
                     <p> {AppConstants.banIndividualTeamMixRegistrationMessage}</p>
-                </Modal>
-            </div>
-        )
-    }
-
-    // CM-2062
-    async cancelSwitchChildParent() {
-        this.setState({ switchChildParentModalVisible: false })
-
-        // clear email input if modal is cancelled, preventing the rego. Other emails are going to be intact
-        const registrationObj = {
-            ...this.props.registrationObj,
-            parentOrGuardian: this.props.registrationObj.parentOrGuardian.map(
-                p => ({...p, email: p.email === this.props.registrationObj.email ? '' : p.email}
-            ))
-        }
-        this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
-    }
-    async confirmSwitchChildParent() {
-        const response = await userAxiosApi.switchParentChild()
-        const {authToken, user} = response.data
-        const {id} = user
-
-        // magically replace logged-in token and uid to new user
-        setAuthToken(authToken);
-        setUserId(id);
-
-        // `registering yourself` needs to be changed to 2, e.g. always registering for child, if this is confirmed
-        this.props.updateUserRegistrationObjectAction({
-            ...this.props.registrationObj,
-            registeringYourself: 2
-        }, "registrationObj");
-
-        this.setState({ switchChildParentModalVisible: false })
-    }
-
-    // CM-2062 Switch confirm modal
-    switchChildParentModal = () => {
-        return (
-            <div>
-                <Modal
-                    className="add-membership-type-modal"
-                    title={AppConstants.warning}
-                    visible={this.state.switchChildParentModalVisible}
-                    onCancel={this.cancelSwitchChildParent}
-                    footer={[
-                        <Button onClick={this.cancelSwitchChildParent}>
-                            {AppConstants.cancel}
-                        </Button>,
-                        <Button className="other-info-btn color-white" onClick={this.confirmSwitchChildParent}>
-                            {AppConstants.continue}
-                        </Button>
-                    ]}
-                >
-                    <p> {AppConstants.switchChildParentMessage}</p>
                 </Modal>
             </div>
         )
@@ -4116,8 +4042,7 @@ class AppRegistrationFormNew extends Component {
                             this.props.userRegistrationState.onMembershipLoad ||
                             this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
-                            this.props.userRegistrationState.onSaveLoad ||
-                            this.state.switchChildParentLoading // CM-2062
+                            this.props.userRegistrationState.onSaveLoad
                         } />
                     </Form>
                 </Layout>
@@ -4160,13 +4085,12 @@ function mapDispatchToProps(dispatch) {
 
 }
 
-function mapStateToProps(state) {
+function mapStatetoProps(state) {
     return {
         registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
-        commonReducerState: state.CommonReducerState,
-        auth: state.LoginState
+        commonReducerState: state.CommonReducerState
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
+export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
