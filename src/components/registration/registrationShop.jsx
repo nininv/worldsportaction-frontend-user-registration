@@ -183,7 +183,8 @@ class RegistrationShop extends Component {
             totalAmt: 0,
             organisationId: expandObj.organisationId,
             skuId: variantOption ? (variantOption.skuId) : 0,
-            variantName: varnt.name
+            variantName: varnt.name,
+            inventoryTracking: expandObj.inventoryTracking
         }
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateReviewInfoAction(obj,key, null, subKey,null);
@@ -265,7 +266,7 @@ class RegistrationShop extends Component {
         }
         return `$${price}`
     }
-    
+
     getMaxVariantsQuantity = (choiceVariant, variantData, productId) => {
         const { registrationReviewList } = this.props.registrationProductState;
         const isNullVariants = !variantData.variantId;
