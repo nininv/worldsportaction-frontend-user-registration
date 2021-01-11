@@ -1,189 +1,189 @@
 import ApiConstants from "../../../themes/apiConstants";
-import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString,feeIsNull,formatValue } from "../../../util/helpers";
+import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString, feeIsNull, formatValue } from "../../../util/helpers";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { setPhotoUrl } from "../../../util/sessionStorage";
 
 const teamMemberObj = {
-    "genderRefId": null,
-    "email": null,
-    "lastName": null,
-    "firstName": null,
-    "middleName": null,
-    "dateOfBirth": null,
-    "mobileNumber":null,
-    "payingFor": 0,
-    "emergencyFirstName": null,
-    "emergencyLastName": null,
-    "emergencyContactNumber": null,
-    "isRegistererAsParent": 0,
-    "parentOrGuardian": [],
-    "membershipProductTypes": []
-  }
+    genderRefId: null,
+    email: null,
+    lastName: null,
+    firstName: null,
+    middleName: null,
+    dateOfBirth: null,
+    mobileNumber: null,
+    payingFor: 0,
+    emergencyFirstName: null,
+    emergencyLastName: null,
+    emergencyContactNumber: null,
+    isRegistererAsParent: 0,
+    parentOrGuardian: [],
+    membershipProductTypes: []
+}
 
 const teamMembersSaveTemp = {
-    "competitionId": null,
-    "organisationId": null,
-    "registrationId": null,
-    "teamMemberRegId": null,
-    "existingUserId": null,
-    "registeringYourself": 4,
-    "competitionMembershipProductDivisionId": null,
-    "teamId": null,
-    "registeringPersonUserId": null,
-    "name": null,
-    "countryRefId": null,
-    "mobileNumber": null,
-    "teamName": null,
-    "divisions": [],
-    "teamMembers": [],
-    "registrationRestrictionTypeRefId": null
+    competitionId: null,
+    organisationId: null,
+    registrationId: null,
+    teamMemberRegId: null,
+    existingUserId: null,
+    registeringYourself: 4,
+    competitionMembershipProductDivisionId: null,
+    teamId: null,
+    registeringPersonUserId: null,
+    name: null,
+    countryRefId: null,
+    mobileNumber: null,
+    teamName: null,
+    divisions: [],
+    teamMembers: [],
+    registrationRestrictionTypeRefId: null
 }
 
 const teamMemberRegReviewTemp = {
-    "total": {
-      "gst": "20.90",
-      "total": "229.90",
-      "shipping": "0.00",
-      "subTotal": "209.00",
-      "targetValue": "229.90",
-      "charityValue": "0.00",
-      "transactionFee": "0.00"
+    total: {
+        gst: "20.90",
+        total: "229.90",
+        shipping: "0.00",
+        subTotal: "209.00",
+        targetValue: "229.90",
+        charityValue: "0.00",
+        transactionFee: "0.00"
     },
-    "yourInfo": {
-      "email": "manager12345@gmail.com",
-      "suburb": "Melbourne",
-      "userId": 13367,
-      "street1": "123 Queen St",
-      "street2": null,
-      "lastName": "12",
-      "firstName": "Manager123",
-      "postalCode": "3000",
-      "stateRefId": 7,
-      "countryRefId": 1,
-      "mobileNumber": "2323289348"
+    yourInfo: {
+        email: "manager12345@gmail.com",
+        suburb: "Melbourne",
+        userId: 13367,
+        street1: "123 Queen St",
+        street2: null,
+        lastName: "12",
+        firstName: "Manager123",
+        postalCode: "3000",
+        stateRefId: 7,
+        countryRefId: 1,
+        mobileNumber: "2323289348"
     },
-    "compParticipants": [
-      {
-        "email": "manager12345@gmail.com",
-        "gender": "Female",
-        "payNow": "229.90",
-        "userId": 0,
-        "lastName": "12",
-        "teamName": "team 98765",
-        "firstName": "Manager123",
-        "dateOfBirth": "1990-01-17T00:00:00.000Z",
-        "noOfPlayers": null,
-        "payPerMatch": "0.00",
-        "teamMembers": {
-          "payingForList": [],
-          "notPayingForList": []
-        },
-        "mobileNumber": "2323289348",
-        "participantId": "2440df41-76b3-4209-9b13-e9d86fb3d2ea",
-        "paymentOptions": [
-          {
-            "feesTypeRefId": 2,
-            "paymentOptionRefId": 3
-          },
-          {
-            "feesTypeRefId": 1,
-            "paymentOptionRefId": 1
-          }
-        ],
-        "competitionName": "Single game fee test 1",
-        "selectedOptions": {
-          "vouchers": [],
-          "discountCodes": [],
-          "gameVoucherValue": null,
-          "selectedDiscounts": [],
-          "paymentOptionRefId": 1,
-          "isHardshipCodeApplied": 0,
-          "selectedSchoolRegCode": null,
-          "isSchoolRegCodeApplied": 0,
-          "nominationPayOptionRefId": 1,
-          "selectedGovernmentVouchers": []
-        },
-        "organisationName": "Netball NSW",
-        "orgRegistrationId": 6205,
-        "competitionEndDate": "2021-03-27T00:00:00.000Z",
-        "competitionLogoUrl": "https://www.googleapis.com/download/storage/v1/b/world-sport-action-dev-c1019.appspot.com/o/competitions%2Flogo_comp_f5f531f9-720d-4bf3-8074-dfe14730d9db_1607903705789.png?generation=1607903708831697&alt=media",
-        "isTeamRegistration": 1,
-        "membershipProducts": [
-          {
-            "fees": {
-              "affiliateFee": null,
-              "membershipFee": {
-                "name": "Netball NSW",
-                "emailId": "netball@nsw.gov.au",
-                "phoneNo": "039009000",
-                "casualFee": 0,
-                "casualGST": 0,
-                "feesToPay": 89,
-                "seasonalFee": 89,
-                "seasonalGST": 8.9,
-                "feesToPayGST": 8.9,
-                "organisationId": "b540171a-27b3-4c69-991f-b4bf0be28159",
-                "discountsToDeduct": 0,
-                "membershipMappingId": 1138,
-                "childDiscountsToDeduct": 0,
-                "governmentVoucherAmount": 0
-              },
-              "competitionOrganisorFee": {
-                "name": "Netball NSW",
-                "emailId": "netball@nsw.gov.au",
-                "phoneNo": "039009000",
-                "casualFee": 10,
-                "casualGST": 1,
-                "feesToPay": 0,
-                "seasonalFee": 120,
-                "seasonalGST": 12,
-                "feesToPayGST": 0,
-                "nominationFee": 0,
-                "nominationGST": 0,
-                "organisationId": "b540171a-27b3-4c69-991f-b4bf0be28159",
-                "discountsToDeduct": 0,
-                "nominationFeeToPay": 10,
-                "nominationGSTToPay": 1,
-                "membershipMappingId": 1138,
-                "childDiscountsToDeduct": 0,
-                "governmentVoucherAmount": 0
-              }
+    compParticipants: [
+        {
+            email: "manager12345@gmail.com",
+            gender: "Female",
+            payNow: "229.90",
+            userId: 0,
+            lastName: "12",
+            teamName: "team 98765",
+            firstName: "Manager123",
+            dateOfBirth: "1990-01-17T00:00:00.000Z",
+            noOfPlayers: null,
+            payPerMatch: "0.00",
+            teamMembers: {
+                payingForList: [],
+                notPayingForList: []
             },
-            "email": "virat015@gmail.com.invalid",
-            "isPlayer": 1,
-            "lastName": "A",
-            "feesToPay": "229.90",
-            "firstName": "Virat017",
-            "divisionId": 3948,
-            "divisionName": "D1",
-            "mobileNumber": "1212211221",
-            "discountsToDeduct": "0.00",
-            "membershipTypeName": "Player",
-            "membershipMappingId": 1138,
-            "orgRegParticipantId": 9927,
-            "membershipProductName": "Single game fee",
-            "childDiscountsToDeduct": "0.00",
-            "governmentVoucherAmount": null,
-            "competitionMembershipProductTypeId": 5502
-          }
-        ],
-        "competitionUniqueKey": "18e47b5f-4ab3-4c77-9ff8-e32436388497",
-        "isTeamSeasonalUponReg": 0,
-        "organisationUniqueKey": "9971815e-d9cb-4d44-bba2-f5be2e12c120",
-        "governmentVoucherAmount": "0.00",
-        "registeringYourselfRefId": 1,
-        "competitionMembershipProductTypeIdCoach": null
-      }
+            mobileNumber: "2323289348",
+            participantId: "2440df41-76b3-4209-9b13-e9d86fb3d2ea",
+            paymentOptions: [
+                {
+                    feesTypeRefId: 2,
+                    paymentOptionRefId: 3
+                },
+                {
+                    feesTypeRefId: 1,
+                    paymentOptionRefId: 1
+                }
+            ],
+            competitionName: "Single game fee test 1",
+            selectedOptions: {
+                vouchers: [],
+                discountCodes: [],
+                gameVoucherValue: null,
+                selectedDiscounts: [],
+                paymentOptionRefId: 1,
+                isHardshipCodeApplied: 0,
+                selectedSchoolRegCode: null,
+                isSchoolRegCodeApplied: 0,
+                nominationPayOptionRefId: 1,
+                selectedGovernmentVouchers: []
+            },
+            organisationName: "Netball NSW",
+            orgRegistrationId: 6205,
+            competitionEndDate: "2021-03-27T00:00:00.000Z",
+            competitionLogoUrl: "https://www.googleapis.com/download/storage/v1/b/world-sport-action-dev-c1019.appspot.com/o/competitions%2Flogo_comp_f5f531f9-720d-4bf3-8074-dfe14730d9db_1607903705789.png?generation=1607903708831697&alt=media",
+            isTeamRegistration: 1,
+            membershipProducts: [
+                {
+                    fees: {
+                        affiliateFee: null,
+                        membershipFee: {
+                            name: "Netball NSW",
+                            emailId: "netball@nsw.gov.au",
+                            phoneNo: "039009000",
+                            casualFee: 0,
+                            casualGST: 0,
+                            feesToPay: 89,
+                            seasonalFee: 89,
+                            seasonalGST: 8.9,
+                            feesToPayGST: 8.9,
+                            organisationId: "b540171a-27b3-4c69-991f-b4bf0be28159",
+                            discountsToDeduct: 0,
+                            membershipMappingId: 1138,
+                            childDiscountsToDeduct: 0,
+                            governmentVoucherAmount: 0
+                        },
+                        competitionOrganisorFee: {
+                            name: "Netball NSW",
+                            emailId: "netball@nsw.gov.au",
+                            phoneNo: "039009000",
+                            casualFee: 10,
+                            casualGST: 1,
+                            feesToPay: 0,
+                            seasonalFee: 120,
+                            seasonalGST: 12,
+                            feesToPayGST: 0,
+                            nominationFee: 0,
+                            nominationGST: 0,
+                            organisationId: "b540171a-27b3-4c69-991f-b4bf0be28159",
+                            discountsToDeduct: 0,
+                            nominationFeeToPay: 10,
+                            nominationGSTToPay: 1,
+                            membershipMappingId: 1138,
+                            childDiscountsToDeduct: 0,
+                            governmentVoucherAmount: 0
+                        }
+                    },
+                    email: "virat015@gmail.com.invalid",
+                    isPlayer: 1,
+                    lastName: "A",
+                    feesToPay: "229.90",
+                    firstName: "Virat017",
+                    divisionId: 3948,
+                    divisionName: "D1",
+                    mobileNumber: "1212211221",
+                    discountsToDeduct: "0.00",
+                    membershipTypeName: "Player",
+                    membershipMappingId: 1138,
+                    orgRegParticipantId: 9927,
+                    membershipProductName: "Single game fee",
+                    childDiscountsToDeduct: "0.00",
+                    governmentVoucherAmount: null,
+                    competitionMembershipProductTypeId: 5502
+                }
+            ],
+            competitionUniqueKey: "18e47b5f-4ab3-4c77-9ff8-e32436388497",
+            isTeamSeasonalUponReg: 0,
+            organisationUniqueKey: "9971815e-d9cb-4d44-bba2-f5be2e12c120",
+            governmentVoucherAmount: "0.00",
+            registeringYourselfRefId: 1,
+            competitionMembershipProductTypeIdCoach: null
+        }
     ],
-    "securePaymentOptions": [
-      {
-        "securePaymentOptionRefId": 1
-      },
-      {
-        "securePaymentOptionRefId": 2
-      }
+    securePaymentOptions: [
+        {
+            securePaymentOptionRefId: 1
+        },
+        {
+            securePaymentOptionRefId: 2
+        }
     ]
-  }
+}
 
 const initialState = {
     onLoad: false,
@@ -229,7 +229,6 @@ const initialState = {
     scorerActivityRoster: [],
     scorerCurrentPage: null,
     scorerTotalCount: null,
-    activityScorerOnLoad: false,
     umpireActivityOnLoad: false,
     umpireActivityList: [],
     umpireActivityCurrentPage: 1,
@@ -243,18 +242,16 @@ const initialState = {
     teamMemberRegReviewList: null,
     getTeamMembersReviewOnLoad: false,
     teamMembersSaveErrorMsg: null,
-    teamMemberRegId : null,
+    teamMemberRegId: null,
     teamMembersSaveOnLoad: false
 };
 
 //get User Role
 function getUserRole(userRoleData) {
-
     let userRole = false
 
     for (let i in userRoleData) {
         if (userRoleData[i].roleId == 15 || userRoleData[i].roleId == 20) {
-
             userRole = true
             break;
         }
@@ -262,37 +259,36 @@ function getUserRole(userRoleData) {
     return userRole
 }
 
-function getUpdatedTeamMemberObj(competition){
-    try{
-      let teamMemberTemp = deepCopyFunction(teamMemberObj);
-      teamMemberTemp.membershipProductTypes = [];
-      let filteredTeamMembershipProducts =  competition.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
-      for(let product of filteredTeamMembershipProducts){
-        let obj = {
-          "competitionMembershipProductId": product.competitionMembershipProductId,
-          "competitionMembershipProductTypeId": product.competitionMembershipProductTypeId,
-          "isPlayer": product.isPlayer,
-          "productTypeName": product.shortName,
-          "isChecked": false
+function getUpdatedTeamMemberObj(competition) {
+    try {
+        let teamMemberTemp = deepCopyFunction(teamMemberObj);
+        teamMemberTemp.membershipProductTypes = [];
+        let filteredTeamMembershipProducts = competition.membershipProducts.filter(x => x.isTeamRegistration == 1 && x.allowTeamRegistrationTypeRefId == 1);
+        for (let product of filteredTeamMembershipProducts) {
+            let obj = {
+                competitionMembershipProductId: product.competitionMembershipProductId,
+                competitionMembershipProductTypeId: product.competitionMembershipProductTypeId,
+                isPlayer: product.isPlayer,
+                productTypeName: product.shortName,
+                isChecked: false
+            }
+            teamMemberTemp.membershipProductTypes.push(obj);
         }
-        teamMemberTemp.membershipProductTypes.push(obj);
-      }
-      return teamMemberTemp;
-    }catch(ex){
-      console.log("Error in getUpdatedTeamMemberObj::"+ex);
+        return teamMemberTemp;
+    } catch (ex) {
+        console.log("Error in getUpdatedTeamMemberObj::" + ex);
     }
-  }
+}
 
-function upateTeamMembersSave(state){
-    try{
+function upateTeamMembersSave(state) {
+    try {
         let membershipProducts = state.membershipProductInfo;
         let organisation = membershipProducts[0];
-        let competition  = organisation.competitions[0];
+        let competition = organisation.competitions[0];
         state.teamMembersSave.registrationRestrictionTypeRefId = competition.registrationRestrictionTypeRefId;
         state.teamMembersSave.teamMembers.push(getUpdatedTeamMemberObj(competition));
-        console.log("state",state.teamMembersSave.teamMembers)
-    }catch(ex){
-        console.log("Error in updateTeamMemberSave::"+ex);
+    } catch (ex) {
+        console.log("Error in updateTeamMemberSave::" + ex);
     }
 }
 
@@ -332,7 +328,6 @@ function userReducer(state = initialState, action) {
             return { ...state, onLoad: true };
 
         case ApiConstants.API_URE_SUCCESS:
-
             return {
                 ...state,
                 onLoad: false,
@@ -340,14 +335,13 @@ function userReducer(state = initialState, action) {
                 status: action.status
             };
 
-        /////get particular user organisation 
+        /////get particular user organisation
         case ApiConstants.API_GET_USER_ORGANISATION_LOAD:
             return { ...state, onLoad: true, error: null }
 
         case ApiConstants.API_GET_USER_ORGANISATION_SUCCESS:
             state.allUserOrganisationData = isArrayNotEmpty(action.result) ? action.result : []
             state.getUserOrganisation = isArrayNotEmpty(action.result) ? action.result : []
-
             return {
                 ...state,
                 onLoad: false,
@@ -396,7 +390,6 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.API_USER_MODULE_MEDICAL_INFO_SUCCESS:
             let medicalData = action.result;
-
             return {
                 ...state,
                 onMedicalLoad: false,
@@ -417,10 +410,10 @@ function userReducer(state = initialState, action) {
                 // userRegistrationDataTotalCount: userRegistrationData.page.totalCount,
                 status: action.status
             };
-        
+
         case ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD:
             return { ...state, getTeamMembersOnLoad: true };
-        
+
         case ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_SUCCESS:
             let teamMembersDetailsData = action.result;
             return {
@@ -558,12 +551,24 @@ function userReducer(state = initialState, action) {
                 allOrganisationList: isArrayNotEmpty(action.result) ? action.result : [],
                 onLoad: false,
             };
-        
+
+        case ApiConstants.API_ADD_CHILD_LOAD:
+            return { ...state };
+
+        case ApiConstants.API_ADD_CHILD_SUCCESS:
+            return { ...state };
+
+        case ApiConstants.API_ADD_PARENT_LOAD:
+            return { ...state };
+
+        case ApiConstants.API_ADD_PARENT_SUCCESS:
+            return { ...state };
+
         case ApiConstants.API_USER_PHOTO_UPDATE_LOAD:
             return { ...state, userPhotoUpdate: true };
 
         case ApiConstants.API_USER_PHOTO_UPDATE_SUCCESS:
-            let personalDataTemp = { ...action.result};
+            let personalDataTemp = { ...action.result };
             personalDataTemp.userId = personalDataTemp.id;
             setPhotoUrl(personalDataTemp.photoUrl);
             let arrTemp = [];
@@ -576,23 +581,23 @@ function userReducer(state = initialState, action) {
                 };
                 arrTemp.push(obj);
             }
-        return {
-            ...state,
-            personalData: personalDataTemp,
-            personalEmergency: arrTemp,
-            userPhotoUpdate: false,
-            status: action.status,
-            error: null
-        };
+            return {
+                ...state,
+                personalData: personalDataTemp,
+                personalEmergency: arrTemp,
+                userPhotoUpdate: false,
+                status: action.status,
+                error: null
+            };
 
         case ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD:
-            return{...state,onLoad: true};
-          
+            return { ...state, onLoad: true };
+
         case ApiConstants.API_REGISTRATION_RESEND_EMAIL_SUCCESS:
-            return{
-              ...state,
-              onLoad: false,
-              status: action.status
+            return {
+                ...state,
+                onLoad: false,
+                status: action.status
             }
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
@@ -600,7 +605,7 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
             state.membershipProductInfo = action.result;
-            if(!state.teamMemberRegId){
+            if (!state.teamMemberRegId) {
                 upateTeamMembersSave(state);
             }
             return {
@@ -608,44 +613,43 @@ function userReducer(state = initialState, action) {
                 onMembershipLoad: false,
                 status: action.status,
             };
-        
+
         case ApiConstants.TEAM_MEMBER_SAVE_UPDATE_ACTION:
-            if(action.key == "teamMembersSave"){
+            if (action.key === "teamMembersSave") {
                 state.teamMembersSave = action.data;
-            }else if(action.key == "teamMember"){
-                if(action.index == undefined){
+            } else if (action.key === "teamMember") {
+                if (action.index == undefined) {
                     upateTeamMembersSave(state)
-                }else{
-                    state.teamMembersSave.teamMembers.splice(action.index,1);
+                } else {
+                    state.teamMembersSave.teamMembers.splice(action.index, 1);
                 }
-            }else if(action.key == "membershipProductTypes"){
+            } else if (action.key === "membershipProductTypes") {
                 state.teamMembersSave.teamMembers[action.index].membershipProductTypes[action.subIndex].isChecked = action.data;
-            }else if(action.key == "teamMemberRegId"){
+            } else if (action.key === "teamMemberRegId") {
                 state.teamMemberRegId = action.data;
-            }else{
-                console.log("sdfsdfd",action.index,action.key)
+            } else {
                 state.teamMembersSave.teamMembers[action.index][action.key] = action.data;
             }
-            return{
+            return {
                 ...state
             }
-        
+
         case ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD:
-            return{...state,teamMembersSaveOnLoad: true}
-    
-        case ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS: 
+            return { ...state, teamMembersSaveOnLoad: true }
+
+        case ApiConstants.API_TEAM_MEMBERS_SAVE_SUCCESS:
             state.teamMembersSaveOnLoad = false;
             state.teamMembersSaveErrorMsg = action.result.errorMsg ? action.result.errorMsg : null;
             state.teamMemberRegId = action.result.id ? action.result.id : null;
             return {
                 ...state,
-                status: action.status,           
+                status: action.status,
             }
 
         case ApiConstants.API_GET_TEAM_MEMBERS_LOAD:
-            return{...state,onLoad: true}
-    
-        case ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS: 
+            return { ...state, onLoad: true }
+
+        case ApiConstants.API_GET_TEAM_MEMBERS_SUCCESS:
             return {
                 ...state,
                 status: action.status,
@@ -654,10 +658,10 @@ function userReducer(state = initialState, action) {
             }
 
         case ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD:
-            return{...state,getTeamMembersReviewOnLoad: true}
-        
+            return { ...state, getTeamMembersReviewOnLoad: true }
+
         case ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_SUCCESS:
-            return{
+            return {
                 ...state,
                 teamMemberRegReviewList: action.result,
                 status: action.status,
@@ -666,37 +670,32 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.UPDATE_TEAM_MEMBER_REVIEW_INFO:
             let reviewData = state.teamMemberRegReviewList;
-            if(action.subKey == "total"){
+            if (action.subKey === "total") {
                 let type = action.key;
-                let totalVal = reviewData.total.total; 
+                let totalVal = reviewData.total.total;
                 let transactionVal = 0;
                 let targetVal = 0;
-                if(action.value == 1){
-                    if(type == "International_CC"){
-                        transactionVal = (totalVal * 3.0/100) + 0.30;
+                if (action.value == 1) {
+                    if (type === "International_CC") {
+                        transactionVal = (totalVal * 3.0 / 100) + 0.30;
                     }
-                    if(type == "International_AE"){
-                        transactionVal = (totalVal * 2.7/100) + 0.30;
-                    }
-                    else if(type == "DOMESTIC_CC"){
-                        transactionVal = (totalVal * 2.25/100)  + 0.30;
-                    }
-                    else if(type == "direct_debit"){
-                        transactionVal = (totalVal * 1.5/100) + 0.30;
-                        console.log("transactionVal DD" + transactionVal);
-                        if(transactionVal > 3.50){
+                    if (type === "International_AE") {
+                        transactionVal = (totalVal * 2.7 / 100) + 0.30;
+                    } else if (type === "DOMESTIC_CC") {
+                        transactionVal = (totalVal * 2.25 / 100) + 0.30;
+                    } else if (type === "direct_debit") {
+                        transactionVal = (totalVal * 1.5 / 100) + 0.30;
+                        if (transactionVal > 3.50) {
                             transactionVal = 3.50;
                         }
                     }
                     targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
                     reviewData["total"]["targetValue"] = formatValue(targetVal);
                     reviewData["total"]["transactionFee"] = formatValue(transactionVal);
-                }
-                else{
+                } else {
                     reviewData["total"]["targetValue"] = "0.00";
                     reviewData["total"]["transactionFee"] = "0.00";
                 }
-               
             }
             return {
                 ...state,
@@ -707,6 +706,5 @@ function userReducer(state = initialState, action) {
             return state;
     }
 }
-
 
 export default userReducer;

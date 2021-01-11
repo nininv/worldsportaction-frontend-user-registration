@@ -48,7 +48,7 @@ const AppConstants = {
   female: "Female",
   unspecified: "Unspecified",
   dob: "Date of Birth",
-  competitionCategoty: "Competition Categoty",
+  competitionCategoty: "Competition Category",
   participant_firstName: "Participant First Name",
   participant_middleName: "Alternative or Middle Name",
   participant_lastName: "Participant Last Name",
@@ -79,21 +79,18 @@ const AppConstants = {
   playWithFriend: "Play with a friend",
   referfriend: "Refer a friend",
   friend: "Friend",
-  referfriend_friendLiketoPlay:
-    "Refer a friend : Do you have a friend you think would like to play?",
+  referfriend_friendLiketoPlay: "Refer a friend : Do you have a friend you think would like to play?",
   friendLiketoPlay: "Do you have a friend you think would like to play?",
   existingMedConditions: "Existing Medical Conditions",
   redularMedicalConditions: "Regular Medications",
   hearAbouttheCompition: "How did you hear about this Netball Competition?",
   who_fav_bird: "Who is your favourite Firebird?",
-  consentForPhotos:
-    "Do you give consent for photos to be taken and used for promotional purposes",
+  consentForPhotos: "Do you give consent for photos to be taken and used for promotional purposes",
   addOtherReg: "Add Another Registration",
   favouriteTeam: "Favourite Netball Team",
   OtherInfoReqd: "Other information required",
   OtherParticipantReqd: "Other Participant information required",
-  yourSupportImportant:
-    "Your Support is important for the continued success of our Club. Can you help?",
+  yourSupportImportant: "Your Support is important for the continued success of our Club. Can you help?",
   childrenCheckNumber: "Working with Children Check Number",
   childrenNumber: "Children Check Number",
   checkExpiryDate: "Check Expiry Date",
@@ -122,8 +119,7 @@ const AppConstants = {
   addParent_guardian: "Add Parent/Guardian",
   addfriend: "Add Friend",
 
-  usernamePasswordIncorrect:
-    "Login Unsuccessful. Incorrect Username or Password",
+  usernamePasswordIncorrect: "Login Unsuccessful. Incorrect Username or Password",
   home: "Home",
   user: "User",
   registration: "Registration",
@@ -186,7 +182,6 @@ const AppConstants = {
   mandatePlayerAge: "Mandate Player Age Restrictions",
   dob_from: "DOB-From",
   dob_To: "DOB-To",
-  team: "Team",
   umpire: "Umpire",
   coach: "Coach",
   addMembershipType: "Add Membership Type",
@@ -275,7 +270,6 @@ const AppConstants = {
   standard_round_robin: "Standard Round Robin",
   double_round_robin: "Double Round Robin",
   halves: "Halves",
-  quarters: 'Quarters',
   fixture_template: "Fixture Template",
   frequency: "Frequency",
   weekly: "Weekly",
@@ -404,10 +398,8 @@ const AppConstants = {
   applyTo: "Apply to",
   courtPrioritisation: "Court Prioritisation",
   randomAllocation: "Random Allocation",
-  automaticallyAssign_LowestCourt_highestGrade:
-    "Automatically assign - lowest court  to highest grade",
-  automaticallyAssign_LowestCourt_LowerGrade:
-    "Automatically assign - lowest court to lowest grade",
+  automaticallyAssign_LowestCourt_highestGrade: "Automatically assign - lowest court  to highest grade",
+  automaticallyAssign_LowestCourt_LowerGrade: "Automatically assign - lowest court to lowest grade",
   preferenceSettings: "Preference Settings",
   addAnother: "Add another",
   courtDetails: "Court Details",
@@ -454,7 +446,7 @@ const AppConstants = {
   allFees: "All Fees",
   addAnotherVoucher: "Add Another Voucher",
 
-  ///registartion membership fees list
+  ///registration membership fees list
   addMembershipProduct: "Add Membership Product",
 
   //comp court and times assign
@@ -464,7 +456,7 @@ const AppConstants = {
   manuallyAddTimeslots: "Manually Add Timeslots",
   evenRotationTimeslots: "Even rotation of teams to timeslots",
   divisionAndGradeTimeslots: "Allocate Divisions and Grades to same timeslot",
-  /*//registraion//*/
+  // registration
   addAFee: "Add a Fee",
   competitionFees: "Competition Fees",
   please_Sel_mem_pro: "Please select membership product",
@@ -559,12 +551,10 @@ const AppConstants = {
   matchList: "Match List",
   addMatches: "Add Matches",
   export: "Export",
-  import: "Import",
   matchName: "WSA 2 VS WSA 1",
   addMatch: "Add Match",
   date: "Date",
   divisionName: "Division Name",
-  type: "Type",
   matchID: "mnbMatchId",
   homeTeam: "Home Team",
   awayTeam: "Away Team",
@@ -600,9 +590,8 @@ const AppConstants = {
   selectClub: "Select Club/Association/State Body",
   manager: "Manager",
   new: "New",
-  exsiting: "Exisiting",
+  exsiting: "Existing",
   teamList: "Team List",
-  addPlayer: "Add Player",
 
   managersList: "Manager List",
   addManager: "Add Manager",
@@ -718,31 +707,26 @@ const AppConstants = {
   todaysMatch: "Today's Match",
   newsPost: "News Post",
   scorerProfile: 'Scorer Profile',
-  managerSearch: 'Manager Search',
   affiliate: "Affiliate",
   selectAffiliate: "Select Affiliate",
   useClubLogo: 'Use Club Logo',
   activeNews: 'Active News',
   addNewRound: 'Add New Round',
-  selectCourt: "Select Court",
   twoHalves: "TWO_HALVES",
   fourQuarters: "FOUR_QUARTERS",
   editBanners: 'Edit Banners',
   editBanner: 'Edit Banner',
   addBanners: 'Add Banners',
-  ////export URl
+  // export URl
   exportUrl: 'http://world-sport-action-socket.appspot.com/players/csv?competitionId=',
 
-  ////Registartion
+  // Registration
   membershipTypeName: "Membership Type Name",
   pleaseEnterMembershipTypeName: "Please Enter Membership Type Name",
 
 
 
   // venue new constants
-  evenRotation: "Even rotation",
-  allocateToSameCourt: 'Allocate to same court',
-  noPreference: "No Preference",
   evenRotation: "Even rotation",
   allocateToSameCourt: 'Allocate to same court',
   noPreference: "No Preference",
@@ -757,7 +741,6 @@ const AppConstants = {
   anyTimePreference: "Do you have any timeslot preferences for divisions or grades?",
   none: "None",
   timeslotsAllocatedBasedOnMatchs: "Timeslots allocated based on match duration",
-  manuallyAddTimeslots: "Manually add timeslots",
   enterTimeMatchesEachDay: "Enter time matches should run each day",
   allocateToSametimeslot: "Allocate to same time slot",
   newCompetition: "New Competition",
@@ -776,7 +759,6 @@ const AppConstants = {
 
 
   editCompetition: "Edit Competition",
-  selectVenue: "Select Venue",
 
 
   /////live scores
@@ -821,7 +803,6 @@ const AppConstants = {
   yesAsANonPlayer: "Yes, as a Non-Player",
   registeringSomeoneElse: "No, registering someone else",
   competitionMembershipProductDivision: "Competition, Membership Product and Division",
-  participantDetails: "Participant Details",
   indicatePreferredPlayerPosition: "Indicate two preferred playing positions:",
   fullName: "Full Name",
   playWithFriendSubtitle: "We may be able to accommodate friends playing with each other. Please note, this is normally only available for lower graded teams. You can choose up to three friends.",
@@ -842,15 +823,12 @@ const AppConstants = {
   organisation: "Organisation",
   gameTimeStatistics: "Game Time Statistics",
   searchManager: "Search Manager",
-  divisionList: "Division List",
-
 
   /// add news
 
   notifyAgain: "Notify again",
   notify: "Notify",
 
-  gradeName: "GradeName",
   editDivision: "Edit Division",
 
   divisionList: "Division List",
@@ -930,7 +908,6 @@ const AppConstants = {
   addToCart: "Add to cart",
   size: "Size",
   quantity: "Quantity",
-  expiryDate: "Expiry Date",
   addedToCart: "Product added to cart",
 
   // RegistrationReviewForm
@@ -968,7 +945,6 @@ const AppConstants = {
   applyCode: "Apply Code",
   removeCode: "Remove Code",
   expiryDate: "Expiry Date",
-  teamRegistration: "Team Registration",
   personRegistering: "Person Registering",
   webAdmin: "WebAdmin",
   teamAlreadyExists: "This team name is already in use. Please choose an alternative name.",
@@ -1002,7 +978,6 @@ const AppConstants = {
   continue: "Continue",
 
   //new registration form
-  signupToCompetition: "Sign up to competition",
   participantDetails: "Participant Details",
   selectCompetition: "Select Competitions",
   additionalInformation: "Additional Information",
@@ -1015,7 +990,7 @@ const AppConstants = {
   selectAnotherUser: "Wrong User?",
   selectAddress: "Select Address",
   addNewAddress: "Add New Address",
-  addNewParentGaurdian: "Add New Parent/Gaurdian",
+  addNewParentGaurdian: "Add New Parent/Guardian",
   chooseMembershipProducts: "Choose Membership Product",
   uniform: "Uniform",
   referFriendSubTitle: "Do you have a friend you think would like to play?",
@@ -1023,8 +998,7 @@ const AppConstants = {
   addAnotherCompetition: "Add Another Competition",
   additionalPersonalInformation: "Additional Personal Information",
   haveYouEverPlayed: "Have you ever played Netball before?",
-  doYouHaveDisablity: "Do you have a disablity?",
-  emergencyContact: "Emergency Contact",
+  doYouHaveDisability: "Do you have a disability?",
   findACompetition: "Find a Competition",
   newParticipantRegistration: "New Participant Registration",
   newTeamRegistration: "New Team Registration",
@@ -1090,8 +1064,11 @@ const AppConstants = {
   associationLevel: "Association Level",
   workingWithChildrenCheckNumber: "What is your Working with Children Check Number or BlueCard Number? You are required to have a Working with Children Check Number or BlueCard. If you don't you will need to apply for one.",
   haveCompletedPrerequisites: "Have you completed the prerequisites for a training Umpire?",
-  walkingNetball: "WalkingNetball",
   useParentsEmailAddress: "Use parent's email address",
+  useChildEmail: "Same as child’s email",
+  useParentEmail: "Use parent’s email address",
+  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. You child will not get their own log-in. If you would like them to have their own log-in please give them a separate email address.',
+  parentMsg2Child: 'You have elected to use the same email for your Parent and yourself. You will lose your login unless you update your own email address first.',
   returnToSelectAddress: "Return to select address",
   returnToLogin: "Return to Login",
   yourDetails: "Your Details",
@@ -1200,7 +1177,6 @@ const AppConstants = {
   invoiceCode: "Invoice Code",
   warning: "Warning",
 
-  myUmpiringAvailability: 'My Umpiring Availability',
   // CM-2026
   banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
@@ -1225,7 +1201,6 @@ const AppConstants = {
   instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
   coachAccreditation: "Coach Accreditation",
   tShirtSizeList: "TShirtSize",
-
 
   registeredBy: "Registered By",
   ownRegistration: "Own Registration",
