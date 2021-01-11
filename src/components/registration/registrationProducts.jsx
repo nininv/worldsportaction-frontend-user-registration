@@ -78,7 +78,7 @@ class RegistrationProducts extends Component {
     componentDidMount() {
         let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
         console.log("registrationUniqueKey"+registrationUniqueKey);
-        // let registrationUniqueKey = "8862bfb9-411e-480b-982e-7a3116628b8c";
+        //let registrationUniqueKey = "0a42a9b5-e629-45f4-9995-3381998d6944";
         this.setState({ registrationUniqueKey: registrationUniqueKey });
         this.getApiInfo(registrationUniqueKey);
     }
@@ -784,14 +784,11 @@ class RegistrationProducts extends Component {
                                 <div className="subtitle-text-common">{AppConstants.payNow}</div>
                                 <div>{"$" + item.payNow}</div>
                             </div>
-                            {item.isTeamRegistration == 1 ?
-                                <div className="col-sm-3">
-                                    <div className="subtitle-text-common">{AppConstants.payNow}</div>
-                                    <div>{"$" + item.payNow}</div>
+                            {item.isTeamRegistration == 1 &&         
+                                <div className="col-sm-6">
+                                    <div className="subtitle-text-common">{AppConstants.payAtMatch}</div>
+                                    <div>{"$" + item.payPerMatch}</div>
                                 </div>
-
-                                :
-                                null
                             }
                         </div>
                     }

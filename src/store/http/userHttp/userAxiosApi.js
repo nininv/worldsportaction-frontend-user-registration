@@ -131,6 +131,16 @@ let userHttpApi = {
     const url = `users/updatePassword`;
     return Method.dataPatch(url, token, payload);        
   },
+
+  addChild(payload) {
+    const url = `usersApi/users/addChild/?parentUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
+    return Method.dataPost(url, token, payload.body);
+  },
+
+  addParent(payload) {
+    const url = `usersApi/users/addParent/?childUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
+    return Method.dataPost(url, token, payload.body);
+  },
 }
 
 let Method = {

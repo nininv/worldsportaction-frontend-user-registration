@@ -43,7 +43,7 @@ import * as teamInviteSaga from './registrationSaga/teamInviteSaga';
 export default function* root_saga() {
   yield takeEvery(ApiConstants.API_LOGIN_LOAD, loginApiSaga);
   yield takeEvery(ApiConstants.API_FORGOT_PASSWORD_LOAD, forgotPasswordSaga);
-  
+
   yield takeEvery(ApiConstants.API_ROLE_LOAD, userSaga.getRoleSaga);
   yield takeEvery(ApiConstants.API_URE_LOAD, userSaga.getUreSaga);
 
@@ -74,7 +74,7 @@ export default function* root_saga() {
   //EndUserRegistrationSave
   yield takeEvery(ApiConstants.API_SAVE_END_USER_REGISTRATION_LOAD, endUserRegSaga.endUserRegistrationSaveSaga)
 
-  //get particular user organisation 
+  //get particular user organisation
   yield takeEvery(ApiConstants.API_GET_USER_ORGANISATION_LOAD, userSaga.getUserOrganisationSaga)
 
   // //EndUserRegistration Registration Settings
@@ -280,7 +280,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_SEASONAL_CASUAL_FEES_LOAD,userRegistrationSaga.getSeasonalCasualFeesSaga);
   yield takeEvery(ApiConstants.API_GET_ALL_ORGANISATION_LIST_LOAD, userSaga.getAllOrganisationListSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD,teamRegistrationSaga.getTeamSeasonalCasualFeesSaga);
-  
+
   yield takeEvery(ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_LOAD,regProductsSaga.getRegistrationSingleGameSaga);
 
   yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.getUmpireAvailabilitySaga);
@@ -291,7 +291,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_REGISTRATION_RESEND_EMAIL_LOAD, userSaga.registrationResendEmailSaga);
 
   yield takeEvery(ApiConstants.API_UPDATE_PASSWORD, updatePasswordSaga);
-  
+
   yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
   yield takeEvery(ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD, userSaga.getUserModuleTeamMembersDataSaga);
 
@@ -299,10 +299,9 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD, userSaga.getTeamMembersReviewSaga);
-  
+  yield takeEvery(ApiConstants.API_ADD_CHILD_LOAD, userSaga.addChildSaga);
+  yield takeEvery(ApiConstants.API_ADD_PARENT_LOAD, userSaga.addParentSaga);
 
 
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
-
-
 }
