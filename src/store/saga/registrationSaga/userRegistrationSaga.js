@@ -179,8 +179,24 @@ export function* sendDigitCode(action) {
   try {
     const {payload} = action;
     const result = yield call(userHttpApi.sendDigitCode, payload);
+
     yield put({
-      type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+      type: ApiConstants.API_SEND_DIGIT_CODE_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* checkDigitCode(action) {
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.checkDigitCode, payload);
+    console.log('result', result)
+
+    yield put({
+      type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,
       result,
     });
   } catch (error) {

@@ -8,7 +8,10 @@ import { getStringWithPassedValues } from '../../../util/helpers';
 
 const CODE_LENGTH = 6;
 
-function EnterCode() {
+function EnterCode({
+  checkDigitCode,
+  id
+}) {
   const [value, setValue] = useState('');
 
   const onChange = ({ target: { value } }) => {
@@ -18,8 +21,10 @@ function EnterCode() {
 
   useEffect(() => {
     if (value.length === CODE_LENGTH) {
-      // TODO: send entered code to the API server
-      console.log('send code', value);
+      const payload = {
+        id, digitCode:value
+      }
+      checkDigitCode(payload)
     }
   }, [value]);
 

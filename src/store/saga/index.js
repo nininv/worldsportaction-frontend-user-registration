@@ -294,5 +294,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
 
   yield takeEvery(ApiConstants.API_GET_USER_EXIST, userRegistrationSaga.getUserExists);
+  yield takeEvery(ApiConstants.API_SEND_DIGIT_CODE, userRegistrationSaga.sendDigitCode);
+  yield takeEvery(ApiConstants.API_CHECK_DIGIT_CODE, userRegistrationSaga.checkDigitCode);
 
 }

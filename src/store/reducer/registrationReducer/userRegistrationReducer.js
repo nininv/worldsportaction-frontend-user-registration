@@ -205,7 +205,7 @@ const initialState = {
 	seasonalAndCasualFeesCompetitionIndex: null,
 	individualCompetitionNotExist: false,
 	registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
-  enableValidateRegistrationCapService: false,
+    enableValidateRegistrationCapService: false,
 	userAlreadyExist: {
 		firstStep: false,
 		secondStep: false,
@@ -1016,10 +1016,40 @@ function userRegistrationReducer(state = initialState, action){
 						firstStep: true,
 						phone: action.result.result.data.phone,
 						email: action.result.result.data.email,
+						id: action.result.result.data.id
 					},
 				}
-      default:
-        return state;
+			case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						firstStep: false,
+						secondStep: true,
+					},
+					userDigitCode: {
+						message: action.result.result.data.message,
+					}
+				}
+			case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
+				console.log('message',action.result.result.data.message,)
+				return {
+					...state,
+					userDigitCode: {
+						message: action.result.result.data.message,
+					}
+				}
+			case ApiConstants.API_CANCEL_SEND:
+				return {
+					...state,
+					userAlreadyExist: {
+						firstStep: false,
+						secondStep: false,
+						phone: false,
+						email: false,
+					}
+				}
+        default: return state;
     }
 }
 

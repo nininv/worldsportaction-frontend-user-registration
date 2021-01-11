@@ -142,6 +142,10 @@ let userHttpApi = {
     const url = `api/user/existing-digit-code`;
     return Method.dataPost(url, token, payload);
   },
+  checkDigitCode(payload) {
+    const url = `api/user/check-existing-digit-code`;
+    return Method.dataPost(url, token, payload);
+  },
 }
 
 let Method = {

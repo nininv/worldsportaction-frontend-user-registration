@@ -64,6 +64,9 @@ import {
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
     getUserExists,
+    sendDigitCode,
+    checkDigitCode,
+    cancelSend,
 } from '../../../store/actions/registrationAction/userRegistrationAction';
 import {
     getAge,
@@ -1420,7 +1423,6 @@ class AppRegistrationFormNew extends Component {
                     //     message.error(ValidationConstants.userPhotoIsRequired);
                     //     return;
                     // }
-
                     if (this.state.currentStep == 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
@@ -1525,7 +1527,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     participantDetailsStepView = (getFieldDecorator) => {
-        const { registrationObj, userAlreadyExist } = this.props.userRegistrationState;
+        const { registrationObj, userAlreadyExist, userDigitCode } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
@@ -1536,8 +1538,8 @@ class AppRegistrationFormNew extends Component {
                 {participantWithoutProfile && this.addedParticipantView()}
                 {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                 {this.participantDetailView(getFieldDecorator)}
-                {userAlreadyExist.firstStep && (<UserAlreadyExists email={userAlreadyExist.email} phone={userAlreadyExist.phone} />)}
-                {userAlreadyExist.secondStep && (<EnterCode />)}
+                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} id={userAlreadyExist.id} email={userAlreadyExist.email} phone={userAlreadyExist.phone} />)}
+                {userAlreadyExist.secondStep && (<EnterCode checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.id} />)}
                 {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                 {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
             </>
@@ -3939,7 +3941,10 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
-        getUserExists
+        getUserExists,
+        sendDigitCode,
+        checkDigitCode,
+        cancelSend,
     }, dispatch);
 }
 

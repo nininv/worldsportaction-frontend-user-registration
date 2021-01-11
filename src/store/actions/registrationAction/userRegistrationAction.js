@@ -115,6 +115,37 @@ function getUserExists(payload){
     return action;
 }
 
+function sendDigitCode(payload){
+    const action = {
+        type: ApiConstants.API_SEND_DIGIT_CODE,
+        payload
+    };
+    return action;
+}
+
+function checkDigitCode(payload){
+    const action = {
+        type: ApiConstants.API_CHECK_DIGIT_CODE,
+        payload
+    };
+    return action;
+}
+
+function doneCheckDigitCode(payload){
+    const action = {
+        type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,
+        payload
+    };
+    return action;
+}
+
+function cancelSend(){
+    const action = {
+        type: ApiConstants.API_CANCEL_SEND,
+    };
+    return action;
+}
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -129,4 +160,8 @@ export{
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
     getUserExists,
+    sendDigitCode,
+    cancelSend,
+    checkDigitCode,
+    doneCheckDigitCode,
 }
