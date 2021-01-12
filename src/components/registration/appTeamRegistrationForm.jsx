@@ -1991,6 +1991,7 @@ class AppTeamRegistrationForm extends Component {
                                                 setFieldsValue={teamRegistrationObj.competitionMembershipProductDivisionId}
                                                 style={{ width: "100%", paddingRight: 1 }}
                                                 onChange={(e) => this.onChangeSetTeamValue(e, "competitionMembershipProductDivisionId")}
+                                                notFoundContent={AppConstants.regoDivisionNotFound}
                                             >
                                                 {(teamRegistrationObj.divisions || []).map((division, divisionIndex) => (
                                                     <Option key={division.competitionMembershipProductDivisionId}
