@@ -1532,13 +1532,12 @@ class AppRegistrationFormNew extends Component {
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
-
         return (
             <>
                 {participantWithoutProfile && this.addedParticipantView()}
                 {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                 {this.participantDetailView(getFieldDecorator)}
-                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} id={userAlreadyExist.id} email={userAlreadyExist.email} phone={userAlreadyExist.phone} />)}
+                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} users={userAlreadyExist.users} />)}
                 {userAlreadyExist.secondStep && (<EnterCode checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.id} />)}
                 {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                 {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}

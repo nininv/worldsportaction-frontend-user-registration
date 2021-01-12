@@ -7,46 +7,42 @@ import AppConstants from '../../../themes/appConstants';
 import { getStringWithPassedValues } from '../../../util/helpers';
 
 function UserAlreadyExists({
-  email = '',
-  phone = '',
-  id = '',
+  users=[],
   onCancelClick = () => {
     cancelSend();
   },
   onOkClick = (selected) => {
     const payload = {id: selected.user, type: selected.type};
     sendDigitCode(payload);
-    console.log(selected);
   },
   sendDigitCode,
   cancelSend
 }) {
   const [selected, setSelected] = useState(null);
   const buttonsDisabled = selected? !(Boolean(selected.user) && Boolean(selected.type)): !selected;
-  const emailList = email.split(',');
-  const phoneList = phone.split(',');
 
-  console.log(email, phone, id)
   return (
     <div className="registration-form-view user-already-exists-section">
-      {(email || phone) && (
+      {(users.length>0)&&(
         <>
           {
-            emailList.length>1?
+            users.length>1?
             <>
-            <p>{getStringWithPassedValues(AppConstants.manyUsersAlreadyExists, { email, phone })}</p>
+            <p>{getStringWithPassedValues(AppConstants.manyUsersAlreadyExists)}</p>
             <Radio.Group
               className="registration-radio-group user-already-exists-buttons"
               onChange={({ target: { value } }) => setSelected({...selected, user: value})}
               value={selected? selected.user : null}
             >
-              {
-                emailList.map((email, index) => {
+              {   
+                users.map((user) => {
                   return (
-                    <Radio value={id} key={id} >
-                      email: {email} <br />
-                      phone: {phoneList[index]}
+                    <>
+                    <Radio value={user.id} key={user.id} >
+                      email: {user.email} <br />
+                      phone: {user.phone}
                     </Radio>
+                    </>
                   )
                 })
               }
@@ -54,16 +50,16 @@ function UserAlreadyExists({
             </>
             :
             <p>{
-              getStringWithPassedValues(AppConstants.oneUserAlreadyExists, { email, phone })
+              getStringWithPassedValues(AppConstants.oneUserAlreadyExists, { email:users[0].email, phone:users[0].phone })
             }</p>
           }
           <Radio.Group
             className="registration-radio-group user-already-exists-buttons"
-            onChange={({ target: { value } }) => setSelected({...selected, user:emailList.length === 1?id:'', type: value})}
+            onChange={({ target: { value } }) => setSelected({...selected, user:users.length === 1?users[0].id:selected.user, type: value})}
             value={selected? selected.type : null}
           >
-            {email && <Radio value={1} >{AppConstants.email}</Radio>}
-            {phone && <Radio value={2} >{AppConstants._sms}</Radio>}
+            {<Radio value={1} >{AppConstants.email}</Radio>}
+            {<Radio value={2} >{AppConstants._sms}</Radio>}
           </Radio.Group>
 
           <div className="contextualHelp-RowDirection user-already-exists-buttons">
@@ -87,7 +83,7 @@ function UserAlreadyExists({
           </div>
         </>
       )}
-      {!(email || phone) && (
+      {!(users) && (
         <p>{getStringWithPassedValues(AppConstants.userAlreadyExistsNoContact)}</p>
       )}
     </div>

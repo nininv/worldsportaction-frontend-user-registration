@@ -208,6 +208,7 @@ const initialState = {
     enableValidateRegistrationCapService: false,
 	userAlreadyExist: {
 		firstStep: false,
+		users: [],
 		secondStep: false,
 		phone: false,
 		email: false,
@@ -1010,13 +1011,12 @@ function userRegistrationReducer(state = initialState, action){
 				}
 
 			case ApiConstants.API_GET_USER_EXIST_SUCCESS:
+				console.log('action.result',action.result.result.data )
 				return {
 					...state,
 					userAlreadyExist: {
 						firstStep: true,
-						phone: action.result.result.data.phone,
-						email: action.result.result.data.email,
-						id: action.result.result.data.id
+						users: action.result.result.data,
 					},
 				}
 			case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
@@ -1045,8 +1045,7 @@ function userRegistrationReducer(state = initialState, action){
 					userAlreadyExist: {
 						firstStep: false,
 						secondStep: false,
-						phone: false,
-						email: false,
+						users: [],
 					}
 				}
         default: return state;
