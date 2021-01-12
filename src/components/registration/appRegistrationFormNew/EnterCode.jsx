@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 
 import '../product.css';
 import './UserAlreadyExists.css';
@@ -10,7 +10,12 @@ const CODE_LENGTH = 6;
 
 function EnterCode({
   checkDigitCode,
-  id
+  id,
+  message,
+  onOkClick = () => {
+    cancelSend();
+  },
+  cancelSend
 }) {
   const [value, setValue] = useState('');
 
@@ -24,20 +29,35 @@ function EnterCode({
       const payload = {
         id, digitCode:value
       }
-      checkDigitCode(payload)
+      checkDigitCode(payload);
     }
   }, [value]);
-
   return (
     <div className="registration-form-view user-already-exists-section">
-      <p>{getStringWithPassedValues(AppConstants.enterXDigitCode, { number: CODE_LENGTH })}</p>
-      <Form.Item className="place-auto-complete-container">
-        <Input
-          maxLength={CODE_LENGTH}
-          value={value}
-          onChange={onChange}
-        />
-      </Form.Item>
+      { message === "decline" ?
+      <> 
+        <p>{getStringWithPassedValues(AppConstants.declineConfirmDetails )}</p>
+        <Button
+              htmlType="button"
+              type="primary"
+              className="open-reg-button user-already-exists-button"
+              onClick={onOkClick}
+            >
+              {AppConstants.ok}
+            </Button>
+      </>
+      :
+      <> 
+        <p>{getStringWithPassedValues(AppConstants.enterXDigitCode, { number: CODE_LENGTH })}</p>
+        <Form.Item className="place-auto-complete-container">
+          <Input
+            maxLength={CODE_LENGTH}
+            value={value}
+            onChange={onChange}
+          />
+        </Form.Item>
+      </>
+    }
     </div>
   );
 }

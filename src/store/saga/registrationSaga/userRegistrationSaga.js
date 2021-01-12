@@ -176,10 +176,10 @@ export function* getUserExists(action) {
 }
 
 export function* sendDigitCode(action) {
+
   try {
     const {payload} = action;
     const result = yield call(userHttpApi.sendDigitCode, payload);
-
     yield put({
       type: ApiConstants.API_SEND_DIGIT_CODE_SUCCESS,
       result,
@@ -189,11 +189,30 @@ export function* sendDigitCode(action) {
   }
 }
 
+export function* sendConfirmDetails(action) {
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.sendConfirmDetails, payload);
+    if (result.result.data.message === "success") {
+      yield put({
+        type: ApiConstants.API_SEND_DIGIT_CODE,
+        payload
+      }) 
+    } else {
+      yield put({
+        type: ApiConstants.API_DECLINE_CONFIRM_DETAILS,
+        result
+      }) 
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
 export function* checkDigitCode(action) {
   try {
     const {payload} = action;
     const result = yield call(userHttpApi.checkDigitCode, payload);
-    console.log('result', result)
 
     yield put({
       type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,

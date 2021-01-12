@@ -208,10 +208,12 @@ const initialState = {
     enableValidateRegistrationCapService: false,
 	userAlreadyExist: {
 		firstStep: false,
-		users: [],
 		secondStep: false,
+		thirdStep: false,
+		users: [],
 		phone: false,
 		email: false,
+		currentUser: null,
 	}
 }
 
@@ -1011,7 +1013,6 @@ function userRegistrationReducer(state = initialState, action){
 				}
 
 			case ApiConstants.API_GET_USER_EXIST_SUCCESS:
-				console.log('action.result',action.result.result.data )
 				return {
 					...state,
 					userAlreadyExist: {
@@ -1024,15 +1025,25 @@ function userRegistrationReducer(state = initialState, action){
 					...state,
 					userAlreadyExist: {
 						...state.userAlreadyExist,
-						firstStep: false,
-						secondStep: true,
+						secondStep: false,
+						thirdStep: true,
+						message: action.result.result.data.message,
 					},
 					userDigitCode: {
 						message: action.result.result.data.message,
 					}
 				}
+			case ApiConstants.API_DECLINE_CONFIRM_DETAILS:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						secondStep: false,
+						thirdStep: true,
+						message: action.result.result.data.message
+					}
+				}
 			case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
-				console.log('message',action.result.result.data.message,)
 				return {
 					...state,
 					userDigitCode: {
@@ -1046,6 +1057,16 @@ function userRegistrationReducer(state = initialState, action){
 						firstStep: false,
 						secondStep: false,
 						users: [],
+					}
+				}
+			case ApiConstants.API_START_CONFIRM:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						firstStep: false,
+						secondStep: true,
+						currentUser: action.payload
 					}
 				}
         default: return state;

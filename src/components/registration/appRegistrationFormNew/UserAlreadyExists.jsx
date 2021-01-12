@@ -8,15 +8,15 @@ import { getStringWithPassedValues } from '../../../util/helpers';
 
 function UserAlreadyExists({
   users=[],
+  startConfirm,
+  cancelSend,
   onCancelClick = () => {
     cancelSend();
   },
   onOkClick = (selected) => {
     const payload = {id: selected.user, type: selected.type};
-    sendDigitCode(payload);
+    startConfirm(payload)
   },
-  sendDigitCode,
-  cancelSend
 }) {
   const [selected, setSelected] = useState(null);
   const buttonsDisabled = selected? !(Boolean(selected.user) && Boolean(selected.type)): !selected;

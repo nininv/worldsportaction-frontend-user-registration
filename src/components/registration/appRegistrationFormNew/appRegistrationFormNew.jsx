@@ -67,6 +67,8 @@ import {
     sendDigitCode,
     checkDigitCode,
     cancelSend,
+    startConfirm,
+    sendConfirmDetails,
 } from '../../../store/actions/registrationAction/userRegistrationAction';
 import {
     getAge,
@@ -89,6 +91,7 @@ import Loader from '../../../customComponents/loader';
 import ApiConstants from "../../../themes/apiConstants";
 import UserAlreadyExists from './UserAlreadyExists';
 import EnterCode from './EnterCode';
+import ConfirmDetails from './ConfirmDetails';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -1532,13 +1535,18 @@ class AppRegistrationFormNew extends Component {
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
+        if (userDigitCode && userDigitCode.message === "success") {
+            this.setState({ currentStep: 1 });
+            this.scrollToTop();
+        }
         return (
             <>
                 {participantWithoutProfile && this.addedParticipantView()}
                 {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                 {this.participantDetailView(getFieldDecorator)}
-                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} users={userAlreadyExist.users} />)}
-                {userAlreadyExist.secondStep && (<EnterCode checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.id} />)}
+                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
+                {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
+                {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
                 {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                 {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
             </>
@@ -3944,6 +3952,8 @@ function mapDispatchToProps(dispatch) {
         sendDigitCode,
         checkDigitCode,
         cancelSend,
+        startConfirm,
+        sendConfirmDetails,
     }, dispatch);
 }
 

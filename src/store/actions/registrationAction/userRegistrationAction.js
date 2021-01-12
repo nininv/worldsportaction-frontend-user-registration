@@ -146,6 +146,31 @@ function cancelSend(){
     return action;
 }
 
+function startConfirm(payload){
+    const action = {
+        type: ApiConstants.API_START_CONFIRM,
+        payload
+    };
+    return action;
+}
+function sendConfirmDetails(payload){
+    const action = {
+        type: ApiConstants.API_SEND_CONFIRM_DETAILS,
+        payload
+    };
+    return action;
+}
+
+function declineConfirmDetails(payload){
+    const action = {
+        type: ApiConstants.API_DECLINE_CONFIRM_DETAILS,
+        payload
+    };
+    return action;
+}
+
+
+
 export{
     getUserRegistrationUserInfoAction,
     selectParticipantAction,
@@ -164,4 +189,7 @@ export{
     cancelSend,
     checkDigitCode,
     doneCheckDigitCode,
+    sendConfirmDetails,
+    startConfirm,
+    declineConfirmDetails,
 }

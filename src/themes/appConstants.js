@@ -1209,7 +1209,9 @@ const AppConstants = {
   oneUserAlreadyExists: "We have found a matching user with email: {{email}} and mobile number {{phone}}. In order to verify your identity, we will send you an authentication code via",
   manyUsersAlreadyExists: "We have found a few possible users that match the details you've entered. Please select the user that matches your details (for security reasons, we have masked some of the details) and then confirm if you would like to recieve your authentication codde at the email address or mobile number we have found. If you dont find any matching contact details, please contact your competition organiser or club admin",
   userAlreadyExistsNoContact: "We have found a matching user but your details don’t match. Please contact your competition organiser.",
-  enterXDigitCode: "Enter {{number}} digit code"
+  enterXDigitCode: "Enter {{number}} digit code",
+  confirmDetails: "Please enter the complete {{detail}}",
+  declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record."
 };
 
 export default AppConstants;
