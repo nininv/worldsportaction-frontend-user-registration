@@ -1932,7 +1932,7 @@ class TeamInivteForm extends Component {
                                     onChange={(e, f) => this.dateConversion(f, "accreditationCoachExpiryDate", "userRegDetails", "additionalInfo")}
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
-                                    value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate, "MM-DD-YYYY")}
+                                    value={userRegDetails.accreditationCoachExpiryDate && moment(userRegDetails.accreditationCoachExpiryDate)}
                                 />
                             )}
                         </div>
