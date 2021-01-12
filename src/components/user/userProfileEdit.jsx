@@ -250,9 +250,18 @@ class UserProfileEdit extends Component {
             userData['accreditationLevelCoachRefId'] = personalData.accreditationLevelCoachRefId
             userData['accreditationLevelUmpireRefId'] = personalData.accreditationLevelUmpireRefId
             userData['accreditationUmpireExpiryDate'] = personalData.accreditationUmpireExpiryDate
+
+            setTimeout(() => {
+                this.props.form.setFieldsValue({
+                    [`accreditationLevelUmpireRefId`]: personalData.accreditationLevelUmpireRefId,
+                    [`accreditationLevelCoachRefId`]: personalData.accreditationLevelCoachRefId,
+                    [`accreditationUmpireExpiryDate`]: personalData.accreditationUmpireExpiryDate && moment(personalData.accreditationUmpireExpiryDate),
+                    [`accreditationCoachExpiryDate`]: personalData.accreditationCoachExpiryDate && moment(personalData.accreditationCoachExpiryDate),
+                })
+            }, 1000);
         }
         this.props.form.setFieldsValue({
-            genderRefId: userData.genderRefId != null ? parseInt(userData.genderRefId) : 0
+            genderRefId: userData.genderRefId ? parseInt(userData.genderRefId) : null,
         })
     }
 
@@ -316,13 +325,18 @@ class UserProfileEdit extends Component {
         }
 
         if (key === 'accreditationLevelUmpireRefId') {
-            data['accreditationUmpireExpiryDate'] = value == 1 && null
+            data['accreditationUmpireExpiryDate'] = null
+            this.props.form.setFieldsValue({
+                [`accreditationUmpireExpiryDate`]: null,
+            })
         }
 
         if (key === 'accreditationLevelCoachRefId') {
-            data['accreditationCoachExpiryDate'] = value == 1 && null
+            data['accreditationCoachExpiryDate'] = null
+            this.props.form.setFieldsValue({
+                [`accreditationCoachExpiryDate`]: null,
+            })
         }
-
         data[key] = value;
 
         this.setState({ userData: data });
@@ -864,52 +878,79 @@ class UserProfileEdit extends Component {
 
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required="required-field" />
-                            <Radio.Group
-                                className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelUmpireRefId")}
-                                value={userData.accreditationLevelUmpireRefId}
-                            >
-                                {(umpireAccreditation || []).map((accreditaiton, accreditationIndex) => (
-                                    <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
-                                ))}
-                            </Radio.Group>
+                            <Form.Item >
+                                {getFieldDecorator(`accreditationLevelUmpireRefId`, {
+                                    rules: [{ required: true, message: ValidationConstants.accreditationLevelUmpire }],
+                                })(
+                                    <Radio.Group
+                                        className="registration-radio-group"
+                                        onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelUmpireRefId")}
+                                    // setFieldsValue={userData.accreditationLevelUmpireRefId}
+                                    >
+                                        {(umpireAccreditation || []).map((accreditaiton, accreditationIndex) => (
+                                            <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                        ))}
+                                    </Radio.Group>
+                                )}
+                            </Form.Item>
 
                             {(userData.accreditationLevelUmpireRefId != 1 && userData.accreditationLevelUmpireRefId != null) && (
-                                <DatePicker
-                                    size="large"
-                                    placeholder={AppConstants.expiryDate}
-                                    style={{ width: "100%", marginTop: "20px" }}
-                                    onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationUmpireExpiryDate")}
-                                    format="DD-MM-YYYY"
-                                    showTime={false}
-                                    value={userData.accreditationUmpireExpiryDate && moment(userData.accreditationUmpireExpiryDate)}
-                                />
+                                <Form.Item >
+                                    {getFieldDecorator(`accreditationUmpireExpiryDate`, {
+                                        rules: [{ required: true, message: ValidationConstants.expiryDateRequire }],
+                                    })(
+                                        <DatePicker
+                                            size="large"
+                                            placeholder={AppConstants.expiryDate}
+                                            style={{ width: "100%", marginTop: "20px" }}
+                                            onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationUmpireExpiryDate")}
+                                            format="DD-MM-YYYY"
+                                            showTime={false}
+                                            // value={userData.accreditationUmpireExpiryDate && moment(userData.accreditationUmpireExpiryDate)}
+                                            disabledDate={d => !d || d.isSameOrBefore(new Date())}
+                                        />
+                                    )}
+                                </Form.Item>
                             )}
                         </div>
 
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required="required-field" />
-                            <Radio.Group
-                                style={{ display: "flex", flexDirection: "column" }}
-                                className="registration-radio-group"
-                                onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelCoachRefId")}
-                                value={userData.accreditationLevelCoachRefId}
-                            >
-                                {(coachAccreditation || []).map((accreditaiton, accreditationIndex) => (
-                                    <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
-                                ))}
-                            </Radio.Group>
+                            <Form.Item >
+                                {getFieldDecorator(`accreditationLevelCoachRefId`, {
+                                    rules: [{ required: true, message: ValidationConstants.accreditationLevelCoach }],
+                                })(
+                                    <Radio.Group
+                                        style={{ display: "flex", flexDirection: "column" }}
+                                        className="registration-radio-group"
+                                        onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelCoachRefId")}
+                                    // setFieldsValue={userData.accreditationLevelCoachRefId}
+                                    >
+                                        {(coachAccreditation || []).map((accreditaiton, accreditationIndex) => (
+                                            <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                        ))}
+                                    </Radio.Group>
+                                )}
+                            </Form.Item>
 
                             {(userData.accreditationLevelCoachRefId != 1 && userData.accreditationLevelCoachRefId != null) && (
-                                <DatePicker
-                                    size="large"
-                                    placeholder={AppConstants.expiryDate}
-                                    style={{ width: "100%", marginTop: "20px" }}
-                                    onChange={(e, f) => this.onChangeSetValue(e, "accreditationCoachExpiryDate")}
-                                    format="DD-MM-YYYY"
-                                    showTime={false}
-                                    value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
-                                />
+                                <Form.Item >
+                                    {getFieldDecorator(`accreditationCoachExpiryDate`, {
+                                        rules: [{ required: true, message: ValidationConstants.expiryDateRequire }],
+                                    })(
+                                        <DatePicker
+                                            size="large"
+                                            placeholder={AppConstants.expiryDate}
+                                            style={{ width: "100%", marginTop: "20px" }}
+                                            // onChange={(e, f) => this.onChangeSetValue(e, "accreditationCoachExpiryDate")}
+                                            onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationCoachExpiryDate")}
+                                            format="DD-MM-YYYY"
+                                            showTime={false}
+                                            // value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
+                                            disabledDate={d => !d || d.isSameOrBefore(new Date())}
+                                        />
+                                    )}
+                                </Form.Item>
                             )}
                         </div>
                     </div>
@@ -1088,82 +1129,85 @@ class UserProfileEdit extends Component {
     };
 
     onSaveClick = (e) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
+            this.props.form.validateFieldsAndScroll((err, values) => {
+                if (err) {
+                    message.error(AppConstants.pleaseReview)
+                }
+                if (!err) {
+                    if (this.confirmOpend) return;
 
-        if (this.confirmOpend) return;
+                    this.confirmOpend = true;
 
-        this.confirmOpend = true;
-
-        const { saveAction } = this;
-        if (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) {
-            let electionMsg = '';
-            if (this.state.titleLabel === AppConstants.addChild) {
-                electionMsg = AppConstants.childMsg2Parent;
-            } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
-                electionMsg = AppConstants.parentMsg2Child;
-            }
-            if (electionMsg !== '') {
-                confirm({
-                    content: electionMsg,
-                    okText: 'Continue',
-                    okType: 'primary',
-                    cancelText: 'Cancel',
-                    onOk: () => {
+                    const { saveAction } = this;
+                    if (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) {
+                        let electionMsg = '';
+                        if (this.state.titleLabel === AppConstants.addChild) {
+                            electionMsg = AppConstants.childMsg2Parent;
+                        } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
+                            electionMsg = AppConstants.parentMsg2Child;
+                        }
+                        if (electionMsg !== '') {
+                            confirm({
+                                content: electionMsg,
+                                okText: 'Continue',
+                                okType: 'primary',
+                                cancelText: 'Cancel',
+                                onOk: () => {
+                                    saveAction();
+                                    this.confirmOpend = false;
+                                },
+                                onCancel: () => {
+                                    this.confirmOpend = false;
+                                },
+                            });
+                        }
+                        else {
+                            saveAction();
+                        }
+                    } else {
                         saveAction();
-                        this.confirmOpend = false;
-                    },
-                    onCancel: () => {
-                        this.confirmOpend = false;
-                    },
-                });
-            }
-            else {
-                saveAction();
-            }
-        } else {
-            saveAction();
+                    }
+                }
+            });
+        } catch (ex) {
+            console.log("Exception occured in saveRegistrationForm" + ex);
         }
-    };
+    }
 
     saveAction = () => {
-        this.props.form.validateFields((err, values) => {
-            if (err) {
-                console.log("Error: " + err);
-                message.error(AppConstants.pleaseReview)
-                return false
-            }
+        let userState = this.props.userState;
+        let data = this.state.userData;
 
-            let userState = this.props.userState;
-            let data = this.state.userData;
+        if (!this.state.isSameEmail && data.mobileNumber != null && data.mobileNumber.length < 10) {
+            message.error(AppConstants.pleaseReview);
+            return false
+        }
 
-            if (!this.state.isSameEmail && data.mobileNumber != null && data.mobileNumber.length < 10) {
-                message.error(AppConstants.pleaseReview);
-                return false
-            }
+        if (this.state.displaySection === 3 && data.emergencyContactNumber != null && data.emergencyContactNumber.length < 10) {
+            message.error(AppConstants.pleaseReview);
+            return false
+        }
 
-            if (this.state.displaySection === 3 && data.emergencyContactNumber != null && data.emergencyContactNumber.length < 10) {
-                message.error(AppConstants.pleaseReview);
-                return false
-            }
+        data["section"] = this.state.section;
+        data["organisationId"] = this.state.organisationId;
+        if (this.state.displaySection == 8 && !data.parentUserId) {
+            data["parentUserId"] = 0;
+        } else if (this.state.displaySection == 7 && !data.childUserId) {
+            data["childUserId"] = 0;
+        }
 
-            data["section"] = this.state.section;
-            data["organisationId"] = this.state.organisationId;
-            if (this.state.displaySection == 8 && !data.parentUserId) {
-                data["parentUserId"] = 0;
-            } else if (this.state.displaySection == 7 && !data.childUserId) {
-                data["childUserId"] = 0;
-            }
+        const sameEmail = (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) ? 1 : 0;
+        if (this.state.titleLabel === AppConstants.addChild) {
+            this.props.addChildAction(data, getUserId(), sameEmail);
+        } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
+            this.props.addParentAction(data, getUserId(), sameEmail);
+        } else {
+            this.props.userProfileUpdateAction(data);
+        }
+        this.setState({ saveLoad: true });
 
-            const sameEmail = (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) ? 1 : 0;
-            if (this.state.titleLabel === AppConstants.addChild) {
-                this.props.addChildAction(data, getUserId(), sameEmail);
-            } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
-                this.props.addParentAction(data, getUserId(), sameEmail);
-            } else {
-                this.props.userProfileUpdateAction(data);
-            }
-            this.setState({ saveLoad: true });
-        });
     };
 
     footerView = (isSubmitting) => {
