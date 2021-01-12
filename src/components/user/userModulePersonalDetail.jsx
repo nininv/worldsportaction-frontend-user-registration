@@ -226,8 +226,8 @@ const teamMembersColumns = [
     },
     {
         title: "Status",
-        dataIndex: "name",
-        key: "name",
+        dataIndex: "paymentStatus",
+        key: "paymentStatus",
     },
     {
         title: "Paid Fee",
