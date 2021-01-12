@@ -2820,6 +2820,7 @@ class AppRegistrationFormNew extends Component {
                                     // value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
                                     value={competition.divisionInfoIndex}
                                     onChange={(index) => this.onChangeDivisionInfo(index, competitionIndex, competition.divisionInfo)}
+                                    notFoundContent={AppConstants.regoDivisionNotFound}
                                 >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
                                         <Option key={"division" + divisionInfoIndex}
@@ -3400,7 +3401,7 @@ class AppRegistrationFormNew extends Component {
                         <Radio value={0}>{AppConstants.no}</Radio>
                     </Radio.Group>
                     )}
-                    </Form.Item>    
+                    </Form.Item>
                     {registrationObj.additionalInfo.isDisability == 1 ?
                         <div>
                             <InputWithHead heading={AppConstants.disabilityCareNumber} />
@@ -3508,7 +3509,7 @@ class AppRegistrationFormNew extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })( 
+                        })(
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
@@ -3518,7 +3519,7 @@ class AppRegistrationFormNew extends Component {
                         ))}
                     </Radio.Group>
                      )}
-                    </Form.Item>   
+                    </Form.Item>
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
