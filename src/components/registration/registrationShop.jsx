@@ -8,7 +8,8 @@ import {
     Button,
     Table,
     DatePicker,
-    Radio, Form, Modal, InputNumber
+    Radio, Form, Modal, InputNumber,
+    Pagination
 } from "antd";
  import "./product.css";
  import "../user/user.css";
@@ -574,11 +575,38 @@ class RegistrationShop extends Component {
         );
     }
 
+    handlePagination = (page) => {
+        let {registrationUniqueKey,typeId,organisationUniqueKey} = this.state
+        let payload = {
+            registrationId: registrationUniqueKey,
+            typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+
+        this.props.getRegistrationShopProductAction(payload);
+    };
+
     shopLeftView = ()=>{
+        const {shopProductList,shopProductsTotalCount,shopProductsPage} = this.props.registrationProductState;
         return(
             <div className="col-sm-12 col-md-7 col-lg-8 mt-0 product-left-view outline-style registration-form-view" style={{cursor:"pointer", marginBottom: 23}}>
                 {this.headerView()}
                 {this.cardView()}
+                <div className="d-flex justify-content-end">
+                    {isArrayNotEmpty(shopProductList) && (
+                        <Pagination
+                            className="antd-pagination"
+                            total={shopProductsTotalCount}
+                            onChange={(page) => this.handlePagination(page)}
+                            current={shopProductsPage}
+                            showSizeChanger={false}
+                        />
+                     )}
+                </div>
                 {/* {this.state.showCardView &&
                     <div>
                         {this.cardExpandView()}

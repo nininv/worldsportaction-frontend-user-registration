@@ -399,9 +399,9 @@ class UserProfileEdit extends Component {
         let defaultVenueAddress = null
         if (userData.street1) {
             defaultVenueAddress = `${userData.street1 && `${userData.street1},`
-            } ${userData.suburb && `${userData.suburb},`
-            } ${state && `${state},`
-            } `;
+                } ${userData.suburb && `${userData.suburb},`
+                } ${state && `${state},`
+                } `;
         }
 
         return (
@@ -479,59 +479,59 @@ class UserProfileEdit extends Component {
                 {(!this.state.isSameEmail
                     || (this.state.titleLabel !== AppConstants.addChild
                         && this.state.titleLabel !== AppConstants.addParent_guardian)) && (
-                    <div className="row">
-                        <div className="col-sm">
-                            <Form.Item
-                                help={hasErrorAddressEdit && ValidationConstants.mobileLength}
-                                validateStatus={hasErrorAddressEdit ? "error" : 'validating'}
-                            >
-                                {getFieldDecorator('mobileNumber', {
-                                    rules: [{ required: true, message: ValidationConstants.contactField }],
-                                })(
-                                    <InputWithHead
-                                        required={"required-field pb-0 pt-3"}
-                                        heading={AppConstants.contactMobile}
-                                        placeholder={AppConstants.contactMobile}
-                                        name={'mobileNumber'}
-                                        setFieldsValue={userData.mobileNumber}
-                                        onChange={(e) => this.onChangeSetValue(e.target.value, "mobileNumber")}
-                                        maxLength={10}
-                                    />
+                        <div className="row">
+                            <div className="col-sm">
+                                <Form.Item
+                                    help={hasErrorAddressEdit && ValidationConstants.mobileLength}
+                                    validateStatus={hasErrorAddressEdit ? "error" : 'validating'}
+                                >
+                                    {getFieldDecorator('mobileNumber', {
+                                        rules: [{ required: true, message: ValidationConstants.contactField }],
+                                    })(
+                                        <InputWithHead
+                                            required={"required-field pb-0 pt-3"}
+                                            heading={AppConstants.contactMobile}
+                                            placeholder={AppConstants.contactMobile}
+                                            name={'mobileNumber'}
+                                            setFieldsValue={userData.mobileNumber}
+                                            onChange={(e) => this.onChangeSetValue(e.target.value, "mobileNumber")}
+                                            maxLength={10}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                            <div className="col-sm">
+                                <Form.Item >
+                                    {getFieldDecorator('email', {
+                                        rules: [
+                                            {
+                                                required: true, message: ValidationConstants.emailField[0]
+                                            },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }
+                                        ],
+                                    })(
+                                        <InputWithHead
+                                            required={"required-field pb-0 pt-3"}
+                                            heading={AppConstants.contactEmail}
+                                            placeholder={AppConstants.contactEmail}
+                                            name={'email'}
+                                            setFieldsValue={userData.email}
+                                            onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
+                                        />
+                                    )}
+                                </Form.Item>
+                                {(userData.userId == getUserId() && this.state.isSameUserEmailChanged) && (
+                                    <div className="same-user-validation">
+                                        {ValidationConstants.emailField[2]}
+                                    </div>
                                 )}
-                            </Form.Item>
+                            </div>
                         </div>
-                        <div className="col-sm">
-                            <Form.Item >
-                                {getFieldDecorator('email', {
-                                    rules: [
-                                        {
-                                            required: true, message: ValidationConstants.emailField[0]
-                                        },
-                                        {
-                                            type: "email",
-                                            pattern: new RegExp(AppConstants.emailExp),
-                                            message: ValidationConstants.email_validation
-                                        }
-                                    ],
-                                })(
-                                    <InputWithHead
-                                        required={"required-field pb-0 pt-3"}
-                                        heading={AppConstants.contactEmail}
-                                        placeholder={AppConstants.contactEmail}
-                                        name={'email'}
-                                        setFieldsValue={userData.email}
-                                        onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
-                                    />
-                                )}
-                            </Form.Item>
-                            {(userData.userId == getUserId() && this.state.isSameUserEmailChanged) && (
-                                <div className="same-user-validation">
-                                    {ValidationConstants.emailField[2]}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
+                    )}
                 {!this.state.manualAddress && (
                     <PlacesAutocomplete
                         defaultValue={defaultVenueAddress && `${defaultVenueAddress}Australia`}
@@ -560,7 +560,7 @@ class UserProfileEdit extends Component {
                                 name={'street1'}
                                 value={userData?.street1}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "street1")}
-                                // readOnly
+                            // readOnly
                             />
                         </div>
                         <div className="col-sm">
@@ -588,7 +588,7 @@ class UserProfileEdit extends Component {
                                 name={'suburb'}
                                 value={userData?.suburb}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "suburb")}
-                                // readOnly
+                            // readOnly
                             />
                         </div>
                         <div className="col-sm">
@@ -602,8 +602,8 @@ class UserProfileEdit extends Component {
                                 value={userData?.stateRefId}
                                 name="stateRefId"
                                 onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
-                                // readOnly
-                                // disabled
+                            // readOnly
+                            // disabled
                             >
                                 {stateList.map((item) => (
                                     <Option key={'state_' + item.id} value={item.id}>{item.name}</Option>
@@ -622,7 +622,7 @@ class UserProfileEdit extends Component {
                                 value={userData?.postalCode}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "postalCode")}
                                 maxLength={4}
-                                // readOnly
+                            // readOnly
                             />
                         </div>
                         <div className="col-sm" />
@@ -1102,19 +1102,24 @@ class UserProfileEdit extends Component {
             } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
                 electionMsg = AppConstants.parentMsg2Child;
             }
-            confirm({
-                content: electionMsg,
-                okText: 'Continue',
-                okType: 'primary',
-                cancelText: 'Cancel',
-                onOk: () => {
-                    saveAction();
-                    this.confirmOpend = false;
-                },
-                onCancel: () => {
-                    this.confirmOpend = false;
-                },
-            });
+            if (electionMsg !== '') {
+                confirm({
+                    content: electionMsg,
+                    okText: 'Continue',
+                    okType: 'primary',
+                    cancelText: 'Cancel',
+                    onOk: () => {
+                        saveAction();
+                        this.confirmOpend = false;
+                    },
+                    onCancel: () => {
+                        this.confirmOpend = false;
+                    },
+                });
+            }
+            else {
+                saveAction();
+            }
         } else {
             saveAction();
         }
