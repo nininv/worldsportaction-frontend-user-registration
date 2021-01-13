@@ -85,7 +85,13 @@ class RegistrationInvoice extends Component {
             // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
             // let userRegId = null;
             // let invoiceId = null;
+            let data=this.props.location
+            data.pathname='/invoice'
             this.props.getInvoice(registrationId, userRegId, invoiceId, teamMemberRegId)
+            window.history.pushState(data, document.title, window.location.href);
+            window.addEventListener('popstate', () => {
+                window.history.pushState(data, document.title, window.location.href);
+            });
             //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
         }
     }

@@ -414,6 +414,11 @@ textarea.ant-input {
   border-color: var(--app-color);
 }
 
+.ant-pagination-item:focus a,
+.ant-pagination-item:hover a {
+  color: var(--app-color);
+}
+
 .ant-input-number {
   display: flex;
   padding-top: 11px;

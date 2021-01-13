@@ -8,7 +8,8 @@ import {
     Button,
     Table,
     DatePicker,
-    Radio, Form, Modal, InputNumber
+    Radio, Form, Modal, InputNumber,
+    Pagination
 } from "antd";
  import "./product.css";
  import "../user/user.css";
@@ -183,7 +184,8 @@ class RegistrationShop extends Component {
             totalAmt: 0,
             organisationId: expandObj.organisationId,
             skuId: variantOption ? (variantOption.skuId) : 0,
-            variantName: varnt.name
+            variantName: varnt.name,
+            inventoryTracking: expandObj.inventoryTracking
         }
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateReviewInfoAction(obj,key, null, subKey,null);
@@ -222,6 +224,21 @@ class RegistrationShop extends Component {
         this.setState({loading: true, buttonPressed: key});
     }
 
+    // renderPrice = (item) => {
+    //     const max = Math.max(...item.variants.map(elem => {
+    //        return Math.max(...elem.variantOptions.map(({ price }) => price));
+    //     }))
+    //     const min = Math.min(...item.variants.map(elem => {
+    //         return Math.min(...elem.variantOptions.map(({ price }) => price));
+    //     }))
+
+    //     const price = (min + feeIsNull(item.tax)).toFixed(2);
+    //     if (min !== max) {
+    //         return `From  $${price}`;
+    //     }
+    //     return `$${price}`
+    // }
+
     renderPrice = (item) => {
         let max=0
         let min=0
@@ -249,6 +266,30 @@ class RegistrationShop extends Component {
             return `From  $${price}`;
         }
         return `$${price}`
+    }
+
+    getMaxVariantsQuantity = (choiceVariant, variantData, productId) => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        const isNullVariants = !variantData.variantId;
+
+        if (!isNullVariants && choiceVariant) {
+            const variantOptionQuantity = variantData.variantOptions.find(item => item.variantOptionId === choiceVariant).quantity;
+            const productFromOrder = registrationReviewList.shopProducts.find(item => item.variantOptionId === choiceVariant);
+            return  variantOptionQuantity - (productFromOrder ? productFromOrder.quantity : 0);
+        }
+        const productsFromOrder = registrationReviewList.shopProducts.filter(item => item.productId === productId);
+
+        if (!isNullVariants && !choiceVariant) {
+            return Math.min(...variantData.variantOptions.map((option) => {
+                const product = productsFromOrder.find(item => item.variantOptionId === option.variantOptionId);
+                if (product) {
+                    return option.quantity - product.quantity;
+                }
+                return option.quantity
+            }));
+        }
+        const quantityFromStore = Math.min(...variantData.variantOptions.map(({ quantity }) => quantity));
+        return quantityFromStore - (productsFromOrder[0] ? productsFromOrder[0].quantity : 0);
     }
 
     enableExpandView = (key, item, index) =>{
@@ -435,7 +476,7 @@ class RegistrationShop extends Component {
         let expandObj = this.state.expandObj;
         console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
-        const isNullVariants =isArrayNotEmpty(expandObj.variants)&&!expandObj.variants[0].variantId;
+        const isNullVariants = !expandObj.variants[0].variantId;
         return(
             <div class = "expand-product-text"  style={{marginTop: "23px"}}>
                 <div style={{textAlign:"right"}}>
@@ -448,58 +489,77 @@ class RegistrationShop extends Component {
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
-                        {(expandObj.variants || []).map((varnt, vIndex) =>(
-                            <div>
-                            <div style={{display:"flex", flexWrap:"wrap"}}>
-                                {!isNullVariants && <div class="col-lg-6" style={{marginTop: 27, padding: 0}}>
-                                    <div className="subtitle-text-common">
-                                        {"Select " + varnt.name}
+                        {(expandObj.variants || []).map((varnt, vIndex) => {
+                            let maxQuantity = this.getMaxVariantsQuantity(this.state.variantOptionId, varnt, expandObj.productId);
+                            let isOutOfStock = false;
+                            if (isNullVariants && maxQuantity === 0 && expandObj.inventoryTracking) {
+                                isOutOfStock = true;
+                            }
+                            if (!isNullVariants && maxQuantity === 0 && this.state.variantOptionId && expandObj.inventoryTracking) {
+                                isOutOfStock = true;
+                            }
+                            if (!expandObj.inventoryTracking) {
+                                maxQuantity = 100000;
+                            }
+
+                            return (
+                                <div>
+                                    <div style={{display: "flex", flexWrap: "wrap"}}>
+                                        {!isNullVariants && <div class="col-lg-6" style={{marginTop: 27, padding: 0}}>
+                                            <div className="subtitle-text-common">
+                                                {"Select " + varnt.name}
+                                            </div>
+                                            <div style={{marginTop: 7}}>
+                                                <Select
+                                                    style={{padding: 0}}
+                                                    placeholder={AppConstants.allCategories}
+                                                    className="body-text-common col-lg-11"
+                                                    value={this.state.variantOptionId}
+                                                    onChange={(e) => this.setState({variantOptionId: e})}
+                                                >
+                                                    {(varnt.variantOptions || []).map((varOpt, vOptIndex) => (
+                                                        <Option key={varOpt.variantOptionId}
+                                                                value={varOpt.variantOptionId}>
+                                                            {varOpt.optionName}</Option>
+                                                    ))}
+                                                </Select>
+                                            </div>
+                                        </div>}
+                                        <div style={{marginTop: 27, padding: 0}} className="col-lg-6">
+                                            <div className="subtitle-text-common">
+                                                {AppConstants.quantity}
+                                            </div>
+                                            <div style={{marginTop: 7, fontFamily: "inter"}}>
+                                                <InputNumber style={{fontWeight: 500}} size="large"
+                                                    min={1}
+                                                    max={maxQuantity}
+                                                    defaultValue={0}
+                                                    onChange={(e) => this.setState({quantity: e})}
+                                                    value={this.state.quantity}
+                                                    className="col-lg-11 body-text-common"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{marginTop: 7}}>
-                                        <Select
-                                            style={{padding: 0}}
-                                            placeholder={AppConstants.allCategories}
-                                            className="body-text-common col-lg-11"
-                                            value={this.state.variantOptionId}
-                                            onChange={(e) => this.setState({variantOptionId: e})}
-                                        >
-                                            {(varnt.variantOptions || []).map((varOpt, vOptIndex) => (
-                                                <Option key={varOpt.variantOptionId} value={varOpt.variantOptionId}>
-                                                    {varOpt.optionName}</Option>
-                                            ))}
-                                        </Select>
-                                    </div>
-                                </div>}
-                                <div style={{marginTop:27,padding:0}} className="col-lg-6">
-                                    <div className="subtitle-text-common">
-                                        {AppConstants.quantity}
-                                    </div>
-                                    <div style={{marginTop:7,fontFamily: "inter"}}>
-                                        <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
-                                        onChange={(e)=> this.setState({quantity: e})}
-                                        value= {this.state.quantity}
-                                        className="col-lg-11 body-text-common"
-                                        />
+                                    <div class="row" style={{margin: 0}}>
+                                        <div class="col-lg-8 col-12"
+                                             style={{padding: 0, marginTop: 23, marginRight: 22}}>
+                                            <Button className={`open-reg-button addToCart ${isOutOfStock ? 'out-of-stock' : ''}`}
+                                                    disabled={this.state.quantity == null || (this.state.variantOptionId == null && !isNullVariants) || maxQuantity === 0}
+                                                    onClick={() => this.addToCart(expandObj, varnt, 'addShopProduct', 'shopProducts')}>
+                                                {isOutOfStock ? AppConstants.outOfStock : AppConstants.addToCart}
+                                            </Button>
+                                        </div>
+                                        <div class="col-lg-3 col-12" style={{padding: 0, marginTop: 23}}>
+                                            <Button className="cancel-button-text" style={{height: "49px"}}
+                                                    onClick={() => this.enableExpandView('hide')}>
+                                                {AppConstants.cancel}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class = "row" style={{margin:0}}>
-                                <div class = "col-lg-8 col-12" style={{padding:0,marginTop:23, marginRight: 22}}>
-                                    <Button className="open-reg-button addToCart"
-                                    disabled={this.state.quantity == null || (this.state.variantOptionId == null && !isNullVariants)}
-                                    onClick={() => this.addToCart(expandObj, varnt,'addShopProduct', 'shopProducts')}>
-                                        {AppConstants.addToCart}
-                                    </Button>
-                                </div>
-                                <div class = "col-lg-3 col-12" style={{padding:0,marginTop:23}}>
-                                    <Button className="cancel-button-text" style={{height: "49px"}}
-                                     onClick = {() => this.enableExpandView('hide')}>
-                                        {AppConstants.cancel}
-                                    </Button>
-                                </div>
-                            </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
 
@@ -516,11 +576,38 @@ class RegistrationShop extends Component {
         );
     }
 
+    handlePagination = (page) => {
+        let {registrationUniqueKey,typeId,organisationUniqueKey} = this.state
+        let payload = {
+            registrationId: registrationUniqueKey,
+            typeId: typeId,
+            organisationUniqueKey: organisationUniqueKey,
+            paging: {
+                limit: 10,
+                offset: (page ? (10 * (page - 1)) : 0),
+            },
+        }
+
+        this.props.getRegistrationShopProductAction(payload);
+    };
+
     shopLeftView = ()=>{
+        const {shopProductList,shopProductsTotalCount,shopProductsPage} = this.props.registrationProductState;
         return(
             <div className="col-sm-12 col-md-7 col-lg-8 mt-0 product-left-view outline-style registration-form-view" style={{cursor:"pointer", marginBottom: 23}}>
                 {this.headerView()}
                 {this.cardView()}
+                <div className="d-flex justify-content-end">
+                    {isArrayNotEmpty(shopProductList) && (
+                        <Pagination
+                            className="antd-pagination"
+                            total={shopProductsTotalCount}
+                            onChange={(page) => this.handlePagination(page)}
+                            current={shopProductsPage}
+                            showSizeChanger={false}
+                        />
+                     )}
+                </div>
                 {/* {this.state.showCardView &&
                     <div>
                         {this.cardExpandView()}
