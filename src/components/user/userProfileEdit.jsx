@@ -365,7 +365,7 @@ class UserProfileEdit extends Component {
     };
 
     handlePlacesAutocomplete = (data) => {
-        const { stateList } = this.props.commonReducerState;
+        const { stateListData } = this.props.commonReducerState;
         const address = data;
         let userData = this.state.userData;
         // this.props.checkVenueDuplication(address);
@@ -383,8 +383,8 @@ class UserProfileEdit extends Component {
         this.setState({
             venueAddress: address,
         });
-        const stateRefId = stateList.length > 0 && address.state
-            ? stateList.find((state) => state.name === address.state).id
+        const stateRefId = stateListData.length > 0 && address.state
+            ? stateListData.find((state) => state.name === address.state).id
             : null;
 
         // this.formRef.current.setFieldsValue({
