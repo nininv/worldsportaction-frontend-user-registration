@@ -2240,39 +2240,39 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            {/* <div className="add-team-member-action-txt" onClick={() => this.gotoAddTeamMember()}>
+                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
                                 +
                                 {' '}
                                 {AppConstants.addTeamMembers}
-                            </div> */}
-                            <div className="user-module-row-heading font-18 mt-2">
-                                {AppConstants.team + ": " + this.state.registrationTeam.teamName}
                             </div>
-                            <div className="table-responsive home-dash-table-view">
-                                <Table
-                                    className="home-dashboard-table"
-                                    columns={teamMembersColumns}
-                                    dataSource={teamMembers}
-                                    pagination={false}
-                                    loading={
-                                        this.props.userState.getTeamMembersOnLoad
-                                    }
-                                />
-                            </div>
-                            <div className="d-flex justify-content-end">
-                                <Pagination
-                                    className="antd-pagination pb-3"
-                                    current={teamMembersCurrentPage}
-                                    total={teamMembersTotalCount}
-                                    onChange={(page) =>
-                                        this.showTeamMembers(
-                                            this.state.registrationTeam,
-                                            page
-                                        )
-                                    }
-                                    showSizeChanger={false}
-                                />
-                            </div>
+                        </div>
+                        <div className="user-module-row-heading font-18 mt-2">
+                            {AppConstants.team + ": " + this.state.registrationTeam.teamName}
+                        </div>
+                        <div className="table-responsive home-dash-table-view">
+                            <Table
+                                className="home-dashboard-table"
+                                columns={teamMembersColumns}
+                                dataSource={teamMembers}
+                                pagination={false}
+                                loading={
+                                    this.props.userState.getTeamMembersOnLoad
+                                }
+                            />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                            <Pagination
+                                className="antd-pagination pb-3"
+                                current={teamMembersCurrentPage}
+                                total={teamMembersTotalCount}
+                                onChange={(page) =>
+                                    this.showTeamMembers(
+                                        this.state.registrationTeam,
+                                        page
+                                    )
+                                }
+                                showSizeChanger={false}
+                            />
                         </div>
                     </div>
                     )}
