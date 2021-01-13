@@ -1539,6 +1539,7 @@ class AppRegistrationFormNew extends Component {
             this.setState({ currentStep: 1 });
             this.scrollToTop();
         }
+
         return (
             <>
                 {participantWithoutProfile && this.addedParticipantView()}
@@ -1547,6 +1548,7 @@ class AppRegistrationFormNew extends Component {
                 {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
                 {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
                 {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
+                <Loader visible={userAlreadyExist.isLoading} />
                 {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                 {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
             </>

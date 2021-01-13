@@ -214,6 +214,7 @@ const initialState = {
 		phone: false,
 		email: false,
 		currentUser: null,
+		isLoading: false,
 	}
 }
 
@@ -1028,6 +1029,7 @@ function userRegistrationReducer(state = initialState, action){
 						secondStep: false,
 						thirdStep: true,
 						message: action.result.result.data.message,
+						isLoading: false,
 					},
 					userDigitCode: {
 						message: action.result.result.data.message,
@@ -1040,7 +1042,8 @@ function userRegistrationReducer(state = initialState, action){
 						...state.userAlreadyExist,
 						secondStep: false,
 						thirdStep: true,
-						message: action.result.result.data.message
+						message: action.result.result.data.message,
+						isLoading: false
 					}
 				}
 			case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
@@ -1048,6 +1051,7 @@ function userRegistrationReducer(state = initialState, action){
 					...state,
 					userDigitCode: {
 						message: action.result.result.data.message,
+						isLoading: false
 					}
 				}
 			case ApiConstants.API_CANCEL_SEND:
@@ -1067,6 +1071,14 @@ function userRegistrationReducer(state = initialState, action){
 						firstStep: false,
 						secondStep: true,
 						currentUser: action.payload
+					}
+				}
+			case ApiConstants.API_PARTICIPANT_DETAILS_LOAD:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						isLoading: true
 					}
 				}
         default: return state;

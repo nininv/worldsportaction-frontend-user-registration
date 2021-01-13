@@ -181,6 +181,9 @@ export function* sendDigitCode(action) {
     const {payload} = action;
     const result = yield call(userHttpApi.sendDigitCode, payload);
     yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
+    yield put({
       type: ApiConstants.API_SEND_DIGIT_CODE_SUCCESS,
       result,
     });
@@ -193,6 +196,9 @@ export function* sendConfirmDetails(action) {
   try {
     const {payload} = action;
     const result = yield call(userHttpApi.sendConfirmDetails, payload);
+    yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
     if (result.result.data.message === "success") {
       yield put({
         type: ApiConstants.API_SEND_DIGIT_CODE,
@@ -213,7 +219,9 @@ export function* checkDigitCode(action) {
   try {
     const {payload} = action;
     const result = yield call(userHttpApi.checkDigitCode, payload);
-
+    yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
     yield put({
       type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,
       result,
