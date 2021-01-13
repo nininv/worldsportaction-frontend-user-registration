@@ -701,7 +701,16 @@ function userReducer(state = initialState, action) {
                 ...state,
                 error: null
             }
+        case ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD:
+            return { ...state, onTeamUpdateLoad: true };
 
+        case ApiConstants.API_TEAM_MEMBER_UPDATE_SUCCESS:
+            return {
+                ...state,
+                onTeamUpdateLoad: false,
+                teamMemberUpdate: action.result,
+                status: action.status
+            };
         default:
             return state;
     }

@@ -1215,7 +1215,12 @@ const AppConstants = {
   outOfStock:"Out of stock",
 
   // not found or empty values
-  regoDivisionNotFound: 'No Divisions match your User information, please choose another Competition.' // CM-2064
+  regoDivisionNotFound: 'No Divisions match your User information, please choose another Competition.', // CM-2064
+
+  removed: "Removed",
+  removeFromTeam: "Remove from Team",
+  addToTeam: "Add to Team",
+  removeFromTeamPopUpMsg: "Do you want to remove this user from the team?"
 };
 
 export default AppConstants;

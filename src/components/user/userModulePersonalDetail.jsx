@@ -18,7 +18,8 @@ import {
     userPhotoUpdateAction,
     registrationResendEmailAction,
     userProfileUpdateAction,
-    getUserModuleTeamMembersAction
+    getUserModuleTeamMembersAction,
+    teamMemberUpdateAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
         '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -250,6 +251,32 @@ const teamMembersColumns = [
     {
         title: "Action",
         key: "action",
+        dataIndex: "isActive",
+        render: (data, record) => (
+            <Menu
+                className="action-triple-dot-submenu"
+                theme="light"
+                mode="horizontal"
+                style={{ lineHeight: "25px" }}
+            >
+                <SubMenu
+                    key="sub1"
+                    title={(
+                        <img
+                            className="dot-image"
+                            src={AppImages.moreTripleDot}
+                            alt=""
+                            width="16"
+                            height="16"
+                        />
+                    )}
+                >
+                    <Menu.Item key="1">
+                        <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                    </Menu.Item>
+                </SubMenu>
+            </Menu>
+        ),
     },
 ]
 
@@ -1007,7 +1034,10 @@ class UserModulePersonalDetail extends Component {
             childRegCurrentPage: 1,
             teamRegCurrentPage: 1,
             isShowRegistrationTeamMembers: false,
-            registrationTeam: null
+            registrationTeam: null,
+            removeTeamMemberLoad: false,
+            showRemoveTeamMemberConfirmPopup: false,
+            removeTeamMemberRecord: null,
         }
     }
 
@@ -1170,6 +1200,21 @@ class UserModulePersonalDetail extends Component {
         if (!isPersonDetailsTabVisited && !userState.onPersonLoad && tabKey === "4") {
             this.setState({ isPersonDetailsTabVisited: true })
         }
+
+        if (this.props.userState.onTeamUpdateLoad == false && this.state.removeTeamMemberLoad == true) {
+            const record = this.state.registrationTeam;
+            const page = 1;
+            const payload = {
+                userId: record.userId,
+                teamId: record.teamId,
+                teamMemberPaging: {
+                    limit: 10,
+                    offset: page ? 10 * (page - 1) : 0,
+                },
+            };
+            this.props.getUserModuleTeamMembersAction(payload);
+            this.setState({ removeTeamMemberLoad: false });
+        }
     }
 
     apiCalls = async (userId) => {
@@ -1323,7 +1368,7 @@ class UserModulePersonalDetail extends Component {
     onChangeTab = e => {
         const tabNumber = e.key || e;
 
-        this.setState({ tabKey: tabNumber, isRegistrationForm: false });
+        this.setState({ tabKey: tabNumber, isRegistrationForm: false, isShowRegistrationTeamMembers: false });
         this.tabApiCalls(tabNumber, this.state.competition, this.state.userId, this.state.yearRefId);
     };
 
@@ -2182,7 +2227,11 @@ class UserModulePersonalDetail extends Component {
                         <div className="row">
                             <div className="col-sm d-flex align-content-center">
                                 <Breadcrumb separator=" > ">
-                                    <Breadcrumb.Item className="breadcrumb-add font-18 pointer" onClick={() => this.setState({isShowRegistrationTeamMembers: false})}>
+                                    <Breadcrumb.Item 
+                                    className="breadcrumb-add font-18 pointer" 
+                                    onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
+                                    style={{ color: "var(--app-color)" }}
+                                    >
                                         {AppConstants.Registrations}
                                     </Breadcrumb.Item>
                                     <Breadcrumb.Item className="breadcrumb-add font-18">
@@ -2560,6 +2609,12 @@ class UserModulePersonalDetail extends Component {
         this.setState({unlinkOnLoad: true});
     }
 
+    removeTeamMemberView = (data) => {
+        data.processType = data.isActive ? "deactivate" : "activate";
+        this.props.teamMemberUpdateAction(data);
+        this.setState({ removeTeamMemberLoad: true });
+    }
+
     unlinkCheckParent = (record) => {
         if (record.unlinkedBy && record.status === "Unlinked") {
             if (record.unlinkedBy == record.userId) {
@@ -2581,6 +2636,14 @@ class UserModulePersonalDetail extends Component {
             }
         } else {
             this.setState({ unlinkRecord: record, showChildUnlinkConfirmPopup: true })
+        }
+    }
+
+    removeTeamMember = (record) => {
+        if (record.isActive) {
+            this.setState({ removeTeamMemberRecord: record, showRemoveTeamMemberConfirmPopup: true });
+        } else {
+            this.removeTeamMemberView(record);
         }
     }
 
@@ -2662,6 +2725,32 @@ class UserModulePersonalDetail extends Component {
             </div>
         )
     }
+
+    removeTeamMemberConfirmPopup = () => (
+        <div>
+            <Modal
+                className="add-membership-type-modal"
+                title={AppConstants.confirm}
+                visible={this.state.showRemoveTeamMemberConfirmPopup}
+                onCancel={() => this.setState({ showRemoveTeamMemberConfirmPopup: false })}
+                footer={[
+                    <Button onClick={() => this.setState({ showRemoveTeamMemberConfirmPopup: false })}>
+                        {AppConstants.no}
+                    </Button>,
+                    <Button
+                        onClick={() => {
+                            this.removeTeamMemberView(this.state.removeTeamMemberRecord);
+                            this.setState({ showRemoveTeamMemberConfirmPopup: false });
+                        }}
+                    >
+                        {AppConstants.yes}
+                    </Button>,
+                ]}
+            >
+                <p>{AppConstants.removeFromTeamPopUpMsg}</p>
+            </Modal>
+        </div>
+    )
 
     render() {
         let {
@@ -2825,6 +2914,7 @@ class UserModulePersonalDetail extends Component {
                         {this.unlinkChildConfirmPopup()}
                         {this.unlinkParentConfirmPopup()}
                         {this.cannotUninkPopup()}
+                        {this.removeTeamMemberConfirmPopup()}
                     </Content>
                 </Layout>
             </div>
@@ -2854,7 +2944,8 @@ function mapDispatchToProps(dispatch) {
         userPhotoUpdateAction,
         registrationResendEmailAction,
         userProfileUpdateAction,
-        getUserModuleTeamMembersAction
+        getUserModuleTeamMembersAction,
+        teamMemberUpdateAction
     }, dispatch);
 }
 

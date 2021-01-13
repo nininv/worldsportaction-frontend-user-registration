@@ -210,6 +210,13 @@ function addParentAction(body, userId, sameEmail) {
   };
 }
 
+function teamMemberUpdateAction(data) {
+  return {
+      type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
+      data,
+  }
+}
+
 export {
   getRoleAction,
   getUreAction,
@@ -239,5 +246,6 @@ export {
   getTeamMembersReviewAction,
   addChildAction,
   addParentAction,
+  teamMemberUpdateAction
 }
 
