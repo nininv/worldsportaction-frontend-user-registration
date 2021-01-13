@@ -233,11 +233,19 @@ const teamMembersColumns = [
         title: "Paid Fee",
         dataIndex: "paidFee",
         key: "paidFee",
+        render: r => new Intl.NumberFormat('en-AU', {
+            style: 'currency',
+            currency: 'AUD',
+            minimumFractionDigits: 2
+        }).format(r)
     },
     {
         title: "Pending Fee",
         dataIndex: "pendingFee",
         key: "pendingFee",
+        render: r => new Intl.NumberFormat('en-AU', {
+            style: 'currency', currency: 'AUD', minimumFractionDigits: 2}
+        ).format(r)
     },
     {
         title: "Action",

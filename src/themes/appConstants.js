@@ -1213,6 +1213,9 @@ const AppConstants = {
   teamMembers: "Team Members",
   umpireAvailabilityMessage: "Please complete your Umpiring Availability and enter your Bank Account details (for Umpire Payments) by clicking on the Action menu.",
   outOfStock:"Out of stock",
+
+  // not found or empty values
+  regoDivisionNotFound: 'No Divisions match your User information, please choose another Competition.' // CM-2064
 };
 
 export default AppConstants;
