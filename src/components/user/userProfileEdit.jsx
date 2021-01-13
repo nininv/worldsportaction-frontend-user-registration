@@ -403,11 +403,11 @@ class UserProfileEdit extends Component {
 
     addressEdit = (getFieldDecorator) => {
         let userData = this.state.userData
-        const { stateList } = this.props.commonReducerState;
+        const { stateListData } = this.props.commonReducerState;
         let hasErrorAddressEdit = this.state.hasErrorAddressEdit;
 
-        let state = (stateList.length > 0 && userData.stateRefId)
-            ? stateList.find((state) => state.id == userData.stateRefId).name
+        let state = (stateListData.length > 0 && userData.stateRefId)
+            ? stateListData.find((state) => state.id == userData.stateRefId).name
             : null;
 
         let defaultVenueAddress = null
@@ -417,7 +417,6 @@ class UserProfileEdit extends Component {
                 } ${state && `${state},`
                 } `;
         }
-
         return (
             <div className="pt-0">
                 <div className="row">
@@ -613,13 +612,13 @@ class UserProfileEdit extends Component {
                                 style={{ width: '100%', paddingRight: 1, minWidth: 182 }}
                                 placeholder={AppConstants.select}
                                 // required="required-field"
-                                value={userData?.stateRefId}
+                                value={userData ?.stateRefId}
                                 name="stateRefId"
                                 onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
                             // readOnly
                             // disabled
                             >
-                                {stateList.map((item) => (
+                                {stateListData.map((item) => (
                                     <Option key={'state_' + item.id} value={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
