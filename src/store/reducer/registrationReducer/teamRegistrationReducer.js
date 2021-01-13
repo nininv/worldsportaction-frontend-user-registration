@@ -285,7 +285,8 @@ function setCompetitionDetails(state,details){
     state.teamRegistrationObj.organisationId = state.teamRegistrationObj.organisationInfo.organisationUniqueKey;
     state.teamRegistrationObj.competitionInfo = deepCopyFunction(details.competitionInfo);
     state.teamRegistrationObj.competitionId = state.teamRegistrationObj.competitionInfo.competitionUniqueKey;
-    state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId; 
+    state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId;
+    state.teamRegistrationObj.membershipProductList = []; 
     let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1);
     for(let productType of filteredPayerAndTeamMembershipProducts){
       let filteredTeamDivision = productType.divisions.find(x => x.isTeamRegistration == 1);
