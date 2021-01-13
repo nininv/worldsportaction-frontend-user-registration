@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon , Modal, Spin } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon, Modal, Spin } from 'antd';
 
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
@@ -22,7 +22,7 @@ import {
     teamMemberUpdateAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
-        '../../store/actions/registrationAction/endUserRegistrationAction';
+    '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
 import {
     getUserId,
@@ -88,7 +88,7 @@ const columns = [
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
                         <span className='year-select-heading mr-3'>{AppConstants.validUntil}</span>
                         <span className="user-details-info-text">
-                            {expiryDate != null ? (expiryDate !== 'Single Use' && expiryDate!== 'Single Game' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
+                            {expiryDate != null ? (expiryDate !== 'Single Use' && expiryDate !== 'Single Game' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
                         </span>
                     </div>
                     <div className="d-flex flex-wrap">
@@ -103,7 +103,7 @@ const columns = [
                             }
                         </div> */}
                         <div
-                            // style={{ marginTop: 13 }}
+                        // style={{ marginTop: 13 }}
                         >
                             <div className="form-heading p-0">{affiliate}</div>
                             <div style={{ textAlign: "start" }}>{competitionName}</div>
@@ -138,12 +138,12 @@ const columns = [
         render: (regForm, e) => {
             let compEndDate = moment(e.competitionEndDate).format("DD/MM/YYYY");
             let currentDate = moment().format("DD/MM/YYYY");
-            return(
+            return (
                 <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
                     <SubMenu
                         key="sub1"
                         title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                    alt="" width="16" height="16" />
+                            alt="" width="16" height="16" />
                         }
                     >
                         <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
@@ -200,16 +200,16 @@ const teamRegistrationColumns = [
         dataIndex: "regForm",
         key: "regForm",
         width: 52,
-        render: (regForm,record) => {
-            return(
+        render: (regForm, record) => {
+            return (
                 <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
                     <SubMenu
                         key="sub1"
                         title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                    alt="" width="16" height="16" />
+                            alt="" width="16" height="16" />
                         }
                     >
-                        <Menu.Item key="1" onClick={() => this_Obj.showTeamMembers(record,1)}>
+                        <Menu.Item key="1" onClick={() => this_Obj.showTeamMembers(record, 1)}>
                             <span>View</span>
                         </Menu.Item>
                     </SubMenu>
@@ -245,7 +245,8 @@ const teamMembersColumns = [
         dataIndex: "pendingFee",
         key: "pendingFee",
         render: r => new Intl.NumberFormat('en-AU', {
-            style: 'currency', currency: 'AUD', minimumFractionDigits: 2}
+            style: 'currency', currency: 'AUD', minimumFractionDigits: 2
+        }
         ).format(r)
     },
     {
@@ -286,7 +287,7 @@ const childOrOtherRegistrationColumns = [
         dataIndex: "regData",
         key: "regData",
         render: (regData, record, index) => {
-            const { dateOfBirth,name,email,feePaid } = record;
+            const { dateOfBirth, name, email, feePaid } = record;
             return (
                 <div>
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
@@ -315,12 +316,12 @@ const childOrOtherRegistrationColumns = [
         key: "regForm",
         width: 52,
         render: (regForm, e) => {
-            return(
+            return (
                 <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
                     <SubMenu
                         key="sub1"
                         title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                    alt="" width="16" height="16" />
+                            alt="" width="16" height="16" />
                         }
                     >
                         <Menu.Item key="1">
@@ -580,7 +581,7 @@ const columnsPersonalAddress = [
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                alt="" width="16" height="16" />}
+                        alt="" width="16" height="16" />}
                 >
                     <Menu.Item key="1">
                         <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "1" } }} >
@@ -602,7 +603,7 @@ const columnsPersonalPrimaryContacts = [
             <div>
                 {record.status === "Linked" ?
                     <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.parentUserId)}>
-                {parentName}</span>
+                        {parentName}</span>
                     :
                     <span>{parentName}</span>
                 }
@@ -654,7 +655,7 @@ const columnsPersonalPrimaryContacts = [
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                alt="" width="16" height="16" />
+                        alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1">
                         <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "2" } }} >
@@ -679,7 +680,7 @@ const columnsPersonalChildContacts = [
             <div>
                 {record.status === "Linked" ?
                     <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
-                    {childName}</span>
+                        {childName}</span>
                     :
                     <span>{childName}</span>
                 }
@@ -731,7 +732,7 @@ const columnsPersonalChildContacts = [
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                                alt="" width="16" height="16" />
+                        alt="" width="16" height="16" />
                     }
                 >
                     <Menu.Item key="1">
@@ -776,7 +777,7 @@ const columnsPersonalEmergency = [
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image"
-                                src={AppImages.moreTripleDotActive} alt="" width="16" height="16" />
+                        src={AppImages.moreTripleDotActive} alt="" width="16" height="16" />
                     }>
                     <Menu.Item key="1">
                         <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "3" } }} >
@@ -1149,7 +1150,7 @@ class UserModulePersonalDetail extends Component {
         }
 
         if ((this.state.competition.competitionUniqueKey == null || this.state.competition.competitionUniqueKey == '-1'
-            ) && personal.competitions != undefined &&
+        ) && personal.competitions != undefined &&
             personal.competitions.length > 0
             && this.props.userState.personalData != nextProps.userState.personalData) {
             // let years = [];
@@ -1177,7 +1178,7 @@ class UserModulePersonalDetail extends Component {
             }
         }
 
-        if(this.props.userState.onUpUpdateLoad == false && this.state.unlinkOnLoad == true){
+        if (this.props.userState.onUpUpdateLoad == false && this.state.unlinkOnLoad == true) {
             let personal = this.props.userState.personalData;
             let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
             let payload = {
@@ -1185,7 +1186,7 @@ class UserModulePersonalDetail extends Component {
                 organisationId: organisationId
             };
             this.props.getUserModulePersonalByCompetitionAction(payload);
-            this.setState({unlinkOnLoad: false})
+            this.setState({ unlinkOnLoad: false })
         }
 
         if (this.props.userState.personalData !== nextProps.userState.personalData) {
@@ -1543,7 +1544,7 @@ class UserModulePersonalDetail extends Component {
 
         const file = data.files[0];
 
-        const isUserChild = !!personalByCompData.length && !!personalByCompData[0].childContacts.length ? false: true;
+        const isUserChild = !!personalByCompData.length && !!personalByCompData[0].childContacts.length ? false : true;
 
         if (file) {
             const formData = new FormData();
@@ -1576,23 +1577,23 @@ class UserModulePersonalDetail extends Component {
             >
                 {
                     personal.photoUrl && !this.props.userState.userPhotoUpdate ?
-                        <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
+                        <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()} />
 
                         : personal.photoUrl && !!this.props.userState.userPhotoUpdate ?
-                        <div>{AppConstants.loading}</div>
+                            <div>{AppConstants.loading}</div>
 
-                        :
-                        <div
-                            className="img-upload-target"
-                            onClick={() => this.selectImage()}
-                        >
-                            <div className="img-upload-target-plus">
-                                +
+                            :
+                            <div
+                                className="img-upload-target"
+                                onClick={() => this.selectImage()}
+                            >
+                                <div className="img-upload-target-plus">
+                                    +
                             </div>
-                            <div style={{ marginTop: "-7px" }}>
-                                {AppConstants.addPhoto}
+                                <div style={{ marginTop: "-7px" }}>
+                                    {AppConstants.addPhoto}
+                                </div>
                             </div>
-                        </div>
                 }
                 <input
                     type="file"
@@ -1612,7 +1613,7 @@ class UserModulePersonalDetail extends Component {
         const { isTablet, isCollapsedUserDetails, isUserLoading } = this.state;
 
         return (
-            <div className="fluid-width" style={{ minHeight: `${isTablet ? 'unset' : 'calc(100vh - 175px'}`}}>
+            <div className="fluid-width" style={{ minHeight: `${isTablet ? 'unset' : 'calc(100vh - 175px'}` }}>
                 {isTablet && (
                     <div
                         className="d-flex justify-content-between align-items-center"
@@ -1639,7 +1640,7 @@ class UserModulePersonalDetail extends Component {
                                         color: 'var(--app-orange)',
                                         fontSize: 20
                                     }}
-                                    onClick={() => this.setState({ isCollapsedUserDetails: false})}
+                                    onClick={() => this.setState({ isCollapsedUserDetails: false })}
                                 />
                                 : <Icon
                                     type="up"
@@ -1647,7 +1648,7 @@ class UserModulePersonalDetail extends Component {
                                         color: 'var(--app-orange)',
                                         fontSize: 20
                                     }}
-                                    onClick={() => this.setState({ isCollapsedUserDetails: true})}
+                                    onClick={() => this.setState({ isCollapsedUserDetails: true })}
                                 />
                             }
                         </div>
@@ -2239,40 +2240,36 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
-                                + {AppConstants.addTeamMembers}
+                            <div className="user-module-row-heading font-18 mt-2">
+                                {AppConstants.team + ": " + this.state.registrationTeam.teamName}
+                            </div>
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={teamMembersColumns}
+                                    dataSource={teamMembers}
+                                    pagination={false}
+                                    loading={
+                                        this.props.userState.getTeamMembersOnLoad
+                                    }
+                                />
+                            </div>
+                            <div className="d-flex justify-content-end">
+                                <Pagination
+                                    className="antd-pagination pb-3"
+                                    current={teamMembersCurrentPage}
+                                    total={teamMembersTotalCount}
+                                    onChange={(page) =>
+                                        this.showTeamMembers(
+                                            this.state.registrationTeam,
+                                            page
+                                        )
+                                    }
+                                    showSizeChanger={false}
+                                />
                             </div>
                         </div>
-                        <div className="user-module-row-heading font-18 mt-2">
-                            {AppConstants.team + ": " + this.state.registrationTeam.teamName}
-                        </div>
-                        <div className="table-responsive home-dash-table-view">
-                            <Table
-                                className="home-dashboard-table"
-                                columns={teamMembersColumns}
-                                dataSource={teamMembers}
-                                pagination={false}
-                                loading={
-                                    this.props.userState.getTeamMembersOnLoad
-                                }
-                            />
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <Pagination
-                                className="antd-pagination pb-3"
-                                current={teamMembersCurrentPage}
-                                total={teamMembersTotalCount}
-                                onChange={(page) =>
-                                    this.showTeamMembers(
-                                        this.state.registrationTeam,
-                                        page
-                                    )
-                                }
-                                showSizeChanger={false}
-                            />
-                        </div>
-                    </div>
-                )}
+                    )}
             </div>
         )
     }
@@ -2299,15 +2296,15 @@ class UserModulePersonalDetail extends Component {
                                         {item.contentValue}
                                     </div>
                                 ) : (
-                                    <div className="table-responsive home-dash-table-view">
-                                        <Table
-                                            className="home-dashboard-table"
-                                            columns={columnsPlayedBefore}
-                                            dataSource={item.playedBefore}
-                                            pagination={false}
-                                        />
-                                    </div>
-                                )}
+                                        <div className="table-responsive home-dash-table-view">
+                                            <Table
+                                                className="home-dashboard-table"
+                                                columns={columnsPlayedBefore}
+                                                dataSource={item.playedBefore}
+                                                pagination={false}
+                                            />
+                                        </div>
+                                    )}
                             </div>
                         )}
                         {(item.registrationSettingsRefId == 8) && (
@@ -2591,22 +2588,22 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let personal = userState.personalData;
         let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
-        data["section"]  = data.status === "Linked" ? "unlink" : "link";
+        data["section"] = data.status === "Linked" ? "unlink" : "link";
         data["childUserId"] = personal.userId;
         data["organisationId"] = organisationId;
         this.props.userProfileUpdateAction(data);
-        this.setState({unlinkOnLoad: true});
+        this.setState({ unlinkOnLoad: true });
     }
 
     childUnLinkView = (data) => {
         let userState = this.props.userState;
         let personal = userState.personalData;
         let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
-        data["section"]  = data.status === "Linked" ? "unlink" : "link";
+        data["section"] = data.status === "Linked" ? "unlink" : "link";
         data["parentUserId"] = personal.userId;
         data["organisationId"] = organisationId;
         this.props.userProfileUpdateAction(data);
-        this.setState({unlinkOnLoad: true});
+        this.setState({ unlinkOnLoad: true });
     }
 
     removeTeamMemberView = (data) => {
@@ -2649,13 +2646,13 @@ class UserModulePersonalDetail extends Component {
 
     cannotUninkPopup = () => {
         let data = this.state.unlinkRecord;
-        return(
+        return (
             <div>
                 <Modal
                     className="add-membership-type-modal"
                     title="Warning"
                     visible={this.state.showCannotUnlinkPopup}
-                    onCancel={() => this.setState({ showCannotUnlinkPopup : false})}
+                    onCancel={() => this.setState({ showCannotUnlinkPopup: false })}
                     footer={[
                         <Button onClick={() => this.setState({ showCannotUnlinkPopup: false })}>
                             {AppConstants.ok}
@@ -2851,7 +2848,7 @@ class UserModulePersonalDetail extends Component {
                                             )}
                                         </Menu>
 
-                                        {this.state.tabKey=== "1" && !isUserLoading && (
+                                        {this.state.tabKey === "1" && !isUserLoading && (
                                             <>
                                                 {!this.state.isRegistrationForm ?
                                                     <>
@@ -2863,7 +2860,7 @@ class UserModulePersonalDetail extends Component {
                                                 }
                                             </>
                                         )}
-                                        {this.state.tabKey=== "2" && (
+                                        {this.state.tabKey === "2" && (
                                             <>
                                                 {!!activityPlayerList && !!activityPlayerList.length && !activityPlayerOnLoad && this.playerActivityView()}
                                                 {!!activityManagerList && !!activityManagerList.length && !activityManagerOnLoad && this.managerActivityView()}
@@ -2877,29 +2874,29 @@ class UserModulePersonalDetail extends Component {
                                                     && this.noDataAvailable()}
                                             </>
                                         )}
-                                        {this.state.tabKey=== "3" && this.statisticsView()}
-                                        {this.state.tabKey=== "4" && !isUserLoading && (
+                                        {this.state.tabKey === "3" && this.statisticsView()}
+                                        {this.state.tabKey === "4" && !isUserLoading && (
                                             <>
                                                 {isPersonDetailsTabVisited && !!personalByCompData && !!personalByCompData.length && !onPersonLoad && this.personalView()}
                                                 {onPersonLoad && this.tableLoadingView()}
                                                 {!personalByCompData.length && !onPersonLoad && this.noDataAvailable()}
                                             </>
                                         )}
-                                        {this.state.tabKey=== "5" && (
+                                        {this.state.tabKey === "5" && (
                                             <>
                                                 {!!medicalData && !!medicalData.length && !onMedicalLoad && this.medicalView()}
                                                 {onMedicalLoad && this.tableLoadingView()}
                                                 {!medicalData.length && !onMedicalLoad && this.noDataAvailable()}
                                             </>
                                         )}
-                                        {this.state.tabKey=== "6" && (
+                                        {this.state.tabKey === "6" && (
                                             <>
                                                 {!!userHistoryList && !!userHistoryList.length && !userHistoryLoad && this.historyView()}
                                                 {userHistoryLoad && this.tableLoadingView()}
                                                 {!userHistoryList.length && !userHistoryLoad && this.noDataAvailable()}
                                             </>
                                         )}
-                                        {this.state.tabKey=== "7" && (
+                                        {this.state.tabKey === "7" && (
                                             <>
                                                 {!!umpireActivityList && !!umpireActivityList.length && !umpireActivityOnLoad && this.umpireActivityView()}
                                                 {umpireActivityOnLoad && this.tableLoadingView()}
