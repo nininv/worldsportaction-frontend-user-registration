@@ -2178,52 +2178,52 @@ class UserModulePersonalDetail extends Component {
                         )}
                     </div>
                 ) : (
-                    <div className="comp-dash-table-view mt-2">
-                        <div className="row">
-                            <div className="col-sm d-flex align-content-center">
-                                <Breadcrumb separator=" > ">
-                                    <Breadcrumb.Item className="breadcrumb-add font-18 pointer" onClick={() => this.setState({isShowRegistrationTeamMembers: false})}>
-                                        {AppConstants.Registrations}
-                                    </Breadcrumb.Item>
-                                    <Breadcrumb.Item className="breadcrumb-add font-18">
-                                        {AppConstants.teamMembers}
-                                    </Breadcrumb.Item>
-                                </Breadcrumb>
+                        <div className="comp-dash-table-view mt-2">
+                            <div className="row">
+                                <div className="col-sm d-flex align-content-center">
+                                    <Breadcrumb separator=" > ">
+                                        <Breadcrumb.Item className="breadcrumb-add font-18 pointer" onClick={() => this.setState({ isShowRegistrationTeamMembers: false })}>
+                                            {AppConstants.Registrations}
+                                        </Breadcrumb.Item>
+                                        <Breadcrumb.Item className="breadcrumb-add font-18">
+                                            {AppConstants.teamMembers}
+                                        </Breadcrumb.Item>
+                                    </Breadcrumb>
+                                </div>
+                                <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
+                                    + {AppConstants.addTeamMembers}
+                                </div>
                             </div>
-                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
-                                + {AppConstants.addTeamMembers}
+                            <div className="user-module-row-heading font-18 mt-2">
+                                {AppConstants.team + ": " + this.state.registrationTeam.teamName}
+                            </div>
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={teamMembersColumns}
+                                    dataSource={teamMembers}
+                                    pagination={false}
+                                    loading={
+                                        this.props.userState.getTeamMembersOnLoad
+                                    }
+                                />
+                            </div>
+                            <div className="d-flex justify-content-end">
+                                <Pagination
+                                    className="antd-pagination pb-3"
+                                    current={teamMembersCurrentPage}
+                                    total={teamMembersTotalCount}
+                                    onChange={(page) =>
+                                        this.showTeamMembers(
+                                            this.state.registrationTeam,
+                                            page
+                                        )
+                                    }
+                                    showSizeChanger={false}
+                                />
                             </div>
                         </div>
-                        <div className="user-module-row-heading font-18 mt-2">
-                            {AppConstants.team + ": " + this.state.registrationTeam.teamName}
-                        </div>
-                        <div className="table-responsive home-dash-table-view">
-                            <Table
-                                className="home-dashboard-table"
-                                columns={teamMembersColumns}
-                                dataSource={teamMembers}
-                                pagination={false}
-                                loading={
-                                    this.props.userState.getTeamMembersOnLoad
-                                }
-                            />
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <Pagination
-                                className="antd-pagination pb-3"
-                                current={teamMembersCurrentPage}
-                                total={teamMembersTotalCount}
-                                onChange={(page) =>
-                                    this.showTeamMembers(
-                                        this.state.registrationTeam,
-                                        page
-                                    )
-                                }
-                                showSizeChanger={false}
-                            />
-                        </div>
-                    </div>
-                )}
+                    )}
             </div>
         )
     }
