@@ -83,7 +83,8 @@ function teamInviteReducer(state = initialState, action){
             }else if(inviteMemberInfoKey == "inviteMemberInfo"){
                 state.iniviteMemberInfo = inviteMemberInfoData;
             }else if(inviteMemberInfoSubKey == "walkingNetball"){
-                state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoKey] = inviteMemberInfoData;
+                state.iniviteMemberInfo.userRegDetails.walkingNetball = state.iniviteMemberInfo.userRegDetails.walkingNetball == null ? {} : state.iniviteMemberInfo.userRegDetails.walkingNetball;
+                state.iniviteMemberInfo.userRegDetails.walkingNetball[inviteMemberInfoKey] = inviteMemberInfoData;
             }
             return{
               ...state

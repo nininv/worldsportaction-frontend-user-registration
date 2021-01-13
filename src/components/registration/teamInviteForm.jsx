@@ -1490,7 +1490,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heartTrouble", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.heartTrouble}
+                                setFieldsValue={userRegDetails.walkingNetball?.heartTrouble}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1505,7 +1505,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "chestPain", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.chestPain}
+                                setFieldsValue={userRegDetails.walkingNetball?.chestPain}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1520,7 +1520,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "faintOrSpells", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.faintOrSpells}
+                                setFieldsValue={userRegDetails.walkingNetball?.faintOrSpells}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1535,7 +1535,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "bloodPressure", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.bloodPressure}
+                                setFieldsValue={userRegDetails.walkingNetball?.bloodPressure}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1550,7 +1550,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "jointOrBoneProblem", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.jointOrBoneProblem}
+                                setFieldsValue={userRegDetails.walkingNetball?.jointOrBoneProblem}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1565,7 +1565,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "physicalActivity", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.physicalActivity}
+                                setFieldsValue={userRegDetails.walkingNetball?.physicalActivity}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1580,7 +1580,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "pregnant", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.pregnant}
+                                setFieldsValue={userRegDetails.walkingNetball?.pregnant}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1595,7 +1595,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "lowerBackProblem", "walkingNetball")}
-                                setFieldsValue={userRegDetails.walkingNetball.lowerBackProblem}
+                                setFieldsValue={userRegDetails.walkingNetball?.lowerBackProblem}
                             >
                                 <Radio value={1}>{AppConstants.yes}</Radio>
                                 <Radio value={0}>{AppConstants.no}</Radio>
@@ -1964,7 +1964,7 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
 
-                    {userRegDetails.membershipProductTypeName == "Walking Netball" && (
+                    {userRegDetails.membershipProductTypeName == "Player - Walking Netball" && (
                         <div>
                             <div className="form-heading" style={{ marginTop: "40px", paddingBottom: "20px" }}>{AppConstants.walkingNetball2}</div>
                             {this.walkingNetballQuestions(getFieldDecorator)}
