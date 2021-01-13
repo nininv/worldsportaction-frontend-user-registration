@@ -37,11 +37,9 @@ function UserAlreadyExists({
               {   
                 users.map((user) => {
                   return (
-                    <>
-                    <Radio value={user.id} key={user.id} >
-                      {user.firstName} {user.lastName} - Email: {user.email}, Phone: {user.phone}
+                    <Radio className="registration-radio-group__radio" value={user.id} key={user.id} >
+                      {user.firstName} {user.lastName} - Email: {user.email}, Phone: {user.phone} 
                     </Radio>
-                    </>
                   )
                 })
               }

@@ -19,3 +19,7 @@
 .user-already-exists-ok {
   margin-left: 16px;
 }
+
+.registration-radio-group__radio {
+  width: 100%;
+}
