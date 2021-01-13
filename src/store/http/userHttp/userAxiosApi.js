@@ -43,7 +43,7 @@ let userHttpApi = {
     return Method.dataGet(url, token);
   },
 
-  //// get particular user organisation 
+  //// get particular user organisation
   async getUserOrganisation() {
     let userId =  await getUserId()
     if(userId!= 0){
@@ -101,7 +101,7 @@ let userHttpApi = {
     const url = `ure/byUserId?userId=${userId}`;
     return Method.dataGet(url, token);
   },
-  
+
   getScorerActivityData(payload, roleId, matchStatus) {
     const url = `api/user/activity/roster?roleId=${roleId}&matchStatus=${matchStatus}`;
     return Method.dataPost(url, token, payload);
@@ -129,17 +129,16 @@ let userHttpApi = {
     }
     console.log(payload)
     const url = `users/updatePassword`;
-    return Method.dataPatch(url, token, payload);        
+    return Method.dataPatch(url, token, payload);
   },
 
   addChild(payload) {
-    const url = `usersApi/users/addChild/?parentUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
-    return Method.dataPost(url, token, payload.body);
+    const url = `users/child/create?parentUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
+    return Method.dataPost(url, token, {childUser: payload.body});
   },
-
   addParent(payload) {
-    const url = `usersApi/users/addParent/?childUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
-    return Method.dataPost(url, token, payload.body);
+    const url = `users/parent/create?childUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
+    return Method.dataPost(url, token, {parentUser: payload.body});
   },
 }
 
@@ -360,7 +359,7 @@ let Method = {
     const url = newUrl;
     return await new Promise((resolve, reject) => {
       userHttp
-        .patch(url, body, {    
+        .patch(url, body, {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",

@@ -1191,6 +1191,7 @@ class UserProfileEdit extends Component {
 
         data["section"] = this.state.section;
         data["organisationId"] = this.state.organisationId;
+        // add child / add parent functions (?)
         if (this.state.displaySection == 8 && !data.parentUserId) {
             data["parentUserId"] = 0;
         } else if (this.state.displaySection == 7 && !data.childUserId) {
