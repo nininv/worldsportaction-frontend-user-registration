@@ -2240,6 +2240,11 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
+                            {/* <div className="add-team-member-action-txt" onClick={() => this.gotoAddTeamMember()}>
+                                +
+                                {' '}
+                                {AppConstants.addTeamMembers}
+                            </div> */}
                             <div className="user-module-row-heading font-18 mt-2">
                                 {AppConstants.team + ": " + this.state.registrationTeam.teamName}
                             </div>
@@ -2269,6 +2274,7 @@ class UserModulePersonalDetail extends Component {
                                 />
                             </div>
                         </div>
+                    </div>
                     )}
             </div>
         )
