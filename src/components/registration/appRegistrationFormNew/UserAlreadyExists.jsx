@@ -39,8 +39,7 @@ function UserAlreadyExists({
                   return (
                     <>
                     <Radio value={user.id} key={user.id} >
-                      email: {user.email} <br />
-                      phone: {user.phone}
+                      {user.firstName} {user.lastName} - Email: {user.email}, Phone: {user.phone}
                     </Radio>
                     </>
                   )
