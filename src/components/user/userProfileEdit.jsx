@@ -1167,9 +1167,11 @@ class UserProfileEdit extends Component {
                         }
                         else {
                             saveAction();
+                            this.confirmOpend = false;
                         }
                     } else {
                         saveAction();
+                        this.confirmOpend = false;
                     }
                 }
             });
