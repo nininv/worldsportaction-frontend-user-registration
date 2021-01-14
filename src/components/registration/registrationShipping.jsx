@@ -317,14 +317,21 @@ class RegistrationShipping extends Component {
                     <div>
                         <div className="subtitle-text-common"
                         style={{marginTop: "20px"}}>{item.productName}</div>
+                         
+                        {/* {item.deliveryType != ""&&( */}
                         <div style={{marginTop:6}}>
                             <Radio.Group className="product-radio-group"
-                            //onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-                            value={item.deliveryType == "pickup" ? 1 : 2}>
+                            onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
+                            value={item.deliveryType == "pickup" ? 1:item.deliveryType == "shipping"?2:null }>
                                 <Radio disabled={(item.deliveryType == "pickup" && item.deliveryType != "") ? false : true} value={1}>{AppConstants.Pickup}</Radio>
-                                <Radio disabled={(item.deliveryType == "shipping" || item.deliveryType == "") ? false : true} value={2}>{AppConstants.Delivery}</Radio>
+                                <Radio disabled={(item.deliveryType == "shipping" && item.deliveryType != "") ? false : true} value={2}>{AppConstants.Delivery}</Radio>
                             </Radio.Group>
                         </div>
+                        {item.deliveryType == ""&&(
+                     <div className="orange-action-txt mt-2">{AppConstants.noPickupMessage}</div>
+
+                        )}
+                       {/* )} */}
                         {item.deliveryType == "pickup" && (
                             <div style={{
                                 background: "var(--app-fdfdfe)",
@@ -781,9 +788,9 @@ class RegistrationShipping extends Component {
                 {this.state.onlyDeliveryAddressFlag == false && (
                     <div>{this.shippingOption()}</div>
                 )}
-                {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
+                {/* {(this.checkAnyDeliveryAddress() || this.state.onlyDeliveryAddressFlag == true) && (
                     <div>{this.deliveryAndBillingView(getFieldDecorator)}</div>
-                )}
+                )} */}
                 </div>
             </div>
         )

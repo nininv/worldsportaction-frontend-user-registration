@@ -90,7 +90,8 @@ class UserProfileEdit extends Component {
             hasErrorEmergency: false,
             hasErrorAddressNumber: false,
             venueAddressError: '',
-            manualAddress: false
+            manualAddress: false,
+            storedEmailAddress: null
         };
         this.confirmOpend = false;
         // this.props.getCommonRefData();
@@ -204,6 +205,7 @@ class UserProfileEdit extends Component {
 
     setAddressFormFields = () => {
         let userData = this.state.userData;
+        this.setState({ storedEmailAddress: userData.email })
         this.props.form.setFieldsValue({
             firstName: userData.firstName,
             lastName: userData.lastName,
@@ -478,16 +480,17 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
 
-                {(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (
-                    <Checkbox
-                        className="single-checkbox"
-                        checked={this.state.isSameEmail}
-                        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}
-                    >
-                        {this.state.titleLabel === AppConstants.addParent_guardian
-                            ? AppConstants.useChildEmail : AppConstants.useParentEmail}
-                    </Checkbox>
-                )}
+                {/* todo: below needs to be properly handled. hiding it now */}
+                {/*{(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (*/}
+                {/*    <Checkbox*/}
+                {/*        className="single-checkbox"*/}
+                {/*        checked={this.state.isSameEmail}*/}
+                {/*        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}*/}
+                {/*    >*/}
+                {/*        {this.state.titleLabel === AppConstants.addParent_guardian*/}
+                {/*            ? AppConstants.useChildEmail : AppConstants.useParentEmail}*/}
+                {/*    </Checkbox>*/}
+                {/*)}*/}
 
                 {(!this.state.isSameEmail
                     || (this.state.titleLabel !== AppConstants.addChild
@@ -1164,9 +1167,11 @@ class UserProfileEdit extends Component {
                         }
                         else {
                             saveAction();
+                            this.confirmOpend = false;
                         }
                     } else {
                         saveAction();
+                        this.confirmOpend = false;
                     }
                 }
             });
@@ -1178,6 +1183,7 @@ class UserProfileEdit extends Component {
     saveAction = () => {
         let userState = this.props.userState;
         let data = this.state.userData;
+        const { storedEmailAddress } = this.state
 
         if (!this.state.isSameEmail && data.mobileNumber != null && data.mobileNumber.length < 10) {
             message.error(AppConstants.pleaseReview);
@@ -1191,6 +1197,7 @@ class UserProfileEdit extends Component {
 
         data["section"] = this.state.section;
         data["organisationId"] = this.state.organisationId;
+        // add child / add parent functions (?)
         if (this.state.displaySection == 8 && !data.parentUserId) {
             data["parentUserId"] = 0;
         } else if (this.state.displaySection == 7 && !data.childUserId) {
@@ -1203,7 +1210,12 @@ class UserProfileEdit extends Component {
         } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
             this.props.addParentAction(data, getUserId(), sameEmail);
         } else {
-            this.props.userProfileUpdateAction(data);
+            if (this.state.displaySection === "1") {
+                data['emailUpdated'] = storedEmailAddress === data.email ? 0 : 1
+                this.props.userProfileUpdateAction(data);
+            } else {
+                this.props.userProfileUpdateAction(data);
+            }
         }
         this.setState({ saveLoad: true });
 
