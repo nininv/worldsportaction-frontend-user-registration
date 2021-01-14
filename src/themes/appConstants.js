@@ -1211,7 +1211,7 @@ const AppConstants = {
   addTeamMembers: "Add Team Members",
   Registrations: "Registrations",
   teamMembers: "Team Members",
-  umpireAvailabilityMessage: "Please complete your Umpiring Availability and enter your Bank Account details (for Umpire Payments) by clicking on the Action menu.",
+  umpireAvailabilityMessage: "Please complete your Umpiring Availability by clicking on the Action menu.",
   outOfStock:"Out of stock",
 
   // not found or empty values
