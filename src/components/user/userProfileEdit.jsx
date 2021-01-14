@@ -480,16 +480,17 @@ class UserProfileEdit extends Component {
                     </div>
                 </div>
 
-                {(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (
-                    <Checkbox
-                        className="single-checkbox"
-                        checked={this.state.isSameEmail}
-                        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}
-                    >
-                        {this.state.titleLabel === AppConstants.addParent_guardian
-                            ? AppConstants.useChildEmail : AppConstants.useParentEmail}
-                    </Checkbox>
-                )}
+                {/* todo: below needs to be properly handled. hiding it now */}
+                {/*{(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (*/}
+                {/*    <Checkbox*/}
+                {/*        className="single-checkbox"*/}
+                {/*        checked={this.state.isSameEmail}*/}
+                {/*        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}*/}
+                {/*    >*/}
+                {/*        {this.state.titleLabel === AppConstants.addParent_guardian*/}
+                {/*            ? AppConstants.useChildEmail : AppConstants.useParentEmail}*/}
+                {/*    </Checkbox>*/}
+                {/*)}*/}
 
                 {(!this.state.isSameEmail
                     || (this.state.titleLabel !== AppConstants.addChild
@@ -1194,6 +1195,7 @@ class UserProfileEdit extends Component {
 
         data["section"] = this.state.section;
         data["organisationId"] = this.state.organisationId;
+        // add child / add parent functions (?)
         if (this.state.displaySection == 8 && !data.parentUserId) {
             data["parentUserId"] = 0;
         } else if (this.state.displaySection == 7 && !data.childUserId) {
