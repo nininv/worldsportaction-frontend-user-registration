@@ -1220,7 +1220,8 @@ const AppConstants = {
   removed: "Removed",
   removeFromTeam: "Remove from Team",
   addToTeam: "Add to Team",
-  removeFromTeamPopUpMsg: "Do you want to remove this user from the team?"
+  removeFromTeamPopUpMsg: "Do you want to remove this user from the team?",
+  noPickupMessage:"There is no pick up or delivery applicable to this product."
 };
 
 export default AppConstants;
