@@ -632,9 +632,9 @@ class AppRegistrationFormNew extends Component {
             });
             if (key == 'referParentEmail' && value == true) {
 
-                this.setState({
-                    sameEmailValidationModalVisible: true
-                })
+                // this.setState({
+                //     sameEmailValidationModalVisible: true
+                // })
             }
 
             if (key == "dateOfBirth") {
@@ -1399,7 +1399,7 @@ class AppRegistrationFormNew extends Component {
         try {
             const { userInfo } = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
-            if (getAge(registrationObj.dateOfBirth) <= 18 && childEmail) {
+            if (getAge(registrationObj.dateOfBirth) <= 18 && childEmail &&(registrationObj.registeringYourself == 1||registrationObj.registeringYourself == 2)) {
                 let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
@@ -2820,6 +2820,7 @@ class AppRegistrationFormNew extends Component {
                                     // value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
                                     value={competition.divisionInfoIndex}
                                     onChange={(index) => this.onChangeDivisionInfo(index, competitionIndex, competition.divisionInfo)}
+                                    notFoundContent={AppConstants.regoDivisionNotFound}
                                 >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
                                         <Option key={"division" + divisionInfoIndex}
