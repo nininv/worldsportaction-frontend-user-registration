@@ -275,7 +275,7 @@ class UserProfileEdit extends Component {
                 data["disabilityTypeRefId"] = null;
             }
         } else if (key === "dateOfBirth") {
-            value = (moment(value).format("YYYY-MM-DD"))
+            value = (moment(value).format("MM-DD-YYYY"))
         } else if (key === "email" && this.state.section === "address") {
             if (data.userId == getUserId()) {
                 this.setState({ isSameUserEmailChanged: true });
