@@ -5,13 +5,13 @@ import {
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
-    Radio, 
-    Form, 
-    Modal, 
-    message, 
+    Radio,
+    Form,
+    Modal,
+    message,
     Steps,
     Tag,
     Pagination,
@@ -33,9 +33,9 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import history from "../../util/history";
-import { updateTeamInviteAction, saveTeamInviteReviewAction} from 
+import { updateTeamInviteAction, saveTeamInviteReviewAction} from
             '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction, getRegParticipantAddressAction} 
+import {getRegistrationByIdAction,getRegistrationShopPickupAddressAction, getRegParticipantAddressAction}
         from '../../store/actions/registrationAction/registrationProductsAction';
 import { getCommonRefData, countryReferenceAction} from '../../store/actions/commonAction/commonAction';
 import ValidationConstants from "../../themes/validationConstant";
@@ -51,7 +51,7 @@ class TeamInviteShipping extends Component{
         super(props);
         this.state = {
             userRegId: null,
-            registrationUniqueKey: null, 
+            registrationUniqueKey: null,
             productModalVisible: false ,
             id: null,
             loading: false ,
@@ -61,7 +61,7 @@ class TeamInviteShipping extends Component{
             userDiffBillingAddressFlag: false,
             deliveryOrBillingAddressSelected: false,
             deliveryAddressManualEnterAddressFlag: false,
-            billingAddressManualEnterAddressFlag: false     
+            billingAddressManualEnterAddressFlag: false
         }
 
         this.props.getCommonRefData();
@@ -89,7 +89,7 @@ class TeamInviteShipping extends Component{
                     this.goToTeamInvitePayments();
                 }
             }
-            if(teamInviteState.onTeamInviteReviewLoad == false && 
+            if(teamInviteState.onTeamInviteReviewLoad == false &&
                 registrationProductState.pickupAddressLoad == false && this.state.apiOnLoad){
                 this.setShippingOptions();
                 this.setState({apiOnLoad: false});
@@ -122,7 +122,7 @@ class TeamInviteShipping extends Component{
     }
 
     removeFromCart = (index, key, subKey) =>{
-        this.props.updateReviewInfoAction(null,key, index, subKey,null);
+        this.props.updateTeamInviteAction(null,key, index, subKey,null);
     }
 
     getAddress = (addressObject) => {
@@ -135,12 +135,12 @@ class TeamInviteShipping extends Component{
                 const country = countryList.length > 0 && addressObject.countryRefId > 0
                 ? countryList.find((country) => country.id === addressObject.countryRefId).name
                 : null;
-    
+
                 let defaultAddress = '';
                 if(addressObject.street1 && addressObject.suburb && state){
-                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') + 
+                    defaultAddress = (addressObject.street1 ? addressObject.street1 + ', ': '') +
                     (addressObject.suburb ? addressObject.suburb + ', ': '') +
-                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') + 
+                    (addressObject.postalCode ? addressObject.postalCode + ', ': '') +
                     (state ? state + ', ': '') +
                     (country ? country + '.': '');
                 }
@@ -175,7 +175,7 @@ class TeamInviteShipping extends Component{
             let shopProducts = teamInviteReviewList != null ? isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
                                       deepCopyFunction(teamInviteReviewList.shopProducts) : [] : [];
             for(let item of shopProducts){
-                let buyingProduct = shopProductList.find(x => x.productId == item.productId); 
+                let buyingProduct = shopProductList.find(x => x.productId == item.productId);
                 if(buyingProduct){
                     buyingProduct["organisationId"] = item.organisationId;
                     let pickupAddress = shopPickupAddresses.find(x => x.organisationId == item.organisationId);
@@ -286,7 +286,7 @@ class TeamInviteShipping extends Component{
             }
         });
     }
-      
+
 
     goToShop = () =>{
         history.push({pathname: '/teamInviteShop', state: {userRegId: this.state.userRegId}})
@@ -301,10 +301,10 @@ class TeamInviteShipping extends Component{
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch :
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -333,11 +333,11 @@ class TeamInviteShipping extends Component{
     //                     <div style={{marginTop:6}}>
     //                         <Radio.Group className="product-radio-group"
     //                         onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-    //                         value={this.getShippingOptionValue(item.organisationId)}>                           
+    //                         value={this.getShippingOptionValue(item.organisationId)}>
     //                             <Radio value={1}>{AppConstants.Pickup}</Radio>
     //                             <Radio value={2}>{AppConstants.Delivery}</Radio>
     //                         </Radio.Group>
-    //                     </div>  
+    //                     </div>
     //                     {item.pickupOrDelivery == 1 && (
     //                         <div style={{
     //                             background: "var(--app-fdfdfe)",
@@ -355,7 +355,7 @@ class TeamInviteShipping extends Component{
     //                                 </div>
     //                             </div>
     //                             <div style={{marginTop: "5px" }}>{item.address}, {item.suburb}, {item.postcode}, {item.state}</div>
-    //                         </div>    
+    //                         </div>
     //                     )}
     //                 </div>
     //             ))}
@@ -375,11 +375,11 @@ class TeamInviteShipping extends Component{
                         <div style={{marginTop:6}}>
                             <Radio.Group className="product-radio-group"
                             //onChange={(e) => this.onChangeSetShippingOptions(e.target.value,index)}
-                            value={item.deliveryType == "pickup" ? 1 : 2}>                           
+                            value={item.deliveryType == "pickup" ? 1 : 2}>
                                 <Radio disabled={(item.deliveryType == "pickup" && item.deliveryType != "") ? false : true} value={1}>{AppConstants.Pickup}</Radio>
                                 <Radio disabled={(item.deliveryType == "shipping" || item.deliveryType == "") ? false : true} value={2}>{AppConstants.Delivery}</Radio>
                             </Radio.Group>
-                        </div>  
+                        </div>
                         {item.deliveryType == "pickup" && (
                             <div style={{
                                 background: "var(--app-fdfdfe)",
@@ -397,7 +397,7 @@ class TeamInviteShipping extends Component{
                                 <div style={{marginTop: "5px" }}>{item.pickupAddress}</div>
                                 <div className="subtitle-text-common" style={{marginTop: "5px" }}>{AppConstants.pickupInstruction}</div>
                                 <div style={{marginTop: "5px" }}>{item.pickupInstruction}</div>
-                            </div>    
+                            </div>
                         )}
                     </div>
                 ))}
@@ -415,13 +415,13 @@ class TeamInviteShipping extends Component{
     //             <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
     //             {this.state.useDiffDeliveryAddressFlag && (
     //                 <div style={{marginTop: "10px"}}>
-    //                     <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
+    //                     <div className="body-text-common">{AppConstants.deliveryAddress}</div>
     //                     <div className="row">
     //                         {participantAddresses != null && participantAddresses.map((item,index) => (
-    //                             <div className="col-sm-12 col-md-6" 
+    //                             <div className="col-sm-12 col-md-6"
     //                             onClick={() => this.addAddress(index,"deliveryAddress")}>
     //                                 <div className="address-border-box">
-    //                                     <div className="headline-text-common" 
+    //                                     <div className="headline-text-common"
     //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
     //                                 </div>
     //                             </div>
@@ -437,13 +437,13 @@ class TeamInviteShipping extends Component{
     //             )}
     //              {this.state.useDiffBillingAddressFlag && (
     //                 <div style={{marginTop: "10px"}}>
-    //                     <div className="body-text-common">{AppConstants.billingAddress}</div>  
+    //                     <div className="body-text-common">{AppConstants.billingAddress}</div>
     //                     <div className="row">
     //                         {participantAddresses != null && participantAddresses.map((item,index) => (
-    //                             <div className="col-sm-12 col-md-6" 
+    //                             <div className="col-sm-12 col-md-6"
     //                             onClick={() => this.addAddress(index,"billingAddress")}>
     //                                 <div className="address-border-box">
-    //                                     <div className="headline-text-common" 
+    //                                     <div className="headline-text-common"
     //                                     style={{fontSize:21}}>{this.getAddress(item)}</div>
     //                                 </div>
     //                             </div>
@@ -460,13 +460,13 @@ class TeamInviteShipping extends Component{
     //             <div class="row">
     //                 {!this.state.useDiffDeliveryAddressFlag && (
     //                     <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
-    //                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>  
-    //                         <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>   
+    //                         <div className="body-text-common">{AppConstants.deliveryAddress}</div>
+    //                         <div className="headline-text-common" style={{paddingLeft:0,margin:"6px 0px 4px 0px"}}>{this.getAddress(deliveryAddress)}</div>
     //                         {participantAddresses.length > 1 && (
     //                             <div className="link-text-common"
-    //                             onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-    //                         )}   
-    //                     </div>  
+    //                             onClick={() => {this.setState({useDiffDeliveryAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div>
+    //                         )}
+    //                     </div>
     //                 )}
     //                 {!this.state.useDiffBillingAddressFlag && (
     //                      <div class="col-sm-12 col-lg-6" style={{marginTop:25}}>
@@ -474,14 +474,14 @@ class TeamInviteShipping extends Component{
     //                         <div className="headline-text-common" style={{paddingLeft:0 , margin:"6px 0px 4px 0px"}}>{this.getAddress(billingAddress)}</div>
     //                         {participantAddresses.length > 1 && (
     //                             <div className="link-text-common"
-    //                             onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div> 
-    //                         )}   
-    //                     </div>  
+    //                             onClick={() => {this.setState({useDiffBillingAddressFlag: true})}}>{AppConstants.useDifferentAddress}</div>
+    //                         )}
+    //                     </div>
     //                 )}
     //             </div>
     //         </div>
     //     )
-    // } 
+    // }
 
     getAddressDropDownValue = (address) => {
         try{
@@ -508,7 +508,7 @@ class TeamInviteShipping extends Component{
             console.log("Exception occured in showAddressSection::"+ex);
         }
     }
-    
+
 
     billingManualEnterAddressView = (getFieldDecorator) => {
         try{
@@ -724,7 +724,7 @@ class TeamInviteShipping extends Component{
             return(
                 <div className="outline-style product-left-view" style={{marginRight:0}}>
                     <div className="headline-text-common" style={{fontSize:21}}>{AppConstants.deliveryAndBillingAddress}</div>
-                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div> 
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.billingAddress}</div>
                     {!this.state.billingAddressManualEnterAddressFlag ? (
                         <div>
                             <Select
@@ -744,7 +744,7 @@ class TeamInviteShipping extends Component{
                     ) : (
                         <div>{this.billingManualEnterAddressView(getFieldDecorator)}</div>
                     )}
-                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.deliveryAddress}</div> 
+                    <div className="body-text-common" style={{marginTop: 20}}>{AppConstants.deliveryAddress}</div>
                     {!this.state.deliveryAddressManualEnterAddressFlag ? (
                         <div>
                             <Select
@@ -776,19 +776,19 @@ class TeamInviteShipping extends Component{
             <div className="col-sm-12 col-md-7 col-lg-8" style={{cursor:"pointer"}}>
                 {this.shippingOption()}
                 {this.checkAnyDeliveryAddress() && (
-                    <div>{this.deliveryAndBillingView(getFieldDecorator)}</div> 
-                )}               
+                    <div>{this.deliveryAndBillingView(getFieldDecorator)}</div>
+                )}
             </div>
         )
     }
 
     yourOrderView = () =>{
         const {teamInviteReviewList} = this.props.teamInviteState;
-        let compParticipants = teamInviteReviewList!= null ? 
+        let compParticipants = teamInviteReviewList!= null ?
                     isArrayNotEmpty(teamInviteReviewList.compParticipants) ?
                     teamInviteReviewList.compParticipants : [] : [];
         let total = teamInviteReviewList!= null ? teamInviteReviewList.total : null;
-        let shopProducts = teamInviteReviewList!= null ? 
+        let shopProducts = teamInviteReviewList!= null ?
                 isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
                 teamInviteReviewList.shopProducts : [] : [];
         return(
@@ -809,8 +809,8 @@ class TeamInviteShipping extends Component{
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                 </div>
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
+
+                                {mem.discountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
@@ -820,19 +820,19 @@ class TeamInviteShipping extends Component{
                         ))}
                         <div className="payment-option-txt">
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer"
                             onClick={() => this.goToTeamInviteProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
-                        {item.governmentVoucherAmount != "0.00" && 
+                        {item.governmentVoucherAmount != "0.00" &&
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                             <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                        </div> 
+                        </div>
                         }
-                    </div> 
+                    </div>
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
@@ -845,7 +845,7 @@ class TeamInviteShipping extends Component{
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -856,7 +856,7 @@ class TeamInviteShipping extends Component{
                         </div>
                     </div>
                 ))}
-                 
+
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
@@ -874,15 +874,15 @@ class TeamInviteShipping extends Component{
                      type="primary">
                         {AppConstants.continue}
                     </Button>
-                </div>                 
-                <div style={{marginTop:23}}> 
-                    <Button className="back-btn-text btn-inner-view" 
+                </div>
+                <div style={{marginTop:23}}>
+                    <Button className="back-btn-text btn-inner-view"
                             onClick={() => this.goToShop()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
+                    </Button>
+                </div>
             </div>
-            
+
         )
     }
 
@@ -899,10 +899,10 @@ class TeamInviteShipping extends Component{
         return(
             <div class="row">
                 {this.shippingLeftView(getFieldDecorator)}
-                {this.shippingRightView()}                
+                {this.shippingRightView()}
             </div>
         );
-    }    
+    }
 
     render(){
         const { getFieldDecorator } = this.props.form;
@@ -929,7 +929,7 @@ class TeamInviteShipping extends Component{
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({	
+    return bindActionCreators({
         saveTeamInviteReviewAction,
         updateTeamInviteAction,
         getRegistrationByIdAction,

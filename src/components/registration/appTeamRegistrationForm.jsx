@@ -1,22 +1,20 @@
 import React, { Component } from "react";
 import {
-    Layout,
     Breadcrumb,
-    Input,
-    Select,
-    Checkbox,
     Button,
-    Table,
-    DatePicker,
-    Radio,
-    Form,
-    Modal,
-    message,
-    Steps,
-    Tag,
-    Pagination,
     Carousel,
-    Spin
+    Checkbox,
+    DatePicker,
+    Form,
+    Input,
+    Layout,
+    message,
+    Modal,
+    Pagination,
+    Radio,
+    Select,
+    Spin,
+    Steps
 } from "antd";
 import { connect } from 'react-redux';
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
@@ -27,56 +25,50 @@ import "./product.css";
 import "../user/user.css";
 import '../competition/competition.css';
 import {
-    selectTeamAction,
-    updateTeamRegistrationObjectAction,
-    updateTeamRegistrationStateVarAction,
-    updateRegistrationTeamMemberAction,
+    getExistingTeamInfoById,
+    getSeasonalAndCasualFees,
+    getTeamInfoById,
+    membershipProductTeamRegistrationAction,
     orgteamRegistrationRegSettingsAction,
     saveTeamInfoAction,
-    updateTeamAdditionalInfoAction,
-    getTeamInfoById,
-    getExistingTeamInfoById,
-    membershipProductTeamRegistrationAction,
+    selectTeamAction,
+    teamNameValidationAction,
     teamRegistrationExpiryCheckAction,
-    getSeasonalAndCasualFees,
-    teamNameValidationAction
+    updateRegistrationTeamMemberAction,
+    updateTeamAdditionalInfoAction,
+    updateTeamRegistrationObjectAction,
+    updateTeamRegistrationStateVarAction
 } from '../../store/actions/registrationAction/teamRegistrationAction';
 import ValidationConstants from "../../themes/validationConstant";
 import {
-    getCommonRefData,
+    accreditationCoachReferenceAction,
+    accreditationUmpireReferenceAction,
+    countryReferenceAction,
+    disabilityReferenceAction,
     favouriteTeamReferenceAction,
     firebirdPlayerReferenceAction,
-    registrationOtherInfoReferenceAction,
-    countryReferenceAction,
-    nationalityReferenceAction,
-    heardByReferenceAction,
-    playerPositionReferenceAction,
     genderReferenceAction,
-    disabilityReferenceAction,
-    personRegisteringRoleReferenceAction,
+    getCommonRefData,
+    getSchoolListAction,
+    heardByReferenceAction,
     identificationReferenceAction,
     otherSportsReferenceAction,
-    accreditationUmpireReferenceAction,
-    accreditationCoachReferenceAction,
-    walkingNetballQuesReferenceAction,
-    getSchoolListAction,
-    validateRegistrationCapAction
+    playerPositionReferenceAction,
+    validateRegistrationCapAction,
+    walkingNetballQuesReferenceAction
 } from '../../store/actions/commonAction/commonAction';
-import { isEmptyArray } from "formik";
 import Loader from '../../customComponents/loader';
-import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '../../util/helpers';
+import { captializedString, deepCopyFunction, getAge, isArrayNotEmpty, regexNumberExpression } from '../../util/helpers';
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
+import { getCompetitonId, getOrganisationId, getUserId } from "../../util/sessionStorage";
 import history from "../../util/history";
-import { captializedString } from "../../util/helpers";
 import { NavLink } from "react-router-dom";
 import CSVReader from 'react-csv-reader';
 import { nearByOrganisations } from "../../util/geocode";
-import commonReducerState from "../../store/reducer/commonReducer/commonReducer";
-import { regexNumberExpression } from '../../util/helpers';
+
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
@@ -207,8 +199,8 @@ class AppTeamRegistrationForm extends Component {
                 teamRegistrationObj.additionalInfo.disabilityCareNumber = user.additionalInfo.disabilityCareNumber;
                 teamRegistrationObj.additionalInfo.heardByRefId = user.additionalInfo.heardByRefId;
                 teamRegistrationObj.additionalInfo.isYearsPlayed = user.additionalInfo.isYearsPlayed;
-                console.log("team",teamRegistrationObj)
-                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj,"teamRegistrationObj")
+                console.log("team", teamRegistrationObj)
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
             }
         } catch (ex) {
             console.log("Error in setUser::" + ex)
@@ -345,7 +337,7 @@ class AppTeamRegistrationForm extends Component {
 
             if (this.props.commonReducerState.onLoad == false && this.state.validateRegistrationCapOnLoad == true) {
                 if (this.props.commonReducerState.status == 4) {
-                    this.setState({ registrationCapModalVisible: true })
+                    this.setState({ registrationCapModalVisible: true, validateRegistrationCapBySubmit: false })
                 } else {
                     if (this.state.validateRegistrationCapBySubmit == true) {
                         this.stepNavigation();
@@ -383,8 +375,8 @@ class AppTeamRegistrationForm extends Component {
         try {
             let participantId = this.props.location.state ? this.props.location.state.participantId : null;
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            this.props.updateTeamRegistrationStateVarAction(registrationId,"registrationId");
-            this.props.updateTeamRegistrationStateVarAction(participantId,"participantId");
+            this.props.updateTeamRegistrationStateVarAction(registrationId, "registrationId");
+            this.props.updateTeamRegistrationStateVarAction(participantId, "participantId");
             let existingTeamParticipantId = this.props.location.state ? this.props.location.state.existingTeamParticipantId : null;
             this.setState({ participantId: participantId, registrationId: registrationId, existingTeamParticipantId: existingTeamParticipantId });
             // console.log("registrationid",registrationId)
@@ -453,7 +445,7 @@ class AppTeamRegistrationForm extends Component {
     setParticipantDetailStepAddressFormFields = (key) => {
         try {
             const { teamRegistrationObj, userInfo } = this.props.teamRegistrationState;
-            if (key == "manualEnterAddressFlag") {
+            if (key === "manualEnterAddressFlag") {
                 this.props.form.setFieldsValue({
                     [`yourDetailsStreet1`]: teamRegistrationObj.street1,
                     [`yourDetailsSuburb`]: teamRegistrationObj.suburb,
@@ -483,14 +475,14 @@ class AppTeamRegistrationForm extends Component {
 
     // setTeamMemberAddressFormFields = (key,member,mIndex) => {
     //     try{
-    //         if(key == "manualEnterAddressFlag"){
+    //         if(key === "manualEnterAddressFlag"){
     //             this.props.form.setFieldsValue({
     //                 [`teamMemberStreet1${mIndex}`]: member.street1,
     //                 [`teamMemberSuburb${mIndex}`]: member.suburb,
     //                 [`teamMemberStateRefId${mIndex}`]: member.stateRefId,
     //                 [`teamMemberPostalCode${mIndex}`]: member.postalCode,
     //                 [`teamMemberCountryRefId${mIndex}`]: member.countryRefId
-    //             }); 
+    //             });
     //         }
     //     }catch(ex){
     //         console.log("Error in setTeamMemberAddressFormFields::"+ex)
@@ -620,6 +612,11 @@ class AppTeamRegistrationForm extends Component {
     onChangeStep = (current) => {
         try {
             if (this.state.enabledSteps.includes(current)) {
+                if (this.state.currentStep == 0 && this.state.enabledSteps.includes(1)) {
+                    this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
+                    this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
+                    return;
+                }
                 this.setState({ currentStep: current });
                 this.scrollToTop();
             }
@@ -762,7 +759,7 @@ class AppTeamRegistrationForm extends Component {
         const { teamRegistrationObj } = this.props.teamRegistrationState;
         try {
             this.props.updateTeamRegistrationObjectAction(value, key);
-            if (key == "stateRefId") {
+            if (key === "stateRefId") {
                 this.getSchoolList(value);
             }
             if (key == 'mobileNumber') {
@@ -860,7 +857,9 @@ class AppTeamRegistrationForm extends Component {
         }
     }
 
-    onChangeTeamMemberValue = (value, key, index, subIndex) => {
+    onChangeTeamMemberValue = (value, key, index, subIndex, parentIndex) => {
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        let teamMember = teamRegistrationObj.teamMembers[index];
         if (key == 'mobileNumber') {
             if (value.length == 10) {
                 this.props.updateRegistrationTeamMemberAction(value, key, index, subIndex)
@@ -938,6 +937,26 @@ class AppTeamRegistrationForm extends Component {
             }
 
         }
+        else if (key === "isRegistererAsParent"){
+            if(value){
+                teamMember.parentOrGuardian[parentIndex][key] = value;
+                teamMember.parentOrGuardian[parentIndex]["firstName"] = teamRegistrationObj.firstName;
+                teamMember.parentOrGuardian[parentIndex]["lastName"] = teamRegistrationObj.lastName;
+                teamMember.parentOrGuardian[parentIndex]["middleName"] = teamRegistrationObj.middleName;
+                teamMember.parentOrGuardian[parentIndex]["email"] = teamRegistrationObj.email;
+                teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = teamRegistrationObj.dateOfBirth;
+                teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = teamRegistrationObj.mobileNumber;
+                teamMember.parentOrGuardian[parentIndex]["postalCode"] = teamRegistrationObj.postalCode;
+                teamMember.parentOrGuardian[parentIndex]["stateRefId"] = teamRegistrationObj.stateRefId;
+                teamMember.parentOrGuardian[parentIndex]["street1"] = teamRegistrationObj.street1;
+                teamMember.parentOrGuardian[parentIndex]["street2"] = teamRegistrationObj.street2;
+                teamMember.parentOrGuardian[parentIndex]["suburb"] = teamRegistrationObj.suburb;
+                this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+            }
+            else{
+                this.clearTeamMemberParentDetails(teamMember, parentIndex);
+            }
+        }
         this.props.updateRegistrationTeamMemberAction(value, key, index, subIndex)
     }
 
@@ -969,7 +988,7 @@ class AppTeamRegistrationForm extends Component {
         e.value = null;
     }
 
-    getFilteredTeamRegisrationObj = (teamRegistrationObj) => {
+    getFilteredTeamRegistrationObj = (teamRegistrationObj) => {
         try {
             teamRegistrationObj["existingUserId"] = getUserId() ? Number(getUserId()) : null;
             teamRegistrationObj.registeringYourself = 4;
@@ -979,9 +998,9 @@ class AppTeamRegistrationForm extends Component {
             // for(let teamMember of teamRegistrationObj.teamMembers){
             //     teamMember.dateOfBirth = teamMember.dateOfBirth ? moment(teamMember.dateOfBirth,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
             // }
-            // teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ? 
+            // teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate = teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate ?
             //                             moment(teamRegistrationObj.additionalInfo.accreditationCoachExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
-            // teamRegistrationObj.additionalInfo.childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ? 
+            // teamRegistrationObj.additionalInfo.childrenCheckExpiryDate = teamRegistrationObj.additionalInfo.childrenCheckExpiryDate ?
             //                             moment(teamRegistrationObj.additionalInfo.childrenCheckExpiryDate,"DD-MM-YYYY").format("MM-DD-YYYY") : null;
 
             let memArr = [];
@@ -1001,7 +1020,7 @@ class AppTeamRegistrationForm extends Component {
             teamRegistrationObj.competitionInfo = null;
             return teamRegistrationObj;
         } catch (ex) {
-            console.log("Error in getFilteredTeamRegisrationObj::" + ex);
+            console.log("Error in getFilteredTeamRegistrationObj::" + ex);
         }
     }
 
@@ -1012,7 +1031,7 @@ class AppTeamRegistrationForm extends Component {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if (address) {
-                if (key == "yourDetails") {
+                if (key === "yourDetails") {
                     this.onChangeSetTeamValue(address.addressOne, "street1");
                     this.onChangeSetTeamValue(address.suburb, "suburb");
                     this.onChangeSetTeamValue(address.postcode, "postalCode");
@@ -1021,7 +1040,7 @@ class AppTeamRegistrationForm extends Component {
                     if (stateRefId) {
                         this.getSchoolList(stateRefId);
                     }
-                } else if (key == "parent") {
+                } else if (key === "parent") {
                     this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                     this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
                     this.onChangeSetParentValue(address.suburb, "suburb", parentIndex);
@@ -1041,13 +1060,13 @@ class AppTeamRegistrationForm extends Component {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if (address) {
-                if (key == "teamMember") {
+                if (key === "teamMember") {
                     this.onChangeTeamMemberValue(address.addressOne, "street1", teamMemberIndex);
                     this.onChangeTeamMemberValue(address.suburb, "suburb", teamMemberIndex);
                     this.onChangeTeamMemberValue(address.postcode, "postalCode", teamMemberIndex);
                     this.onChangeTeamMemberValue(countryRefId ? countryRefId : null, "countryRefId", teamMemberIndex);
                     this.onChangeTeamMemberValue(stateRefId ? stateRefId : null, "stateRefId", teamMemberIndex);
-                } else if (key == "teamMemberParent") {
+                } else if (key === "teamMemberParent") {
                     this.onChangeSetTeamMemberParentValue(stateRefId ? stateRefId : null, "stateRefId", teamMemberParentIndex, teamMemberIndex);
                     this.onChangeSetTeamMemberParentValue(address.addressOne, "street1", teamMemberParentIndex, teamMemberIndex);
                     this.onChangeSetTeamMemberParentValue(address.suburb, "suburb", teamMemberParentIndex, teamMemberIndex);
@@ -1086,7 +1105,7 @@ class AppTeamRegistrationForm extends Component {
     onChangeSetParentValue = (value, key, parentIndex) => {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            if (key == "isSameAddress") {
+            if (key === "isSameAddress") {
                 teamRegistrationObj.parentOrGuardian[parentIndex][key] = value;
                 if (value) {
                     teamRegistrationObj.parentOrGuardian[parentIndex]["street1"] = teamRegistrationObj.street1;
@@ -1149,7 +1168,7 @@ class AppTeamRegistrationForm extends Component {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             let teamMember = teamRegistrationObj.teamMembers[teamMemberIndex]
-            if (key == "isSameAddress") {
+            if (key === "isSameAddress") {
                 teamMember.parentOrGuardian[parentIndex][key] = value;
                 if (value) {
                     teamMember.parentOrGuardian[parentIndex]["street1"] = teamMember.street1;
@@ -1162,7 +1181,45 @@ class AppTeamRegistrationForm extends Component {
                 } else {
                     this.clearTeamMemberParentAddress(parentIndex, teamMemberIndex);
                 }
-            } else {
+            }
+            else if (key === "mobileNumber") {
+                if (value.length === 10) {
+                    let hasError = this.state.hasErrorTeamMemberParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex && element.teamMemberIndex == teamMemberIndex);
+                    if (obj != undefined) {
+                        hasError.splice(hasError.indexOf(obj), 1);
+                    }
+                    this.setState({
+                        hasErrorTeamMemberParent: hasError
+                    })
+                    teamMember.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+
+                } else if (value.length < 10) {
+                    teamMember.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+                    let hasError = this.state.hasErrorParent;
+                    let obj = hasError.find(element => element.parentIndex == parentIndex);
+                    if (obj == undefined) {
+                        hasError.push({
+                            error: true,
+                            parentIndex: parentIndex,
+                            teamMemberIndex: teamMemberIndex
+                        })
+                    };
+                    this.setState({
+                        hasErrorTeamMemberParent: hasError
+                    })
+                }
+                if (!regexNumberExpression(value)) {
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`teamMemberParentMobileNumber${teamMemberIndex}${parentIndex}`]: null,
+                        });
+                    }, 300);
+                }
+            }
+            else {
                 teamMember.parentOrGuardian[parentIndex][key] = value;
                 this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
             }
@@ -1190,6 +1247,17 @@ class AppTeamRegistrationForm extends Component {
         teamMember.parentOrGuardian[parentIndex]["stateRefId"] = null;
         teamMember.parentOrGuardian[parentIndex]["countryRefId"] = null;
         teamMember.parentOrGuardian[parentIndex]["postalCode"] = null;
+        this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
+    }
+
+    clearTeamMemberParentDetails = (teamMember, parentIndex) => {
+        const { teamRegistrationObj } = this.props.teamRegistrationState;
+        teamMember.parentOrGuardian[parentIndex]["firstName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["lastName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["middleName"] = null;
+        teamMember.parentOrGuardian[parentIndex]["dateOfBirth"] = null;
+        teamMember.parentOrGuardian[parentIndex]["mobileNumber"] = null;
+        teamMember.parentOrGuardian[parentIndex]["email"] = null;
         this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj");
     }
 
@@ -1429,15 +1497,15 @@ class AppTeamRegistrationForm extends Component {
     addParent = (key, parentIndex) => {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            if (key == "add") {
+            if (key === "add") {
                 let parentObj = deepCopyFunction(this.getParentObj());
                 parentObj.tempParentId = teamRegistrationObj.parentOrGuardian.length + 1;
                 teamRegistrationObj.parentOrGuardian.push(parentObj);
             }
-            if (key == "remove") {
+            if (key === "remove") {
                 teamRegistrationObj.parentOrGuardian.splice(parentIndex, 1);
             }
-            if (key == "removeAllParent") {
+            if (key === "removeAllParent") {
                 teamRegistrationObj.parentOrGuardian = [];
             }
             this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
@@ -1450,15 +1518,15 @@ class AppTeamRegistrationForm extends Component {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             let teamMember = teamRegistrationObj.teamMembers[teamMemberIndex];
-            if (key == "add") {
+            if (key === "add") {
                 let parentObj = deepCopyFunction(this.getParentObj());
                 parentObj.tempParentId = teamMember.parentOrGuardian.length + 1;
                 teamMember.parentOrGuardian.push(parentObj);
             }
-            if (key == "remove") {
+            if (key === "remove") {
                 teamMember.parentOrGuardian.splice(teamMemberParentIndex, 1);
             }
-            if (key == "removeAllParent") {
+            if (key === "removeAllParent") {
                 teamMember.parentOrGuardian = [];
             }
             console.log("teamREg", teamMember)
@@ -1473,19 +1541,19 @@ class AppTeamRegistrationForm extends Component {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             let date = moment(f, "DD-MM-YYYY").format("MM-DD-YYYY");
             console.log("Date", date)
-            if (referenceKey == "team") {
+            if (referenceKey === "team") {
                 this.onChangeSetTeamValue(date, key);
-                if (getAge(date) < 18) {
+                if (getAge(date) <= 18) {
                     if (!isArrayNotEmpty(teamRegistrationObj.parentOrGuardian)) {
                         this.addParent("add")
                     }
                 } else {
                     this.addParent("removeAllParent")
                 }
-            }else if(referenceKey == "teamMember"){
-                this.onChangeTeamMemberValue(date,key, teamMemberIndex);
-                this.teamMemberAddingProcess(date,teamRegistrationObj.teamMembers[teamMemberIndex].payingFor,teamMemberIndex)
-            }else if(referenceKey == "additionalInfo"){
+            } else if (referenceKey === "teamMember") {
+                this.onChangeTeamMemberValue(date, key, teamMemberIndex);
+                this.teamMemberAddingProcess(date, teamRegistrationObj.teamMembers[teamMemberIndex].payingFor, teamMemberIndex)
+            } else if (referenceKey === "additionalInfo") {
                 this.onChangeSetAdditionalInfo(date, key)
             }
         } catch (ex) {
@@ -1496,7 +1564,7 @@ class AppTeamRegistrationForm extends Component {
     teamMemberAddingProcess = (dob, payingFor, teamMemberIndex) => {
         try {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
-            if (getAge(dob) < 18 && payingFor == 1) {
+            if (getAge(dob) <= 18 && payingFor == 1) {
                 if (!isArrayNotEmpty(teamRegistrationObj.teamMembers[teamMemberIndex].parentOrGuardian)) {
                     this.addTeamMemberParent("add", teamMemberIndex)
                 }
@@ -1555,23 +1623,28 @@ class AppTeamRegistrationForm extends Component {
             const { teamRegistrationObj } = this.props.teamRegistrationState;
             console.log("teamRegis final", teamRegistrationObj)
             let saveTeamRegistrationObj = JSON.parse(JSON.stringify(teamRegistrationObj));
-            let filteredTeamRegistrationObj = this.getFilteredTeamRegisrationObj(saveTeamRegistrationObj)
+            let filteredTeamRegistrationObj = this.getFilteredTeamRegistrationObj(saveTeamRegistrationObj)
             if (this.state.currentStep == 1) {
                 this.setState({ buttonSubmitted: true });
                 for (let teamMember of teamRegistrationObj.teamMembers) {
                     if (this.showMemberTypeValidation(teamMember)) {
+                        message.error(AppConstants.pleaseReview)
                         return;
                     }
                 }
             }
             this.props.form.validateFieldsAndScroll((err, values) => {
+                if (err) {
+                    message.error(AppConstants.pleaseReview)
+                    return false;
+                }
                 if (!err) {
                     if (this.state.currentStep == 0) {
                         // let productAdded = this.productValidation();
                         // if(!productAdded){
                         //     message.error(ValidationConstants.fillMembershipProductInformation);
                         //     return;
-                        // } 
+                        // }
                         this.props.validateRegistrationCapAction(this.props.teamRegistrationState.registrationCapValidateInputObj);
                         this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
                         return;
@@ -1593,14 +1666,26 @@ class AppTeamRegistrationForm extends Component {
                             return;
                         }
                         if (values.yourDetailsMobileNumber != null && values.yourDetailsMobileNumber.length != 10) {
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorYourDetails: true })
                             return false;
                         }
                         if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                            message.error(AppConstants.pleaseReview)
+                            this.setState({ hasErrorEmergency: true })
                             return false;
                         }
                         if (filteredTeamRegistrationObj.parentOrGuardian != null && filteredTeamRegistrationObj.parentOrGuardian.length > 0) {
                             for (let a in filteredTeamRegistrationObj.parentOrGuardian) {
                                 if (filteredTeamRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorParent.push({
+                                        error: true,
+                                        parentIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorParent: this.state.hasErrorParent
+                                    })
                                     return false
                                 }
                             }
@@ -1608,14 +1693,39 @@ class AppTeamRegistrationForm extends Component {
                         if (filteredTeamRegistrationObj.teamMembers != null && filteredTeamRegistrationObj.teamMembers.length > 0) {
                             for (let a in filteredTeamRegistrationObj.teamMembers) {
                                 if (filteredTeamRegistrationObj.teamMembers[a].mobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].mobileNumber.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorTeamMember: this.state.hasErrorTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != null && filteredTeamRegistrationObj.teamMembers[a].emergencyContactNumber?.length != 10) {
+                                    message.error(AppConstants.pleaseReview)
+                                    this.state.hasErrorEmergencyTeamMember.push({
+                                        error: true,
+                                        teamMemberIndex: a
+                                    })
+                                    this.setState({
+                                        hasErrorEmergencyTeamMember: this.state.hasErrorEmergencyTeamMember
+                                    })
                                     return false
                                 }
                                 if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian.length > 0) {
                                     for (let b in filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian) {
                                         if (filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber != null && filteredTeamRegistrationObj.teamMembers[a].parentOrGuardian[b].nobileNumber.length != 10) {
+                                            message.error(AppConstants.pleaseReview)
+                                            this.state.hasErrorTeamMemberParent.push({
+                                                error: true,
+                                                parentIndex: a,
+                                                teamMemberIndex: b
+                                            })
+                                            this.setState({
+                                                hasErrorTeamMemberParent: this.state.hasErrorTeamMemberParent
+                                            })
                                             return false
                                         }
                                     }
@@ -1785,7 +1895,7 @@ class AppTeamRegistrationForm extends Component {
                                 pageSize={this.state.competitionsCountPerPage}
                                 current={this.state.competitionsCurrentPage}
                                 style={{ textAlign: "center" }}
-                                //total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length} 
+                                //total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length}
                                 total={this.state.allCompetitionsByOrgId.length}
                                 itemRender={this.paginationItems} />
                         ) :
@@ -1881,6 +1991,7 @@ class AppTeamRegistrationForm extends Component {
                                                 setFieldsValue={teamRegistrationObj.competitionMembershipProductDivisionId}
                                                 style={{ width: "100%", paddingRight: 1 }}
                                                 onChange={(e) => this.onChangeSetTeamValue(e, "competitionMembershipProductDivisionId")}
+                                                notFoundContent={AppConstants.regoDivisionNotFound}
                                             >
                                                 {(teamRegistrationObj.divisions || []).map((division, divisionIndex) => (
                                                     <Option key={division.competitionMembershipProductDivisionId}
@@ -1893,24 +2004,22 @@ class AppTeamRegistrationForm extends Component {
                             )}
 
                             <div className="row">
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.totalsinglegamefees}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (teamRegistrationObj.fees.totalCasualFee)) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
+                                <div className="col-sm-12 col-md-6">
+                                    <div className="input-style-bold">{AppConstants.payAtRegistration}</div>
+                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId ? teamRegistrationObj.fees.payAtRegistration : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
                                         <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
                                     </div>
                                 </div>
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.feeDueAtRegistration}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 1 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
-                                        <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
+                                {this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId != 1 ?
+                                    <div className="col-sm-12 col-md-6">
+                                        <div className="input-style-bold">{this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? AppConstants.payAtMatch : AppConstants.payAtMatchPerPlayer}</div>
+                                        <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId ? teamRegistrationObj.fees.payAtMatch : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
+                                            <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-sm-12 col-lg-4">
-                                    <div className="input-style-bold">{AppConstants.feeDueAtMatch}</div>
-                                    <div className="form-heading">{!this.props.teamRegistrationState.getSeasonalCasualFeesOnLoad ? ('$' + (this.props.teamRegistrationState.feesInfo?.teamRegChargeTypeRefId == 2 ? teamRegistrationObj.fees.totalSeasonalFee : "0.00")) : (<div style={{ textAlign: "center" }}><Spin /></div>)}
-                                        <span style={{ fontSize: "12px", alignSelf: "flex-end", marginBottom: "5px" }}>&#8199;incl.GST</span>
-                                    </div>
-                                </div>
+                                    :
+                                    null
+                                }
                             </div>
                             <div className="input-style-bold pt-1 pb-0">{AppConstants.dueAtRegistration}</div>
                         </div>
@@ -2106,7 +2215,7 @@ class AppTeamRegistrationForm extends Component {
                 <div>
                     {/* {teamRegistrationObj.selectAddressFlag && (
                         <div>
-                            <div className="form-heading" 
+                            <div className="form-heading"
                             style={{paddingBottom: "0px",marginTop: "30px"}}>{AppConstants.address}</div>
                             <InputWithHead heading={AppConstants.selectAddress} required={"required-field"}/>
                             <Form.Item >
@@ -2123,14 +2232,14 @@ class AppTeamRegistrationForm extends Component {
                                     ))}
                                 </Select>
                                 )}
-                            </Form.Item> 
+                            </Form.Item>
                             <div className="orange-action-txt" style={{marginTop: "10px"}}
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true,"addNewAddressFlag")
                                 this.onChangeSetParticipantValue(false,"selectAddressFlag");
                                 this.onChangeSetParticipantValue(null,"addOrRemoveAddressBySelect");
                             }}
-                            >+ {AppConstants.addNewAddress}</div>	
+                            >+ {AppConstants.addNewAddress}</div>
                         </div>
                     )}  */}
 
@@ -2443,10 +2552,10 @@ class AppTeamRegistrationForm extends Component {
     //     try{
     //         const { stateList, countryList } = this.props.commonReducerState;
     //         return(
-    //             <div>   
+    //             <div>
     //                 {teamMember.addNewAddressFlag && (
     //                     <div>
-    //                         <div className="form-heading" 
+    //                         <div className="form-heading"
     //                         style={{paddingBottom: "0px",marginBottom: "-20px",marginTop: "20px"}}>{AppConstants.findAddress}</div>
     //                         <div>
     //                             <Form.Item name="addressSearch">
@@ -2458,14 +2567,14 @@ class AppTeamRegistrationForm extends Component {
     //                                     onBlur={() => { this.setState({searchAddressError: ''})}}
     //                                     onSetData={(e)=>this.teamMemberAddressAutoComplete(e,"teamMember",teamMemberIndex)}
     //                                 />
-    //                             </Form.Item> 
+    //                             </Form.Item>
     //                             <div className="orange-action-txt" style={{marginTop: "10px"}}
     //                             onClick={() => {
     //                                 this.onChangeTeamMemberValue(true, "manualEnterAddressFlag", teamMemberIndex)
     //                                 this.onChangeTeamMemberValue(false,"addNewAddressFlag",teamMemberIndex);
     //                             }}
-    //                             >{AppConstants.enterAddressManually}</div>	 
-    //                         </div> 
+    //                             >{AppConstants.enterAddressManually}</div>
+    //                         </div>
     //                     </div>
     //                 )}
 
@@ -2486,7 +2595,7 @@ class AppTeamRegistrationForm extends Component {
     //                                     required={"required-field pt-0 pb-0"}
     //                                     heading={AppConstants.addressOne}
     //                                     placeholder={AppConstants.addressOne}
-    //                                     onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "street1",teamMemberIndex)} 
+    //                                     onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "street1",teamMemberIndex)}
     //                                     setFieldsValue={teamMember.street1}
     //                                 />
     //                             )}
@@ -2494,7 +2603,7 @@ class AppTeamRegistrationForm extends Component {
     //                         <InputWithHead
     //                             heading={AppConstants.addressTwo}
     //                             placeholder={AppConstants.addressTwo}
-    //                             onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "street2",teamMemberIndex)} 
+    //                             onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "street2",teamMemberIndex)}
     //                             value={teamMember.street2}
     //                         />
     //                         <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
@@ -2504,7 +2613,7 @@ class AppTeamRegistrationForm extends Component {
     //                             })(
     //                                 <InputWithHead
     //                                     placeholder={AppConstants.suburb}
-    //                                     onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "suburb",teamMemberIndex)} 
+    //                                     onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "suburb",teamMemberIndex)}
     //                                     setFieldsValue={teamMember.suburb}
     //                                 />
     //                             )}
@@ -2538,7 +2647,7 @@ class AppTeamRegistrationForm extends Component {
     //                                             required={"required-field pt-0 pb-0"}
     //                                             placeholder={AppConstants.postcode}
     //                                             maxLength={4}
-    //                                             onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "postalCode",teamMemberIndex)} 
+    //                                             onChange={(e) => this.onChangeTeamMemberValue(e.target.value, "postalCode",teamMemberIndex)}
     //                                             setFieldsValue={teamMember.postalCode}
     //                                         />
     //                                     )}
@@ -2562,7 +2671,7 @@ class AppTeamRegistrationForm extends Component {
     //                             )}
     //                         </Form.Item>
     //                     </div>
-    //                 )} 
+    //                 )}
     //             </div>
     //         )
     //     }catch(ex){
@@ -2574,10 +2683,10 @@ class AppTeamRegistrationForm extends Component {
     //     try{
     //         const { stateList, countryList } = this.props.commonReducerState;
     //         return(
-    //             <div>   
+    //             <div>
     //                 {parent.addNewAddressFlag && (
     //                     <div>
-    //                         <div className="form-heading" 
+    //                         <div className="form-heading"
     //                         style={{paddingBottom: "0px",marginBottom: "-20px",marginTop: "20px"}}>{AppConstants.findAddress}</div>
     //                         <div>
     //                             <Form.Item name="addressSearch">
@@ -2589,14 +2698,14 @@ class AppTeamRegistrationForm extends Component {
     //                                     onBlur={() => { this.setState({searchAddressError: ''})}}
     //                                     onSetData={(e)=>this.teamMemberAddressAutoComplete(e,"teamMemberParent",teamMemberIndex,parentIndex)}
     //                                 />
-    //                             </Form.Item> 
+    //                             </Form.Item>
     //                             <div className="orange-action-txt" style={{marginTop: "10px"}}
     //                             onClick={() => {
     //                                 this.onChangeSetTeamMemberParentValue(true, "manualEnterAddressFlag",parentIndex, teamMemberIndex)
     //                                 this.onChangeSetTeamMemberParentValue(false,"addNewAddressFlag",parentIndex,teamMemberIndex);
     //                             }}
-    //                             >{AppConstants.enterAddressManually}</div>	 
-    //                         </div> 
+    //                             >{AppConstants.enterAddressManually}</div>
+    //                         </div>
     //                     </div>
     //                 )}
 
@@ -2617,7 +2726,7 @@ class AppTeamRegistrationForm extends Component {
     //                                     required={"required-field pt-0 pb-0"}
     //                                     heading={AppConstants.addressOne}
     //                                     placeholder={AppConstants.addressOne}
-    //                                     onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "street1",parentIndex,teamMemberIndex)} 
+    //                                     onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "street1",parentIndex,teamMemberIndex)}
     //                                     setFieldsValue={parent.street1}
     //                                 />
     //                             )}
@@ -2625,7 +2734,7 @@ class AppTeamRegistrationForm extends Component {
     //                         <InputWithHead
     //                             heading={AppConstants.addressTwo}
     //                             placeholder={AppConstants.addressTwo}
-    //                             onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "street2",parentIndex,teamMemberIndex)} 
+    //                             onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "street2",parentIndex,teamMemberIndex)}
     //                             value={parent.street2}
     //                         />
     //                         <InputWithHead heading={AppConstants.suburb} required={"required-field"}/>
@@ -2635,7 +2744,7 @@ class AppTeamRegistrationForm extends Component {
     //                             })(
     //                                 <InputWithHead
     //                                     placeholder={AppConstants.suburb}
-    //                                     onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "suburb",parentIndex,teamMemberIndex)} 
+    //                                     onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "suburb",parentIndex,teamMemberIndex)}
     //                                     setFieldsValue={parent.suburb}
     //                                 />
     //                             )}
@@ -2669,7 +2778,7 @@ class AppTeamRegistrationForm extends Component {
     //                                             required={"required-field pt-0 pb-0"}
     //                                             placeholder={AppConstants.postcode}
     //                                             maxLength={4}
-    //                                             onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "postalCode",parentIndex,teamMemberIndex)} 
+    //                                             onChange={(e) => this.onChangeSetTeamMemberParentValue(e.target.value, "postalCode",parentIndex,teamMemberIndex)}
     //                                             setFieldsValue={parent.postalCode}
     //                                         />
     //                                     )}
@@ -2693,7 +2802,7 @@ class AppTeamRegistrationForm extends Component {
     //                             )}
     //                         </Form.Item>
     //                     </div>
-    //                 )} 
+    //                 )}
     //             </div>
     //         )
     //     }catch(ex){
@@ -3020,11 +3129,11 @@ class AppTeamRegistrationForm extends Component {
                     {isArrayNotEmpty(teamMember.parentOrGuardian) && (
                         <div>
                             <div className="form-heading" style={{ paddingBottom: "0px", marginTop: 20 }}>{AppConstants.parentOrGuardianDetail}</div>
-                            {getAge(teamRegistrationObj.dateOfBirth) >= 18 &&
+                            {getAge(teamRegistrationObj.dateOfBirth) > 18 &&
                                 <Checkbox
                                     className="single-checkbox"
                                     checked={teamMember.isRegistererAsParent == 1 ? true : false}
-                                    onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex)}>
+                                    onChange={e => this.onChangeTeamMemberValue(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex, null , 0)}>
                                     {AppConstants.teamMemberParentCheck}
                                 </Checkbox>
                             }
@@ -3047,7 +3156,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) >= 18 && teamMember.payingFor == 1 && (
+                    {getAge(moment(teamMember.dateOfBirth).format("MM-DD-YYYY")) > 18 && teamMember.payingFor == 1 && (
                         <div>
                             {teamMember.dateOfBirth && (
                                 <div>{this.teamMemberEmergencyContactView(teamMemberIndex, getFieldDecorator)}</div>
@@ -3641,7 +3750,7 @@ class AppTeamRegistrationForm extends Component {
                 <div>
                     <div>{this.addedCompetitionView()}</div>
                     <div>{this.yourDetailsView(getFieldDecorator)}</div>
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) ? (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) ? (
                         <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
                     ) : (
                             <div>
@@ -3839,18 +3948,18 @@ class AppTeamRegistrationForm extends Component {
                         {getFieldDecorator(`additionalInfoCountryRefId`, {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={AppConstants.select}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e, "countryRefId")}
-                                setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
-                                {countryList.length > 0 && countryList.map((item) => (
-                                    < Option key={item.id} value={item.id}> {item.description}</Option>
-                                ))}
-                            </Select>
-                        )}
-                    </Form.Item>
-                    <InputWithHead heading={AppConstants.doYouIdentifyAs} />
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder={AppConstants.select}
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
+                            setFieldsValue={teamRegistrationObj.additionalInfo.countryRefId}>
+                            {countryList.length > 0 && countryList.map((item) => (
+                                < Option key={item.id} value={item.id}> {item.description}</Option>
+                            ))}
+                        </Select>
+                      )}
+                      </Form.Item>
+                    <InputWithHead heading={AppConstants.doYouIdentifyAs} required={"required-field"} />
                     <Radio.Group
                         className="registration-radio-group"
                         onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "identifyRefId")}
@@ -3903,10 +4012,10 @@ class AppTeamRegistrationForm extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
-                        })( 
+                        })(
                             <TextArea
                                 placeholder={AppConstants.anyAllergies}
-                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")} 
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "allergyInfo")}
                                 setFieldsValue={teamRegistrationObj.additionalInfo.allergyInfo}
                                 allowClear
                             />
@@ -3941,7 +4050,7 @@ class AppTeamRegistrationForm extends Component {
                                         style={{ marginBottom: '15px' }} />
                                 )}
                             </Form.Item>
-                            <InputWithHead heading={AppConstants.typeOfDisability} />
+                            <InputWithHead heading={AppConstants.typeOfDisability} required={"required-field"} />
                             <Radio.Group
                                 className="reg-competition-radio"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
@@ -3974,7 +4083,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                         {teamRegistrationObj.additionalInfo.favouriteTeamRefId == 6 && (
                             <div className="col-md-6 col-sm-12">
-                                <InputWithHead heading={AppConstants.who_fav_bird} />
+                                <InputWithHead heading={AppConstants.who_fav_bird} required={"required-field"} />
                                 <Form.Item>
                                     {getFieldDecorator(`additionalInfoFavoriteBird`, {
                                         rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -4079,7 +4188,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
 
-                    {(getAge(teamRegistrationObj.dateOfBirth) < 18) && (
+                    {(getAge(teamRegistrationObj.dateOfBirth) <= 18) && (
                         <div>
                             {teamRegistrationObj.regSetting.school_standard == 1 && (
                                 <div>
@@ -4128,7 +4237,7 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} />
+                            <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required={"required-field"} />
                             <Radio.Group
                                 className="registration-radio-group"
                                 style={{ flexDirection: "column" }}
@@ -4155,7 +4264,7 @@ class AppTeamRegistrationForm extends Component {
 
                     {(teamRegistrationObj.personRoleRefId == 2) && (
                         <div>
-                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber} />
+                            <InputWithHead heading={AppConstants.workingWithChildrenCheckNumber}/>
                             <div className="row">
                                 <div className="col-sm-12 col-md-6">
                                     <InputWithHead

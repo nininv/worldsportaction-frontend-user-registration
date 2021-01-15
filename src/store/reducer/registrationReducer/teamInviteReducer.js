@@ -21,6 +21,7 @@ const initialState = {
 function updateInviteMemberInfo(iniviteMemberInfoTemp){
     try{
         let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
+        userRegDetails.referParentEmail = userRegDetails.isInActive ? true : false;
         let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
         if(userRegDetails.parentOrGaurdianDetails){
             for(let parent of userRegDetails.parentOrGaurdianDetails){
@@ -67,6 +68,9 @@ function teamInviteReducer(state = initialState, action){
             let inviteMemberInfoKey = action.key;
             let inviteMemberInfoSubKey= action.subKey;
             let inviteMemberInfoParentIndex = action.parentIndex;
+            if(state.iniviteMemberInfo.userRegDetails.referParentEmail == true){
+                state.iniviteMemberInfo.userRegDetails.email = null;
+            }
             if(inviteMemberInfoSubKey == "userRegDetails"){
                 if(inviteMemberInfoKey == "isYearsPlayed"){
                     if(inviteMemberInfoData == 1){
@@ -79,7 +83,8 @@ function teamInviteReducer(state = initialState, action){
             }else if(inviteMemberInfoKey == "inviteMemberInfo"){
                 state.iniviteMemberInfo = inviteMemberInfoData;
             }else if(inviteMemberInfoSubKey == "walkingNetball"){
-                state.iniviteMemberInfo.userRegDetails[inviteMemberInfoSubKey][inviteMemberInfoKey] = inviteMemberInfoData;
+                state.iniviteMemberInfo.userRegDetails.walkingNetball = state.iniviteMemberInfo.userRegDetails.walkingNetball == null ? {} : state.iniviteMemberInfo.userRegDetails.walkingNetball;
+                state.iniviteMemberInfo.userRegDetails.walkingNetball[inviteMemberInfoKey] = inviteMemberInfoData;
             }
             return{
               ...state
@@ -193,23 +198,29 @@ function teamInviteReducer(state = initialState, action){
                         reviewData[action.subKey].splice(index,1);
                     }
                     reviewData[action.subKey].push(action.value);
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) +
-                                            feeIsNull(action.value.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
-                                            feeIsNull(action.value.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) +
-                    feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
+                    if(!sameProduct){
+                        reviewData["total"]["subTotal"] = (feeIsNull(reviewData["total"]["subTotal"]) +
+                        feeIsNull(action.value.amount)).toFixed(2);
+                        reviewData["total"]["gst"] = (feeIsNull(reviewData["total"]["gst"]) +
+                                                feeIsNull(action.value.tax)).toFixed(2);
+                        reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) +
+                        feeIsNull(action.value.amount)+  feeIsNull(action.value.tax)).toFixed(2);
 
-                                            
+                        reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) + 
+                        feeIsNull(action.value.amount) + feeIsNull(action.value.tax)).toFixed(2);   
+                    }                                 
                 }
                 else if(action.key == "removeShopProduct"){
                     let shopData = reviewData[action.subKey][action.index];
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) -
-                                                feeIsNull(shopData.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) -
-                                        feeIsNull(shopData.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
-                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
+                    reviewData["total"]["subTotal"] = (feeIsNull(reviewData["total"]["subTotal"]) -
+                                                feeIsNull(shopData.amount)).toFixed(2);
+                    reviewData["total"]["gst"] = (feeIsNull(reviewData["total"]["gst"]) -
+                                        feeIsNull(shopData.tax)).toFixed(2);
+                    reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) -
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax)).toFixed(2);
+                    
+                    reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) - 
+                    feeIsNull(shopData.amount) - feeIsNull(shopData.tax)).toFixed(2);
                     
                     reviewData[action.subKey].splice(action.index,1);
                 }

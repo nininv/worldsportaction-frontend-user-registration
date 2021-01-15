@@ -13,11 +13,12 @@ async function logout() {
 let token = getAuthToken();
 let AxiosApi = {
     ///get invoice
-    getInvoice(registrationId, userRegId, invoiceId) {
+    getInvoice(registrationId, userRegId, invoiceId, teamMemberRegId) {
         let body = {
             registrationId: registrationId,
             userRegId: userRegId,
-            invoiceId: invoiceId
+            invoiceId: invoiceId,
+            teamMemberRegId: teamMemberRegId
         }
         let url = `/api/invoice`
         return Method.dataPost(url, token, body)
@@ -30,11 +31,12 @@ let AxiosApi = {
     },
 
     //////get invoice status
-    getInvoiceStatus(registrationId, userRegId, invoiceId) {
+    getInvoiceStatus(registrationId, userRegId, invoiceId, teamMemberRegId) {
         let body = {
             registrationId: registrationId,
             userRegId: userRegId,
-            invoiceId: invoiceId
+            invoiceId: invoiceId,
+            teamMemberRegId: teamMemberRegId
         }
         //console.log("body"+ JSON.stringify(body));
         let url = `/api/payments/getInvoiceStatus`

@@ -230,6 +230,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 		}
 		if((action.data != -1) || (getUserId() != 0 && registrationObj.registeringYourself == 1)){
 			let selectedUser = state.userInfo.find((user) => user.id == action.data);
+			registrationObj.userId = selectedUser.id;
 			registrationObj.firstName = selectedUser.firstName;
 			registrationObj.lastName = selectedUser.lastName;
 			registrationObj.email = selectedUser.email;
@@ -239,7 +240,12 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.mobileNumber = selectedUser.mobileNumber;
 			registrationObj.emergencyFirstName = selectedUser.emergencyFirstName;
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;
-            registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
+			registrationObj.isInActive = selectedUser.isInActive;
+			registrationObj.referParentEmail = selectedUser.isInActive ? true : false;
+			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail == true){
+				registrationObj.email = null;
+			}
 			if(selectedUser.stateRefId){
 				registrationObj.selectAddressFlag = true;
 				registrationObj.addNewAddressFlag = false;
@@ -300,12 +306,13 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.additionalInfo.isParticipatedInSSP = selectedUser.additionalInfo.isParticipatedInSSP;
 			registrationObj.additionalInfo.accreditationLevelUmpireRefId = selectedUser.additionalInfo.accreditationLevelUmpireRefId;
 			registrationObj.additionalInfo.associationLevelInfo = selectedUser.additionalInfo.associationLevelInfo;
-			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate;
+			registrationObj.additionalInfo.accreditationUmpireExpiryDate = selectedUser.additionalInfo.accreditationUmpireExpiryDate ? moment(selectedUser.additionalInfo.accreditationUmpireExpiryDate).format("MM-DD-YYYY") : null;;;
 			registrationObj.additionalInfo.isPrerequestTrainingComplete = selectedUser.additionalInfo.isPrerequestTrainingComplete;
 			registrationObj.additionalInfo.accreditationLevelCoachRefId = selectedUser.additionalInfo.accreditationLevelCoachRefId;
-			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate;
+			registrationObj.additionalInfo.accreditationCoachExpiryDate = selectedUser.additionalInfo.accreditationCoachExpiryDate ? moment(selectedUser.additionalInfo.accreditationCoachExpiryDate).format("MM-DD-YYYY") : null;
 			registrationObj.additionalInfo.childrenCheckNumber = selectedUser.additionalInfo.childrenCheckNumber;
-			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate;
+			registrationObj.additionalInfo.childrenCheckExpiryDate = selectedUser.additionalInfo.childrenCheckExpiryDate ? moment(selectedUser.additionalInfo.childrenCheckExpiryDate).format("MM-DD-YYYY") : null;
+			console.log("registrationObj.additionalInfo.childrenCheckExpiryDate",registrationObj.additionalInfo.childrenCheckExpiryDate)
 			registrationObj.additionalInfo.walkingNetballRefId = selectedUser.additionalInfo.walkingNetballRefId;
 			registrationObj.additionalInfo.walkingNetballInfo = selectedUser.additionalInfo.walkingNetballInfo;
 			state.updateExistingUserOnLoad = true;
@@ -684,7 +691,7 @@ function updateParticipantByIdByMembershipInfo(state,participantData){
 function checkByDateOfBirth(state,dateOfBirth){
 	try{
 		state.registrationObj.dateOfBirth = dateOfBirth;
-		if(getAge(dateOfBirth) < 18){
+		if(getAge(dateOfBirth) <= 18){
 			state.registrationObj.referParentEmail = true;
 			if(state.registrationObj.userId != getUserId()){
 				state.registrationObj.email = null;

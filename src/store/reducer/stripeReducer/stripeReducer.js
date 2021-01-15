@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { isArrayNotEmpty, isNullOrEmptyString, isNullOrUndefined } from "../../../util/helpers";
-import { setStripeAccountId } from "../../../util/sessionStorage";
+import { setStripeAccountConnectId, setStripeAccountId } from "../../../util/sessionStorage";
 
 const initialState = {
     onLoad: false,
@@ -351,7 +351,7 @@ function stripe(state = initialState, action) {
 
         case ApiConstants.API_SAVE_STRIPE_ACCOUNT_API_SUCCESS:
             console.log("a**", action.result)
-            setStripeAccountId(action.result.userStripeAccountId)
+            setStripeAccountConnectId(action.result.userStripeAccountId)
             return {
                 ...state,
                 onLoad: false,

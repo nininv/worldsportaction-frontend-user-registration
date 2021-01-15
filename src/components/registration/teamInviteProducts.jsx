@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import {
     Layout,
-    Button, 
+    Button,
     Form,
-    Checkbox, 
+    Checkbox,
     Input,
     Select,
     Radio, Modal, message
@@ -24,11 +24,11 @@ import history from "../../util/history";
 import { liveScore_formateDate } from "../../themes/dateformate";
 import InputWithHead from "../../customComponents/InputWithHead";
 
-import { 
+import {
     getTeamInviteReviewAction,saveTeamInviteReviewAction,
     updateTeamInviteAction
 } from '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationShopProductAction, getTermsAndConditionsAction } from 
+import {getRegistrationShopProductAction, getTermsAndConditionsAction } from
             '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
 
@@ -55,7 +55,7 @@ class TeamInviteProducts extends Component{
     componentDidMount(){
         try{
             let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            //let userRegId = "5c2b3545-732e-490e-b8d6-eeee2720f8c5"
+            // let userRegId = "40f5dce2-a23a-4795-ba6e-93f8f4d01e09"
             this.setState({userRegId: userRegId});
             this.getApiInfo(userRegId);
         }catch(ex){
@@ -73,7 +73,7 @@ class TeamInviteProducts extends Component{
                         this.goToShop();
                     }else{
                         this.goToTeamInvitePayments();
-                    } 
+                    }
                 }
             }
         }catch(ex){
@@ -85,7 +85,11 @@ class TeamInviteProducts extends Component{
         history.push({pathname: '/teamInviteShop', state: {userRegId: this.state.userRegId}})
     }
 
-     
+    removeFromCart = (index, key, subKey) => {
+        this.props.updateTeamInviteAction(null, key, index, subKey, null);
+    }
+
+
     getApiInfo = (userRegId) => {
         this.setState({onLoading: true});
         let payload = {
@@ -100,7 +104,7 @@ class TeamInviteProducts extends Component{
         history.push({pathname: '/teamInvitePayment', state: {userRegId: this.state.userRegId}})
     }
 
-    
+
     getShopProducts = (userRegId, page, typeId,organisationUniqueKey) =>{
         let {registrationId} = this.props.teamInviteState;
         let payload = {
@@ -133,10 +137,10 @@ class TeamInviteProducts extends Component{
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch :
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -203,7 +207,7 @@ class TeamInviteProducts extends Component{
             console.log("Error in ");
         }
     }
-    
+
 
     headerView = () => {
         try{
@@ -228,23 +232,23 @@ class TeamInviteProducts extends Component{
                                 <img src={item.photoUrl}/>
                             ):
                             (
-                                <img src={AppImages.userIcon} alt=""/>     
+                                <img src={AppImages.userIcon} alt=""/>
                             )
                         }
                         </div>
                         <div class="pt-3 pl-2" style={{marginLeft:10,marginRight: "auto"}}>
                             <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
-                            <div className="body-text-common">{item.gender + ', ' + 
+                            <div className="body-text-common">{item.gender + ', ' +
                                 liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : liveScore_formateDate(item.dateOfBirth)}
                             </div>
                         </div>
-                    
-                        <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.gotoTeamInviteForm()}>                   
+
+                        <div className="transfer-image-view pointer" style={{paddingRight:"15px"}} onClick={() => this.gotoTeamInviteForm()}>
                             <span className="link-text-common" style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
                             <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
-                        </div> 
+                        </div>
                     </div>
                     <div style={{display:"flex" , marginTop:30}}>
                      <div className="circular--landscape" style={{height: "67px" , width: "67px"}}>
@@ -253,16 +257,16 @@ class TeamInviteProducts extends Component{
                                 <img src={item.competitionLogoUrl} alt="" />
                             ):
                             (
-                                <img src={AppImages.userIcon} alt=""/>     
+                                <img src={AppImages.userIcon} alt=""/>
                             )
-                        }              
+                        }
                     </div>
                     <div class = "pt-3 pl-2" style={{marginLeft:10}}>
                         <div className="body-text-common">Competition</div>
                         <div className="headline-text-common">{item.competitionName}</div>
                         <div className="body-text-common">{item.organisationName}</div>
                     </div>
-                </div>   
+                </div>
                 </div>
             )
         }catch(ex){
@@ -279,40 +283,40 @@ class TeamInviteProducts extends Component{
                             {AppConstants.registration}{"(s)"}
                         </div>
                         { (item.membershipProducts || []).map((mem, memIndex) =>(
-                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common" 
+                            <div key={mem.competitionMembershipProductTypeId + "#" + memIndex} className="subtitle-text-common"
                             style={{fontFamily: "inherit",fontSize: 16 ,marginTop: "5px"}}>
                                 {mem.membershipTypeName + (mem.divisionId!= null ? ' - ' + mem.divisionName : "")}
                             </div>
                         )) }
                     </div>
-                                
+
                     <div className="subtitle-text-common" style={{marginTop: "16px"}}>
                         {AppConstants.wouldYouLikeTopay}
                     </div>
                     <div style={{marginTop:6}}>
                         <Radio.Group className="body-text-common"
                             value={item.selectedOptions.paymentOptionRefId}
-                            onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>  
-                            {(item.paymentOptions || []).map((p, pIndex) =>(  
+                            onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>
+                            {(item.paymentOptions || []).map((p, pIndex) =>(
                                 <span key={p.paymentOptionRefId}>
-                                    {p.paymentOptionRefId == 1 && 
-                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payEachMatch}</Radio>                    
-                                    }  
-                                    {p.paymentOptionRefId == 3 &&          
+                                    {p.paymentOptionRefId == 1 &&
+                                        <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payEachMatch}</Radio>
+                                    }
+                                    {p.paymentOptionRefId == 3 &&
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
                                     }
-                                    { p.paymentOptionRefId == 4 &&          
+                                    { p.paymentOptionRefId == 4 &&
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-                                    } 
-                                    {/* { p.paymentOptionRefId == 5 &&          
+                                    }
+                                    {/* { p.paymentOptionRefId == 5 &&
                                     <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
                                     }  */}
 
-                                </span>                  
+                                </span>
                             ))}
                         </Radio.Group>
                     </div>
-                    {item.selectedOptions.paymentOptionRefId == 4 && 
+                    {item.selectedOptions.paymentOptionRefId == 4 &&
                     <div className="row" style={{marginTop: '20px'}}>
                         {(item.instalmentDates || []).map((i, iIndex) => (
                             <div className="col-sm-3" key={iIndex}>
@@ -343,62 +347,62 @@ class TeamInviteProducts extends Component{
                             <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.favouriteTeam}</div>
                             <div>
                                 <Select
-                                        style={{ width: "100%", paddingRight: 1, minWidth: 182  }}  
+                                        style={{ width: "100%", paddingRight: 1, minWidth: 182  }}
                                         required={"required-field pt-0 pb-0"}
                                         className="input-inside-table-venue-court"
                                         onChange={(e) => this.setReviewInfo(e, "governmentVoucherRefId", index,"selectedOptions", govIndex)}
                                         value={gov.governmentVoucherRefId}
                                         placeholder={'Code'}>
                                         {(item.governmentVouchers || []).map((gv, gvIndex) => (
-                                                <Option key={gv.governmentVoucherRefId + "#" + gvIndex} 
+                                                <Option key={gv.governmentVoucherRefId + "#" + gvIndex}
                                                 value={gv.governmentVoucherRefId} >{gv.description}</Option>
                                             ))
                                         }
-                                    
+
                                     </Select>
                             </div>
-                        </div>                   
+                        </div>
                         <div class="col-sm-11 col-lg-5 col-9" style={{ width: "100%",margin: "15px 0px 0px 0px"}} >
                             <div className="subtitle-text-common" style={{marginBottom:7}}>{AppConstants.code}</div>
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
-                                placeholder={AppConstants.code}  
-                                value={gov.voucherCode} 
-                                onChange={(e) => this.setReviewInfo(e.target.value, "voucherCode", index,"selectedOptions", govIndex)}                    
+                                placeholder={AppConstants.code}
+                                value={gov.voucherCode}
+                                onChange={(e) => this.setReviewInfo(e.target.value, "voucherCode", index,"selectedOptions", govIndex)}
                             />
                         </div>
                         <div className="transfer-image-view pointer" style={{paddingLeft: '15px',paddingTop:44}}
-                            onClick={() => this.setReviewInfo(null, "removeVoucher", index,"selectedOptions", govIndex)}>                   
+                            onClick={() => this.setReviewInfo(null, "removeVoucher", index,"selectedOptions", govIndex)}>
                             <span className="user-remove-btn" >
                                 <img class="marginIcon" src={AppImages.removeIcon} />
                             </span>
-                        </div>    
-                        {gov.isValid == 0 && 
+                        </div>
+                        {gov.isValid == 0 &&
                         <div className="ml-4 discount-validation" style={{alignSelf:"center"}}>
                             {gov.message}
                         </div>
-                        }                          
+                        }
                     </div>
                 ))}
                 <div style={{display: 'flex',flexWrap:"wrap",justifyContent:"space-between",width: "99%"}}>
                     {isArrayNotEmpty(item.governmentVouchers) && (
                         <div style={{marginTop: "13px", alignSelf: "center"}}>
-                            <span className="btn-text-common pointer" style={{paddingTop: 7}} 
+                            <span className="btn-text-common pointer" style={{paddingTop: 7}}
                                     onClick={() => this.setReviewInfo(null, "addVoucher", index,"selectedOptions", null)}>
                                 + {AppConstants.addGovernmentVoucher}
                             </span>
-                        </div>  
+                        </div>
                     )}
-                    {selectedVouchers && selectedVouchers.length > 0 && 
+                    {selectedVouchers && selectedVouchers.length > 0 &&
                     <div style={{paddingTop:'15px'}}>
                         <Button className="open-reg-button"
                             onClick={(e) =>  this.setReviewInfo(null, "voucher", index,null, null)}
                             type="primary">
                             {AppConstants.applyCode}
                         </Button>
-                    </div> 
-                    }   
-                </div>           
+                    </div>
+                    }
+                </div>
             </div>
         )
     }
@@ -407,14 +411,14 @@ class TeamInviteProducts extends Component{
         const {teamInviteReviewList} = this.props.teamInviteState;
         let charity = teamInviteReviewList!= null ? teamInviteReviewList.charity : null;
         let charityRoundUp = teamInviteReviewList!= null ? teamInviteReviewList.charityRoundUp : [];
-        
+
         return(
-            <div style={{marginTop: "23px"}}>   
-                {charity!= null &&             
+            <div style={{marginTop: "23px"}}>
+                {charity!= null &&
                 <div className="headline-text-common" style={{fontSize: 21 ,marginTop: "5px"}}>
                     {charity.name}
                 </div>}
-                {charity!= null && 
+                {charity!= null &&
                 <div className = "product-text-common" style={{fontWeight:500 ,  marginTop: "8px" ,width: "92%" }}>
                     {charity.description}
                 </div>
@@ -425,7 +429,7 @@ class TeamInviteProducts extends Component{
                      value={teamInviteReviewList.charityRoundUpRefId}
                      onChange={(e) => this.setReviewInfo(e.target.value, "charityRoundUpRefId", null,"charity")}>
                         {(charityRoundUp || []).map((x, cIndex) => (
-                            <Radio key ={x.charityRoundUpRefId} value={x.charityRoundUpRefId}>{x.description}</Radio>  
+                            <Radio key ={x.charityRoundUpRefId} value={x.charityRoundUpRefId}>{x.description}</Radio>
                         ))}
                     </Radio.Group>
                 </div>}
@@ -436,7 +440,7 @@ class TeamInviteProducts extends Component{
     productLeftView = (getFieldDecorator)=>{
         const {teamInviteReviewList} = this.props.teamInviteState;
         //console.log("registrationReviewList", this.props.registrationProductState);
-        let compParticipants = teamInviteReviewList!= null ? 
+        let compParticipants = teamInviteReviewList!= null ?
                     isArrayNotEmpty(teamInviteReviewList.compParticipants) ?
                     teamInviteReviewList.compParticipants : [] : [];
         try{
@@ -459,11 +463,11 @@ class TeamInviteProducts extends Component{
 
     yourOrderView = (getFieldDecorator) => {
         const {teamInviteReviewList} = this.props.teamInviteState;
-        let compParticipants = teamInviteReviewList!= null ? 
+        let compParticipants = teamInviteReviewList!= null ?
                     isArrayNotEmpty(teamInviteReviewList.compParticipants) ?
                     teamInviteReviewList.compParticipants : [] : [];
         let total = teamInviteReviewList!= null ? teamInviteReviewList.total : null;
-        let shopProducts = teamInviteReviewList!= null ? 
+        let shopProducts = teamInviteReviewList!= null ?
                             isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
                             teamInviteReviewList.shopProducts : [] : [];
         try{
@@ -485,33 +489,33 @@ class TeamInviteProducts extends Component{
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                     </div>
-                                    
-                                    {mem.discountsToDeduct!= "0.00" && 
+
+                                    {mem.discountsToDeduct!= "0.00" &&
                                     <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
                                     </div>
                                     }
-                                    {/* {mem.childDiscountsToDeduct!= "0.00" && 
+                                    {/* {mem.childDiscountsToDeduct!= "0.00" &&
                                     <div  className="body-text-common mr-4" style={{display:"flex"}}>
                                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.familyDiscount}</div>
                                         <div className="alignself-center pt-2" style={{marginRight:10}}>(${mem.childDiscountsToDeduct})</div>
                                     </div>
                                     } */}
-                                   
+
                                 </div>
                             ))}
-                             
+
                             <div className="payment-option-txt">
                                 {paymentOptionTxt}
                             </div>
-                            {item.governmentVoucherAmount != "0.00" && 
+                            {item.governmentVoucherAmount != "0.00" &&
                             <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                                 <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                                 <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                            </div> 
+                            </div>
                             }
-                        </div> 
+                        </div>
                         )}
                     )}
                     {(shopProducts).map((shop, index) =>(
@@ -524,7 +528,7 @@ class TeamInviteProducts extends Component{
                                     <div>
                                         {shop.productName}
                                     </div>
-                                    <div>({shop.optionName})</div>                               
+                                    <div>{shop.optionName && `(${shop.optionName})`}</div>
                                 </div>
                             </div>
                             <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -532,7 +536,7 @@ class TeamInviteProducts extends Component{
                                 <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
                             </div>
                         </div>
-                    ))} 
+                    ))}
                     <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                         <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                         <div className="alignself-center pt-2" style={{marginRight:10}}>${total && total.total}</div>
@@ -543,7 +547,7 @@ class TeamInviteProducts extends Component{
             console.log("Error in yourOrderView::"+ex);
         }
     }
-    
+
     termsAndConditionsCheck = (e) => {
         this.setState({ agreeTerm: e.target.checked });
         if(e.target.checked){
@@ -556,15 +560,15 @@ class TeamInviteProducts extends Component{
         return(
             <div className="termsView-main outline-style" style={{padding: "36px 20px 36px 20px"}}>
                 <div className="headline-text-common mb-4" style={{textAlign: "left"}}>{AppConstants.termsAndConditionsHeading}</div>
-                <div className="pt-2">   
-                { (termsAndConditions || []).map((item, index) =>(               
+                <div className="pt-2">
+                { (termsAndConditions || []).map((item, index) =>(
                     <div className="pb-4 link-text-common" style={{marginLeft:0}}>
                          <a className="userRegLink" href={item.termsAndConditions} target='_blank' >
                         Terms and Conditions for {item.name}
                         </a>
-                    </div> 
-                ))}                  
-                </div>                           
+                    </div>
+                ))}
+                </div>
                 <div className="body-text-common mt-0" style={{display:"flex"}}>
                     <div>
                         <Checkbox
@@ -580,8 +584,8 @@ class TeamInviteProducts extends Component{
                 {this.state.isAgreed &&
                     <div style={{color:"var(--app-red)"}}>
                         {ValidationConstants.termsAndCondition[0]}
-                    </div>  
-                }                      
+                    </div>
+                }
             </div>
         )
     }
@@ -590,12 +594,12 @@ class TeamInviteProducts extends Component{
         try{
             return(
                 <div style={{marginTop:23}}>
-                     <Button className="open-reg-button link-text-common" 
+                     <Button className="open-reg-button link-text-common"
                       htmlType="submit"
                       type="primary"
                      style={{ width:"100%",textTransform: "uppercase"}}>
                         {AppConstants.continue}
-                    </Button>     
+                    </Button>
                 </div>
             )
         }catch(ex){
@@ -618,7 +622,7 @@ class TeamInviteProducts extends Component{
         return(
             <div className="row" style={{margin:0}}>
                 {this.productLeftView(getFieldDecorator)}
-                {this.productRightView(getFieldDecorator)}                
+                {this.productRightView(getFieldDecorator)}
             </div>
         );
     }
@@ -640,7 +644,7 @@ class TeamInviteProducts extends Component{
                         onSubmit={this.teamInviteProductSave}
                         noValidate="noValidate">
                         <Content>
-                            <Loader visible={this.props.teamInviteState.onTeamInviteReviewLoad || 
+                            <Loader visible={this.props.teamInviteState.onTeamInviteReviewLoad ||
                             this.props.teamInviteState.teamInviteProductsOnLoad} />
                             {this.contentView(getFieldDecorator)}</Content>
                     </Form>
@@ -651,12 +655,12 @@ class TeamInviteProducts extends Component{
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({	
+    return bindActionCreators({
         getTeamInviteReviewAction,
         saveTeamInviteReviewAction,
         updateTeamInviteAction,
         getRegistrationShopProductAction,
-        getTermsAndConditionsAction  
+        getTermsAndConditionsAction
     }, dispatch);
 
 }

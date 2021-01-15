@@ -264,8 +264,28 @@ let AxiosApi = {
 
     validateRegistrationCap(payload) {
         var url = `api/registrationcap/validate`;
-        return Method.dataPost(url, token, payload);
+        return Method.dataPost(url,token,payload)
     },
+
+    teamMembersSave(payload){
+        var url = `api/registration/teamparticipant`;
+        return Method.dataPost(url,token,payload)
+    },
+
+    getTeamMembers(teamMemberRegId){
+        var url = `api/registration/teamparticipantdata?teamMemberRegId=${teamMemberRegId}`;
+        return Method.dataGet(url, token);
+    },
+
+    getTeamMembersReview(payload){
+        var url = `api/registration/teamparticipant/review?registrationId=${payload.registrationId}&teamMemberRegId=${payload.teamMemberRegId}`;
+        return Method.dataGet(url, token);
+    },
+
+    updateTeamMembers(payload) {
+        const url = `api/registration/teamparticipant/removeoradd?userRegUniqueKey=${payload.userRegUniqueKey}&processType=${payload.processType}`;
+        return Method.dataPost(url, token, payload);
+      },
 };
 
 const Method = {

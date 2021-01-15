@@ -1,4 +1,4 @@
-import { put, call } from 'redux-saga/effects'
+import { put, call, takeEvery } from 'redux-saga/effects'
 import ApiConstants from "../../../themes/apiConstants";
 import CommonAxiosApi from "../../http/commonHttp/commonAxios";
 import RegistrationAxiosApi from "../../http/registrationHttp/registrationAxios";
@@ -367,3 +367,36 @@ export function* validateRegistrationCapSaga(action){
     }
 }
 
+export function* netSetGoTshirtSizeSaga(){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference,AppConstants.tShirtSizeList);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_NETSETGO_TSHIRT_SIZE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* accreditationUmpireCoachReferenceSaga() {
+    try {
+        const result = yield call(CommonAxiosApi.getCombinedUmpireCoachAccreditationReference);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}

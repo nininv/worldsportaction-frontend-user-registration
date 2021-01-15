@@ -240,22 +240,29 @@ class MyUmpiringAvailability extends Component {
                                     <div className="inside-table-view mt-4" >
                                         {schedule && userRole &&
                                             <>
-                                                <div className="table-actions">
-                                                    <WeekPicker
-                                                        onChange={this.handleChangeDate}
-                                                        disabledDate={this.disabledDate}
-                                                        format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
-                                                    />
-                                                    <Button
-                                                        className="schedule-approval-button"
-                                                        type="primary"
-                                                        htmlType="submit"
-                                                        disabled={false}
-                                                        onClick={this.handleSaveAvailability}
-                                                        disabled={this.props.liveScoreUmpireState.onLoad}
-                                                    >
-                                                        {AppConstants.save}
-                                                    </Button>
+                                                <div className="row">
+                                                    <div className="col-sm-8 inside-table-view d-flex justify-content-center">
+                                                        <span className="umpireAvailablityMessage">{AppConstants.please_sel_umpire_unavailable_time}</span>
+                                                    </div>
+                                                    <div className="col-sm d-flex align-items-center">
+                                                        <div className="table-actions">
+                                                            <WeekPicker
+                                                                onChange={this.handleChangeDate}
+                                                                disabledDate={this.disabledDate}
+                                                                format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
+                                                            />
+                                                            <Button
+                                                                className="schedule-approval-button"
+                                                                type="primary"
+                                                                htmlType="submit"
+                                                                disabled={false}
+                                                                onClick={this.handleSaveAvailability}
+                                                                disabled={this.props.liveScoreUmpireState.onLoad}
+                                                            >
+                                                                {AppConstants.save}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <ScheduleSelector
@@ -283,7 +290,7 @@ class MyUmpiringAvailability extends Component {
                         <Loader visible={this.props.liveScoreUmpireState.onLoad} />
                     </Content>
                 </Layout>
-            </div>
+            </div >
 
         );
     }

@@ -5,13 +5,13 @@ import {
     Input,
     Select,
     Checkbox,
-    Button, 
+    Button,
     Table,
     DatePicker,
-    Radio, 
-    Form, 
-    Modal, 
-    message, 
+    Radio,
+    Form,
+    Modal,
+    message,
     Steps,
     Tag,
     Pagination,
@@ -35,9 +35,9 @@ import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceS
 import history from "../../util/history";
 import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";
-import { updateTeamInviteAction, saveTeamInviteReviewAction} from 
+import { updateTeamInviteAction, saveTeamInviteReviewAction} from
             '../../store/actions/registrationAction/teamInviteAction';
-import {getRegistrationByIdAction, getRegistrationShopProductAction } from 
+import {getRegistrationByIdAction, getRegistrationShopProductAction } from
             '../../store/actions/registrationAction/registrationProductsAction';
 
 const { Header, Footer, Content } = Layout;
@@ -50,7 +50,7 @@ class TeamInviteShop extends Component{
         super(props);
         this.state = {
             showCardView:false,
-            registrationUniqueKey: null,   
+            registrationUniqueKey: null,
             productModalVisible: false ,
             id: null,
             typeId: -1,
@@ -126,13 +126,13 @@ class TeamInviteShop extends Component{
         }else if(key == "organisationUniqueKey"){
             this.setState({organisationUniqueKey: value});
             this.getRegistrationShopProducts(1, this.state.typeId, this.state.userRegId,value);
-        } 
+        }
     }
 
     getOrganisationFilterList = () => {
         try{
             const {registrationReviewList} = this.props.registrationProductState;
-            let compParticipants = registrationReviewList!= null ? 
+            let compParticipants = registrationReviewList!= null ?
                         isArrayNotEmpty(registrationReviewList.compParticipants) ?
                         registrationReviewList.compParticipants : [] : [];
             let organisationList = Array.from(new Set(compParticipants.map(a => a.organisationUniqueKey))).
@@ -154,14 +154,23 @@ class TeamInviteShop extends Component{
     }
 
     goToTeamInviteProducts = () =>{
-        history.push({pathname: '/teamInviteProductsReview', state: {userRegId: this.state.userRegId}})
+        let {teamInviteReviewList, registrationId} = this.props.teamInviteState;
+        if(teamInviteReviewList){
+            teamInviteReviewList["registrationId"] = registrationId;
+            teamInviteReviewList["userRegId"] = this.state.userRegId;
+            teamInviteReviewList["key"] = "shop";
+            this.callSaveRegistrationProducts("shop", teamInviteReviewList);
+        }
+        setTimeout(() => {
+            history.push({pathname: '/teamInviteProductsReview', state: {userRegId: this.state.userRegId}})
+        }, 300)
     }
 
     getPaymentOptionText = (paymentOptionRefId) =>{
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch : 
-        (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-        (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-        (paymentOptionRefId == 4 ? AppConstants.firstInstalment : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.payEachMatch :
+        (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+        (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+        (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
 
         return paymentOptionTxt;
@@ -169,11 +178,11 @@ class TeamInviteShop extends Component{
 
     enableExpandView = (key, item,index) =>{
         if(key == "show"){
-            this.setState({showCardView:true, expandObj: item,quantity: 1, shopSelectedRow: index}); 
-        } 
+            this.setState({showCardView:true, expandObj: item, variantOptionId: null, quantity: 1, shopSelectedRow: index});
+        }
         else {
             this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
-                quantity: null}); 
+                quantity: null});
         }
     }
 
@@ -192,12 +201,13 @@ class TeamInviteShop extends Component{
             totalAmt: 0,
             organisationId: expandObj.organisationId,
             skuId: variantOption ? (variantOption.skuId) : 0,
-            variantName: varnt.name
+            variantName: varnt.name,
+            inventoryTracking: expandObj.inventoryTracking
         }
         obj.totalAmt =  feeIsNull(obj.amount) + feeIsNull(obj.tax)
         this.props.updateTeamInviteAction(obj,key, null, subKey,null);
         this.setState({showCardView:false, expandObj: null, variantOptionId: null,
-            quantity: null}); 
+            quantity: null});
     }
 
     removeFromCart = (index, key, subKey) =>{
@@ -230,6 +240,45 @@ class TeamInviteShop extends Component{
         this.setState({loading: true, buttonPressed: key});
     }
 
+    renderPrice = (item) => {
+        const max = Math.max(...item.variants.map(elem => {
+            return Math.max(...elem.variantOptions.map(({ price }) => price));
+        }))
+        const min = Math.min(...item.variants.map(elem => {
+            return Math.min(...elem.variantOptions.map(({ price }) => price));
+        }))
+
+        const price = (min + feeIsNull(item.tax)).toFixed(2);
+        if (min !== max) {
+            return `From  $${price}`;
+        }
+        return `$${price}`
+    }
+
+    getMaxVariantsQuantity = (choiceVariant, variantData, productId) => {
+        const { registrationReviewList } = this.props.registrationProductState;
+        const isNullVariants = !variantData.variantId;
+
+        if (!isNullVariants && choiceVariant) {
+            const variantOptionQuantity = variantData.variantOptions.find(item => item.variantOptionId === choiceVariant).quantity;
+            const productFromOrder = registrationReviewList.shopProducts.find(item => item.variantOptionId === choiceVariant);
+            return  variantOptionQuantity - (productFromOrder ? productFromOrder.quantity : 0);
+        }
+        const productsFromOrder = registrationReviewList.shopProducts.filter(item => item.productId === productId);
+
+        if (!isNullVariants && !choiceVariant) {
+            return Math.min(...variantData.variantOptions.map((option) => {
+                const product = productsFromOrder.find(item => item.variantOptionId === option.variantOptionId);
+                if (product) {
+                    return option.quantity - product.quantity;
+                }
+                return option.quantity
+            }));
+        }
+        const quantityFromStore = Math.min(...variantData.variantOptions.map(({ quantity }) => quantity));
+        return quantityFromStore - (productsFromOrder[0] ? productsFromOrder[0].quantity : 0);
+    }
+
     getShopProductList =(shopProductList) =>{
         try {
             let shopProductListTemp = [];
@@ -256,34 +305,34 @@ class TeamInviteShop extends Component{
                 <div style={{display:"flex", flexWrap: "wrap"}}>
                     <div style={{width:"230px",marginTop: "10px",marginRight: "15px"}}>
                         <Select
-                            style={{ width: "100%", paddingRight: 1}}                  
-                            placeholder={AppConstants.all}  
+                            style={{ width: "100%", paddingRight: 1}}
+                            placeholder={AppConstants.all}
                             className="custom-dropdown"
                             onChange={(e) => this.onChangeSetValue("organisationUniqueKey", e)}
-                            value={this.state.organisationUniqueKey}                                               
+                            value={this.state.organisationUniqueKey}
                         >
-                            <Option value={-1}>All</Option> 
+                            <Option value={-1}>All</Option>
                             {
                                 (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option> 
+                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
                                 ))
-                            }    
+                            }
                         </Select>
                     </div>
                     <div style={{width:"230px",marginTop: "10px"}}>
                         <Select
-                            style={{ width: "100%", paddingRight: 1}}                  
-                            placeholder={AppConstants.allCategories}  
+                            style={{ width: "100%", paddingRight: 1}}
+                            placeholder={AppConstants.allCategories}
                             className="custom-dropdown"
                             onChange={(e) => this.onChangeSetValue("typeId", e)}
-                            value={this.state.typeId}                                               
+                            value={this.state.typeId}
                         >
-                            <Option value={-1}>All categories</Option> 
+                            <Option value={-1}>All categories</Option>
                             {
                                 (types || []).map((item, index) =>(
-                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option> 
+                                    <Option key = {item.id} value={item.id}>{item.typeName}</Option>
                                 ))
-                            }    
+                            }
                         </Select>
                     </div>
                 </div>
@@ -304,7 +353,7 @@ class TeamInviteShop extends Component{
                             </div>
                             <div className="px-4">
                                 <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                <div class="subtitle-text-common">{this.renderPrice(item)}</div>
                             </div>
                         </div>
                     </div>
@@ -331,16 +380,16 @@ class TeamInviteShop extends Component{
                                         <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                                     </div>
                                     <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                    <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+                                    <div class="subtitle-text-common">{this.renderPrice(item)}</div>
                                 </div>
                                 {this.state.showCardView && index == this.state.expandObj.sIndex &&
                                     <div>
                                         {this.cardExpandView()}
-                                    </div>                
+                                    </div>
                                 }
                             </div>
                         ))}
-                    </div> 
+                    </div>
                 :
                     <div >
                         {(shopProductListTemp  || []).map((item, index)=> (
@@ -351,7 +400,7 @@ class TeamInviteShop extends Component{
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
                                     <div className="col-md-12">
                                         {this.cardExpandView()}
-                                    </div>                
+                                    </div>
                                 }
                              </div>
                          ))}
@@ -372,23 +421,24 @@ class TeamInviteShop extends Component{
         //                         <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
         //                     </div>
         //                     <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-        //                     <div class="subtitle-text-common">${ (feeIsNull(item.varients[0].variantOptions[0].price) +  feeIsNull(item.tax)).toFixed(2) }</div>
+        //                     <div class="subtitle-text-common">{this.renderPrice(item)}</div>
         //                 </div>
         //             </div>
         //         ))}
         //     </div>
         // )
-    } 
+    }
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
         console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
+        const isNullVariants = !expandObj.variants[0].variantId;
         return(
-            <div class = "expand-product-text"  style={{marginTop: "23px"}}>     
+            <div class = "expand-product-text"  style={{marginTop: "23px"}}>
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
-                </div>           
+                </div>
                 <div class="row" style={{marginTop: "17px"}}>
                     <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
                         <img style={{width: "100%" , height: "180px"}} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
@@ -396,61 +446,78 @@ class TeamInviteShop extends Component{
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
-                        {(expandObj.varients || []).map((varnt, vIndex) =>(
-                            <div>
-                            <div style={{display:"flex", flexWrap:"wrap"}}>
-                                <div class="col-lg-6" style={{marginTop:27,padding:0}}>
-                                    <div className="subtitle-text-common">
-                                        {"Select " + varnt.name}
+                        {(expandObj.variants || []).map((varnt, vIndex) => {
+                            let maxQuantity = this.getMaxVariantsQuantity(this.state.variantOptionId, varnt, expandObj.productId);
+                            let isOutOfStock = false;
+                            if (isNullVariants && maxQuantity === 0 && expandObj.inventoryTracking) {
+                                isOutOfStock = true;
+                            }
+                            if (!isNullVariants && maxQuantity === 0 && this.state.variantOptionId && expandObj.inventoryTracking) {
+                                isOutOfStock = true;
+                            }
+                            if (!expandObj.inventoryTracking) {
+                                maxQuantity = 100000;
+                            }
+
+                            return (
+                                <div>
+                                    <div style={{display: "flex", flexWrap: "wrap"}}>
+                                        {!isNullVariants && <div class="col-lg-6" style={{marginTop: 27, padding: 0}}>
+                                            <div className="subtitle-text-common">
+                                                {"Select " + varnt.name}
+                                            </div>
+                                            <div style={{marginTop: 7}}>
+                                                <Select
+                                                    style={{padding: 0}}
+                                                    placeholder={AppConstants.allCategories}
+                                                    className="body-text-common col-lg-11"
+                                                    value={this.state.variantOptionId}
+                                                    onChange={(e) => this.setState({variantOptionId: e})}
+                                                >
+                                                    {(varnt.variantOptions || []).map((varOpt, vOptIndex) => (
+                                                        <Option key={varOpt.variantOptionId}
+                                                                value={varOpt.variantOptionId}>
+                                                            {varOpt.optionName}</Option>
+                                                    ))}
+                                                </Select>
+                                            </div>
+                                        </div>}
+                                        <div style={{marginTop: 27, padding: 0}} className="col-lg-6">
+                                            <div className="subtitle-text-common">
+                                                {AppConstants.quantity}
+                                            </div>
+                                            <div style={{marginTop: 7, fontFamily: "inter"}}>
+                                                <InputNumber style={{fontWeight: 500}} size="large" min={1} max={maxQuantity}
+                                                             defaultValue={0}
+                                                             onChange={(e) => this.setState({quantity: e})}
+                                                             value={this.state.quantity}
+                                                             className="col-lg-11 body-text-common"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{marginTop:7}}>
-                                        <Select
-                                            style={{ padding:0}}                  
-                                            placeholder={AppConstants.allCategories}  
-                                            className="body-text-common col-lg-11" 
-                                            value={this.state.variantOptionId}   
-                                            onChange={(e)=> this.setState({variantOptionId: e})}                                                 
-                                        >
-                                            {(varnt.variantOptions || []).map((varOpt, vOptIndex) =>(
-                                                <Option key={varOpt.variantOptionId} value={varOpt.variantOptionId}>
-                                                    {varOpt.optionName}</Option>  
-                                            ))}  
-                                        </Select>
+                                    <div class="row" style={{margin: 0}}>
+                                        <div class="col-lg-8 col-12"
+                                             style={{padding: 0, marginTop: 23, marginRight: 22}}>
+                                            <Button className={`open-reg-button addToCart ${isOutOfStock ? 'out-of-stock' : ''}`}
+                                                    disabled={this.state.quantity == null || (this.state.variantOptionId == null && !isNullVariants) || maxQuantity === 0}
+                                                    onClick={() => this.addToCart(expandObj, varnt, 'addShopProduct', 'shopProducts')}>
+                                                {isOutOfStock ? AppConstants.outOfStock : AppConstants.addToCart}
+                                            </Button>
+                                        </div>
+                                        <div class="col-lg-3 col-12" style={{padding: 0, marginTop: 23}}>
+                                            <Button className="cancel-button-text" style={{height: "49px"}}
+                                                    onClick={() => this.enableExpandView('hide')}>
+                                                {AppConstants.cancel}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style={{marginTop:27,padding:0}} className="col-lg-6">
-                                    <div className="subtitle-text-common">
-                                        {AppConstants.quantity}
-                                    </div>
-                                    <div style={{marginTop:7,fontFamily: "inter"}}>                                    
-                                        <InputNumber  style={{fontWeight: 500 }} size="large" min={1} max={100000} defaultValue={0}
-                                        onChange={(e)=> this.setState({quantity: e})}
-                                        value= {this.state.quantity}
-                                        className="col-lg-11 body-text-common"
-                                        />
-                                    </div>
-                                </div>  
-                            </div>
-                            <div class = "row" style={{margin:0}}>
-                                <div class = "col-lg-8 col-12" style={{padding:0,marginTop:23, marginRight: 22}}>
-                                    <Button className="open-reg-button addToCart"
-                                    disabled={this.state.quantity == null || this.state.variantOptionId == null}
-                                    onClick={() => this.addToCart(expandObj, varnt,'addShopProduct', 'shopProducts')}>
-                                        {AppConstants.addToCart}
-                                    </Button> 
-                                </div>
-                                <div class = "col-lg-3 col-12" style={{padding:0,marginTop:23}}>
-                                    <Button className="cancel-button-text" style={{height: "49px"}}
-                                     onClick = {() => this.enableExpandView('hide')}>
-                                        {AppConstants.cancel}
-                                    </Button> 
-                                </div>                       
-                            </div> 
-                            </div>
-                        ))}
-                    </div>                   
-                </div> 
-                   
+                            )
+                        })}
+                    </div>
+                </div>
+
             </div>
         )
     }
@@ -463,7 +530,7 @@ class TeamInviteShop extends Component{
                 {/* {this.state.showCardView &&
                     <div>
                         {this.cardExpandView()}
-                    </div>                
+                    </div>
                 } */}
             </div>
         )
@@ -471,11 +538,11 @@ class TeamInviteShop extends Component{
 
     yourOrderView = () =>{
         const {teamInviteReviewList} = this.props.teamInviteState;
-        let compParticipants = teamInviteReviewList!= null ? 
+        let compParticipants = teamInviteReviewList!= null ?
                     isArrayNotEmpty(teamInviteReviewList.compParticipants) ?
                     teamInviteReviewList.compParticipants : [] : [];
         let total = teamInviteReviewList!= null ? teamInviteReviewList.total : null;
-        let shopProducts = teamInviteReviewList!= null ? 
+        let shopProducts = teamInviteReviewList!= null ?
                 isArrayNotEmpty(teamInviteReviewList.shopProducts) ?
                 teamInviteReviewList.shopProducts : [] : [];
         return(
@@ -496,8 +563,8 @@ class TeamInviteShop extends Component{
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{mem.membershipTypeName  + (mem.divisionId!= null ? ' - '+ mem.divisionName : '')}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>${mem.feesToPay}</div>
                                 </div>
-                                
-                                {mem.discountsToDeduct!= "0.00" && 
+
+                                {mem.discountsToDeduct!= "0.00" &&
                                 <div  className="body-text-common mr-4" style={{display:"flex" , fontWeight:500}}>
                                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.discount}</div>
                                     <div className="alignself-center pt-2" style={{marginRight:10}}>- ${mem.discountsToDeduct}</div>
@@ -507,19 +574,19 @@ class TeamInviteShop extends Component{
                         ))}
                         <div className="payment-option-txt">
                             {paymentOptionTxt}
-                            <span className="link-text-common pointer" 
+                            <span className="link-text-common pointer"
                             onClick={() => this.goToTeamInviteProducts()}
                             style={{margin: "0px 15px 0px 10px"}}>
                                 {AppConstants.edit}
                             </span>
                         </div>
-                        {item.governmentVoucherAmount != "0.00" && 
+                        {item.governmentVoucherAmount != "0.00" &&
                         <div  className="product-text-common mr-4 pb-4" style={{display:"flex" , fontWeight:500 ,}}>
                             <div className="alignself-center pt-2" style={{marginRight:"auto"}}> {AppConstants.governmentSportsVoucher}</div>
                             <div className="alignself-center pt-2" style={{marginRight:10}}>- ${item.governmentVoucherAmount}</div>
-                        </div> 
+                        </div>
                         }
-                    </div> 
+                    </div>
                     )}
                 )}
                 {(shopProducts).map((shop, index) =>(
@@ -532,7 +599,7 @@ class TeamInviteShop extends Component{
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>                               
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{fontWeight:600 , marginRight:10}}>${shop.totalAmt ? shop.totalAmt.toFixed(2): '0.00'}</div>
@@ -543,7 +610,7 @@ class TeamInviteShop extends Component{
                         </div>
                     </div>
                 ))}
-                 
+
                 <div  className="subtitle-text-common mt-10 mr-4" style={{display:"flex"}}>
                     <div className="alignself-center pt-2" style={{marginRight:"auto"}}>{AppConstants.totalPaymentDue}</div>
                     <div className="alignself-center pt-2" style={{marginRight:10}}>${total && feeIsNull(total.total).toFixed(2)}</div>
@@ -561,15 +628,15 @@ class TeamInviteShop extends Component{
                       type="primary">
                         {AppConstants.continue}
                     </Button>
-                </div>                 
-                <div style={{marginTop:23}}> 
+                </div>
+                <div style={{marginTop:23}}>
                     <Button className="back-btn-text btn-inner-view"
                      onClick={()=> this.goToTeamInviteProducts()}>
                         {AppConstants.back}
-                    </Button> 
-                </div>     
+                    </Button>
+                </div>
             </div>
-            
+
         )
     }
 
@@ -586,7 +653,7 @@ class TeamInviteShop extends Component{
         return(
             <div className="row" style={{margin:0}}>
                 {this.shopLeftView(getFieldDecorator)}
-                {this.shopRightView(getFieldDecorator)}                
+                {this.shopRightView(getFieldDecorator)}
             </div>
         );
     }
@@ -617,7 +684,7 @@ class TeamInviteShop extends Component{
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({	
+    return bindActionCreators({
         getRegistrationByIdAction,
         getRegistrationShopProductAction,
         saveTeamInviteReviewAction,

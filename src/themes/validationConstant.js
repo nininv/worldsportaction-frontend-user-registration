@@ -113,16 +113,23 @@ const ValidationConstants = {
         "Allergies field is required",
         "Disability Care Number is required",
         "This field is required",
-        "This field is required",
+        "Other participation is required",
         "This field is required",
     ],
     memberTypeIsRequired: "Member type is required",
-    currentPasswordRequired : "Current Password is required",
-    newPasswordRequired : "New Password is required",
-    confirmPasswordRequired : "Confirm Password is required",
+    currentPasswordRequired: "Current Password is required",
+    newPasswordRequired: "New Password is required",
+    confirmPasswordRequired: "Confirm Password is required",
     passwordVerification: 'Password must be minimum 8 characters',
     mobileLength: 'Contact number must be 10 digits',
-    invalidNumber : 'Invalid Number',
+    invalidNumber: 'Invalid Number',
+
+    fillTshirtSizeInformation: "Please choose a T'Shirt Size",
+    accreditationLevelUmpire: "National accreditation level umpire is required.",
+    prerequisitesTrainingUmpire: "Prerequisites training umpire is required.",
+    accreditationLevelCoach: "National accreditation level coach is required.",
+
+    expiryDateRequire: 'Expire date is required.',
 };
 
 export default ValidationConstants;

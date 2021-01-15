@@ -42,7 +42,7 @@ const AppImages = {
   netballImages: require("../images/imagesNetball.png"),
   netballLogoMain: require("../images/headerLogo.png"),
   printImage: require("../images/print.png"),
-  shoppingCart:require("../images/shopping-cart.png"),
+  shoppingCart: require("../images/shopping-cart.png"),
   removeIcon2: require("../images/remove-icon.jpg"),
   crossImage: require("../images/close.png"),
   removeIcon: require("../images/removeIcon.svg"),
@@ -53,6 +53,8 @@ const AppImages = {
   teamLoadDefualtGrey: require("../images/team-logo-default-gray.svg"),
   teamLoadDefualtWhite: require("../images/team-logo-default-white.svg"),
   wentWrong: require("../images/went_wrong.jpg"),
+  whistleIcon: require("../images/whistle.png"),
+  ringing: require("../images/ringing.png"),
 };
 
 export default AppImages;

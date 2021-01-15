@@ -12,7 +12,7 @@ class InputWithHead extends React.Component {
                 <Input
                     className="input"
                     placeholder={placeholder}
-                    name={name}
+                    name={name || 'hidden'}
                     // handleChange={(name) => alert(name)}
                     onBlur={handleBlur}
                     onChange={onChange}

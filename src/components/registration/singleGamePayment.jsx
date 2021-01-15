@@ -94,11 +94,12 @@ const CheckoutForm = (props) => {
             if (event.complete) {
                 if (elements) {
                     const card = elements.getElement(CardElement);
-                    if (card) {
+                    if (card != undefined) {
+                        console.log("card", card)
                         const cardToken = await stripe.createToken(card);
-                        console.log("cardToken", cardToken.token);
                         if (cardToken.token == undefined) {
-                            message.error(cardToken.error.message)
+                            message.error(cardToken?.error?.message);
+                            setError(cardToken?.error?.message);
                         }
                         else if (cardToken.token != undefined) {
 
@@ -197,9 +198,12 @@ const CheckoutForm = (props) => {
                                                         onChange={handleChange}
                                                         className='StripeElement'
                                                     />
-                                                    <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{ marginTop: "-10px" }}>{AppConstants.creditCardMsg}</div>
+                                                    {error && <div className="card-errors" role="alert">{error}</div>}
+                                                    <div
+                                                        style={{ marginTop: "5px" }}
+                                                    >{AppConstants.creditCardMsg}</div>
                                                 </div>
+
                                             }
                                         </div>
                                     </div>
@@ -261,7 +265,7 @@ class SingleGamePayment extends Component {
     }
 
     goBack = () => {
-        history.push({ pathname: '/userPersonal', state: { tabKey: "5" } });
+        history.push({ pathname: '/userPersonal', state: { tabKey: "1" } });
     }
     contentView = () => {
         return (
@@ -329,8 +333,10 @@ class SingleGamePayment extends Component {
                                                     <InputWithHead
                                                         style={{ height: '40px', width: '73px' }}
                                                         value={total.noOfMatch}
-                                                        placeholder={AppConstants.noOfMatches}
-                                                        onChange={(e) => this.props.updateSingleFeeAction(e.target.value, "noOfMatch", 0, "total", null)}
+                                                        placeholder=" "
+                                                        type={"number"}
+                                                        min="1"
+                                                        onChange={(e) => this.props.updateSingleFeeAction(e.target.value ? e.target.value : 1, "noOfMatch", 0, "total", null)}
                                                     />
                                                 </div>
                                                 <div class="counter">

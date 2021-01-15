@@ -132,7 +132,7 @@ class DashboardLayout extends React.Component {
     let selectedOrgData = getOrganisationData()
     // let userImage = ((getPhotoUrl()!= null && getPhotoUrl()!= undefined && getPhotoUrl()!= 'null') ? 
     //     getPhotoUrl() : AppImages.defaultUser)
-    let userImage = ((getPhotoUrl() && getPhotoUrl() != null && getPhotoUrl() != undefined && getPhotoUrl() != 'null') ? getPhotoUrl() : AppImages.defaultUser)
+    let userImage = ((getPhotoUrl() && getPhotoUrl() != null && getPhotoUrl() != undefined && getPhotoUrl() != 'null' && !this.props.userState.userPhotoUpdate) ? getPhotoUrl() : AppImages.defaultUser)
 
 
     return (

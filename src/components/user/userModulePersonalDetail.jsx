@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon , Modal, Spin } from 'antd';
-
-import Tabs from 'rc-tabs';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon, Modal, Spin } from 'antd';
 
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
@@ -19,23 +17,40 @@ import {
     getUserModuleActivityManagerAction, getUserHistoryAction, getUserRole, getScorerData, getUmpireActivityListAction,
     userPhotoUpdateAction,
     registrationResendEmailAction,
-    userProfileUpdateAction
+    userProfileUpdateAction,
+    getUserModuleTeamMembersAction,
+    teamMemberUpdateAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
-import { getUserId, setUserId, getTempUserId, setTempUserId, getOrganisationData, getStripeAccountId, setOrganistaionId, setCompetitionID, setSourceSystemFlag, setAuthToken, getAuthToken, setIsUserRegistration } from "../../util/sessionStorage";
+import {
+    getUserId,
+    setUserId,
+    getTempUserId,
+    setTempUserId,
+    getOrganisationData,
+    getStripeAccountId,
+    getStripeAccountConnectId,
+    setOrganistaionId,
+    setCompetitionID,
+    setSourceSystemFlag,
+    setAuthToken,
+    getAuthToken,
+    setIsUserRegistration
+} from "../../util/sessionStorage";
+import { getAge, isArrayNotEmpty } from "../../util/helpers";
 import moment from 'moment';
 import history from '../../util/history'
 import { liveScore_formateDate, getTime } from '../../themes/dateformate';
 import InputWithHead from "../../customComponents/InputWithHead";
 import Loader from '../../customComponents/loader';
+import TableWithScrollArrows from '../../customComponents/tableWithScrollArrows';
 import StripeKeys from "../stripe/stripeKeys";
 import { saveStripeAccountAction, getStripeLoginLinkAction } from '../../store/actions/stripeAction/stripeAction';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
-const { TabPane } = Tabs;
 const { SubMenu } = Menu;
 let this_Obj = null;
 let section = null;
@@ -50,8 +65,7 @@ function umpireActivityTableSort(key) {
     } else if (this_Obj.state.sortBy === key && this_Obj.state.sortOrder === 'DESC') {
         sortBy = sortOrder = null;
     }
-    const payload =
-    {
+    const payload = {
         "paging": {
             "limit": 10,
             "offset": this_Obj.state.umpireActivityOffset
@@ -60,7 +74,6 @@ function umpireActivityTableSort(key) {
     this_Obj.setState({ UmpireActivityListSortBy: sortBy, UmpireActivityListSortOrder: sortOrder });
 
     this_Obj.props.getUmpireActivityListAction(payload, JSON.stringify([15]), this_Obj.state.userId, sortBy, sortOrder);
-
 }
 
 const columns = [
@@ -75,7 +88,7 @@ const columns = [
                     <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
                         <span className='year-select-heading mr-3'>{AppConstants.validUntil}</span>
                         <span className="user-details-info-text">
-                            {expiryDate != null ? (expiryDate != 'Single Use' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : "-"}
+                            {expiryDate != null ? (expiryDate !== 'Single Use' && expiryDate !== 'Single Game' && expiryDate !== 'Pay each Match' ? moment(expiryDate).format("DD/MM/YYYY") : expiryDate) : moment(record.competitionEndDate).format("DD/MM/YYYY")}
                         </span>
                     </div>
                     <div className="d-flex flex-wrap">
@@ -90,19 +103,90 @@ const columns = [
                             }
                         </div> */}
                         <div
-                            // style={{ marginTop: 13 }}
+                        // style={{ marginTop: 13 }}
                         >
                             <div className="form-heading p-0">{affiliate}</div>
                             <div style={{ textAlign: "start" }}>{competitionName}</div>
                             <div className="d-flex flex-wrap align-items-center">
                                 {/* TODO add dates when backend is ready */}
                                 {/* <div className="d-flex align-items-center py-3" style={{ marginRight: 42 }}>
-                                    <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} /> 
+                                    <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} />
                                     <div>01/01/1970 - 01/01/1970</div>
                                 </div> */}
                                 <div className="d-flex align-items-center py-3">
                                     <span>{membershipType}</span>
                                     <div className="status-indicator">{paymentStatus}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {membershipType === "Umpire" && getStripeAccountConnectId().length === 0 && (
+                        <div className="d-flex flex-row">
+                            <img src={AppImages.ringing} alt="" width="22" height="22" />
+                            <InputWithHead required="pt-0 pl-3" heading={AppConstants.umpireAvailabilityMessage} />
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    },
+    {
+        title: "Action",
+        dataIndex: "regForm",
+        key: "regForm",
+        width: 52,
+        render: (regForm, e) => {
+            let compEndDate = moment(e.competitionEndDate).format("DD/MM/YYYY");
+            let currentDate = moment().format("DD/MM/YYYY");
+            return (
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }
+                    >
+                        <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
+                            <span>View</span>
+                        </Menu.Item>
+                        {e.expiryDate === "Single Game" && (compEndDate >= currentDate) && (
+                            <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
+                                <span>Purchase Single Game(s)</span>
+                            </Menu.Item>
+                        )}
+                        {/* {e.teamId &&
+                            <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
+                                <span>Resend Email</span>
+                            </Menu.Item>
+                        } */}
+                    </SubMenu>
+                </Menu>
+            )
+        }
+    }
+];
+
+const teamRegistrationColumns = [
+    {
+        title: "",
+        dataIndex: "regData",
+        key: "regData",
+        render: (regData, record, index) => {
+            const { registeredBy, competitionName, teamName, productName, status, organisationName } = record;
+            return (
+                <div>
+                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                        <span className='year-select-heading mr-3'>{AppConstants.registeredBy}</span>
+                        <span className="user-details-info-text">{registeredBy} </span>
+                    </div>
+                    <div className="d-flex flex-wrap">
+                        <div>
+                            <div className="form-heading p-0">{teamName}</div>
+                            <div style={{ textAlign: "start" }}>{competitionName}</div>
+                            <div className="d-flex flex-wrap align-items-center">
+                                <div className="d-flex align-items-center py-3">
+                                    <span>{productName}</span>
+                                    <div className="status-indicator">{status}</div>
                                 </div>
                             </div>
                         </div>
@@ -116,36 +200,142 @@ const columns = [
         dataIndex: "regForm",
         key: "regForm",
         width: 52,
-        render: (regForm, e) => (
-            <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal"
-                style={{ lineHeight: "8px" }}
+        render: (regForm, record) => {
+            return (
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }
+                    >
+                        <Menu.Item key="1" onClick={() => this_Obj.showTeamMembers(record, 1)}>
+                            <span>View</span>
+                        </Menu.Item>
+                    </SubMenu>
+                </Menu>
+            )
+        }
+    }
+];
+
+const teamMembersColumns = [
+    {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+    },
+    {
+        title: "Status",
+        dataIndex: "paymentStatus",
+        key: "paymentStatus",
+    },
+    {
+        title: "Paid Fee",
+        dataIndex: "paidFee",
+        key: "paidFee",
+        render: r => new Intl.NumberFormat('en-AU', {
+            style: 'currency',
+            currency: 'AUD',
+            minimumFractionDigits: 2
+        }).format(r)
+    },
+    {
+        title: "Pending Fee",
+        dataIndex: "pendingFee",
+        key: "pendingFee",
+        render: r => new Intl.NumberFormat('en-AU', {
+            style: 'currency', currency: 'AUD', minimumFractionDigits: 2
+        }
+        ).format(r)
+    },
+    {
+        title: "Action",
+        key: "action",
+        dataIndex: "isActive",
+        render: (data, record) => (
+            <Menu
+                className="action-triple-dot-submenu"
+                theme="light"
+                mode="horizontal"
+                style={{ lineHeight: "25px" }}
             >
                 <SubMenu
                     key="sub1"
-                    title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                        alt="" width="16" height="16" />
-                    }>
-                    <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
-                        <span>View</span>
+                    title={(
+                        <img
+                            className="dot-image"
+                            src={AppImages.moreTripleDot}
+                            alt=""
+                            width="16"
+                            height="16"
+                        />
+                    )}
+                >
+                    <Menu.Item key="1">
+                        <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
                     </Menu.Item>
-                    {e.expiryDate == "Single Use" &&
-                        <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
-                            <span>Purchase Single Game(s)</span>
-                        </Menu.Item>
-                    }
-                    {/* {e.teamId &&
-                        <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
-                            <span>Resend Email</span>
-                        </Menu.Item>
-                    } */}
                 </SubMenu>
             </Menu>
-        )
+        ),
+    },
+]
+
+const childOrOtherRegistrationColumns = [
+    {
+        title: "",
+        dataIndex: "regData",
+        key: "regData",
+        render: (regData, record, index) => {
+            const { dateOfBirth, name, email, feePaid } = record;
+            return (
+                <div>
+                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                        <span className='year-select-heading mr-3'>{AppConstants.dateOfBirth}</span>
+                        <span className="user-details-info-text">{moment(dateOfBirth).format("DD/MM/YYYY")}</span>
+                    </div>
+                    <div className="d-flex flex-wrap">
+                        <div>
+                            <div className="form-heading p-0">{name}</div>
+                            <div style={{ textAlign: "start" }}>{email}</div>
+                            <div className="d-flex flex-wrap align-items-center">
+                                <div className="d-flex align-items-center py-3">
+                                    <span>{AppConstants.feePaid}</span>
+                                    <div className="status-indicator">{feePaid}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    },
+    {
+        title: "Action",
+        dataIndex: "regForm",
+        key: "regForm",
+        width: 52,
+        render: (regForm, e) => {
+            return (
+                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
+                    <SubMenu
+                        key="sub1"
+                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                            alt="" width="16" height="16" />
+                        }
+                    >
+                        <Menu.Item key="1">
+                            <span>View</span>
+                        </Menu.Item>
+                    </SubMenu>
+                </Menu>
+            )
+
+        }
     }
 ];
 
 const columnsPlayer = [
-
     {
         title: 'Match Id',
         dataIndex: 'matchId',
@@ -207,11 +397,9 @@ const columnsPlayer = [
         key: 'affiliate',
         sorter: (a, b) => a.affiliate.localeCompare(b.affiliate),
     }
-
 ];
 
 const columnsParent = [
-
     {
         title: 'First Name',
         dataIndex: 'firstName',
@@ -411,18 +599,15 @@ const columnsPersonalPrimaryContacts = [
         title: 'Name',
         dataIndex: 'parentName',
         key: 'parentName',
-        render: (parentName, record) =>
-        (
+        render: (parentName, record) => (
             <div>
-                {record.status == "Linked" ? 
-                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
-                    {parentName}</span>
+                {record.status === "Linked" ?
+                    <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.parentUserId)}>
+                        {parentName}</span>
                     :
                     <span>{parentName}</span>
                 }
-
             </div>
-
         )
     },
     {
@@ -466,8 +651,7 @@ const columnsPersonalPrimaryContacts = [
         key: 'isUser',
         width: 80,
         render: (data, record) => (
-            <Menu className="action-triple-dot-submenu" theme="light"
-                mode="horizontal" style={{ lineHeight: "25px" }}>
+            <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "25px" }}>
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image" src={AppImages.moreTripleDotActive}
@@ -479,7 +663,7 @@ const columnsPersonalPrimaryContacts = [
                         </NavLink>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <span onClick={() => this_Obj.unlinkCheckParent(record)}>{record.status == "Linked" ? "Unlink" : "Link"}</span>
+                        <span onClick={() => this_Obj.unlinkCheckParent(record)}>{record.status === "Linked" ? "Unlink" : "Link"}</span>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
@@ -494,17 +678,14 @@ const columnsPersonalChildContacts = [
         key: 'childName',
         render: (childName, record) => (
             <div>
-                {record.status == "Linked" ? 
+                {record.status === "Linked" ?
                     <span className="input-heading-add-another pt-0 pointer" onClick={() => this_Obj.loadAnotherUser(record.childUserId)}>
-                    {childName}</span>
+                        {childName}</span>
                     :
                     <span>{childName}</span>
                 }
-
             </div>
-
         )
-
     },
     {
         title: 'Street',
@@ -547,20 +728,20 @@ const columnsPersonalChildContacts = [
         key: 'isUser',
         width: 80,
         render: (data, record) => (
-            <Menu className="action-triple-dot-submenu" theme="light"
-                mode="horizontal" style={{ lineHeight: "25px" }}>
+            <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "25px" }}>
                 <SubMenu
                     key="sub1"
                     title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                         alt="" width="16" height="16" />
-                    }>
+                    }
+                >
                     <Menu.Item key="1">
-                        <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "6" } }} >
+                        <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: record, moduleFrom: "6" } }}>
                             <span>Edit</span>
                         </NavLink>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <span onClick={() => this_Obj.unlinkCheckChild(record)}>{record.status == "Linked" ? "Unlink" : "Link"}</span>
+                        <span onClick={() => this_Obj.unlinkCheckChild(record)}>{record.status === "Linked" ? "Unlink" : "Link"}</span>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
@@ -820,12 +1001,6 @@ const umpireActivityColumn = [
 ]
 const umpireActivityData = []
 
-let isScrollActive = false;
-let additionalTableScrollX = 0;
-let tableScrollX = 0;
-let prevTimeTableScroll = 0;
-let prevScrollTable = 0;
-
 class UserModulePersonalDetail extends Component {
     constructor(props) {
         super(props);
@@ -854,44 +1029,29 @@ class UserModulePersonalDetail extends Component {
             showParentUnlinkConfirmPopup: false,
             showCannotUnlinkPopup: false,
             isPersonDetailsTabVisited: false,
-            overflowingTables: {
-                managerActivityOverflow: false,
-                playerActivityOverflow: false,
-                scorerActivityOverflow: false,
-                umpireActivityOverflow: false,
-                personalAddressOverflow: false,
-                personalPrimaryContactsOverflow: false,
-                personalChildContactsOverflow: false,
-                personalEmergencyOverflow: false,
-            },
+            isUserLoading: false,
+            myRegCurrentPage: 1,
+            otherRegCurrentPage: 1,
+            childRegCurrentPage: 1,
+            teamRegCurrentPage: 1,
+            isShowRegistrationTeamMembers: false,
+            registrationTeam: null,
+            removeTeamMemberLoad: false,
+            showRemoveTeamMemberConfirmPopup: false,
+            removeTeamMemberRecord: null,
         }
-
-        this.tableScrollDirectionRef = React.createRef(0);
-
-        this.managerActivityRef = React.createRef();
-        this.playerActivityRef = React.createRef();
-        this.scorerActivityRef = React.createRef();
-
-        this.umpireActivityRef = React.createRef();
-
-        this.personalAddressRef = React.createRef();
-        this.personalPrimaryContactsRef = React.createRef();
-        this.personalChildContactsRef = React.createRef();
-        this.personalEmergencyRef = React.createRef();
     }
 
     componentWillMount() {
         let competition = this.getEmptyCompObj();
         this.setState({ competition: competition });
-
     }
 
     async componentDidMount() {
         let user_Id = this.state.userId;
         if (this.state.tempUserId != undefined && this.state.tempUserId != null) {
             user_Id = this.state.tempUserId;
-            await this.setState({ userId: user_Id });
-            localStorage.removeItem("tempUserId");
+            this.setState({ userId: user_Id });
         }
 
         if (this.props.location.state != null && this.props.location.state != undefined) {
@@ -899,11 +1059,10 @@ class UserModulePersonalDetail extends Component {
             await this.setState({ tabKey: tabKey });
         }
         let urlSplit = this.props.location.search.split("?code=")
-        let stripeConnected = getStripeAccountId() == "null" ? false : true
+        let stripeConnected = getStripeAccountConnectId()
         if (stripeConnected) {
             console.log("stripe connected")
-        }
-        else if (urlSplit[1]) {
+        } else if (urlSplit[1]) {
             let codeSplit = urlSplit[1].split("&state=")
             let code = codeSplit[0]
 
@@ -919,8 +1078,7 @@ class UserModulePersonalDetail extends Component {
             if (userId != undefined && token != undefined) {
                 await setUserId(userId);
                 await setAuthToken(token);
-            }
-            else {
+            } else {
                 let authToken = await getAuthToken();
                 let userIdFromStorage = await getUserId();
                 if (userIdFromStorage != undefined && authToken != undefined &&
@@ -945,17 +1103,15 @@ class UserModulePersonalDetail extends Component {
                     history.push("/userpersonal")
                     this.apiCalls(userId);
                 }
-            }
-            else {
+            } else {
                 await setIsUserRegistration(1);
                 history.push({ pathname: "/login", state: { isUserRegistration: 1 } });
             }
-        }
-        else {
+        } else {
             this.props.getOnlyYearListAction();
             this.apiCalls(user_Id);
         }
-      
+
         this.checkWidth();
         window.addEventListener('resize', this.checkWidth);
     }
@@ -967,18 +1123,9 @@ class UserModulePersonalDetail extends Component {
     checkWidth = () => {
         const matchMedia = window.matchMedia(`(max-width: 767px)`);
 
-        const overflowingTablesCopy = { ...this.state.overflowingTables };
-
-        const isSomeOverflow = Object.values(overflowingTablesCopy).some(item => !!item);
-        
-        if (matchMedia || isSomeOverflow) {
-            for (let key in overflowingTablesCopy) {
-                overflowingTablesCopy[key] = false;
-            }
-
+        if (this.state.isTablet !== matchMedia.matches) {
             this.setState({
                 isTablet: matchMedia.matches,
-                overflowingTables: { ...overflowingTablesCopy },
             });
         }
     };
@@ -1006,15 +1153,14 @@ class UserModulePersonalDetail extends Component {
         ) && personal.competitions != undefined &&
             personal.competitions.length > 0
             && this.props.userState.personalData != nextProps.userState.personalData) {
-            //let years = [];
-            //let competitions = [];
+            // let years = [];
+            // let competitions = [];
             // (personal.competitions || []).map((item, index) => {
             //     let obj = {
             //         id: item.yearRefId
             //     }
             //     years.push(obj);
             // });
-            // console.log("personal.competitions::" + JSON.stringify(personal.competitions));
             let yearRefId = -1;
             this.setState({ yearRefId: -1 });
             if (personal.competitions != null && personal.competitions.length > 0 && yearRefId != null) {
@@ -1032,7 +1178,7 @@ class UserModulePersonalDetail extends Component {
             }
         }
 
-        if(this.props.userState.onUpUpdateLoad == false && this.state.unlinkOnLoad == true){
+        if (this.props.userState.onUpUpdateLoad == false && this.state.unlinkOnLoad == true) {
             let personal = this.props.userState.personalData;
             let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
             let payload = {
@@ -1040,7 +1186,11 @@ class UserModulePersonalDetail extends Component {
                 organisationId: organisationId
             };
             this.props.getUserModulePersonalByCompetitionAction(payload);
-            this.setState({unlinkOnLoad: false})
+            this.setState({ unlinkOnLoad: false })
+        }
+
+        if (this.props.userState.personalData !== nextProps.userState.personalData) {
+            this.setState({ isUserLoading: false });
         }
 
         // hack to define tables overflow to display scroll arrows,
@@ -1052,56 +1202,19 @@ class UserModulePersonalDetail extends Component {
             this.setState({ isPersonDetailsTabVisited: true })
         }
 
-        if (tabKey == "2") {
-            this.changeOverflowState('managerActivityOverflow', this.managerActivityRef);
-            this.changeOverflowState('playerActivityOverflow', this.playerActivityRef);
-            this.changeOverflowState('scorerActivityOverflow', this.scorerActivityRef);
-        }
-        if (tabKey === "4") {
-            this.changeOverflowStatePersonalDetails();
-        }
-        if (tabKey === "7") {
-            this.changeOverflowState('umpireActivityOverflow', this.umpireActivityRef);
-        }
-    }
-
-    checkOverflowRef = ref => ref.current && this.checkOverflow(ref.current);
-
-    changeOverflowState = (stateOverflowKey, ref) => {
-        const prevOverflow = this.state.overflowingTables;
-
-        if (!prevOverflow[stateOverflowKey] && this.checkOverflowRef(ref)) {
-            this.setState({ 
-                overflowingTables: {
-                    ...prevOverflow,
-                    [stateOverflowKey]: true
-                }
-            });
-        }
-    }
-
-    changeOverflowStatePersonalDetails = () => {
-        const personalAddressOverflow = this.checkOverflowRef(this.personalAddressRef);
-        const personalPrimaryContactsOverflow = this.checkOverflowRef(this.personalPrimaryContactsRef);
-        const personalChildContactsOverflow = this.checkOverflowRef(this.personalChildContactsRef);
-        const personalEmergencyOverflow = this.checkOverflowRef(this.personalEmergencyRef);
-
-        const { overflowingTables } = this.state;
-
-        if (!overflowingTables.personalAddressOverflow && personalAddressOverflow 
-                || !overflowingTables.personalPrimaryContactsOverflow && personalPrimaryContactsOverflow
-                || !overflowingTables.personalChildContactsOverflow && personalChildContactsOverflow
-                || !overflowingTables.personalEmergencyOverflow && personalEmergencyOverflow
-        ) {
-            this.setState({ 
-                overflowingTables: {
-                    ...overflowingTables,
-                    personalAddressOverflow,
-                    personalPrimaryContactsOverflow,
-                    personalChildContactsOverflow,
-                    personalEmergencyOverflow,
-                }
-            });
+        if (this.props.userState.onTeamUpdateLoad == false && this.state.removeTeamMemberLoad == true) {
+            const record = this.state.registrationTeam;
+            const page = 1;
+            const payload = {
+                userId: record.userId,
+                teamId: record.teamId,
+                teamMemberPaging: {
+                    limit: 10,
+                    offset: page ? 10 * (page - 1) : 0,
+                },
+            };
+            this.props.getUserModuleTeamMembersAction(payload);
+            this.setState({ removeTeamMemberLoad: false });
         }
     }
 
@@ -1110,6 +1223,8 @@ class UserModulePersonalDetail extends Component {
             userId: userId,
             organisationId: null
         }
+
+        this.setState({ isUserLoading: true });
         await this.props.getUserModulePersonalDetailsAction(payload);
         await this.props.getUserModulePersonalByCompetitionAction(payload)
         await this.props.getUserRole(userId)
@@ -1141,7 +1256,6 @@ class UserModulePersonalDetail extends Component {
             }
         }
         return orgArray
-
     }
 
     onChangeYear = (value) => {
@@ -1151,8 +1265,7 @@ class UserModulePersonalDetail extends Component {
 
         if (value != -1) {
             competitions = personal.competitions.filter(x => x.yearRefId === value);
-        }
-        else {
+        } else {
             competitions = personal.competitions;
         }
 
@@ -1194,21 +1307,24 @@ class UserModulePersonalDetail extends Component {
         }
 
         this.setState({
-            competitions: competitions, competition: competition,
-            yearRefId: yearRefId, teams: teams, divisions: divisions
+            competitions: competitions,
+            competition: competition,
+            yearRefId: yearRefId,
+            teams: teams,
+            divisions: divisions
         });
 
         this.tabApiCalls(this.state.tabKey, competition, this.state.userId, yearRefId);
     }
 
     getEmptyCompObj = () => {
-        let competition = {
+        return {
             team: { teamId: 0, teamName: "" },
-            divisionName: "", competitionUniqueKey: '-1',
-            competitionName: "All", year: 0
+            divisionName: "",
+            competitionUniqueKey: '-1',
+            competitionName: "All",
+            year: 0
         };
-
-        return competition;
     }
 
     onChangeSetValue = (value) => {
@@ -1243,19 +1359,18 @@ class UserModulePersonalDetail extends Component {
                 })
             }
 
-
             this.setState({ competition: competition, divisions: divisions, teams: teams });
             this.tabApiCalls(this.state.tabKey, competition, this.state.userId, this.state.yearRefId);
-        }
-        else {
+        } else {
             this.generateCompInfo(personal.competitions, this.state.yearRefId);
         }
-
     }
 
-    onChangeTab = (key) => {
-        this.setState({ tabKey: key, isRegistrationForm: false });
-        this.tabApiCalls(key, this.state.competition, this.state.userId, this.state.yearRefId);
+    onChangeTab = e => {
+        const tabNumber = e.key || e;
+
+        this.setState({ tabKey: tabNumber, isRegistrationForm: false, isShowRegistrationTeamMembers: false });
+        this.tabApiCalls(tabNumber, this.state.competition, this.state.userId, this.state.yearRefId);
     };
 
     tabApiCalls = (tabKey, competition, userId, yearRefId) => {
@@ -1266,24 +1381,20 @@ class UserModulePersonalDetail extends Component {
         }
         if (tabKey === "1") {
             this.handleRegistrationTableList(1, userId, competition, yearRefId);
-        }
-        else if (tabKey == "2") {
-            this.hanleActivityTableList(1, userId, competition, "player", yearRefId);
-            // this.hanleActivityTableList(1, userId, competition, "parent", yearRefId);
-            this.hanleActivityTableList(1, userId, competition, "scorer", yearRefId);
-            this.hanleActivityTableList(1, userId, competition, "manager", yearRefId);
+        } else if (tabKey == "2") {
+            this.handleActivityTableList(1, userId, competition, "player", yearRefId);
+            // this.handleActivityTableList(1, userId, competition, "parent", yearRefId);
+            this.handleActivityTableList(1, userId, competition, "scorer", yearRefId);
+            this.handleActivityTableList(1, userId, competition, "manager", yearRefId);
         }
         if (tabKey === "4") {
             this.props.getUserModulePersonalByCompetitionAction(payload)
-        }
-        else if (tabKey === "5") {
+        } else if (tabKey === "5") {
             this.props.getUserModuleMedicalInfoAction(payload)
-        }
-        else if (tabKey === "6") {
+        } else if (tabKey === "6") {
             this.handleHistoryTableList(1, userId);
 
-        }
-        else if (tabKey === "7") {
+        } else if (tabKey === "7") {
             let payload = {
                 "paging": {
                     "limit": 10,
@@ -1294,9 +1405,8 @@ class UserModulePersonalDetail extends Component {
         }
     }
 
-    hanleActivityTableList = (page, userId, competition, key, yearRefId) => {
-        let filter =
-        {
+    handleActivityTableList = (page, userId, competition, key, yearRefId) => {
+        let filter = {
             competitionId: competition.competitionUniqueKey,
             organisationId: null,
             userId: userId,
@@ -1306,31 +1416,75 @@ class UserModulePersonalDetail extends Component {
                 offset: (page ? (10 * (page - 1)) : 0)
             }
         }
-        if (key == "player")
+        if (key === "player")
             this.props.getUserModuleActivityPlayerAction(filter);
-        if (key == "parent")
+        if (key === "parent")
             this.props.getUserModuleActivityParentAction(filter);
-        if (key == "scorer")
+        if (key === "scorer")
             // this.props.getUserModuleActivityScorerAction(filter);
             this.props.getScorerData(filter, 4, "ENDED");
-        if (key == "manager")
+        if (key === "manager")
             this.props.getUserModuleActivityManagerAction(filter);
 
     }
 
-    handleRegistrationTableList = (page, userId, competition, yearRefId) => {
-        let filter =
-        {
-            competitionId: competition.competitionUniqueKey,
-            userId: userId,
-            organisationId: null,
-            yearRefId: yearRefId,
-            paging: {
-                limit: 10,
-                offset: (page ? (10 * (page - 1)) : 0)
+    showTeamMembers = (record, page) => {
+        try {
+            this.setState({ isShowRegistrationTeamMembers: true, registrationTeam: record })
+            let payload = {
+                userId: record.userId,
+                teamId: record.teamId,
+                teamMemberPaging: {
+                    limit: 10,
+                    offset: page ? 10 * (page - 1) : 0,
+                }
             }
+            this.props.getUserModuleTeamMembersAction(payload);
+        } catch (ex) {
+            console.log("Error in showTeamMember::" + ex);
         }
-        this.props.getUserModuleRegistrationAction(filter)
+    }
+
+    gotoAddTeamMembers = () => {
+        const { registrationTeam } = this.state;
+        history.push("/addTeamMember", { registrationTeam: registrationTeam })
+    }
+
+    handleRegistrationTableList = (page, userId, competition, yearRefId, key) => {
+        if (key === 'myRegistrations') {
+            this.setState({ myRegCurrentPage: page })
+        } else if (key === 'otherRegistrations') {
+            this.setState({ otherRegCurrentPage: page })
+        } else if (key === 'teamRegistrations') {
+            this.setState({ teamRegCurrentPage: page })
+        } else if (key === 'childRegistrations') {
+            this.setState({ childRegCurrentPage: page })
+        }
+        setTimeout(() => {
+            let filter = {
+                competitionId: competition.competitionUniqueKey,
+                userId: userId,
+                organisationId: null,
+                yearRefId,
+                myRegPaging: {
+                    limit: 10,
+                    offset: this.state.myRegCurrentPage ? 10 * (this.state.myRegCurrentPage - 1) : 0,
+                },
+                otherRegPaging: {
+                    limit: 10,
+                    offset: this.state.otherRegCurrentPage ? 10 * (this.state.otherRegCurrentPage - 1) : 0,
+                },
+                teamRegPaging: {
+                    limit: 10,
+                    offset: this.state.teamRegCurrentPage ? 10 * (this.state.teamRegCurrentPage - 1) : 0,
+                },
+                childRegPaging: {
+                    limit: 10,
+                    offset: this.state.childRegCurrentPage ? 10 * (this.state.childRegCurrentPage - 1) : 0,
+                }
+            };
+            this.props.getUserModuleRegistrationAction(filter);
+        }, 300);
     };
 
     ////pagination handling for umpire activity table list
@@ -1351,10 +1505,12 @@ class UserModulePersonalDetail extends Component {
         history.push(screen)
     }
 
-    loadAnotherUser = async (userId) => {
-        await setTempUserId(userId);
-        //history.push({pathname: '/userPersonal'})
-        window.location.reload();
+    loadAnotherUser = userId => {
+        setTempUserId(userId);
+        this.setState({ userId, isUserLoading: true });
+        this.apiCalls(userId);
+        // history.replace({ pathname: '/userPersonal' });
+        // window.location.reload();
     }
 
     viewRegForm = async (item) => {
@@ -1362,8 +1518,7 @@ class UserModulePersonalDetail extends Component {
     }
 
     handleHistoryTableList = (page, userId) => {
-        let filter =
-        {
+        let filter = {
             userId: userId,
             paging: {
                 limit: 10,
@@ -1383,55 +1538,19 @@ class UserModulePersonalDetail extends Component {
     }
 
     setImage = (data, key) => {
-        let userState = this.props.userState;
-        let personal = userState.personalData;
-        if (data.files[0] !== undefined) {
-                const formData = new FormData();
-                formData.append("profile_photo", data.files[0]);
-                this.props.userPhotoUpdateAction(formData);
+        const userState = this.props.userState;
+        const { userId } = userState.personalData;
+        const { personalByCompData } = userState;
+
+        const file = data.files[0];
+
+        const isUserChild = !!personalByCompData.length && !!personalByCompData[0].childContacts.length ? false : true;
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("profile_photo", file);
+            isUserChild ? this.props.userPhotoUpdateAction(formData, userId) : this.props.userPhotoUpdateAction(formData);
         }
-    }
-
-    checkOverflow = el => {
-        const curOverflow = el.style.overflow;
-
-        if (!curOverflow || curOverflow === "visible")
-        el.style.overflow = "hidden";
-
-        const isOverflowing = el.clientWidth < el.scrollWidth;
-
-        el.style.overflow = curOverflow;
-
-        return isOverflowing;
-    }
-
-    doTableScroll = (time, scroller) => {
-        const max = 10;
-        const f = 0.2;
-
-        let diffTime = time - prevTimeTableScroll;
-
-        if (!isScrollActive) {
-            diffTime = 80;
-            isScrollActive = true;
-        }
-        prevTimeTableScroll = time;
-      
-        additionalTableScrollX = (this.tableScrollDirectionRef.current * max * f + additionalTableScrollX * (1 - f)) * (diffTime / 20);
-        
-        tableScrollX += additionalTableScrollX;
-
-        const thisScroll = scroller.scrollLeft;
-        const nextScroll = Math.floor(thisScroll + additionalTableScrollX);
-      
-        if (Math.abs(additionalTableScrollX) > 0.5 && nextScroll !== prevScrollTable) {
-            scroller.scrollLeft = nextScroll;
-            requestAnimationFrame(time => this.doTableScroll(time, scroller));
-        } else {
-            additionalTableScrollX = 0;
-            isScrollActive = false;
-        }
-        prevScrollTable = nextScroll;
     }
 
     headerView = () => {
@@ -1444,7 +1563,7 @@ class UserModulePersonalDetail extends Component {
                         </Breadcrumb>
                     </div>
                 </div>
-            </Header >
+            </Header>
         )
     }
 
@@ -1452,22 +1571,29 @@ class UserModulePersonalDetail extends Component {
         const personal = this.props.userState.personalData;
 
         return (
-            <div className={`${!this.state.isTablet ? 'align-self-center' : ''} circular--landscape`}>
+            <div
+                className={`${!this.state.isTablet ? "align-self-center" : ""} circular--landscape`}
+                role="button"
+            >
                 {
-                    personal.photoUrl ?
-                        <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()}/>
-                        :
-                        <div 
-                            className="img-upload-target" 
-                            onClick={() => this.selectImage()}
-                        >
-                            <div className="img-upload-target-plus">
-                                +
+                    personal.photoUrl && !this.props.userState.userPhotoUpdate ?
+                        <img src={personal.photoUrl} alt="" onClick={() => this.selectImage()} />
+
+                        : personal.photoUrl && !!this.props.userState.userPhotoUpdate ?
+                            <div>{AppConstants.loading}</div>
+
+                            :
+                            <div
+                                className="img-upload-target"
+                                onClick={() => this.selectImage()}
+                            >
+                                <div className="img-upload-target-plus">
+                                    +
                             </div>
-                            <div style={{ marginTop: "-7px" }}>
-                                {AppConstants.addPhoto}
+                                <div style={{ marginTop: "-7px" }}>
+                                    {AppConstants.addPhoto}
+                                </div>
                             </div>
-                        </div>
                 }
                 <input
                     type="file"
@@ -1482,67 +1608,66 @@ class UserModulePersonalDetail extends Component {
     leftHandSideView = () => {
         let userState = this.props.userState;
         let personal = userState.personalData;
-        let compititionId = this.state.competition != null ? this.state.competition.competitionUniqueKey : null;
+        let competitionId = this.state.competition != null ? this.state.competition.competitionUniqueKey : null;
 
-        const { isTablet, isCollapsedUserDetails } = this.state;
+        const { isTablet, isCollapsedUserDetails, isUserLoading } = this.state;
 
         return (
-            <div className="fluid-width" >
-
-                {isTablet && 
+            <div className="fluid-width" style={{ minHeight: `${isTablet ? 'unset' : 'calc(100vh - 175px'}` }}>
+                {isTablet && (
                     <div
                         className="d-flex justify-content-between align-items-center"
                         style={{
-                            minHeight: 48,
+                            minHeight: 80,
                             padding: '16px 20px',
+                            boxSizing: 'border-box',
                             borderBottom: '1px solid rgba(27, 27, 52, 0.07)'
                         }}
                     >
-                        <div className='d-flex align-items-center'>
+                        {!isUserLoading && <div className='d-flex align-items-center'>
                             {this.personalPhotoView()}
                             <div className='d-flex flex-column align-items-start justify-content-center' style={{ marginLeft: 16 }}>
                                 <span className="user-heading p-0">{personal.firstName + " " + personal.lastName}</span>
                                 <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                             </div>
-                        </div>
+                        </div>}
 
-                        <div style={{ color: 'var(--app-color)' }}>
-                            {isCollapsedUserDetails 
-                                ? <Icon 
+                        <div style={{ color: 'var(--app-color)', marginLeft: 'auto' }}>
+                            {isCollapsedUserDetails
+                                ? <Icon
                                     type="down"
                                     style={{
                                         color: 'var(--app-orange)',
                                         fontSize: 20
                                     }}
-                                    onClick={() => this.setState({ isCollapsedUserDetails: false})}
-                                    />
+                                    onClick={() => this.setState({ isCollapsedUserDetails: false })}
+                                />
                                 : <Icon
                                     type="up"
                                     style={{
                                         color: 'var(--app-orange)',
                                         fontSize: 20
                                     }}
-                                    onClick={() => this.setState({ isCollapsedUserDetails: true})}
-                                    />
+                                    onClick={() => this.setState({ isCollapsedUserDetails: true })}
+                                />
                             }
                         </div>
                     </div>
-                }
+                )}
 
-                {(!isCollapsedUserDetails || !isTablet) &&
+                {(!isCollapsedUserDetails || !isTablet) && !isUserLoading && (
                     <>
-                        {!isTablet && 
+                        {!isTablet && (
                             <div className='profile-image-view' style={{ marginTop: 40, marginBottom: 23 }}>
                                 {this.personalPhotoView()}
                                 <span className="user-heading">{personal.firstName + " " + personal.lastName}</span>
-                                {personal.userId ? 
+                                {personal.userId ?
                                     <span className="year-select-heading pt-0">{'#' + personal.userId}</span>
                                     :
                                     <span className="year-select-heading pt-0">{'#' + personal.id}</span>
                                 }
                             </div>
-                        }
-
+                        )}
 
                         <div className={`${isTablet ? 'content-view-padding' : ''} profile-info-view`}>
                             <div className="profile-info-desc-view d-flex flex-wrap">
@@ -1580,7 +1705,8 @@ class UserModulePersonalDetail extends Component {
                                     className="user-prof-filter-select"
                                     style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
                                     onChange={yearRefId => this.onChangeYear(yearRefId)}
-                                    value={this.state.yearRefId}>
+                                    value={this.state.yearRefId}
+                                >
                                     <Option key={-1} value={-1}>{AppConstants.all}</Option>
                                     {this.props.appState.yearList.map(item => {
                                         return (
@@ -1594,7 +1720,8 @@ class UserModulePersonalDetail extends Component {
                                     className="user-prof-filter-select"
                                     style={{ width: "100%", paddingRight: 1, paddingTop: '15px' }}
                                     onChange={(e) => this.onChangeSetValue(e)}
-                                    value={compititionId}>
+                                    value={competitionId}
+                                >
                                     <Option key={-1} value={'-1'}>{AppConstants.all}</Option>
                                     {(this.state.competitions || []).map((comp, index) => (
                                         <Option key={comp.competitionUniqueKey} value={comp.competitionUniqueKey}>{comp.competitionName}</Option>
@@ -1608,7 +1735,6 @@ class UserModulePersonalDetail extends Component {
                                 {(this.state.teams != null && this.state.teams || []).map((item, index) => (
                                     <div key={item.teamId} className="side-bar-profile-desc-text">{item.teamName}</div>
                                 ))}
-
                             </div>
                             <div className="profile-info-details-view">
                                 <div className="live-score-title-icon-view">
@@ -1619,84 +1745,63 @@ class UserModulePersonalDetail extends Component {
                                 ))}
                                 {/* <span className="side-bar-profile-desc-text">{this.state.competition!= null ? this.state.competition.divisionName : null}</span> */}
                             </div>
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <div className="live-score-icon-view">
+                                        <img src={AppImages.whistleIcon} alt="" height="16" width="16" />
+                                    </div>
+                                    <span className="year-select-heading ml-3">
+                                        {AppConstants.umpireAccreditation}
+                                    </span>
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="year-select-heading  ml-3">
+                                            {AppConstants.expiry}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className='live-score-title-icon-view ml-5'>
+                                    <span className="desc-text-style side-bar-profile-data">
+                                        {personal.accrediationLevel}
+                                    </span>
+
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="desc-text-style side-bar-profile-data">
+                                            {personal.accreditationUmpireExpiryDate && moment(personal.accreditationUmpireExpiryDate).format("DD-MM-YYYY")}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Coach Accrediation */}
+                            <div className="live-score-side-desc-view">
+                                <div className="live-score-title-icon-view">
+                                    <div className="live-score-icon-view">
+                                        <img src={AppImages.whistleIcon} alt="" height="16" width="16" />
+                                    </div>
+                                    <span className="year-select-heading ml-3">
+                                        {AppConstants.coachAccreditation}
+                                    </span>
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="year-select-heading  ml-3">
+                                            {AppConstants.expiry}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className='live-score-title-icon-view ml-5'>
+                                    <span className="desc-text-style side-bar-profile-data">
+                                        {personal.coachAccreditationLevel}
+                                    </span>
+
+                                    <div className='col-sm d-flex justify-content-end'>
+                                        <span className="desc-text-style side-bar-profile-data">
+                                            {personal.accreditationCoachExpiryDate && moment(personal.accreditationCoachExpiryDate).format("DD-MM-YYYY")}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </>
-                }
+                )}
             </div>
-        )
-    }
-
-    tableArrowsView = (tableRef, isOverflowingTable) => {
-        return (
-            <>
-                {isOverflowingTable && 
-                    <>
-                        <div
-                            className="d-flex justify-content-center align-items-center position-absolute"
-                            style={{
-                                top: 0,
-                                left: 1,
-                                height: '100%',
-                                width: 25,
-                                borderTopLeftRadius: 10,
-                                borderBottomLeftRadius: 10,
-                                boxShadow: 'inset 10px 0 8px 2px rgba(0,0,0,.15)',
-                                cursor: 'w-resize',
-                                zIndex: 2,
-                            }}
-                            onMouseDown={() => {
-                                this.tableScrollDirectionRef.current = -1;
-                                if (!isScrollActive) {
-                                    requestAnimationFrame(time => this.doTableScroll(time, tableRef.current));
-                                }
-                            }}
-                            onMouseUp={() => {
-                                this.tableScrollDirectionRef.current = 0;
-                            }}
-                        >
-                            <Icon
-                                type="left"
-                                style={{
-                                    color: 'var(--app-orange)',
-                                    fontSize: 22
-                                }}
-                            />
-                        </div>
-
-                        <div
-                            className="d-flex justify-content-center align-items-center position-absolute"
-                            style={{
-                                top: 0,
-                                right: 1,
-                                height: '100%',
-                                width: 25,
-                                borderTopRightRadius: 10,
-                                borderBottomRightRadius: 10,
-                                boxShadow: 'inset -10px 0 8px 2px rgba(0,0,0,.15)',
-                                cursor: 'e-resize',
-                                zIndex: 2,
-                            }}
-                            onMouseDown={() => {
-                                this.tableScrollDirectionRef.current = 1;
-                                if (!isScrollActive) {
-                                    requestAnimationFrame(time => this.doTableScroll(time, tableRef.current));
-                                }
-                            }}
-                            onMouseUp={() => {
-                                this.tableScrollDirectionRef.current = 0;
-                            }}
-                        >
-                            <Icon 
-                                type="right"
-                                style={{
-                                    color: 'var(--app-orange)',
-                                    fontSize: 22
-                                }}
-                            />
-                        </div>
-                    </>
-                }
-            </>
         )
     }
 
@@ -1705,32 +1810,21 @@ class UserModulePersonalDetail extends Component {
         let activityPlayerList = userState.activityPlayerList;
         let total = userState.activityPlayerTotalCount;
 
-        const { playerActivityOverflow } = this.state.overflowingTables;
-
         return (
             <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.playerHeading}</div>
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.playerActivityRef}
-                        style={{ width: '100%' }}
-                    >
-                        <Table className="home-dashboard-table"
-                            columns={columnsPlayer}
-                            dataSource={activityPlayerList}
-                            pagination={false}
-                            loading={userState.activityPlayerOnLoad && true}
-                        />
-                    </div>
-                    {this.tableArrowsView(this.playerActivityRef, playerActivityOverflow)}
-                </div>
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsPlayer}
+                    dataSource={activityPlayerList}
+                    pagination={false}
+                />
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
                         current={userState.activityPlayerPage}
                         total={total}
-                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "player")}
+                        onChange={(page) => this.handleActivityTableList(page, this.state.userId, this.state.competition, "player")}
                     />
                 </div>
             </div>
@@ -1744,20 +1838,18 @@ class UserModulePersonalDetail extends Component {
         return (
             <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.parentHeading}</div>
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsParent}
-                        dataSource={activityParentList}
-                        pagination={false}
-                        loading={userState.activityParentOnLoad == true && true}
-                    />
-                </div>
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsParent}
+                    dataSource={activityParentList}
+                    pagination={false}
+                />
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
                         current={userState.activityParentPage}
                         total={total}
-                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "parent")}
+                        onChange={(page) => this.handleActivityTableList(page, this.state.userId, this.state.competition, "parent")}
                     />
                 </div>
             </div>
@@ -1769,32 +1861,21 @@ class UserModulePersonalDetail extends Component {
         let activityScorerList = userState.scorerActivityRoster;
         let total = userState.scorerTotalCount;
 
-        const { scorerActivityOverflow } = this.state.overflowingTables;
-
         return (
             <div className="dash-table-paddings mt-2" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.scorerHeading}</div>
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.scorerActivityRef}
-                        style={{ width: '100%' }}
-                    >
-                        <Table className="home-dashboard-table"
-                            columns={columnsScorer}
-                            dataSource={activityScorerList}
-                            pagination={false}
-                            loading={userState.activityScorerOnLoad && true}
-                        />
-                    </div>
-                    {this.tableArrowsView(this.scorerActivityRef, scorerActivityOverflow)}
-                </div>
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsScorer}
+                    dataSource={activityScorerList}
+                    pagination={false}
+                />
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
                         current={userState.scorerCurrentPage}
                         total={total}
-                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "scorer", this.state.yearRefId)}
+                        onChange={(page) => this.handleActivityTableList(page, this.state.userId, this.state.competition, "scorer", this.state.yearRefId)}
                     />
                 </div>
             </div>
@@ -1806,34 +1887,23 @@ class UserModulePersonalDetail extends Component {
         let activityManagerList = userState.activityManagerList;
         let total = userState.activityScorerTotalCount;
 
-        const { managerActivityOverflow } = this.state.overflowingTables;
-
         return (
             <div className="dash-table-paddings mt-2 position-relative" style={{ backgroundColor: "#f7fafc" }}>
                 <div className="user-module-row-heading">{AppConstants.managerHeading}</div>
 
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.managerActivityRef}
-                        style={{ width: '100%' }}
-                    > 
-                        <Table className="home-dashboard-table"
-                            columns={columnsManager}
-                            dataSource={activityManagerList}
-                            pagination={false}
-                            loading={userState.activityManagerOnLoad && true}
-                        />
-                    </div>
-                    {this.tableArrowsView(this.managerActivityRef, managerActivityOverflow)}
-                </div>
-                
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsManager}
+                    dataSource={activityManagerList}
+                    pagination={false}
+                />
+
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
                         current={userState.activityManagerPage}
                         total={total}
-                        onChange={(page) => this.hanleActivityTableList(page, this.state.userId, this.state.competition, "manager")}
+                        onChange={(page) => this.handleActivityTableList(page, this.state.userId, this.state.competition, "manager")}
                     />
                 </div>
             </div>
@@ -1850,23 +1920,16 @@ class UserModulePersonalDetail extends Component {
 
     personalView = () => {
         const { userState } = this.props;
-        const { isPersonDetailsTabVisited } = this.state;
-        const personalByCompData = isPersonDetailsTabVisited && !!userState.personalByCompData && userState.personalByCompData;
+        const personal = userState.personalData;
+        const personalByCompData = !!userState.personalByCompData && userState.personalByCompData;
         const primaryContacts = personalByCompData.length > 0 ? personalByCompData[0].primaryContacts : [];
         const childContacts = personalByCompData.length > 0 ? personalByCompData[0].childContacts : [];
         let countryName = "";
-        //let nationalityName = "";
-        //let languages = "";
+        // let nationalityName = "";
+        // let languages = "";
         let userRegId = null;
         let childrenCheckNumber = "";
         let childrenCheckExpiryDate = "";
-
-        const { 
-            personalAddressOverflow,
-            personalPrimaryContactsOverflow,
-            personalChildContactsOverflow,
-            personalEmergencyOverflow,
-        } = this.state.overflowingTables;
 
         if (personalByCompData != null && personalByCompData.length > 0) {
             countryName = personalByCompData[0].countryName;
@@ -1880,121 +1943,92 @@ class UserModulePersonalDetail extends Component {
         return (
             <div className="dash-table-paddings mt-2">
                 <div className="user-module-row-heading">{AppConstants.address}</div>
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.personalAddressRef}
-                        style={{ width: '100%' }}
-                    > 
-                        <Table className="home-dashboard-table"
-                            columns={columnsPersonalAddress}
-                            dataSource={personalByCompData}
-                            pagination={false}
-                            loading={userState.onPersonLoad == true && true}
-                        />
-                    </div>
-                    {this.tableArrowsView(this.personalAddressRef, personalAddressOverflow)}
-                </div>
 
-                {primaryContacts != null && primaryContacts.length > 0 &&
-                    <div>
-                        <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.parentOrGuardianDetail}</div>
-                        <NavLink
-                            to={{
-                                pathname: `/userProfileEdit`,
-                                state: { moduleFrom: "8", userData: userState.personalData },
-                            }}
-                        >
-                            <span className="input-heading-add-another" style={{paddingTop:"unset", marginBottom:"15px"}}>
-                                + {AppConstants.addParent_guardian}
-                            </span>
-                        </NavLink>
-                        <div className="position-relative">
-                            <div
-                                className="table-responsive home-dash-table-view"
-                                ref={this.personalPrimaryContactsRef}
-                                style={{ width: '100%' }}
-                            > 
-                                <Table className="home-dashboard-table"
-                                    columns={columnsPersonalPrimaryContacts}
-                                    dataSource={primaryContacts}
-                                    pagination={false}
-                                    loading={userState.onPersonLoad == true && true}
-                                />
-                            </div>
-                            {this.tableArrowsView(this.personalPrimaryContactsRef, personalPrimaryContactsOverflow)}
-                        </div>
-                    </div>}
-                {childContacts != null && childContacts.length > 0 &&
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsPersonalAddress}
+                    dataSource={personalByCompData}
+                    pagination={false}
+                />
+
+                {/* {primaryContacts != null && primaryContacts.length > 0 && */}
+                <div>
+                    <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.parentOrGuardianDetail}</div>
+                    <NavLink
+                        to={{
+                            pathname: `/userProfileEdit`,
+                            state: { moduleFrom: "8", userData: personal },
+                        }}
+                    >
+                        <span className="input-heading-add-another" style={{ paddingTop: "unset", marginBottom: "15px" }}>
+                            + {AppConstants.addParent_guardian}
+                        </span>
+                    </NavLink>
+
+                    <TableWithScrollArrows
+                        className="home-dashboard-table"
+                        columns={columnsPersonalPrimaryContacts}
+                        dataSource={primaryContacts}
+                        pagination={false}
+                    />
+                </div>
+                {/* } */}
+                {(!personal.dateOfBirth || getAge(personal.dateOfBirth) > 18) && (
                     <div>
                         <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.childDetails}</div>
                         <NavLink
                             to={{
                                 pathname: `/userProfileEdit`,
-                                state: { moduleFrom: "7", userData: userState.personalData },
+                                state: { moduleFrom: "7", userData: personal },
                             }}
                         >
-                            <span className="input-heading-add-another" style={{paddingTop:"unset", marginBottom:"15px"}}>
+                            <span className="input-heading-add-another" style={{ paddingTop: "unset", marginBottom: "15px" }}>
                                 + {AppConstants.addChild}
                             </span>
                         </NavLink>
-                        <div className="position-relative">
-                            <div
-                                className="table-responsive home-dash-table-view"
-                                ref={this.personalChildContactsRef}
-                                style={{ width: '100%' }}
-                            >
-                                <Table className="home-dashboard-table"
-                                    columns={columnsPersonalChildContacts}
-                                    dataSource={childContacts}
-                                    pagination={false}
-                                    loading={userState.onPersonLoad == true && true}
-                                />
-                            </div>
-                            {this.tableArrowsView(this.personalChildContactsRef, personalChildContactsOverflow)}
-                        </div>
-                    </div>
-                }
 
-                <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.emergencyContacts}</div>
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.personalEmergencyRef}
-                        style={{ width: '100%' }}
-                    >
-                        <Table className="home-dashboard-table"
-                            columns={columnsPersonalEmergency}
-                            dataSource={userState.personalEmergency}
+                        <TableWithScrollArrows
+                            className="home-dashboard-table"
+                            columns={columnsPersonalChildContacts}
+                            dataSource={childContacts}
                             pagination={false}
-                            loading={userState.onPersonLoad == true && true}
                         />
                     </div>
-                    {this.tableArrowsView(this.personalEmergencyRef, personalEmergencyOverflow)}
-                </div>
-                <div className="row ">
+                )}
+
+                <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.emergencyContacts}</div>
+
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsPersonalEmergency}
+                    dataSource={userState.personalEmergency}
+                    pagination={false}
+                />
+                <div className="row">
                     <div className="col-sm user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.otherInformation}</div>
                     <div className="col-sm d-flex justify-content-end align-items-end" style={{ marginTop: 7, marginBottom: 10 }}>
                         <div className="comp-buttons-view m-0">
-                            <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4" } }} >
-                                <Button className="other-info-btn other-info-edit-btn m-0" type="primary" >
+                            <NavLink to={{ pathname: `/userProfileEdit`, state: { userData: personalByCompData[0], moduleFrom: "4", personalData: personal } }}>
+                                <Button className="other-info-btn other-info-edit-btn m-0" type="primary">
                                     {AppConstants.edit}
                                 </Button>
                             </NavLink>
                         </div>
                     </div>
                 </div>
-                <div className="table-responsive home-dash-table-view" >
+                <div className="table-responsive home-dash-table-view">
                     <div style={{ marginTop: '7px', marginRight: '15px', marginBottom: '15px' }}>
                         <div className="other-info-row" style={{ paddingTop: '10px' }}>
-                            <div className="year-select-heading other-info-label" >{AppConstants.gender}</div>
-                            <div className="side-bar-profile-desc-text other-info-font">{personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].gender : null}</div>
+                            <div className="year-select-heading other-info-label">{AppConstants.gender}</div>
+                            <div className="other-info-text other-info-font">
+                                {personalByCompData != null && personalByCompData.length > 0 ? personalByCompData[0].gender : null}
+                            </div>
                         </div>
-                        {userRegId != null &&
+                        {userRegId != null && (
                             <div>
                                 <div className="other-info-row">
-                                    <div className="year-select-heading other-info-label" >{AppConstants.countryOfBirth}</div>
-                                    <div className="side-bar-profile-desc-text other-info-font">{countryName}</div>
+                                    <div className="year-select-heading other-info-label">{AppConstants.countryOfBirth}</div>
+                                    <div className="other-info-text other-info-font">{countryName}</div>
                                 </div>
                                 {/* <div className="other-info-row">
                                     <div className="year-select-heading other-info-label">{AppConstants.nationalityReference}</div>
@@ -2004,14 +2038,15 @@ class UserModulePersonalDetail extends Component {
                                     <div className="year-select-heading other-info-label">{AppConstants.childLangSpoken}</div>
                                     <div className="side-bar-profile-desc-text other-info-font">{languages}</div>
                                 </div> */}
-                            </div>}
+                            </div>
+                        )}
                         <div className="other-info-row">
                             <div className="year-select-heading other-info-label">{AppConstants.childrenNumber}</div>
-                            <div className="side-bar-profile-desc-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckNumber}</div>
+                            <div className="other-info-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckNumber}</div>
                         </div>
                         <div className="other-info-row">
                             <div className="year-select-heading other-info-label" style={{ paddingBottom: '20px' }}>{AppConstants.checkExpiryDate}</div>
-                            <div className="side-bar-profile-desc-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
+                            <div className="other-info-text other-info-font" style={{ paddingTop: 7 }}>{childrenCheckExpiryDate != null ? moment(childrenCheckExpiryDate).format("DD/MM/YYYY") : ""}</div>
                         </div>
 
                         {/* <div className="other-info-row">
@@ -2028,7 +2063,7 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let medical = userState.medicalData;
         // let medical = [];
-        // if(medData != null && medData.length > 0){
+        // if (medData != null && medData.length > 0) {
         //     medData[0]["userId"] = this.state.userId;
         //     medical = medData;
         // }
@@ -2049,38 +2084,37 @@ class UserModulePersonalDetail extends Component {
                             </div>
                             <div style={{ marginBottom: "1%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.existingMedConditions}</div>
-                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="other-info-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.existingMedicalCondition}
                                 </div>
                             </div>
                             <div style={{ marginBottom: "3%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.redularMedicalConditions}</div>
-                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="other-info-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.regularMedication}
                                 </div>
                             </div>
                             <div style={{ marginBottom: "3%", display: 'flex' }} >
                                 <div className="year-select-heading other-info-label col-sm-2">{AppConstants.disability}</div>
-                                <div className="side-bar-profile-desc-text other-info-font" style={{ textAlign: 'left' }}>
+                                <div className="other-info-text other-info-font" style={{ textAlign: 'left' }}>
                                     {item.isDisability}
                                 </div>
                             </div>
-                            {
-                                item.isDisability == 'Yes' ?
-                                    <div className="dash-table-paddings mt-2" style={{ paddingLeft: '0px' }}>
-                                        <div className="table-responsive home-dash-table-view">
-                                            <Table className="home-dashboard-table"
-                                                columns={columnsMedical}
-                                                dataSource={item.disability}
-                                                pagination={false}
-                                            />
-                                        </div> </div> : null
-                            }
-
+                            {item.isDisability === 'Yes' && (
+                                <div className="dash-table-paddings mt-2" style={{ paddingLeft: '0px' }}>
+                                    <div className="table-responsive home-dash-table-view">
+                                        <Table
+                                            className="home-dashboard-table"
+                                            columns={columnsMedical}
+                                            dataSource={item.disability}
+                                            pagination={false}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))
                 }
-
             </div>
         )
     }
@@ -2088,26 +2122,160 @@ class UserModulePersonalDetail extends Component {
     registrationView = () => {
         let userState = this.props.userState;
         let userRegistrationList = userState.userRegistrationList;
-        let total = userState.userRegistrationDataTotalCount;
+        // let total = userState.userRegistrationDataTotalCount;
+        let myRegistrations = userRegistrationList?.myRegistrations.registrationDetails ? userRegistrationList?.myRegistrations.registrationDetails : [];
+        let myRegistrationsCurrentPage = userRegistrationList?.myRegistrations.page ? userRegistrationList?.myRegistrations.page.currentPage : 1;
+        let myRegistrationsTotalCount = userRegistrationList?.myRegistrations.page.totalCount;
+        let otherRegistrations = userRegistrationList?.otherRegistrations.registrationYourDetails ? userRegistrationList?.otherRegistrations.registrationYourDetails : [];
+        let otherRegistrationsCurrentPage = userRegistrationList?.otherRegistrations.page ? userRegistrationList?.otherRegistrations.page.currentPage : 1;
+        let otherRegistrationsTotalCount = userRegistrationList?.otherRegistrations.page.totalCount;
+        let teamRegistrations = userRegistrationList?.teamRegistrations.registrationTeamDetails ? userRegistrationList?.teamRegistrations.registrationTeamDetails : [];
+        let teamRegistrationsCurrentPage = userRegistrationList?.teamRegistrations.page ? userRegistrationList?.teamRegistrations.page.currentPage : 1;
+        let teamRegistrationsTotalCount = userRegistrationList?.teamRegistrations.page.totalCount;
+        let childRegistrations = userRegistrationList?.childRegistrations.childRegistrationDetails ? userRegistrationList?.childRegistrations.childRegistrationDetails : [];
+        let childRegistrationsCurrentPage = userRegistrationList?.childRegistrations.page ? userRegistrationList?.childRegistrations.page.currentPage : 1;
+        let childRegistrationsTotalCount = userRegistrationList?.childRegistrations.page.totalCount;
+        let teamMembers = userState.teamMembersDetails ? userState.teamMembersDetails.teamMembers : [];
+        let teamMembersCurrentPage = userState.teamMembersDetails?.page ? userState.teamMembersDetails?.page.currentPage : 1;
+        let teamMembersTotalCount = userState.teamMembersDetails?.page.totalCount;
         return (
-            <div className="mt-2">
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table dashboard-registration-table"
-                        columns={columns}
-                        showHeader={false}
-                        dataSource={userRegistrationList}
-                        pagination={false}
-                        loading={this.props.userState.userRegistrationOnLoad == true && true}
-                    />
-                </div>
-                <div className="d-flex justify-content-end">
-                    <Pagination
-                        className="antd-pagination"
-                        current={userState.userRegistrationDataPage}
-                        total={total}
-                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId)}
-                    />
-                </div>
+            <div>
+                {this.state.isShowRegistrationTeamMembers == false ? (
+                    <div>
+                        {isArrayNotEmpty(myRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.ownRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={columns}
+                                    showHeader={false}
+                                    dataSource={myRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={myRegistrationsCurrentPage}
+                                        total={myRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "myRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(otherRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.otherRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={childOrOtherRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={otherRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={otherRegistrationsCurrentPage}
+                                        total={otherRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "otherRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(childRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.childRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={childOrOtherRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={childRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={childRegistrationsCurrentPage}
+                                        total={childRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "childRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {isArrayNotEmpty(teamRegistrations) && (
+                            <div className="mt-2">
+                                <div className="user-module-row-heading">{AppConstants.teamRegistration}</div>
+                                <TableWithScrollArrows
+                                    className="home-dashboard-table dashboard-registration-table"
+                                    columns={teamRegistrationColumns}
+                                    showHeader={false}
+                                    dataSource={teamRegistrations}
+                                    pagination={false}
+                                />
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        className="antd-pagination"
+                                        current={teamRegistrationsCurrentPage}
+                                        total={teamRegistrationsTotalCount}
+                                        onChange={(page) => this.handleRegistrationTableList(page, this.state.userId, this.state.competition, this.state.yearRefId, "teamRegistrations")}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="comp-dash-table-view mt-2">
+                        <div className="row">
+                            <div className="col-sm d-flex align-content-center">
+                                <Breadcrumb separator=" > ">
+                                    <Breadcrumb.Item 
+                                    className="breadcrumb-add font-18 pointer" 
+                                    onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
+                                    style={{ color: "var(--app-color)" }}
+                                    >
+                                        {AppConstants.Registrations}
+                                    </Breadcrumb.Item>
+                                    <Breadcrumb.Item className="breadcrumb-add font-18">
+                                        {AppConstants.teamMembers}
+                                    </Breadcrumb.Item>
+                                </Breadcrumb>
+                            </div>
+                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
+                                +
+                                {' '}
+                                {AppConstants.addTeamMembers}
+                            </div>
+                        </div>
+                        <div className="user-module-row-heading font-18 mt-2">
+                            {AppConstants.team + ": " + this.state.registrationTeam.teamName}
+                        </div>
+                        <div className="table-responsive home-dash-table-view">
+                            <Table
+                                className="home-dashboard-table"
+                                columns={teamMembersColumns}
+                                dataSource={teamMembers}
+                                pagination={false}
+                                loading={
+                                    this.props.userState.getTeamMembersOnLoad
+                                }
+                            />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                            <Pagination
+                                className="antd-pagination pb-3"
+                                current={teamMembersCurrentPage}
+                                total={teamMembersTotalCount}
+                                onChange={(page) =>
+                                    this.showTeamMembers(
+                                        this.state.registrationTeam,
+                                        page
+                                    )
+                                }
+                                showSizeChanger={false}
+                            />
+                        </div>
+                    </div>
+                    )}
             </div>
         )
     }
@@ -2121,80 +2289,81 @@ class UserModulePersonalDetail extends Component {
                 {(registrationForm || []).map((item, index) => (
                     <div key={index} style={{ marginBottom: '15px' }}>
                         <InputWithHead heading={item.description} />
-                        {
-                            (item.registrationSettingsRefId == 6 || item.registrationSettingsRefId == 11) ?
-                                <div className="applicable-to-text">
-                                    {item.contentValue == null ? AppConstants.noInformationProvided : item.contentValue}
-                                </div> : null
-                        }
-                        {
-                            (item.registrationSettingsRefId == 7) ?
-                                <div>
-                                    {item.contentValue == "No" ?
-                                        <div className="applicable-to-text">
-                                            {item.contentValue}
-                                        </div> :
+
+                        {(item.registrationSettingsRefId == 6 || item.registrationSettingsRefId == 11) && (
+                            <div className="applicable-to-text">
+                                {item.contentValue == null ? AppConstants.noInformationProvided : item.contentValue}
+                            </div>
+                        )}
+                        {(item.registrationSettingsRefId == 7) && (
+                            <div>
+                                {item.contentValue == "No" ? (
+                                    <div className="applicable-to-text">
+                                        {item.contentValue}
+                                    </div>
+                                ) : (
                                         <div className="table-responsive home-dash-table-view">
-                                            <Table className="home-dashboard-table"
+                                            <Table
+                                                className="home-dashboard-table"
                                                 columns={columnsPlayedBefore}
                                                 dataSource={item.playedBefore}
                                                 pagination={false}
                                             />
                                         </div>
-                                    }
-                                </div> : null
-                        }
-                        {
-                            (item.registrationSettingsRefId == 8) ?
-                                <div className="table-responsive home-dash-table-view">
-                                    <Table className="home-dashboard-table"
-                                        columns={columnsFriends}
-                                        dataSource={item.friends}
-                                        pagination={false}
-                                    />
-                                </div> : null
-                        }
-                        {
-                            (item.registrationSettingsRefId == 9) ?
-                                <div className="table-responsive home-dash-table-view">
-                                    <Table className="home-dashboard-table"
-                                        columns={columnsFriends}
-                                        dataSource={item.referFriends}
-                                        pagination={false}
-                                    />
-                                </div> : null
-                        }
-                        {
-                            (item.registrationSettingsRefId == 10) ?
-                                <div className="table-responsive home-dash-table-view">
-                                    <Table className="home-dashboard-table"
-                                        columns={columnsFav}
-                                        dataSource={item.favourites}
-                                        pagination={false}
-                                    />
-                                </div> : null
-                        }
-                        {
-                            (item.registrationSettingsRefId == 12) ?
-                                <div className="table-responsive home-dash-table-view">
-                                    <Table className="home-dashboard-table"
-                                        columns={columnsVol}
-                                        dataSource={item.volunteers}
-                                        pagination={false}
-                                    />
-                                </div> : null
-                        }
+                                    )}
+                            </div>
+                        )}
+                        {(item.registrationSettingsRefId == 8) && (
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={columnsFriends}
+                                    dataSource={item.friends}
+                                    pagination={false}
+                                />
+                            </div>
+                        )}
+                        {(item.registrationSettingsRefId == 9) && (
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={columnsFriends}
+                                    dataSource={item.referFriends}
+                                    pagination={false}
+                                />
+                            </div>
+                        )}
+                        {(item.registrationSettingsRefId == 10) && (
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={columnsFav}
+                                    dataSource={item.favourites}
+                                    pagination={false}
+                                />
+                            </div>
+                        )}
+                        {(item.registrationSettingsRefId == 12) && (
+                            <div className="table-responsive home-dash-table-view">
+                                <Table
+                                    className="home-dashboard-table"
+                                    columns={columnsVol}
+                                    dataSource={item.volunteers}
+                                    pagination={false}
+                                />
+                            </div>
+                        )}
                     </div>
-                ))
-                }
-                {registrationForm.length == 0 ?
-                    <div>{AppConstants.noInformationProvided}</div> : null
-                }
+                ))}
+                {registrationForm.length === 0 && (
+                    <div>{AppConstants.noInformationProvided}</div>
+                )}
                 <div className="row" style={{ marginTop: '50px' }}>
                     <div className="col-sm-3">
                         <div className="reg-add-save-button">
                             <Button type="cancel-button" onClick={() => this.setState({ isRegistrationForm: false })}>
-                                {AppConstants.back}</Button>
+                                {AppConstants.back}
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -2221,24 +2390,58 @@ class UserModulePersonalDetail extends Component {
 
     headerView = () => {
         const stripeConnected = getStripeAccountId() ? true : false;
-        const userEmail = this.userEmail();
-        const stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&stripe_user[email]=${userEmail}&redirect_uri=${StripeKeys.url}`;
+        const stripeConnectId = getStripeAccountConnectId() ? true : false;
+        let stripeConnectURL = `https://connect.stripe.com/express/oauth/authorize?client_id=${StripeKeys.clientId}&state={STATE_VALUE}&redirect_uri=${StripeKeys.url}`;
+        if (true) {
+            let userDetail = null
+            if (this.props && this.props.userState && this.props.userState.personalData) {
+                userDetail = this.props.userState.personalData
+            }
+            if (userDetail) {
+                stripeConnectURL += '&stripe_user[country]=AU' // Hardcode country to Australia
+                stripeConnectURL += `&stripe_user[first_name]=${userDetail.firstName}`
+                stripeConnectURL += `&stripe_user[last_name]=${userDetail.lastName}`
+
+                if (userDetail.email) {
+                    stripeConnectURL += `&stripe_user[email]=${encodeURIComponent(userDetail.email)}`
+                }
+
+                if (userDetail.mobileNumber) {
+                    stripeConnectURL += `&stripe_user[phone_number]=${encodeURIComponent(userDetail.mobileNumber)}`
+                }
+
+                if (userDetail.dateOfBirth) {
+                    const dob = new Date(userDetail.dateOfBirth)
+                    const day = dob.getDate()
+                    const month = dob.getMonth() + 1;
+                    const year = dob.getFullYear()
+                    stripeConnectURL += `&stripe_user[dob_day]=${day}`
+                    stripeConnectURL += `&stripe_user[dob_month]=${month}`
+                    stripeConnectURL += `&stripe_user[dob_year]=${year}`
+                }
+
+                stripeConnectURL += `&stripe_user[product_description]=${encodeURIComponent('Receiving payments for umpire payments after matches are played')}`
+            }
+        }
 
         const { userState } = this.props;
         const { userRole } = userState;
-        
+
         const personalByCompData = !!userState.personalByCompData ? userState.personalByCompData : [];
 
         return (
-            <div className="row" >
+            <div className="row">
                 <div className="col-sm" style={{ flex: 1 }}>
-                    <Header className="form-header-view" style={{
-                        backgroundColor: "transparent",
-                        display: "flex", paddingLeft: '0px',
-                        alignItems: "center",
-                    }} >
+                    <Header
+                        className="form-header-view"
+                        style={{
+                            backgroundColor: "transparent",
+                            display: "flex", paddingLeft: '0px',
+                            alignItems: "center",
+                        }}
+                    >
                         <div className="user-heading">{AppConstants.userProfile}</div>
-                    </Header >
+                    </Header>
                 </div>
 
                 <div className="col-sm d-flex align-items-center justify-content-end" style={{ flex: 1 }}>
@@ -2261,10 +2464,9 @@ class UserModulePersonalDetail extends Component {
                                         }
                                     >
                                         <Menu.Item onClick={() => history.push({
-                                                pathname: '/userProfileEdit',
-                                                state: { userData: personalByCompData[0], moduleFrom: "1" }
-                                            })}
-                                        >
+                                            pathname: '/userProfileEdit',
+                                            state: { userData: personalByCompData[0], moduleFrom: "1" }
+                                        })}>
                                             <span>{AppConstants.editProfile}</span>
                                         </Menu.Item>
                                         <Menu.Item onClick={() => this.navigateTo("/appRegistrationForm")} >
@@ -2276,50 +2478,47 @@ class UserModulePersonalDetail extends Component {
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
-                                        {stripeConnected ?
-                                            <Menu.Item
+                                        {stripeConnectId ?
+                                            userRole && <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
                                                 className="menu-item-without-selection"
                                             >
                                                 <span>{AppConstants.editBankAccount}</span>
                                             </Menu.Item>
                                             :
-                                            <Menu.Item>
+                                            userRole && <Menu.Item>
                                                 <a href={stripeConnectURL}>
                                                     <span>{AppConstants.uploadBankAccnt}</span>
                                                 </a>
                                             </Menu.Item>
                                         }
 
-                                        {userRole &&
-                                            <Menu.Item onClick={() => history.push("/myUmpiringAvailability")} >
+                                        {userRole && (
+                                            <Menu.Item onClick={() => history.push("/myUmpiringAvailability")}>
                                                 <span>{AppConstants.myUmpiringAvailability}</span>
                                             </Menu.Item>
-                                        }
+                                        )}
                                     </SubMenu>
                                 </Menu>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         )
     }
 
     historyView = () => {
-        let { userHistoryList, userHistoryPage, userHistoryTotalCount, userHistoryLoad } = this.props.userState;
+        let { userHistoryList, userHistoryPage, userHistoryTotalCount } = this.props.userState;
 
         return (
-            <div className="dash-table-paddings mt-2" >
-                <div className="table-responsive home-dash-table-view">
-                    <Table className="home-dashboard-table"
-                        columns={columnsHistory}
-                        dataSource={userHistoryList}
-                        pagination={false}
-                        loading={userHistoryLoad == true && true}
-                    />
-                </div>
+            <div className="dash-table-paddings mt-2">
+                <TableWithScrollArrows
+                    className="home-dashboard-table"
+                    columns={columnsHistory}
+                    dataSource={userHistoryList}
+                    pagination={false}
+                />
                 <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination"
@@ -2334,8 +2533,7 @@ class UserModulePersonalDetail extends Component {
 
     userEmail = () => {
         let orgData = getOrganisationData()
-        let email = orgData && orgData.email ? encodeURIComponent(orgData.email) : ""
-        return email
+        return orgData && orgData.email ? encodeURIComponent(orgData.email) : ""
     }
 
     stripeDashboardLoginUrl = () => {
@@ -2344,16 +2542,15 @@ class UserModulePersonalDetail extends Component {
     }
 
     umpireActivityView = () => {
-        let { umpireActivityOnLoad, umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
-
-        const { umpireActivityOverflow } = this.state.overflowingTables;
+        let { umpireActivityList, umpireActivityCurrentPage, umpireActivityTotalCount } = this.props.userState;
 
         return (
             <div
                 className="dash-table-paddings mt-2 pt-4"
                 style={{ backgroundColor: "#f7fafc" }}
             >
-                {/* <div className="transfer-image-view mb-3">
+                {/*
+                <div className="transfer-image-view mb-3">
                     <Button
                         className="primary-add-comp-form" type="primary">
                         <div className="row">
@@ -2367,26 +2564,16 @@ class UserModulePersonalDetail extends Component {
                             </div>
                         </div>
                     </Button>
+                </div>
+                */}
 
-                </div>
- */}
-                <div className="position-relative">
-                    <div
-                        className="table-responsive home-dash-table-view"
-                        ref={this.umpireActivityRef}
-                        style={{ width: '100%' }}
-                    >
-                        <Table
-                            className="home-dashboard-table"
-                            columns={umpireActivityColumn}
-                            dataSource={umpireActivityList}
-                            pagination={false}
-                            loading={umpireActivityOnLoad == true && true}
-                        />
-                    </div>
-                    {this.tableArrowsView(this.umpireActivityRef, umpireActivityOverflow)}
-                </div>
-                <div className="d-flex justify-content-end ">
+                <TableWithScrollArrows
+                    columns={umpireActivityColumn}
+                    dataSource={umpireActivityList}
+                    pagination={false}
+                    className="home-dashboard-table"
+                />
+                <div className="d-flex justify-content-end">
                     <Pagination
                         className="antd-pagination pb-3"
                         current={umpireActivityCurrentPage}
@@ -2407,147 +2594,202 @@ class UserModulePersonalDetail extends Component {
         let userState = this.props.userState;
         let personal = userState.personalData;
         let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
-        data["section"]  = data.status == "Linked" ? "unlink" : "link";
+        data["section"] = data.status === "Linked" ? "unlink" : "link";
         data["childUserId"] = personal.userId;
         data["organisationId"] = organisationId;
         this.props.userProfileUpdateAction(data);
-        this.setState({unlinkOnLoad: true});
+        this.setState({ unlinkOnLoad: true });
     }
 
     childUnLinkView = (data) => {
         let userState = this.props.userState;
         let personal = userState.personalData;
         let organisationId = getOrganisationData() ? getOrganisationData().organisationUniqueKey : null;
-        data["section"]  = data.status == "Linked" ? "unlink" : "link";
+        data["section"] = data.status === "Linked" ? "unlink" : "link";
         data["parentUserId"] = personal.userId;
         data["organisationId"] = organisationId;
         this.props.userProfileUpdateAction(data);
-        this.setState({unlinkOnLoad: true});
+        this.setState({ unlinkOnLoad: true });
     }
 
+    removeTeamMemberView = (data) => {
+        data.processType = data.isActive ? "deactivate" : "activate";
+        this.props.teamMemberUpdateAction(data);
+        this.setState({ removeTeamMemberLoad: true });
+    }
 
     unlinkCheckParent = (record) => {
-        if(record.unlinkedBy && record.status=="Unlinked"){
-            if(record.unlinkedBy == record.userId){
-                this.setState({unlinkRecord: record,showParentUnlinkConfirmPopup: true})
+        if (record.unlinkedBy && record.status === "Unlinked") {
+            if (record.unlinkedBy == record.userId) {
+                this.setState({ unlinkRecord: record, showParentUnlinkConfirmPopup: true })
+            } else {
+                this.setState({ unlinkRecord: record, showCannotUnlinkPopup: true })
             }
-            else{
-                this.setState({unlinkRecord: record,showCannotUnlinkPopup: true})
-            }
+        } else {
+            this.setState({ unlinkRecord: record, showParentUnlinkConfirmPopup: true })
         }
-        else{
-            this.setState({unlinkRecord: record,showParentUnlinkConfirmPopup: true})
-        }
-
-        }
+    }
 
     unlinkCheckChild = (record) => {
-        if(record.unlinkedBy && record.status=="Unlinked"){
-            if(record.unlinkedBy == record.userId){
-             this.setState({unlinkRecord: record,showChildUnlinkConfirmPopup: true})    
+        if (record.unlinkedBy && record.status === "Unlinked") {
+            if (record.unlinkedBy == record.userId) {
+                this.setState({ unlinkRecord: record, showChildUnlinkConfirmPopup: true })
+            } else {
+                this.setState({ unlinkRecord: record, showCannotUnlinkPopup: true })
             }
-            else{
-                this.setState({unlinkRecord: record, showCannotUnlinkPopup: true})
-            }
+        } else {
+            this.setState({ unlinkRecord: record, showChildUnlinkConfirmPopup: true })
         }
-        else{
-            this.setState({unlinkRecord: record,showChildUnlinkConfirmPopup: true})    
-        }
+    }
 
+    removeTeamMember = (record) => {
+        if (record.isActive) {
+            this.setState({ removeTeamMemberRecord: record, showRemoveTeamMemberConfirmPopup: true });
+        } else {
+            this.removeTeamMemberView(record);
         }
+    }
 
-        cannotUninkPopup = () => {
-            let data = this.state.unlinkRecord;
-            return(
-                <div>
-                    
-                    <Modal
-                        className="add-membership-type-modal"
-                        title="Warning"
-                        visible={this.state.showCannotUnlinkPopup}
-                        onCancel={() => this.setState({ showCannotUnlinkPopup : false})}
-                        footer={[
-                            <Button onClick={() => this.setState({ showCannotUnlinkPopup: false })}>
-                                {AppConstants.ok}
-                            </Button>,
-                        ]}
-                        >   
-                            {data?.childName ? 
-                            <p> {AppConstants.parentUnlinkMessage}</p>
-                            :
-                            <p>{AppConstants.childUnlinkMessage}</p>
-                            }
-    
-                        </Modal>
-                </div>
-            )
-        }
+    cannotUninkPopup = () => {
+        let data = this.state.unlinkRecord;
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title="Warning"
+                    visible={this.state.showCannotUnlinkPopup}
+                    onCancel={() => this.setState({ showCannotUnlinkPopup: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ showCannotUnlinkPopup: false })}>
+                            {AppConstants.ok}
+                        </Button>,
+                    ]}
+                >
+                    {data?.childName ?
+                        <p> {AppConstants.parentUnlinkMessage}</p>
+                        :
+                        <p>{AppConstants.childUnlinkMessage}</p>
+                    }
+                </Modal>
+            </div>
+        )
+    }
 
-        unlinkChildConfirmPopup = () => {
-            let status = this.state.unlinkRecord?.status == "Linked" ? "de-link" : "link";
-            return (
-                <div>
-                    <Modal
-                        className="add-membership-type-modal"
-                        title={AppConstants.confirm}
-                        visible={this.state.showChildUnlinkConfirmPopup}
-                        onCancel={() => this.setState({ showChildUnlinkConfirmPopup: false })}
-                        footer={[
-                            <Button onClick={() => this.setState({ showChildUnlinkConfirmPopup: false })}>
-                                {AppConstants.cancel}
-                            </Button>,
-                            <Button onClick={() => {
-                                this.childUnLinkView(this.state.unlinkRecord);
-                                this.setState({ showChildUnlinkConfirmPopup: false })
-                            }}>
-                                {AppConstants.confirm}
-                            </Button>
-                        ]}
+    unlinkChildConfirmPopup = () => {
+        let status = this.state.unlinkRecord?.status === "Linked" ? "de-link" : "link";
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.confirm}
+                    visible={this.state.showChildUnlinkConfirmPopup}
+                    onCancel={() => this.setState({ showChildUnlinkConfirmPopup: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ showChildUnlinkConfirmPopup: false })}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button onClick={() => {
+                            this.childUnLinkView(this.state.unlinkRecord);
+                            this.setState({ showChildUnlinkConfirmPopup: false })
+                        }}>
+                            {AppConstants.confirm}
+                        </Button>
+                    ]}
+                >
+                    <p> {"Are you sure you want to " + status + " your account?"}</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    unlinkParentConfirmPopup = () => {
+        let status = this.state.unlinkRecord?.status === "Linked" ? "de-link" : "link";
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.confirm}
+                    visible={this.state.showParentUnlinkConfirmPopup}
+                    onCancel={() => this.setState({ showParentUnlinkConfirmPopup: false })}
+                    footer={[
+                        <Button onClick={() => this.setState({ showParentUnlinkConfirmPopup: false })}>
+                            {AppConstants.cancel}
+                        </Button>,
+                        <Button onClick={() => {
+                            this.parentUnLinkView(this.state.unlinkRecord);
+                            this.setState({ showParentUnlinkConfirmPopup: false })
+                        }}>
+                            {AppConstants.confirm}
+                        </Button>
+                    ]}
+                >
+                    <p> {"Are you sure you want to " + status + " your account?"}</p>
+                </Modal>
+            </div>
+        )
+    }
+
+    removeTeamMemberConfirmPopup = () => (
+        <div>
+            <Modal
+                className="add-membership-type-modal"
+                title={AppConstants.confirm}
+                visible={this.state.showRemoveTeamMemberConfirmPopup}
+                onCancel={() => this.setState({ showRemoveTeamMemberConfirmPopup: false })}
+                footer={[
+                    <Button onClick={() => this.setState({ showRemoveTeamMemberConfirmPopup: false })}>
+                        {AppConstants.no}
+                    </Button>,
+                    <Button
+                        onClick={() => {
+                            this.removeTeamMemberView(this.state.removeTeamMemberRecord);
+                            this.setState({ showRemoveTeamMemberConfirmPopup: false });
+                        }}
                     >
-                       <p> {"Are you sure you want to " + status + " your account?"}</p>
-                    </Modal>
-                </div>
-            )
-        }
-    
-        unlinkParentConfirmPopup = () => {
-            let status = this.state.unlinkRecord?.status == "Linked" ? "de-link" : "link";
-            return (
-                <div>
-                    <Modal
-                        className="add-membership-type-modal"
-                        title={AppConstants.confirm}
-                        visible={this.state.showParentUnlinkConfirmPopup}
-                        onCancel={() => this.setState({ showParentUnlinkConfirmPopup: false })}
-                        footer={[
-                            <Button onClick={() => this.setState({ showParentUnlinkConfirmPopup: false })}>
-                                {AppConstants.cancel}
-                            </Button>,
-                            <Button onClick={() => {
-                                this.parentUnLinkView(this.state.unlinkRecord);
-                                this.setState({ showParentUnlinkConfirmPopup: false })
-                            }}>
-                                {AppConstants.confirm}
-                            </Button>
-                        ]}
-                    >
-                       <p> {"Are you sure you want to " + status + " your account?"}</p>
-                    </Modal>
-                </div>
-            )
-        }
+                        {AppConstants.yes}
+                    </Button>,
+                ]}
+            >
+                <p>{AppConstants.removeFromTeamPopUpMsg}</p>
+            </Modal>
+        </div>
+    )
 
     render() {
-        let { activityPlayerList, activityManagerList, activityScorerList, umpireActivityList, scorerActivityRoster, activityParentList, personalByCompData, userRole } = this.props.userState;
+        let {
+            activityPlayerList,
+            activityManagerList,
+            activityScorerList,
+            umpireActivityList,
+            scorerActivityRoster,
+            userRegistrationList,
+            activityParentList,
+            medicalData,
+            userHistoryList,
+
+            personalByCompData,
+            userRole,
+
+            activityManagerOnLoad,
+            activityPlayerOnLoad,
+            activityScorerOnLoad,
+            umpireActivityOnLoad,
+            activityParentOnLoad,
+            onPersonLoad,
+            userRegistrationOnLoad,
+            userHistoryLoad,
+            onMedicalLoad,
+
+            personalData
+        } = this.props.userState;
+
         let personalDetails = personalByCompData != null ? personalByCompData : [];
         let userRegistrationId = null;
         if (personalDetails != null && personalDetails.length > 0) {
             userRegistrationId = personalByCompData[0].userRegistrationId
         }
 
-        const { activityManagerOnLoad, activityPlayerOnLoad, activityScorerOnLoad, umpireActivityOnLoad } = this.props.userState;
-
-        const { isTablet, isCollapsedUserDetails} = this.state;
+        const { isTablet, isCollapsedUserDetails, isPersonDetailsTabVisited, isUserLoading } = this.state;
 
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
@@ -2555,7 +2797,7 @@ class UserModulePersonalDetail extends Component {
                 {/* <InnerHorizontalMenu menu={"user"} userSelectedKey={"1"} /> */}
                 <Layout className="live-score-player-profile-layout">
                     <Content className="live-score-player-profile-content">
-                        <div className="fluid-width" >
+                        <div className="fluid-width">
                             <div
                                 className="d-flex flex-wrap"
                                 style={{
@@ -2565,7 +2807,7 @@ class UserModulePersonalDetail extends Component {
                                 <div
                                     className={`${isTablet ? "col-sm-12 px-0" : "col-sm-3 content-view-padding"} bg-white`}
                                     style={{
-                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '7%'}`,
+                                        paddingBottom: `${isTablet && isCollapsedUserDetails ? 0 : '50px'}`,
                                     }}
                                 >
                                     {this.leftHandSideView()}
@@ -2577,74 +2819,111 @@ class UserModulePersonalDetail extends Component {
                                 >
                                     <div className="mt-4">{this.headerView()}</div>
                                     <div className="inside-table-view mt-4" >
-                                        <Tabs
-                                            defaultActiveKey={this.state.tabKey}
-                                            onChange={(e) => this.onChangeTab(e)}
-                                            moreIcon={<img src={AppImages.moreTripleDotActive} />}
-                                            tabBarStyle={{
-                                                fontSize: 14,
-                                                color: "var(--app-9b9bad)",
-                                                fontFamily: 'inter',
-                                            }}
-                                            className="tabs-wrapper"
+                                        <Menu
+                                            theme="light"
+                                            mode="horizontal"
+                                            defaultSelectedKeys={['1']}
+                                            style={{ lineHeight: '48px', marginBottom: 25 }}
+                                            selectedKeys={[this.state.tabKey]}
+                                            onClick={this.onChangeTab}
                                         >
-                                            <TabPane tab={AppConstants.registrations} key="1">
+                                            <Menu.Item key="1">
+                                                <span>{AppConstants.registrations}</span>
+                                            </Menu.Item>
+                                            <Menu.Item key="2">
+                                                <span>{AppConstants.activity}</span>
+                                            </Menu.Item>
+                                            <Menu.Item key="3">
+                                                <span>{AppConstants.statistics}</span>
+                                            </Menu.Item>
+                                            <Menu.Item key="4">
+                                                <span>{AppConstants.personalDetails}</span>
+                                            </Menu.Item>
+                                            {userRegistrationId != null && (
+                                                <Menu.Item key="5">
+                                                    <span>{AppConstants.medical}</span>
+                                                </Menu.Item>
+                                            )}
+                                            <Menu.Item key="6">
+                                                <span>{AppConstants.history}</span>
+                                            </Menu.Item>
+                                            {userRole && (
+                                                <Menu.Item key="7">
+                                                    <span>{AppConstants.umpireActivity}</span>
+                                                </Menu.Item>
+                                            )}
+                                        </Menu>
+
+                                        {this.state.tabKey === "1" && !isUserLoading && (
+                                            <>
                                                 {!this.state.isRegistrationForm ?
-                                                    this.registrationView() :
-                                                    this.registrationFormView()
+                                                    <>
+                                                        {!!userRegistrationList && !userRegistrationOnLoad && this.registrationView()}
+                                                        {(userRegistrationOnLoad || onPersonLoad || !personalByCompData[0]?.userId) && this.tableLoadingView()}
+                                                        {!userRegistrationList && !userRegistrationOnLoad && !onPersonLoad && (!!personalData?.userId || !!personalByCompData[0]?.userId) && this.noDataAvailable()}
+                                                    </>
+                                                    : this.registrationFormView()
                                                 }
-                                            </TabPane>
-                                            <TabPane tab={AppConstants.activity} key="2">
-                                                {!!activityPlayerList && !!activityPlayerList.length && this.playerActivityView()}
-                                                {!!activityManagerList && !!activityManagerList.length  && this.managerActivityView()}
-                                                {!!scorerActivityRoster && !!scorerActivityRoster.length  && this.scorerActivityView()}
+                                            </>
+                                        )}
+                                        {this.state.tabKey === "2" && (
+                                            <>
+                                                {!!activityPlayerList && !!activityPlayerList.length && !activityPlayerOnLoad && this.playerActivityView()}
+                                                {!!activityManagerList && !!activityManagerList.length && !activityManagerOnLoad && this.managerActivityView()}
+                                                {!!scorerActivityRoster && !!scorerActivityRoster.length && !activityScorerOnLoad && this.scorerActivityView()}
                                                 {/* {!!activityParentList && !!activityParentList.length && this.parentActivityView()} */}
-                                                {!activityPlayerList.length && !activityManagerList.length
-                                                    && !scorerActivityRoster.length
-                                                    && (activityManagerOnLoad && activityPlayerOnLoad && activityScorerOnLoad)
+                                                {(activityManagerOnLoad && activityPlayerOnLoad && activityScorerOnLoad)
                                                     && this.tableLoadingView()}
                                                 {!activityPlayerList.length && !activityManagerList.length
                                                     && !scorerActivityRoster.length //&& activityParentList.length == 0
                                                     && !activityManagerOnLoad && !activityPlayerOnLoad && !activityScorerOnLoad
-                                                    && this.noDataAvailable()}   
-                                            </TabPane>
-                                            <TabPane tab={AppConstants.statistics} key="3">
-                                                {this.statisticsView()}
-                                            </TabPane>
-                                            <TabPane tab={AppConstants.personalDetails} key="4">
-                                                {this.personalView()}
-                                            </TabPane>
-                                            {userRegistrationId != null &&
-                                                <TabPane tab={AppConstants.medical} key="5">
-                                                    {this.medicalView()}
-                                                </TabPane>}
-                                            <TabPane tab={AppConstants.history} key="6">
-                                                {this.historyView()}
-                                            </TabPane>
-                                            {
-                                                userRole &&
-                                                <TabPane tab={AppConstants.umpireActivity} key="7">
-                                                    {!!umpireActivityList && !!umpireActivityList.length && this.umpireActivityView()}
-                                                    {!umpireActivityList.length && umpireActivityOnLoad && this.tableLoadingView()}
-                                                    {!umpireActivityList.length && !umpireActivityOnLoad && this.noDataAvailable()}
-                                                </TabPane>
-                                            }
-                                        </Tabs>
+                                                    && this.noDataAvailable()}
+                                            </>
+                                        )}
+                                        {this.state.tabKey === "3" && this.statisticsView()}
+                                        {this.state.tabKey === "4" && !isUserLoading && (
+                                            <>
+                                                {isPersonDetailsTabVisited && !!personalByCompData && !!personalByCompData.length && !onPersonLoad && this.personalView()}
+                                                {onPersonLoad && this.tableLoadingView()}
+                                                {!personalByCompData.length && !onPersonLoad && this.noDataAvailable()}
+                                            </>
+                                        )}
+                                        {this.state.tabKey === "5" && (
+                                            <>
+                                                {!!medicalData && !!medicalData.length && !onMedicalLoad && this.medicalView()}
+                                                {onMedicalLoad && this.tableLoadingView()}
+                                                {!medicalData.length && !onMedicalLoad && this.noDataAvailable()}
+                                            </>
+                                        )}
+                                        {this.state.tabKey === "6" && (
+                                            <>
+                                                {!!userHistoryList && !!userHistoryList.length && !userHistoryLoad && this.historyView()}
+                                                {userHistoryLoad && this.tableLoadingView()}
+                                                {!userHistoryList.length && !userHistoryLoad && this.noDataAvailable()}
+                                            </>
+                                        )}
+                                        {this.state.tabKey === "7" && (
+                                            <>
+                                                {!!umpireActivityList && !!umpireActivityList.length && !umpireActivityOnLoad && this.umpireActivityView()}
+                                                {umpireActivityOnLoad && this.tableLoadingView()}
+                                                {!umpireActivityList.length && !umpireActivityOnLoad && this.noDataAvailable()}
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <Loader visible={this.props.userState.onMedicalLoad} />
+                        <Loader visible={this.props.userState.userPhotoUpdate || isUserLoading} />
                         {this.unlinkChildConfirmPopup()}
                         {this.unlinkParentConfirmPopup()}
                         {this.cannotUninkPopup()}
+                        {this.removeTeamMemberConfirmPopup()}
                     </Content>
                 </Layout>
             </div>
 
         );
     }
-
 }
 
 function mapDispatchToProps(dispatch) {
@@ -2667,12 +2946,13 @@ function mapDispatchToProps(dispatch) {
         getStripeLoginLinkAction,
         userPhotoUpdateAction,
         registrationResendEmailAction,
-        userProfileUpdateAction
+        userProfileUpdateAction,
+        getUserModuleTeamMembersAction,
+        teamMemberUpdateAction
     }, dispatch);
-
 }
 
-function mapStatetoProps(state) {
+function mapStateToProps(state) {
     return {
         userState: state.UserState,
         appState: state.AppState,
@@ -2682,4 +2962,4 @@ function mapStatetoProps(state) {
     }
 }
 
-export default connect(mapStatetoProps, mapDispatchToProps)(UserModulePersonalDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(UserModulePersonalDetail);

@@ -111,7 +111,7 @@ const CheckoutForm = (props) => {
         singleCredit: false,
         selectedOption: 0
     })
-
+    const [disabled, setDisabled] = useState(false)
 
     const stripe = useStripe();
     const elements = useElements();
@@ -136,8 +136,8 @@ const CheckoutForm = (props) => {
                         console.log("card", card)
                         const cardToken = await stripe.createToken(card);
                         if (cardToken.token == undefined) {
-                            message.error(cardToken.error.message);
-                            setError(cardToken.error.message);
+                            message.error(cardToken?.error?.message);
+                            setError(cardToken?.error?.message);
                         }
                         else if (cardToken.token != undefined) {
                             const country = cardToken.token.card.country;
@@ -257,6 +257,7 @@ const CheckoutForm = (props) => {
 
     // Handle form submission.
     const handleSubmit = async (event) => {
+        setDisabled(true);
         event.preventDefault();
         console.log("clientSecretKey", clientSecretKey);
         console.log(event)
@@ -353,6 +354,7 @@ const CheckoutForm = (props) => {
                 message.error(AppConstants.selectedPaymentOption)
             }
         }
+        setDisabled(false);
     }
 
     return (
@@ -377,8 +379,10 @@ const CheckoutForm = (props) => {
                                                         onChange={handleChange}
                                                         className='StripeElement'
                                                     />
-                                                    <div className="card-errors" role="alert">{error}</div>
-                                                    <div style={{ marginTop: "-10px" }}>{AppConstants.creditCardMsg}</div>
+                                                    {error && <div className="card-errors" role="alert">{error}</div>}
+                                                    <div
+                                                        style={{ marginTop: "5px" }}
+                                                    >{AppConstants.creditCardMsg}</div>
                                                 </div>
                                             )}
                                         </div>
@@ -464,22 +468,22 @@ const CheckoutForm = (props) => {
                                             }
                                         </div>
                                     </div>}
-                                {/* {pay.securePaymentOptionRefId == 3 && 
+                                {/* {pay.securePaymentOptionRefId == 3 &&
                         <div>
                             <div className="row">
                                 <div className='col-sm'>
-                                    <Radio key={"3"} 
+                                    <Radio key={"3"}
                                 className="payment-type-radio-style"
                                 onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
                                 </div>
                             </div>
                             <div className="row pl-4">
                                 <div className='col-sm'>
-                                    {selectedPaymentOption.cash == true && 
+                                    {selectedPaymentOption.cash == true &&
                                         <div className="pt-0">
-                                            <Radio key={"4"} 
-                                            className="payment-type-radio-style"                                            
-                                            onChange={(e) => changePaymentOption(e, "cash_direct_debit")} 
+                                            <Radio key={"4"}
+                                            className="payment-type-radio-style"
+                                            onChange={(e) => changePaymentOption(e, "cash_direct_debit")}
                                                     checked={selectedPaymentOption.cashDirect}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.cashDirect == true &&
                                                 <div>
@@ -516,19 +520,19 @@ const CheckoutForm = (props) => {
                                                     <div style={{marginTop: "10px"}}>{AppConstants.directDebitMsg}</div>
                                                 </div>
                                             }
-                                        </div>   
+                                        </div>
                                     }
                                 </div>
                             </div>
                             <div className="row pl-4">
                                 <div className='col-sm'>
-                                    {selectedPaymentOption.cash == true && 
+                                    {selectedPaymentOption.cash == true &&
                                         <div className="pt-0">
-                                            <Radio key={"5"} 
+                                            <Radio key={"5"}
                                             className="payment-type-radio-style"
                                             onChange={(e) => changePaymentOption(e, "cash_card")}
                                                     checked={selectedPaymentOption.cashCredit}>{AppConstants.creditCard}</Radio>
-                                                {selectedPaymentOption.cashCredit == true && 
+                                                {selectedPaymentOption.cashCredit == true &&
                                                 <div className="pt-4">
                                                     <CardElement
                                                         id="card-element"
@@ -538,9 +542,9 @@ const CheckoutForm = (props) => {
                                                     />
                                                     <div className="card-errors" role="alert">{error}</div>
                                                     <div style={{marginTop: "-10px"}}>{AppConstants.creditCardMsg}</div>
-                                                </div>   
+                                                </div>
                                                 }
-                                        </div>   
+                                        </div>
                                     }
                                 </div>
                             </div>
@@ -610,6 +614,7 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                             <Button
+                                disabled={disabled}
                                 style={{ textTransform: "uppercase" }}
                                 className="open-reg-button"
                                 htmlType="submit"
@@ -670,10 +675,10 @@ class RegistrationPayment extends Component {
         history.push({ pathname: '/registrationProducts', state: { registrationId: this.state.registrationUniqueKey } })
     }
 
-    getPaymentOptionText = (paymentOptionRefId) => {
-        let paymentOptionTxt = paymentOptionRefId == 1 ? AppConstants.paySingleGame :
+    getPaymentOptionText = (paymentOptionRefId, isTeamRegistration) => {
+        let paymentOptionTxt = paymentOptionRefId == 1 ? (isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly) :
             (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
-                (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+                (paymentOptionRefId == 3 ? AppConstants.allMatches :
                     (paymentOptionRefId == 4 ? AppConstants.firstInstalment :
                         (paymentOptionRefId == 5 ? AppConstants.schoolRegistration : ""))));
 
@@ -801,7 +806,7 @@ class RegistrationPayment extends Component {
                     {AppConstants.yourOrder}
                 </div>
                 {(compParticipants || []).map((item, index) => {
-                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId)
+                    let paymentOptionTxt = this.getPaymentOptionText(item.selectedOptions.paymentOptionRefId, item.isTeamRegistration)
                     return (
                         <div style={{ paddingBottom: 12 }} key={item.participantId}>
                             {item.isTeamRegistration == 1 ?
@@ -883,7 +888,7 @@ class RegistrationPayment extends Component {
                                 <div>
                                     {shop.productName}
                                 </div>
-                                <div>({shop.optionName}) {AppConstants.qty} : {shop.quantity}</div>
+                                <div>{shop.optionName && `(${shop.optionName}) `}{AppConstants.qty} : {shop.quantity}</div>
                             </div>
                         </div>
                         <div className="alignself-center pt-5" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
