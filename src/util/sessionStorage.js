@@ -8,6 +8,10 @@ export const getCompetitonId = key => {
     return localStorage.competitionId
 }
 
+export const getLiveScoreCompetition = () => {
+    return localStorage.LiveScoreCompetition
+}
+
 // Set Auth Token
 export const setAuthToken = token => {
     localStorage.setItem("token", token);
