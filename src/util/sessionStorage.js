@@ -1,205 +1,180 @@
 // set competition id
-const setCompetitionID = competitionId => {
-    console.log(competitionId, " is id");
+export const setCompetitionID = competitionId => {
     localStorage.setItem("competitionId", competitionId)
-
 }
+
 // get competition id
-const getCompetitonId = key => {
+export const getCompetitonId = key => {
     return localStorage.competitionId
 }
+
 // Set Auth Token
-const setAuthToken = token => {
-    // console.log(token, 'token')
+export const setAuthToken = token => {
     localStorage.setItem("token", token);
 }
+
 // get Auth Token
-const getAuthToken = token => {
+export const getAuthToken = token => {
     return localStorage.token
 }
+
 // Set User Id
-const setUserId = userId => {
+export const setUserId = userId => {
     localStorage.setItem("userId", userId)
 }
+
 // get User Id
-const getUserId = () => {
+export const getUserId = () => {
     return localStorage.userId
 }
 
-const getName = () =>{
+export const getName = () => {
     return localStorage.name
 }
 
-const setName = (name) => {
+export const setName = (name) => {
     localStorage.setItem("name", name)
 }
 
-const getPhotoUrl = () => {
+export const getPhotoUrl = () => {
     return localStorage.photoUrl
 }
 
-const setPhotoUrl = (photoUrl) => {
+export const setPhotoUrl = (photoUrl) => {
     localStorage.setItem("photoUrl", photoUrl)
 }
-// Set Own  Year
-const setOwnCompetitionYear = own_year => {
+
+// Set Own Year
+export const setOwnCompetitionYear = own_year => {
     localStorage.setItem("own_year", own_year)
 }
-// get Own  Year
-const getOwnCompetitionYear = () => {
+
+// get Own Year
+export const getOwnCompetitionYear = () => {
     return localStorage.own_year
 }
 
-// Set  own competition 
+export // Set own competition
 const setOwn_competition = own_competition => {
     localStorage.setItem("own_competition", own_competition)
 }
+
 /// get own competition
-const getOwn_competition = () => {
+export const getOwn_competition = () => {
     return localStorage.own_competition
 }
 
-const setOrganisationData = (organisationData) => {
+export const setOrganisationData = (organisationData) => {
     let data = JSON.stringify(organisationData)
     localStorage.setItem("setOrganisationData", data)
 }
 
-const getOrganisationData = () => {
+export const getOrganisationData = () => {
     return localStorage.setOrganisationData ? JSON.parse(localStorage.setOrganisationData) : null
 }
+
 // set Participating Year
-const setParticipatingYear = Participate_year => {
+export const setParticipatingYear = Participate_year => {
     localStorage.setItem("Participate_year", Participate_year)
 }
 
 // get Participating  Year
-const getParticipatingYear = () => {
+export const getParticipatingYear = () => {
     return localStorage.Participate_year
 }
 
-// Set  Participating competition 
-const setParticipating_competition = Participating_competition => {
+// Set Participating competition
+export const setParticipating_competition = Participating_competition => {
     localStorage.setItem("Participating_competition", Participating_competition)
 }
 
 // get Participating competition
-const getParticipating_competition = () => {
+export const getParticipating_competition = () => {
     return localStorage.Participating_competition
 }
 
-const setOrganistaionId = (organisationId) => {
+export const setOrganistaionId = (organisationId) => {
     localStorage.setItem("organisationId", organisationId)
 }
 
-const getOrganisationId = () => {
+export const getOrganisationId = () => {
     return localStorage.organisationId;
 }
 
-const setliveScoreOrgID=(Orgid)=>{
+export const setliveScoreOrgID = (Orgid) => {
     localStorage.setItem("liveScoreOrgID", Orgid)
 }
 
-const getliveScoreOrgID = () => {
+export const getliveScoreOrgID = () => {
     return localStorage.liveScoreOrgID
 }
 
-const setUserRegId=(userRegId)=>{
+export const setUserRegId = (userRegId) => {
     localStorage.setItem("userRegId", userRegId)
 }
 
-const getUserRegId = () => {
+export const getUserRegId = () => {
     return localStorage.userRegId
 }
 
-const setExistingUserRefId = (existingUserRefId) => {
+export const setExistingUserRefId = (existingUserRefId) => {
     localStorage.setItem("existingUserRefId", existingUserRefId)
 }
 
-const getExistingUserRefId = () => {
+export const getExistingUserRefId = () => {
     return localStorage.existingUserRefId
 }
 
-
-const setRegisteringYourselfRefId = (registeringYourselfRefId) => {
+export const setRegisteringYourselfRefId = (registeringYourselfRefId) => {
     localStorage.setItem("registeringYourselfRefId", registeringYourselfRefId)
 }
 
-const getRegisteringYourselfRefId = () => {
+export const getRegisteringYourselfRefId = () => {
     return localStorage.registeringYourselfRefId
 }
 
-
-const setIsUserRegistration = (isUserRegistration) => {
+export const setIsUserRegistration = (isUserRegistration) => {
     localStorage.setItem("isUserRegistration", isUserRegistration)
 }
 
-const getIsUserRegistration = () => {
+export const getIsUserRegistration = () => {
     return localStorage.isUserRegistration
 }
 
 // Set Temp User Id
-const setTempUserId = userId => {
+export const setTempUserId = userId => {
     localStorage.setItem("tempUserId", userId)
 }
+
 // get Temp User Id
-const getTempUserId = () => {
+export const getTempUserId = () => {
     return localStorage.tempUserId
 }
 
-// set source syatem flag
-const setSourceSystemFlag = sourceSystem => {
+// set source system flag
+export const setSourceSystemFlag = sourceSystem => {
     localStorage.setItem("sourceSystem", sourceSystem)
 }
+
 // get source system flag
-const getSourceSystemFlag= key => {
+export const getSourceSystemFlag = key => {
     return localStorage.sourceSystem
 }
 
-// Set stripe acount id
-const setStripeAccountId = stripeCustomerAccountId => {
+// Set stripe account id
+export const setStripeAccountId = stripeCustomerAccountId => {
     localStorage.setItem("stripeCustomerAccountId", stripeCustomerAccountId)
 }
-/// Set stripe acount id
-const getStripeAccountId = () => {
+
+/// Set stripe account id
+export const getStripeAccountId = () => {
     return localStorage.stripeCustomerAccountId
 }
 
-const getStripeAccountConnectId = () => {
+export const getStripeAccountConnectId = () => {
     return localStorage.stripeAccountId
 }
 
-const setStripeAccountConnectId = stripeAccountId => {
+export const setStripeAccountConnectId = stripeAccountId => {
     localStorage.setItem("stripeAccountId", stripeAccountId || "")
-}
-
-module.exports = {
-    setCompetitionID, getCompetitonId,
-    setAuthToken, getAuthToken,
-    setUserId, getUserId,
-    setName, getName,
-    setPhotoUrl, getPhotoUrl,
-    setOwnCompetitionYear,
-    getOwnCompetitionYear,
-    setOwn_competition,
-    getOwn_competition,
-    setOrganisationData,
-    getOrganisationData,
-    setParticipatingYear,
-    getParticipatingYear,
-    setParticipating_competition,
-    getParticipating_competition,
-    getOrganisationId,
-    setOrganistaionId,
-    setliveScoreOrgID,
-    getliveScoreOrgID,
-    setUserRegId,getUserRegId,
-    setExistingUserRefId,getExistingUserRefId,
-    setRegisteringYourselfRefId,getRegisteringYourselfRefId,
-    setIsUserRegistration, getIsUserRegistration,
-    setTempUserId, getTempUserId,
-    setSourceSystemFlag,getSourceSystemFlag,
-    setStripeAccountId,
-    getStripeAccountId,
-    getStripeAccountConnectId,
-    setStripeAccountConnectId
 }

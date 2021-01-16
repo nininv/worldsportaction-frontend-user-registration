@@ -1,21 +1,17 @@
-function getTeamViewPlayerListData(playerData) {
-
-    var playerArray = []
+export function getTeamViewPlayerListData(playerData) {
+    const playerArray = [];
     for (let i in playerData) {
-        var object = this.getTeamViewPlayerListObject(playerData[i])
-        playerArray.push(object)
+        const object = this.getTeamViewPlayerListObject(playerData[i]);
+        playerArray.push(object);
     }
-    return playerArray
+    return playerArray;
 }
 
-function getTeamViewPlayerListObject(playerData) {
+export function getTeamViewPlayerListObject(playerData) {
     return {
         // profilePic: playerData.photoUrl,
         name: playerData.firstName + " " + playerData.lastName,
         dob: playerData.dateOfBirth,
-        number: playerData.phoneNumber
-    }
+        number: playerData.phoneNumber,
+    };
 }
-
-
-module.exports = { getTeamViewPlayerListData, getTeamViewPlayerListObject }

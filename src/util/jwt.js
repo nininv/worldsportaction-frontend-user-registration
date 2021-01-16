@@ -1,15 +1,11 @@
-const JWT = require("jsonwebtoken");
+import JWT from "jsonwebtoken";
 
-const jwtSecertKey = "9sec_key_Value9";
+const jwtSecretKey = "9sec_key_Value9";
 
-function jwtEncrypt(data) {
-  let mykey = JWT.sign(data, jwtSecertKey);
-  return mykey;
+export function JwtEncrypt(data) {
+    return JWT.sign(data, jwtSecretKey);
 }
 
-function jwtDecrypt(token) {
-  let mykey = JWT.verify(token, jwtSecertKey);
-  return mykey;
+export function JwtDecrypt(token) {
+    return JWT.verify(token, jwtSecretKey);
 }
-
-module.exports = { JwtEncrypt: jwtEncrypt, JwtDecrypt: jwtDecrypt };

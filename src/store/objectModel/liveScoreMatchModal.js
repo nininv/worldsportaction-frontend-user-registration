@@ -1,18 +1,15 @@
-function getData(data) {
-
-    var arr = []
+export function getData(data) {
+    const arr = [];
     for (let i in data) {
-        var object = this.getMatchDivisionObject(data[i])
-        arr.push(object)
+        const object = this.getMatchDivisionObject(data[i]);
+        arr.push(object);
     }
-    return arr
+    return arr;
 }
 
-function getMatchDivisionObject(data) {
+export function getMatchDivisionObject(data) {
     return {
         id: data.id,
-        name: data.name
-
-    }
+        name: data.name,
+    };
 }
-module.exports = { getData, getMatchDivisionObject, }
