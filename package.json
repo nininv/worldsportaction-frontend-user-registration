@@ -29,6 +29,7 @@
     "react-cool-onclickoutside": "^1.5.8",
     "react-csv-reader": "^2.0.2",
     "react-dom": "^16.14.0",
+    "redux-thunk": "^2.3.0",
     "react-draft-wysiwyg": "^1.14.5",
     "react-player": "^1.15.3",
     "react-png-tooltip": "^1.2.0",

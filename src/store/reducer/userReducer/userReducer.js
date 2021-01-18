@@ -553,9 +553,6 @@ function userReducer(state = initialState, action) {
                 onLoad: false,
             };
 
-        case ApiConstants.API_ADD_CHILD_LOAD:
-            return { ...state };
-
         case ApiConstants.API_ADD_CHILD_SUCCESS:
             return { ...state };
 

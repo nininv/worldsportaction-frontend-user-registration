@@ -299,8 +299,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD, userSaga.getTeamMembersReviewSaga);
-  yield takeEvery(ApiConstants.API_ADD_CHILD_LOAD, userSaga.addChildSaga);
-  yield takeEvery(ApiConstants.API_ADD_PARENT_LOAD, userSaga.addParentSaga);
 
 
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);

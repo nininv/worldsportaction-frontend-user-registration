@@ -16,9 +16,7 @@ import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
-import {
-    addChildAction, addParentAction, userProfileUpdateAction
-} from '../../store/actions/userAction/userAction';
+import { userProfileUpdateAction } from '../../store/actions/userAction/userAction';
 import ValidationConstants from "../../themes/validationConstant";
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
@@ -32,6 +30,7 @@ import Loader from '../../customComponents/loader';
 import { setTempUserId, getUserId } from "../../util/sessionStorage";
 import { regexNumberExpression } from '../../util/helpers';
 import PlacesAutocomplete from "../registration/elements/PlaceAutoComplete";
+import UserAxiosApi from "../../store/http/userHttp/userAxiosApi";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -1180,6 +1179,29 @@ class UserProfileEdit extends Component {
         }
     }
 
+    // actual function to call saving a child / parent
+    async addChildOrParent (body) {
+        const { userId, email } = this.props.userState.personalData; // current (spoofing) user id
+        const sameEmail = Number(this.state.isSameEmail || this.state.userData.email === email);
+        try {
+            const { status } = await (
+                this.state.titleLabel === AppConstants.addChild
+                ? UserAxiosApi.addChild
+                : UserAxiosApi.addParent
+            )({ userId, sameEmail, body });
+            if ([1, 4].includes(status)) {
+                history.push({
+                    pathname: '/userPersonal',
+                    state: { tabKey: this.state.tabKey, userId },
+                });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        this.setState({ saveLoad: false });
+    };
+
+    // global save action
     saveAction = () => {
         let userState = this.props.userState;
         let data = this.state.userData;
@@ -1204,11 +1226,8 @@ class UserProfileEdit extends Component {
             data["childUserId"] = 0;
         }
 
-        const sameEmail = (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) ? 1 : 0;
-        if (this.state.titleLabel === AppConstants.addChild) {
-            this.props.addChildAction(data, getUserId(), sameEmail);
-        } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
-            this.props.addParentAction(data, getUserId(), sameEmail);
+        if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
+            this.addChildOrParent(data);
         } else {
             if (this.state.displaySection === "1") {
                 data['emailUpdated'] = storedEmailAddress === data.email ? 0 : 1
@@ -1275,8 +1294,6 @@ class UserProfileEdit extends Component {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        addParentAction,
-        addChildAction,
         userProfileUpdateAction,
         getCommonRefData,
         countryReferenceAction,
