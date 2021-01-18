@@ -1524,7 +1524,7 @@ class AppRegistrationFormNew extends Component {
                            
                             if(isChild){
                                 for(let x in filteredSaveRegistrationObj.parentOrGuardian){
-                                    if(filteredSaveRegistrationObj.referParentEmail == false &&  filteredSaveRegistrationObj.parentOrGuardian[x].email == loggedInUser.email){
+                                    if(filteredSaveRegistrationObj.referParentEmail == false &&  filteredSaveRegistrationObj.parentOrGuardian[x].email.toLowerCase() == loggedInUser.email.toLowerCase()){
                                         if(loggedInUser.parentOrGuardian == null){
                                             this.setState({
                                                 sameEmailAsChildValidationModalVisible: true
