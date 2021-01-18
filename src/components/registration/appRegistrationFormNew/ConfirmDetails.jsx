@@ -30,6 +30,7 @@ function ConfirmDetails({
             <Input
               onChange={({ target: { value } }) => setValue({...value, detail: value})}
               value={value? value.detail : null}
+              initialValue={''}
             />
         </Form.Item>
         <div className="contextualHelp-RowDirection user-already-exists-buttons">

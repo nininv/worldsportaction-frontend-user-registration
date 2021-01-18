@@ -166,6 +166,7 @@ export function* getUserExists(action) {
     const {payload} = action;
     payload.dateOfBirth = moment(payload.dateOfBirth).format('YYYY-MM-DD')
     const result = yield call(userHttpApi.checkUserMatch, payload);
+    console.log('result', result)
     yield put({
       type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
       result,

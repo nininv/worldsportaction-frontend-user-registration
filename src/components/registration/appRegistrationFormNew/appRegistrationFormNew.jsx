@@ -1613,8 +1613,8 @@ class AppRegistrationFormNew extends Component {
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
-        if (userDigitCode && userDigitCode.message === "success") {
-            this.setState({ currentStep: 1 });
+        if (userAlreadyExist && userAlreadyExist.message === "success" || userAlreadyExist.users === false) {
+            this.setState({ ...this.state, currentStep: 1 });
             this.scrollToTop();
         }
 

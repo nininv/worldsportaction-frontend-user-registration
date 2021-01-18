@@ -35,7 +35,7 @@ function EnterCode({
   return (
     <div className="registration-form-view user-already-exists-section">
       { message === "decline" ?
-      <> 
+      <>
         <p>{getStringWithPassedValues(AppConstants.declineConfirmDetails )}</p>
         <Button
               htmlType="button"
@@ -47,7 +47,7 @@ function EnterCode({
             </Button>
       </>
       :
-      <> 
+      <>
         <p>{getStringWithPassedValues(AppConstants.enterXDigitCode, { number: CODE_LENGTH })}</p>
         <Form.Item className="place-auto-complete-container">
           <Input
