@@ -122,6 +122,7 @@ class AppRegistrationFormNew extends Component {
             sameEmailValidationModalVisible: false,
             banIndividualTeamMixModalVisible: false,
             sameSomeoneEmailValidationModalVisible: false,
+            sameEmailAsChildValidationModalVisible: false,
         }
         this.ref = React.createRef();
         this.props.getCommonRefData();
@@ -1428,9 +1429,10 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+            const { registrationObj, expiredRegistration, userInfo } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
+            let selectedUser = userInfo.find(x => x.id == filteredSaveRegistrationObj.userId)
 
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (err) {
@@ -1511,6 +1513,20 @@ class AppRegistrationFormNew extends Component {
                                         hasErrorParent: hasError
                                     })
                                     return false
+                                }
+                            }
+                        }
+
+                        if(selectedUser){
+                            let isYoung = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
+                            if((selectedUser.id == filteredSaveRegistrationObj.userId) && isYoung && selectedUser.parentOrGuardian == null){
+                                for(let x in filteredSaveRegistrationObj.parentOrGuardian){
+                                    if(filteredSaveRegistrationObj.parentOrGuardian[x].email == filteredSaveRegistrationObj.email){
+                                        this.setState({
+                                            sameEmailAsChildValidationModalVisible: true
+                                        })
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -1924,6 +1940,7 @@ class AppRegistrationFormNew extends Component {
                                 rules: [{ required: true, message: ValidationConstants.nameField[0] }],
                             })(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_firstName}
                                     onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "firstName")}
                                     setFieldsValue={registrationObj.firstName}
@@ -1958,6 +1975,7 @@ class AppRegistrationFormNew extends Component {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                             })(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_lastName}
                                     onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "lastName")}
                                     setFieldsValue={registrationObj.lastName}
@@ -3849,6 +3867,7 @@ class AppRegistrationFormNew extends Component {
                         {this.registrationCapValidationModal()}
                         {this.sameEmailValidationModal()}
                         {this.sameSomeOneEmailValidationModal()}
+                        {this.sameEmailAsChildValidationModal()}
                     </div>
                 )}
                 {this.banIndividualTeamMixModal()}
@@ -4011,6 +4030,30 @@ class AppRegistrationFormNew extends Component {
             )
         } catch (ex) {
             console.log("Error in sameSomeOneEmailValidationModal::" + ex);
+        }
+    }
+
+    sameEmailAsChildValidationModal = () => {
+        try{
+            return (
+                <div>
+                    <Modal
+                        className="add-membership-type-modal"
+                        title={AppConstants.warning}
+                        visible={this.state.sameEmailAsChildValidationModalVisible}
+                        onCancel={() => this.setState({ sameEmailAsChildValidationModalVisible: false })}
+                        footer={[
+                            <Button onClick={() => this.setState({ sameEmailAsChildValidationModalVisible: false })}>
+                                {AppConstants.ok}
+                            </Button>
+                        ]}
+                    >
+                        <p> {AppConstants.sameEmailAsChild}</p>
+                    </Modal>
+                </div>
+            )
+        } catch (ex) {
+            console.log("Error in sameEmailAsChildValidationModal::" + ex);
         }
     }
 
