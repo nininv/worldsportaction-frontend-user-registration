@@ -1432,6 +1432,7 @@ class AppRegistrationFormNew extends Component {
             const { registrationObj, expiredRegistration, userInfo } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
+         
             let selectedUser = userInfo.find(x => x.id == filteredSaveRegistrationObj.userId)
             let loggedInUser = userInfo.find(x => x.id == getUserId())
 
@@ -1518,33 +1519,37 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
 
-                        if(selectedUser){
-                            let isYoung = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
-                            if((selectedUser.id == filteredSaveRegistrationObj.userId) && isYoung && selectedUser.parentOrGuardian == null){
+                        if(loggedInUser){
+                            let isChild = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
+                           
+                            if(isChild){
                                 for(let x in filteredSaveRegistrationObj.parentOrGuardian){
-                                    if(filteredSaveRegistrationObj.parentOrGuardian[x].email == filteredSaveRegistrationObj.email){
-                                        this.setState({
-                                            sameEmailAsChildValidationModalVisible: true
-                                        })
-                                        return;
+                                    if(filteredSaveRegistrationObj.referParentEmail == false &&  filteredSaveRegistrationObj.parentOrGuardian[x].email == loggedInUser.email){
+                                        if(loggedInUser.parentOrGuardian == null){
+                                            this.setState({
+                                                sameEmailAsChildValidationModalVisible: true
+                                            })
+                                            return;
+                                        }
                                     }
                                 }
                             }
+                            
                         }
 
-                        if(loggedInUser){
-                            let isYoung = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
-                            if(isYoung){
-                                for(let x in filteredSaveRegistrationObj.parentOrGuardian){
-                                    if(filteredSaveRegistrationObj.parentOrGuardian[x].email == loggedInUser.email){
-                                        this.setState({
-                                            sameEmailAsChildValidationModalVisible: true
-                                        })
-                                        return;
-                                    }
-                                }
-                            }
-                        }
+                        // if(loggedInUser){
+                        //     let isYoung = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
+                        //     if(isYoung){
+                        //         for(let x in filteredSaveRegistrationObj.parentOrGuardian){
+                        //             if(filteredSaveRegistrationObj.parentOrGuardian[x].email == loggedInUser.email){
+                        //                 this.setState({
+                        //                     sameEmailAsChildValidationModalVisible: true
+                        //                 })
+                        //                 return;
+                        //             }
+                        //         }
+                        //     }
+                        // }
 
                         let isSame = this.setReferParentEmailIfRequired(registrationObj);
                         if (!isSame) {
