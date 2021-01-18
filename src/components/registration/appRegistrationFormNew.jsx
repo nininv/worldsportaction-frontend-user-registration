@@ -1433,6 +1433,7 @@ class AppRegistrationFormNew extends Component {
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
             let selectedUser = userInfo.find(x => x.id == filteredSaveRegistrationObj.userId)
+            let loggedInUser = userInfo.find(x => x.id == getUserId())
 
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (err) {
@@ -1522,6 +1523,20 @@ class AppRegistrationFormNew extends Component {
                             if((selectedUser.id == filteredSaveRegistrationObj.userId) && isYoung && selectedUser.parentOrGuardian == null){
                                 for(let x in filteredSaveRegistrationObj.parentOrGuardian){
                                     if(filteredSaveRegistrationObj.parentOrGuardian[x].email == filteredSaveRegistrationObj.email){
+                                        this.setState({
+                                            sameEmailAsChildValidationModalVisible: true
+                                        })
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        if(loggedInUser){
+                            let isYoung = getAge(filteredSaveRegistrationObj.dateOfBirth) < 18
+                            if(isYoung){
+                                for(let x in filteredSaveRegistrationObj.parentOrGuardian){
+                                    if(filteredSaveRegistrationObj.parentOrGuardian[x].email == loggedInUser.email){
                                         this.setState({
                                             sameEmailAsChildValidationModalVisible: true
                                         })
