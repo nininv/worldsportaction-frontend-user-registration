@@ -58,8 +58,8 @@ export const getOwnCompetitionYear = () => {
     return localStorage.own_year
 }
 
-export // Set own competition
-const setOwn_competition = own_competition => {
+// Set own competition
+export const setOwn_competition = own_competition => {
     localStorage.setItem("own_competition", own_competition)
 }
 
