@@ -215,7 +215,6 @@ const initialState = {
 		email: false,
 		currentUser: null,
         isLoading: false,
-        existStatus:null,
 	}
 }
 
