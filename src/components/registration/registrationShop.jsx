@@ -492,13 +492,13 @@ class RegistrationShop extends Component {
                         {(expandObj.variants || []).map((varnt, vIndex) => {
                             let maxQuantity = this.getMaxVariantsQuantity(this.state.variantOptionId, varnt, expandObj.productId);
                             let isOutOfStock = false;
-                            if (isNullVariants && maxQuantity === 0 && expandObj.inventoryTracking) {
+                            if (isNullVariants && maxQuantity === 0 && expandObj.inventoryTracking && !expandObj.availableIfOutOfStock) {
                                 isOutOfStock = true;
                             }
-                            if (!isNullVariants && maxQuantity === 0 && this.state.variantOptionId && expandObj.inventoryTracking) {
+                            if (!isNullVariants && maxQuantity === 0 && this.state.variantOptionId && expandObj.inventoryTracking && !expandObj.availableIfOutOfStock) {
                                 isOutOfStock = true;
                             }
-                            if (!expandObj.inventoryTracking) {
+                            if (!expandObj.inventoryTracking || expandObj.availableIfOutOfStock) {
                                 maxQuantity = 100000;
                             }
 

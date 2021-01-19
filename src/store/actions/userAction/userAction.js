@@ -196,20 +196,6 @@ function getTeamMembersReviewAction(payload) {
   };
 }
 
-function addChildAction(body, userId, sameEmail) {
-  return {
-    type: ApiConstants.API_ADD_CHILD_LOAD,
-    payload: { body, userId, sameEmail },
-  };
-}
-
-function addParentAction(body, userId, sameEmail) {
-  return {
-    type: ApiConstants.API_ADD_PARENT_LOAD,
-    payload: { body, userId, sameEmail },
-  };
-}
-
 function teamMemberUpdateAction(data) {
   return {
       type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
@@ -244,8 +230,6 @@ export {
   getTeamMembersAction,
   updateReviewInfoAction,
   getTeamMembersReviewAction,
-  addChildAction,
-  addParentAction,
   teamMemberUpdateAction
 }
 

@@ -6,8 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { liveScoreLaddersListAction, clearLadderList } from '../../store/actions/LiveScoreAction/liveScoreLadderAction'
 import history from "../../util/history";
-// import {getLiveScoreCompetiton,setAuthToken, setUserId, setOrganistaionId, setCompetitionID, getAuthToken, getUserId  } from '../../util/sessionStorage'
-import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID, getLiveScoreCompetiton } from '../../util/sessionStorage'
+import { getliveScoreOrgID, setAuthToken, setUserId, setliveScoreOrgID, getLiveScoreCompetition } from '../../util/sessionStorage'
 import { isArrayNotEmpty, getCurrentYear } from '../../util/helpers'
 import { getLiveScoreDivisionList } from '../../store/actions/LiveScoreAction/liveScoreDivisionAction'
 import { fixtureCompetitionListAction } from "../../store/actions/LiveScoreAction/LiveScoreFixtureAction"
@@ -284,7 +283,7 @@ class LiveScorePublicLadder extends Component {
     }
 
     async getCompDetails() {
-        let compDetails = await getLiveScoreCompetiton()
+        let compDetails = await getLiveScoreCompetition()
         return compDetails
     }
 

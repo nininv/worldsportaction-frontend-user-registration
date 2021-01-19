@@ -1418,7 +1418,7 @@ class AppRegistrationFormNew extends Component {
             const { userInfo } = this.props.userRegistrationState;
             let childEmail = registrationObj.email;
             if (getAge(registrationObj.dateOfBirth) <= 18 && childEmail &&(registrationObj.registeringYourself == 1||registrationObj.registeringYourself == 2)) {
-                let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email === childEmail);
+                let isSameWithParentEmail = registrationObj.parentOrGuardian.find(x => x.email.toLowerCase() === childEmail.toLowerCase());
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
                     return false;
