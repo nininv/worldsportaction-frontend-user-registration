@@ -1538,8 +1538,10 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
-                        this.props.getUserExists(registrationObj);
-                        return;
+
+                        // disabled check exist users
+                        // this.props.getUserExists(registrationObj);
+                        // return;
                     }
                     if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
