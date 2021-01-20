@@ -1288,7 +1288,7 @@ class UserProfileEdit extends Component {
                     >
                         <Content>
                             <div className="formView">{this.contentView(getFieldDecorator)}</div>
-                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad} />
+                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad || this.state.isAdding} />
                         </Content>
 
                         <Footer>{this.footerView()}</Footer>
