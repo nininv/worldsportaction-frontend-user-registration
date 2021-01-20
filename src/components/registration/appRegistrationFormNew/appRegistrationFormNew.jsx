@@ -66,6 +66,7 @@ import {
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
     getUserExists,
+    stopStepNavigation,
     sendDigitCode,
     checkDigitCode,
     cancelSend,
@@ -287,6 +288,12 @@ class AppRegistrationFormNew extends Component {
             }
             this.setState({ validateRegistrationCapOnLoad: false })
 
+        }
+
+        if (this.props.userRegistrationState.userAlreadyExist.startStepNavigation == true) {
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+            this.stepNavigation(registrationObj, expiredRegistration);
+            this.props.stopStepNavigation()
         }
     }
 
@@ -1540,8 +1547,8 @@ class AppRegistrationFormNew extends Component {
                         }
 
                         // disabled check exist users
-                        // this.props.getUserExists(registrationObj);
-                        // return;
+                        this.props.getUserExists(registrationObj);
+                        return;
                     }
                     if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -1609,10 +1616,6 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
-    jumpNextStep (step, completed) {
-        console.log('this.state', step)
-        this.setState({ currentStep:step, completedSteps: completed })
-    }
 
     participantDetailsStepView = (getFieldDecorator) => {
         const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
@@ -1620,22 +1623,20 @@ class AppRegistrationFormNew extends Component {
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
-        if (userAlreadyExist && userAlreadyExist.message === "success" || userAlreadyExist.users === false) {
-            this.stepNavigation(registrationObj, expiredRegistration);
-        }
 
-        return (
-            <>
-                {participantWithoutProfile && this.addedParticipantView()}
-                {!participantWithoutProfile && this.addedParticipantWithProfileView()}
-                {this.participantDetailView(getFieldDecorator)}
-                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
-                {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
-                {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
-                <Loader visible={userAlreadyExist.isLoading} />
-                {isYoung && this.parentOrGuardianView(getFieldDecorator)}
-                {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
-            </>
+            return (
+                <>
+                    {participantWithoutProfile && this.addedParticipantView()}
+                    {!participantWithoutProfile && this.addedParticipantWithProfileView()}
+                    {this.participantDetailView(getFieldDecorator)}
+                    {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
+                    {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
+                    {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
+                    <Loader visible={userAlreadyExist.isLoading} />
+                    {isYoung && this.parentOrGuardianView(getFieldDecorator)}
+                    {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
+                </>
+            )
         // let { registrationObj } = this.props.userRegistrationState;
         // console.log("regostratop", registrationObj.dateOfBirth)
         // return (
@@ -1656,7 +1657,6 @@ class AppRegistrationFormNew extends Component {
         //                 </div>
         //             )}
         //     </div>
-        )
     }
 
     addOrSelectParticipantView = () => {
@@ -4150,6 +4150,7 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
+        stopStepNavigation,
         getUserExists,
         sendDigitCode,
         checkDigitCode,

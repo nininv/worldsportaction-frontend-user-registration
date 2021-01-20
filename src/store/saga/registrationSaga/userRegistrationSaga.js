@@ -164,10 +164,10 @@ export function* getSeasonalCasualFeesSaga(action) {
 export function* getUserExists(action) {
   try {
     const {payload} = action;
-    payload.dateOfBirth = moment(payload.dateOfBirth).format('YYYY-MM-DD')
-    const result = yield call(userHttpApi.checkUserMatch, payload);
-    console.log('result of getUserExist',result)
-    if (!result.data) {
+    const DOB = moment(payload.dateOfBirth).format('YYYY-MM-DD')
+    const reqData = {...payload, dateOfBirth:DOB}
+    const result = yield call(userHttpApi.checkUserMatch, reqData);
+    if (result.result.data === false) {
         yield put({
             type: ApiConstants.API_GET_USER_EXIST_DECLINE,
             result,
