@@ -1607,15 +1607,19 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
+    jumpNextStep (step, completed) {
+        console.log('this.state', step)
+        this.setState({ currentStep:step, completedSteps: completed })
+    }
+
     participantDetailsStepView = (getFieldDecorator) => {
-        const { registrationObj, userAlreadyExist, userDigitCode } = this.props.userRegistrationState;
+        const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
         if (userAlreadyExist && userAlreadyExist.message === "success" || userAlreadyExist.users === false) {
-            this.setState({ ...this.state, currentStep: 1 });
-            this.scrollToTop();
+            this.stepNavigation(registrationObj, expiredRegistration);
         }
 
         return (

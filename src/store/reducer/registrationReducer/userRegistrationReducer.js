@@ -814,16 +814,16 @@ function userRegistrationReducer(state = initialState, action){
                 status: action.status,
                 userInfo: userInfoData
 			};
-			
-		case ApiConstants.SELECT_PARTICIPANT: 
+
+		case ApiConstants.SELECT_PARTICIPANT:
 			registrationObjTemp[action.key] = action.data;
 			state.registrationObj = getUserUpdatedRegistrationObj(state,action);
 			setMembershipProductsInfo(state);
-			return { 
-				...state 
+			return {
+				...state
 			}
-		
-		case ApiConstants.UPDATE_USER_REGISTATION_OBJECT: 
+
+		case ApiConstants.UPDATE_USER_REGISTATION_OBJECT:
 			let value = action.data;
 			let key = action.key;
 			if(key == "registrationObj"){
@@ -847,7 +847,7 @@ function userRegistrationReducer(state = initialState, action){
 			}else{
 				state.registrationObj[key] = value;
 			}
-			return { 
+			return {
 				...state
 			}
 
@@ -862,7 +862,7 @@ function userRegistrationReducer(state = initialState, action){
 				if(isNullOrEmptyString(participantId)){
 					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,responseData);
 				}else{
-					//Link previous participant parents for next participant 
+					//Link previous participant parents for next participant
 					state.parents = responseData.parents;
 					state.registeredParents = responseData.registeredParents;
 				}
@@ -875,7 +875,7 @@ function userRegistrationReducer(state = initialState, action){
 			}catch(ex){
 				console.log("Error in success",ex);
 			}
-			
+
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
 			return { ...state, onMembershipLoad: true };
@@ -894,7 +894,7 @@ function userRegistrationReducer(state = initialState, action){
 				membershipProductInfo: individualRegMembershipInfo
 			};
 
-		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT: 
+		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT:
 			let competitionData = action.data;
 			let competitionKey = action.key;
 			let competitionIndex = action.index;
@@ -945,7 +945,7 @@ function userRegistrationReducer(state = initialState, action){
 				...state
 			};
 
-		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
+		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO:
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
 			let additionalInfoSubKey = action.subKey;
@@ -1025,6 +1025,13 @@ function userRegistrationReducer(state = initialState, action){
 					...state,
 					userAlreadyExist: {
 						firstStep: true,
+						users: action.result.result.data,
+					},
+				}
+			case ApiConstants.API_GET_USER_EXIST_DECLINE:
+				return {
+					...state,
+					userAlreadyExist: {
 						users: action.result.result.data,
 					},
 				}

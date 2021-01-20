@@ -15,7 +15,7 @@ function* failSaga(result) {
     message.error(result.result.data.message);
   }, 800);
 }
-  
+
 function* errorSaga(error) {
   yield put({
     type: ApiConstants.API_END_USER_REGISTRATION_ERROR,
@@ -83,10 +83,10 @@ export function* saveParticipantData(action) {
   }
 }
 
-  ////// EndUserRegistration Membership Products 
+  ////// EndUserRegistration Membership Products
 export function* endUserRegistrationMembershipProducts(action) {
   try {
-    const result = yield call(AxiosApi.getEndUserRegMembershipProducts, 
+    const result = yield call(AxiosApi.getEndUserRegMembershipProducts,
           action.payload);
     if (result.status === 1) {
       yield put({
@@ -110,7 +110,7 @@ export function* endUserRegistrationMembershipProducts(action) {
 ////// Org Registration Registration Settings
 export function* orgRegistrationRegistrationSettings(action) {
   try {
-    const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings, 
+    const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings,
           action.payload);
     if (result.status === 1) {
       yield put({
@@ -166,10 +166,18 @@ export function* getUserExists(action) {
     const {payload} = action;
     payload.dateOfBirth = moment(payload.dateOfBirth).format('YYYY-MM-DD')
     const result = yield call(userHttpApi.checkUserMatch, payload);
-    yield put({
-      type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
-      result,
-    });
+    console.log('result of getUserExist',result)
+    if (!result.data) {
+        yield put({
+            type: ApiConstants.API_GET_USER_EXIST_DECLINE,
+            result,
+          });
+    } else {
+        yield put({
+            type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+            result,
+          });
+    }
   } catch (error) {
     yield call(errorSaga, error)
   }
@@ -203,12 +211,12 @@ export function* sendConfirmDetails(action) {
       yield put({
         type: ApiConstants.API_SEND_DIGIT_CODE,
         payload
-      }) 
+      })
     } else {
       yield put({
         type: ApiConstants.API_DECLINE_CONFIRM_DETAILS,
         result
-      }) 
+      })
     }
   } catch (error) {
     yield call(errorSaga, error)
