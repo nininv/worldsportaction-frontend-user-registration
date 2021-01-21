@@ -164,8 +164,17 @@ export function* getSeasonalCasualFeesSaga(action) {
 export function* getUserExists(action) {
   try {
     const {payload} = action;
-    const DOB = moment(payload.dateOfBirth).format('YYYY-MM-DD')
-    const reqData = {...payload, dateOfBirth:DOB}
+    let DOBFormated = '';
+    const DOBMoment = moment(payload.dateOfBirth);
+    if (DOBMoment.isValid()) {
+        DOBFormated = DOBMoment.format('YYYY-MM-DD')
+    } else {
+        const splittedDOB = payload.dateOfBirth.split('-')
+        const reversedSplittedDOB = [splittedDOB[2], splittedDOB[0], splittedDOB[1]]
+        DOBFormated = reversedSplittedDOB.join('-')
+    }
+
+    const reqData = {...payload, dateOfBirth:DOBFormated}
     const result = yield call(userHttpApi.checkUserMatch, reqData);
     if (result.result.data === false) {
         yield put({
