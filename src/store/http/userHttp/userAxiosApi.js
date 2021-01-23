@@ -140,6 +140,29 @@ let userHttpApi = {
     const url = `users/parent/create?childUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
     return Method.dataPost(url, token, {parentUser: payload.body});
   },
+
+  checkUserMatch(payload) {
+    const url = `api/user/existing`;
+    return Method.dataPost(url, token, payload);
+  },
+
+  sendAuthenticationCodeType(payload) {
+    const url = `api/user/existing-auth-code`;
+    return Method.dataPost(url, token, payload);
+  },
+
+  sendDigitCode(payload) {
+    const url = `api/user/existing-digit-code`;
+    return Method.dataPost(url, token, payload);
+  },
+  checkDigitCode(payload) {
+    const url = `api/user/check-existing-digit-code`;
+    return Method.dataPost(url, token, payload);
+  },
+  sendConfirmDetails(payload) {
+    const url = `api/user/confirm-details`;
+    return Method.dataPost(url, token, payload);
+  },
 }
 
 let Method = {

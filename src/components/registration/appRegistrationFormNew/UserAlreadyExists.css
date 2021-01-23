@@ -1,0 +1,25 @@
+.user-already-exists-buttons {
+  margin-top: 16px;
+}
+
+.user-already-exists-section {
+  border: 1px solid var(--app-f5222d);
+}
+
+.user-already-exists-button {
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.user-already-exists-button:disabled {
+  background-color: transparent;
+  background-image: none;
+}
+
+.user-already-exists-ok {
+  margin-left: 16px;
+}
+
+.registration-radio-group__radio {
+  width: 100%;
+}

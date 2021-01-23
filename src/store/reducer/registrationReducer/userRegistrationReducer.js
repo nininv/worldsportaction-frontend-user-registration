@@ -97,7 +97,6 @@ let registrationObjTemp = {
 		"favouriteFireBird": null,
 		"isConsentPhotosGiven": false,
 		"isDisability": null,
-		"disabilityCareNumber": null,
 		"childrenCheckNumber": null,
 		"childrenCheckExpiryDate": null,
 		"lastCaptainName": null,
@@ -206,7 +205,17 @@ const initialState = {
 	seasonalAndCasualFeesCompetitionIndex: null,
 	individualCompetitionNotExist: false,
 	registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
-    enableValidateRegistrationCapService: false
+    enableValidateRegistrationCapService: false,
+	userAlreadyExist: {
+		firstStep: false,
+		secondStep: false,
+		thirdStep: false,
+		users: [],
+		phone: false,
+		email: false,
+		currentUser: null,
+        isLoading: false,
+	}
 }
 
 function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
@@ -243,7 +252,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 				registrationObj.street1 = selectedUser.street1;
 				registrationObj.street2 = selectedUser.street2;
 				registrationObj.suburb = selectedUser.suburb;
-				registrationObj.postalCode = selectedUser.postalCode;	
+				registrationObj.postalCode = selectedUser.postalCode;
 				registrationObj.stateRefId = selectedUser.stateRefId;
 				registrationObj.countryRefId = selectedUser.countryRefId;
 			}else{
@@ -334,7 +343,7 @@ function setMembershipProductsInfo(state,organisationData){
 						competition.registrationRestrictionTypeRefId = competition.competitionInfo.registrationRestrictionTypeRefId;
 						state.registrationObj.competitions.push(competition);
 						state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
-						state.addCompetitionFlag = true; 
+						state.addCompetitionFlag = true;
 					}
 					// else{
 					// 	state.expiredRegistrationFlag = true;
@@ -356,7 +365,7 @@ function setMembershipProductsInfo(state,organisationData){
 				state.registrationObj.competitions[0] = competition;
 			}
 			state.lastAddedCompetitionIndex = state.registrationObj.competitions.length - 1;
-			state.addCompetitionFlag = true; 
+			state.addCompetitionFlag = true;
 		}
 	}catch(ex){
 		console.log("Error in setMembershipProductsInfo in userRegistrationReducer"+ex);
@@ -414,7 +423,7 @@ function getFilteredDivisions(divisions,state){
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 							"divisionName": division.divisionName
-						}      
+						}
 						filteredDivisions.push(div);
 					}
 				}else if(division.genderRefId == null && (division.fromDate != null && division.toDate != null)){
@@ -426,14 +435,14 @@ function getFilteredDivisions(divisions,state){
 							"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 							"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 							"divisionName": division.divisionName
-						}      
+						}
 						filteredDivisions.push(div);
 					}
 				}else if(division.genderRefId != null && (division.fromDate != null && division.toDate != null)){
 					var startDate = moment(division.fromDate, "YYYY-MM-DD");
 					var endDate = moment(division.toDate, "YYYY-MM-DD");
 					// console.log("date",JSON.stringify(date),JSON.stringify(startDate),JSON.stringify(endDate),date.isBefore(endDate),date.isAfter(startDate),division.genderRefId == genderRefId)
-					if (((date.isBefore(endDate) && date.isAfter(startDate)) || (date.isSame(startDate) || date.isSame(endDate))) 
+					if (((date.isBefore(endDate) && date.isAfter(startDate)) || (date.isSame(startDate) || date.isSame(endDate)))
 						&& (division.genderRefId == genderRefId || genderRefId == 3)){
 							console.log("inside 3")
 							let div = {
@@ -441,7 +450,7 @@ function getFilteredDivisions(divisions,state){
 								"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 								"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 								"divisionName": division.divisionName
-							}      
+							}
 							filteredDivisions.push(div);
 					}
 				}else{
@@ -450,8 +459,8 @@ function getFilteredDivisions(divisions,state){
 						"competitionMembershipProductTypeId": division.competitionMembershipProductTypeId,
 						"competitionMembershipProductDivisionId": division.competitionMembershipProductDivisionId,
 						"divisionName": division.divisionName
-					}      
-					filteredDivisions.push(div); 
+					}
+					filteredDivisions.push(div);
 				}
 			}
 		}
@@ -482,7 +491,7 @@ function setValidateRegistrationBySingleProductCapObj(state,competitionIndex,fro
 							"divisionId": divisionItem.competitionMembershipProductDivisionId
 						}
 						validateRegistrationCapObj.products.push(product);
-					} 
+					}
 				}else{
 					let product = {
 						"competitionId": competition.competitionId,
@@ -507,7 +516,7 @@ function setSeasonalFeeAndCasualFeeInput(state,competitionIndex,fromNonProductsO
 	try{
 		let registrationObjTemp = deepCopyFunction(state.registrationObj);
 		let competition = registrationObjTemp.competitions[competitionIndex];
-		let selectedInSameCompetition = state.seasionalAndCasualFeesInputObj ? 
+		let selectedInSameCompetition = state.seasionalAndCasualFeesInputObj ?
 					(state.seasionalAndCasualFeesInputObj.organisationId == competition.organisationId) && (state.seasionalAndCasualFeesInputObj.competitionId == competition.competitionId) : false;
 		if(selectedInSameCompetition){
 			if(fromNonProductsOrDivisions == 1){
@@ -598,7 +607,7 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
 				"membershipTypeName": membershipProductInfo.shortName,
 				"isChecked": competitionData,
-				"isPlayer": membershipProductInfo.isPlayer	
+				"isPlayer": membershipProductInfo.isPlayer
 			}
 			actionCheckBoxProduct = product;
 			state.registrationObj.competitions[competitionIndex].products.push(product);
@@ -615,11 +624,11 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 			let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
 
 			//for prevent loading in fees
-			actionCheckBoxProduct = registrationObjProducts.find(product => product.competitionMembershipProductTypeId == membershipProductInfo.competitionMembershipProductTypeId);	
+			actionCheckBoxProduct = registrationObjProducts.find(product => product.competitionMembershipProductTypeId == membershipProductInfo.competitionMembershipProductTypeId);
 			let filteredProducts = registrationObjProducts.filter(product => product.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
 			if(filteredProducts != undefined){
 				state.registrationObj.competitions[competitionIndex].products = filteredProducts;
-			}	
+			}
 			let filteredDivisionInfo = registrationObjDivisionInfo.filter(divisionInfo => divisionInfo.competitionMembershipProductTypeId != membershipProductInfo.competitionMembershipProductTypeId);
 			if(filteredDivisionInfo != undefined){
 				state.registrationObj.competitions[competitionIndex].divisionInfo = filteredDivisionInfo;
@@ -637,8 +646,8 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 				setValidateRegistrationBySingleProductCapObj(state,competitionIndex,2,actionCheckBoxProduct.isPlayer)
 			}
 		}
-		
-		
+
+
 	}catch(ex){
 		console.log("Error in setMembershipProductsAndDivisionInfo in userRegistrationReducer"+ex);
 	}
@@ -646,11 +655,11 @@ function setMembershipProductsAndDivisionInfo(state,competitionData,competitionI
 
 function updateUmpireCoachWalkingNetball(state){
 	try{
-		state.registrationObj.umpireFlag = state.registrationObj.competitions.find(x => 
+		state.registrationObj.umpireFlag = state.registrationObj.competitions.find(x =>
 			x.products.find(y => y.membershipTypeName == "Umpire")) ? 1 : 0;
-		state.registrationObj.coachFlag = state.registrationObj.competitions.find(x => 
+		state.registrationObj.coachFlag = state.registrationObj.competitions.find(x =>
 			x.products.find(y => y.membershipTypeName == "Coach")) ? 1 : 0;
-		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x => 
+		state.registrationObj.walkingNetballFlag = state.registrationObj.competitions.find(x =>
 			x.products.find(y => y.membershipTypeName == "Walking Netball" || y.membershipTypeName == "Player - Walking Netball")) ? 1 : 0;
 	}catch(ex){
 		console.log("Error in updateUmpireCoachWalkingNetball in userRegistrationReducer"+ex);
@@ -805,16 +814,16 @@ function userRegistrationReducer(state = initialState, action){
                 status: action.status,
                 userInfo: userInfoData
 			};
-			
-		case ApiConstants.SELECT_PARTICIPANT: 
+
+		case ApiConstants.SELECT_PARTICIPANT:
 			registrationObjTemp[action.key] = action.data;
 			state.registrationObj = getUserUpdatedRegistrationObj(state,action);
 			setMembershipProductsInfo(state);
-			return { 
-				...state 
+			return {
+				...state
 			}
-		
-		case ApiConstants.UPDATE_USER_REGISTATION_OBJECT: 
+
+		case ApiConstants.UPDATE_USER_REGISTATION_OBJECT:
 			let value = action.data;
 			let key = action.key;
 			if(key == "registrationObj"){
@@ -838,7 +847,7 @@ function userRegistrationReducer(state = initialState, action){
 			}else{
 				state.registrationObj[key] = value;
 			}
-			return { 
+			return {
 				...state
 			}
 
@@ -853,7 +862,7 @@ function userRegistrationReducer(state = initialState, action){
 				if(isNullOrEmptyString(participantId)){
 					registrationObjTemp = updateParticipantByIdByMembershipInfo(state,responseData);
 				}else{
-					//Link previous participant parents for next participant 
+					//Link previous participant parents for next participant
 					state.parents = responseData.parents;
 					state.registeredParents = responseData.registeredParents;
 				}
@@ -866,7 +875,7 @@ function userRegistrationReducer(state = initialState, action){
 			}catch(ex){
 				console.log("Error in success",ex);
 			}
-			
+
 
 		case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_LOAD:
 			return { ...state, onMembershipLoad: true };
@@ -885,7 +894,7 @@ function userRegistrationReducer(state = initialState, action){
 				membershipProductInfo: individualRegMembershipInfo
 			};
 
-		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT: 
+		case ApiConstants.UPDATE_PARTICIPANT_COMPETITION_OBJECT:
 			let competitionData = action.data;
 			let competitionKey = action.key;
 			let competitionIndex = action.index;
@@ -927,7 +936,7 @@ function userRegistrationReducer(state = initialState, action){
 			return {
 				...state
 			};
-		
+
 		case ApiConstants.UPDATE_USER_REGISTRATION_STATE_VAR:
 			let stateKey = action.key;
 			let stateData = action.data;
@@ -936,7 +945,7 @@ function userRegistrationReducer(state = initialState, action){
 				...state
 			};
 
-		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO: 
+		case ApiConstants.UPDATE_PARTICIPANT_ADDITIONAL_INFO:
 			let additionalInfoKey = action.key;
 			let additionalInfoData = action.data;
 			let additionalInfoSubKey = action.subKey;
@@ -970,7 +979,7 @@ function userRegistrationReducer(state = initialState, action){
 
 			case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
 				return { ...state, onLoad: true };
-	
+
 			case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
 				let registrationSettings = action.result;
 				setRegistrationSetting(state,registrationSettings);
@@ -980,9 +989,9 @@ function userRegistrationReducer(state = initialState, action){
 					status: action.status
 				};
 
-			case ApiConstants.API_EXPIRED_REGISTRATION_LOAD: 
+			case ApiConstants.API_EXPIRED_REGISTRATION_LOAD:
 				return {...state,onLoad: true}
-			
+
 			case ApiConstants.API_EXPIRED_REGISTRATION_SUCCESS:
 				let expiredRegistrationTemp = action.result;
 				console.log("sersf",expiredRegistrationTemp)
@@ -1011,8 +1020,83 @@ function userRegistrationReducer(state = initialState, action){
 					console.log("Error in API_GET_SEASONAL_CASUAL_FEES_SUCCESS::"+ex);
 				}
 
-        default:
-            return state;
+			case ApiConstants.API_GET_USER_EXIST_SUCCESS:
+				return {
+					...state,
+					userAlreadyExist: {
+						firstStep: true,
+						users: action.result.result.data,
+					},
+				}
+			case ApiConstants.API_GET_USER_EXIST_DECLINE:
+				return {
+					...state,
+					userAlreadyExist: {
+						users: action.result.result.data,
+					},
+				}
+			case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						secondStep: false,
+						thirdStep: true,
+						message: action.result.result.data.message,
+						isLoading: false,
+					},
+					userDigitCode: {
+						message: action.result.result.data.message,
+					}
+				}
+			case ApiConstants.API_DECLINE_CONFIRM_DETAILS:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						secondStep: false,
+						thirdStep: true,
+						message: action.result.result.data.message,
+						isLoading: false
+					}
+				}
+			case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
+				return {
+                    ...state,
+                    userAlreadyExist: {
+                        ...state.userAlreadyExist,
+                        message: action.result.result.data.message,
+                        isLoading: false
+                    },
+				}
+			case ApiConstants.API_CANCEL_SEND:
+				return {
+					...state,
+					userAlreadyExist: {
+						firstStep: false,
+						secondStep: false,
+						users: [],
+					}
+				}
+			case ApiConstants.API_START_CONFIRM:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						firstStep: false,
+						secondStep: true,
+						currentUser: action.payload
+					}
+				}
+			case ApiConstants.API_PARTICIPANT_DETAILS_LOAD:
+				return {
+					...state,
+					userAlreadyExist: {
+						...state.userAlreadyExist,
+						isLoading: true
+					}
+				}
+        default: return state;
     }
 }
 

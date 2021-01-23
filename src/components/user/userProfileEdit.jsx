@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { NavLink } from "react-router-dom";
 import {
     Layout,
     Breadcrumb,
@@ -12,26 +15,23 @@ import {
     message,
     Modal
 } from "antd";
-import moment from 'moment';
-import InputWithHead from "../../customComponents/InputWithHead";
-import DashboardLayout from "../../pages/dashboardLayout";
+import moment from "moment";
+
 import AppConstants from "../../themes/appConstants";
-import {
-    addChildAction, addParentAction, userProfileUpdateAction
-} from '../../store/actions/userAction/userAction';
 import ValidationConstants from "../../themes/validationConstant";
-import { connect } from 'react-redux';
-import { NavLink } from "react-router-dom";
+import history from "../../util/history";
+import { regexNumberExpression } from "../../util/helpers";
+import { setTempUserId, getUserId } from "../../util/sessionStorage";
 import {
     getCommonRefData, countryReferenceAction, nationalityReferenceAction,
     genderReferenceAction, disabilityReferenceAction, combinedAccreditationUmpieCoachRefrence
-} from '../../store/actions/commonAction/commonAction';
-import { bindActionCreators } from 'redux';
-import history from '../../util/history'
-import Loader from '../../customComponents/loader';
-import { setTempUserId, getUserId } from "../../util/sessionStorage";
-import { regexNumberExpression } from '../../util/helpers';
+} from "../../store/actions/commonAction/commonAction";
+import UserAxiosApi from "../../store/http/userHttp/userAxiosApi";
+import { userProfileUpdateAction } from "../../store/actions/userAction/userAction";
+import InputWithHead from "../../customComponents/InputWithHead";
+import Loader from "../../customComponents/loader";
 import PlacesAutocomplete from "../registration/elements/PlaceAutoComplete";
+import DashboardLayout from "../../pages/dashboardLayout";
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -91,7 +91,8 @@ class UserProfileEdit extends Component {
             hasErrorAddressNumber: false,
             venueAddressError: '',
             manualAddress: false,
-            storedEmailAddress: null
+            storedEmailAddress: null,
+            isAdding: false,
         };
         this.confirmOpend = false;
         // this.props.getCommonRefData();
@@ -100,13 +101,13 @@ class UserProfileEdit extends Component {
         this.props.genderReferenceAction();
         this.props.disabilityReferenceAction();
         this.formRef = React.createRef();
-        this.props.combinedAccreditationUmpieCoachRefrence()
+        this.props.combinedAccreditationUmpieCoachRefrence();
     }
 
     async componentDidMount() {
         if (this.props.history.location.state) {
             let titleLabel = "";
-            let section = ""
+            let section = "";
             let data = this.props.history.location.state.userData;
             let moduleFrom = this.props.history.location.state.moduleFrom;
 
@@ -114,7 +115,7 @@ class UserProfileEdit extends Component {
                 titleLabel = AppConstants.edit + ' ' + AppConstants.address;
                 section = "address";
             } else if (moduleFrom == "2") {
-                titleLabel = AppConstants.edit + ' ' + AppConstants.parentOrGuardianDetail
+                titleLabel = AppConstants.edit + ' ' + AppConstants.parentOrGuardianDetail;
                 section = "primary";
             } else if (moduleFrom == "3") {
                 titleLabel = AppConstants.edit + ' ' + AppConstants.emergencyContacts;
@@ -155,14 +156,14 @@ class UserProfileEdit extends Component {
                 titleLabel: titleLabel,
                 section: section,
                 loadValue: true
-            })
+            });
             setTempUserId(data.userId);
         }
     }
 
     componentDidUpdate(nextProps) {
         if (this.state.loadValue) {
-            this.setState({ loadValue: false })
+            this.setState({ loadValue: false });
             if (this.state.displaySection == "1") {
                 this.setAddressFormFields();
             } else if (this.state.displaySection == "2") {
@@ -177,7 +178,7 @@ class UserProfileEdit extends Component {
         }
         let userState = this.props.userState;
         if (userState.onUpUpdateLoad == false && this.state.saveLoad == true) {
-            this.setState({ saveLoad: false })
+            this.setState({ saveLoad: false });
             if (userState.status == 1) {
                 if (this.state.isSameUserEmailChanged) {
                     this.logout();
@@ -205,20 +206,21 @@ class UserProfileEdit extends Component {
 
     setAddressFormFields = () => {
         let userData = this.state.userData;
-        this.setState({ storedEmailAddress: userData.email })
+        this.setState({ storedEmailAddress: userData.email });
         this.props.form.setFieldsValue({
             firstName: userData.firstName,
             lastName: userData.lastName,
             mobileNumber: userData.mobileNumber,
-            dateOfBirth: ((userData.dateOfBirth != null && userData.dateOfBirth != '') ?
-                moment(userData.dateOfBirth, "YYYY-MM-DD") : null),
+            dateOfBirth: ((userData.dateOfBirth != null && userData.dateOfBirth != '')
+                ? moment(userData.dateOfBirth, "YYYY-MM-DD")
+                : null),
             street1: userData.street1,
             email: userData.email,
             suburb: userData.suburb,
             stateRefId: userData.stateRefId,
             postalCode: userData.postalCode,
         })
-    }
+    };
 
     setPrimaryContactFormFields = () => {
         let userData = this.state.userData;
@@ -230,9 +232,9 @@ class UserProfileEdit extends Component {
             email: userData.email,
             suburb: userData.suburb,
             stateRefId: userData.stateRefId,
-            postalCode: userData.postalCode
-        })
-    }
+            postalCode: userData.postalCode,
+        });
+    };
 
     setEmergencyFormField = () => {
         let userData = this.state.userData;
@@ -240,32 +242,32 @@ class UserProfileEdit extends Component {
             emergencyFirstName: userData.emergencyFirstName,
             emergencyLastName: userData.emergencyLastName,
             emergencyContactNumber: userData.emergencyContactNumber,
-        })
-    }
+        });
+    };
 
     setOtherInfoFormField = () => {
         let userData = this.state.userData;
-        let personalData = this.props.location.state ? this.props.location.state.personalData ? this.props.location.state.personalData : null : null
+        let personalData = this.props.location.state ? this.props.location.state.personalData ? this.props.location.state.personalData : null : null;
 
         if (personalData) {
-            userData['accreditationCoachExpiryDate'] = personalData.accreditationCoachExpiryDate
-            userData['accreditationLevelCoachRefId'] = personalData.accreditationLevelCoachRefId
-            userData['accreditationLevelUmpireRefId'] = personalData.accreditationLevelUmpireRefId
-            userData['accreditationUmpireExpiryDate'] = personalData.accreditationUmpireExpiryDate
+            userData.accreditationCoachExpiryDate = personalData.accreditationCoachExpiryDate;
+            userData.accreditationLevelCoachRefId = personalData.accreditationLevelCoachRefId;
+            userData.accreditationLevelUmpireRefId = personalData.accreditationLevelUmpireRefId;
+            userData.accreditationUmpireExpiryDate = personalData.accreditationUmpireExpiryDate;
 
             setTimeout(() => {
                 this.props.form.setFieldsValue({
-                    [`accreditationLevelUmpireRefId`]: personalData.accreditationLevelUmpireRefId,
-                    [`accreditationLevelCoachRefId`]: personalData.accreditationLevelCoachRefId,
-                    [`accreditationUmpireExpiryDate`]: personalData.accreditationUmpireExpiryDate && moment(personalData.accreditationUmpireExpiryDate),
-                    [`accreditationCoachExpiryDate`]: personalData.accreditationCoachExpiryDate && moment(personalData.accreditationCoachExpiryDate),
-                })
+                    accreditationLevelUmpireRefId: personalData.accreditationLevelUmpireRefId,
+                    accreditationLevelCoachRefId: personalData.accreditationLevelCoachRefId,
+                    accreditationUmpireExpiryDate: personalData.accreditationUmpireExpiryDate && moment(personalData.accreditationUmpireExpiryDate),
+                    accreditationCoachExpiryDate: personalData.accreditationCoachExpiryDate && moment(personalData.accreditationCoachExpiryDate),
+                });
             }, 1000);
         }
         this.props.form.setFieldsValue({
             genderRefId: userData.genderRefId ? parseInt(userData.genderRefId) : null,
-        })
-    }
+        });
+    };
 
     onChangeSetValue = (value, key) => {
         let data = this.state.userData;
@@ -275,7 +277,7 @@ class UserProfileEdit extends Component {
                 data["disabilityTypeRefId"] = null;
             }
         } else if (key === "dateOfBirth") {
-            value = (moment(value).format("YYYY-MM-DD"))
+            value = (moment(value).format("MM-DD-YYYY"));
         } else if (key === "email" && this.state.section === "address") {
             if (data.userId == getUserId()) {
                 this.setState({ isSameUserEmailChanged: true });
@@ -286,14 +288,14 @@ class UserProfileEdit extends Component {
             if (value.length === 10) {
                 this.setState({
                     hasErrorAddressEdit: false
-                })
-                value = regexNumberExpression(value)
+                });
+                value = regexNumberExpression(value);
             } else if (value.length < 10) {
                 this.setState({
                     hasErrorAddressEdit: true
-                })
+                });
 
-                value = regexNumberExpression(value)
+                value = regexNumberExpression(value);
 
                 if (regexNumberExpression(value) == undefined) {
                     setTimeout(() => {
@@ -304,67 +306,64 @@ class UserProfileEdit extends Component {
                 }
             }
         } else if (key === "emergencyContactNumber") {
-            if (value.length == 10) {
+            if (value.length === 10) {
                 this.setState({
                     hasErrorEmergency: false
-                })
+                });
                 value = regexNumberExpression(value)
             } else if (value.length < 10) {
                 this.setState({
                     hasErrorEmergency: true
-                })
+                });
 
-                value = regexNumberExpression(value)
+                value = regexNumberExpression(value);
 
                 if (regexNumberExpression(value) == undefined) {
                     setTimeout(() => {
                         this.props.form.setFieldsValue({
                             emergencyContactNumber: this.state.userData.emergencyContactNumber,
-                        })
+                        });
                     }, 300);
                 }
             }
         }
 
         if (key === 'accreditationLevelUmpireRefId') {
-            data['accreditationUmpireExpiryDate'] = null
+            data.accreditationUmpireExpiryDate = null;
             this.props.form.setFieldsValue({
-                [`accreditationUmpireExpiryDate`]: null,
-            })
+                accreditationUmpireExpiryDate: null,
+            });
         }
 
         if (key === 'accreditationLevelCoachRefId') {
-            data['accreditationCoachExpiryDate'] = null
+            data.accreditationCoachExpiryDate = null;
             this.props.form.setFieldsValue({
-                [`accreditationCoachExpiryDate`]: null,
-            })
+                accreditationCoachExpiryDate: null,
+            });
         }
         data[key] = value;
 
         this.setState({ userData: data });
-    }
-
-    ///////view for breadcrumb
-    headerView = () => {
-        return (
-            <div className="header-view">
-                <Header
-                    className="form-header-view"
-                    style={{
-                        backgroundColor: "transparent",
-                        display: "flex",
-                        alignItems: "center"
-                    }}
-                >
-                    <Breadcrumb separator=" > ">
-                        <Breadcrumb.Item className="breadcrumb-add">
-                            {this.state.titleLabel}
-                        </Breadcrumb.Item>
-                    </Breadcrumb>
-                </Header>
-            </div>
-        );
     };
+
+    headerView = () => (
+        <div className="header-view">
+            <Header
+                className="form-header-view"
+                style={{
+                    backgroundColor: "transparent",
+                    display: "flex",
+                    alignItems: "center"
+                }}
+            >
+                <Breadcrumb separator=" > ">
+                    <Breadcrumb.Item className="breadcrumb-add">
+                        {this.state.titleLabel}
+                    </Breadcrumb.Item>
+                </Breadcrumb>
+            </Header>
+        </div>
+    );
 
     handlePlacesAutocomplete = (data) => {
         const { stateListData } = this.props.commonReducerState;
@@ -375,11 +374,11 @@ class UserProfileEdit extends Component {
         if (!address || !address.suburb) {
             this.setState({
                 venueAddressError: ValidationConstants.venueAddressDetailsError,
-            })
+            });
         } else {
             this.setState({
                 venueAddressError: ''
-            })
+            });
         }
 
         this.setState({
@@ -396,15 +395,15 @@ class UserProfileEdit extends Component {
         //     postcode: address.postcode || null,
         // });
         if (address) {
-            userData['street1'] = address.addressOne
-            userData['stateRefId'] = stateRefId
-            userData['suburb'] = address.suburb
-            userData['postalCode'] = address.postcode
+            userData['street1'] = address.addressOne;
+            userData['stateRefId'] = stateRefId;
+            userData['suburb'] = address.suburb;
+            userData['postalCode'] = address.postcode;
         }
     };
 
     addressEdit = (getFieldDecorator) => {
-        let userData = this.state.userData
+        let userData = this.state.userData;
         const { stateListData } = this.props.commonReducerState;
         let hasErrorAddressEdit = this.state.hasErrorAddressEdit;
 
@@ -412,42 +411,41 @@ class UserProfileEdit extends Component {
             ? stateListData.find((state) => state.id == userData.stateRefId).name
             : null;
 
-        let defaultVenueAddress = null
+        let defaultVenueAddress = null;
         if (userData.street1) {
-            defaultVenueAddress = `${userData.street1 && `${userData.street1},`
-                } ${userData.suburb && `${userData.suburb},`
-                } ${state && `${state},`
-                } `;
+            defaultVenueAddress = `${userData.street1 && `${userData.street1},`} ${userData.suburb && `${userData.suburb},`} ${state && `${state},`} `;
         }
+
         return (
             <div className="pt-0">
                 <div className="row">
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('firstName', {
                                 rules: [{ required: true, message: ValidationConstants.firstName }],
                             })(
                                 <InputWithHead
-                                    required={"required-field pb-0"}
+                                    required="required-field pb-0"
                                     heading={AppConstants.firstName}
                                     placeholder={AppConstants.firstName}
-                                    name={'firstName'}
+                                    name="firstName"
                                     setFieldsValue={userData.firstName}
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "firstName")}
                                 />
                             )}
                         </Form.Item>
                     </div>
+
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('lastName', {
                                 rules: [{ required: false }],
                             })(
                                 <InputWithHead
-                                    required={"required-field pb-0"}
+                                    required="required-field pb-0"
                                     heading={AppConstants.lastName}
                                     placeholder={AppConstants.lastName}
-                                    name={'lastName'}
+                                    name="lastName"
                                     setFieldsValue={userData.lastName}
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "lastName")}
                                 />
@@ -470,27 +468,29 @@ class UserProfileEdit extends Component {
                         <DatePicker
                             size="large"
                             placeholder="dd-mm-yyyy"
-                            style={{ width: "100%", }}
+                            style={{ width: "100%" }}
                             onChange={e => this.onChangeSetValue(e, "dateOfBirth")}
                             format="DD-MM-YYYY"
                             showTime={false}
-                            name={'dateOfBirth'}
+                            name="dateOfBirth"
                             value={userData.dateOfBirth ? moment(userData.dateOfBirth) : null}
                         />
                     </div>
                 </div>
 
                 {/* todo: below needs to be properly handled. hiding it now */}
-                {/*{(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (*/}
-                {/*    <Checkbox*/}
-                {/*        className="single-checkbox"*/}
-                {/*        checked={this.state.isSameEmail}*/}
-                {/*        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}*/}
-                {/*    >*/}
-                {/*        {this.state.titleLabel === AppConstants.addParent_guardian*/}
-                {/*            ? AppConstants.useChildEmail : AppConstants.useParentEmail}*/}
-                {/*    </Checkbox>*/}
-                {/*)}*/}
+                {/*
+                {(this.state.titleLabel === AppConstants.addParent_guardian || this.state.titleLabel === AppConstants.addChild) && (
+                    <Checkbox
+                        className="single-checkbox"
+                        checked={this.state.isSameEmail}
+                        onChange={(e) => this.setState({ isSameEmail: e.target.checked })}
+                    >
+                        {this.state.titleLabel === AppConstants.addParent_guardian
+                            ? AppConstants.useChildEmail : AppConstants.useParentEmail}
+                    </Checkbox>
+                )}
+                */}
 
                 {(!this.state.isSameEmail
                     || (this.state.titleLabel !== AppConstants.addChild
@@ -505,10 +505,10 @@ class UserProfileEdit extends Component {
                                         rules: [{ required: true, message: ValidationConstants.contactField }],
                                     })(
                                         <InputWithHead
-                                            required={"required-field pb-0 pt-3"}
+                                            required="required-field pb-0 pt-3"
                                             heading={AppConstants.contactMobile}
                                             placeholder={AppConstants.contactMobile}
-                                            name={'mobileNumber'}
+                                            name="mobileNumber"
                                             setFieldsValue={userData.mobileNumber}
                                             onChange={(e) => this.onChangeSetValue(e.target.value, "mobileNumber")}
                                             maxLength={10}
@@ -517,12 +517,10 @@ class UserProfileEdit extends Component {
                                 </Form.Item>
                             </div>
                             <div className="col-sm">
-                                <Form.Item >
+                                <Form.Item>
                                     {getFieldDecorator('email', {
                                         rules: [
-                                            {
-                                                required: true, message: ValidationConstants.emailField[0]
-                                            },
+                                            { required: true, message: ValidationConstants.emailField[0] },
                                             {
                                                 type: "email",
                                                 pattern: new RegExp(AppConstants.emailExp),
@@ -531,10 +529,10 @@ class UserProfileEdit extends Component {
                                         ],
                                     })(
                                         <InputWithHead
-                                            required={"required-field pb-0 pt-3"}
+                                            required="required-field pb-0 pt-3"
                                             heading={AppConstants.contactEmail}
                                             placeholder={AppConstants.contactEmail}
-                                            name={'email'}
+                                            name="email"
                                             setFieldsValue={userData.email}
                                             onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
                                         />
@@ -573,10 +571,10 @@ class UserProfileEdit extends Component {
                                 // required="required-field"
                                 heading={AppConstants.addressOne}
                                 placeholder={AppConstants.addressOne}
-                                name={'street1'}
+                                name="street1"
                                 value={userData?.street1}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "street1")}
-                            // readOnly
+                                // readOnly
                             />
                         </div>
                         <div className="col-sm">
@@ -585,7 +583,7 @@ class UserProfileEdit extends Component {
                                 // style={{ marginTop: 9 }}
                                 heading={AppConstants.addressTwo}
                                 placeholder={AppConstants.addressTwo}
-                                name={'street2'}
+                                name="street2"
                                 value={userData?.street2}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "street2")}
                             />
@@ -601,25 +599,25 @@ class UserProfileEdit extends Component {
                                 heading={AppConstants.suburb}
                                 placeholder={AppConstants.suburb}
                                 // required="required-field"
-                                name={'suburb'}
+                                name="suburb"
                                 value={userData?.suburb}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "suburb")}
-                            // readOnly
+                                // readOnly
                             />
                         </div>
                         <div className="col-sm">
-                            <div >
+                            <div>
                                 <InputWithHead heading={AppConstants.stateHeading} />
                             </div>
                             <Select
                                 style={{ width: '100%', paddingRight: 1, minWidth: 182 }}
                                 placeholder={AppConstants.select}
                                 // required="required-field"
-                                value={userData ?.stateRefId}
+                                value={userData?.stateRefId}
                                 name="stateRefId"
                                 onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
-                            // readOnly
-                            // disabled
+                                // readOnly
+                                // disabled
                             >
                                 {stateListData.map((item) => (
                                     <Option key={'state_' + item.id} value={item.id}>{item.name}</Option>
@@ -634,28 +632,28 @@ class UserProfileEdit extends Component {
                             <InputWithHead
                                 heading={AppConstants.postCode}
                                 placeholder={AppConstants.postCode}
-                                name={'postalCode'}
+                                name="postalCode"
                                 value={userData?.postalCode}
                                 onChange={(e) => this.onChangeSetValue(e.target.value, "postalCode")}
                                 maxLength={4}
-                            // readOnly
+                                // readOnly
                             />
                         </div>
                         <div className="col-sm" />
                     </div>
                 )}
-            </div >
+            </div>
         );
     };
 
     primaryContactEdit = (getFieldDecorator) => {
-        let userData = this.state.userData
+        let userData = this.state.userData;
         const { stateList } = this.props.commonReducerState;
         return (
             <div className="content-view pt-0">
-                <div className='row'>
+                <div className="row">
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('firstName', {
                                 rules: [{ required: true, message: ValidationConstants.firstName }],
                             })(
@@ -663,7 +661,7 @@ class UserProfileEdit extends Component {
                                     required="required-field"
                                     heading={AppConstants.firstName}
                                     placeholder={AppConstants.firstName}
-                                    name={'firstName'}
+                                    name="firstName"
                                     setFieldsValue={userData.firstName}
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "firstName")}
                                 />
@@ -671,7 +669,7 @@ class UserProfileEdit extends Component {
                         </Form.Item>
                     </div>
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('lastName', {
                                 rules: [{ required: false }],
                             })(
@@ -679,7 +677,7 @@ class UserProfileEdit extends Component {
                                     required="required-field"
                                     heading={AppConstants.lastName}
                                     placeholder={AppConstants.lastName}
-                                    name={'lastName'}
+                                    name="lastName"
                                     setFieldsValue={userData.lastName}
                                     onChange={(e) => this.onChangeSetValue(e.target.value, "lastName")}
                                 />
@@ -687,7 +685,7 @@ class UserProfileEdit extends Component {
                         </Form.Item>
                     </div>
                 </div>
-                <div className='row'>
+                <div className="row">
                     <div className="col-sm" style={{ paddingTop: "11px" }}>
                         <InputWithHead
                             style={{ marginTop: "9px" }}
@@ -733,7 +731,7 @@ class UserProfileEdit extends Component {
                             onChange={(e) => this.onChangeSetValue(e, "stateRefId")}
                         >
                             {stateList.length > 0 && stateList.map((item) => (
-                                < Option value={item.id}> {item.name}</Option>
+                                <Option value={item.id}>{item.name}</Option>
                             ))}
                         </Select>
                     </div>
@@ -752,7 +750,7 @@ class UserProfileEdit extends Component {
                         />
                     </div>
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('email', {
                                 rules: [{ required: true, message: ValidationConstants.emailField[0] }],
                             })(
@@ -767,10 +765,9 @@ class UserProfileEdit extends Component {
                         </Form.Item>
                     </div>
                 </div>
-
                 <div className="row">
                     <div className="col-sm">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('mobileNumber', {
                                 rules: [{ required: true, message: ValidationConstants.contactField }],
                             })(
@@ -791,13 +788,13 @@ class UserProfileEdit extends Component {
     };
 
     emergencyContactEdit = (getFieldDecorator) => {
-        let userData = this.state.userData
-        let hasErrorEmergency = this.state.hasErrorEmergency
+        let userData = this.state.userData;
+        let hasErrorEmergency = this.state.hasErrorEmergency;
         return (
             <div className="content-view pt-0">
-                <div className='row'>
+                <div className="row">
                     <div className="col-sm-12 col-md-6">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('emergencyFirstName', {
                                 rules: [{ required: true, message: ValidationConstants.emergencyContactName[0] }],
                             })(
@@ -813,7 +810,7 @@ class UserProfileEdit extends Component {
                         </Form.Item>
                     </div>
                     <div className="col-sm-12 col-md-6">
-                        <Form.Item >
+                        <Form.Item>
                             {getFieldDecorator('emergencyLastName', {
                                 rules: [{ required: true, message: ValidationConstants.emergencyContactName[1] }],
                             })(
@@ -854,7 +851,7 @@ class UserProfileEdit extends Component {
     };
 
     otherInfoEdit = (getFieldDecorator) => {
-        let userData = this.state.userData
+        let userData = this.state.userData;
         const { countryList, nationalityList, genderList, umpireAccreditation, coachAccreditation } = this.props.commonReducerState;
         return (
             <div className="content-view pt-0">
@@ -862,15 +859,16 @@ class UserProfileEdit extends Component {
                     <div className="col-sm">
                         <div style={{ paddingTop: "11px", paddingBottom: "10px" }}>
                             <InputWithHead heading={AppConstants.gender} required="required-field" />
-                            <Form.Item >
+                            <Form.Item>
                                 {getFieldDecorator(`genderRefId`, {
                                     rules: [{ required: true, message: ValidationConstants.genderField }],
                                 })(
                                     <Radio.Group
                                         className="reg-competition-radio"
                                         onChange={(e) => this.onChangeSetValue(e.target.value, "genderRefId")}
-                                        setFieldsValue={userData.genderRefId}>
-                                        {(genderList || []).map((gender, genderIndex) => (
+                                        setFieldsValue={userData.genderRefId}
+                                    >
+                                        {(genderList || []).map((gender) => (
                                             <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
                                         ))}
                                     </Radio.Group>
@@ -880,24 +878,26 @@ class UserProfileEdit extends Component {
 
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelUmpire} required="required-field" />
-                            <Form.Item >
+                            <Form.Item>
                                 {getFieldDecorator(`accreditationLevelUmpireRefId`, {
                                     rules: [{ required: true, message: ValidationConstants.accreditationLevelUmpire }],
                                 })(
                                     <Radio.Group
                                         className="registration-radio-group"
                                         onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelUmpireRefId")}
-                                    // setFieldsValue={userData.accreditationLevelUmpireRefId}
+                                        // setFieldsValue={userData.accreditationLevelUmpireRefId}
                                     >
-                                        {(umpireAccreditation || []).map((accreditaiton, accreditationIndex) => (
-                                            <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                        {(umpireAccreditation || []).map((accreditation) => (
+                                            <Radio style={{ marginBottom: "10px" }} key={accreditation.id} value={accreditation.id}>
+                                                {accreditation.description}
+                                            </Radio>
                                         ))}
                                     </Radio.Group>
                                 )}
                             </Form.Item>
 
                             {(userData.accreditationLevelUmpireRefId != 1 && userData.accreditationLevelUmpireRefId != null) && (
-                                <Form.Item >
+                                <Form.Item>
                                     {getFieldDecorator(`accreditationUmpireExpiryDate`, {
                                         rules: [{ required: true, message: ValidationConstants.expiryDateRequire }],
                                     })(
@@ -918,7 +918,7 @@ class UserProfileEdit extends Component {
 
                         <div>
                             <InputWithHead heading={AppConstants.nationalAccreditationLevelCoach} required="required-field" />
-                            <Form.Item >
+                            <Form.Item>
                                 {getFieldDecorator(`accreditationLevelCoachRefId`, {
                                     rules: [{ required: true, message: ValidationConstants.accreditationLevelCoach }],
                                 })(
@@ -926,17 +926,17 @@ class UserProfileEdit extends Component {
                                         style={{ display: "flex", flexDirection: "column" }}
                                         className="registration-radio-group"
                                         onChange={(e) => this.onChangeSetValue(e.target.value, "accreditationLevelCoachRefId")}
-                                    // setFieldsValue={userData.accreditationLevelCoachRefId}
+                                        // setFieldsValue={userData.accreditationLevelCoachRefId}
                                     >
-                                        {(coachAccreditation || []).map((accreditaiton, accreditationIndex) => (
-                                            <Radio style={{ marginBottom: "10px" }} key={accreditaiton.id} value={accreditaiton.id}>{accreditaiton.description}</Radio>
+                                        {(coachAccreditation || []).map((accreditation) => (
+                                            <Radio style={{ marginBottom: "10px" }} key={accreditation.id} value={accreditation.id}>{accreditation.description}</Radio>
                                         ))}
                                     </Radio.Group>
                                 )}
                             </Form.Item>
 
                             {(userData.accreditationLevelCoachRefId != 1 && userData.accreditationLevelCoachRefId != null) && (
-                                <Form.Item >
+                                <Form.Item>
                                     {getFieldDecorator(`accreditationCoachExpiryDate`, {
                                         rules: [{ required: true, message: ValidationConstants.expiryDateRequire }],
                                     })(
@@ -959,7 +959,7 @@ class UserProfileEdit extends Component {
                 </div>
                 {userData.userRegistrationId != null && (
                     <div>
-                        <div className='row'>
+                        <div className="row">
                             <div className="col-sm">
                                 <div style={{ paddingTop: "11px", paddingBottom: "10px" }}>
                                     <InputWithHead heading={AppConstants.childCountry} />
@@ -971,8 +971,8 @@ class UserProfileEdit extends Component {
                                     value={userData.countryRefId}
                                     name={'countryRefId'}
                                 >
-                                    {countryList.length > 0 && countryList.map((country, index) => (
-                                        <Option key={country.id} value={country.id}> {country.description}</Option>
+                                    {countryList.length > 0 && countryList.map((country) => (
+                                        <Option key={country.id} value={country.id}>{country.description}</Option>
                                     ))}
                                 </Select>
                             </div>
@@ -991,8 +991,8 @@ class UserProfileEdit extends Component {
                                     value={userData.nationalityRefId}
                                     name={"nationalityRefId"}
                                 >
-                                    {nationalityList.length > 0 && nationalityList.map((nation, index) => (
-                                        < Option key={nation.id} value={nation.id}> {nation.description}</Option>
+                                    {nationalityList.length > 0 && nationalityList.map((nation) => (
+                                        <Option key={nation.id} value={nation.id}>{nation.description}</Option>
                                     ))}
                                 </Select>
                             </div>
@@ -1043,12 +1043,12 @@ class UserProfileEdit extends Component {
     };
 
     medicalEdit = (getFieldDecorator) => {
-        let userData = this.state.userData
+        let userData = this.state.userData;
         let { disabilityList } = this.props.commonReducerState;
 
         return (
             <div className="formView pt-5" style={{ paddingBottom: "40px" }}>
-                {/* <span className="form-heading"> {AppConstants.additionalInfoReqd} </span>    */}
+                {/* <span className="form-heading">{AppConstants.additionalInfoReqd}</span> */}
                 <InputWithHead heading={AppConstants.existingMedConditions} />
                 <TextArea
                     placeholder={AppConstants.existingMedConditions}
@@ -1098,7 +1098,7 @@ class UserProfileEdit extends Component {
                 </div>
             </div>
         )
-    }
+    };
 
     contentView = (getFieldDecorator) => {
         const { displaySection } = this.state;
@@ -1113,7 +1113,9 @@ class UserProfileEdit extends Component {
                     <div>{this.primaryContactEdit(getFieldDecorator)}</div>
                 )} */}
 
-                {(displaySection === "1" || displaySection === "2" || displaySection === "6" || displaySection === "7" || displaySection === "8") && <div>{this.addressEdit(getFieldDecorator)}</div>}
+                {(displaySection === "1" || displaySection === "2" || displaySection === "6" || displaySection === "7" || displaySection === "8") && (
+                    <div>{this.addressEdit(getFieldDecorator)}</div>
+                )}
 
                 {displaySection == "3" && (
                     <div>{this.emergencyContactEdit(getFieldDecorator)}</div>
@@ -1133,6 +1135,7 @@ class UserProfileEdit extends Component {
     onSaveClick = (e) => {
         try {
             e.preventDefault();
+
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (err) {
                     message.error(AppConstants.pleaseReview)
@@ -1164,8 +1167,7 @@ class UserProfileEdit extends Component {
                                     this.confirmOpend = false;
                                 },
                             });
-                        }
-                        else {
+                        } else {
                             saveAction();
                             this.confirmOpend = false;
                         }
@@ -1176,23 +1178,47 @@ class UserProfileEdit extends Component {
                 }
             });
         } catch (ex) {
-            console.log("Exception occured in saveRegistrationForm" + ex);
+            console.log("Exception occurred in saveRegistrationForm" + ex);
         }
-    }
+    };
 
+    // actual function to call saving a child / parent
+    async addChildOrParent (body) {
+        const { userId, email } = this.props.userState.personalData; // current (spoofing) user id
+        const sameEmail = Number(this.state.isSameEmail || this.state.userData.email === email);
+        try {
+            this.setState({ isAdding: true });
+            const { status } = await (
+                this.state.titleLabel === AppConstants.addChild ? UserAxiosApi.addChild : UserAxiosApi.addParent
+            )({ userId, sameEmail, body });
+            if ([1, 4].includes(status)) {
+                history.push({
+                    pathname: '/userPersonal',
+                    state: { tabKey: this.state.tabKey, userId },
+                });
+
+                this.setState({ isAdding: false });
+            }
+        } catch (e) {
+            this.setState({ isAdding: false });
+            console.error(e);
+        }
+    };
+
+    // global save action
     saveAction = () => {
         let userState = this.props.userState;
         let data = this.state.userData;
-        const { storedEmailAddress } = this.state
+        const { storedEmailAddress } = this.state;
 
         if (!this.state.isSameEmail && data.mobileNumber != null && data.mobileNumber.length < 10) {
             message.error(AppConstants.pleaseReview);
-            return false
+            return false;
         }
 
         if (this.state.displaySection === 3 && data.emergencyContactNumber != null && data.emergencyContactNumber.length < 10) {
             message.error(AppConstants.pleaseReview);
-            return false
+            return false;
         }
 
         data["section"] = this.state.section;
@@ -1204,21 +1230,17 @@ class UserProfileEdit extends Component {
             data["childUserId"] = 0;
         }
 
-        const sameEmail = (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) ? 1 : 0;
-        if (this.state.titleLabel === AppConstants.addChild) {
-            this.props.addChildAction(data, getUserId(), sameEmail);
-        } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
-            this.props.addParentAction(data, getUserId(), sameEmail);
+        if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
+            this.addChildOrParent(data);
         } else {
             if (this.state.displaySection === "1") {
-                data['emailUpdated'] = storedEmailAddress === data.email ? 0 : 1
+                data['emailUpdated'] = storedEmailAddress === data.email ? 0 : 1;
                 this.props.userProfileUpdateAction(data);
             } else {
                 this.props.userProfileUpdateAction(data);
             }
+            this.setState({ saveLoad: true });
         }
-        this.setState({ saveLoad: true });
-
     };
 
     footerView = (isSubmitting) => {
@@ -1228,7 +1250,7 @@ class UserProfileEdit extends Component {
                     <div className="row">
                         <div className="col-sm">
                             <div className="reg-add-save-button">
-                                <NavLink to={{ pathname: `/userPersonal`, state: { tabKey: this.state.tabKey, userId: this.state.userData.userId } }} >
+                                <NavLink to={{ pathname: `/userPersonal`, state: { tabKey: this.state.tabKey, userId: this.state.userData.userId } }}>
                                     <Button type="cancel-button">{AppConstants.cancel}</Button>
                                 </NavLink>
                             </div>
@@ -1252,7 +1274,11 @@ class UserProfileEdit extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
-                <DashboardLayout menuHeading={AppConstants.user} menuName={AppConstants.user} onMenuHeadingClick={() => history.push("./userTextualDashboard")} />
+                <DashboardLayout
+                    menuHeading={AppConstants.user}
+                    menuName={AppConstants.user}
+                    onMenuHeadingClick={() => history.push("./userTextualDashboard")}
+                />
                 <Layout>
                     {this.headerView()}
                     <Form
@@ -1262,7 +1288,7 @@ class UserProfileEdit extends Component {
                     >
                         <Content>
                             <div className="formView">{this.contentView(getFieldDecorator)}</div>
-                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad} />
+                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad || this.state.isAdding} />
                         </Content>
 
                         <Footer>{this.footerView()}</Footer>
@@ -1275,8 +1301,6 @@ class UserProfileEdit extends Component {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        addParentAction,
-        addChildAction,
         userProfileUpdateAction,
         getCommonRefData,
         countryReferenceAction,

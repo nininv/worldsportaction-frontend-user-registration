@@ -6,31 +6,30 @@ import {
     Select,
     Checkbox,
     Button,
-    Table,
     DatePicker,
     Radio,
     Form,
     Modal,
     message,
     Steps,
-    Tag,
     Pagination,
     Carousel,
     Spin, notification
 } from "antd";
-import "./product.css";
-import "../user/user.css";
-import '../competition/competition.css';
-import moment from 'moment';
-import InputWithHead from "../../customComponents/InputWithHead";
-import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
-import DashboardLayout from "../../pages/dashboardLayout";
-import AppConstants from "../../themes/appConstants";
-import AppImages from "../../themes/appImages";
 import { connect } from 'react-redux';
-import { NavLink } from "react-router-dom";
-import { getUreAction } from "../../store/actions/userAction/userAction";
-import ValidationConstants from "../../themes/validationConstant";
+import moment from 'moment';
+import { bindActionCreators } from "redux";
+// styles
+import "../product.css";
+import "../../user/user.css";
+import '../../competition/competition.css';
+// components
+import InputWithHead from "../../../customComponents/InputWithHead";
+import InnerHorizontalMenu from "../../../pages/innerHorizontalMenu";
+import DashboardLayout from "../../../pages/dashboardLayout";
+import AppConstants from "../../../themes/appConstants";
+import AppImages from "../../../themes/appImages";
+import ValidationConstants from "../../../themes/validationConstant";
 import {
     getCommonRefData,
     favouriteTeamReferenceAction,
@@ -51,7 +50,8 @@ import {
     getSchoolListAction,
     validateRegistrationCapAction,
     netSetGoTshirtSizeAction
-} from '../../store/actions/commonAction/commonAction';
+} from '../../../store/actions/commonAction/commonAction';
+
 import {
     getUserRegistrationUserInfoAction,
     updateUserRegistrationObjectAction,
@@ -64,26 +64,43 @@ import {
     getParticipantInfoById,
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
-    getSeasonalAndCasualFees
-} from '../../store/actions/registrationAction/userRegistrationAction';
-import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '../../util/helpers';
-import { bindActionCreators } from "redux";
-import history from "../../util/history";
-import Loader from '../../customComponents/loader';
-import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag } from "../../util/sessionStorage";
-import CSVReader from 'react-csv-reader'
-import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import { get } from "jquery";
-import { captializedString } from "../../util/helpers";
-import { nearByOrganisations } from "../../util/geocode";
-import ApiConstants from "../../themes/apiConstants";
-import { regexNumberExpression } from '../../util/helpers';
-// import zipcodes from  'zipcodes';
+    getSeasonalAndCasualFees,
+    getUserExists,
+    sendDigitCode,
+    checkDigitCode,
+    cancelSend,
+    startConfirm,
+    sendConfirmDetails,
+} from '../../../store/actions/registrationAction/userRegistrationAction';
+import {
+    getAge,
+    deepCopyFunction,
+    isArrayNotEmpty,
+    regexNumberExpression,
+    captializedString,
+} from '../../../util/helpers';
+import { nearByOrganisations } from "../../../util/geocode";
+import history from "../../../util/history";
+import {
+    getOrganisationId,
+    getCompetitonId,
+    getUserId,
+    getAuthToken,
+    getSourceSystemFlag,
+} from "../../../util/sessionStorage";
+import PlacesAutocomplete from "../elements/PlaceAutoComplete/index";
+import Loader from '../../../customComponents/loader';
+import ApiConstants from "../../../themes/apiConstants";
+import UserAlreadyExists from './UserAlreadyExists';
+import EnterCode from './EnterCode';
+import ConfirmDetails from './ConfirmDetails';
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
+
+const ADULT = 18; // years age is minimum for registration without parents
 
 class AppRegistrationFormNew extends Component {
     constructor(props) {
@@ -141,6 +158,20 @@ class AppRegistrationFormNew extends Component {
         this.props.netSetGoTshirtSizeAction();
     }
 
+    componentDidMount() {
+        this.props.updateUserRegistrationObjectAction(null, "registrationObj");
+        this.getUserInfo();
+        this.props.membershipProductEndUserRegistrationAction({});
+        this.setState({ getMembershipLoad: true });
+        if (getOrganisationId() != null && getCompetitonId() != null) {
+            this.setState({
+                showAddAnotherCompetitionView: false,
+                organisationId: getOrganisationId(),
+                competitionId: getCompetitonId()
+            })
+        }
+    }
+
     componentDidUpdate(nextProps) {
         let registrationState = this.props.userRegistrationState;
         if (!registrationState.onMembershipLoad && this.state.getMembershipLoad) {
@@ -166,16 +197,13 @@ class AppRegistrationFormNew extends Component {
 
         if (!registrationState.onParticipantByIdLoad && this.state.getParticipantByIdLoad) {
             if (this.state.participantId != null) {
-                this.state.completedSteps = [0, 1, 2];
-                this.state.enabledSteps = [0, 1, 2];
                 this.setState({
                     getParticipantByIdLoad: false,
-                    completedSteps: this.state.completedSteps,
-                    enabledSteps: this.state.enabledSteps
-                });
-                setTimeout(() => {
+                    completedSteps: [0, 1, 2],
+                    enabledSteps: [0, 1, 2],
+                }, () => {
                     this.setParticipantDetailStepFormFields();
-                }, 300);
+                });
             } else {
                 this.setState({ getParticipantByIdLoad: false });
                 this.selectAnotherParticipant();
@@ -259,20 +287,7 @@ class AppRegistrationFormNew extends Component {
                 }
             }
             this.setState({ validateRegistrationCapOnLoad: false })
-        }
-    }
 
-    componentDidMount() {
-        this.props.updateUserRegistrationObjectAction(null, "registrationObj");
-        this.getUserInfo();
-        this.props.membershipProductEndUserRegistrationAction({});
-        this.setState({ getMembershipLoad: true });
-        if (getOrganisationId() != null && getCompetitonId() != null) {
-            this.setState({
-                showAddAnotherCompetitionView: false,
-                organisationId: getOrganisationId(),
-                competitionId: getCompetitonId()
-            })
         }
     }
 
@@ -651,13 +666,16 @@ class AppRegistrationFormNew extends Component {
     }
 
     clearParticipantAddress = (registrationObj) => {
-        registrationObj.street1 = null;
-        registrationObj.street2 = null;
-        registrationObj.postalCode = null;
-        registrationObj.suburb = null;
-        registrationObj.stateRefId = null;
-        registrationObj.countryRefId = null;
-        this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+        const resetAddress = {
+            ...registrationObj,
+            street1: null,
+            street2: null,
+            postalCode: null,
+            suburb: null,
+            stateRefId: null,
+            countryRefId: null,
+        };
+        this.props.updateUserRegistrationObjectAction(resetAddress, 'registrationObj');
     }
 
     getUpdatedParentObj = (parent) => {
@@ -1484,6 +1502,7 @@ class AppRegistrationFormNew extends Component {
                     //     return;
                     // }
 
+
                     if (this.state.currentStep === 0) {
                         let addressSearchError = this.addressSearchValidation();
                         if (addressSearchError) {
@@ -1555,6 +1574,10 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
+
+                        // disabled check exist users
+                        // this.props.getUserExists(registrationObj);
+                        // return;
                     }
                     if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -1622,27 +1645,53 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
+    jumpNextStep (step, completed) {
+        console.log('this.state', step)
+        this.setState({ currentStep:step, completedSteps: completed })
+    }
+
     participantDetailsStepView = (getFieldDecorator) => {
-        let { registrationObj } = this.props.userRegistrationState;
-        console.log("regostratop", registrationObj.dateOfBirth)
+        const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
+        const { userId, dateOfBirth } = registrationObj;
+        const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
+        const isYoung = getAge(dateOfBirth) < ADULT;
+        const isAdult = !isYoung;
+        if (userAlreadyExist && userAlreadyExist.message === "success" || userAlreadyExist.users === false) {
+            this.stepNavigation(registrationObj, expiredRegistration);
+        }
+
         return (
-            <div>
-                {registrationObj.userId == -1 || registrationObj.userId == -2 ?
-                    <div>{this.addedParticipantView()}</div>
-                    :
-                    <div>{this.addedParticipantWithProfileView()}</div>
-                }
-                <div>{this.participantDetailView(getFieldDecorator)}</div>
-                {getAge(registrationObj.dateOfBirth) <= 18 ? (
-                    <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
-                ) : (
-                        <div>
-                            {registrationObj.dateOfBirth && (
-                                <div>{this.emergencyContactView(getFieldDecorator)}</div>
-                            )}
-                        </div>
-                    )}
-            </div>
+            <>
+                {participantWithoutProfile && this.addedParticipantView()}
+                {!participantWithoutProfile && this.addedParticipantWithProfileView()}
+                {this.participantDetailView(getFieldDecorator)}
+                {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
+                {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
+                {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
+                <Loader visible={userAlreadyExist.isLoading} />
+                {isYoung && this.parentOrGuardianView(getFieldDecorator)}
+                {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
+            </>
+        // let { registrationObj } = this.props.userRegistrationState;
+        // console.log("regostratop", registrationObj.dateOfBirth)
+        // return (
+        //     <div>
+        //         {registrationObj.userId == -1 || registrationObj.userId == -2 ?
+        //             <div>{this.addedParticipantView()}</div>
+        //             :
+        //             <div>{this.addedParticipantWithProfileView()}</div>
+        //         }
+        //         <div>{this.participantDetailView(getFieldDecorator)}</div>
+        //         {getAge(registrationObj.dateOfBirth) <= 18 ? (
+        //             <div>{this.parentOrGuardianView(getFieldDecorator)}</div>
+        //         ) : (
+        //                 <div>
+        //                     {registrationObj.dateOfBirth && (
+        //                         <div>{this.emergencyContactView(getFieldDecorator)}</div>
+        //                     )}
+        //                 </div>
+        //             )}
+        //     </div>
         )
     }
 
@@ -1928,24 +1977,29 @@ class AppRegistrationFormNew extends Component {
     }
 
     participantDetailView = (getFieldDecorator) => {
-        let hasErrorParticipitant = this.state.hasErrorParticipitant;
-        let userRegistrationstate = this.props.userRegistrationState;
-        let registrationObj = userRegistrationstate.registrationObj;
-        const { genderList, stateList, countryList } = this.props.commonReducerState;
+        const { hasErrorParticipitant } = this.state;
+        const { userRegistrationState, commonReducerState } = this.props;
+        const { registrationObj } = userRegistrationState;
+        const { genderList, stateList, countryList } = commonReducerState;
+        const isYoung = getAge(registrationObj?.dateOfBirth) < ADULT;
+
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.participantDetails}</div>
                 <InputWithHead heading={AppConstants.gender} required={"required-field"}></InputWithHead>
                 <Form.Item >
-                    {getFieldDecorator(`genderRefId`, {
-                        rules: [{ required: true, message: ValidationConstants.genderField }],
-                    })(
+                    {getFieldDecorator(
+                        'genderRefId',
+                        {
+                            rules: [{ required: true, message: ValidationConstants.genderField }],
+                        },
+                    )(
                         <Radio.Group
                             className="registration-radio-group"
-                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "genderRefId")}
+                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, 'genderRefId')}
                             setFieldsValue={registrationObj.genderRefId}
                         >
-                            {(genderList || []).map((gender, genderIndex) => (
+                            {(genderList || []).map((gender) => (
                                 <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
                             ))}
                         </Radio.Group>
@@ -1956,13 +2010,17 @@ class AppRegistrationFormNew extends Component {
                     <div className="col-sm-12 col-md-6">
                         <InputWithHead heading={AppConstants.participant_firstName} required={"required-field"} />
                         <Form.Item >
-                            {getFieldDecorator(`participantFirstName`, {
-                                rules: [{ required: true, message: ValidationConstants.nameField[0] }],
-                            })(
+                            {getFieldDecorator(
+                                'participantFirstName',
+                                {
+                                    getValueFromEvent: ({ target: { value } }) => captializedString(value),
+                                    rules: [{ required: true, message: ValidationConstants.nameField[0] }],
+                                },
+                            )(
                                 <InputWithHead
                                     disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_firstName}
-                                    onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "firstName")}
+                                    onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "firstName")}
                                     setFieldsValue={registrationObj.firstName}
                                     onBlur={(i) => this.props.form.setFieldsValue({
                                         'participantFirstName': captializedString(i.target.value)
@@ -2078,6 +2136,7 @@ class AppRegistrationFormNew extends Component {
                                 }
                             </div>
                         )}
+                        {/* {isYoung && ( */}
                         {getAge(registrationObj.dateOfBirth) <= 18 && (
                             <Checkbox
                                 className="single-checkbox"
@@ -2090,17 +2149,17 @@ class AppRegistrationFormNew extends Component {
                 </div>
 
                 <InputWithHead heading={AppConstants.photo} />
-                {registrationObj.photoUrl == null ?
+                {registrationObj.photoUrl == null && (
                     <div className="upload-default" onClick={() => this.selectImage()}>
                         <div style={{ fontSize: "22px" }}>
                             +
-                            </div>
+                        </div>
                         <div style={{ marginTop: "-7px" }}>
                             {AppConstants.upload}
                         </div>
-                    </div> : null
-                }
-                {registrationObj.photoUrl ?
+                    </div>
+                )}
+                {registrationObj.photoUrl && (
                     <img
                         src={registrationObj.photoUrl}
                         alt=""
@@ -2112,8 +2171,8 @@ class AppRegistrationFormNew extends Component {
                             ev.target.src = AppImages.circleImage;
                         }}
                         onClick={() => this.selectImage()}
-                    /> : null
-                }
+                    />
+                )}
                 <input
                     type="file"
                     id={"user-pic"}
@@ -3846,41 +3905,48 @@ class AppRegistrationFormNew extends Component {
     }
 
     stepsContentView = (getFieldDecorator) => {
-        return (
-            <div>
-                {this.state.currentStep === 0 &&
-                    <div>{this.participantDetailsStepView(getFieldDecorator)}</div>
-                }
-                {this.state.currentStep === 1 &&
-                    <div>{this.selectCompetitionStepView(getFieldDecorator)}</div>
-                }
-                {this.state.currentStep === 2 &&
-                    <div>{this.additionalInfoStepView(getFieldDecorator)}</div>
-                }
-            </div>
-        )
+        const { currentStep } = this.state;
+
+        if (currentStep === 0) {
+            return this.participantDetailsStepView(getFieldDecorator);
+        }
+        if (currentStep === 1) {
+            return this.selectCompetitionStepView(getFieldDecorator);
+        }
+        if (currentStep === 2) {
+            return this.additionalInfoStepView(getFieldDecorator);
+        }
+        return null;
     }
 
     contentView = (getFieldDecorator) => {
-        let { registrationObj } = this.props.userRegistrationState;
+        const { registrationObj } = this.props.userRegistrationState;
+        const { registrationId, completedSteps, currentStep } = this.state;
+
+        const getStatus = (value) => {
+            const isFinish = completedSteps.includes(value);
+            return isFinish && 'finish';
+        };
+
         return (
             <div className="pt-0 registration-form-wrapper">
-                {this.state.registrationId && (
-                    <div className="orange-action-txt"
+                {registrationId && (
+                    <div
+                        className="orange-action-txt"
                         onClick={() => this.goToRegistrationProducts()}
-                        style={{ marginBottom: "20px" }}>{AppConstants.returnToShoppingCart}
-                        <img className="icon-size-20" style={{ marginLeft: "7px" }} src={AppImages.shoppingCartIcon} />
+                        style={{ marginBottom: "20px" }}
+                    >
+                        {AppConstants.returnToShoppingCart}
+                        <img className="icon-size-20" style={{ marginLeft: "7px" }} src={AppImages.shoppingCartIcon} alt="shop cart" />
                     </div>
                 )}
-                {(registrationObj == null || registrationObj.registeringYourself == undefined) && (
-                    <div>{this.addOrSelectParticipantView()}</div>
-                )}
-                {registrationObj != null && registrationObj.registeringYourself && (
+                {!(registrationObj?.registeringYourself) && (this.addOrSelectParticipantView())}
+                {registrationObj?.registeringYourself && (
                     <div>
-                        <Steps className="registration-steps" current={this.state.currentStep} onChange={this.changeStep}>
-                            <Step status={this.state.completedSteps.includes(0) && "finish"} title={AppConstants.participantDetails} />
-                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && "finish"} title={AppConstants.selectCompetition} />
-                            <Step status={this.state.completedSteps.includes(0) && this.state.completedSteps.includes(1) && this.state.completedSteps.includes(2) && "finish"} title={AppConstants.additionalInformation} />
+                        <Steps className="registration-steps" current={currentStep} onChange={this.changeStep}>
+                            <Step status={getStatus(0)} title={AppConstants.participantDetails} />
+                            <Step status={getStatus(1)} title={AppConstants.selectCompetition} />
+                            <Step status={getStatus(2)} title={AppConstants.additionalInformation} />
                         </Steps>
                         {this.stepsContentView(getFieldDecorator)}
                         {this.singleCompModalView()}
@@ -3977,8 +4043,6 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.cancel}
                         </Button>,
                         <Button
-                            // htmlType="submit"
-                            // type="primary"
                             className="other-info-btn color-white"
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
@@ -4023,6 +4087,7 @@ class AppRegistrationFormNew extends Component {
                         </Button>
                     ]}
                 >
+                    {/* <p> {registrationObj.registeringYourself != 3 ? AppConstants.sameEmailValidationMessage : AppConstants.sameSomeoneEmailValidationMessage2}</p> */}
                     <p> {AppConstants.banIndividualTeamMixRegistrationMessage}</p>
                 </Modal>
             </div>
@@ -4079,6 +4144,11 @@ class AppRegistrationFormNew extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { userRegistrationState } = this.props;
+        const { onMembershipLoad, userInfoOnLoad, onParticipantByIdLoad, onSaveLoad } = userRegistrationState;
+        const isLoading = (onMembershipLoad || userInfoOnLoad || onParticipantByIdLoad || onSaveLoad);
+
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
@@ -4091,23 +4161,22 @@ class AppRegistrationFormNew extends Component {
                     {/* <a onClick="javascript:window.open('mailto:mail@domain.com', 'mail');event.preventDefault()" href="mailto:example@example.com" target="_blank">Email</a> */}
                     <Form
                         autoComplete="off"
-                        scrollToFirstError={true}
+                        scrollToFirstError
                         onSubmit={this.saveRegistrationForm}
                         noValidate="noValidate"
                         className="mb-4"
                     >
                         <Content>
-                            <div>
-                                {this.contentView(getFieldDecorator)}
-                            </div>
+                            {this.contentView(getFieldDecorator)}
                         </Content>
                         <div>{this.actionView()}</div>
-                        <Loader visible={
+                        <Loader visible={isLoading} />
+                        {/* <Loader visible={
                             this.props.userRegistrationState.onMembershipLoad ||
                             this.props.userRegistrationState.userInfoOnLoad ||
                             this.props.userRegistrationState.onParticipantByIdLoad ||
                             this.props.userRegistrationState.onSaveLoad
-                        } />
+                        } /> */}
                     </Form>
                 </Layout>
             </div>
@@ -4144,12 +4213,17 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
+        getUserExists,
+        sendDigitCode,
+        checkDigitCode,
+        cancelSend,
+        startConfirm,
+        sendConfirmDetails,
         netSetGoTshirtSizeAction
     }, dispatch);
-
 }
 
-function mapStatetoProps(state) {
+function mapStateToProps(state) {
     return {
         registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
@@ -4157,4 +4231,4 @@ function mapStatetoProps(state) {
     }
 }
 
-export default connect(mapStatetoProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));
+export default connect(mapStateToProps, mapDispatchToProps)(Form.create()(AppRegistrationFormNew));

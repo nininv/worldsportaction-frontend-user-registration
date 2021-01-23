@@ -243,7 +243,8 @@ const initialState = {
     getTeamMembersReviewOnLoad: false,
     teamMembersSaveErrorMsg: null,
     teamMemberRegId: null,
-    teamMembersSaveOnLoad: false
+    teamMembersSaveOnLoad: false,
+    teamMemberDeletion: false
 };
 
 //get User Role
@@ -552,9 +553,6 @@ function userReducer(state = initialState, action) {
                 onLoad: false,
             };
 
-        case ApiConstants.API_ADD_CHILD_LOAD:
-            return { ...state };
-
         case ApiConstants.API_ADD_CHILD_SUCCESS:
             return { ...state };
 
@@ -606,6 +604,7 @@ function userReducer(state = initialState, action) {
         case ApiConstants.API_MEMBERSHIP_PRODUCT_END_USER_REG_SUCCESS:
             state.membershipProductInfo = action.result;
             if (!state.teamMemberRegId) {
+                state.teamMembersSave = deepCopyFunction(teamMembersSaveTemp)
                 upateTeamMembersSave(state);
             }
             return {
@@ -622,12 +621,16 @@ function userReducer(state = initialState, action) {
                     upateTeamMembersSave(state)
                 } else {
                     state.teamMembersSave.teamMembers.splice(action.index, 1);
+                    state.teamMemberDeletion = true;
                 }
             } else if (action.key === "membershipProductTypes") {
                 state.teamMembersSave.teamMembers[action.index].membershipProductTypes[action.subIndex].isChecked = action.data;
             } else if (action.key === "teamMemberRegId") {
                 state.teamMemberRegId = action.data;
-            } else {
+            } else if (action.key === "teamMemberDeletion") {
+                state.teamMemberDeletion = false
+            }
+             else {
                 state.teamMembersSave.teamMembers[action.index][action.key] = action.data;
             }
             return {

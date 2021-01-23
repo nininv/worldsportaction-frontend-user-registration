@@ -1,12 +1,8 @@
-// import { DataManager } from './../../Components';
 import http from "./liveScorehttp";
-import { getUserId, getAuthToken, getLiveScoreCompetiton } from "../../../util/sessionStorage"
+import { getUserId, getAuthToken } from "../../../util/sessionStorage"
 import history from "../../../util/history";
 import { message } from "antd";
 import ValidationConstants from "../../../themes/validationConstant";
-import { isArrayNotEmpty } from "../../../util/helpers";
-import { post } from "jquery";
-
 
 async function logout() {
     await localStorage.clear();
@@ -16,39 +12,31 @@ async function logout() {
 let token = getAuthToken();
 // let userId = getUserId();
 
-
 let LiveScoreAxiosApi = {
-
     liveScoreGetDivision(data, compKey) {
-
-        var url = null
+        let url = null
         if (compKey) {
             url = `/division?competitionKey=${compKey}`
         } else {
             url = `/division?competitionId=${data}`
         }
-
-
         return Method.dataGet(url, null)
     },
 
-
     liveScoreLadderList(divisionId, competitionID, compKey) {
-        var url = null;
+        let url = null;
         if (compKey) {
             url = `/teams/ladder?divisionIds=${divisionId}&competitionKey=${compKey}`;
         } else {
             url = `/teams/ladder?divisionIds=${divisionId}&competitionIds=${competitionID}`;
         }
-
         return Method.dataGet(url, localStorage.token)
         // return Method.dataPost(url, localStorage.token, postBody)
     },
 
-
     liveScoreRound(competitionID, division, teamId) {
         let url = null
-        if (teamId == "All") {
+        if (teamId === "All") {
             url = `/round?competitionId=${competitionID}&divisionId=${division}`;
         } else {
             let team = JSON.stringify(teamId)
@@ -81,7 +69,6 @@ let LiveScoreAxiosApi = {
         return Method.dataGet(url, localStorage.token)
     },
 
-
     getUmpireAvailabilityList(userId, fromTime, endTime) {
         const url = `/booking/?userId=${userId}&fromTime=${fromTime}&endTime=${endTime}`;
         return Method.dataGet(url, token);
@@ -91,14 +78,9 @@ let LiveScoreAxiosApi = {
         let url = `/booking/save?userId=${userId}&fromTime=${fromTime}&endTime=${endTime}`;
         return Method.dataPost(url, token, payload);
     },
-
 };
 
-
-
-
 const Method = {
-
     async dataPost(newurl, authorization, body) {
         const url = newurl;
         return await new Promise((resolve, reject) => {
@@ -110,22 +92,18 @@ const Method = {
                         Authorization: "BWSA " + authorization
                     }
                 })
-
                 .then(result => {
-
                     if (result.status === 200) {
                         return resolve({
                             status: 1,
                             result: result
                         });
-                    }
-                    else if (result.status == 212) {
+                    } else if (result.status == 212) {
                         return resolve({
                             status: 4,
                             result: result
                         });
-                    }
-                    else {
+                    } else {
                         if (result) {
                             return reject({
                                 status: 3,
@@ -141,9 +119,7 @@ const Method = {
                     }
                 })
                 .catch(err => {
-
                     if (err.response) {
-
                         if (err.response.status !== null || err.response.status !== undefined) {
                             if (err.response.status == 401) {
                                 let unauthorizedStatus = err.response.status
@@ -151,8 +127,7 @@ const Method = {
                                     logout()
                                     //message.error(ValidationConstants.messageStatus401)
                                 }
-                            }
-                            else if (err.response.status == 400) {
+                            } else if (err.response.status == 400) {
 
                                 message.config({
                                     duration: 1.5,
@@ -163,30 +138,24 @@ const Method = {
                                     status: 5,
                                     error: err.response.data.message
                                 });
-                            }
-                            else {
+                            } else {
                                 return reject({
-
                                     status: 5,
                                     error: err.response && err.response.data.message
                                 });
                             }
                         }
-                    }
-                    else {
-
+                    } else {
                         return reject({
                             status: 5,
                             error: err.response && err.response.data.message
                         });
-
                     }
                 });
         });
     },
 
     // Method to GET response
-
     async dataGet(newurl, authorization) {
         const url = newurl;
         return await new Promise((resolve, reject) => {
@@ -199,21 +168,18 @@ const Method = {
                         "Access-Control-Allow-Origin": "*"
                     }
                 })
-
                 .then(result => {
                     if (result.status === 200) {
                         return resolve({
                             status: 1,
                             result: result
                         });
-                    }
-                    else if (result.status == 212) {
+                    } else if (result.status == 212) {
                         return resolve({
                             status: 4,
                             result: result
                         });
-                    }
-                    else {
+                    } else {
                         if (result) {
                             return reject({
                                 status: 3,
@@ -238,17 +204,15 @@ const Method = {
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         return reject({
                             status: 5,
                             error: err
                         });
-
                     }
                 });
         });
     },
-
 };
+
 export default LiveScoreAxiosApi;
