@@ -23,7 +23,7 @@ const feeIsNull = (fee) => {
     return ((fee === null || fee === undefined) ? 0 : (stringTOFloatNumberReg(fee)));
 }
 
-export const getAge = (birthDate) => {
+ const getAge = (birthDate) => {
     let dob = moment(birthDate,"MM-DD-YYYY").format("YYYY-MM-DD");
     return moment().diff(dob, 'years',false)
  }
