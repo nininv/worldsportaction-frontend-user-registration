@@ -210,6 +210,7 @@ const initialState = {
 		firstStep: false,
 		secondStep: false,
 		thirdStep: false,
+		fourthStep: false,
 		users: [],
 		phone: false,
 		email: false,
@@ -1044,6 +1045,13 @@ function userRegistrationReducer(state = initialState, action){
                         startStepNavigation:false,
 					},
 				}
+			case ApiConstants.API_START_STEP_NAVIGATION:
+				return {
+					...state,
+					userAlreadyExist: {
+                        startStepNavigation:true,
+					},
+				}
 			case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
 				return {
 					...state,
@@ -1075,6 +1083,8 @@ function userRegistrationReducer(state = initialState, action){
                     userAlreadyExist: {
                         ...state.userAlreadyExist,
                         message: action.result.result.data.message,
+                        thirdStep: false,
+                        fourthStep: true,
                         isLoading: false
                     },
 				}

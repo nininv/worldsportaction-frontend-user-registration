@@ -107,6 +107,12 @@ function getSeasonalAndCasualFees(payload){
     return action;
 }
 
+function startStepNavigation(){
+    const action = {
+        type: ApiConstants.API_START_STEP_NAVIGATION,
+    };
+    return action;
+}
 function stopStepNavigation(){
     const action = {
         type: ApiConstants.API_STOP_STEP_NAVIGATION,
@@ -191,6 +197,7 @@ export{
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
     stopStepNavigation,
+    startStepNavigation,
     getUserExists,
     sendDigitCode,
     cancelSend,

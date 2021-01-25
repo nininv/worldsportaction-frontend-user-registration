@@ -66,6 +66,7 @@ import {
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
     getUserExists,
+    startStepNavigation,
     stopStepNavigation,
     sendDigitCode,
     checkDigitCode,
@@ -94,6 +95,7 @@ import Loader from '../../../customComponents/loader';
 import ApiConstants from "../../../themes/apiConstants";
 import UserAlreadyExists from './UserAlreadyExists';
 import EnterCode from './EnterCode';
+import CodeCheckResult from './CodeCheckResult';
 import ConfirmDetails from './ConfirmDetails';
 
 const { Header, Footer, Content } = Layout;
@@ -1453,7 +1455,7 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+            const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
 
@@ -1546,9 +1548,13 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
 
-                        // disabled check exist users
-                        this.props.getUserExists(registrationObj);
-                        return;
+                        if (!this.props.loginState.loggedIn) {
+                            if (userAlreadyExist.fourthStep === true && userAlreadyExist.message === "success") {
+                                return this.props.startStepNavigation()
+                            }
+                            this.props.getUserExists(registrationObj);
+                            return;
+                        }
                     }
                     if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
@@ -1624,7 +1630,7 @@ class AppRegistrationFormNew extends Component {
         const isYoung = getAge(dateOfBirth) < ADULT;
         const isAdult = !isYoung;
 
-            return (
+        return (
                 <>
                     {participantWithoutProfile && this.addedParticipantView()}
                     {!participantWithoutProfile && this.addedParticipantWithProfileView()}
@@ -1632,6 +1638,7 @@ class AppRegistrationFormNew extends Component {
                     {userAlreadyExist.firstStep && (<UserAlreadyExists cancelSend={this.props.cancelSend} startConfirm={this.props.startConfirm}  users={userAlreadyExist.users} />)}
                     {userAlreadyExist.secondStep && (<ConfirmDetails  cancelSend={this.props.cancelSend} sendDigitCode={this.props.sendDigitCode} sendConfirmDetails={this.props.sendConfirmDetails} id={userAlreadyExist.currentUser.id} type={userAlreadyExist.currentUser.type}/>) }
                     {userAlreadyExist.thirdStep && (<EnterCode cancelSend={this.props.cancelSend} message={userAlreadyExist.message} checkDigitCode={this.props.checkDigitCode} id={userAlreadyExist.currentUser.id} />)}
+                    { userAlreadyExist.fourthStep && (<CodeCheckResult startStepNavigation={this.props.startStepNavigation} cancelSend={this.props.cancelSend} message={userAlreadyExist.message} />)}
                     <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                     {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
@@ -4150,6 +4157,7 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
+        startStepNavigation,
         stopStepNavigation,
         getUserExists,
         sendDigitCode,
@@ -4165,7 +4173,8 @@ function mapStateToProps(state) {
     return {
         registrationProductState: state.RegistrationProductState,
         userRegistrationState: state.UserRegistrationState,
-        commonReducerState: state.CommonReducerState
+        commonReducerState: state.CommonReducerState,
+        loginState: state.LoginState
     }
 }
 

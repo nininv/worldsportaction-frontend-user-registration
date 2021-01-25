@@ -1194,6 +1194,8 @@ const AppConstants = {
   enterXDigitCode: "Enter {{number}} digit code",
   confirmDetails: "Please enter the complete {{detail}}",
   declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record.",
+  successCheckDigitCode: "Your user was matched successfully.",
+  declineCheckDigitCode: "You entered wrong code.",
 
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",
