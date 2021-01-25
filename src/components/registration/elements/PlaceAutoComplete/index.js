@@ -11,9 +11,7 @@ import './style.css';
 import AppConstants from '../../../../themes/appConstants';
 
 const mapAddressInfo = (addressComponents) => {
-  console.log("addressComponents",addressComponents);
   if (addressComponents.length > 0) {
-
     let streetNumber = null;
     let address  = null;
     let suburb  = null;
@@ -47,7 +45,6 @@ const mapAddressInfo = (addressComponents) => {
       postcode: postCode,
       country: country
     }
-    console.log("AddressData",addressData)
     return addressData;
   }
   return null;

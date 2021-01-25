@@ -1,13 +1,12 @@
-// import userHttp from './userHttp';
-import userHttp from "./userHttp";
-import history from "../../../util/history";
 import { message } from "antd";
-import ValidationConstants from "../../../themes/validationConstant";
-import { getUserId, getAuthToken, getOrganisationData } from "../../../util/sessionStorage"
 
+import ValidationConstants from "../../../themes/validationConstant";
+import history from "../../../util/history";
+import { getUserId, getAuthToken } from "../../../util/sessionStorage";
+import userHttp from "./userHttp";
 
 let token = getAuthToken();
-let userId = getUserId()
+let userId = getUserId();
 
 async function logout() {
   await localStorage.clear();
@@ -15,15 +14,13 @@ async function logout() {
 }
 
 let userHttpApi = {
-
-
   Login(payload) {
-    var base64 = require("base-64");
-    var md5 = require("md5");
-    let authorization = base64.encode(
+    const base64 = require("base-64");
+    const md5 = require("md5");
+    const authorization = base64.encode(
       payload.userName + ":" + md5(payload.password)
     );
-    var url = "/users/loginWithEmailPassword";
+    const url = "/users/loginWithEmailPassword";
     return Method.dataGet(url, authorization);
   },
 
@@ -34,37 +31,37 @@ let userHttpApi = {
   },
   //role Api
   role() {
-    var url = "/ref/roles";
+    const url = "/ref/roles";
     return Method.dataGet(url, token);
   },
   // User Role Entity Api
   ure() {
-    var url = "/ure";
+    const url = "/ure";
     return Method.dataGet(url, token);
   },
 
   //// get particular user organisation
   async getUserOrganisation() {
-    let userId =  await getUserId()
-    if(userId!= 0){
+    let userId = await getUserId()
+    if (userId != 0) {
       var url = `api/userorganisation?userId=${userId}`;
       return Method.dataGet(url, token)
     }
   },
   getUserModulePersonalData(payload) {
-    var url = `api/user/personaldetails?userId=${payload.userId}&organisationId=${payload.organisationId!= null ? payload.organisationId: '' }`;
+    const url = `api/user/personaldetails?userId=${payload.userId}&organisationId=${payload.organisationId != null ? payload.organisationId : ''}`;
     return Method.dataGet(url, token);
   },
   getUserModulePersonalByCompData(payload) {
-    var url = `api/user/personaldetails/competition`;
+    const url = `api/user/personaldetails/competition`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleMedicalInfo(payload) {
-    var url = `api/user/medical`;
+    const url = `api/user/medical`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleRegistrationData(payload) {
-    var url = `api/user/registration`;
+    const url = `api/user/registration`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleTeamMembersData(payload) {
@@ -72,25 +69,24 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityPlayer(payload) {
-    var url = `api/user/activity/player`;
+    const url = `api/user/activity/player`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityParent(payload) {
-    var url = `api/user/activity/parent`;
+    const url = `api/user/activity/parent`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityScorer(payload) {
-    var url = `api/user/activity/scorer`;
+    const url = `api/user/activity/scorer`;
     return Method.dataPost(url, token, payload);
   },
   getUserModuleActivityManager(payload) {
-    var url = `api/user/activity/manager`;
+    const url = `api/user/activity/manager`;
     return Method.dataPost(url, token, payload);
   },
 
-
   updateUserProfile(payload) {
-    var url = `api/userprofile/update?section=${payload.section}`;
+    const url = `api/userprofile/update?section=${payload.section}`;
     return Method.dataPost(url, token, payload);
   },
   getUserHistory(payload) {
@@ -117,28 +113,26 @@ let userHttpApi = {
     const url = userId ? `users/photo?userId=${userId}` : `users/photo`;
     return Method.dataPost(url, token, payload);
   },
-  registrationResendEmail(teamId){
+  registrationResendEmail(teamId) {
     const url = `api/users/registration/resendmail`;
     return Method.dataPost(url, token, null);
   },
   updatePassword(data) {
-    console.log(data)
-    let payload = {
+    const payload = {
       password: data.currentPassword,
       newPassword: data.newPassword,
     }
-    console.log(payload)
     const url = `users/updatePassword`;
     return Method.dataPatch(url, token, payload);
   },
 
   addChild(payload) {
     const url = `users/child/create?parentUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
-    return Method.dataPost(url, token, {childUser: payload.body});
+    return Method.dataPost(url, token, { childUser: payload.body });
   },
   addParent(payload) {
     const url = `users/parent/create?childUserId=${payload.userId}&sameEmail=${payload.sameEmail}`;
-    return Method.dataPost(url, token, {parentUser: payload.body});
+    return Method.dataPost(url, token, { parentUser: payload.body });
   },
 
   checkUserMatch(payload) {
@@ -177,32 +171,27 @@ let Method = {
             Authorization: "BWSA " + authorization
           }
         })
-
         .then(result => {
           if (result.status === 200) {
             return resolve({
               status: 1,
               result: result
             });
-          }
-          else if (result.status == 212) {
+          } else if (result.status == 212) {
             return resolve({
               status: 4,
               result: result
             });
-          }
-          else {
-            if (result) {
-              return reject({
-                status: 3,
-                error: result.data.message,
-              });
-            } else {
-              return reject({
-                status: 4,
-                error: "Something went wrong."
-              });
-            }
+          } else if (result) {
+            return reject({
+              status: 3,
+              error: result.data.message,
+            });
+          } else {
+            return reject({
+              status: 4,
+              error: "Something went wrong."
+            });
           }
         })
         .catch(err => {
@@ -215,22 +204,18 @@ let Method = {
                   logout()
                   //message.error(ValidationConstants.messageStatus401)
                 }
-              }
-              else {
+              } else {
                 return reject({
                   status: 5,
                   error: err
                 })
-
               }
             }
-          }
-          else {
+          } else {
             return reject({
               status: 5,
               error: err
             });
-
           }
         });
     });
@@ -249,32 +234,27 @@ let Method = {
             "Access-Control-Allow-Origin": "*"
           }
         })
-
         .then(result => {
           if (result.status === 200) {
             return resolve({
               status: 1,
               result: result
             });
-          }
-          else if (result.status == 212) {
+          } else if (result.status == 212) {
             return resolve({
               status: 4,
               result: result
             });
-          }
-          else {
-            if (result) {
-              return reject({
-                status: 3,
-                error: result.data.message,
-              });
-            } else {
-              return reject({
-                status: 4,
-                error: "Something went wrong."
-              });
-            }
+          } else if (result) {
+            return reject({
+              status: 3,
+              error: result.data.message,
+            });
+          } else {
+            return reject({
+              status: 4,
+              error: "Something went wrong."
+            });
           }
         })
         .catch(err => {
@@ -287,22 +267,18 @@ let Method = {
                   logout()
                   //message.error(ValidationConstants.messageStatus401)
                 }
-              }
-              else {
+              } else {
                 return reject({
                   status: 5,
                   error: err
                 })
-
               }
             }
-          }
-          else {
+          } else {
             return reject({
               status: 5,
               error: err
             });
-
           }
         });
     });
@@ -320,32 +296,27 @@ let Method = {
             "Access-Control-Allow-Origin": "*"
           }
         })
-
         .then(result => {
           if (result.status === 200) {
             return resolve({
               status: 1,
               result: result
             });
-          }
-          else if (result.status == 212) {
+          } else if (result.status == 212) {
             return resolve({
               status: 4,
               result: result
             });
-          }
-          else {
-            if (result) {
-              return reject({
-                status: 3,
-                error: result.data.message,
-              });
-            } else {
-              return reject({
-                status: 4,
-                error: "Something went wrong."
-              });
-            }
+          } else if (result) {
+            return reject({
+              status: 3,
+              error: result.data.message,
+            });
+          } else {
+            return reject({
+              status: 4,
+              error: "Something went wrong."
+            });
           }
         })
         .catch(err => {
@@ -358,26 +329,23 @@ let Method = {
                   logout()
                   //message.error(ValidationConstants.messageStatus401)
                 }
-              }
-              else {
+              } else {
                 return reject({
                   status: 5,
                   error: err
                 })
-
               }
             }
-          }
-          else {
+          } else {
             return reject({
               status: 5,
               error: err
             });
-
           }
         });
     });
   },
+
   async dataPatch(newUrl, authorization, body) {
     const url = newUrl;
     return await new Promise((resolve, reject) => {
@@ -401,18 +369,16 @@ let Method = {
               status: 4,
               result: result
             });
+          } else if (result) {
+            return reject({
+              status: 3,
+              error: result.data.message,
+            });
           } else {
-            if (result) {
-              return reject({
-                status: 3,
-                error: result.data.message,
-              });
-            } else {
-              return reject({
-                status: 4,
-                error: "Something went wrong."
-              });
-            }
+            return reject({
+              status: 4,
+              error: "Something went wrong."
+            });
           }
         })
         .catch(err => {

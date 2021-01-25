@@ -1186,21 +1186,29 @@ class UserProfileEdit extends Component {
     async addChildOrParent (body) {
         const { userId, email } = this.props.userState.personalData; // current (spoofing) user id
         const sameEmail = Number(this.state.isSameEmail || this.state.userData.email === email);
+
         try {
             this.setState({ isAdding: true });
-            const { status } = await (
+
+            const { status, result } = await (
                 this.state.titleLabel === AppConstants.addChild ? UserAxiosApi.addChild : UserAxiosApi.addParent
             )({ userId, sameEmail, body });
-            if ([1, 4].includes(status)) {
+
+            this.setState({ isAdding: false });
+
+            if (status === 1) {
                 history.push({
                     pathname: '/userPersonal',
                     state: { tabKey: this.state.tabKey, userId },
                 });
+            }
 
-                this.setState({ isAdding: false });
+            if (status === 4) {
+                message.error(result.data.message);
             }
         } catch (e) {
             this.setState({ isAdding: false });
+            message.error("Something Went Wrong");
             console.error(e);
         }
     };
