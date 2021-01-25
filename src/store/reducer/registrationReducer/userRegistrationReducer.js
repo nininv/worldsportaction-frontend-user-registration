@@ -243,7 +243,7 @@ function getUserUpdatedRegistrationObj(state,action,key,registeringYourself){
 			registrationObj.emergencyContactNumber = selectedUser.emergencyContactNumber;
 			registrationObj.isInActive = selectedUser.isInActive;
 			registrationObj.referParentEmail = selectedUser.isInActive ? true : false;
-			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail == true){
+			if(registrationObj.userId != getUserId() && registrationObj.referParentEmail){
 				registrationObj.email = null;
 			}
 			if(selectedUser.stateRefId){
