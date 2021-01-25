@@ -253,31 +253,37 @@ const teamMembersColumns = [
         title: "Action",
         key: "action",
         dataIndex: "isActive",
-        render: (data, record) => (
-            <Menu
-                className="action-triple-dot-submenu"
-                theme="light"
-                mode="horizontal"
-                style={{ lineHeight: "25px" }}
-            >
-                <SubMenu
-                    key="sub1"
-                    title={(
-                        <img
-                            className="dot-image"
-                            src={AppImages.moreTripleDot}
-                            alt=""
-                            width="16"
-                            height="16"
-                        />
-                    )}
-                >
-                    <Menu.Item key="1">
-                        <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
-                    </Menu.Item>
-                </SubMenu>
-            </Menu>
-        ),
+        render: (data, record) => {
+            return(
+                <div>
+                    {record.isRemove == 1 &&
+                        <Menu
+                            className="action-triple-dot-submenu"
+                            theme="light"
+                            mode="horizontal"
+                            style={{ lineHeight: "25px" }}
+                        >
+                            <SubMenu
+                                key="sub1"
+                                title={(
+                                    <img
+                                        className="dot-image"
+                                        src={AppImages.moreTripleDot}
+                                        alt=""
+                                        width="16"
+                                        height="16"
+                                    />
+                                )}
+                            >
+                                <Menu.Item key="1">
+                                    <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                                </Menu.Item>
+                            </SubMenu>
+                        </Menu>
+                    }
+                </div>
+            )
+        },
     },
 ]
 
@@ -1973,7 +1979,7 @@ class UserModulePersonalDetail extends Component {
                     />
                 </div>
                 {/* } */}
-                {(!personal.dateOfBirth || getAge(personal.dateOfBirth) > 18) && (
+                {(!personal.dateOfBirth || getAge(moment(personal.dateOfBirth).format("MM-DD-YYYY")) > 18) && (
                     <div>
                         <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.childDetails}</div>
                         <NavLink
@@ -2228,10 +2234,10 @@ class UserModulePersonalDetail extends Component {
                         <div className="row">
                             <div className="col-sm d-flex align-content-center">
                                 <Breadcrumb separator=" > ">
-                                    <Breadcrumb.Item 
-                                    className="breadcrumb-add font-18 pointer" 
-                                    onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
-                                    style={{ color: "var(--app-color)" }}
+                                    <Breadcrumb.Item
+                                        className="breadcrumb-add font-18 pointer"
+                                        onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
+                                        style={{ color: "var(--app-color)" }}
                                     >
                                         {AppConstants.Registrations}
                                     </Breadcrumb.Item>
@@ -2240,11 +2246,16 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
-                                +
-                                {' '}
-                                {AppConstants.addTeamMembers}
-                            </div>
+                            {this.state.registrationTeam.isRemove ? 
+                                <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
+                                    +
+                                    {' '}
+                                    {AppConstants.addTeamMembers}
+                                </div>
+                                :
+                                null
+                            }
+
                         </div>
                         <div className="user-module-row-heading font-18 mt-2">
                             {AppConstants.team + ": " + this.state.registrationTeam.teamName}

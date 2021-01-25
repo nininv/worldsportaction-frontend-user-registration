@@ -396,10 +396,10 @@ const CheckoutForm = (props) => {
                                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div className="pt-5">
-                                                    <div class="sr-root">
-                                                        <div class="sr-main">
-                                                            {/* <div class="sr-combo-inputs-row">
-                                                    <div class="col">
+                                                    <div className="sr-root">
+                                                        <div className="sr-main">
+                                                            {/* <div className="sr-combo-inputs-row">
+                                                    <div className="col">
                                                         <label htmlFor="name">
                                                             Name
                                                         </label>
@@ -413,7 +413,7 @@ const CheckoutForm = (props) => {
                                                             required
                                                         />
                                                     </div>
-                                                    <div class="col">
+                                                    <div className="col">
                                                         <label htmlFor="email">
                                                             Email Address
                                                         </label>
@@ -428,8 +428,8 @@ const CheckoutForm = (props) => {
                                                         />
                                                     </div>
                                                 </div> */}
-                                                            <div class="sr-combo-inputs-row">
-                                                                <div class="col">
+                                                            <div className="sr-combo-inputs-row">
+                                                                <div className="col">
                                                                     <label htmlFor="au-bank-account-element">
                                                                         Bank Account
                                                     </label>
@@ -444,7 +444,7 @@ const CheckoutForm = (props) => {
                                                             </div>
                                                             <div id="bank-name"></div>
                                                             <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
-                                                            <div class="col pt-3" id="mandate-acceptance">
+                                                            <div className="col pt-3" id="mandate-acceptance">
                                                                 {AppConstants.stripeMandate1} <a> </a>
                                                                 <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
                                                                     target="_blank"
@@ -455,7 +455,7 @@ const CheckoutForm = (props) => {
                                                                 {AppConstants.stripeMandate2}
                                                             </div>
                                                             {/* </form> */}
-                                                            {/* <div class="sr-result hidden">
+                                                            {/* <div className="sr-result hidden">
                                                     <p>Response<br /></p>
                                                     <pre>
                                                         <code></code>
@@ -487,10 +487,10 @@ const CheckoutForm = (props) => {
                                                     checked={selectedPaymentOption.cashDirect}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.cashDirect == true &&
                                                 <div>
-                                                    <div class="sr-root">
-                                                        <div class="sr-main">
-                                                            <div class="sr-combo-inputs-row">
-                                                                <div class="col">
+                                                    <div className="sr-root">
+                                                        <div className="sr-main">
+                                                            <div className="sr-combo-inputs-row">
+                                                                <div className="col">
                                                                     <label htmlFor="au-bank-account-element">
                                                                         Bank Account
                                                                 </label>
@@ -505,7 +505,7 @@ const CheckoutForm = (props) => {
                                                             </div>
                                                             <div id="bank-name"></div>
                                                             <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
-                                                            <div class="col pt-3" id="mandate-acceptance">
+                                                            <div className="col pt-3" id="mandate-acceptance">
                                                                 {AppConstants.stripeMandate1} <a> </a>
                                                                 <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
                                                                     target="_blank"

@@ -16,14 +16,12 @@ import { Skeleton } from "antd";
 import PrivateRoute from "./util/protectedRoute";
 import Login from "./components/login";
 import ForgotPassword from "./components/forgotPassword";
-import { getUserId, getAuthToken, getExistingUserRefId, 
-        getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration } 
+import { getUserId, getAuthToken, getExistingUserRefId,
+        getRegisteringYourselfRefId, getUserRegId, getIsUserRegistration }
 from "./util/sessionStorage";
 import ErrorBoundary from "./components/emptyComponent/errorBoundary";
 
 function App() {
-  console.log(localStorage.getItem("token"));
-
   const lazyLoad = Component => {
     const lazy = props => {
       return (
@@ -45,14 +43,14 @@ function App() {
             exact
             path="/"
            render={() =>
-              ( 
-                    ( getUserId()!= 0  && getUserId()!= null && getUserId()!= undefined && 
+              (
+                    ( getUserId()!= 0  && getUserId()!= null && getUserId()!= undefined &&
                       getAuthToken() != null  && getAuthToken() != undefined)? (
                       <Redirect to="/userPersonal" />
-                    ) : 
+                    ) :
                     (<Redirect to="/login" />))
             }
-          /> 
+          />
           <Route path="/login" component={lazyLoad(Login)} />
           <Route path="/forgotPassword" component={lazyLoad(ForgotPassword)} />
           <PrivateRoute path="/" component={lazyLoad(Routes)} />

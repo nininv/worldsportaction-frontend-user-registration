@@ -5,7 +5,7 @@ const initialState = {
     iniviteMemberInfo: null,
     inviteOnLoad: false,
     inviteMemberRegSettings: null,
-    inviteMemberSaveOnLoad: false, 
+    inviteMemberSaveOnLoad: false,
     teamInviteProductsInfo: null,
     teamInviteProductsOnLoad: false,
     onTeamInviteReviewLoad: false,
@@ -21,7 +21,7 @@ const initialState = {
 function updateInviteMemberInfo(iniviteMemberInfoTemp){
     try{
         let userRegDetails = iniviteMemberInfoTemp.userRegDetails;
-        userRegDetails.referParentEmail = userRegDetails.isInActive ? true : false;
+        userRegDetails.referParentEmail = !!userRegDetails.isInActive;
         let registererAddress = userRegDetails.street1 + userRegDetails.street2 + userRegDetails.suburb + userRegDetails.postalCode + userRegDetails.stateRefId + userRegDetails.countryRefId;
         if(userRegDetails.parentOrGaurdianDetails){
             for(let parent of userRegDetails.parentOrGaurdianDetails){
@@ -51,9 +51,9 @@ function updateInviteMemberInfo(iniviteMemberInfoTemp){
 
 function teamInviteReducer(state = initialState, action){
     switch(action.type){
-        case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
+        case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD:
             return {...state,inviteOnLoad: true}
-          
+
         case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS:
             let iniviteMemberInfoTemp = action.result;
             return {
@@ -68,7 +68,7 @@ function teamInviteReducer(state = initialState, action){
             let inviteMemberInfoKey = action.key;
             let inviteMemberInfoSubKey= action.subKey;
             let inviteMemberInfoParentIndex = action.parentIndex;
-            if(state.iniviteMemberInfo.userRegDetails.referParentEmail == true){
+            if(state.iniviteMemberInfo.userRegDetails.referParentEmail){
                 state.iniviteMemberInfo.userRegDetails.email = null;
             }
             if(inviteMemberInfoSubKey == "userRegDetails"){
@@ -92,18 +92,18 @@ function teamInviteReducer(state = initialState, action){
 
         case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD:
             return { ...state, inviteMemberSaveOnLoad: true };
-  
+
         case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
             return {
                 ...state,
                 teamInviteCount: action.result.teamInviteCount,
                 inviteMemberSaveOnLoad: false,
                 status: action.status
-            };  
-        
+            };
+
         case ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD:
             return { ...state, onLoad: true };
-    
+
         case ApiConstants.API_TEAM_INVITE_REG_SETTINGS_SUCCESS:
             let registrationSettings = action.result;
             return {
@@ -134,7 +134,7 @@ function teamInviteReducer(state = initialState, action){
                 status: action.status,
                 shopPickupAddresses: shopPickupAddresses
             };
-            
+
         case ApiConstants.API_SAVE_TEAM_INVITE_REVIEW_LOAD:
             return { ...state, onTeamInviteReviewLoad: true };
 
@@ -155,7 +155,7 @@ function teamInviteReducer(state = initialState, action){
                 status: action.status,
                 participantAddresses: participantAddresses
             };
-            
+
         case ApiConstants.UPDATE_TEAM_REVIEW_INFO:
             let reviewData = state.teamInviteReviewList;
             if(action.subKey == "charity"){
@@ -187,7 +187,7 @@ function teamInviteReducer(state = initialState, action){
                 else {
                     reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
                 }
-                
+
             }
             else if(action.subKey == "shopProducts"){
                 if(action.key == "addShopProduct"){
@@ -206,9 +206,9 @@ function teamInviteReducer(state = initialState, action){
                         reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) +
                         feeIsNull(action.value.amount)+  feeIsNull(action.value.tax)).toFixed(2);
 
-                        reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) + 
-                        feeIsNull(action.value.amount) + feeIsNull(action.value.tax)).toFixed(2);   
-                    }                                 
+                        reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) +
+                        feeIsNull(action.value.amount) + feeIsNull(action.value.tax)).toFixed(2);
+                    }
                 }
                 else if(action.key == "removeShopProduct"){
                     let shopData = reviewData[action.subKey][action.index];
@@ -218,13 +218,13 @@ function teamInviteReducer(state = initialState, action){
                                         feeIsNull(shopData.tax)).toFixed(2);
                     reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) -
                     feeIsNull(shopData.amount) -  feeIsNull(shopData.tax)).toFixed(2);
-                    
-                    reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) - 
+
+                    reviewData["total"]["total"] = (feeIsNull(reviewData["total"]["total"]) -
                     feeIsNull(shopData.amount) - feeIsNull(shopData.tax)).toFixed(2);
-                    
+
                     reviewData[action.subKey].splice(action.index,1);
                 }
-                
+
                 console.log("reviewData", reviewData);
             }
             // else if(action.subKey == "yourInfo"){
@@ -232,7 +232,7 @@ function teamInviteReducer(state = initialState, action){
             //         setYourInfo(action,state);
             //     }else{
             //         reviewData[action.subKey][action.key] = action.value
-            //     }   
+            //     }
             // }
             // else if(action.subKey == "shippingOptions"){
             //     let organisationId = action.value;
@@ -262,7 +262,7 @@ function teamInviteReducer(state = initialState, action){
             else if(action.subKey == "total"){
                 console.log("***********************************" + action.key)
                 let type = action.key;
-                let totalVal = reviewData.total.total; 
+                let totalVal = reviewData.total.total;
                 console.log("totalVal" + totalVal);
                 let transactionVal = 0;
                 let targetVal = 0;
@@ -292,7 +292,7 @@ function teamInviteReducer(state = initialState, action){
                     reviewData["total"]["targetValue"] = "0.00";
                     reviewData["total"]["transactionFee"] = "0.00";
                 }
-               
+
             }
             return {
                 ...state,
