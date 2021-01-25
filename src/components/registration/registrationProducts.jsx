@@ -784,7 +784,7 @@ class RegistrationProducts extends Component {
                                 <div className="subtitle-text-common">{AppConstants.payNow}</div>
                                 <div>{"$" + item.payNow}</div>
                             </div>
-                            {item.isTeamRegistration == 1 &&         
+                            {item.isTeamRegistration == 1 &&
                                 <div className="col-sm-6">
                                     <div className="subtitle-text-common">{AppConstants.payAtMatch}</div>
                                     <div>{"$" + item.payPerMatch}</div>
@@ -977,6 +977,14 @@ class RegistrationProducts extends Component {
 
     governmentVoucherView = (item, index) => {
         let selectedVouchers = item.selectedOptions.vouchers;
+        // ensure there is no blank fields in vouchers
+        let selectedVouchersHaveEmpty = false
+        selectedVouchers.forEach(
+            v => {
+                if (!v.governmentVoucherRefId || !v.voucherCode) selectedVouchersHaveEmpty = true
+            }
+        )
+
         return (
             <div>
                 {isArrayNotEmpty(selectedVouchers) && (
@@ -1040,6 +1048,7 @@ class RegistrationProducts extends Component {
                     {selectedVouchers && selectedVouchers.length > 0 &&
                         <div style={{ paddingTop: '15px' }}>
                             <Button className="open-reg-button"
+                                disabled={selectedVouchersHaveEmpty}
                                 onClick={(e) => this.setReviewInfo(null, "voucher", index, null, null)}
                                 type="primary">
                                 {AppConstants.applyCode}
@@ -1161,7 +1170,7 @@ class RegistrationProducts extends Component {
                                             onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null, "yourInfo", null)}
                                             setFieldsValue={yourInfo ? yourInfo.firstName : null}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                ['yourDetailsFirstName']: captializedString(i.target.value)
+                                                'yourDetailsFirstName': captializedString(i.target.value)
                                             })}
                                         />
                                     )}
@@ -1178,7 +1187,7 @@ class RegistrationProducts extends Component {
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null, "yourInfo", null)}
                                             setFieldsValue={yourInfo ? yourInfo.lastName : null}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                ['yourDetailsLastName']: captializedString(i.target.value)
+                                                'yourDetailsLastName': captializedString(i.target.value)
                                             })}
                                         />
                                     )}
