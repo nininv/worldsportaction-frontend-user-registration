@@ -1973,7 +1973,7 @@ class UserModulePersonalDetail extends Component {
                     />
                 </div>
                 {/* } */}
-                {(!personal.dateOfBirth || getAge(personal.dateOfBirth) > 18) && (
+                {(!personal.dateOfBirth || getAge(moment(personal.dateOfBirth).format("MM-DD-YYYY")) > 18) && (
                     <div>
                         <div className="user-module-row-heading" style={{ marginTop: '30px' }}>{AppConstants.childDetails}</div>
                         <NavLink
@@ -2228,10 +2228,10 @@ class UserModulePersonalDetail extends Component {
                         <div className="row">
                             <div className="col-sm d-flex align-content-center">
                                 <Breadcrumb separator=" > ">
-                                    <Breadcrumb.Item 
-                                    className="breadcrumb-add font-18 pointer" 
-                                    onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
-                                    style={{ color: "var(--app-color)" }}
+                                    <Breadcrumb.Item
+                                        className="breadcrumb-add font-18 pointer"
+                                        onClick={() => this.setState({isShowRegistrationTeamMembers: false})}
+                                        style={{ color: "var(--app-color)" }}
                                     >
                                         {AppConstants.Registrations}
                                     </Breadcrumb.Item>
