@@ -352,10 +352,10 @@ const CheckoutForm = (props) => {
                                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div>
-                                                    <div class="sr-root">
-                                                        <div class="sr-main">
-                                                            {/* <div class="sr-combo-inputs-row">
-                                                <div class="col">
+                                                    <div className="sr-root">
+                                                        <div className="sr-main">
+                                                            {/* <div className="sr-combo-inputs-row">
+                                                <div className="col">
                                                     <label htmlFor="name">
                                                         Name
                                                     </label>

@@ -530,7 +530,7 @@ class RegistrationProducts extends Component {
                                     <img src={AppImages.teamLoadDefualtWhite} />
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
-                                    <div class="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
+                                    <div className="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
                                         <div className="headline-text-common">{item.teamName}</div>
                                         <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
                                     </div>
@@ -555,7 +555,7 @@ class RegistrationProducts extends Component {
                                     }
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
-                                    <div class="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
+                                    <div className="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
                                         <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
                                         <div className="body-text-common">{item.gender}
                                             {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
@@ -579,7 +579,7 @@ class RegistrationProducts extends Component {
                                 )
                         }
                     </div>
-                    <div class="pl-2" style={{ marginLeft: 10 }}>
+                    <div className="pl-2" style={{ marginLeft: 10 }}>
                         <div className="body-text-common">Competition</div>
                         <div className="headline-text-common">{item.competitionName}</div>
                         <div className="body-text-common">{item.organisationName}</div>
@@ -1013,7 +1013,7 @@ class RegistrationProducts extends Component {
                                 </Select>
                             </div>
                         </div>
-                        <div class="col-sm-11 col-lg-5 col-9" style={{ width: "100%", margin: "15px 0px 0px 0px" }} >
+                        <div className="col-sm-11 col-lg-5 col-9" style={{ width: "100%", margin: "15px 0px 0px 0px" }} >
                             <div className="subtitle-text-common" style={{ marginBottom: 7 }}>{AppConstants.code}</div>
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
