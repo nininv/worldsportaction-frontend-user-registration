@@ -1092,8 +1092,9 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-						firstStep: false,
-						secondStep: false,
+                        firstStep: false,
+                        secondStep: false,
+                        startStepNavigation: true,
 						users: [],
 					}
 				}
