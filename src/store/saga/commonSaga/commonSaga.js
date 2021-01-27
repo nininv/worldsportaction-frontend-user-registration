@@ -26,7 +26,6 @@ function* errorSaga(error) {
 export function* getCommonDataSaga(action) {
     try {
         const result = yield call(CommonAxiosApi.getCommonData);
-        console.log(result, 'CommonResult')
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_COMMON_REF_DATA_SUCCESS,
@@ -48,7 +47,7 @@ export function* getCommonDataSaga(action) {
     }
 }
 
-///////get the grades reference data 
+///////get the grades reference data
 export function* gradesReferenceListSaga(action) {
     try {
         const result = yield call(CommonAxiosApi.gradesReferenceList);
