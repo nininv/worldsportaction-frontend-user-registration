@@ -352,8 +352,8 @@ class TeamInviteShop extends Component{
                                 <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                             </div>
                             <div className="px-4">
-                                <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                <div class="subtitle-text-common">{this.renderPrice(item)}</div>
+                                <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                <div className="subtitle-text-common">{this.renderPrice(item)}</div>
                             </div>
                         </div>
                     </div>
@@ -379,8 +379,8 @@ class TeamInviteShop extends Component{
                                     <div style={{display: "flex", justifyContent:"center"}}>
                                         <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                                     </div>
-                                    <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-                                    <div class="subtitle-text-common">{this.renderPrice(item)}</div>
+                                    <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                    <div className="subtitle-text-common">{this.renderPrice(item)}</div>
                                 </div>
                                 {this.state.showCardView && index == this.state.expandObj.sIndex &&
                                     <div>
@@ -420,8 +420,8 @@ class TeamInviteShop extends Component{
         //                     <div style={{display: "flex",justifyContent: "center"}}>
         //                         <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
         //                     </div>
-        //                     <div class="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
-        //                     <div class="subtitle-text-common">{this.renderPrice(item)}</div>
+        //                     <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+        //                     <div className="subtitle-text-common">{this.renderPrice(item)}</div>
         //                 </div>
         //             </div>
         //         ))}
@@ -439,8 +439,8 @@ class TeamInviteShop extends Component{
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
                 </div>
-                <div class="row" style={{marginTop: "17px"}}>
-                    <div class="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
+                <div className="row" style={{marginTop: "17px"}}>
+                    <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
                         <img style={{width: "100%" , height: "180px"}} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
@@ -462,7 +462,7 @@ class TeamInviteShop extends Component{
                             return (
                                 <div>
                                     <div style={{display: "flex", flexWrap: "wrap"}}>
-                                        {!isNullVariants && <div class="col-lg-6" style={{marginTop: 27, padding: 0}}>
+                                        {!isNullVariants && <div className="col-lg-6" style={{marginTop: 27, padding: 0}}>
                                             <div className="subtitle-text-common">
                                                 {"Select " + varnt.name}
                                             </div>
@@ -496,8 +496,8 @@ class TeamInviteShop extends Component{
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" style={{margin: 0}}>
-                                        <div class="col-lg-8 col-12"
+                                    <div className="row" style={{margin: 0}}>
+                                        <div className="col-lg-8 col-12"
                                              style={{padding: 0, marginTop: 23, marginRight: 22}}>
                                             <Button className={`open-reg-button addToCart ${isOutOfStock ? 'out-of-stock' : ''}`}
                                                     disabled={this.state.quantity == null || (this.state.variantOptionId == null && !isNullVariants) || maxQuantity === 0}
@@ -505,7 +505,7 @@ class TeamInviteShop extends Component{
                                                 {isOutOfStock ? AppConstants.outOfStock : AppConstants.addToCart}
                                             </Button>
                                         </div>
-                                        <div class="col-lg-3 col-12" style={{padding: 0, marginTop: 23}}>
+                                        <div className="col-lg-3 col-12" style={{padding: 0, marginTop: 23}}>
                                             <Button className="cancel-button-text" style={{height: "49px"}}
                                                     onClick={() => this.enableExpandView('hide')}>
                                                 {AppConstants.cancel}

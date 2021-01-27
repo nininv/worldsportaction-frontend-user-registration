@@ -339,7 +339,7 @@ class SingleGamePayment extends Component {
                                                         onChange={(e) => this.props.updateSingleFeeAction(e.target.value ? e.target.value : 1, "noOfMatch", 0, "total", null)}
                                                     />
                                                 </div>
-                                                <div class="counter">
+                                                <div className="counter">
                                                     <span className="plus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "increment")}>+</span>
                                                     <span className="minus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "decrement")}>-</span>
                                                 </div>

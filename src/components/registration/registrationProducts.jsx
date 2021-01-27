@@ -530,7 +530,7 @@ class RegistrationProducts extends Component {
                                     <img src={AppImages.teamLoadDefualtWhite} />
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
-                                    <div class="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
+                                    <div className="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
                                         <div className="headline-text-common">{item.teamName}</div>
                                         <div className="body-text-common">{AppConstants.team + ',' + item.totalMembers + ' ' + AppConstants.members}</div>
                                     </div>
@@ -555,7 +555,7 @@ class RegistrationProducts extends Component {
                                     }
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', width: 'calc(100% - 67px)' }}>
-                                    <div class="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
+                                    <div className="pl-2" style={{ marginLeft: 10, marginRight: "auto" }}>
                                         <div className="headline-text-common">{item.firstName + ' ' + item.lastName}</div>
                                         <div className="body-text-common">{item.gender}
                                             {liveScore_formateDate(item.dateOfBirth) == "Invalid date" ? "" : ',' + liveScore_formateDate(item.dateOfBirth)}
@@ -579,7 +579,7 @@ class RegistrationProducts extends Component {
                                 )
                         }
                     </div>
-                    <div class="pl-2" style={{ marginLeft: 10 }}>
+                    <div className="pl-2" style={{ marginLeft: 10 }}>
                         <div className="body-text-common">Competition</div>
                         <div className="headline-text-common">{item.competitionName}</div>
                         <div className="body-text-common">{item.organisationName}</div>
@@ -784,7 +784,7 @@ class RegistrationProducts extends Component {
                                 <div className="subtitle-text-common">{AppConstants.payNow}</div>
                                 <div>{"$" + item.payNow}</div>
                             </div>
-                            {item.isTeamRegistration == 1 &&         
+                            {item.isTeamRegistration == 1 &&
                                 <div className="col-sm-6">
                                     <div className="subtitle-text-common">{AppConstants.payAtMatch}</div>
                                     <div>{"$" + item.payPerMatch}</div>
@@ -977,6 +977,14 @@ class RegistrationProducts extends Component {
 
     governmentVoucherView = (item, index) => {
         let selectedVouchers = item.selectedOptions.vouchers;
+        // ensure there is no blank fields in vouchers
+        let selectedVouchersHaveEmpty = false
+        selectedVouchers.forEach(
+            v => {
+                if (!v.governmentVoucherRefId || !v.voucherCode) selectedVouchersHaveEmpty = true
+            }
+        )
+
         return (
             <div>
                 {isArrayNotEmpty(selectedVouchers) && (
@@ -986,7 +994,7 @@ class RegistrationProducts extends Component {
                 )}
                 {(selectedVouchers || []).map((gov, govIndex) => (
                     <div className="row">
-                        <div class="col-sm-11 col-lg-6" style={{ width: "100%", margin: "15px 0px 0px 0px" }}>
+                        <div className="col-sm-11 col-lg-6" style={{ width: "100%", margin: "15px 0px 0px 0px" }}>
                             <div className="subtitle-text-common" style={{ marginBottom: 7 }}>{AppConstants.voucherType}</div>
                             <div>
                                 <Select
@@ -1005,7 +1013,7 @@ class RegistrationProducts extends Component {
                                 </Select>
                             </div>
                         </div>
-                        <div class="col-sm-11 col-lg-5 col-9" style={{ width: "100%", margin: "15px 0px 0px 0px" }} >
+                        <div className="col-sm-11 col-lg-5 col-9" style={{ width: "100%", margin: "15px 0px 0px 0px" }} >
                             <div className="subtitle-text-common" style={{ marginBottom: 7 }}>{AppConstants.code}</div>
                             <InputWithHead
                                 required={"required-field pt-0 pb-0"}
@@ -1040,6 +1048,7 @@ class RegistrationProducts extends Component {
                     {selectedVouchers && selectedVouchers.length > 0 &&
                         <div style={{ paddingTop: '15px' }}>
                             <Button className="open-reg-button"
+                                disabled={selectedVouchersHaveEmpty}
                                 onClick={(e) => this.setReviewInfo(null, "voucher", index, null, null)}
                                 type="primary">
                                 {AppConstants.applyCode}
@@ -1161,7 +1170,7 @@ class RegistrationProducts extends Component {
                                             onChange={(e) => this.setReviewInfo(captializedString(e.target.value), "firstName", null, "yourInfo", null)}
                                             setFieldsValue={yourInfo ? yourInfo.firstName : null}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                ['yourDetailsFirstName']: captializedString(i.target.value)
+                                                'yourDetailsFirstName': captializedString(i.target.value)
                                             })}
                                         />
                                     )}
@@ -1178,7 +1187,7 @@ class RegistrationProducts extends Component {
                                             onChange={(e) => this.setReviewInfo(e.target.value, "lastName", null, "yourInfo", null)}
                                             setFieldsValue={yourInfo ? yourInfo.lastName : null}
                                             onBlur={(i) => this.props.form.setFieldsValue({
-                                                ['yourDetailsLastName']: captializedString(i.target.value)
+                                                'yourDetailsLastName': captializedString(i.target.value)
                                             })}
                                         />
                                     )}
