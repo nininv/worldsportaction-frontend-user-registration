@@ -161,7 +161,7 @@ export function* getSeasonalCasualFeesSaga(action) {
   }
 }
 
-export function* getUserExists(action) {
+export function* lookForExistingUser(action) {
   try {
     const {payload} = action;
     let DOBFormated = '';
@@ -176,17 +176,17 @@ export function* getUserExists(action) {
 
     const reqData = {...payload, dateOfBirth:DOBFormated}
     const result = yield call(userHttpApi.checkUserMatch, reqData);
-    if (result.result.data === false) {
-        yield put({
-            type: ApiConstants.API_GET_USER_EXIST_DECLINE,
-            result,
+      if (result.result.data.exists) {
+          yield put({
+              type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+              result,
           });
-    } else {
-        yield put({
-            type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
-            result,
+      } else {
+          yield put({
+              type: ApiConstants.API_GET_USER_EXIST_DECLINE,
+              result,
           });
-    }
+      }
   } catch (error) {
     yield call(errorSaga, error)
   }

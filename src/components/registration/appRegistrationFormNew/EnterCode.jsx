@@ -1,40 +1,41 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Button, Form, Input } from 'antd';
 
 import '../product.css';
 import './UserAlreadyExists.css';
 import AppConstants from '../../../themes/appConstants';
 import { getStringWithPassedValues } from '../../../util/helpers';
+import {useSelector} from "react-redux";
 
 const CODE_LENGTH = 6;
 
-function EnterCode({
+const EnterCode = ({
   checkDigitCode,
   id,
-  message,
   onOkClick = () => {
     cancelSend();
   },
   cancelSend
-}) {
+}) => {
+  const userAlreadyExist = useSelector(state => state.UserRegistrationState.userAlreadyExist)
+  const {codeValidationSuccess} = userAlreadyExist
   const [value, setValue] = useState('');
 
   const onChange = ({ target: { value } }) => {
-    const sanitizedValue = value.replace(/\D/g, '');
-    setValue(sanitizedValue);
+      const sanitizedValue = value.replace(/\D/g, '');
+      setValue(sanitizedValue);
+
+      if (sanitizedValue.length === CODE_LENGTH) {
+          const payload = {
+              id, digitCode: sanitizedValue
+          }
+          checkDigitCode(payload);
+      }
   };
 
-  useEffect(() => {
-    if (value.length === CODE_LENGTH) {
-      const payload = {
-        id, digitCode:value
-      }
-      checkDigitCode(payload);
-    }
-  }, [value]);
   return (
     <div className="registration-form-view user-already-exists-section">
-      { message === "decline" ?
+      { codeValidationSuccess === false ?
       <>
         <p>{getStringWithPassedValues(AppConstants.declineConfirmDetails )}</p>
         <Button
@@ -60,6 +61,6 @@ function EnterCode({
     }
     </div>
   );
-}
+};
 
 export default memo(EnterCode);

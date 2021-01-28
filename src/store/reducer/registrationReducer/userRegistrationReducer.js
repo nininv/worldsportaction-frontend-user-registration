@@ -1,5 +1,4 @@
 import ApiConstants from "../../../themes/apiConstants";
-import AppConstants from "../../../themes/appConstants";
 import { getOrganisationId,  getCompetitonId, getUserId } from "../../../util/sessionStorage.js";
 import { deepCopyFunction, getAge, isNullOrEmptyString} from '../../../util/helpers';
 import moment from 'moment';
@@ -207,16 +206,14 @@ const initialState = {
 	registrationCapValidateInputObj: deepCopyFunction(registrationCapValidateInputObjTemp),
     enableValidateRegistrationCapService: false,
 	userAlreadyExist: {
-		firstStep: false,
-		secondStep: false,
-		thirdStep: false,
-		fourthStep: false,
+	    currentStep: 0,
+        codeValidationSuccess: null, // null = untouched, true: success, false, fail
 		users: [],
 		phone: false,
 		email: false,
 		currentUser: null,
         isLoading: false,
-        startStepNavigation:false,
+        startStepNavigation: false, // trigger listener
 	}
 }
 
@@ -1026,7 +1023,7 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-						firstStep: true,
+					    currentStep: 1,
 						users: action.result.result.data,
 					},
 				}
@@ -1057,8 +1054,7 @@ function userRegistrationReducer(state = initialState, action){
 					...state,
 					userAlreadyExist: {
 						...state.userAlreadyExist,
-						secondStep: false,
-						thirdStep: true,
+                        currentStep: 3,
 						message: action.result.result.data.message,
 						isLoading: false,
 					},
@@ -1066,25 +1062,24 @@ function userRegistrationReducer(state = initialState, action){
 						message: action.result.result.data.message,
 					}
 				}
-			case ApiConstants.API_DECLINE_CONFIRM_DETAILS:
+        case ApiConstants.API_DECLINE_CONFIRM_DETAILS:
 				return {
 					...state,
 					userAlreadyExist: {
 						...state.userAlreadyExist,
-						secondStep: false,
-						thirdStep: true,
+                        currentStep: 3,
 						message: action.result.result.data.message,
 						isLoading: false
 					}
 				}
-			case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
+            case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
+			    const {success: codeValidationSuccess} = action.result.result.data
 				return {
                     ...state,
                     userAlreadyExist: {
                         ...state.userAlreadyExist,
-                        message: action.result.result.data.message,
-                        thirdStep: false,
-                        fourthStep: true,
+                        codeValidationSuccess,
+                        currentStep: codeValidationSuccess ? 4 : 3,
                         isLoading: false
                     },
 				}
@@ -1092,8 +1087,10 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-                        firstStep: false,
-                        secondStep: false,
+					    // fixme: no step here?
+                        step_1: false,
+                        step_2: false,
+                        currentStep: 0, // ??? this is right?
                         startStepNavigation: true,
 						users: [],
 					}
@@ -1103,8 +1100,7 @@ function userRegistrationReducer(state = initialState, action){
 					...state,
 					userAlreadyExist: {
 						...state.userAlreadyExist,
-						firstStep: false,
-						secondStep: true,
+                        currentStep: 2,
 						currentUser: action.payload
 					}
 				}

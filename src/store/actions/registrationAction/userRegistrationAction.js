@@ -119,7 +119,7 @@ function stopStepNavigation(){
     };
     return action;
 }
-function getUserExists(payload){
+function lookForExistingUser(payload){
     const action = {
         type: ApiConstants.API_GET_USER_EXIST,
         payload
@@ -198,7 +198,7 @@ export{
     getSeasonalAndCasualFees,
     stopStepNavigation,
     startStepNavigation,
-    getUserExists,
+    lookForExistingUser,
     sendDigitCode,
     cancelSend,
     checkDigitCode,

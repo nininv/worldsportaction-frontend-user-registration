@@ -16,7 +16,7 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppConstants from "../../themes/appConstants";
-import { 
+import {
     teamMemberSaveUpdateAction,
     teamMembersSaveAction,
     getUserModulePersonalDetailsAction ,
@@ -88,7 +88,7 @@ class AddTeamMember extends Component {
                                 history.push('/teamMemberRegPayment',{team: this.state.team,teamMemberRegId: userState.teamMemberRegId})
                             }
                         }
-                    } 
+                    }
                 }
                 if(userState.onLoad == false && this.state.getTeamMembersOnLoad == true){
                     this.setState({getTeamMembersOnLoad: false});
@@ -133,7 +133,7 @@ class AddTeamMember extends Component {
                     [`teamMemberEmail${i}`]: teamMembers[i].email,
                     [`teamMemberEmergencyFirstName${i}`]: teamMembers[i].emergencyFirstName,
                     [`teamMemberEmergencyLastName${i}`]: teamMembers[i].emergencyLastName,
-                    [`teamMemberEmergencyContactNumber${i}`]: teamMembers[i].emergencyContactNumber,  
+                    [`teamMemberEmergencyContactNumber${i}`]: teamMembers[i].emergencyContactNumber,
                 });
                 if(isArrayNotEmpty(teamMembers[i].parentOrGuardian)){
                     for(let j in teamMembers[i].parentOrGuardian){
@@ -317,7 +317,7 @@ class AddTeamMember extends Component {
         try{
             const {personalData} = this.props.userState;
             teamMembersSave.divisions = this.getDivisions();
-            teamMembersSave.competitionMembershipProductDivisionId = this.state.team.competitionMembershipProductDivisionId; 
+            teamMembersSave.competitionMembershipProductDivisionId = this.state.team.competitionMembershipProductDivisionId;
             teamMembersSave.organisationId = this.state.team.organisationUniqueKey;
             teamMembersSave.competitionId = this.state.team.competitionUniqueKey;
             teamMembersSave.teamId = this.state.team.teamId;
@@ -843,7 +843,7 @@ class AddTeamMember extends Component {
                             {getAge(dateOfBirth) > 18 &&
                                 <Checkbox
                                     className="single-checkbox"
-                                    checked={teamMember.isRegistererAsParent == 1 ? true : false}
+                                    checked={teamMember.isRegistererAsParent == 1}
                                     onChange={e => this.onChangeTeamMemberSaveUpdate(e.target.checked ? 1 : 0, "isRegistererAsParent", teamMemberIndex, 0)}>
                                     {AppConstants.teamMemberParentCheck}
                                 </Checkbox>
@@ -902,7 +902,7 @@ class AddTeamMember extends Component {
         );
     };
 
-   
+
     footerView = (isSubmitting) => {
         return (
             <div className="fluid-width">
@@ -944,8 +944,8 @@ class AddTeamMember extends Component {
                     >
                         <Content>
                             <div className="formView">{this.contentView(getFieldDecorator)}</div>
-                            <Loader visible={this.props.commonReducerState.onLoad || 
-                                this.state.teamMembersSaveOnLoad || 
+                            <Loader visible={this.props.commonReducerState.onLoad ||
+                                this.state.teamMembersSaveOnLoad ||
                                 this.state.getTeamMembersOnLoad ||
                                 this.props.userState.onMembershipLoad} />
                         </Content>
