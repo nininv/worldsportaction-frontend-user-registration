@@ -114,67 +114,9 @@ function getSeasonalAndCasualFees(payload) {
     return action;
 }
 
-function startStepNavigation() {
-    const action = {
-        type: ApiConstants.API_START_STEP_NAVIGATION,
-    };
-    return action;
-}
-function stopStepNavigation() {
-    const action = {
-        type: ApiConstants.API_STOP_STEP_NAVIGATION,
-    };
-    return action;
-}
-function lookForExistingUser(payload) {
-    const action = {
-        type: ApiConstants.API_GET_USER_EXIST,
-        payload,
-    };
-    return action;
-}
-
-function sendDigitCode(payload) {
-    const action = {
-        type: ApiConstants.API_SEND_DIGIT_CODE,
-        payload,
-    };
-    return action;
-}
-
-function checkDigitCode(payload) {
-    const action = {
-        type: ApiConstants.API_CHECK_DIGIT_CODE,
-        payload,
-    };
-    return action;
-}
-
-function doneCheckDigitCode(payload) {
-    const action = {
-        type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,
-        payload,
-    };
-    return action;
-}
-
-function cancelSend() {
-    const action = {
-        type: ApiConstants.API_CANCEL_SEND,
-    };
-    return action;
-}
-
 function startConfirm(payload) {
     const action = {
         type: ApiConstants.API_START_CONFIRM,
-        payload,
-    };
-    return action;
-}
-function sendConfirmDetails(payload) {
-    const action = {
-        type: ApiConstants.API_SEND_CONFIRM_DETAILS,
         payload,
     };
     return action;
@@ -201,14 +143,6 @@ export {
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
-    stopStepNavigation,
-    startStepNavigation,
-    lookForExistingUser,
-    sendDigitCode,
-    cancelSend,
-    checkDigitCode,
-    doneCheckDigitCode,
-    sendConfirmDetails,
     startConfirm,
     declineConfirmDetails,
 };

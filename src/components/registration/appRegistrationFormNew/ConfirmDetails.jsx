@@ -5,17 +5,16 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { cancelSend } from "../../../store/actions/registrationAction/userRegistrationAction";
 import { useDispatch, useSelector } from "react-redux";
 
-function ConfirmDetails({ type, sendConfirmDetails }) {
+function ConfirmDetails({ type, confirmDetails, cancel }) {
     const dispatch = useDispatch();
     const [value, setValue] = useState(null);
 
     const onOkClick = (value) => {
         if (value) {
             const payload = { detail: value.detail, id, type };
-            sendConfirmDetails(payload);
+            confirmDetails(payload);
         }
     };
 
@@ -46,7 +45,7 @@ function ConfirmDetails({ type, sendConfirmDetails }) {
                     htmlType="button"
                     type="primary"
                     className="open-reg-button user-already-exists-button"
-                    onClick={() => dispatch(cancelSend())}
+                    onClick={cancel}
                 >
                     {AppConstants.cancel}
                 </Button>

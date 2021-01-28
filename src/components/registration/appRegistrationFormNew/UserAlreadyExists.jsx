@@ -5,13 +5,10 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import {
-    cancelSend,
-    startConfirm,
-} from "../../../store/actions/registrationAction/userRegistrationAction";
+import { startConfirm } from "../../../store/actions/registrationAction/userRegistrationAction";
 import { useDispatch, useSelector } from "react-redux";
 
-const UserAlreadyExists = () => {
+const UserAlreadyExists = ({ cancel }) => {
     const dispatch = useDispatch();
 
     const [selected, setSelected] = useState(null);
@@ -20,19 +17,14 @@ const UserAlreadyExists = () => {
         ? !(!!selected.user && !!selected.type)
         : !selected;
 
-    const {
-        users,
-        currentUser: { type },
-    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
+    const { users } = useSelector(
+        (state) => state.UserRegistrationState.userAlreadyExist
+    );
 
     const onOkClick = (selected) => {
         const payload = { id: selected.user, type: selected.type };
         startConfirm(payload);
         dispatch(startConfirm(payload));
-    };
-
-    const onCancelClick = () => {
-        dispatch(cancelSend());
     };
 
     return (

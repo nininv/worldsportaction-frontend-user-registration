@@ -62,10 +62,6 @@ import {
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
-    lookForExistingUser,
-    startStepNavigation,
-    stopStepNavigation,
-    sendConfirmDetails,
 } from '../../../store/actions/registrationAction/userRegistrationAction';
 import {
     getAge,
@@ -83,18 +79,64 @@ import {
 } from "../../../util/sessionStorage";
 import PlacesAutocomplete from "../elements/PlaceAutoComplete/index";
 import Loader from '../../../customComponents/loader';
-import UserAlreadyExists from './UserAlreadyExists';
-import EnterCode from './EnterCode';
-import CodeCheckResult from './CodeCheckResult';
-import ConfirmDetails from './ConfirmDetails';
-import {lenientObjectCompare} from "../../../util/lenientCompare";
+import userHttpApi from "../../../store/http/userHttp/userAxiosApi";
+import UserValidation from "./Validation";
 
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
 
 const ADULT = 18; // years age is minimum for registration without parents
+
+
+const lookForExistingUser = async (userInfo) =>{
+  try {
+    let DOBFormatted = '';
+    const DOBMoment = moment(userInfo.dateOfBirth);
+
+    if (DOBMoment.isValid()) {
+        DOBFormatted = DOBMoment.format('YYYY-MM-DD')
+    } else {
+        const splittedDOB = payload.dateOfBirth.split('-')
+        const reversedSplittedDOB = [splittedDOB[2], splittedDOB[0], splittedDOB[1]]
+        DOBFormatted = reversedSplittedDOB.join('-')
+    }
+
+    const reqData = {...payload, dateOfBirth: DOBFormatted}
+    const result = await userHttpApi.checkUserMatch(reqData);
+    return result.result.data.users
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+export const sendDigitCode = async ({payload}) => {
+  try {
+    const result = await userHttpApi.sendDigitCode({payload});
+    if (result.result.data.success) {
+        // todo: save send digit code (navigate)
+    } else {
+    }
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+
+export const confirmDetails = async ({ id, type, detail }) => {
+  try {
+    const result = await userHttpApi.confirmDetails({ id, type, detail });
+    if (result.result.data.success) {
+        // todo: save somewhere
+    } else {
+    }
+  } catch (error) {
+      console.error(error);
+  }
+};
+
 
 class AppRegistrationFormNew extends Component {
     constructor(props) {
@@ -286,7 +328,7 @@ class AppRegistrationFormNew extends Component {
         if (this.props.userRegistrationState.userAlreadyExist.verificationNavigationListener == true) {
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             this.stepNavigation(registrationObj, expiredRegistration);
-            this.props.stopStepNavigation()
+            this.props.stopVerificationStepNavigation()
         }
     }
 
@@ -1450,7 +1492,7 @@ class AppRegistrationFormNew extends Component {
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
 
-            this.props.form.validateFieldsAndScroll((err, values) => {
+            this.props.form.validateFieldsAndScroll(async (err, values) => {
                 if (err) {
                     message.error(AppConstants.pleaseReview)
                     if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0) {
@@ -1545,7 +1587,7 @@ class AppRegistrationFormNew extends Component {
                             console.log('registrationObj', registrationObj, 'registrationObj.userId', registrationObj.userId);
                             if (!registrationObj.userId) {
                                 // validation needs to be run again
-                                this.props.lookForExistingUser(registrationObj);
+                                await lookForExistingUser(registrationObj);
                             }
 
                             // if all verification has passed,
@@ -1637,10 +1679,7 @@ class AppRegistrationFormNew extends Component {
                     {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                     {this.participantDetailView(getFieldDecorator)}
 
-                    { userAlreadyExist.currentStep === 1 && <UserAlreadyExists /> }
-                    { userAlreadyExist.currentStep === 2 && <ConfirmDetails /> }
-                    { userAlreadyExist.currentStep === 3 && <EnterCode /> }
-                    { userAlreadyExist.currentStep === 4 && <CodeCheckResult /> }
+                    <UserValidation/>
 
                     <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
@@ -4160,10 +4199,8 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
-        verificationNavigationListener: startStepNavigation,
-        stopStepNavigation,
         lookForExistingUser,
-        sendConfirmDetails,
+        confirmDetails,
         netSetGoTshirtSizeAction
     }, dispatch);
 }

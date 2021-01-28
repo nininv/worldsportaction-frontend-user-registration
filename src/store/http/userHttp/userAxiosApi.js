@@ -153,7 +153,7 @@ let userHttpApi = {
     const url = `api/user/check-existing-digit-code`;
     return Method.dataPost(url, token, payload);
   },
-  sendConfirmDetails(payload) {
+  confirmDetails(payload) {
     const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
   },

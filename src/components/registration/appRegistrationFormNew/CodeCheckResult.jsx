@@ -1,26 +1,17 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { Button } from "antd";
 
 import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    cancelSend,
-    startStepNavigation,
-} from "../../../store/actions/registrationAction/userRegistrationAction";
 
-const CodeCheckResult = () => {
-    const dispatch = useDispatch();
-
-    const { message } = useSelector(
-        (state) => state.UserRegistrationState.userAlreadyExist
-    );
+const CodeCheckResult = ({ next, cancel }) => {
+    const [error, setError] = useState(false);
 
     return (
         <div className="registration-form-view user-already-exists-section">
-            {message === "decline" ? (
+            {error ? (
                 <>
                     <p>
                         {getStringWithPassedValues(
@@ -31,7 +22,7 @@ const CodeCheckResult = () => {
                         htmlType="button"
                         type="primary"
                         className="open-reg-button user-already-exists-button"
-                        onClick={() => dispatch(cancelSend())}
+                        onClick={cancel}
                     >
                         {AppConstants.ok}
                     </Button>
@@ -47,9 +38,7 @@ const CodeCheckResult = () => {
                         htmlType="button"
                         type="primary"
                         className="open-reg-button user-already-exists-button"
-                        onClick={() => {
-                            dispatch(startStepNavigation());
-                        }}
+                        onClick={next}
                     >
                         {AppConstants.next}
                     </Button>
