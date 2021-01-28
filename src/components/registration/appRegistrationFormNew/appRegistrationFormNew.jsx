@@ -4161,7 +4161,7 @@ function mapDispatchToProps(dispatch) {
         getSchoolListAction,
         validateRegistrationCapAction,
         verificationNavigationListener: startStepNavigation,
-        stopStepNavigationstopStepNavigation,
+        stopStepNavigation,
         lookForExistingUser,
         sendConfirmDetails,
         netSetGoTshirtSizeAction
