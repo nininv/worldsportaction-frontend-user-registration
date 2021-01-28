@@ -318,6 +318,9 @@ const CheckoutForm = (props) => {
                     :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">
