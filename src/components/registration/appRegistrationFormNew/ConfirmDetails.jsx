@@ -1,27 +1,27 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { Button, Form, Input } from "antd";
 
 import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
+import { cancelSend } from "../../../store/actions/registrationAction/userRegistrationAction";
+import { useDispatch, useSelector } from "react-redux";
 
-function ConfirmDetails({
-    id,
-    type,
-    onCancelClick = () => {
-        cancelSend();
-    },
-    onOkClick = (value) => {
+function ConfirmDetails({ type, sendConfirmDetails }) {
+    const dispatch = useDispatch();
+    const [value, setValue] = useState(null);
+
+    const onOkClick = (value) => {
         if (value) {
             const payload = { detail: value.detail, id, type };
             sendConfirmDetails(payload);
         }
-    },
-    sendConfirmDetails,
-    cancelSend,
-}) {
-    const [value, setValue] = useState(null);
+    };
+
+    const {
+        currentUser: { id },
+    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
 
     return (
         <div className="registration-form-view user-already-exists-section">
@@ -46,7 +46,7 @@ function ConfirmDetails({
                     htmlType="button"
                     type="primary"
                     className="open-reg-button user-already-exists-button"
-                    onClick={onCancelClick}
+                    onClick={() => dispatch(cancelSend())}
                 >
                     {AppConstants.cancel}
                 </Button>

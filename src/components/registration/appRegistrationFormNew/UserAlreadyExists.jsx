@@ -1,27 +1,39 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { Button, Radio } from "antd";
 
 import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-
-function UserAlreadyExists({
-    users = [],
-    startConfirm,
+import {
     cancelSend,
-    onCancelClick = () => {
-        cancelSend();
-    },
-    onOkClick = (selected) => {
+    startConfirm,
+} from "../../../store/actions/registrationAction/userRegistrationAction";
+import { useDispatch, useSelector } from "react-redux";
+
+const UserAlreadyExists = () => {
+    const dispatch = useDispatch();
+
+    const [selected, setSelected] = useState(null);
+
+    const buttonsDisabled = selected
+        ? !(!!selected.user && !!selected.type)
+        : !selected;
+
+    const {
+        users,
+        currentUser: { type },
+    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
+
+    const onOkClick = (selected) => {
         const payload = { id: selected.user, type: selected.type };
         startConfirm(payload);
-    },
-}) {
-    const [selected, setSelected] = useState(null);
-    const buttonsDisabled = selected
-        ? !(Boolean(selected.user) && Boolean(selected.type))
-        : !selected;
+        dispatch(startConfirm(payload));
+    };
+
+    const onCancelClick = () => {
+        dispatch(cancelSend());
+    };
 
     return (
         <div className="registration-form-view user-already-exists-section">
@@ -114,6 +126,6 @@ function UserAlreadyExists({
             )}
         </div>
     );
-}
+};
 
 export default memo(UserAlreadyExists);

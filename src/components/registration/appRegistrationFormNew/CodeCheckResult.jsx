@@ -5,10 +5,16 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    cancelSend,
+    startStepNavigation,
+} from "../../../store/actions/registrationAction/userRegistrationAction";
 
-function CodeCheckResult({ message, cancelSend }) {
-    const { verificationNavigationListener } = useSelector(
+const CodeCheckResult = () => {
+    const dispatch = useDispatch();
+
+    const { message } = useSelector(
         (state) => state.UserRegistrationState.userAlreadyExist
     );
 
@@ -25,7 +31,7 @@ function CodeCheckResult({ message, cancelSend }) {
                         htmlType="button"
                         type="primary"
                         className="open-reg-button user-already-exists-button"
-                        onClick={cancelSend}
+                        onClick={() => dispatch(cancelSend())}
                     >
                         {AppConstants.ok}
                     </Button>
@@ -41,7 +47,9 @@ function CodeCheckResult({ message, cancelSend }) {
                         htmlType="button"
                         type="primary"
                         className="open-reg-button user-already-exists-button"
-                        onClick={verificationNavigationListener}
+                        onClick={() => {
+                            dispatch(startStepNavigation());
+                        }}
                     >
                         {AppConstants.next}
                     </Button>
@@ -49,6 +57,6 @@ function CodeCheckResult({ message, cancelSend }) {
             )}
         </div>
     );
-}
+};
 
 export default memo(CodeCheckResult);

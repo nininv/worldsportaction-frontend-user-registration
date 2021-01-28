@@ -14,7 +14,7 @@ import {
     Steps,
     Pagination,
     Carousel,
-    Spin, notification
+    Spin
 } from "antd";
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -34,14 +34,11 @@ import {
     getCommonRefData,
     favouriteTeamReferenceAction,
     firebirdPlayerReferenceAction,
-    registrationOtherInfoReferenceAction,
     countryReferenceAction,
-    nationalityReferenceAction,
     heardByReferenceAction,
     playerPositionReferenceAction,
     genderReferenceAction,
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction,
     identificationReferenceAction,
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
@@ -68,10 +65,6 @@ import {
     lookForExistingUser,
     startStepNavigation,
     stopStepNavigation,
-    sendDigitCode,
-    checkDigitCode,
-    cancelSend,
-    startConfirm,
     sendConfirmDetails,
 } from '../../../store/actions/registrationAction/userRegistrationAction';
 import {
@@ -87,12 +80,9 @@ import {
     getOrganisationId,
     getCompetitonId,
     getUserId,
-    getAuthToken,
-    getSourceSystemFlag,
 } from "../../../util/sessionStorage";
 import PlacesAutocomplete from "../elements/PlaceAutoComplete/index";
 import Loader from '../../../customComponents/loader';
-import ApiConstants from "../../../themes/apiConstants";
 import UserAlreadyExists from './UserAlreadyExists';
 import EnterCode from './EnterCode';
 import CodeCheckResult from './CodeCheckResult';
@@ -293,7 +283,7 @@ class AppRegistrationFormNew extends Component {
 
         }
 
-        if (this.props.userRegistrationState.userAlreadyExist.startStepNavigation == true) {
+        if (this.props.userRegistrationState.userAlreadyExist.verificationNavigationListener == true) {
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             this.stepNavigation(registrationObj, expiredRegistration);
             this.props.stopStepNavigation()
@@ -1549,25 +1539,19 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
 
+                        // for logged in user, we don't handle any of the validation
                         if (!this.props.loginState.loggedIn) {
                             // check if the user in registration object is still the "verified" one in store
-                            if (!lenientObjectCompare(
-                                registrationObj.verifiedUser, {
-                                    firstName: registrationObj.firstName,
-                                    lastName: registrationObj.lastName,
-                                    mobileNumber: registrationObj.mobileNumber,
-                                    email: registrationObj.email
-                                },
-                                ['firstName', 'lastName', 'mobileNumber', 'email']
-                                )
-                            ) {
+                            console.log('registrationObj', registrationObj, 'registrationObj.userId', registrationObj.userId);
+                            if (!registrationObj.userId) {
                                 // validation needs to be run again
                                 this.props.lookForExistingUser(registrationObj);
                             }
 
-                            // for logged in user, we don't handle any of the validation
+                            // if all verification has passed,
                             if (userAlreadyExist.currentStep === 4 && userAlreadyExist.message === "success") {
-                                return this.props.startStepNavigation()
+                                // navigate the form forward
+                                return this.props.verificationNavigationListener()
                             }
                             this.props.lookForExistingUser(registrationObj);
                             return;
@@ -1653,40 +1637,10 @@ class AppRegistrationFormNew extends Component {
                     {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                     {this.participantDetailView(getFieldDecorator)}
 
-                    {
-                        userAlreadyExist.currentStep === 1 && (
-                        <UserAlreadyExists
-                            cancelSend={this.props.cancelSend}
-                            startConfirm={this.props.startConfirm}
-                            users={userAlreadyExist.users} />
-                       )
-                    }
-                    {
-                        userAlreadyExist.currentStep === 2 && (
-                        <ConfirmDetails
-                            cancelSend={this.props.cancelSend}
-                            sendDigitCode={this.props.sendDigitCode}
-                            sendConfirmDetails={this.props.sendConfirmDetails}
-                            id={userAlreadyExist.currentUser.id}
-                            type={userAlreadyExist.currentUser.type}/>
-                        )
-                    }
-                    {
-                        userAlreadyExist.currentStep === 3 && (
-                        <EnterCode
-                            cancelSend={this.props.cancelSend}
-                            checkDigitCode={this.props.checkDigitCode}
-                            id={userAlreadyExist.currentUser.id} />
-                        )
-                    }
-                    {
-                        userAlreadyExist.currentStep === 4 && (
-                        <CodeCheckResult
-                            startStepNavigation={this.props.startStepNavigation}
-                            cancelSend={this.props.cancelSend}
-                            message={userAlreadyExist.message} />
-                        )
-                    }
+                    { userAlreadyExist.currentStep === 1 && <UserAlreadyExists /> }
+                    { userAlreadyExist.currentStep === 2 && <ConfirmDetails /> }
+                    { userAlreadyExist.currentStep === 3 && <EnterCode /> }
+                    { userAlreadyExist.currentStep === 4 && <CodeCheckResult /> }
 
                     <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
@@ -4206,13 +4160,9 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         validateRegistrationCapAction,
-        startStepNavigation,
-        stopStepNavigation,
+        verificationNavigationListener: startStepNavigation,
+        stopStepNavigationstopStepNavigation,
         lookForExistingUser,
-        sendDigitCode,
-        checkDigitCode,
-        cancelSend,
-        startConfirm,
         sendConfirmDetails,
         netSetGoTshirtSizeAction
     }, dispatch);

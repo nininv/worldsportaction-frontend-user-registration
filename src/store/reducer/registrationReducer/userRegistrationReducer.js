@@ -213,7 +213,7 @@ const initialState = {
 		email: false,
 		currentUser: null,
         isLoading: false,
-        startStepNavigation: false, // trigger listener
+        verificationNavigationListener: false, // trigger listener
 	}
 }
 
@@ -1031,7 +1031,7 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-                        startStepNavigation:true,
+                        verificationNavigationListener:true,
 						users: action.result.result.data,
 					},
 				}
@@ -1039,14 +1039,14 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-                        startStepNavigation:false,
+                        verificationNavigationListener:false,
 					},
 				}
 			case ApiConstants.API_START_STEP_NAVIGATION:
 				return {
 					...state,
 					userAlreadyExist: {
-                        startStepNavigation:true,
+                        verificationNavigationListener:true,
 					},
 				}
 			case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
@@ -1087,11 +1087,8 @@ function userRegistrationReducer(state = initialState, action){
 				return {
 					...state,
 					userAlreadyExist: {
-					    // fixme: no step here?
-                        step_1: false,
-                        step_2: false,
-                        currentStep: 0, // ??? this is right?
-                        startStepNavigation: true,
+                        currentStep: 0,
+                        verificationNavigationListener: true,
 						users: [],
 					}
 				}

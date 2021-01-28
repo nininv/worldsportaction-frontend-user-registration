@@ -5,23 +5,23 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    cancelSend,
+    checkDigitCode,
+} from "../../../store/actions/registrationAction/userRegistrationAction";
 
 const CODE_LENGTH = 6;
 
-const EnterCode = ({
-    checkDigitCode,
-    id,
-    onOkClick = () => {
-        cancelSend();
-    },
-    cancelSend,
-}) => {
-    const userAlreadyExist = useSelector(
-        (state) => state.UserRegistrationState.userAlreadyExist
-    );
-    const { codeValidationSuccess } = userAlreadyExist;
+const EnterCode = () => {
     const [value, setValue] = useState("");
+
+    const {
+        currentUser: { id },
+        codeValidationSuccess,
+    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
+
+    const dispatch = useDispatch();
 
     const onChange = ({ target: { value } }) => {
         const sanitizedValue = value.replace(/\D/g, "");
@@ -32,7 +32,7 @@ const EnterCode = ({
                 id,
                 digitCode: sanitizedValue,
             };
-            checkDigitCode(payload);
+            dispatch(checkDigitCode(payload));
         }
     };
 
@@ -49,7 +49,7 @@ const EnterCode = ({
                         htmlType="button"
                         type="primary"
                         className="open-reg-button user-already-exists-button"
-                        onClick={onOkClick}
+                        onClick={() => dispatch(cancelSend())}
                     >
                         {AppConstants.ok}
                     </Button>
