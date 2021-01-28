@@ -1078,6 +1078,7 @@ const AppConstants = {
   pickupAddress: "Pickup Address",
   qty: "Qty",
   securePaymentMsg: "There is no payment required",
+  submitButtonPressDescription: "You must press SUBMIT to complete your Registration.",
   selectParentOrGuardian: "Select Parent/Guardian",
   returnToShoppingCart: "Return to Shopping Cart",
   anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies (medical or food) or Illnesses. Please detail a Management Plan (if applicable)",
