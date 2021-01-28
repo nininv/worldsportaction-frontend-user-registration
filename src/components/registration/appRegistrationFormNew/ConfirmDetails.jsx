@@ -5,10 +5,9 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 function ConfirmDetails({ type, confirmDetails, cancel }) {
-    const dispatch = useDispatch();
     const [value, setValue] = useState(null);
 
     const onOkClick = (value) => {
