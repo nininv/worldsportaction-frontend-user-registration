@@ -1179,6 +1179,7 @@ const AppConstants = {
   invoiceCode: "Invoice Code",
   warning: "Warning",
 
+  id: 'ID',
   // CM-2026
   banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
@@ -1196,6 +1197,8 @@ const AppConstants = {
   confirmDetails: "Please enter the complete {{detail}}",
   declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record.",
 
+  possibleMatches: 'Possible Matches',
+  possibleMatchesDescription: 'Select the user you want to merge with and press Next',
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",
   payAtMatchPerPlayer: "Pay At Match Per Player",

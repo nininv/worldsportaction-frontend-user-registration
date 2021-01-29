@@ -9,6 +9,7 @@ import { NavLink } from "react-router-dom";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
+import { setOrganisationData } from "../../util/sessionStorage";
 import {
     getUserModulePersonalDetailsAction,
     getUserModulePersonalByCompetitionAction, getUserModuleRegistrationAction,
@@ -19,7 +20,8 @@ import {
     registrationResendEmailAction,
     userProfileUpdateAction,
     getUserModuleTeamMembersAction,
-    teamMemberUpdateAction
+    teamMemberUpdateAction,
+    getUserOrganisationAction,
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -1055,6 +1057,12 @@ class UserModulePersonalDetail extends Component {
 
     async componentDidMount() {
         let user_Id = this.state.userId;
+        await this.props.getUserOrganisationAction();
+        const organisationData = this.props.userState.getUserOrganisation;
+        if (organisationData.length > 0) {
+            await setOrganisationData(organisationData[0]);
+        }
+
         if (this.state.tempUserId != undefined && this.state.tempUserId != null) {
             user_Id = this.state.tempUserId;
             this.setState({ userId: user_Id });
@@ -2959,7 +2967,8 @@ function mapDispatchToProps(dispatch) {
         registrationResendEmailAction,
         userProfileUpdateAction,
         getUserModuleTeamMembersAction,
-        teamMemberUpdateAction
+        teamMemberUpdateAction,
+        getUserOrganisationAction,
     }, dispatch);
 }
 

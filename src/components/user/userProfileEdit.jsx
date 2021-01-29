@@ -13,7 +13,9 @@ import {
     Radio,
     Form,
     message,
-    Modal
+    Modal,
+    Table,
+    Typography
 } from "antd";
 import moment from "moment";
 
@@ -21,7 +23,7 @@ import AppConstants from "../../themes/appConstants";
 import ValidationConstants from "../../themes/validationConstant";
 import history from "../../util/history";
 import { regexNumberExpression } from "../../util/helpers";
-import { setTempUserId, getUserId } from "../../util/sessionStorage";
+import { getOrganisationData, setTempUserId, getUserId } from "../../util/sessionStorage";
 import {
     getCommonRefData, countryReferenceAction, nationalityReferenceAction,
     genderReferenceAction, disabilityReferenceAction, combinedAccreditationUmpieCoachRefrence
@@ -37,6 +39,39 @@ const { Header, Footer, Content } = Layout;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
+const { Text } = Typography;
+
+const columns = [
+    {
+        title: AppConstants.id,
+        dataIndex: "id",
+        key: "key",
+    }, {
+        title: AppConstants.firstName,
+        dataIndex: "firstName",
+        key: "firstName",
+    }, {
+        title: AppConstants.lastName,
+        dataIndex: "lastName",
+        key: "lastName",
+    }, {
+        title: AppConstants.dateOfBirth,
+        dataIndex: "dob",
+        key: "dob",
+    }, {
+        title: AppConstants.emailAdd,
+        dataIndex: "maskedEmail",
+        key: "maskedEmail",
+    }, {
+        title: AppConstants.contactNumber,
+        dataIndex: "maskedMobileNumber",
+        key: "maskedMobileNumber",
+    }, {
+        title: AppConstants.affiliate,
+        dataIndex: "affiliate",
+        key: "affiliate",
+    },
+];
 
 class UserProfileEdit extends Component {
     constructor(props) {
@@ -48,6 +83,7 @@ class UserProfileEdit extends Component {
             loadValue: false,
             saveLoad: false,
             tabKey: "4",
+            organisationId: getOrganisationData() ? getOrganisationData().organisationUniqueKey : null,
             userData: {
                 genderRefId: 0,
                 firstName: "",
@@ -59,7 +95,7 @@ class UserProfileEdit extends Component {
                 street1: "",
                 street2: "",
                 suburb: "",
-                stateRefId: 1,
+                stateRefId: 0,
                 postalCode: "",
                 statusRefId: 0,
                 emergencyFirstName: "",
@@ -93,6 +129,10 @@ class UserProfileEdit extends Component {
             manualAddress: false,
             storedEmailAddress: null,
             isAdding: false,
+            // possible matches
+            possibleMatches: [],
+            isPossibleMatchShow: false,
+            isLoading: false,
         };
         this.confirmOpend = false;
         // this.props.getCommonRefData();
@@ -1132,6 +1172,123 @@ class UserProfileEdit extends Component {
         );
     };
 
+    // possible matches view
+    // ideally this should be separate from the user profile view
+
+    maskMobileNumber = (number = 0) => {
+        const maskedNumber = number.toString().replace(/([0-9]{2})([0-9]{4})([0-9]{4})/, ($0, $1, $2, $3) => { return $1 + $2.replace(/\d/g, '*') + $3; });
+        return maskedNumber;
+    };
+
+    maskEmail = (email = '') => {
+        const [name, domain] = email.split('@');
+        let maskedName = '';
+        for (let i = 0; i < name.length; i ++) {
+            maskedName += i === 0 ? name[i] : '*';
+        }
+        const [mailType, portion] = domain.split('.');
+        let maskedMailType = '';
+        for (let i = 0; i < mailType.length; i ++) {
+            maskedMailType += i === 0 ? mailType[i] : '*';
+        }
+        const maskedEmail = maskedName + '@' + maskedMailType + '.' + portion;
+        return maskedEmail;
+    };
+
+    possibleMatchesDetailView = (matches) => {
+        let selectedMatch = null;
+
+        const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+                selectedMatch = selectedRows;
+            },
+            getCheckboxProps: (record) => ({
+                name: record.name,
+            }),
+        };
+
+        const dataSource = matches.map((u) => ({
+            key: u.id,
+            id: u.id,
+            firstName: u.firstName,
+            lastName: u.lastname,
+            dob: moment(u.dateOfBirth).format('DD/MM/YYYY'),
+            email: u.email,
+            maskedEmail: this.maskEmail(u.email),
+            mobile: u.mobileNumber,
+            maskedMobileNumber: this.maskMobileNumber(u.mobileNumber),
+            affiliate: u.affiliates && u.affiliates.length ? u.affiliates.join(', ') : '',
+        }));
+
+        // actual function to call saving a child / parent
+        const addChildOrParent = async () => {
+            // if match is not selected, save the user data from the form
+            const userToAdd = {...this.state.userData, ...selectedMatch};
+            const { userId } = this.props.history.location.state.userData;
+            const sameEmail = (this.state.isSameEmail || this.state.userData.email === this.props.history.location.state.userData.email) ? 1 : 0;
+
+            this.setState({ isLoading: true });
+            if (this.state.titleLabel === AppConstants.addChild) {
+                try {
+                    const { status } = await UserAxiosApi.addChild({ userId, sameEmail, body: userToAdd });
+                    if ([1, 4].includes(status)) {
+                        history.push({
+                            pathname: '/userPersonal',
+                            state: { tabKey: this.state.tabKey, userId: this.props.history.location.state.userData.userId },
+                        });
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            } else if (this.state.titleLabel === AppConstants.addParent_guardian) {
+                try {
+                    const { status } = await UserAxiosApi.addParent({ userId, sameEmail, body: userToAdd });
+                    if ([1, 4].includes(status)) {
+                        history.push({
+                            pathname: '/userPersonal',
+                            state: { tabKey: this.state.tabKey, userId: this.props.history.location.state.userData.userId },
+                        });
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            this.setState({ isLoading: false });
+            // this.setState({ saveLoad: true });
+        };
+
+        const onCancel = () => {
+            this.confirmOpend = false;
+            this.setState({ isPossibleMatchShow: false });
+        };
+
+        return (
+            <div className="comp-dash-table-view mt-5">
+                <Loader visible={this.state.isLoading} />
+                <h2>{AppConstants.possibleMatches}</h2>
+                <Text type="secondary">
+                    {AppConstants.possibleMatchesDescription}
+                </Text>
+                <div className="table-responsive home-dash-table-view mt-3">
+                    <Table
+                        rowSelection={{
+                            type: 'radio',
+                            ...rowSelection,
+                        }}
+                        className="home-dashboard-table"
+                        dataSource={dataSource}
+                        columns={columns}
+                        pagination={false}
+                    />
+                </div>
+                <div className="d-flex align-items-center justify-content-between mt-4">
+                    <Button onClick={onCancel}>{AppConstants.cancel}</Button>
+                    <Button type="primary" onClick={addChildOrParent}>{AppConstants.next}</Button>
+                </div>
+            </div>
+        );
+    };
+
     onSaveClick = (e) => {
         try {
             e.preventDefault();
@@ -1182,39 +1339,8 @@ class UserProfileEdit extends Component {
         }
     };
 
-    // actual function to call saving a child / parent
-    async addChildOrParent (body) {
-        const { userId, email } = this.props.userState.personalData; // current (spoofing) user id
-        const sameEmail = Number(this.state.isSameEmail || this.state.userData.email === email);
-
-        try {
-            this.setState({ isAdding: true });
-
-            const { status, result } = await (
-                this.state.titleLabel === AppConstants.addChild ? UserAxiosApi.addChild : UserAxiosApi.addParent
-            )({ userId, sameEmail, body });
-
-            this.setState({ isAdding: false });
-
-            if (status === 1) {
-                history.push({
-                    pathname: '/userPersonal',
-                    state: { tabKey: this.state.tabKey, userId },
-                });
-            }
-
-            if (status === 4) {
-                message.error(result.data.message);
-            }
-        } catch (e) {
-            this.setState({ isAdding: false });
-            message.error("Something Went Wrong");
-            console.error(e);
-        }
-    };
-
     // global save action
-    saveAction = () => {
+    saveAction = async () => {
         let userState = this.props.userState;
         let data = this.state.userData;
         const { storedEmailAddress } = this.state;
@@ -1239,7 +1365,11 @@ class UserProfileEdit extends Component {
         }
 
         if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
-            this.addChildOrParent(data);
+            data.dateOfBirth = moment(data.dateOfBirth).format("YYYY-MM-DD");
+            const { status, result: { data: possibleMatches } } = await UserAxiosApi.findPossibleMerge(data);
+            if ([1, 4].includes(status)) {
+                this.setState({ isPossibleMatchShow: true, possibleMatches });
+            }
         } else {
             if (this.state.displaySection === "1") {
                 data['emailUpdated'] = storedEmailAddress === data.email ? 0 : 1;
@@ -1288,19 +1418,25 @@ class UserProfileEdit extends Component {
                     onMenuHeadingClick={() => history.push("./userTextualDashboard")}
                 />
                 <Layout>
-                    {this.headerView()}
-                    <Form
-                        onSubmit={this.onSaveClick}
-                        noValidate="noValidate"
-                        ref={this.formRef}
-                    >
-                        <Content>
-                            <div className="formView">{this.contentView(getFieldDecorator)}</div>
-                            <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad || this.state.isAdding} />
-                        </Content>
+                    {!this.state.isPossibleMatchShow ? (
+                        <>
+                            {this.headerView()}
+                            <Form
+                                onSubmit={this.onSaveClick}
+                                noValidate="noValidate"
+                                ref={this.formRef}
+                            >
+                                <Content>
+                                    <div className="formView">{this.contentView(getFieldDecorator)}</div>
+                                    <Loader visible={this.props.userState.onUpUpdateLoad || this.props.commonReducerState.onLoad || this.state.isAdding} />
+                                </Content>
 
-                        <Footer>{this.footerView()}</Footer>
-                    </Form>
+                                <Footer>{this.footerView()}</Footer>
+                            </Form>
+                        </>
+                    ) : (
+                        this.possibleMatchesDetailView(this.state.possibleMatches)
+                    )}
                 </Layout>
             </div>
         );
