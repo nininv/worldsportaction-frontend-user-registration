@@ -65,15 +65,15 @@ const EnterCode = ({ cancel, next }) => {
                             { number: CODE_LENGTH }
                         )}
                     </p>
-                    <Form.Item className="place-auto-complete-container">
-                        <Input
-                            maxLength={CODE_LENGTH}
-                            value={value}
-                            onChange={onChange}
-                        />
-                    </Form.Item>
                 </>
             )}
+            <Form.Item className="place-auto-complete-container">
+                <Input
+                    maxLength={CODE_LENGTH}
+                    value={value}
+                    onChange={onChange}
+                />
+            </Form.Item>
         </div>
     );
 };

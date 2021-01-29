@@ -5,33 +5,26 @@ import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { startConfirm } from "../../../store/actions/registrationAction/userRegistrationAction";
-import { useDispatch, useSelector } from "react-redux";
 
-const UserAlreadyExists = ({ cancel }) => {
-    const dispatch = useDispatch();
-
-    const [selected, setSelected] = useState(null);
+const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
+    const [selected, setSelected] = useState(null); // radio selection, not the real selected
 
     const buttonsDisabled = selected
         ? !(!!selected.user && !!selected.type)
         : !selected;
 
-    const { users } = useSelector(
-        (state) => state.UserRegistrationState.userAlreadyExist
-    );
-
-    const onOkClick = (selected) => {
-        const payload = { id: selected.user, type: selected.type };
-        startConfirm(payload);
-        dispatch(startConfirm(payload));
+    const confirm = (selected) => {
+        const payload = { id: selected.user, type: selected.type }; // todo: what use?
+        // select this user
+        setUserId(selected.user);
+        next();
     };
 
     return (
         <div className="registration-form-view user-already-exists-section">
-            {users.length > 0 && (
+            {matchingUsers.length > 0 && (
                 <>
-                    {users.length > 1 ? (
+                    {matchingUsers.length > 1 ? (
                         <>
                             <p>
                                 {getStringWithPassedValues(
@@ -45,7 +38,7 @@ const UserAlreadyExists = ({ cancel }) => {
                                 }
                                 value={selected ? selected.user : null}
                             >
-                                {users.map((user) => {
+                                {matchingUsers.map((user) => {
                                     return (
                                         <Radio
                                             className="registration-radio-group__radio"
@@ -64,7 +57,10 @@ const UserAlreadyExists = ({ cancel }) => {
                         <p>
                             {getStringWithPassedValues(
                                 AppConstants.oneUserAlreadyExists,
-                                { email: users[0].email, phone: users[0].phone }
+                                {
+                                    email: matchingUsers[0].email,
+                                    phone: matchingUsers[0].phone,
+                                }
                             )}
                         </p>
                     )}
@@ -74,8 +70,8 @@ const UserAlreadyExists = ({ cancel }) => {
                             setSelected({
                                 ...selected,
                                 user:
-                                    users.length === 1
-                                        ? users[0].id
+                                    matchingUsers.length === 1
+                                        ? matchingUsers[0].id
                                         : selected.user,
                                 type: value,
                             })
@@ -91,7 +87,7 @@ const UserAlreadyExists = ({ cancel }) => {
                             htmlType="button"
                             type="primary"
                             className="open-reg-button user-already-exists-button"
-                            onClick={onCancelClick}
+                            onClick={cancel}
                         >
                             {AppConstants.cancel}
                         </Button>
@@ -100,7 +96,7 @@ const UserAlreadyExists = ({ cancel }) => {
                             type="default"
                             className="open-reg-button user-already-exists-button user-already-exists-ok"
                             onClick={() => {
-                                onOkClick(selected);
+                                confirm(selected);
                             }}
                             disabled={buttonsDisabled}
                         >
@@ -109,7 +105,7 @@ const UserAlreadyExists = ({ cancel }) => {
                     </div>
                 </>
             )}
-            {!users && (
+            {!matchingUsers && (
                 <p>
                     {getStringWithPassedValues(
                         AppConstants.userAlreadyExistsNoContact

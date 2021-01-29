@@ -114,14 +114,6 @@ function getSeasonalAndCasualFees(payload) {
     return action;
 }
 
-function startConfirm(payload) {
-    const action = {
-        type: ApiConstants.API_START_CONFIRM,
-        payload,
-    };
-    return action;
-}
-
 function declineConfirmDetails(payload) {
     const action = {
         type: ApiConstants.API_DECLINE_CONFIRM_DETAILS,
@@ -143,6 +135,5 @@ export {
     orgRegistrationRegSettingsEndUserRegAction,
     registrationExpiryCheckAction,
     getSeasonalAndCasualFees,
-    startConfirm,
     declineConfirmDetails,
 };

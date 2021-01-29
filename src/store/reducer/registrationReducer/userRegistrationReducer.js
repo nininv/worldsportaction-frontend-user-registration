@@ -1490,15 +1490,6 @@ function userRegistrationReducer(state = initialState, action) {
                     users: [],
                 },
             };
-        case ApiConstants.API_START_CONFIRM:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    ...state.userAlreadyExist,
-                    currentStep: 2,
-                    currentUser: action.payload,
-                },
-            };
         case ApiConstants.API_PARTICIPANT_DETAILS_LOAD:
             return {
                 ...state,

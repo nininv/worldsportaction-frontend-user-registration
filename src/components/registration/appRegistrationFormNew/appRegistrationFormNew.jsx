@@ -1679,7 +1679,11 @@ class AppRegistrationFormNew extends Component {
                     {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                     {this.participantDetailView(getFieldDecorator)}
 
-                    <UserValidation/>
+                    <UserValidation user={registrationObj} updateUser={(updatedUser) => {
+                        // since we only care about these 2 fields being updated by Validator Component
+                        updateUserRegistrationObjectAction(updatedUser.isVerified, 'isVerified');
+                        updateUserRegistrationObjectAction(updatedUser.userId, 'userId');
+                    }}/>
 
                     <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
@@ -2535,6 +2539,8 @@ class AppRegistrationFormNew extends Component {
                             {!parent.isSameAddress && (
                                 <div>{this.parentOrGuardianAddressView(parent, parentIndex, getFieldDecorator)}</div>
                             )}
+                            {/* TODO-exis : how to update user here */}
+                            <UserValidation user={parent} updateUser={() => alert('unfinished...')}/>
                         </div>
                     );
                 })}
