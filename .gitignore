@@ -4,3 +4,5 @@ build
 .env
 # ide stuff
 .idea/
+.vscode
+.eslintcache

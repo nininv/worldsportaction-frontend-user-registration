@@ -1,25 +1,18 @@
-var moment = require('moment');
-const isArrayNotEmpty = array => {
-    if (array !== null && Array.isArray(array) && array.length > 0) {
-        return true
-    } else {
-        return false
-    }
+import moment from 'moment';
+
+export const isArrayNotEmpty = array => {
+    return (array !== null && Array.isArray(array) && array.length > 0);
 }
 
-const isNullOrEmptyString = word => {
-    if (word !== null && word !== undefined && word.length > 0) {
-        return true
-    } else {
-        return false
-    }
+export const isNullOrEmptyString = word => {
+    return (word !== null && word !== undefined && word.length > 0);
 }
 
-const isNullOrUndefined = (e) => {
+export const isNullOrUndefined = (e) => {
     return (e === null || e === undefined) ? false : e;
 }
 
-const feeIsNull = (fee) => {
+export const feeIsNull = (fee) => {
     return ((fee === null || fee === undefined) ? 0 : (stringTOFloatNumberReg(fee)));
 }
 
@@ -29,7 +22,7 @@ const getAge = (birthDate) => {
 }
 // export const getAge = (birthDate) => (Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10));
 
-const deepCopyFunction = inObject => {
+export const deepCopyFunction = inObject => {
     let outObject, value, key
 
     if (typeof inObject !== "object" || inObject === null) {
@@ -49,26 +42,25 @@ const deepCopyFunction = inObject => {
     return outObject
 }
 
-const formatValue = (val) => {
+export const formatValue = (val) => {
     return val === null ? "0.00" : stringTOFloatNumberReg(val).toFixed(2)
 }
 
-const stringTOFloatNumber = (checkString) => {
+export const stringTOFloatNumber = (checkString) => {
     return typeof checkString === 'string' ? parseFloat(checkString) : checkString;
 }
 
-const stringTOFloatNumberReg = (checkString) => {
+export const stringTOFloatNumberReg = (checkString) => {
     return typeof checkString === 'string' ? Number(Number(checkString).toFixed(2)) : Number(Number(checkString).toFixed(2));
 }
 
-const captializedString = (value) => {
+export const captializedString = (value) => {
     if (value != undefined) {
-        let capString = value.charAt(0).toUpperCase() + value.slice(1);
-        return capString;
+        return value.charAt(0).toUpperCase() + value.slice(1);
     }
 };
 
-const getCurrentYear = (yearArr) => {
+export const getCurrentYear = (yearArr) => {
     let currentYear = moment().year()
     let currentYearIndex = yearArr.findIndex((x) => x.name == currentYear)
     if (currentYearIndex === -1) {
@@ -78,7 +70,7 @@ const getCurrentYear = (yearArr) => {
     }
 };
 
-const compare = (a, b) => {
+export const compare = (a, b) => {
     const bandA = a.sortOrder;
     const bandB = b.sortOrder;
     let comparison = 0;
@@ -90,17 +82,23 @@ const compare = (a, b) => {
     return comparison;
 }
 
-const reverseArray = (array) => {
+export const reverseArray = (array) => {
     return array.sort(compare)
 };
 
-const regexNumberExpression = (number) => {
+export const regexNumberExpression = (number) => {
     if (number) {
         return number.replace(/[^\d]/g, '');
     }
 };
 
-module.exports = {
-    isArrayNotEmpty, isNullOrEmptyString, getAge, deepCopyFunction, formatValue,
-    isNullOrUndefined, feeIsNull, captializedString, getCurrentYear, reverseArray, regexNumberExpression
+export const getStringWithPassedValues = (string = '', values = {}) => {
+    try {
+        const list = Object.entries(values);
+        return list.reduce((acc, [key, value]) => {
+            return acc.replace(`{{${key}}}`, value);
+        }, string);
+    } catch (err) {
+        console.log('Error "getStringWithPassedValues"', err.message);
+    }
 }

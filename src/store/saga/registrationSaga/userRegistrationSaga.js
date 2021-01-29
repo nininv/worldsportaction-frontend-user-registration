@@ -1,7 +1,9 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import AxiosApi from "../../http/registrationHttp/registrationAxios";
+import userHttpApi from "../../http/userHttp/userAxiosApi";
 import { message } from "antd";
+import * as moment from "moment";
 
 function* failSaga(result) {
   yield put({
@@ -13,7 +15,7 @@ function* failSaga(result) {
     message.error(result.result.data.message);
   }, 800);
 }
-  
+
 function* errorSaga(error) {
   yield put({
     type: ApiConstants.API_END_USER_REGISTRATION_ERROR,
@@ -81,10 +83,10 @@ export function* saveParticipantData(action) {
   }
 }
 
-  ////// EndUserRegistration Membership Products 
+  ////// EndUserRegistration Membership Products
 export function* endUserRegistrationMembershipProducts(action) {
   try {
-    const result = yield call(AxiosApi.getEndUserRegMembershipProducts, 
+    const result = yield call(AxiosApi.getEndUserRegMembershipProducts,
           action.payload);
     if (result.status === 1) {
       yield put({
@@ -108,7 +110,7 @@ export function* endUserRegistrationMembershipProducts(action) {
 ////// Org Registration Registration Settings
 export function* orgRegistrationRegistrationSettings(action) {
   try {
-    const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings, 
+    const result = yield call(AxiosApi.getOrgRegistrationRegistrationSettings,
           action.payload);
     if (result.status === 1) {
       yield put({
@@ -154,6 +156,84 @@ export function* getSeasonalCasualFeesSaga(action) {
     } else {
       yield call(failSaga, result)
     }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* getUserExists(action) {
+  try {
+    const {payload} = action;
+    payload.dateOfBirth = moment(payload.dateOfBirth).format('YYYY-MM-DD')
+    const result = yield call(userHttpApi.checkUserMatch, payload);
+    console.log('result of getUserExist',result)
+    if (!result.data) {
+        yield put({
+            type: ApiConstants.API_GET_USER_EXIST_DECLINE,
+            result,
+          });
+    } else {
+        yield put({
+            type: ApiConstants.API_GET_USER_EXIST_SUCCESS,
+            result,
+          });
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* sendDigitCode(action) {
+
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.sendDigitCode, payload);
+    yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
+    yield put({
+      type: ApiConstants.API_SEND_DIGIT_CODE_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* sendConfirmDetails(action) {
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.sendConfirmDetails, payload);
+    yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
+    if (result.result.data.message === "success") {
+      yield put({
+        type: ApiConstants.API_SEND_DIGIT_CODE,
+        payload
+      })
+    } else {
+      yield put({
+        type: ApiConstants.API_DECLINE_CONFIRM_DETAILS,
+        result
+      })
+    }
+  } catch (error) {
+    yield call(errorSaga, error)
+  }
+}
+
+export function* checkDigitCode(action) {
+  try {
+    const {payload} = action;
+    const result = yield call(userHttpApi.checkDigitCode, payload);
+    yield put({
+      type: ApiConstants.API_PARTICIPANT_DETAILS_LOAD
+    })
+    yield put({
+      type: ApiConstants.API_DONE_CHECK_DIGIT_CODE,
+      result,
+    });
   } catch (error) {
     yield call(errorSaga, error)
   }

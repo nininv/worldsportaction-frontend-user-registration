@@ -19,7 +19,7 @@ import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import DashboardLayout from "../../pages/dashboardLayout";
 import AppImages from "../../themes/appImages";
 import {getRegistrationReviewProductAction,saveRegistrationReviewProduct,
-    updateReviewProductAction} from 
+    updateReviewProductAction} from
             '../../store/actions/registrationAction/endUserRegistrationAction';
 import moment from 'moment';
 import StripeKeys from "../stripe/stripeKeys";
@@ -93,14 +93,14 @@ const CheckoutForm = (props) => {
         credit: false,
         selectedOption: 0
     });
-    
+
     const stripe = useStripe();
     const elements = useElements();
     let paymentOptions = props.paymentOptions;
     let isSchoolRegistration = props.isSchoolRegistration;
     let payload = props.payload;
     let registrationUniqueKey = props.registrationUniqueKey;
-    
+
     console.log("PaymentOptions" ,props.paymentOptions);
     console.log(selectedPaymentOption)
     // Handle real-time validation errors from the card Element.
@@ -242,16 +242,16 @@ const CheckoutForm = (props) => {
         // className="content-view"
         <div>
             <form id='my-form' className="form" onSubmit={handleSubmit} >
-                {paymentOptions.length > 0 && 
+                {paymentOptions.length > 0 &&
                 <div className="formView content-view pt-5">
                     <div className = "individual-header-view">
                         <div>
-                            {AppConstants.securePaymentOptions}  
-                        </div>                    
-                    </div> 
+                            {AppConstants.securePaymentOptions}
+                        </div>
+                    </div>
                     {(paymentOptions || []).map((pay, pIndex) =>(
                     <div>
-                        {pay.securePaymentOptionRefId == 2 && 
+                        {pay.securePaymentOptionRefId == 2 &&
                         <div className="row">
                             <div className='col-sm'>
                                 <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
@@ -269,15 +269,15 @@ const CheckoutForm = (props) => {
                                 }
                             </div>
                         </div>}
-                        {pay.securePaymentOptionRefId == 1 && 
+                        {pay.securePaymentOptionRefId == 1 &&
                         <div className="row">
                             <div className='col-sm'>
                                 <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                 {selectedPaymentOption.direct == true &&
-                                    <div class="sr-root">
-                                        <div class="sr-main">
-                                            {/* <div class="sr-combo-inputs-row">
-                                                <div class="col">
+                                    <div className="sr-root">
+                                        <div className="sr-main">
+                                            {/* <div className="sr-combo-inputs-row">
+                                                <div className="col">
                                                     <label htmlFor="name">
                                                         Name
                                                     </label>
@@ -291,7 +291,7 @@ const CheckoutForm = (props) => {
                                                         required
                                                     />
                                                 </div>
-                                                <div class="col">
+                                                <div className="col">
                                                     <label htmlFor="email">
                                                         Email Address
                                                     </label>
@@ -306,8 +306,8 @@ const CheckoutForm = (props) => {
                                                     />
                                                 </div>
                                             </div> */}
-                                            <div class="sr-combo-inputs-row">
-                                                <div class="col">
+                                            <div className="sr-combo-inputs-row">
+                                                <div className="col">
                                                     <label htmlFor="au-bank-account-element">
                                                         Bank Account
                                                 </label>
@@ -322,7 +322,7 @@ const CheckoutForm = (props) => {
                                             </div>
                                             <div id="bank-name"></div>
                                             <div id="error-message" className=" pl-4 card-errors" role="alert">{bankError}</div>
-                                            <div class="col pt-3" id="mandate-acceptance">
+                                            <div className="col pt-3" id="mandate-acceptance">
                                                 {AppConstants.stripeMandate1} <a> </a>
                                                 <a href="https://stripe.com/au-becs-dd-service-agreement/legal"
                                                     target="_blank"
@@ -333,7 +333,7 @@ const CheckoutForm = (props) => {
                                                 {AppConstants.stripeMandate2}
                                             </div>
                                             {/* </form> */}
-                                            {/* <div class="sr-result hidden">
+                                            {/* <div className="sr-result hidden">
                                                 <p>Response<br /></p>
                                                 <pre>
                                                     <code></code>
@@ -344,7 +344,7 @@ const CheckoutForm = (props) => {
                                 }
                             </div>
                         </div>}
-                        {pay.securePaymentOptionRefId == 3 && 
+                        {pay.securePaymentOptionRefId == 3 &&
                         <div className="row">
                             <div className='col-sm'>
                                 <Radio key={"3"} onChange={(e) => changePaymentOption(e, "cash")} checked={selectedPaymentOption.cash}>{AppConstants.cash}</Radio>
@@ -405,7 +405,7 @@ class ReviewProducts extends Component {
 
     componentDidUpdate(nextProps){
         // let registrationState = this.props.endUserRegistrationState;
-       
+
     }
 
     getApiInfo = (registrationUniqueKey) => {
@@ -414,7 +414,7 @@ class ReviewProducts extends Component {
         }
         this.props.getRegistrationReviewProductAction(payload);
     }
-  
+
     getReferenceData = () => {
     }
 
@@ -424,7 +424,7 @@ class ReviewProducts extends Component {
             registrationId: this.state.registrationUniqueKey
         })
     }
-    
+
     editNavigation = () => {
         history.push("/registrationReview", {
             registrationId: this.state.registrationUniqueKey
@@ -452,7 +452,7 @@ class ReviewProducts extends Component {
                         display: "flex",
                         alignItems: "flex-start",
                         padding:0
-                        
+
                     }}
                 >
                     <Breadcrumb
@@ -479,10 +479,10 @@ class ReviewProducts extends Component {
         let isSchoolRegistration = regReviewPrdData!= null ? regReviewPrdData.isSchoolRegistration : 0;
         return (
             <div>
-                
+
                 {(participantList || []).map((item,index) =>(
                 <div style={{ marginBottom: 40}}>
-                   
+
                         {this.reviewProducts(getFieldDecorator, item, index)}
                 </div>
                ))}
@@ -495,7 +495,7 @@ class ReviewProducts extends Component {
                         payload={regReviewPrdData} registrationUniqueKey = {this.state.registrationUniqueKey}
                         isSchoolRegistration={isSchoolRegistration}/>
                     </Elements>
-               </div> 
+               </div>
 
                 <Modal
                      className="add-membership-type-modal"
@@ -512,18 +512,18 @@ class ReviewProducts extends Component {
 
     reviewProducts = (getFieldDecorator, item, index) => {
         let paymentOptionRefId = item.selectedOptions.paymentOptionRefId;
-        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame : 
-                                (paymentOptionRefId == 2 ? AppConstants.gameVoucher : 
-                                (paymentOptionRefId == 3 ? AppConstants.payfullAmount : 
-                                (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment : 
+        let paymentOptionTxt =   paymentOptionRefId == 1 ? AppConstants.paySingleGame :
+                                (paymentOptionRefId == 2 ? AppConstants.gameVoucher :
+                                (paymentOptionRefId == 3 ? AppConstants.payfullAmount :
+                                (paymentOptionRefId == 4 ? AppConstants.weeklyInstalment :
                                 (paymentOptionRefId == 5 ? AppConstants.schoolRegistration: ""))));
         return (
             <div className = "formView content-view pt-5 pb-5">
                 {index == 0 &&
                  <div className = "individual-header-view" style={{marginBottom:20}}>
                     <div>
-                        {AppConstants.reviewProducts}  
-                    </div>                    
+                        {AppConstants.reviewProducts}
+                    </div>
                 </div>
                 }
                 <div className='individual-header-view' style={{fontSize:20}}>
@@ -533,16 +533,16 @@ class ReviewProducts extends Component {
                         {AppConstants.hyphen}
                         {item.firstName + ' ' + item.lastName}
                         {AppConstants.hyphen}
-                        {item.organisationName}    
+                        {item.organisationName}
                         {AppConstants.hyphen}
-                        {item.competitionName}  
+                        {item.competitionName}
                     </div>
-                </div>  
+                </div>
                 {(item.membershipProducts || []).map((mem, memIndex) =>(
                 <div>
                     <div className='product-text' style={{fontFamily: "inter-medium"}}>
                         <div style={{marginRight:"auto"}}>
-                        {mem.membershipProductName + ' - ' + mem.membershipTypeName} 
+                        {mem.membershipProductName + ' - ' + mem.membershipTypeName}
                         {mem.divisionName!= null ?  ' - ' + mem.divisionName : ''}
                         </div>
                         <div className='dolar-text'>
@@ -555,56 +555,56 @@ class ReviewProducts extends Component {
                                     src={AppImages.removeIcon}
                                     height="18"
                                     width="14"
-                                    name={'image'}     
-                                    onClick={(e) => this.deleteMemProd(index,memIndex)}                         
+                                    name={'image'}
+                                    onClick={(e) => this.deleteMemProd(index,memIndex)}
                                 />
                             </div>  */}
-                        </div>  
-                    </div>  
-                    {(mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  ) && 
+                        </div>
+                    </div>
+                    {(mem.childDiscountsToDeduct != "0.00" && mem.childDiscountsToDeduct != ""  ) &&
                     <div className='membership-text' style={{marginTop:2}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
                             <span>{":"+" "}</span>
                             <span>{AppConstants.familyDiscount}</span>
-                        </div>                   
+                        </div>
                         <div className='dolar-text'>
                             <div className="number-text-style" style={{marginRight:17}}>
                             (${mem.childDiscountsToDeduct})
                             </div>
-                        </div>  
-                    </div>  
+                        </div>
+                    </div>
                     }
-                    {mem.isDiscountApplied == 1 && 
+                    {mem.isDiscountApplied == 1 &&
                     <div className='membership-text' style={{marginTop:2}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
                             <span>{":"+" "}</span>
                             <span>{AppConstants.discount}</span>
-                        </div>                   
+                        </div>
                         <div className='dolar-text'>
                             <div className="number-text-style" style={{marginRight:17}}>
                             (${mem.discountsToDeduct})
                             </div>
-                        </div>  
-                    </div>  
-                    } 
-                     
-                    <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>  
+                        </div>
+                    </div>
+                    }
+
+                    <div className='membership-text' style={{marginTop:5,color: "inherit"}}></div>
                     <div className='edit-header-main'>
                         <div className="text-editsection" style={{fontSize:15}}>
                             {paymentOptionTxt + (paymentOptionRefId == 2 ? " x " + item.selectedOptions.gameVoucherValue : "") }
                         </div>
-                        { paymentOptionRefId == 4 &&  item.instalmentDates.length > 0 &&                   
+                        { paymentOptionRefId == 4 &&  item.instalmentDates.length > 0 &&
                         <div className="heading-instalmentdate">
                             <div className="text-instalmentdate">{AppConstants.instalmentDates}</div>
                             {(item.instalmentDates || []).map((i, iIndex) => (
                                 <span>{(i.instalmentDate != null ? moment(i.instalmentDate).format("DD/MM/YYYY") : "") +
                                         (item.instalmentDates.length != (iIndex + 1) ?   ', ' : '')}</span>
                             )) }
-                        </div>   
+                        </div>
                         }
-                        <div style={{ cursor: 'pointer' , textDecoration:"underline"}} 
+                        <div style={{ cursor: 'pointer' , textDecoration:"underline"}}
                         className="user-remove-text mr-0 mb-1" onClick={() => this.editNavigation()}>
                             {AppConstants.edit}
                         </div>
@@ -612,10 +612,10 @@ class ReviewProducts extends Component {
                     { memIndex != item.membershipProducts.length-1 ?
                         <div style={{borderBottom: "1.5px solid #7474",marginTop:18}}></div>
                     :null}
-                </div> 
-                ))} 
+                </div>
+                ))}
                 <div className=''>
-                    {item.selectedOptions.governmentVoucherRefId!= null && 
+                    {item.selectedOptions.governmentVoucherRefId!= null &&
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
                             <span className="number-text-style">{AppConstants.less}</span>
@@ -625,33 +625,33 @@ class ReviewProducts extends Component {
                         <div className="number-text-style">
                             ${0}
                         </div>
-                    </div> 
+                    </div>
                     }
                     {/* <div className='review-product-membership-text' style={{marginTop:4}}>
                         <div>
-                            <span className="number-text-style">{AppConstants.less}</span>                    
-                            <span>{":"+" "}</span>                       
+                            <span className="number-text-style">{AppConstants.less}</span>
+                            <span>{":"+" "}</span>
                             <span>{AppConstants.hardshipPlayer}</span>
                         </div>
                         <div className="number-text-style">
                             $20
                         </div>
                     </div>  */}
-                </div>                      
+                </div>
             </div>
         )
     }
-    
+
     totalPaymentDue = (getFieldDecorator) => {
         let {regReviewPrdData} = this.props.endUserRegistrationState;
         let total = regReviewPrdData!= null ? regReviewPrdData.total: null;
         return (
-            <div className = "formView content-view pt-5 pb-5"> 
+            <div className = "formView content-view pt-5 pb-5">
              <div className = "individual-header-view">
                     <div>
-                        {AppConstants.total}  
-                    </div>                    
-                </div>            
+                        {AppConstants.total}
+                    </div>
+                </div>
                 <div className='text-common-spacing' style={{borderBottom: "1.5px solid #7474"}}>
                     <div className='review-product-membership-text' style={{marginTop:0}}>
                         <div>
@@ -668,34 +668,34 @@ class ReviewProducts extends Component {
                         <div>
                             ${total!= null ? total.shipping: 0}
                         </div>
-                    </div>  
+                    </div>
                     <div className='review-product-membership-text' style={{marginTop:4,paddingTop:5}}>
-                        <div>              
+                        <div>
                             <span>{AppConstants.gst}</span>
                         </div>
                         <div>
                             ${total!= null ? total.gst: 0}
                         </div>
-                    </div> 
+                    </div>
                     <div className='review-product-membership-text' style={{marginTop:4 , paddingTop:5}}>
-                        <div>       
+                        <div>
                             <span>{AppConstants.charityRoundUp}</span>
                         </div>
                         <div>
                             ${total!= null ? total.charityValue: 0}
                         </div>
                     </div>
-                </div> 
+                </div>
                 <div className='product-text' style={{width: "97%",marginTop: 22,fontWeight:600}}>
                     <div style={{marginRight:"auto"}}>
-                        {AppConstants.totalPaymentDue} 
+                        {AppConstants.totalPaymentDue}
                     </div>
                     <div>
                         <div style={{fontFamily:"inter-medium"}}>
                             ${total!= null ? total.targetValue: 0}
                         </div>
-                    </div>  
-                </div>                                  
+                    </div>
+                </div>
             </div>
         )
     }
@@ -707,16 +707,16 @@ class ReviewProducts extends Component {
     //         <div className = "individual-reg-view">
     //             <div className = "individual-header-view">
     //                 <div>
-    //                     {AppConstants.securePaymentOptions}  
-    //                 </div>                    
-    //             </div> 
+    //                     {AppConstants.securePaymentOptions}
+    //                 </div>
+    //             </div>
     //             <div style={{marginTop:40}}>
     //                 <Radio.Group className="reg-competition-radio" style={{marginBottom:10}}>
     //                     {(securePaymentOptions || []) .map((x, sIndex) => (
     //                     <div>
-    //                         {x.securePaymentOptionRefId == 2 && 
+    //                         {x.securePaymentOptionRefId == 2 &&
     //                         <div>
-    //                             <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>   
+    //                             <Radio key={x.securePaymentOptionRefId} value={x.securePaymentOptionRefId}>{AppConstants.credit}/{AppConstants.debitCard}</Radio>
     //                             <div className="card-outer-element">
     //                                 <Elements stripe={stripePromise}>
     //                                     <form className='form-element'>
@@ -726,22 +726,22 @@ class ReviewProducts extends Component {
     //                                             // onChange={handleChange}
     //                                             className='StripeElement'
     //                                         />
-    //                                     </form>       
-    //                                 </Elements>             
+    //                                     </form>
+    //                                 </Elements>
     //                             </div>
     //                         </div>
     //                         }
-    //                         {x.securePaymentOptionRefId == 1 && 
-    //                             <Radio value={"1"}>{AppConstants.debitCard}</Radio> 
+    //                         {x.securePaymentOptionRefId == 1 &&
+    //                             <Radio value={"1"}>{AppConstants.debitCard}</Radio>
     //                         }
-    //                         { x.securePaymentOptionRefId == 3 && 
-    //                         <Radio value={3}>{AppConstants.cash}</Radio>  
+    //                         { x.securePaymentOptionRefId == 3 &&
+    //                         <Radio value={3}>{AppConstants.cash}</Radio>
     //                         }
     //                     </div>
     //                     ))}
-                        
-    //                 </Radio.Group>  
-    //             </div>                                                  
+
+    //                 </Radio.Group>
+    //             </div>
     //         </div>
     //     )
     // }
@@ -838,7 +838,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
    // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
    //console.log("Payload::" + JSON.stringify(payload));
-  
+
     let body;
     if (paymentType === "card") {
         let stripeToken = token.id
@@ -887,7 +887,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     if (response.status === 200) {
                         if (paymentType == "card") {
                             message.success(Response.message);
-                            
+
                             console.log("registrationUniqueKey"+ registrationUniqueKey);
                             history.push("/invoice", {
                                 registrationId: registrationUniqueKey,

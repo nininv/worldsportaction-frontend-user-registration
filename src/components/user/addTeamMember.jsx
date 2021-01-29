@@ -94,6 +94,10 @@ class AddTeamMember extends Component {
                     this.setState({getTeamMembersOnLoad: false});
                     this.setTeamMembersFormFieldsValue();
                 }
+                if(userState.teamMemberDeletion == true){
+                    this.props.teamMemberSaveUpdateAction(false, "teamMemberDeletion")
+                    this.setTeamMembersFormFieldsValue();
+                }
             }
         }catch(ex){
             console.log("Error in componentDidUpdate::"+ex);

@@ -318,6 +318,9 @@ const CheckoutForm = (props) => {
                     :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">
@@ -676,7 +679,7 @@ async function confirmDebitPayment(confirmDebitPaymentInput) {
             confirmDebitPaymentInput.props.onLoad(false)
         } else {
             confirmDebitPaymentInput.setBankError(null)
-            stripeTokenHandler(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption, null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.teamMemberRegId, 2, confirmDebitPaymentInput.auBankAccount, confirmDebitPaymentInput.setBankError, confirmDebitPaymentInput.stripe, confirmDebitPaymentInput.card, confirmDebitPaymentInput.setError);
+            stripeTokenHandler(result.token, confirmDebitPaymentInput.props, confirmDebitPaymentInput.selectedOption, null, null, confirmDebitPaymentInput.payload, confirmDebitPaymentInput.teamMemberRegId, confirmDebitPaymentInput.registrationId, 2, confirmDebitPaymentInput.auBankAccount, confirmDebitPaymentInput.setBankError, confirmDebitPaymentInput.stripe, confirmDebitPaymentInput.card, confirmDebitPaymentInput.setError);
 
         }
     } catch (ex) {

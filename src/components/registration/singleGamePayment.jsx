@@ -213,6 +213,9 @@ const CheckoutForm = (props) => {
                     </div> :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">
@@ -339,7 +342,7 @@ class SingleGamePayment extends Component {
                                                         onChange={(e) => this.props.updateSingleFeeAction(e.target.value ? e.target.value : 1, "noOfMatch", 0, "total", null)}
                                                     />
                                                 </div>
-                                                <div class="counter">
+                                                <div className="counter">
                                                     <span className="plus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "increment")}>+</span>
                                                     <span className="minus" onClick={() => this.props.updateSingleFeeAction(total.noOfMatch, "noOfMatch", 0, "total", "decrement")}>-</span>
                                                 </div>

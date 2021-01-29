@@ -1,15 +1,13 @@
-function getPlayerListData(data) {
-
-    var PlayerArray = []
+export function getPlayerListData(data) {
+    const playerArray = [];
     for (let i in data) {
-        var object = this.getPlayerListObject(data[i])
-        PlayerArray.push(object)
+        const object = this.getPlayerListObject(data[i]);
+        playerArray.push(object);
     }
-    return PlayerArray
+    return playerArray;
 }
 
-function getPlayerListObject(data) {
-    console.log(data, 'playerListData')
+export function getPlayerListObject(data) {
     return {
         playerId: data.id,
         firstName: data.firstName,
@@ -18,9 +16,6 @@ function getPlayerListObject(data) {
         phoneNumber: data.phoneNumber,
         dob: data.dateOfBirth,
         team: data.team,
-        division: data.team.division
-    }
+        division: data.team.division,
+    };
 }
-
-
-module.exports = { getPlayerListData, getPlayerListObject, }

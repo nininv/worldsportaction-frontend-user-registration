@@ -344,7 +344,7 @@ const CheckoutForm = (props) => {
                                             }
                                         </div>
                                     </div>}
-                                {/* {pay.securePaymentOptionRefId == 1 &&
+                                {pay.securePaymentOptionRefId == 1 &&
                                     <div className="row">
                                         <div className='col-sm'>
                                             <Radio key={"2"}
@@ -352,13 +352,43 @@ const CheckoutForm = (props) => {
                                                 onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div>
-                                                    <div class="sr-root">
-                                                        <div class="sr-main">
+                                                    <div className="sr-root">
+                                                        <div className="sr-main">
+                                                            {/* <div className="sr-combo-inputs-row">
+                                                <div className="col">
+                                                    <label htmlFor="name">
+                                                        Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="name"
+                                                        name="name"
+                                                        placeholder="John Smith"
+                                                        onChange={e => setName(e.target.value)}
+                                                        value={name}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div class="col">
+                                                    <label htmlFor="email">
+                                                        Email Address
+                                                    </label>
+                                                    <input
+                                                        id="email"
+                                                        name="email"
+                                                        type="email"
+                                                        onChange={e => setEmail(e.target.value)}
+                                                        value={email}
+                                                        placeholder="john.smith@example.com"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div> */}
                                                             <div class="sr-combo-inputs-row">
                                                                 <div class="col">
                                                                     <label htmlFor="au-bank-account-element">
                                                                         Bank Account
-                                                                    </label>
+                                                </label>
                                                                     <div id="au-bank-account-element">
                                                                         <AuBankAccountElement
                                                                             id="au-bank-account-element"
@@ -379,7 +409,7 @@ const CheckoutForm = (props) => {
                                                                     Direct Debit Request service agreement
                                                 </a>
                                                                 {AppConstants.stripeMandate2}
-                                                            </div> */}
+                                                            </div>
                                                             {/* </form> */}
                                                             {/* <div class="sr-result hidden">
                                                 <p>Response<br /></p>
@@ -387,13 +417,13 @@ const CheckoutForm = (props) => {
                                                     <code></code>
                                                 </pre>
                                             </div> */}
-                                                        {/* </div>
+                                                        </div>
                                                     </div>
                                                     <div style={{ marginTop: "10px" }}>{AppConstants.directDebitMsg}</div>
                                                 </div>
                                             }
                                         </div>
-                                    </div>} */}
+                                    </div>}
                                 {/* {pay.securePaymentOptionRefId == 3 &&
                         <div>
                             <div className="row">
@@ -481,6 +511,9 @@ const CheckoutForm = (props) => {
                     </div> :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">

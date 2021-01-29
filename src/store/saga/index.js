@@ -299,12 +299,14 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_REVIEW_LOAD, userSaga.getTeamMembersReviewSaga);
-  yield takeEvery(ApiConstants.API_ADD_CHILD_LOAD, userSaga.addChildSaga);
-  yield takeEvery(ApiConstants.API_ADD_PARENT_LOAD, userSaga.addParentSaga);
 
 
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
 
   yield takeEvery(ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD, userSaga.updateTeamMembersSaga);
 
+  yield takeEvery(ApiConstants.API_GET_USER_EXIST, userRegistrationSaga.getUserExists);
+  yield takeEvery(ApiConstants.API_SEND_DIGIT_CODE, userRegistrationSaga.sendDigitCode);
+  yield takeEvery(ApiConstants.API_CHECK_DIGIT_CODE, userRegistrationSaga.checkDigitCode);
+  yield takeEvery(ApiConstants.API_SEND_CONFIRM_DETAILS, userRegistrationSaga.sendConfirmDetails);
 }

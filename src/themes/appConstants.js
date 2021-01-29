@@ -106,6 +106,7 @@ const AppConstants = {
   uniformAndMerchandise: "Uniforms and Merchandise",
   vouchers: "Vouchers",
   addvoucher: "Add voucher",
+  choose: "Choose",
 
   //agreeTerm: "I have read and agree to (Affiliates name)  ",
   agreeTerm: "I have read and agree to all of the above Terms and Conditions",
@@ -1077,6 +1078,7 @@ const AppConstants = {
   pickupAddress: "Pickup Address",
   qty: "Qty",
   securePaymentMsg: "There is no payment required",
+  submitButtonPressDescription: "You must press SUBMIT to complete your Registration.",
   selectParentOrGuardian: "Select Parent/Guardian",
   returnToShoppingCart: "Return to Shopping Cart",
   anyExistingMedicalCondition: "Please detail any existing medical conditions, allergies (medical or food) or Illnesses. Please detail a Management Plan (if applicable)",
@@ -1177,6 +1179,7 @@ const AppConstants = {
   invoiceCode: "Invoice Code",
   warning: "Warning",
 
+  id: 'ID',
   // CM-2026
   banIndividualTeamMixRegistrationMessage: "Team Registrations cannot be completed at the same time as Individual registrations. Please complete your current Individual Registration and then log back in to complete the Team Registration.",
   childUnlinkMessage: "Your Parent needs to re-link your Accounts. Please ask them to press link next to you name in their User Profile.",
@@ -1186,7 +1189,16 @@ const AppConstants = {
   sameEmailValidationMessage: "You have elected to use the same email for your child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a seperate email address.",
   sameSomeoneEmailValidationMessage2: "You have elected to use the same email for the child and the parent/ guardian. The child will not get their own login. If you would like them to have their own login please give them a seperate email address.",
   sameSomeoneEmailValidationMessage: "A different email address is required for you and the user you are registering.",
+  // found matched user to continue registration
+  oneUserAlreadyExists: "We have found a matching user with email: {{email}} and mobile number {{phone}}. In order to verify your identity, we will send you an authentication code via",
+  manyUsersAlreadyExists: "We have found a few possible users that match the details you've entered. Please select the user that matches your details (for security reasons, we have masked some of the details) and then confirm if you would like to recieve your authentication codde at the email address or mobile number we have found. If you dont find any matching contact details, please contact your competition organiser or club admin",
+  userAlreadyExistsNoContact: "We have found a matching user but your details don’t match. Please contact your competition organiser.",
+  enterXDigitCode: "Enter {{number}} digit code",
+  confirmDetails: "Please enter the complete {{detail}}",
+  declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record.",
 
+  possibleMatches: 'Possible Matches',
+  possibleMatchesDescription: 'Select the user you want to merge with and press Next',
   payAtMatch: "Pay At Match",
   payAtRegistration: "Pay At Registration",
   payAtMatchPerPlayer: "Pay At Match Per Player",
