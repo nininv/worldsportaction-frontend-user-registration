@@ -157,6 +157,9 @@ let userHttpApi = {
     const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
   },
+  findPossibleMerge(payload) {
+    return Method.dataPost('userMerge/find', token, payload);
+  },
 }
 
 let Method = {
