@@ -317,7 +317,7 @@ class UserProfileEdit extends Component {
                 data["disabilityTypeRefId"] = null;
             }
         } else if (key === "dateOfBirth") {
-            value = (moment(value).format("MM-DD-YYYY"));
+            value = (moment(value).format("YYYY-MM-DD"));
         } else if (key === "email" && this.state.section === "address") {
             if (data.userId == getUserId()) {
                 this.setState({ isSameUserEmailChanged: true });
@@ -513,7 +513,6 @@ class UserProfileEdit extends Component {
                             format="DD-MM-YYYY"
                             showTime={false}
                             name="dateOfBirth"
-                            value={userData.dateOfBirth ? moment(userData.dateOfBirth) : null}
                         />
                     </div>
                 </div>
@@ -1365,7 +1364,6 @@ class UserProfileEdit extends Component {
         }
 
         if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
-            data.dateOfBirth = moment(data.dateOfBirth).format("YYYY-MM-DD");
             const { status, result: { data: possibleMatches } } = await UserAxiosApi.findPossibleMerge(data);
             if ([1, 4].includes(status)) {
                 this.setState({ isPossibleMatchShow: true, possibleMatches });
