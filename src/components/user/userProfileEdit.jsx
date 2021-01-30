@@ -317,7 +317,7 @@ class UserProfileEdit extends Component {
                 data["disabilityTypeRefId"] = null;
             }
         } else if (key === "dateOfBirth") {
-            value = (moment(value).format("YYYY-MM-DD"));
+            value = value && (moment(value).format("YYYY-MM-DD"));
         } else if (key === "email" && this.state.section === "address") {
             if (data.userId == getUserId()) {
                 this.setState({ isSameUserEmailChanged: true });
@@ -513,6 +513,7 @@ class UserProfileEdit extends Component {
                             format="DD-MM-YYYY"
                             showTime={false}
                             name="dateOfBirth"
+                            value={userData.dateOfBirth ? moment(userData.dateOfBirth) : null}
                         />
                     </div>
                 </div>
@@ -947,7 +948,7 @@ class UserProfileEdit extends Component {
                                             onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationUmpireExpiryDate")}
                                             format="DD-MM-YYYY"
                                             showTime={false}
-                                            // value={userData.accreditationUmpireExpiryDate && moment(userData.accreditationUmpireExpiryDate)}
+                                            value={userData.accreditationUmpireExpiryDate && moment(userData.accreditationUmpireExpiryDate)}
                                             disabledDate={d => !d || d.isSameOrBefore(new Date())}
                                         />
                                     )}
@@ -987,7 +988,7 @@ class UserProfileEdit extends Component {
                                             onChange={(e, f) => this.onChangeSetValue((moment(e).format("YYYY-MM-DD")), "accreditationCoachExpiryDate")}
                                             format="DD-MM-YYYY"
                                             showTime={false}
-                                            // value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
+                                            value={userData.accreditationCoachExpiryDate && moment(userData.accreditationCoachExpiryDate)}
                                             disabledDate={d => !d || d.isSameOrBefore(new Date())}
                                         />
                                     )}
