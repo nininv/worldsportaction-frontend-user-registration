@@ -2497,20 +2497,6 @@ class UserModulePersonalDetail extends Component {
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                             <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
-                                        {stripeConnectId ?
-                                            userRole && <Menu.Item
-                                                onClick={() => this.stripeDashboardLoginUrl()}
-                                                className="menu-item-without-selection"
-                                            >
-                                                <span>{AppConstants.editBankAccount}</span>
-                                            </Menu.Item>
-                                            :
-                                            userRole && <Menu.Item>
-                                                <a href={stripeConnectURL}>
-                                                    <span>{AppConstants.uploadBankAccnt}</span>
-                                                </a>
-                                            </Menu.Item>
-                                        }
 
                                         {userRole && (
                                             <Menu.Item onClick={() => history.push("/myUmpiringAvailability")}>
