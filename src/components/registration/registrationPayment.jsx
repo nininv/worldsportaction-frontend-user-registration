@@ -1086,8 +1086,10 @@ async function confirmDebitPayment(confirmDebitPaymentInput) {
             payment_method: {
                 au_becs_debit: confirmDebitPaymentInput.auBankAccount,
                 billing_details: {
-                    name: "Club Test 1", // accountholderName.value,
-                    email: "testclub@wsa.com"  // email.value,
+                    // name: "Club Test 1", // accountholderName.value,
+                    // email: "testclub@wsa.com"  // email.value,
+                    name: confirmDebitPaymentInput.payload.yourInfo.firstName + " " + confirmDebitPaymentInput.payload.yourInfo.lastName,
+                    email: confirmDebitPaymentInput.payload.yourInfo.email
                 },
             }
         });

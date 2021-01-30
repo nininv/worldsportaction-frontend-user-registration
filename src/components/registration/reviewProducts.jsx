@@ -199,8 +199,10 @@ const CheckoutForm = (props) => {
                     payment_method: {
                         au_becs_debit: auBankAccount,
                         billing_details: {
-                            name:  "Club Test 1", // accountholderName.value,
-                            email: "testclub@wsa.com"  // email.value,
+                            // name:  "Club Test 1", // accountholderName.value,
+                            // email: "testclub@wsa.com"  // email.value,
+                            name: payload.yourInfo.firstName + " " + payload.yourInfo.lastName,
+                            email: payload.yourInfo.email
                         },
                     }
                 });
