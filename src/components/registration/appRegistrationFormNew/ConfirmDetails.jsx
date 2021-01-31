@@ -1,42 +1,52 @@
-import React, { memo, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 
 import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useSelector } from "react-redux";
+import userHttpApi from "../../../store/http/userHttp/userAxiosApi";
 
-function ConfirmDetails({ type, confirmDetails, cancel }) {
-    const [value, setValue] = useState(null);
+// step 2
+// choose SMS / phone and request code
+// need to input correct phone / email
+const ConfirmDetails = ({ type, next, cancel, userId }) => {
+    const [contactValue, setContactValue] = useState(null);
+    const [error, setError] = useState(false);
 
-    const onOkClick = (value) => {
-        if (value) {
-            const payload = { detail: value.detail, id, type };
-            confirmDetails(payload);
+    const confirm = async () => {
+        try {
+            const result = await userHttpApi.requestDigitCode({
+                type,
+                contactValue,
+                userId,
+            });
+            if (result.result.data.success) {
+                next();
+            } else {
+                setError(true);
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
-
-    const {
-        currentUser: { id },
-    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
 
     return (
         <div className="registration-form-view user-already-exists-section">
             <p>
-                {getStringWithPassedValues(AppConstants.confirmDetails, {
-                    detail:
-                        type === 1
-                            ? AppConstants.emailAdd.toLowerCase()
-                            : AppConstants.phoneNumber.toLowerCase(),
-                })}
+                {error
+                    ? AppConstants.incorrectContactDetails
+                    : getStringWithPassedValues(AppConstants.confirmDetails, {
+                          detail:
+                              type === "email"
+                                  ? AppConstants.emailAdd.toLowerCase()
+                                  : AppConstants.phoneNumber.toLowerCase(),
+                      })}
             </p>
             <Form.Item className="place-auto-complete-container">
                 <Input
-                    onChange={({ target: { value } }) =>
-                        setValue({ ...value, detail: value })
-                    }
-                    value={value ? value.detail : null}
+                    onChange={({ target: { value } }) => setContactValue(value)}
+                    value={contactValue}
                 />
             </Form.Item>
             <div className="contextualHelp-RowDirection user-already-exists-buttons">
@@ -52,15 +62,13 @@ function ConfirmDetails({ type, confirmDetails, cancel }) {
                     htmlType="button"
                     type="default"
                     className="open-reg-button user-already-exists-button user-already-exists-ok"
-                    onClick={() => {
-                        onOkClick(value);
-                    }}
+                    onClick={confirm}
                 >
                     {AppConstants.ok}
                 </Button>
             </div>
         </div>
     );
-}
+};
 
-export default memo(ConfirmDetails);
+export default ConfirmDetails;

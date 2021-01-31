@@ -1,22 +1,17 @@
-import React, { memo, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 
 import "../product.css";
 import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
-import { useSelector } from "react-redux";
 import userHttpApi from "../../../store/http/userHttp/userAxiosApi";
 
 const CODE_LENGTH = 6;
 
-const EnterCode = ({ cancel, next }) => {
+const EnterCode = ({ cancel, next, userId }) => {
     const [value, setValue] = useState("");
     const [error, setError] = useState(false);
-
-    const {
-        currentUser: { id },
-    } = useSelector((state) => state.UserRegistrationState.userAlreadyExist);
 
     const onChange = async ({ target: { value } }) => {
         const sanitizedValue = value.replace(/\D/g, "");
@@ -25,7 +20,7 @@ const EnterCode = ({ cancel, next }) => {
         if (sanitizedValue.length === CODE_LENGTH) {
             try {
                 const result = await userHttpApi.checkDigitCode({
-                    id,
+                    userId,
                     digitCode: sanitizedValue,
                 });
                 if (result.success) {
@@ -34,6 +29,7 @@ const EnterCode = ({ cancel, next }) => {
                     setError(true);
                 }
             } catch (error) {
+                setError(true);
                 console.error(error);
             }
         }
@@ -78,4 +74,4 @@ const EnterCode = ({ cancel, next }) => {
     );
 };
 
-export default memo(EnterCode);
+export default EnterCode;

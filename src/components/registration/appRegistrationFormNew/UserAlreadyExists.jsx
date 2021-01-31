@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React from "react";
 import { Button, Radio } from "antd";
 
 import "../product.css";
@@ -6,20 +6,15 @@ import "./UserAlreadyExists.css";
 import AppConstants from "../../../themes/appConstants";
 import { getStringWithPassedValues } from "../../../util/helpers";
 
-const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
-    const [selected, setSelected] = useState(null); // radio selection, not the real selected
-
-    const buttonsDisabled = selected
-        ? !(!!selected.user && !!selected.type)
-        : !selected;
-
-    const confirm = (selected) => {
-        const payload = { id: selected.user, type: selected.type }; // todo: what use?
-        // select this user
-        setUserId(selected.user);
-        next();
-    };
-
+const UserAlreadyExists = ({
+    cancel,
+    next,
+    userId,
+    setUserId,
+    matchingUsers,
+    type,
+    setType,
+}) => {
     return (
         <div className="registration-form-view user-already-exists-section">
             {matchingUsers.length > 0 && (
@@ -34,9 +29,9 @@ const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
                             <Radio.Group
                                 className="registration-radio-group user-already-exists-buttons"
                                 onChange={({ target: { value } }) =>
-                                    setSelected({ ...selected, user: value })
+                                    setUserId(value)
                                 }
-                                value={selected ? selected.user : null}
+                                value={userId}
                             >
                                 {matchingUsers.map((user) => {
                                     return (
@@ -66,20 +61,11 @@ const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
                     )}
                     <Radio.Group
                         className="registration-radio-group user-already-exists-buttons"
-                        onChange={({ target: { value } }) =>
-                            setSelected({
-                                ...selected,
-                                user:
-                                    matchingUsers.length === 1
-                                        ? matchingUsers[0].id
-                                        : selected.user,
-                                type: value,
-                            })
-                        }
-                        value={selected ? selected.type : null}
+                        onChange={({ target: { value } }) => setType(value)}
+                        value={type}
                     >
-                        {<Radio value={1}>{AppConstants.email}</Radio>}
-                        {<Radio value={2}>{AppConstants._sms}</Radio>}
+                        {<Radio value={"email"}>{AppConstants.email}</Radio>}
+                        {<Radio value={"sms"}>{AppConstants._sms}</Radio>}
                     </Radio.Group>
 
                     <div className="contextualHelp-RowDirection user-already-exists-buttons">
@@ -95,16 +81,17 @@ const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
                             htmlType="button"
                             type="default"
                             className="open-reg-button user-already-exists-button user-already-exists-ok"
-                            onClick={() => {
-                                confirm(selected);
-                            }}
-                            disabled={buttonsDisabled}
+                            onClick={next}
+                            disabled={
+                                (matchingUsers.length > 1 && !userId) || !type
+                            }
                         >
                             {AppConstants.ok}
                         </Button>
                     </div>
                 </>
             )}
+            {/* todo: below - shouldn't be in this process in total */}
             {!matchingUsers && (
                 <p>
                     {getStringWithPassedValues(
@@ -116,4 +103,4 @@ const UserAlreadyExists = ({ cancel, next, setUserId, matchingUsers }) => {
     );
 };
 
-export default memo(UserAlreadyExists);
+export default UserAlreadyExists;

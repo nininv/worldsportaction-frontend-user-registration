@@ -1169,6 +1169,10 @@ function userRegistrationReducer(state = initialState, action) {
         case ApiConstants.UPDATE_USER_REGISTATION_OBJECT:
             let value = action.data;
             let key = action.key;
+            /*
+             fixme: this function allows updating the "registrationObj" or a field of it. (anti-pattern)
+             recommendation: separate this
+            */
             if (key == "registrationObj") {
                 state.registrationObj = value;
             } else if (key == "competitions") {
@@ -1421,83 +1425,7 @@ function userRegistrationReducer(state = initialState, action) {
                     "Error in API_GET_SEASONAL_CASUAL_FEES_SUCCESS::" + ex
                 );
             }
-
-        case ApiConstants.API_GET_USER_EXISTS:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    verificationNavigationListener: action.result.result.exists,
-                    currentStep: action.result.result.exists ? 1 : 0,
-                    users: action.result.result.users,
-                },
-            };
-        case ApiConstants.API_STOP_VERIFICATION_STEP_NAVIGATION:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    verificationNavigationListener: false,
-                },
-            };
-        case ApiConstants.API_START_VERIFICATION_STEP_NAVIGATION:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    verificationNavigationListener: true,
-                },
-            };
-        case ApiConstants.API_SEND_DIGIT_CODE_SUCCESS:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    ...state.userAlreadyExist,
-                    currentStep: 3,
-                    message: action.result.result.data.message,
-                    isLoading: false,
-                },
-                userDigitCode: {
-                    message: action.result.result.data.message,
-                },
-            };
-        case ApiConstants.API_DECLINE_CONFIRM_DETAILS:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    ...state.userAlreadyExist,
-                    currentStep: 3,
-                    message: action.result.result.data.message,
-                    isLoading: false,
-                },
-            };
-        case ApiConstants.API_DONE_CHECK_DIGIT_CODE:
-            const {
-                success: codeValidationSuccess,
-            } = action.result.result.data;
-            return {
-                ...state,
-                userAlreadyExist: {
-                    ...state.userAlreadyExist,
-                    codeValidationSuccess,
-                    currentStep: codeValidationSuccess ? 4 : 3,
-                    isLoading: false,
-                },
-            };
-        case ApiConstants.API_CANCEL_SEND:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    currentStep: 0,
-                    verificationNavigationListener: true,
-                    users: [],
-                },
-            };
-        case ApiConstants.API_PARTICIPANT_DETAILS_LOAD:
-            return {
-                ...state,
-                userAlreadyExist: {
-                    ...state.userAlreadyExist,
-                    isLoading: true,
-                },
-            };
+            break;
         default:
             return state;
     }

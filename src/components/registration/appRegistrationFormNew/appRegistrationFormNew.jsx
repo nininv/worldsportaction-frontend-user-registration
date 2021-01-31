@@ -80,7 +80,7 @@ import {
 import PlacesAutocomplete from "../elements/PlaceAutoComplete/index";
 import Loader from '../../../customComponents/loader';
 import userHttpApi from "../../../store/http/userHttp/userAxiosApi";
-import UserValidation from "./Validation";
+import UserValidation from "./UserValidation";
 
 const { Header, Content } = Layout;
 const { Step } = Steps;
@@ -90,52 +90,26 @@ const { Option } = Select;
 const ADULT = 18; // years age is minimum for registration without parents
 
 
-const lookForExistingUser = async (userInfo) =>{
+const lookForExistingUser = async (userInfo) => {
   try {
-    let DOBFormatted = '';
+    let DOBFormatted;
     const DOBMoment = moment(userInfo.dateOfBirth);
 
     if (DOBMoment.isValid()) {
         DOBFormatted = DOBMoment.format('YYYY-MM-DD')
     } else {
-        const splittedDOB = payload.dateOfBirth.split('-')
+        const splittedDOB = userInfo.dateOfBirth.split('-')
         const reversedSplittedDOB = [splittedDOB[2], splittedDOB[0], splittedDOB[1]]
         DOBFormatted = reversedSplittedDOB.join('-')
     }
 
-    const reqData = {...payload, dateOfBirth: DOBFormatted}
+    const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data.users
+    return result.result.data.users // User[]
   } catch (error) {
     console.error(error);
   }
 }
-
-
-export const sendDigitCode = async ({payload}) => {
-  try {
-    const result = await userHttpApi.sendDigitCode({payload});
-    if (result.result.data.success) {
-        // todo: save send digit code (navigate)
-    } else {
-    }
-  } catch (error) {
-      console.error(error);
-  }
-};
-
-
-export const confirmDetails = async ({ id, type, detail }) => {
-  try {
-    const result = await userHttpApi.confirmDetails({ id, type, detail });
-    if (result.result.data.success) {
-        // todo: save somewhere
-    } else {
-    }
-  } catch (error) {
-      console.error(error);
-  }
-};
 
 
 class AppRegistrationFormNew extends Component {
@@ -1585,20 +1559,39 @@ class AppRegistrationFormNew extends Component {
                         if (!this.props.loginState.loggedIn) {
                             // check if the user in registration object is still the "verified" one in store
                             console.log('registrationObj', registrationObj, 'registrationObj.userId', registrationObj.userId);
-                            if (!registrationObj.userId) {
-                                // validation needs to be run again
-                                await lookForExistingUser(registrationObj);
-                            }
+                            const {isVerified} = registrationObj
+                            this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
 
-                            // if all verification has passed,
-                            if (userAlreadyExist.currentStep === 4 && userAlreadyExist.message === "success") {
-                                // navigate the form forward
-                                return this.props.verificationNavigationListener()
+                            if (!isVerified) { // Requires verification
+                                const users = await lookForExistingUser(registrationObj);
+                                if (users.length) {
+                                    this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
+                                    return; // halt the process
+                                } else {
+                                    // doesn't return any user, complete the process
+                                    this.props.updateUserRegistrationObjectAction(true, 'isVerified')
+                                }
+
                             }
-                            this.props.lookForExistingUser(registrationObj);
-                            return;
+                        }
+                        // verify parents / guardian one by one
+                        const {parentOrGuardian} = registrationObj
+                        for (let i = 0; i < parentOrGuardian.length; i++){
+                            let pg = parentOrGuardian[i];
+                            if (!pg.isVerified) {
+                                const users = await lookForExistingUser(pg)
+                                this.onChangeSetParentValue(true, "isVerifyTouched", i)
+                                if (users.length) {
+                                    this.onChangeSetParentValue(users, 'matchingUsers', i);
+                                    return; // halt the process
+                                } else {
+                                    // doesn't return any user, complete the process
+                                    this.onChangeSetParentValue(true, 'isVerified', i)
+                                }
+                            }
                         }
                     }
+
                     if (this.state.currentStep === 1) {
                         if (registrationObj.competitions.length == 0) {
                             message.error(ValidationConstants.competitionField);
@@ -1679,11 +1672,9 @@ class AppRegistrationFormNew extends Component {
                     {!participantWithoutProfile && this.addedParticipantWithProfileView()}
                     {this.participantDetailView(getFieldDecorator)}
 
-                    <UserValidation user={registrationObj} updateUser={(updatedUser) => {
-                        // since we only care about these 2 fields being updated by Validator Component
-                        updateUserRegistrationObjectAction(updatedUser.isVerified, 'isVerified');
-                        updateUserRegistrationObjectAction(updatedUser.userId, 'userId');
-                    }}/>
+                    <UserValidation user={registrationObj} updateUser={
+                        (updatedUser) => updateUserRegistrationObjectAction(updatedUser, 'registrationObj')
+                    }/>
 
                     <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
@@ -2539,8 +2530,12 @@ class AppRegistrationFormNew extends Component {
                             {!parent.isSameAddress && (
                                 <div>{this.parentOrGuardianAddressView(parent, parentIndex, getFieldDecorator)}</div>
                             )}
-                            {/* TODO-exis : how to update user here */}
-                            <UserValidation user={parent} updateUser={() => alert('unfinished...')}/>
+                            <UserValidation
+                                user={parent}
+                                updateUser={({ userId }) => {
+                                    this.onChangeSetParentValue(userId, "userId", parentIndex);
+                                    this.onChangeSetParentValue(true, "isVerified", parentIndex);
+                                }}/>
                         </div>
                     );
                 })}
@@ -4206,7 +4201,6 @@ function mapDispatchToProps(dispatch) {
         getSchoolListAction,
         validateRegistrationCapAction,
         lookForExistingUser,
-        confirmDetails,
         netSetGoTshirtSizeAction
     }, dispatch);
 }

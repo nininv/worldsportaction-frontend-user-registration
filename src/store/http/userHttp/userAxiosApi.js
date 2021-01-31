@@ -140,21 +140,12 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
 
-  sendAuthenticationCodeType(payload) {
-    const url = `api/user/existing-auth-code`;
-    return Method.dataPost(url, token, payload);
-  },
-
-  sendDigitCode(payload) {
-    const url = `api/user/existing-digit-code`;
+  requestDigitCode(payload) {
+    const url = `api/user/request-digit-code`;
     return Method.dataPost(url, token, payload);
   },
   checkDigitCode(payload) {
     const url = `api/user/check-existing-digit-code`;
-    return Method.dataPost(url, token, payload);
-  },
-  confirmDetails(payload) {
-    const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
   },
 }
