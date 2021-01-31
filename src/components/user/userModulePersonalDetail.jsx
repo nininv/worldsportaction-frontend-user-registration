@@ -122,7 +122,7 @@ const columns = [
                             </div>
                         </div>
                     </div>
-                    {membershipType === "Umpire" && getStripeAccountConnectId().length === 0 && (
+                    {membershipType === "Umpire" && typeof(getStripeAccountConnectId()) !== 'undefined' && getStripeAccountConnectId().length === 0 && (
                         <div className="d-flex flex-row">
                             <img src={AppImages.ringing} alt="" width="22" height="22" />
                             <InputWithHead required="pt-0 pl-3" heading={AppConstants.umpireAvailabilityMessage} />
