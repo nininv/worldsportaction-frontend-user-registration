@@ -16,14 +16,19 @@ const EnterCode = ({ cancel, next, userId }) => {
     const onChange = async ({ target: { value } }) => {
         const sanitizedValue = value.replace(/\D/g, "");
         setValue(sanitizedValue);
-
+        setError(false); // clear errors
         if (sanitizedValue.length === CODE_LENGTH) {
             try {
                 const result = await userHttpApi.checkDigitCode({
                     userId,
                     digitCode: sanitizedValue,
                 });
-                if (result.success) {
+                console.log(result);
+                if (
+                    result.result &&
+                    result.result.data &&
+                    result.result.data.success
+                ) {
                     next();
                 } else {
                     setError(true);

@@ -298,12 +298,6 @@ class AppRegistrationFormNew extends Component {
             this.setState({ validateRegistrationCapOnLoad: false })
 
         }
-
-        if (this.props.userRegistrationState.userAlreadyExist.verificationNavigationListener == true) {
-            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
-            this.stepNavigation(registrationObj, expiredRegistration);
-            this.props.stopVerificationStepNavigation()
-        }
     }
 
     // setAllCompetitions = (membershipProductInfo) => {
@@ -1462,7 +1456,7 @@ class AppRegistrationFormNew extends Component {
     saveRegistrationForm = (e) => {
         try {
             e.preventDefault();
-            const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
+            const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
 
@@ -1564,7 +1558,7 @@ class AppRegistrationFormNew extends Component {
 
                             if (!isVerified) { // Requires verification
                                 const users = await lookForExistingUser(registrationObj);
-                                if (users.length) {
+                                if (users && users.length) {
                                     this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
                                     return; // halt the process
                                 } else {
@@ -1581,7 +1575,7 @@ class AppRegistrationFormNew extends Component {
                             if (!pg.isVerified) {
                                 const users = await lookForExistingUser(pg)
                                 this.onChangeSetParentValue(true, "isVerifyTouched", i)
-                                if (users.length) {
+                                if (users && users.length) {
                                     this.onChangeSetParentValue(users, 'matchingUsers', i);
                                     return; // halt the process
                                 } else {
@@ -1660,7 +1654,7 @@ class AppRegistrationFormNew extends Component {
 
 
     participantDetailsStepView = (getFieldDecorator) => {
-        const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
+        const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
         const isYoung = getAge(dateOfBirth) < ADULT;
@@ -1673,10 +1667,9 @@ class AppRegistrationFormNew extends Component {
                     {this.participantDetailView(getFieldDecorator)}
 
                     <UserValidation user={registrationObj} updateUser={
-                        (updatedUser) => updateUserRegistrationObjectAction(updatedUser, 'registrationObj')
+                        (updatedUser) => this.props.updateUserRegistrationObjectAction(updatedUser, 'registrationObj')
                     }/>
 
-                    <Loader visible={userAlreadyExist.isLoading} />
                     {isYoung && this.parentOrGuardianView(getFieldDecorator)}
                     {(isAdult && dateOfBirth) && this.emergencyContactView(getFieldDecorator)}
                 </>

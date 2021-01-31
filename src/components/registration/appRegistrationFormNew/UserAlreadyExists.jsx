@@ -15,9 +15,16 @@ const UserAlreadyExists = ({
     type,
     setType,
 }) => {
+    const confirm = () => {
+        // in case for a single user, user Id would be not set
+        if (matchingUsers.length === 1) setUserId(matchingUsers[0].id);
+
+        // otherwise, user id is set on selecting radio
+        next();
+    };
     return (
         <div className="registration-form-view user-already-exists-section">
-            {matchingUsers.length > 0 && (
+            {matchingUsers && matchingUsers.length > 0 && (
                 <>
                     {matchingUsers.length > 1 ? (
                         <>
@@ -81,7 +88,7 @@ const UserAlreadyExists = ({
                             htmlType="button"
                             type="default"
                             className="open-reg-button user-already-exists-button user-already-exists-ok"
-                            onClick={next}
+                            onClick={confirm}
                             disabled={
                                 (matchingUsers.length > 1 && !userId) || !type
                             }

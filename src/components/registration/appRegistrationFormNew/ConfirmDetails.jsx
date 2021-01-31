@@ -27,6 +27,7 @@ const ConfirmDetails = ({ type, next, cancel, userId }) => {
                 setError(true);
             }
         } catch (error) {
+            setError(true);
             console.error(error);
         }
     };

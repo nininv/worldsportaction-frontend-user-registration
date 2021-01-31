@@ -26,50 +26,49 @@ export const UserValidation = ({ user, updateUser }) => {
     // 3
     // 4: result
 
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(1);
     const [userId, setUserId] = useState(null); // when we select a target userId, store it here
     const [type, setType] = useState(null); // email / sms
 
     const { matchingUsers, isVerified, isVerifyTouched } = user; // store the matching users under a User, whether it is a Participant / Parent
 
+    if (!isVerifyTouched || isVerified) return null;
     return (
-        isVerifyTouched &&
-        !isVerified && (
-            <>
-                {step === 1 && (
-                    <UserAlreadyExists
-                        cancel={setStep(0)}
-                        next={setStep(2)}
-                        matchingUsers={matchingUsers}
-                        userId={userId}
-                        setUserId={setUserId}
-                        type={type}
-                        setType={setType}
-                    />
-                )}
-                {step === 2 && (
-                    <ConfirmDetails
-                        cancel={setStep(0)}
-                        next={setStep(3)}
-                        userId={userId}
-                    />
-                )}
-                {step === 3 && (
-                    <EnterCode
-                        cancel={setStep(0)}
-                        next={setStep(4)}
-                        userId={userId}
-                    />
-                )}
-                {step === 4 && (
-                    <CodeCheckSuccess
-                        updateUser={updateUser}
-                        user={user}
-                        userId={userId}
-                    />
-                )}
-            </>
-        )
+        <>
+            {step === 1 && (
+                <UserAlreadyExists
+                    cancel={() => setStep(0)}
+                    next={() => setStep(2)}
+                    matchingUsers={matchingUsers}
+                    userId={userId}
+                    setUserId={setUserId}
+                    type={type}
+                    setType={setType}
+                />
+            )}
+            {step === 2 && (
+                <ConfirmDetails
+                    type={type}
+                    cancel={() => setStep(0)}
+                    next={() => setStep(3)}
+                    userId={userId}
+                />
+            )}
+            {step === 3 && (
+                <EnterCode
+                    cancel={() => setStep(0)}
+                    next={() => setStep(4)}
+                    userId={userId}
+                />
+            )}
+            {step === 4 && (
+                <CodeCheckSuccess
+                    updateUser={updateUser}
+                    user={user}
+                    userId={userId}
+                />
+            )}
+        </>
     );
 };
 
