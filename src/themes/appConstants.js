@@ -1068,7 +1068,7 @@ const AppConstants = {
   useParentsEmailAddress: "Use parent's email address",
   useChildEmail: "Use same contact details as yourself",
   useParentEmail: "Use same contact details as yourself",
-  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. You child will not get their own login. If you would like them to have their own login please give them a separate email address.',
+  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a separate email address.',
   parentMsg2Child: 'You have elected to use the same email for your Parent and yourself. You will lose your login unless you update your own email address first. If you do go ahead with using the same email address, you will be logged out for security reasons, and need to log in again.',
   returnToSelectAddress: "Return to select address",
   returnToLogin: "Return to Login",
@@ -1233,7 +1233,10 @@ const AppConstants = {
   removeFromTeam: "Remove from Team",
   addToTeam: "Add to Team",
   removeFromTeamPopUpMsg: "Do you want to remove this user from the team?",
-  noPickupMessage:"There is no pick up or delivery applicable to this product."
+  noPickupMessage:"There is no pick up or delivery applicable to this product.",
+
+  parentDetails: "Parent details",
+  unavailable: "unavailable",
 };
 
 export default AppConstants;

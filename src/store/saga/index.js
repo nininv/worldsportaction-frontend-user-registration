@@ -263,6 +263,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_SCORER_ACTIVITY_LOAD, userSaga.getScorerActivitySaga);
   yield takeEvery(ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD, userSaga.getUmpireActivityListSaga);
 
+  yield takeEvery(ApiConstants.API_GET_USER_PARENT_DATA_LOAD, userSaga.getUserParentData);
+
   //Team invite saga
   yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD, teamInviteSaga.getInvitedTeamRegInfoSaga);
   yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD, teamInviteSaga.orgTeamInviteRegistrationSettings);

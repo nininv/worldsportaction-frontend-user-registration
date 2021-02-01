@@ -203,6 +203,13 @@ function teamMemberUpdateAction(data) {
   }
 }
 
+function getUserParentDataAction(data) {
+  return {
+    type: ApiConstants.API_GET_USER_PARENT_DATA_LOAD,
+    data,
+  }
+}
+
 export {
   getRoleAction,
   getUreAction,
@@ -230,6 +237,7 @@ export {
   getTeamMembersAction,
   updateReviewInfoAction,
   getTeamMembersReviewAction,
-  teamMemberUpdateAction
+  teamMemberUpdateAction,
+  getUserParentDataAction,
 }
 
