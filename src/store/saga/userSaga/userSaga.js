@@ -307,6 +307,23 @@ export function* getUserRole(action) {
     }
 }
 
+export function* getUserParentData(action) {
+    try {
+        const result = yield call(userHttpApi.getUserParentData);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_USER_PARENT_DATA_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
 // Get the Scorer Activity Data
 export function* getScorerActivitySaga(action) {
     try {
