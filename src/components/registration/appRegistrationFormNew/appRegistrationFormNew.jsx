@@ -1618,7 +1618,7 @@ class AppRegistrationFormNew extends Component {
         const { registrationObj, expiredRegistration, userAlreadyExist } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
         const participantWithoutProfile = ([-2, -1]).includes(userId); // may be need use (userId < 0)?
-        const isYoung = getAge(dateOfBirth) < ADULT;
+        const isYoung = getAge(dateOfBirth) <= ADULT;
         const isAdult = !isYoung;
         if (userAlreadyExist && userAlreadyExist.message === "success" || userAlreadyExist.users === false) {
             this.stepNavigation(registrationObj, expiredRegistration);
