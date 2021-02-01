@@ -991,7 +991,7 @@ class AppRegistrationForm extends Component {
         participantObj.userId = userInfo != null ? userInfo.id : 0;
 
         if (userInfo != null && userInfo != undefined) {
-            if (getAge(new Date(userInfo.dateOfBirth)) < 18) {
+            if (getAge(new Date(userInfo.dateOfBirth)) <= 18) {
                 (userInfo.parentOrGuardian || []).map((item, userIndex) => {
                     this.addParent(index, userRegistrations, item);
                 })
@@ -1130,7 +1130,7 @@ class AppRegistrationForm extends Component {
         });
 
         if (userInfo != null && userInfo != undefined) {
-            if (getAge(new Date(userInfo.dateOfBirth)) < 18) {
+            if (getAge(new Date(userInfo.dateOfBirth)) <= 18) {
                 (userInfo.parentOrGuardian || []).map((item, parentIndex) => {
                     this.setParentformFieldsValue(index, parentIndex, item);
                 })
@@ -2537,7 +2537,7 @@ class AppRegistrationForm extends Component {
             let regYourSelf1 = userRegistrations.find(x => x.registeringYourself == 1 || x.registeringYourself == 4);
             let regYourSelf2 = false;
             userRegistrations.map((item) => {
-                if (getAge(item.dateOfBirth) < 18) {
+                if (getAge(item.dateOfBirth) <= 18) {
                     // if(getUserId() == null || getUserId() == 0){
                     regYourSelf2 = true;
                     //}
@@ -2750,7 +2750,7 @@ class AppRegistrationForm extends Component {
                                     }
                                     else {
                                         if (x.whoAreYouRegistering == 1) {
-                                            if (getAge(x.dateOfBirth) < 18) {
+                                            if (getAge(x.dateOfBirth) <= 18) {
                                                 if (getUserId() == null || getUserId() == 0) {
                                                     this.setFinalYourInfo(registrationDetail, x.parentOrGuardian[0]);
                                                     break;
