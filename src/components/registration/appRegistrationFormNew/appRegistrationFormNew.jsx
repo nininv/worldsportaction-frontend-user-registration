@@ -2467,7 +2467,7 @@ class AppRegistrationFormNew extends Component {
                                             }],
                                         })(
                                             <InputWithHead
-                                                disabled={(registrationObj.userId == getUserId()) && parent.userId != 0}
+                                                disabled={parent.userId != 0}
                                                 required={"required-field pt-0 pb-0"}
                                                 heading={AppConstants.email}
                                                 placeholder={AppConstants.email}
