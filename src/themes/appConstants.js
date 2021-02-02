@@ -1237,6 +1237,7 @@ const AppConstants = {
 
   parentDetails: "Parent details",
   unavailable: "unavailable",
+  doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
 };
 
 export default AppConstants;

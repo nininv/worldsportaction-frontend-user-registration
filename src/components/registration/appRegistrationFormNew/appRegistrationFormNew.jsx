@@ -2104,7 +2104,7 @@ class AppRegistrationFormNew extends Component {
                                 className="single-checkbox"
                                 checked={registrationObj.referParentEmail}
                                 onChange={e => this.onChangeSetParticipantValue(e.target.checked, "referParentEmail")} >
-                                {AppConstants.useParentsEmailAddress}
+                                {AppConstants.doNotGiveChildTheirOwnLogin}
                             </Checkbox>
                         )}
                     </div>
