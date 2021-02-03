@@ -653,6 +653,14 @@ class AppRegistrationFormNew extends Component {
                 // })
             }
 
+            if(key == 'referParentEmail' && value == false){
+                setTimeout(() => {
+                    this.props.form.setFieldsValue({
+                        [`participantEmail`]:  null
+                    });
+                });
+            }
+
             if (key == "dateOfBirth") {
                 if (getAge(value) <= 18) {
                     if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
@@ -1423,9 +1431,10 @@ class AppRegistrationFormNew extends Component {
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
                     return false;
-                } else {
-                    this.onChangeSetParticipantValue(false, "referParentEmail");
-                }
+                } 
+                // else {
+                //     this.onChangeSetParticipantValue(false, "referParentEmail");
+                // }
             }
             if (registrationObj.registeringYourself == 3) {
                 if (getUserId() != 0) {
