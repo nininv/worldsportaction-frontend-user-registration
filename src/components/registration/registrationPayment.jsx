@@ -284,6 +284,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result1", result);
+                    props.onLoad(true)
                     registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption);
                     // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
@@ -341,7 +342,7 @@ const CheckoutForm = (props) => {
                 }, 100);
             }
             else if (props.payload.total.targetValue == 0) {
-                // props.onLoad(true)
+                props.onLoad(true)
                 registrationCapValidate(null, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1);
                 // stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,clientSecretKey);
             }
