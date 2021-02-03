@@ -202,21 +202,32 @@ class UserProfileEdit extends Component {
 
             await this.props.getUserParentDataAction();
             const { parentData } = this.props.userState;
-
+            let additionalSettings = {};
             if (showSameEmailOption) {
                 const matchingData = parentData.find((parent) => {
-                    return (parent.email + '.' + data.firstName === data.email);
+                    return (parent.email?.toLowerCase() + '.' + data.firstName?.toLowerCase() === data.email?.toLowerCase());
                 });
 
                 if (matchingData) {
-                    await this.setState({
+                    additionalSettings = {
+                        ...additionalSettings,
                         showParentEmailSelectbox: true,
                         enableEmailInputbox: false,
                         showEmailInputbox: false,
                         isSameEmail: true,
                         parentMatchingId: matchingData.id,
-                    })
+                    };
                 }
+            }
+
+            const personalEmail = this.props.userState.personalData.email;
+            if ((personalEmail?.toLowerCase() + '.' + data.firstName?.toLowerCase()) === data.email?.toLowerCase()) {
+                data['email'] = personalEmail;
+                additionalSettings = {
+                    ...additionalSettings,
+                    isSameEmail: true,
+                    enableEmailInputbox: false,
+                };
             }
 
             await this.setState({
@@ -225,7 +236,8 @@ class UserProfileEdit extends Component {
                 showSameEmailOption,
                 titleLabel: titleLabel,
                 section: section,
-                loadValue: true
+                loadValue: true,
+                ...additionalSettings,
             });
             setTempUserId(data.userId);
         }
@@ -353,6 +365,7 @@ class UserProfileEdit extends Component {
 
     onChangeSetValue = async (value, key) => {
         let data = {...this.state.userData};
+        let additionalSettings = {};
         if (key === "isDisability") {
             if (value == 0) {
                 data["disabilityCareNumber"] = null;
@@ -360,14 +373,28 @@ class UserProfileEdit extends Component {
             }
         } else if (key === "dateOfBirth") {
             value = value && (moment(value).format("YYYY-MM-DD"));
-            if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
-            || this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)
-            || this.state.titleLabel === AppConstants.addChild) {
-                const age = moment().year() - moment(value).year();
-                if (age < 18) {
-                    this.setState({ showSameEmailOption: true });
-                } else {
-                    this.setState({ showSameEmailOption: false });
+            const age = moment().year() - moment(value).year();
+            if (age < 18) {
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    await this.setState({ showSameEmailOption: true });
+                }
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    data['email'] = this.props.userState.personalData.email;
+                    await this.props.form.setFieldsValue({ "email": data["email"] });
+                    additionalSettings = { ...additionalSettings, isSameEmail: true, enableEmailInputbox: false };
+                }
+            } else {
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    await this.setState({
+                        showSameEmailOption: false,
+                        enableEmailInputbox: true,
+                        isSameEmail: false
+                    });
                 }
             }
         } else if (key === "email" && this.state.section === "address") {
@@ -426,6 +453,7 @@ class UserProfileEdit extends Component {
                 const { parentData } = this.props.userState;
                 const parent = parentData.find((item) => item.id === value);
                 const updatedEmail = parent.email + '.' + data.firstName;
+                await this.setState({ enableEmailInputbox: false, showEmailInputbox: false });
                 key = "email";
                 value = updatedEmail;
             }
@@ -446,7 +474,7 @@ class UserProfileEdit extends Component {
         }
         data[key] = value;
 
-        this.setState({ userData: data });
+        this.setState({ userData: data, ...additionalSettings });
     };
 
     headerView = () => (
@@ -1478,6 +1506,12 @@ class UserProfileEdit extends Component {
             data["parentUserId"] = 0;
         } else if (this.state.displaySection == 7 && !data.childUserId) {
             data["childUserId"] = 0;
+        }
+
+        if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.edit + ' ' + AppConstants.child ) {
+            if (this.state.isSameEmail) {
+                data["email"] = this.props.userState.personalData.email + '.' + data.firstName;
+            }
         }
 
         if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
