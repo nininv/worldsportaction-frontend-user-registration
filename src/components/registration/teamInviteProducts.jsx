@@ -299,9 +299,9 @@ class TeamInviteProducts extends Component{
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index,"selectedOptions")}>
                             {(item.paymentOptions || []).map((p, pIndex) =>(
                                 <span key={p.paymentOptionRefId}>
-                                    {p.paymentOptionRefId == 1 &&
+                                    {/* {p.paymentOptionRefId == 1 &&
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payEachMatch}</Radio>
-                                    }
+                                    } */}
                                     {p.paymentOptionRefId == 3 &&
                                         <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.payfullAmount}</Radio>
                                     }
