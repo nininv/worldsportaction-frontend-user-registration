@@ -390,7 +390,7 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={'$' + (competitionDetails.nomDiscountsToDeduct ? (Number(competitionDetails.nomDiscountsToDeduct)).toFixed(2) : "0.00")}
+                                    heading={'$' + (Number(nomDiscountsToDeduct)).toFixed(2)}
                                     required={"input-align-right"}
                                 />
                             </div>
@@ -528,7 +528,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                    heading={'$' + (affiliateDetail.nomDiscountsToDeduct ? (Number(affiliateDetail.nomDiscountsToDeduct)).toFixed(2) : "0.00")}
+                                    heading={'$' + (Number(nomDiscountsToDeduct)).toFixed(2)}
                                         required={"input-align-right"}
                                     />
                                 }
