@@ -411,8 +411,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2)) - parseFloat((nomDiscountsToDeduct).toFixed(2))
-                                                - parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2))
+                                                + parseFloat((childDiscountsToDeduct).toFixed(2)))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -557,8 +557,8 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2)) - parseFloat((nomDiscountsToDeduct).toFixed(2)) 
-                                                    -  parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2)) 
+                                                    +  parseFloat((childDiscountsToDeduct).toFixed(2)))).toFixed(2)}
                                     />}
                             </div>
 
