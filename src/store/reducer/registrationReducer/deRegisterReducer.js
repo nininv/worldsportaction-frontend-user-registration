@@ -83,6 +83,7 @@ function deRegistrationReducer(state = initialState, action) {
                     if(userData.isTeam == 1){
                         state.teamMembers = userData.teamMembers;
                         state.saveData.isTeam = 1;
+                        state.saveData.regChangeTypeRefId = 1;
                     }
                     else{
                         state.teamMembers = [];

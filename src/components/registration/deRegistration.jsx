@@ -557,7 +557,7 @@ class DeRegistration extends Component {
                                 return (
                                     <div key={"register" + index}>
                                         <div className="contextualHelp-RowDirection" >
-                                            <Radio value={item.id}>{item.value}</Radio>
+                                            <Radio value={item.id} disabled={item.id == 2 && saveData.isTeam}>{item.value}</Radio>
                                             <div style={{ marginLeft: -20, }}>
                                                 <Tooltip placement='bottom' background="#ff8237">
                                                     <span>{item.helpMsg}</span>

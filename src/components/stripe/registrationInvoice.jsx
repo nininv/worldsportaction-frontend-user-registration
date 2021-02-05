@@ -363,6 +363,9 @@ class RegistrationInvoice extends Component {
     nominationCompOrgView = (competitionDetails) => {
         let nominationGVAmount = competitionDetails.nominationGVAmount!= null ? 
         competitionDetails.nominationGVAmount : 0;
+        let nomDiscountsToDeduct = competitionDetails.nomDiscountsToDeduct ? competitionDetails.nomDiscountsToDeduct : 0;
+        let childDiscountsToDeduct = competitionDetails.nomChildDiscountsToDeduct!= null ? 
+                competitionDetails.nomChildDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
@@ -389,7 +392,7 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={'$' + "0.00"}
+                                     heading={'$' + (parseFloat((nomDiscountsToDeduct).toFixed(2))  + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                     required={"input-align-right"}
                                 />
                             </div>
@@ -408,7 +411,8 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column" >
                                 <InputWithHead
                                     required="invoice"
-                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
+                                    heading={'$' + (  parseFloat((competitionDetails.nominationFeeToPay).toFixed(2)) + parseFloat((competitionDetails.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2))
+                                                + parseFloat((childDiscountsToDeduct).toFixed(2)))).toFixed(2)}
                                 />
                             </div>
                         </div>
@@ -495,6 +499,9 @@ class RegistrationInvoice extends Component {
     nominationAffiliateView = (affiliateDetail) => {
         let nominationGVAmount = affiliateDetail.nominationGVAmount!= null ? 
         affiliateDetail.nominationGVAmount : 0;
+        let nomDiscountsToDeduct = affiliateDetail.nomDiscountsToDeduct ? affiliateDetail.nomDiscountsToDeduct : 0;
+        let childDiscountsToDeduct = affiliateDetail.nomChildDiscountsToDeduct!= null ? 
+                    affiliateDetail.nomChildDiscountsToDeduct : 0;
         return (
             <div className="row" >
                 <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
@@ -526,7 +533,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-description" >
                                 {affiliateDetail &&
                                     <InputWithHead
-                                        heading={'$' + "0.00"}
+                                    heading={'$' + (parseFloat((nomDiscountsToDeduct).toFixed(2))  + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                         required={"input-align-right"}
                                     />
                                 }
@@ -550,7 +557,8 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - parseFloat((nominationGVAmount).toFixed(2))).toFixed(2)}
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2)) 
+                                                    +  parseFloat((childDiscountsToDeduct).toFixed(2)))).toFixed(2)}
                                     />}
                             </div>
 
