@@ -11,7 +11,7 @@ import AppRegistrationSuccess from "../components/registration/appRegistrationSu
 import Stripe from "../components/stripe/stripe";
 import RegistrationInvoice from "../components/stripe/registrationInvoice"
 
-// Live Score Screesn 
+// Live Score Screesn
 import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder"
 import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
 
@@ -41,9 +41,10 @@ import SingleGamePayment from "../components/registration/singleGamePayment";
 import MyUmpiringAvailability from "../components/umpire/myUmpiringAvailability";
 import AddTeamMember from "../components/user/addTeamMember";
 
-// changePassword 
+// changePassword
 import ManagePassword from './Accounts/password';
 import TeamMemberRegPayment from "../components/user/teamMemberRegPayment";
+import ReportFoulsPage from '../pages/refereeReportPage'
 
 const lazyLoad = Component => {
   const lazy = props => {
@@ -127,6 +128,10 @@ class Routes extends React.Component {
           path="/deRegistration"
           component={lazyLoad(DeRegistration)}
         />
+        <Route
+          path="/refereeReport"
+          component={lazyLoad(ReportFoulsPage)}
+        />
         <PrivateRoute
           path="/listProducts"
           component={lazyLoad(ListProducts)}
@@ -157,12 +162,12 @@ class Routes extends React.Component {
         <PrivateRoute
           path="/teamInviteProductsReview"
           component={lazyLoad(TeamInviteProducts)}
-        /> 
+        />
 
         <PrivateRoute
           path="/teamInviteShop"
           component={lazyLoad(TeamInviteShop)}
-        /> 
+        />
 
         <PrivateRoute
           path='/teamInviteShipping'
@@ -207,7 +212,7 @@ class Routes extends React.Component {
           path="/addTeamMember"
           component={lazyLoad(AddTeamMember)}
           />
-        
+
         <PrivateRoute path="/teamMemberRegPayment" component={lazyLoad(TeamMemberRegPayment)}/>
 
         <Route path="/" component={lazyLoad(NotFound)} />

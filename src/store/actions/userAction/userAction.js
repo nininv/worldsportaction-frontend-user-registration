@@ -197,8 +197,15 @@ function getTeamMembersReviewAction(payload) {
 }
 
 function teamMemberUpdateAction(data) {
+    return {
+        type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
+        data,
+    }
+}
+
+function getUsersByRoleAction(data) {
   return {
-      type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
+      type: ApiConstants.API_GET_USERS_BY_ROLE_LOAD,
       data,
   }
 }
@@ -239,5 +246,6 @@ export {
   getTeamMembersReviewAction,
   teamMemberUpdateAction,
   getUserParentDataAction,
+  getUsersByRoleAction
 }
 

@@ -78,6 +78,11 @@ let LiveScoreAxiosApi = {
         let url = `/booking/save?userId=${userId}&fromTime=${fromTime}&endTime=${endTime}`;
         return Method.dataPost(url, token, payload);
     },
+
+    createRefereeReport(data) {
+        let url = `/incident/refereeReport`;
+        return Method.dataPost(url, token, data);
+    },
 };
 
 const Method = {

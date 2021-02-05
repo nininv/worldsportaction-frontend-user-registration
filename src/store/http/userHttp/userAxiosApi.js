@@ -97,7 +97,10 @@ let userHttpApi = {
     const url = `ure/byUserId?userId=${userId}`;
     return Method.dataGet(url, token);
   },
-
+  getUserRoles() {
+    const url = 'users/roles';
+    return Method.dataPost(url, token);
+  },
   getScorerActivityData(payload, roleId, matchStatus) {
     const url = `api/user/activity/roster?roleId=${roleId}&matchStatus=${matchStatus}`;
     return Method.dataPost(url, token, payload);
@@ -108,7 +111,6 @@ let userHttpApi = {
     const url = `api/organisations/all`;
     return Method.dataGet(url, token);
   },
-
   saveUserPhoto(payload, userId) {
     const url = userId ? `users/photo?userId=${userId}` : `users/photo`;
     return Method.dataPost(url, token, payload);
@@ -156,6 +158,11 @@ let userHttpApi = {
   sendConfirmDetails(payload) {
     const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
+  },
+  getUsersByRole(payload) {
+    const { roleId, entityTypeId, entityId, userName } = payload;
+    const url = `users/byRole?roleId=${roleId}&entityTypeId=${entityTypeId}&entityId=${entityId}&userName=${userName}`;
+    return Method.dataGet(url, token, payload);
   },
   findPossibleMerge(payload) {
     return Method.dataPost('userMerge/find', token, payload);

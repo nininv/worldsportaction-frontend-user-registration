@@ -6,7 +6,7 @@ import ApiConstants from "../../themes/apiConstants";
 import { getOnlyYearListSaga, getYearListingSaga } from "./appSaga";
 
 import {
-  getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
+  getCommonDataSaga, getRefereeOffenceListSaga, countryReferenceSaga,
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
@@ -287,6 +287,7 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.getUmpireAvailabilitySaga);
   yield takeEvery(ApiConstants.API_LIVE_SCORE_SAVE_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.saveUmpireAvailabilitySaga);
+  yield takeEvery(ApiConstants.API_CREATE_REFEREE_REPORT, liveScoreSaga.createRefereeReportSaga);
 
   yield takeEvery(ApiConstants.API_USER_PHOTO_UPDATE_LOAD, userSaga.saveUserPhotosSaga);
 
@@ -297,6 +298,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
   yield takeEvery(ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD, userSaga.getUserModuleTeamMembersDataSaga);
 
+  yield takeEvery(ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD, getRefereeOffenceListSaga);
   yield takeEvery(ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD, netSetGoTshirtSizeSaga);
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
@@ -311,4 +313,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_SEND_DIGIT_CODE, userRegistrationSaga.sendDigitCode);
   yield takeEvery(ApiConstants.API_CHECK_DIGIT_CODE, userRegistrationSaga.checkDigitCode);
   yield takeEvery(ApiConstants.API_SEND_CONFIRM_DETAILS, userRegistrationSaga.sendConfirmDetails);
+
+  yield takeEvery(ApiConstants.API_GET_USERS_BY_ROLE_LOAD, userSaga.getUsersByRoleSaga);
 }

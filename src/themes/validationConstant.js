@@ -38,7 +38,7 @@ const ValidationConstants = {
     whoAreYouRegistering: ["Who are you registering is required"],
     whatTypeOfRegistration: ["What type of registration is required"],
 
-    /////////////membership 
+    /////////////membership
     membershipProductIsRequired: "Membership product name is required.",
     pleaseSelectValidity: "Please select validity.",
     pleaseSelectYear: "Please select Year.",
@@ -67,7 +67,7 @@ const ValidationConstants = {
     registrationOpenDateIsRequired: "Registration open date is required.",
     registrationCloseDateIsRequired: 'Registration close date is required.',
 
-    //time slot 
+    //time slot
     timeSlotPreference: "Please select time slot preference",
     timeSlotVenue: "Please select venueId",
     gradeField: 'Grade field is required.',
@@ -88,7 +88,7 @@ const ValidationConstants = {
     variantIsRequired: 'Variant is required.',
 
     email_validation: "Please enter valid email address!",
-	
+
 	addressRequiredError: "Address is required",
     addressDetailsError: "Please input Address in details",
     userRequired: "Please select User",
@@ -123,6 +123,7 @@ const ValidationConstants = {
     passwordVerification: 'Password must be minimum 8 characters',
     mobileLength: 'Contact number must be 10 digits',
     invalidNumber: 'Invalid Number',
+    fieldIsRequired: 'Field is required',
 
     fillTshirtSizeInformation: "Please choose a T'Shirt Size",
     accreditationLevelUmpire: "National accreditation level umpire is required.",

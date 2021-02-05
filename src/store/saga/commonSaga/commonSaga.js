@@ -399,3 +399,20 @@ export function* accreditationUmpireCoachReferenceSaga() {
         yield call(errorSaga, error)
     }
 }
+
+export function* getRefereeOffenceListSaga(){
+    try {
+        const result = yield call(CommonAxiosApi.getCommonReference, AppConstants.refereeOffence);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
