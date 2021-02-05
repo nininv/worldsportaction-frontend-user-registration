@@ -147,7 +147,7 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
-    /////////get the grades reference data 
+    /////////get the grades reference data
     gradesReferenceList() {
         let url = `common/reference/grade`;
         return Method.dataGet(url, token);
@@ -161,7 +161,7 @@ let AxiosApi = {
         return Method.dataGet(url, token)
     },
 
-    /// All Venues Listing 
+    /// All Venues Listing
     getVenuesList(payload) {
         let url = `/api/venue/list?userId=${userId}`;
         return Method.dataPost(url, token, payload);

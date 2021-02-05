@@ -193,6 +193,7 @@ const initialState = {
     result: [],
     status: 0,
     roles: [],
+    userListByRole: [],
     userRolesEntity: [],
     allUserOrganisationData: [],
     getUserOrganisation: [],
@@ -515,6 +516,12 @@ function userReducer(state = initialState, action) {
             state.userRole = userRole
             return {
                 ...state,
+            };
+
+        case ApiConstants.API_GET_USERS_BY_ROLE_SUCCESS:
+            return {
+                ...state,
+                userListByRole: action.result
             };
 
         ////Scorer

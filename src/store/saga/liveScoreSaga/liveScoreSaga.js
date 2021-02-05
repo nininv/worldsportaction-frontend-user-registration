@@ -1,7 +1,10 @@
+import { message } from "antd";
+
 import { put, call } from '../../../../node_modules/redux-saga/effects'
 import ApiConstants from "../../../themes/apiConstants";
 import LiveScoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
-import { message } from "antd";
+import history from '../../../util/history'
+
 
 function* failSaga(result) {
     yield put({ type: ApiConstants.API_LIVE_SCORE_SCORER_LIST_FAIL });
@@ -75,5 +78,26 @@ export function* getLiveScoreScorerSaga(action) {
         }
     } catch (error) {
         yield call(errorSaga, error)
+    }
+}
+
+export function* createRefereeReportSaga(action) {
+    try {
+        const result = yield call(LiveScoreAxiosApi.createRefereeReport, action.data);
+
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_CREATE_REFEREE_REPORT_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+            history.push('/userPersonal')
+            message.success('Create Referee Report - Created Successfully')
+
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
     }
 }

@@ -43,7 +43,7 @@ export function* saveUmpireAvailabilitySaga(action) {
     try {
         const { postData, fromTime, endTime, userId } = action;
         const updateResult = yield call(LiveScoreAxiosApi.saveUmpireAvailabilityList, postData, userId, fromTime, endTime);
-       
+
         if (updateResult.status === 1) {
             const result = yield call(LiveScoreAxiosApi.getUmpireAvailabilityList, userId, fromTime, endTime);
 
@@ -59,7 +59,7 @@ export function* saveUmpireAvailabilitySaga(action) {
             }
         }
 
-        
+
     } catch (error) {
         yield call(errorSaga, error);
     }

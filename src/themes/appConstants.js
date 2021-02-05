@@ -789,6 +789,7 @@ const AppConstants = {
   todaysIncidents: "Today's Incidents",
   todaysMatch: "Today's Matches",
   recipientSelection: "Enter Recipients",
+  dateAndTimeIncident: "Date and Time of Incident",
 
   ////addedd 2 march
   ByMatch: "By Match",
@@ -891,7 +892,9 @@ const AppConstants = {
   includeGST: " (incl. GST)",
   history: "History",
   registrationChange: "Registration Change",
+  reportFouls: "Report Fouls",
   mobileNumber: "Mobile Number",
+  reportOffenceRequired: "Please select the offence (can choose multiple)",
   whatRegistrationChange: "What registration change do you need to make?",
   takenCourtforTraining: "Have you taken the court for training, grading or a competition game",
   reasonRegisterTitle: "Why would you like to de-register?",
@@ -977,6 +980,20 @@ const AppConstants = {
   yourOrder: "Your order",
   ConditionsForNetballQLD: "Terms and Conditions for Netball QLD",
   continue: "Continue",
+
+  //refereeReport offences form
+  firstReportFormStep: "First step",
+  secondReportFormStep: "Second step",
+  secondReportFormStepQ1: 'At what point in the game did te incident occur?',
+  secondReportFormStepQ2: 'What happened in the lead up to the incident?',
+  secondReportFormStepQ3: 'What happened that made you lodge this refereeReport?',
+  secondReportFormStepQ4: 'Where were you when the incident occurred?',
+  secondReportFormStepQ5: 'What did you do?',
+  secondReportFormStepQ6: 'What happened following the incident?',
+  reportFormThirdStep: "Third step",
+  thirdReportFormStepQ1: 'Is there anything that you would like to add that may assist in assessing these charges?',
+  nameOfWitness: 'Name of Witness',
+  addWitness: 'Add Witness',
 
   //new registration form
   participantDetails: "Participant Details",
@@ -1213,6 +1230,7 @@ const AppConstants = {
   instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
   coachAccreditation: "Coach Accreditation",
   tShirtSizeList: "TShirtSize",
+  refereeOffence: "RefereeOffence",
 
   registeredBy: "Registered By",
   ownRegistration: "Own Registration",

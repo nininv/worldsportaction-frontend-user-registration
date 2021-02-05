@@ -20,7 +20,17 @@ function getliveScoreScorerList(competitionId, roleId) {
     return action;
 }
 
+function createRefereeReportAction(data) {
+    const action = {
+        type: ApiConstants.API_CREATE_REFEREE_REPORT,
+        data
+    };
+
+    return action;
+}
+
 export {
     liveScorePlayerListAction,
     getliveScoreScorerList,
-} 
+    createRefereeReportAction,
+}

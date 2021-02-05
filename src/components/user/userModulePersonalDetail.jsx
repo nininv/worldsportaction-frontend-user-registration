@@ -2254,7 +2254,7 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            {this.state.registrationTeam.isRemove ? 
+                            {this.state.registrationTeam.isRemove ?
                                 <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
                                     +
                                     {' '}
@@ -2496,6 +2496,9 @@ class UserModulePersonalDetail extends Component {
                                         </Menu.Item>
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
                                             <span>{AppConstants.transfer}</span>
+                                        </Menu.Item>
+                                        <Menu.Item onClick={() => history.push("/appReportFouls", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
+                                            <span>{AppConstants.report}</span>
                                         </Menu.Item>
                                         {stripeConnectId ?
                                             userRole && <Menu.Item
