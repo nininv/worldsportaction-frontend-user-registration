@@ -598,7 +598,7 @@ function setSeasonalFeeAndCasualFeeInput(state,competitionIndex,fromNonProductsO
 function setMembershipProductsAndDivisionInfo(state,competitionData,competitionIndex,competitionSubIndex){
 	try{
 		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
-		let membershipProductInfo = competitionInfo.membershipProducts[competitionSubIndex];
+		let membershipProductInfo = competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1)[competitionSubIndex];
 		membershipProductInfo.isChecked = competitionData;
 		let actionCheckBoxProduct;
 		if(competitionData){
