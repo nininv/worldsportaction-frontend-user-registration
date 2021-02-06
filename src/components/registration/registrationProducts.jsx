@@ -904,7 +904,7 @@ class RegistrationProducts extends Component {
                 ))
                 }
 
-                {!isSchoolRegistration &&
+                {/* {!isSchoolRegistration && */}
                     <div style={{ display: 'flex', flexWrap: "wrap", justifyContent: "space-between", width: "99%" }}>
                         <div style={{ marginTop: "13px", alignSelf: "center" }}>
                             <span className="btn-text-common pointer" style={{ paddingTop: 7 }}
@@ -921,7 +921,8 @@ class RegistrationProducts extends Component {
                                 </Button>
                             </div>
                         }
-                    </div>}
+                    </div>
+                    {/* } */}
             </div >
         )
     }
