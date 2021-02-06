@@ -124,13 +124,13 @@ const ValidationConstants = {
     mobileLength: 'Contact number must be 10 digits',
     invalidNumber: 'Invalid Number',
 
-    fillTshirtSizeInformation: "Please choose a T'Shirt Size",
+    fillTshirtSizeInformation: "Please choose a T-Shirt Size",
     accreditationLevelUmpire: "National accreditation level umpire is required.",
     prerequisitesTrainingUmpire: "Prerequisites training umpire is required.",
     accreditationLevelCoach: "National accreditation level coach is required.",
 
-    expiryDateRequire: 'Expire date is required.',
-    instalmentDiscountMsg: "Instalments can’t be used if a discount has been applied. Please select another payment option."
+    expiryDateRequire: 'Expiry date is required.',
+    instalmentDiscountMsg: "Instalments can't be used if a discount has been applied. Please select another payment option."
 };
 
 export default ValidationConstants;
