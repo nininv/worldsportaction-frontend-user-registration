@@ -131,6 +131,7 @@ const ValidationConstants = {
     accreditationLevelCoach: "National accreditation level coach is required.",
 
     expiryDateRequire: 'Expire date is required.',
+    instalmentDiscountMsg: "Instalments can’t be used if a discount has been applied. Please select another payment option."
 };
 
 export default ValidationConstants;
