@@ -213,6 +213,9 @@ const CheckoutForm = (props) => {
                     </div> :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">
@@ -220,10 +223,12 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {(paymentOptions.length > 0) ?
                                 <Button
+                                    id="submit"
                                     style={{ textTransform: "uppercase" }}
                                     className="open-reg-button"
                                     htmlType="submit"
-                                    type="primary">
+                                    type="primary"
+                                >
                                     {AppConstants.submit}
                                 </Button>
                                 : null}
@@ -412,8 +417,11 @@ class SingleGamePayment extends Component {
                     </Button>
                 </div>                  */}
                 <div style={{ marginTop: 23 }}>
-                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
-                        onClick={() => this.goBack()}>
+                    <Button
+                        id="back"
+                        className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                        onClick={() => this.goBack()}
+                    >
                         {AppConstants.back}
                     </Button>
                 </div>

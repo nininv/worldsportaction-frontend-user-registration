@@ -197,9 +197,23 @@ function getTeamMembersReviewAction(payload) {
 }
 
 function teamMemberUpdateAction(data) {
+    return {
+        type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
+        data,
+    }
+}
+
+function getUsersByRoleAction(data) {
   return {
-      type: ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD,
+      type: ApiConstants.API_GET_USERS_BY_ROLE_LOAD,
       data,
+  }
+}
+
+function getUserParentDataAction(data) {
+  return {
+    type: ApiConstants.API_GET_USER_PARENT_DATA_LOAD,
+    data,
   }
 }
 
@@ -230,6 +244,8 @@ export {
   getTeamMembersAction,
   updateReviewInfoAction,
   getTeamMembersReviewAction,
-  teamMemberUpdateAction
+  teamMemberUpdateAction,
+  getUserParentDataAction,
+  getUsersByRoleAction
 }
 

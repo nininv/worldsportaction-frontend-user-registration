@@ -307,6 +307,23 @@ export function* getUserRole(action) {
     }
 }
 
+export function* getUserParentData(action) {
+    try {
+        const result = yield call(userHttpApi.getUserParentData);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_USER_PARENT_DATA_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
 // Get the Scorer Activity Data
 export function* getScorerActivitySaga(action) {
     try {
@@ -487,11 +504,29 @@ export function* addParentSaga(action) {
 export function* updateTeamMembersSaga(action) {
     try {
       const result = yield call(registrationAxiosApi.updateTeamMembers, action.data);
-  
+
       if (result.status === 1 || result.status === 4) {
         yield put({
           type: ApiConstants.API_TEAM_MEMBER_UPDATE_SUCCESS,
           result: result.status == 1 ? result.result.data : result.result.data.message,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
+
+export function* getUsersByRoleSaga(action) {
+    try {
+      const result = yield call(userHttpApi.getUsersByRole, action.data);
+
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_USERS_BY_ROLE_SUCCESS,
+          result: result.result.data,
           status: result.status,
         });
       } else {

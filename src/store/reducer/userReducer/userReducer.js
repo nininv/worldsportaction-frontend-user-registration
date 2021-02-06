@@ -1,4 +1,5 @@
 import ApiConstants from "../../../themes/apiConstants";
+import AppConstants from "../../../themes/appConstants";
 import { deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString, feeIsNull, formatValue } from "../../../util/helpers";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { setPhotoUrl } from "../../../util/sessionStorage";
@@ -192,6 +193,7 @@ const initialState = {
     result: [],
     status: 0,
     roles: [],
+    userListByRole: [],
     userRolesEntity: [],
     allUserOrganisationData: [],
     getUserOrganisation: [],
@@ -244,7 +246,9 @@ const initialState = {
     teamMembersSaveErrorMsg: null,
     teamMemberRegId: null,
     teamMembersSaveOnLoad: false,
-    teamMemberDeletion: false
+    teamMemberDeletion: false,
+    parentData: [],
+    getUserParentDataOnLoad: false,
 };
 
 //get User Role
@@ -514,6 +518,12 @@ function userReducer(state = initialState, action) {
                 ...state,
             };
 
+        case ApiConstants.API_GET_USERS_BY_ROLE_SUCCESS:
+            return {
+                ...state,
+                userListByRole: action.result
+            };
+
         ////Scorer
         case ApiConstants.API_GET_SCORER_ACTIVITY_LOAD:
             return { ...state, activityScorerOnLoad: true };
@@ -714,6 +724,27 @@ function userReducer(state = initialState, action) {
                 teamMemberUpdate: action.result,
                 status: action.status
             };
+
+        case ApiConstants.API_GET_USER_PARENT_DATA_LOAD:
+            return { ...state, getUserParentDataOnLoad: true }
+
+        case ApiConstants.API_GET_USER_PARENT_DATA_SUCCESS:
+
+            let parentData = action.result.userData;
+            const nonAvailableParent = {
+                id: -1,
+                firstName: AppConstants.parentDetails,
+                lastName: AppConstants.unavailable,
+            }
+            parentData.push(nonAvailableParent);
+
+            return {
+                ...state,
+                parentData,
+                status: action.status,
+                getUserParentDataOnLoad: false
+            }
+
         default:
             return state;
     }

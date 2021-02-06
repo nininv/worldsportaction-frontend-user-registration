@@ -330,6 +330,7 @@ class RegistrationShop extends Component {
                         style={{width: 'calc(50% - 7px', minWidth: 170 }}
                     >
                         <Select
+                            id="merchandise-categories"
                             style={{ width: "100%", paddingRight: 1}}
                             placeholder={AppConstants.all}
                             className="custom-dropdown"
@@ -339,7 +340,7 @@ class RegistrationShop extends Component {
                             <Option value={-1}>All</Option>
                             {
                                 (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
+                                    <Option id={"merchandise-category-" + index} key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
                                 ))
                             }
                         </Select>

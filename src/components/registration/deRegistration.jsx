@@ -180,7 +180,7 @@ class DeRegistration extends Component {
         console.log(subItem, selectedOption)
         const { saveData, deRegistionOption } = this.props.deRegistrationState
         // if (subItem.id == 1 && selectedOption == 1) {
-        // } 
+        // }
         if ((subItem.id == 1 && selectedOption == 1) || (subItem.id == 2 && selectedOption == 2)) {
             return (
                 <div className="ml-5 pt-3">
@@ -395,6 +395,7 @@ class DeRegistration extends Component {
                         </Select>
                     )}
                 </Form.Item>
+
                 <InputWithHead heading={AppConstants.organisationName} required={"required-field"} />
                 <Form.Item >
                     {getFieldDecorator(`organisationId`, {
@@ -557,7 +558,7 @@ class DeRegistration extends Component {
                                 return (
                                     <div key={"register" + index}>
                                         <div className="contextualHelp-RowDirection" >
-                                            <Radio value={item.id}>{item.value}</Radio>
+                                            <Radio value={item.id} disabled={item.id == 2 && saveData.isTeam}>{item.value}</Radio>
                                             <div style={{ marginLeft: -20, }}>
                                                 <Tooltip placement='bottom' background="#ff8237">
                                                     <span>{item.helpMsg}</span>
@@ -631,7 +632,6 @@ class DeRegistration extends Component {
                     </Form>
                 </Layout>
             </div>
-
         );
     }
 

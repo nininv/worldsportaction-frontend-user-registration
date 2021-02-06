@@ -32,7 +32,8 @@ const initialState = {
     registrationCapValidationMessage: null,
     umpireAccreditation: [],
     coachAccreditation: [],
-    stateListData: []
+    stateListData: [],
+    refereeOffenceList: []
 };
 
 function commonReducerState(state = initialState, action) {
@@ -62,7 +63,7 @@ function commonReducerState(state = initialState, action) {
                 status: action.status
             };
 
-        ///////get the grades reference data 
+        ///////get the grades reference data
         case ApiConstants.API_GRADES_REFERENCE_LIST_LOAD:
             return { ...state, onLoad: true, error: null };
 
@@ -76,7 +77,7 @@ function commonReducerState(state = initialState, action) {
                 error: null
             };
 
-        ///////get the Favourite Team List 
+        ///////get the Favourite Team List
         case ApiConstants.API_FAVOURITE_TEAM_REFERENCE_LOAD:
             return { ...state, onLoad: true, error: null };
 
@@ -89,7 +90,7 @@ function commonReducerState(state = initialState, action) {
                 error: null
             };
 
-        ///////get the Firebird Player List 
+        ///////get the Firebird Player List
         case ApiConstants.API_FIREBIRD_PLAYER_REFERENCE_LOAD:
             return { ...state, onLoad: true, error: null };
 
@@ -102,7 +103,7 @@ function commonReducerState(state = initialState, action) {
                 error: null
             };
 
-         ///////get the  registration other info 
+         ///////get the  registration other info
          case ApiConstants.API_REGISTRATION_OTHER_INFO_REFERENCE_LOAD:
             return { ...state, registrationOtherInfoOnLoad: true, error: null };
 
@@ -174,11 +175,11 @@ function commonReducerState(state = initialState, action) {
             console.log('Called clear Filter',state.mainVenueList)
             // state.venueList= [...state.mainVenueList]
             return {
-                
+
                 ...state,
                 venueList: [...state.mainVenueList],
             }
-     
+
         ///////get the  Gender list
         case ApiConstants.API_GENDER_REFERENCE_LOAD:
             return { ...state, onLoad: true, error: null };
@@ -307,9 +308,21 @@ function commonReducerState(state = initialState, action) {
                 error : null
             }
 
+        case ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD:
+            return { ...state, onLoad: true, error: null };
+
+        case ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                refereeOffenceList: isArrayNotEmpty(action.result) ? action.result : [],
+                onLoad: false,
+                error: null
+            };
+
         case ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD:
             return { ...state, onLoad: true, error: null };
-        
+
         case ApiConstants.API_NETSETGO_TSHIRT_SIZE_SUCCESS:
             return {
                 ...state,

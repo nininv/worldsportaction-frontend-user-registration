@@ -68,7 +68,8 @@ class RegistrationProducts extends Component {
             competitionUniqueKey: null,
             teamName: null,
             isAgreed: false,
-            sameSomeoneEmailValidationModalVisible: false
+            sameSomeoneEmailValidationModalVisible: false,
+            hasInstalmentDiscounts: false
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -180,6 +181,26 @@ class RegistrationProducts extends Component {
         let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
         const { termsAndConditions } = this.props.registrationProductState;
         let participantUsers = this.props.registrationProductState.participantUsers;
+        
+        let hasDiscounts = false;
+        for(let item of registrationReviewList.compParticipants){
+            if(item.selectedOptions.paymentOptionRefId == 4){
+                let isHardshipCodeApplied = item.selectedOptions.isHardshipCodeApplied;
+                let isSchoolRegCodeApplied = item.selectedOptions.isSchoolRegCodeApplied;
+                let discounts = item.selectedOptions.selectedDiscounts ? item.selectedOptions.selectedDiscounts.length : 0;
+                let govVouchers = item.selectedOptions.selectedGovernmentVouchers ? item.selectedOptions.selectedGovernmentVouchers.length : 0;
+    
+                if(isHardshipCodeApplied || isSchoolRegCodeApplied || discounts || govVouchers ){
+                    this.setState({hasInstalmentDiscounts: true});
+                    hasDiscounts = true;
+                    break;
+                }
+            }
+        }
+        if(hasDiscounts){
+            return;
+        }
+       
         if (incompletePaymentMessage != '') {
             incompletePaymentMessage = "Team Registrations have not been enabled for the " + incompletePaymentMessage + "Competition.";
             message.error(incompletePaymentMessage);
@@ -254,6 +275,8 @@ class RegistrationProducts extends Component {
 
     setReviewInfo = (value, key, index, subkey, subIndex) => {
         let registrationReview = this.props.registrationProductState.registrationReviewList;
+        this.setState({hasInstalmentDiscounts: false})
+
         registrationReview["registrationId"] = this.state.registrationUniqueKey;
         registrationReview["index"] = index;
         this.props.updateReviewInfoAction(value, key, index, subkey, subIndex);
@@ -634,6 +657,16 @@ class RegistrationProducts extends Component {
             //         instalmentCount = 2;
             //     }
             // }
+            let hasDiscounts = false;
+            let isHardshipCodeApplied = item.selectedOptions.isHardshipCodeApplied;
+            let isSchoolRegCodeApplied = item.selectedOptions.isSchoolRegCodeApplied;
+            let discounts = item.selectedOptions.selectedDiscounts ? item.selectedOptions.selectedDiscounts.length : 0;
+            let govVouchers = item.selectedOptions.selectedGovernmentVouchers ? item.selectedOptions.selectedGovernmentVouchers.length : 0;
+
+            if(isHardshipCodeApplied || isSchoolRegCodeApplied || discounts || govVouchers ){
+                hasDiscounts = true;
+            }
+
             if ((item.isTeamRegistration == 1 && item.isTeamSeasonalUponReg == 1) || item.isSeasonalUponReg == 1) {
                 let currentDateExist = item.instalmentDates.find(x => moment(x.instalmentDate).format("DD/MM/YYYY") === moment(currentDate).format("DD/MM/YYYY"));
                 if (!currentDateExist) {
@@ -736,7 +769,7 @@ class RegistrationProducts extends Component {
 
                                         {p.paymentOptionRefId == 3 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
+                                                <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
                                                 <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                     <Tooltip placement='bottom' background="#ff8237">
                                                         <span>{AppConstants.allMatchesTipMsg}</span>
@@ -746,8 +779,7 @@ class RegistrationProducts extends Component {
                                         }
                                         {p.paymentOptionRefId == 4 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-
+                                                <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
                                                 <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                     <Tooltip placement='bottom' background="#ff8237">
                                                         <span>{AppConstants.instalmentTipMessage}</span>
@@ -756,11 +788,11 @@ class RegistrationProducts extends Component {
                                             </div>
                                         }
                                         {p.paymentOptionRefId == 5 &&
-                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                            <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
                                         }
                                         {p.paymentOptionRefId == 1 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                                <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
                                                 {item.isTeamRegistration == 0 ?
                                                     <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                         <Tooltip placement='bottom' background="#ff8237">
@@ -848,6 +880,7 @@ class RegistrationProducts extends Component {
                     <div key={index + "#" + disIndex} style={{ display: "flex", marginTop: "15px", justifyContent: "space-between", marginRight: 26 }}>
                         <div style={{ width: "100%" }}>
                             <InputWithHead
+                                id="discount-code-box"
                                 style={{ width: "97%" }}
                                 required={"required-field pt-0 pb-0"}
                                 placeholder={AppConstants.discountCode}
@@ -871,24 +904,30 @@ class RegistrationProducts extends Component {
                 ))
                 }
 
-                {!isSchoolRegistration &&
+                {/* {!isSchoolRegistration && */}
                     <div style={{ display: 'flex', flexWrap: "wrap", justifyContent: "space-between", width: "99%" }}>
                         <div style={{ marginTop: "13px", alignSelf: "center" }}>
-                            <span className="btn-text-common pointer" style={{ paddingTop: 7 }}
+                            <span
+                                id="add-discount-code"
+                                className="btn-text-common pointer" style={{ paddingTop: 7 }}
                                 onClick={(e) => this.setReviewInfo(null, "addDiscount", index, "selectedOptions")}>
                                 + {AppConstants.addDiscountCode}
                             </span>
                         </div>
                         {discountCodes && discountCodes.length > 0 &&
                             <div style={{ padding: "15px 0px 0px 0px" }}>
-                                <Button className="open-reg-button"
+                                <Button
+                                    id="apply-discount-code"
+                                    className="open-reg-button"
                                     onClick={(e) => this.setReviewInfo(null, "discount", index, null, null)}
-                                    type="primary">
+                                    type="primary"
+                                >
                                     {AppConstants.applyCode}
                                 </Button>
                             </div>
                         }
-                    </div>}
+                    </div>
+                    {/* } */}
             </div >
         )
     }
@@ -1643,6 +1682,11 @@ class RegistrationProducts extends Component {
                     style={{ width: "100%", textTransform: "uppercase" }}>
                     {AppConstants.continue}
                 </Button>
+                { this.state.hasInstalmentDiscounts && 
+                    <div className="ml-4 discount-validation" style={{ "marginTop":'10px'}}>
+                        {ValidationConstants.instalmentDiscountMsg}
+                    </div>
+                }
             </div>
         )
     }

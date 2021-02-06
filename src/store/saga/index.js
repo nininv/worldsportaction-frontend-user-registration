@@ -6,7 +6,7 @@ import ApiConstants from "../../themes/apiConstants";
 import { getOnlyYearListSaga, getYearListingSaga } from "./appSaga";
 
 import {
-  getCommonDataSaga, gradesReferenceListSaga, countryReferenceSaga,
+  getCommonDataSaga, getRefereeOffenceListSaga, countryReferenceSaga,
   registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
   nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
   genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
@@ -263,6 +263,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_GET_SCORER_ACTIVITY_LOAD, userSaga.getScorerActivitySaga);
   yield takeEvery(ApiConstants.API_GET_UMPIRE_ACTIVITY_LIST_LOAD, userSaga.getUmpireActivityListSaga);
 
+  yield takeEvery(ApiConstants.API_GET_USER_PARENT_DATA_LOAD, userSaga.getUserParentData);
+
   //Team invite saga
   yield takeEvery(ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD, teamInviteSaga.getInvitedTeamRegInfoSaga);
   yield takeEvery(ApiConstants.API_TEAM_INVITE_REG_SETTINGS_LOAD, teamInviteSaga.orgTeamInviteRegistrationSettings);
@@ -285,6 +287,7 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_LIVE_SCORE_GET_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.getUmpireAvailabilitySaga);
   yield takeEvery(ApiConstants.API_LIVE_SCORE_SAVE_UMPIRE_AVAILABILITY_LOAD, liveScoreUmpireSaga.saveUmpireAvailabilitySaga);
+  yield takeEvery(ApiConstants.API_CREATE_REFEREE_REPORT, liveScoreSaga.createRefereeReportSaga);
 
   yield takeEvery(ApiConstants.API_USER_PHOTO_UPDATE_LOAD, userSaga.saveUserPhotosSaga);
 
@@ -295,6 +298,7 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_VALIDATE_REGISTRATION_CAP_LOAD, validateRegistrationCapSaga);
   yield takeEvery(ApiConstants.API_GET_USER_MODULE_TEAM_MEMBERS_LOAD, userSaga.getUserModuleTeamMembersDataSaga);
 
+  yield takeEvery(ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD, getRefereeOffenceListSaga);
   yield takeEvery(ApiConstants.API_NETSETGO_TSHIRT_SIZE_LOAD, netSetGoTshirtSizeSaga);
   yield takeEvery(ApiConstants.API_TEAM_MEMBERS_SAVE_LOAD, userSaga.teamMembersSaveSaga);
   yield takeEvery(ApiConstants.API_GET_TEAM_MEMBERS_LOAD, userSaga.getTeamMembersSaga);
@@ -304,5 +308,4 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
 
   yield takeEvery(ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD, userSaga.updateTeamMembersSaga);
-
 }

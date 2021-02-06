@@ -284,6 +284,7 @@ const CheckoutForm = (props) => {
                     setError(null);
                     // Send the token to your server.
                     console.log("Result1", result);
+                    props.onLoad(true)
                     registrationCapValidate(result.token, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption);
                     // stripeTokenHandler(result.token, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption);
                 }
@@ -341,7 +342,7 @@ const CheckoutForm = (props) => {
                 }, 100);
             }
             else if (props.payload.total.targetValue == 0) {
-                // props.onLoad(true)
+                props.onLoad(true)
                 registrationCapValidate(null, props, selectedPaymentOption.selectedOption, null, null, payload, registrationUniqueKey, 1);
                 // stripeTokenHandler(null, props, selectedPaymentOption.selectedOption,null, null, payload, registrationUniqueKey,1,clientSecretKey);
             }
@@ -368,9 +369,15 @@ const CheckoutForm = (props) => {
                                 {pay.securePaymentOptionRefId == 2 &&
                                     <div className="row">
                                         <div className='col-sm'>
-                                            <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                            <Radio
+                                                id="credit"
+                                                key={"1"}
+                                                onChange={(e) => changePaymentOption(e, "credit")}
                                                 className="payment-type-radio-style"
-                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                                checked={selectedPaymentOption.credit}
+                                            >
+                                                {AppConstants.creditCard}
+                                            </Radio>
                                             {selectedPaymentOption.credit == true && (
                                                 <div className="pt-5">
                                                     <CardElement
@@ -392,8 +399,12 @@ const CheckoutForm = (props) => {
                                     <div className="row">
                                         <div className='col-sm'>
                                             <Radio key={"2"}
+                                                id="direct-debit"
                                                 className="payment-type-radio-style"
-                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}
+                                            >
+                                                {AppConstants.directDebit}
+                                            </Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div className="pt-5">
                                                     <div className="sr-root">
@@ -607,6 +618,9 @@ const CheckoutForm = (props) => {
                     :
                     <div className="content-view pt-5 secure-payment-msg">
                         {AppConstants.securePaymentMsg}
+                        <div style={{ fontWeight: "bold" }}>
+                            {AppConstants.submitButtonPressDescription}
+                        </div>
                     </div>
                 }
                 <div className="mt-5">
@@ -614,6 +628,7 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                             <Button
+                                id="submit"
                                 disabled={disabled}
                                 style={{ textTransform: "uppercase" }}
                                 className="open-reg-button"
@@ -960,7 +975,10 @@ class RegistrationPayment extends Component {
                     </Button>
                 </div>                  */}
                 <div style={{ marginTop: 23 }}>
-                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                    <Button
+                        id="back"
+                        className="back-btn-text"
+                        style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
                         onClick={() => this.back()}>
                         {AppConstants.back}
                     </Button>
@@ -1083,8 +1101,10 @@ async function confirmDebitPayment(confirmDebitPaymentInput) {
             payment_method: {
                 au_becs_debit: confirmDebitPaymentInput.auBankAccount,
                 billing_details: {
-                    name: "Club Test 1", // accountholderName.value,
-                    email: "testclub@wsa.com"  // email.value,
+                    // name: "Club Test 1", // accountholderName.value,
+                    // email: "testclub@wsa.com"  // email.value,
+                    name: confirmDebitPaymentInput.payload.yourInfo.firstName + " " + confirmDebitPaymentInput.payload.yourInfo.lastName,
+                    email: confirmDebitPaymentInput.payload.yourInfo.email
                 },
             }
         });

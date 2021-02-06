@@ -11,8 +11,7 @@ const initialState = {
     result: null,
     status: 0,
     registrationSelection: [
-        { id: 1, value: "De-register", helpMsg: "What is de-registration? I am leaving netball and no longer want to participate in Netball.I have not taken the court in training, grading or competition games." },
-        { id: 2, value: "Transfer", helpMsg: "What is a transfer? I am wanting to move to another Netball Club or Association for the upcoming season." }
+        { id: 1, value: "De-register", helpMsg: "What is de-registration? I am leaving netball and no longer want to participate in Netball.I have not taken the court in training, grading or competition games." }
     ],
     DeRegistionMainOption: [
         { id: 1, value: "Yes" },
@@ -83,6 +82,7 @@ function deRegistrationReducer(state = initialState, action) {
                     if(userData.isTeam == 1){
                         state.teamMembers = userData.teamMembers;
                         state.saveData.isTeam = 1;
+                        state.saveData.regChangeTypeRefId = 1;
                     }
                     else{
                         state.teamMembers = [];

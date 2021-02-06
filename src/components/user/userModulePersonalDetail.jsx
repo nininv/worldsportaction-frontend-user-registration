@@ -9,6 +9,7 @@ import { NavLink } from "react-router-dom";
 import InnerHorizontalMenu from "../../pages/innerHorizontalMenu";
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
+import { setOrganisationData } from "../../util/sessionStorage";
 import {
     getUserModulePersonalDetailsAction,
     getUserModulePersonalByCompetitionAction, getUserModuleRegistrationAction,
@@ -19,7 +20,8 @@ import {
     registrationResendEmailAction,
     userProfileUpdateAction,
     getUserModuleTeamMembersAction,
-    teamMemberUpdateAction
+    teamMemberUpdateAction,
+    getUserOrganisationAction,
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -120,7 +122,7 @@ const columns = [
                             </div>
                         </div>
                     </div>
-                    {membershipType === "Umpire" && getStripeAccountConnectId().length === 0 && (
+                    {membershipType === "Umpire" && typeof(getStripeAccountConnectId()) !== 'undefined' && getStripeAccountConnectId().length === 0 && (
                         <div className="d-flex flex-row">
                             <img src={AppImages.ringing} alt="" width="22" height="22" />
                             <InputWithHead required="pt-0 pl-3" heading={AppConstants.umpireAvailabilityMessage} />
@@ -1055,6 +1057,12 @@ class UserModulePersonalDetail extends Component {
 
     async componentDidMount() {
         let user_Id = this.state.userId;
+        await this.props.getUserOrganisationAction();
+        const organisationData = this.props.userState.getUserOrganisation;
+        if (organisationData.length > 0) {
+            await setOrganisationData(organisationData[0]);
+        }
+
         if (this.state.tempUserId != undefined && this.state.tempUserId != null) {
             user_Id = this.state.tempUserId;
             this.setState({ userId: user_Id });
@@ -2246,7 +2254,7 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            {this.state.registrationTeam.isRemove ? 
+                            {this.state.registrationTeam.isRemove ?
                                 <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
                                     +
                                     {' '}
@@ -2485,9 +2493,6 @@ class UserModulePersonalDetail extends Component {
                                         </Menu.Item>
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
                                             <span>{AppConstants.deRegistration}</span>
-                                        </Menu.Item>
-                                        <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
-                                            <span>{AppConstants.transfer}</span>
                                         </Menu.Item>
                                         {stripeConnectId ?
                                             userRole && <Menu.Item
@@ -2959,7 +2964,8 @@ function mapDispatchToProps(dispatch) {
         registrationResendEmailAction,
         userProfileUpdateAction,
         getUserModuleTeamMembersAction,
-        teamMemberUpdateAction
+        teamMemberUpdateAction,
+        getUserOrganisationAction,
     }, dispatch);
 }
 
