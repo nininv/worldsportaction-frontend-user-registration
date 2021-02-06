@@ -797,35 +797,6 @@ function setSeasonalFeeAndCasualFeeInput(
     }
 }
 
-function setMembershipProductsAndDivisionInfo(state,competitionData,competitionIndex,competitionSubIndex){
-	try{
-		let competitionInfo = state.registrationObj.competitions[competitionIndex].competitionInfo;
-		let membershipProductInfo = competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1)[competitionSubIndex];
-		membershipProductInfo.isChecked = competitionData;
-		let actionCheckBoxProduct;
-		if(competitionData){
-			let product = {
-				"competitionMembershipProductId": membershipProductInfo.competitionMembershipProductId,
-				"competitionMembershipProductTypeId": membershipProductInfo.competitionMembershipProductTypeId,
-				"membershipTypeName": membershipProductInfo.shortName,
-				"isChecked": competitionData,
-				"isPlayer": membershipProductInfo.isPlayer
-			}
-			actionCheckBoxProduct = product;
-			state.registrationObj.competitions[competitionIndex].products.push(product);
-			if(membershipProductInfo.isPlayer == 1){
-				let divisionInfoList = state.registrationObj.competitions[competitionIndex].divisionInfo;
-				divisionInfoList.push.apply(divisionInfoList,getFilteredDivisions(membershipProductInfo.divisions,state));
-			}
-
-			setSeasonalFeeAndCasualFeeInput(state,competitionIndex,1,actionCheckBoxProduct);
-			setValidateRegistrationBySingleProductCapObj(state,competitionIndex,1,actionCheckBoxProduct.isPlayer)
-		}else{
-			let registrationObjProducts = state.registrationObj.competitions[competitionIndex].products;
-			let registrationObjDivisionInfo = state.registrationObj.competitions[competitionIndex].divisionInfo;
-			let registrationObjDivisions = state.registrationObj.competitions[competitionIndex].divisions;
-
-
 function setMembershipProductsAndDivisionInfo(
     state,
     competitionData,
@@ -836,8 +807,8 @@ function setMembershipProductsAndDivisionInfo(
         let competitionInfo =
             state.registrationObj.competitions[competitionIndex]
                 .competitionInfo;
-        let membershipProductInfo =
-            competitionInfo.membershipProducts[competitionSubIndex];
+        let membershipProductInfo = competitionInfo.membershipProducts
+            .filter(x => x.isIndividualRegistration == 1)[competitionSubIndex];
         membershipProductInfo.isChecked = competitionData;
         let actionCheckBoxProduct;
         if (competitionData) {
