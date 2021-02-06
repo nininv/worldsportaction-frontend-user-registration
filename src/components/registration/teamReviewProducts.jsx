@@ -249,8 +249,14 @@ const CheckoutForm = (props) => {
                         {pay.securePaymentOptionRefId == 2 &&
                         <div className="row">
                             <div className='col-sm'>
-                                <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
-                                    checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                <Radio
+                                    id="credit"
+                                    key={"1"}
+                                    onChange={(e) => changePaymentOption(e, "credit")}
+                                    checked={selectedPaymentOption.credit}
+                                >
+                                    {AppConstants.creditCard}
+                                </Radio>
                                 {selectedPaymentOption.credit == true &&
                                     <div className="pt-5">
                                         <CardElement
@@ -267,7 +273,14 @@ const CheckoutForm = (props) => {
                         {pay.securePaymentOptionRefId == 1 &&
                         <div className="row">
                             <div className='col-sm'>
-                                <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                <Radio
+                                    id="direct-debit"
+                                    key={"2"}
+                                    onChange={(e) => changePaymentOption(e, "direct")}
+                                    checked={selectedPaymentOption.direct}
+                                >
+                                    {AppConstants.directDebit}
+                                </Radio>
                                 {selectedPaymentOption.direct == true &&
                                     <div className="sr-root">
                                         <div className="sr-main">
@@ -352,12 +365,16 @@ const CheckoutForm = (props) => {
                 <div className="formView mt-5" style={{backgroundColor: "#f7fafc"}}>
                     <div style={{padding:0}}>
                         <div style={{display:"flex" , justifyContent:"space-between"}}>
-                            <Button className="save-draft-text" type="save-draft-text"
-                                onClick={() => previousCall()}>
+                            <Button
+                                className="save-draft-text"
+                                type="save-draft-text"
+                                onClick={() => previousCall()}
+                            >
                                 {AppConstants.previous}
                             </Button>
                             {(paymentOptions.length > 0 || isSchoolRegistration == 1) ?
                                 <Button
+                                    id="next"
                                     className="open-reg-button"
                                     htmlType="submit"
                                     type="primary">

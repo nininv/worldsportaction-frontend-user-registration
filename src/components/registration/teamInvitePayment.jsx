@@ -326,10 +326,15 @@ const CheckoutForm = (props) => {
                                 {pay.securePaymentOptionRefId == 2 &&
                                     <div className="row">
                                         <div className='col-sm'>
-                                            <Radio key={"1"}
+                                            <Radio
+                                                id="credit"
+                                                key={"1"}
                                                 className="payment-type-radio-style"
                                                 onChange={(e) => changePaymentOption(e, "credit")}
-                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                                checked={selectedPaymentOption.credit}
+                                            >
+                                                {AppConstants.creditCard}
+                                            </Radio>
                                             {selectedPaymentOption.credit == true &&
                                                 <div className="pt-5">
                                                     <CardElement
@@ -349,9 +354,15 @@ const CheckoutForm = (props) => {
                                 {pay.securePaymentOptionRefId == 1 &&
                                     <div className="row">
                                         <div className='col-sm'>
-                                            <Radio key={"2"}
+                                            <Radio
+                                                id="direct-debit"
+                                                key={"2"}
                                                 className="payment-type-radio-style"
-                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                                onChange={(e) => changePaymentOption(e, "direct")}
+                                                checked={selectedPaymentOption.direct}
+                                            >
+                                                {AppConstants.directDebit}
+                                            </Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div>
                                                     <div className="sr-root">
@@ -523,9 +534,11 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {(paymentOptions.length > 0 || totalVal == 0 || hasFutureInstalment == 1) ?
                                 <Button
+                                    id="submit"
                                     className="open-reg-button"
                                     htmlType="submit"
-                                    type="primary">
+                                    type="primary"
+                                >
                                     {AppConstants.submit}
                                 </Button>
                                 : null}
@@ -765,8 +778,11 @@ class TeamInvitePayment extends Component {
             return (
                 <div style={{ marginTop: 23 }}>
                     <div style={{ marginTop: 23 }}>
-                        <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
-                            onClick={() => this.back()}>
+                        <Button
+                            id="back"
+                            className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                            onClick={() => this.back()}
+                        >
                             {AppConstants.back}
                         </Button>
                     </div>

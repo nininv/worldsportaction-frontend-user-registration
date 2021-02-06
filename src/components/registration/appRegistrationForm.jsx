@@ -2948,7 +2948,7 @@ class AppRegistrationForm extends Component {
                                     // value={item.genderRefId}
                                     setFieldsValue={item.genderRefId}>
                                     {(genderList || []).map((gender, genderIndex) => (
-                                        <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
+                                        <Radio id={"gender-" + genderIndex} key={gender.id} value={gender.id}>{gender.description}</Radio>
                                     ))}
                                 </Radio.Group>
                             )}
@@ -4581,13 +4581,14 @@ class AppRegistrationForm extends Component {
                     })(
                         <div >
                             <Checkbox
+                                id="agree-term"
                                 className="single-checkbox pt-3"
                                 checked={this.state.agreeTerm}
                                 onChange={e => this.setState({ agreeTerm: e.target.checked })}>
                                 {AppConstants.agreeTerm}
                                 {/* <span className="app-reg-terms">
-                                {AppConstants.termsAndConditions}{" "}
-                            </span> */}
+                                    {AppConstants.termsAndConditions}{" "}
+                                </span> */}
                                 <span className="required-field"></span>
                             </Checkbox>
                         </div>
@@ -4620,13 +4621,14 @@ class AppRegistrationForm extends Component {
                         })(
                             <div >
                                 <Checkbox
+                                    id="agree-term"
                                     className="single-checkbox mt-0"
                                     checked={this.state.agreeTerm}
                                     onChange={e => this.setState({ agreeTerm: e.target.checked })}>
                                     {AppConstants.agreeTerm}
                                     {/* <span className="app-reg-terms">
-                                    {AppConstants.termsAndConditions}{" "}
-                                </span> */}
+                                        {AppConstants.termsAndConditions}{" "}
+                                    </span> */}
                                     <span className="required-field"></span>
                                 </Checkbox>
                             </div>

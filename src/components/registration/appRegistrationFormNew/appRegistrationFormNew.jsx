@@ -1723,15 +1723,23 @@ class AppRegistrationFormNew extends Component {
                     ))}
                     <div className='col-sm-6'>
                         <div
+                            id="new-participant-registration"
                             onClick={() => this.addOrSelectParticipant(-1)}
                             className={registrationObj != null && registrationObj.userId == -1 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
-                            style={{ textAlign: "center", padding: "0px 40px" }}>+ {AppConstants.newParticipantRegistration}</div>
+                            style={{ textAlign: "center", padding: "0px 40px" }}
+                        >
+                            + {AppConstants.newParticipantRegistration}
+                        </div>
                     </div>
                     <div className='col-sm-6'>
                         <div
+                            id="new-team-registration"
                             onClick={() => this.goToTeamRegistrationForm(null, this.state.registrationId)}
                             className={registrationObj != null && registrationObj.userId == -2 ? 'new-participant-button-active' : 'new-participant-button-inactive'}
-                            style={{ textAlign: "center", padding: "0px 70px" }}>+ {AppConstants.newTeamRegistration}</div>
+                            style={{ textAlign: "center", padding: "0px 70px" }}
+                        >
+                            + {AppConstants.newTeamRegistration}
+                        </div>
                     </div>
                 </div>
 
@@ -1743,9 +1751,9 @@ class AppRegistrationFormNew extends Component {
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "registeringYourself")}
                             value={registrationObj.registeringYourself}
                         >
-                            <Radio value={1}>{AppConstants.registeringSelf}</Radio>
-                            <Radio value={2}>{AppConstants.noRegisteringMyChild}</Radio>
-                            <Radio value={3}>{AppConstants.noRegisteringSomeoneElse}</Radio>
+                            <Radio id="registering-self-yes" value={1}>{AppConstants.registeringSelf}</Radio>
+                            <Radio id="registering-self-child" value={2}>{AppConstants.noRegisteringMyChild}</Radio>
+                            <Radio id="registering-self-else" value={3}>{AppConstants.noRegisteringSomeoneElse}</Radio>
                         </Radio.Group>
                     </div>
                     : null}
@@ -1820,8 +1828,12 @@ class AppRegistrationFormNew extends Component {
                                 }}
                             >{AppConstants.returnToSelectAddress}</div>
                         )}
-                        <div className="form-heading"
-                            style={(newUser || !hasAddressForExistingUserFlag) ? { marginTop: "20px", marginBottom: "-20px" } : { paddingBottom: "0px", marginBottom: "-20px" }}>{AppConstants.findAddress}</div>
+                        <div
+                            className="form-heading"
+                            style={(newUser || !hasAddressForExistingUserFlag) ? { marginTop: "20px", marginBottom: "-20px" } : { paddingBottom: "0px", marginBottom: "-20px" }}
+                        >
+                            {AppConstants.findAddress}
+                        </div>
                         <div>
                             <Form.Item name="addressSearch">
                                 <PlacesAutocomplete
@@ -1833,7 +1845,9 @@ class AppRegistrationFormNew extends Component {
                                     onSetData={(e) => this.handlePlacesAutocomplete(e, "participant")}
                                 />
                             </Form.Item>
-                            <div className="orange-action-txt" style={{ marginTop: "10px" }}
+                            <div
+                                className="orange-action-txt"
+                                style={{ marginTop: "10px" }}
                                 onClick={() => {
                                     this.onChangeSetParticipantValue(true, "manualEnterAddressFlag");
                                     this.onChangeSetParticipantValue(false, "addNewAddressFlag");
@@ -1872,6 +1886,7 @@ class AppRegistrationFormNew extends Component {
                             )}
                         </Form.Item>
                         <InputWithHead
+                            id="participant-street-2"
                             heading={AppConstants.addressTwo}
                             placeholder={AppConstants.addressTwo}
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "street2")}
@@ -1917,6 +1932,7 @@ class AppRegistrationFormNew extends Component {
                                         rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                     })(
                                         <InputWithHead
+                                            id="competitions-postcode"
                                             required={"required-field pt-0 pb-0"}
                                             placeholder={AppConstants.postcode}
                                             maxLength={4}
@@ -2687,6 +2703,7 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         <InputWithHead heading={AppConstants.organisationName} />
                         <Select
+                            id={"competition-organisations"}
                             showSearch
                             optionFilterProp="children"
                             onChange={(e) => this.onChangeSetOrganisation(e)}
@@ -2695,8 +2712,8 @@ class AppRegistrationFormNew extends Component {
                             {(this.state.organisationId == null || this.state.organisationId == undefined) && (
                                 < Option key={"Please select"} value={-1}> {AppConstants.pleaseSelect}</Option>
                             )}
-                            {(this.state.organisations || []).map((item) => (
-                                < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
+                            {(this.state.organisations || []).map((item, index) => (
+                                < Option id={"competition-organisation-" + index} key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
                             ))}
                         </Select>
                         {organisationInfo && (
@@ -2824,6 +2841,7 @@ class AppRegistrationFormNew extends Component {
                         <div className="competition-specifics-headings required-field" style={{ paddingTop: '6px' }}>{AppConstants.registeringIndividualTo}</div>
                         {(competitionInfo.membershipProducts.filter(x => x.isIndividualRegistration == 1) || []).map((membershipProduct, membershipProductIndex) => (
                             <Checkbox
+                                id={"competition-membership-product-" + membershipProductIndex}
                                 className="membership-product-checkbox py-2"
                                 checked={membershipProduct.isChecked}
                                 key={membershipProduct.competitionMembershipProductId + membershipProductIndex}
@@ -2857,8 +2875,7 @@ class AppRegistrationFormNew extends Component {
                         {this.isPlayerActive(competition) && (
                             <div>
                                 <div className="input-style-bold required-field">{AppConstants.registrationDivisions}</div>
-                                <div
-                                    style={{ marginBottom: "10px" }}>
+                                <div id="competition-divisions" style={{ marginBottom: "10px" }}>
                                     {(competition.divisions || []).map((division, divisionIndex) => (
                                         // <Tag
                                         // key={division.competitionMembershipProductDivisionId + divisionIndex}
@@ -2872,7 +2889,16 @@ class AppRegistrationFormNew extends Component {
                                             backgroundColor: "white",
                                             border: "1px solid var(--app-d9d9d9)",
                                             margin: "0px 10px 10px 0px"
-                                        }}>{division.divisionName} <span style={{ cursor: "pointer", marginLeft: "5px", color: "var(--app-color)" }} onClick={(e) => this.onChangeSetCompetitionValue(e, "divisions", competitionIndex, divisionIndex)}>&#10005;</span></span>
+                                        }}>
+                                            {division.divisionName}
+                                            <span
+                                                id={"competition-division-" + divisionIndex}
+                                                style={{ cursor: "pointer", marginLeft: "5px", color: "var(--app-color)" }}
+                                                onClick={(e) => this.onChangeSetCompetitionValue(e, "divisions", competitionIndex, divisionIndex)}
+                                            >
+                                                &#10005;
+                                            </span>
+                                        </span>
                                     ))}
                                 </div>
                                 {/* <Select
@@ -2885,6 +2911,7 @@ class AppRegistrationFormNew extends Component {
                                     ))}
                                 </Select> */}
                                 <Select
+                                    id="competition-divisions"
                                     style={{ width: "100%", paddingRight: 1 }}
                                     // value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
                                     value={competition.divisionInfoIndex}
@@ -2892,7 +2919,9 @@ class AppRegistrationFormNew extends Component {
                                     notFoundContent={AppConstants.regoDivisionNotFound}
                                 >
                                     {(competition.divisionInfo || []).map((divisionInfo, divisionInfoIndex) => (
-                                        <Option key={"division" + divisionInfoIndex}
+                                        <Option
+                                            id={"competition-division-" + divisionInfoIndex}
+                                            key={"division" + divisionInfoIndex}
                                             value={divisionInfoIndex}>{divisionInfo.divisionName}</Option>
                                     ))}
                                 </Select>
@@ -3395,14 +3424,14 @@ class AppRegistrationFormNew extends Component {
                         {getFieldDecorator(`identifyRefId`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[0] }],
                         })(
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
-                        value={registrationObj.additionalInfo.identifyRefId}>
-                        {(identifyAsList || []).map((identification, identificationIndex) => (
-                            <Radio key={identification.id} value={identification.id}>{identification.description}</Radio>
-                        ))}
-                    </Radio.Group>
+                        <Radio.Group
+                            className="registration-radio-group"
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value,"identifyRefId")}
+                            value={registrationObj.additionalInfo.identifyRefId}>
+                            {(identifyAsList || []).map((identification, identificationIndex) => (
+                                <Radio id={"additional-identify-" + identificationIndex}key={identification.id} value={identification.id}>{identification.description}</Radio>
+                            ))}
+                        </Radio.Group>
                      )}
                      </Form.Item>
                     <InputWithHead heading={AppConstants.anyExistingMedicalCondition} required={"required-field"}/>
@@ -3462,13 +3491,13 @@ class AppRegistrationFormNew extends Component {
                         {getFieldDecorator(`additionalInfoHaveDisablity`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
                         })(
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
-                        value={registrationObj.additionalInfo.isDisability}>
-                        <Radio value={1}>{AppConstants.yes}</Radio>
-                        <Radio value={0}>{AppConstants.no}</Radio>
-                    </Radio.Group>
+                        <Radio.Group
+                            className="registration-radio-group"
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
+                            value={registrationObj.additionalInfo.isDisability}>
+                            <Radio id="additional-ndis-yes"value={1}>{AppConstants.yes}</Radio>
+                            <Radio id="additional-ndis-no" value={0}>{AppConstants.no}</Radio>
+                        </Radio.Group>
                     )}
                     </Form.Item>
                     {registrationObj.additionalInfo.isDisability == 1 ?
@@ -3491,7 +3520,7 @@ class AppRegistrationFormNew extends Component {
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "disabilityTypeRefId")}
                                 value={registrationObj.additionalInfo.disabilityTypeRefId}>
                                 {(disabilityList || []).map((dis, disIndex) => (
-                                    <Radio key={dis.id} value={dis.id}>{dis.description}</Radio>
+                                    <Radio id={"additional-disability-" + disIndex} key={dis.id} value={dis.id}>{dis.description}</Radio>
                                 ))}
                             </Radio.Group>
                         </div>
@@ -3579,14 +3608,16 @@ class AppRegistrationFormNew extends Component {
                         {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
                         })(
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
-                        value={registrationObj.additionalInfo.heardByRefId}>
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                    </Radio.Group>
+                        <Radio.Group
+                            className="registration-radio-group"
+                            onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
+                            value={registrationObj.additionalInfo.heardByRefId}>
+                            {(heardByList || []).map((heard, index) => (
+                                <Radio
+                                    id={"additional-hear-" + index}
+                                    style={{ marginBottom: "10px" }} key={heard.id} value={heard.id}>{heard.description}</Radio>
+                            ))}
+                        </Radio.Group>
                      )}
                     </Form.Item>
                     {registrationObj.additionalInfo.heardByRefId == 6 && (
@@ -3942,11 +3973,15 @@ class AppRegistrationFormNew extends Component {
                     !showAddAnotherCompetitionViewTemp && !expiredRegistrationExist && (
                         <div className="form-registration-action">
                             <Button
+                                id={this.state.submitButtonText === AppConstants.addCompetitionAndMembership && "add-competition-and-membership"}
                                 htmlType="submit"
                                 type="primary"
                                 style={{ float: "right", color: "white", textTransform: "uppercase" }}
                                 disabled={this.disabledOrNot()}
-                                className="open-reg-button">{this.state.submitButtonText}</Button>
+                                className="open-reg-button"
+                            >
+                                {this.state.submitButtonText}
+                            </Button>
                         </div>
                     )}
             </div>
@@ -4014,6 +4049,7 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.cancel}
                         </Button>,
                         <Button
+                            id="continue-submit"
                             className="other-info-btn color-white"
                             onClick={() => {
                                 this.onChangeSetParticipantValue(true, "referParentEmail");
@@ -4047,6 +4083,7 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.cancel}
                         </Button>,
                         <Button
+                            id="continue-submit"
                             // htmlType="submit"
                             // type="primary"
                             className="other-info-btn color-white"

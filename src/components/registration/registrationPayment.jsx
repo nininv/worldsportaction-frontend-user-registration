@@ -369,9 +369,15 @@ const CheckoutForm = (props) => {
                                 {pay.securePaymentOptionRefId == 2 &&
                                     <div className="row">
                                         <div className='col-sm'>
-                                            <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                            <Radio
+                                                id="credit"
+                                                key={"1"}
+                                                onChange={(e) => changePaymentOption(e, "credit")}
                                                 className="payment-type-radio-style"
-                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                                checked={selectedPaymentOption.credit}
+                                            >
+                                                {AppConstants.creditCard}
+                                            </Radio>
                                             {selectedPaymentOption.credit == true && (
                                                 <div className="pt-5">
                                                     <CardElement
@@ -393,8 +399,12 @@ const CheckoutForm = (props) => {
                                     <div className="row">
                                         <div className='col-sm'>
                                             <Radio key={"2"}
+                                                id="direct-debit"
                                                 className="payment-type-radio-style"
-                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}
+                                            >
+                                                {AppConstants.directDebit}
+                                            </Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div className="pt-5">
                                                     <div className="sr-root">
@@ -618,6 +628,7 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                             <Button
+                                id="submit"
                                 disabled={disabled}
                                 style={{ textTransform: "uppercase" }}
                                 className="open-reg-button"
@@ -964,7 +975,10 @@ class RegistrationPayment extends Component {
                     </Button>
                 </div>                  */}
                 <div style={{ marginTop: 23 }}>
-                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                    <Button
+                        id="back"
+                        className="back-btn-text"
+                        style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
                         onClick={() => this.back()}>
                         {AppConstants.back}
                     </Button>

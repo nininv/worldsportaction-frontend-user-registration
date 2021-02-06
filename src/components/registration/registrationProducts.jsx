@@ -769,7 +769,7 @@ class RegistrationProducts extends Component {
 
                                         {p.paymentOptionRefId == 3 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
+                                                <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
                                                 <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                     <Tooltip placement='bottom' background="#ff8237">
                                                         <span>{AppConstants.allMatchesTipMsg}</span>
@@ -779,8 +779,7 @@ class RegistrationProducts extends Component {
                                         }
                                         {p.paymentOptionRefId == 4 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-
+                                                <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
                                                 <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                     <Tooltip placement='bottom' background="#ff8237">
                                                         <span>{AppConstants.instalmentTipMessage}</span>
@@ -789,11 +788,11 @@ class RegistrationProducts extends Component {
                                             </div>
                                         }
                                         {p.paymentOptionRefId == 5 &&
-                                            <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                            <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
                                         }
                                         {p.paymentOptionRefId == 1 &&
                                             <div className="contextualHelp-RowDirection">
-                                                <Radio key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                                <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
                                                 {item.isTeamRegistration == 0 ?
                                                     <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                         <Tooltip placement='bottom' background="#ff8237">
@@ -881,6 +880,7 @@ class RegistrationProducts extends Component {
                     <div key={index + "#" + disIndex} style={{ display: "flex", marginTop: "15px", justifyContent: "space-between", marginRight: 26 }}>
                         <div style={{ width: "100%" }}>
                             <InputWithHead
+                                id="discount-code-box"
                                 style={{ width: "97%" }}
                                 required={"required-field pt-0 pb-0"}
                                 placeholder={AppConstants.discountCode}
@@ -907,16 +907,21 @@ class RegistrationProducts extends Component {
                 {!isSchoolRegistration &&
                     <div style={{ display: 'flex', flexWrap: "wrap", justifyContent: "space-between", width: "99%" }}>
                         <div style={{ marginTop: "13px", alignSelf: "center" }}>
-                            <span className="btn-text-common pointer" style={{ paddingTop: 7 }}
+                            <span
+                                id="add-discount-code"
+                                className="btn-text-common pointer" style={{ paddingTop: 7 }}
                                 onClick={(e) => this.setReviewInfo(null, "addDiscount", index, "selectedOptions")}>
                                 + {AppConstants.addDiscountCode}
                             </span>
                         </div>
                         {discountCodes && discountCodes.length > 0 &&
                             <div style={{ padding: "15px 0px 0px 0px" }}>
-                                <Button className="open-reg-button"
+                                <Button
+                                    id="apply-discount-code"
+                                    className="open-reg-button"
                                     onClick={(e) => this.setReviewInfo(null, "discount", index, null, null)}
-                                    type="primary">
+                                    type="primary"
+                                >
                                     {AppConstants.applyCode}
                                 </Button>
                             </div>
