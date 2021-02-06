@@ -2494,12 +2494,6 @@ class UserModulePersonalDetail extends Component {
                                         <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
                                             <span>{AppConstants.deRegistration}</span>
                                         </Menu.Item>
-                                        <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
-                                            <span>{AppConstants.transfer}</span>
-                                        </Menu.Item>
-                                        <Menu.Item onClick={() => history.push("/appReportFouls", { userId: this.state.userId, regChangeTypeRefId: 2 })} >
-                                            <span>{AppConstants.report}</span>
-                                        </Menu.Item>
                                         {stripeConnectId ?
                                             userRole && <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
