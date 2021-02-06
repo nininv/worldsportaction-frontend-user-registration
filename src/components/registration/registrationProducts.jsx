@@ -68,7 +68,8 @@ class RegistrationProducts extends Component {
             competitionUniqueKey: null,
             teamName: null,
             isAgreed: false,
-            sameSomeoneEmailValidationModalVisible: false
+            sameSomeoneEmailValidationModalVisible: false,
+            hasInstalmentDiscounts: false
         };
         this.props.getCommonRefData();
         this.props.countryReferenceAction();
@@ -76,9 +77,9 @@ class RegistrationProducts extends Component {
     }
 
     componentDidMount() {
-        let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
-        console.log("registrationUniqueKey"+registrationUniqueKey);
-        //let registrationUniqueKey = "ad60d9a2-24b7-4e63-83db-d9b8cae3e8dd";
+        // let registrationUniqueKey = this.props.location.state ? this.props.location.state.registrationId : null;
+        // console.log("registrationUniqueKey"+registrationUniqueKey);
+        let registrationUniqueKey = "d0fbe644-80d0-44fb-ae73-ad1bad0c4647";
         this.setState({ registrationUniqueKey: registrationUniqueKey });
         this.getApiInfo(registrationUniqueKey);
     }
@@ -180,6 +181,26 @@ class RegistrationProducts extends Component {
         let yourInfo = registrationReviewList ? registrationReviewList.yourInfo : null;
         const { termsAndConditions } = this.props.registrationProductState;
         let participantUsers = this.props.registrationProductState.participantUsers;
+        
+        let hasDiscounts = false;
+        for(let item of registrationReviewList.compParticipants){
+            if(item.selectedOptions.paymentOptionRefId == 4){
+                let isHardshipCodeApplied = item.selectedOptions.isHardshipCodeApplied;
+                let isSchoolRegCodeApplied = item.selectedOptions.isSchoolRegCodeApplied;
+                let discounts = item.selectedOptions.selectedDiscounts ? item.selectedOptions.selectedDiscounts.length : 0;
+                let govVouchers = item.selectedOptions.selectedGovernmentVouchers ? item.selectedOptions.selectedGovernmentVouchers.length : 0;
+    
+                if(isHardshipCodeApplied || isSchoolRegCodeApplied || discounts || govVouchers ){
+                    this.setState({hasInstalmentDiscounts: true});
+                    hasDiscounts = true;
+                    break;
+                }
+            }
+        }
+        if(hasDiscounts){
+            return;
+        }
+       
         if (incompletePaymentMessage != '') {
             incompletePaymentMessage = "Team Registrations have not been enabled for the " + incompletePaymentMessage + "Competition.";
             message.error(incompletePaymentMessage);
@@ -254,6 +275,8 @@ class RegistrationProducts extends Component {
 
     setReviewInfo = (value, key, index, subkey, subIndex) => {
         let registrationReview = this.props.registrationProductState.registrationReviewList;
+        this.setState({hasInstalmentDiscounts: false})
+
         registrationReview["registrationId"] = this.state.registrationUniqueKey;
         registrationReview["index"] = index;
         this.props.updateReviewInfoAction(value, key, index, subkey, subIndex);
@@ -634,6 +657,16 @@ class RegistrationProducts extends Component {
             //         instalmentCount = 2;
             //     }
             // }
+            let hasDiscounts = false;
+            let isHardshipCodeApplied = item.selectedOptions.isHardshipCodeApplied;
+            let isSchoolRegCodeApplied = item.selectedOptions.isSchoolRegCodeApplied;
+            let discounts = item.selectedOptions.selectedDiscounts ? item.selectedOptions.selectedDiscounts.length : 0;
+            let govVouchers = item.selectedOptions.selectedGovernmentVouchers ? item.selectedOptions.selectedGovernmentVouchers.length : 0;
+
+            if(isHardshipCodeApplied || isSchoolRegCodeApplied || discounts || govVouchers ){
+                hasDiscounts = true;
+            }
+
             if ((item.isTeamRegistration == 1 && item.isTeamSeasonalUponReg == 1) || item.isSeasonalUponReg == 1) {
                 let currentDateExist = item.instalmentDates.find(x => moment(x.instalmentDate).format("DD/MM/YYYY") === moment(currentDate).format("DD/MM/YYYY"));
                 if (!currentDateExist) {
@@ -1643,6 +1676,11 @@ class RegistrationProducts extends Component {
                     style={{ width: "100%", textTransform: "uppercase" }}>
                     {AppConstants.continue}
                 </Button>
+                { this.state.hasInstalmentDiscounts && 
+                    <div className="ml-4 discount-validation" style={{ "marginTop":'10px'}}>
+                        {ValidationConstants.instalmentDiscountMsg}
+                    </div>
+                }
             </div>
         )
     }
