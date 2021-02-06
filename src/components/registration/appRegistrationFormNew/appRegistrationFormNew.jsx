@@ -1737,13 +1737,13 @@ class AppRegistrationFormNew extends Component {
 
                 {registrationObj != null && (registrationObj.userId == -1 || registrationObj.userId == -2) ?
                     <div>
-                        <InputWithHead heading={AppConstants.areYouRegisteringYourself} required={"required-field"}></InputWithHead>
+                        <InputWithHead heading={AppConstants.whoAreYouRegistering} required={"required-field"}></InputWithHead>
                         <Radio.Group
                             className="registration-radio-group"
                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "registeringYourself")}
                             value={registrationObj.registeringYourself}
                         >
-                            <Radio value={1}>{AppConstants.yes}</Radio>
+                            <Radio value={1}>{AppConstants.registeringSelf}</Radio>
                             <Radio value={2}>{AppConstants.noRegisteringMyChild}</Radio>
                             <Radio value={3}>{AppConstants.noRegisteringSomeoneElse}</Radio>
                         </Radio.Group>
