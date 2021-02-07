@@ -185,7 +185,6 @@ function endUserRegistrationReducer(state = initialState, action) {
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_LOAD:
             state["participantIndex"] = action.payload.participantIndex;
             state["prodIndex"] = action.payload.prodIndex;
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +  JSON.stringify(action.payload));
             return { ...state, onLoad: true };
 
         case ApiConstants.API_ORG_REGISTRATION_REG_SETTINGS_SUCCESS:
