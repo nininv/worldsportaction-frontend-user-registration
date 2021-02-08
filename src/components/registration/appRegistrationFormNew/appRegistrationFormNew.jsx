@@ -676,6 +676,7 @@ class AppRegistrationFormNew extends Component {
 
             if (key == "dateOfBirth") {
                 if (getAge(value) <= 18) {
+                    await this.props.updateUserRegistrationObjectAction(true, "referParentEmail");
                     setTimeout(async () => {
                         await this.setParticipantDetailStepFormFields();
                     });
