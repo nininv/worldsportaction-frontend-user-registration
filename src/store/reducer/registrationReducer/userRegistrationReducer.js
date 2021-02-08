@@ -230,6 +230,15 @@ function getUserUpdatedRegistrationObj(
         } else {
             registrationObj = deepCopyFunction(registrationObjTemp);
         }
+
+        if (action.data === -1) {
+            state.parents = state.userInfo;
+            let selectedUser = state.userInfo.find(
+                (user) => user.id == getUserId()
+            );
+            registrationObj.parentOrGuardian.push(selectedUser);
+        }
+
         if (
             action.data != -1 ||
             (getUserId() != 0 && registrationObj.registeringYourself == 1)

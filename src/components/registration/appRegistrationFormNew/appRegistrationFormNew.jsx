@@ -648,6 +648,12 @@ class AppRegistrationFormNew extends Component {
                 this.props.updateUserRegistrationObjectAction(false, "referParentEmail");
             }
             this.props.updateUserRegistrationObjectAction(value, key);
+        } else if (key == 'tempParents') {
+            registrationObj.parentOrGuardian.splice(0, 1);
+            registrationObj.parentOrGuardian.push(parents[value]);
+            setTimeout(async () => {
+                await this.setParticipantDetailStepFormFields();
+            });
         } else {
             this.props.updateUserRegistrationObjectAction(value, key);
         }
@@ -1494,8 +1500,6 @@ class AppRegistrationFormNew extends Component {
             if (registrationObj.referParentEmail) {
                 await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
             }
-
-            console.log('registrationOBj======>', registrationObj);
 
             this.props.form.validateFieldsAndScroll(async (err, values) => {
                 if (err) {
@@ -2453,6 +2457,7 @@ class AppRegistrationFormNew extends Component {
     parentOrGuardianView = (getFieldDecorator) => {
         const { registrationObj, parents } = this.props.userRegistrationState;
         let hasErrorParent = this.state.hasErrorParent;
+
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
@@ -2460,13 +2465,12 @@ class AppRegistrationFormNew extends Component {
                     <div>
                         <InputWithHead heading={AppConstants.selectParentOrGuardian} />
                         <Select
-                            mode="multiple"
-                            style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                            onChange={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
+                            // mode="multiple"
+                            // style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                            onChange={(e) => this.onChangeSetParticipantValue(e, "tempParents")}
+                        >
                             {parents.length > 0 && parents.map((tParent, tpIndex) => (
-                                <Option key={tParent.email} value={tParent.email}>
-                                    {tParent.firstName + " " + tParent.lastName}
-                                </Option>
+                                <Option key={tpIndex} value={tpIndex}>{tParent.firstName + " " + tParent.lastName}</Option>
                             ))}
                         </Select>
                     </div>
