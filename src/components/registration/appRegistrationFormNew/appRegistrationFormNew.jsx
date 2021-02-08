@@ -411,7 +411,7 @@ class AppRegistrationFormNew extends Component {
                     [`additionalInfoAllergies`]: additionalInfo.allergyInfo,
                     [`additionalInfoTeamYouFollow`]: additionalInfo.favouriteTeamRefId,
                     [`additionalInfoPlayingOtherParticipantSports`]: additionalInfo.otherSportsInfo ? additionalInfo.otherSportsInfo : [],
-                    [`additionalInfoFavoriteBird`]: additionalInfo.favouriteTeamRefId,
+                    [`additionalInfoFavoriteBird`]: additionalInfo.favouriteFireBird,
                     [`additionalInfoDisablityCareNumber`]: additionalInfo.disabilityCareNumber,
                     [`additionalInfoHeartTrouble`]: additionalInfo.walkingNetball.heartTrouble,
                     [`additionalInfoChestPain`]: additionalInfo.walkingNetball.chestPain,
@@ -582,7 +582,7 @@ class AppRegistrationFormNew extends Component {
         this.props.getSchoolListAction(stateRefId);
     }
 
-    onChangeSetParticipantValue = (value, key) => {
+    onChangeSetParticipantValue = async (value, key) => {
         const { registrationObj, parents, userInfo } = this.props.userRegistrationState;
         if (key == "addOrRemoveAddressBySelect") {
             if (value) {
@@ -631,7 +631,6 @@ class AppRegistrationFormNew extends Component {
                 this.setState({
                     hasErrorEmergency: true
                 })
-
             }
 
             if (!regexNumberExpression(value)) {
@@ -641,12 +640,16 @@ class AppRegistrationFormNew extends Component {
                     });
                 }, 300);
             }
-
-
-        }
-        else {
+        } else if (key == 'email') {
+            if (registrationObj.referParentEmail == true) {
+                this.props.form.setFieldsValue({
+                    ['participantEmail']: registrationObj.parentOrGuardian[0]?.email,
+                });
+                this.props.updateUserRegistrationObjectAction(false, "referParentEmail");
+            }
             this.props.updateUserRegistrationObjectAction(value, key);
-            // console.log("update field", registrationObj);
+        } else {
+            this.props.updateUserRegistrationObjectAction(value, key);
         }
 
         if (key == "dateOfBirth" || key == "referParentEmail") {
@@ -655,28 +658,44 @@ class AppRegistrationFormNew extends Component {
                     [`participantEmail`]: registrationObj.email ? registrationObj.email : null
                 });
             });
-            if (key == 'referParentEmail' && value == true) {
-
-                // this.setState({
-                //     sameEmailValidationModalVisible: true
-                // })
-            }
-
-            if(key == 'referParentEmail' && value == false){
-                setTimeout(() => {
+            if (key == 'referParentEmail') {
+                if (value == true) {
                     this.props.form.setFieldsValue({
-                        [`participantEmail`]:  null
+                        [`parentEmail0`]:  registrationObj.parentOrGuardian[0]?.email
                     });
-                });
+                } else {
+                    setTimeout(() => {
+                        this.props.form.setFieldsValue({
+                            [`participantEmail`]:  registrationObj.parentOrGuardian[0]?.email,
+                        });
+                    });
+                }
+                await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email, "email");
+                await this.props.updateUserRegistrationObjectAction(value, "referParentEmail");
             }
 
             if (key == "dateOfBirth") {
                 if (getAge(value) <= 18) {
-                    if (!isArrayNotEmpty(registrationObj.parentOrGuardian)) {
+                    setTimeout(async () => {
+                        await this.setParticipantDetailStepFormFields();
+                    });
+                    if (!registrationObj.parentOrGuardian.length) {
                         this.addParent("add");
+                    } else {
+                        setTimeout(async () => {
+                            await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+                            this.props.form.setFieldsValue({
+                                ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                            });
+                        });
                     }
-                } else {
-                    this.addParent("removeAllParent")
+                } else if (registrationObj.referParentEmail) {
+                    setTimeout(async () => {
+                        await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+                        this.props.form.setFieldsValue({
+                            ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                        });
+                    });
                 }
             }
         }
@@ -817,10 +836,8 @@ class AppRegistrationFormNew extends Component {
                     // this.setState({
                     //     hasErrorParent: true
                     // })
-                    console.log('obj ', this.state.hasErrorParent, parentIndex)
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
-                    console.log('obj ', obj)
                     if (obj == undefined) {
                         hasError.push({
                             error: true,
@@ -872,7 +889,6 @@ class AppRegistrationFormNew extends Component {
         // }else {
         //     this.setState({searchAddressError: ''})
         // }
-        console.log("adderssData", address)
         if (address) {
             const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
             const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
@@ -1148,7 +1164,6 @@ class AppRegistrationFormNew extends Component {
         try {
             let error = false;
             const { registrationObj } = this.props.userRegistrationState;
-            console.log("registrationObj", registrationObj);
             if (registrationObj.addNewAddressFlag &&
                 registrationObj.stateRefId == null) {
                 error = true;
@@ -1272,8 +1287,6 @@ class AppRegistrationFormNew extends Component {
     }
 
     goToTeamRegistrationForm = (uniqueKey, registrationId) => {
-        // console.log(registrationId, uniqueKey);
-
         const { registrationReviewList } = this.props.registrationProductState;
         const compParticipants = registrationReviewList !== null ?
             isArrayNotEmpty(registrationReviewList.compParticipants) ?
@@ -1462,12 +1475,26 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
-    saveRegistrationForm = (e) => {
+    checkIfChildOfSessionUser = async(registrationObj) => {
+        const sessionUserId =  parseInt(getUserId());
+        const matchingIndex = registrationObj.parentOrGuardian.findIndex((parent) => parent.userId === sessionUserId);
+        if (matchingIndex !== -1) {
+            await this.props.updateUserRegistrationObjectAction(2, "registeringYourself");
+        }
+    }
+
+    saveRegistrationForm = async (e) => {
         try {
             e.preventDefault();
             const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
             let saveRegistrationObj = JSON.parse(JSON.stringify(registrationObj));
             let filteredSaveRegistrationObj = this.getFilteredRegisrationObj(saveRegistrationObj)
+            await this.checkIfChildOfSessionUser(registrationObj);
+            if (registrationObj.referParentEmail) {
+                await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+            }
+
+            console.log('registrationOBj======>', registrationObj);
 
             this.props.form.validateFieldsAndScroll(async (err, values) => {
                 if (err) {
@@ -1561,7 +1588,6 @@ class AppRegistrationFormNew extends Component {
                         // for logged in user, we don't handle any of the validation
                         if (!this.props.loginState.loggedIn) {
                             // check if the user in registration object is still the "verified" one in store
-                            console.log('registrationObj', registrationObj, 'registrationObj.userId', registrationObj.userId);
                             const {isVerified} = registrationObj
                             this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
 
@@ -2008,7 +2034,6 @@ class AppRegistrationFormNew extends Component {
         const { registrationObj } = userRegistrationState;
         const { genderList, stateList, countryList } = commonReducerState;
         const isYoung = getAge(registrationObj?.dateOfBirth) < ADULT;
-
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.participantDetails}</div>
@@ -2127,8 +2152,10 @@ class AppRegistrationFormNew extends Component {
                             )}
                         </Form.Item>
                     </div>
-                    <div className="col-sm-12 col-md-6"
-                        style={registrationObj.referParentEmail ? { alignSelf: "center", marginTop: "25px" } : {}}>
+                    <div
+                        className="col-sm-12 col-md-6"
+                        style={registrationObj.referParentEmail && getAge(registrationObj.dateOfBirth) <= 18 ? { alignSelf: "center", marginTop: "25px" } : {}}
+                    >
                         {!registrationObj.referParentEmail && (
                             <div>
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
@@ -2160,7 +2187,30 @@ class AppRegistrationFormNew extends Component {
                                 }
                             </div>
                         )}
-                        {/* {isYoung && ( */}
+                        {registrationObj.referParentEmail && getAge(registrationObj.dateOfBirth) > 18 && (
+                            <div>
+                                <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
+                                <Form.Item >
+                                    {getFieldDecorator(`parentEmail0`, {
+                                        rules: [
+                                            { required: true, message: ValidationConstants.emailField[0] },
+                                            {
+                                                type: "email",
+                                                pattern: new RegExp(AppConstants.emailExp),
+                                                message: ValidationConstants.email_validation
+                                            }
+                                        ],
+                                    })(
+                                        <InputWithHead
+                                            disabled={registrationObj.userId == getUserId()}
+                                            placeholder={AppConstants.contactEmail}
+                                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
+                                            setFieldsValue={registrationObj.parentOrGuardian[0]?.email}
+                                        />
+                                    )}
+                                </Form.Item>
+                            </div>
+                        )}
                         {getAge(registrationObj.dateOfBirth) <= 18 && (
                             <Checkbox
                                 className="single-checkbox"
@@ -3440,7 +3490,6 @@ class AppRegistrationFormNew extends Component {
             let hasAnyOneYes = walkingNetballQuesKeys.find(key => registrationObj.additionalInfo.walkingNetball[key] == 1);
             let hasOtherParticipantSports = registrationObj.additionalInfo.otherSportsInfo.find(x => x == "14");
             let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "MM-DD-YYYY") : null;
-            console.log("childrenCheckExpiryDate", childrenCheckExpiryDate)
             let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "MM-DD-YYYY") : null;
             let accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "MM-DD-YYYY") : null;
             return (
@@ -3531,7 +3580,7 @@ class AppRegistrationFormNew extends Component {
                     </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoHaveDisablity`, {
+                        {getFieldDecorator(`isDisability`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
                         })(
                         <Radio.Group
@@ -3648,7 +3697,7 @@ class AppRegistrationFormNew extends Component {
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
+                        {getFieldDecorator(`heardByRefId`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
                         })(
                         <Radio.Group
@@ -3928,7 +3977,7 @@ class AppRegistrationFormNew extends Component {
                                     <div>
                                         <InputWithHead heading={AppConstants.provideFurtherDetails} required={"required-field"} />
                                         <Form.Item>
-                                            {getFieldDecorator(`additionalInfoProvideFurtherDetails`, {
+                                            {getFieldDecorator(`walkingNetballInfo`, {
                                                 rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[6] }],
                                             })(
                                                 <InputWithHead

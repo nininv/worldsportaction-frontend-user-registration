@@ -374,10 +374,6 @@ function getUserUpdatedRegistrationObj(
                       selectedUser.additionalInfo.childrenCheckExpiryDate
                   ).format("MM-DD-YYYY")
                 : null;
-            console.log(
-                "registrationObj.additionalInfo.childrenCheckExpiryDate",
-                registrationObj.additionalInfo.childrenCheckExpiryDate
-            );
             registrationObj.additionalInfo.walkingNetballRefId =
                 selectedUser.additionalInfo.walkingNetballRefId;
             registrationObj.additionalInfo.walkingNetballInfo =
@@ -507,10 +503,8 @@ function getFilteredDivisions(divisions, state) {
     try {
         let filteredDivisions = [];
         let genderRefId = state.registrationObj.genderRefId;
-        // console.log("date",state.registrationObj.dateOfBirth)
         // var date = moment(moment(state.registrationObj.dateOfBirth).format("MM-DD-YYYY"),"MM-DD-YYYY");
         var date = moment(state.registrationObj.dateOfBirth, "MM-DD-YYYY");
-        console.log("date", JSON.stringify(date));
         for (let division of divisions) {
             if (
                 division.registrationLock == 0 &&
@@ -573,7 +567,6 @@ function getFilteredDivisions(divisions, state) {
                         (division.genderRefId == genderRefId ||
                             genderRefId == 3)
                     ) {
-                        console.log("inside 3");
                         let div = {
                             competitionMembershipProductId:
                                 division.competitionMembershipProductId,
@@ -998,12 +991,12 @@ function checkByDateOfBirth(state, dateOfBirth) {
     try {
         state.registrationObj.dateOfBirth = dateOfBirth;
         if (getAge(dateOfBirth) <= 18) {
-            state.registrationObj.referParentEmail = true;
+            // state.registrationObj.referParentEmail = true;
             if (state.registrationObj.userId != getUserId()) {
                 state.registrationObj.email = null;
             }
         } else {
-            state.registrationObj.referParentEmail = false;
+            // state.registrationObj.referParentEmail = false;
         }
         let competitions = state.registrationObj.competitions;
         for (let competition of competitions) {
@@ -1015,7 +1008,6 @@ function checkByDateOfBirth(state, dateOfBirth) {
                 membershipProduct.isChecked = false;
             }
         }
-        console.log(state.registrationObj);
     } catch (ex) {
         console.log(
             "Error in checkByDateOfBirth in userRegistrationReducer" + ex
@@ -1183,12 +1175,9 @@ function userRegistrationReducer(state = initialState, action) {
                 checkByGender(state, value);
             } else if (key == "referParentEmail") {
                 state.registrationObj[key] = value;
-                if (
-                    state.registrationObj.userId != getUserId() &&
-                    value == true
-                ) {
-                    state.registrationObj.email = null;
-                }
+                // if (state.registrationObj.userId != getUserId() && value == true) {
+                //     state.registrationObj.email = null;
+                // }
             } else if (key == "registeringYourself") {
                 state.registrationObj[key] = value;
                 if (getUserId() != 0) {
@@ -1199,6 +1188,8 @@ function userRegistrationReducer(state = initialState, action) {
                         state.registrationObj.registeringYourself
                     );
                 }
+            } else if (key == "email") {
+                state.registrationObj.email = value;
             } else {
                 state.registrationObj[key] = value;
             }
@@ -1393,7 +1384,6 @@ function userRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_EXPIRED_REGISTRATION_SUCCESS:
             let expiredRegistrationTemp = action.result;
-            console.log("sersf", expiredRegistrationTemp);
             return {
                 ...state,
                 onLoad: false,
