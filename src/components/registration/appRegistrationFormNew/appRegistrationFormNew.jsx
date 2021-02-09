@@ -234,7 +234,7 @@ class AppRegistrationFormNew extends Component {
 
         if (registrationState.isSavedParticipant) {
             this.props.updateUserRegistrationStateVarAction("isSavedParticipant", false);
-            if (registrationState.saveValidationErrorMsg != null && registrationState.saveValidationErrorMsg.length > 0) {
+            if (registrationState.saveValidationErrorMsg != null && registrationState.saveValidationErrorMsg?.length > 0) {
                 this.setState({ singleCompModalVisible: true });
             } else {
                 history.push("/registrationProducts", {
@@ -486,10 +486,10 @@ class AppRegistrationFormNew extends Component {
         try {
             if (addressObject) {
                 const { stateList, countryList } = this.props.commonReducerState;
-                const state = stateList.length > 0 && addressObject.stateRefId > 0
+                const state = stateList?.length > 0 && addressObject.stateRefId > 0
                     ? stateList.find((state) => state.id === addressObject.stateRefId).name
                     : null;
-                const country = countryList.length > 0 && addressObject.countryRefId > 0
+                const country = countryList?.length > 0 && addressObject.countryRefId > 0
                     ? countryList.find((country) => country.id === addressObject.countryRefId).description
                     : null;
 
@@ -595,12 +595,12 @@ class AppRegistrationFormNew extends Component {
             this.props.updateUserRegistrationObjectAction(value, key);
         }
         else if (key == "mobileNumber") {
-            if (value.length === 10) {
+            if (value?.length === 10) {
                 this.setState({
                     hasErrorParticipitant: false
                 })
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
-            } else if (value.length < 10) {
+            } else if (value?.length < 10) {
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
                 this.setState({
                     hasErrorParticipitant: true
@@ -613,12 +613,12 @@ class AppRegistrationFormNew extends Component {
             }, 300);
         }
         else if (key == 'emergencyContactNumber') {
-            if (value.length === 10) {
+            if (value?.length === 10) {
                 this.setState({
                     hasErrorEmergency: false
                 })
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
-            } else if (value.length < 10) {
+            } else if (value?.length < 10) {
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
                 this.setState({
                     hasErrorEmergency: true
@@ -748,7 +748,7 @@ class AppRegistrationFormNew extends Component {
                 let parentObj = deepCopyFunction(this.getParentObj());
                 parentObj.selectAddressFlag = (newUser || user.parentOrGuardian == null) ? false : true;
                 parentObj.addNewAddressFlag = (newUser || user.parentOrGuardian == null) ? true : false;
-                parentObj.tempParentId = registrationObj.parentOrGuardian.length + 1;
+                parentObj.tempParentId = registrationObj.parentOrGuardian?.length + 1;
 
                 //Do for second user when he is a child for first user
                 if (registrationObj.registeringYourself == 2) {
@@ -805,7 +805,7 @@ class AppRegistrationFormNew extends Component {
                 }
             }
             else if (key == "mobileNumber") {
-                if (value.length === 10) {
+                if (value?.length === 10) {
                     let hasError = this.state.hasErrorParent;
                     let obj = hasError.find(element => element.parentIndex == parentIndex);
                     if (obj != undefined) {
@@ -820,7 +820,7 @@ class AppRegistrationFormNew extends Component {
                     })
                     registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
                     this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
-                } else if (value.length < 10) {
+                } else if (value?.length < 10) {
                     registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
                     this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
                     // this.setState({
@@ -883,8 +883,8 @@ class AppRegistrationFormNew extends Component {
         // }
         console.log("adderssData", address)
         if (address) {
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
+            const stateRefId = stateList?.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+            const countryRefId = countryList?.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if (key == "parent") {
                 this.onChangeSetParentValue(stateRefId ? stateRefId : null, "stateRefId", parentIndex);
                 this.onChangeSetParentValue(address.addressOne, "street1", parentIndex);
@@ -919,7 +919,7 @@ class AppRegistrationFormNew extends Component {
         let restrictionId = competition.competitionInfo.registrationRestrictionTypeRefId
         let isSameDiv = (competition.divisions || []).find(x => x.competitionMembershipProductDivisionId == divisionInfo.competitionMembershipProductDivisionId)
         if (restrictionId == 1) {
-            if (competition.divisions.length < 1) {
+            if (competition.divisions?.length < 1) {
                 this.onChangeSetCompetitionValue(divisionInfo.competitionMembershipProductDivisionId, "divisionInfo", competitionIndex, null, null, divisionInfo.competitionMembershipProductTypeId)
             }
         }
@@ -1086,7 +1086,7 @@ class AppRegistrationFormNew extends Component {
     getOrganisationPhotos = (organisationPhotos) => {
         try {
             let organisationPhotosTemp = [];
-            for (let i = 0; i < organisationPhotos.length; i++) {
+            for (let i = 0; i < organisationPhotos?.length; i++) {
                 if ((i % 2) == 0) {
                     let obj = {
                         photoUrl1: organisationPhotos[i].photoUrl,
@@ -1376,7 +1376,7 @@ class AppRegistrationFormNew extends Component {
             let nextStep = this.state.currentStep + 1;
             this.scrollToTop();
             if (nextStep == 1) {
-                if (registrationObj.competitions.length == 0 &&
+                if (registrationObj.competitions?.length == 0 &&
                     expiredRegistration == null) {
                     this.setState({ showAddAnotherCompetitionView: true });
                 }
@@ -1484,10 +1484,10 @@ class AppRegistrationFormNew extends Component {
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (err) {
                     message.error(AppConstants.pleaseReview)
-                    if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0) {
+                    if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian?.length > 0) {
                         for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
-                            if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null || filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
-                                if (this.state.hasErrorParent.length > 0) {
+                            if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null || filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber?.length != 10) {
+                                if (this.state.hasErrorParent?.length > 0) {
                                     let item = this.state.hasErrorParent.find(element => element.parentIndex == a);
                                     if (item != undefined) {
                                         let hasErrors = this.state.hasErrorParent;
@@ -1537,21 +1537,21 @@ class AppRegistrationFormNew extends Component {
                             return;
                         };
 
-                        if (values.participantMobileNumber != null && values.participantMobileNumber.length != 10) {
+                        if (values.participantMobileNumber != null && values.participantMobileNumber?.length != 10) {
                             // message.error(ValidationConstants.mobileLength);
                             message.error(AppConstants.pleaseReview)
                             this.setState({ hasErrorParticipitant: true })
                             return false;
                         }
-                        if (values.emergencyContactNumber != null && values.emergencyContactNumber.length != 10) {
+                        if (values.emergencyContactNumber != null && values.emergencyContactNumber?.length != 10) {
                             message.error(AppConstants.pleaseReview)
                             this.setState({ hasErrorEmergency: true })
                             return false;
                         }
                         let hasError = this.state.hasErrorParent;
-                        if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian.length > 0) {
+                        if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian?.length > 0) {
                             for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
-                                if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber.length != 10) {
+                                if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber?.length != 10) {
                                     message.error(AppConstants.pleaseReview)
                                     hasError.push({
                                         error: true,
@@ -1607,7 +1607,7 @@ class AppRegistrationFormNew extends Component {
                         // return;
                     }
                     if (this.state.currentStep === 1) {
-                        if (registrationObj.competitions.length == 0) {
+                        if (registrationObj.competitions?.length == 0) {
                             message.error(ValidationConstants.competitionField);
                             return;
                         } else {
@@ -1735,7 +1735,7 @@ class AppRegistrationFormNew extends Component {
             >
                 <div className="form-heading"
                     style={{ paddingBottom: "0px" }}>
-                    {userInfo.length == 0 ? AppConstants.addParticipant : AppConstants.selectOrAddParticipant}
+                    {userInfo?.length == 0 ? AppConstants.addParticipant : AppConstants.selectOrAddParticipant}
                 </div>
                 <div className="row">
                     {(userInfo || []).map((user, index) => (
@@ -1957,7 +1957,7 @@ class AppRegistrationFormNew extends Component {
                                             placeholder={AppConstants.state}
                                             onChange={(e) => this.onChangeSetParticipantValue(e, "stateRefId")}
                                             setFieldsValue={registrationObj.stateRefId}>
-                                            {stateList.length > 0 && stateList.map((item) => (
+                                            {stateList?.length > 0 && stateList.map((item) => (
                                                 < Option key={item.id} value={item.id}> {item.name}</Option>
                                             ))}
                                         </Select>
@@ -1991,7 +1991,7 @@ class AppRegistrationFormNew extends Component {
                                     placeholder={AppConstants.country}
                                     onChange={(e) => this.onChangeSetParticipantValue(e, "countryRefId")}
                                     setFieldsValue={registrationObj.countryRefId}>
-                                    {countryList.length > 0 && countryList.map((item) => (
+                                    {countryList?.length > 0 && countryList.map((item) => (
                                         < Option key={item.id} value={item.id}> {item.description}</Option>
                                     ))}
                                 </Select>
@@ -2351,7 +2351,7 @@ class AppRegistrationFormNew extends Component {
                                                 placeholder={AppConstants.state}
                                                 onChange={(e) => this.onChangeSetParentValue(e, "stateRefId", parentIndex)}
                                                 setFieldsValue={parent.stateRefId}>
-                                                {stateList.length > 0 && stateList.map((item) => (
+                                                {stateList?.length > 0 && stateList.map((item) => (
                                                     < Option key={item.id} value={item.id}> {item.name}</Option>
                                                 ))
                                                 }
@@ -2386,7 +2386,7 @@ class AppRegistrationFormNew extends Component {
                                         placeholder={AppConstants.country}
                                         onChange={(e) => this.onChangeSetParentValue(e, "countryRefId", parentIndex)}
                                         setFieldsValue={parent.countryRefId}>
-                                        {countryList.length > 0 && countryList.map((item) => (
+                                        {countryList?.length > 0 && countryList.map((item) => (
                                             < Option key={item.id} value={item.id}> {item.description}</Option>
                                         ))}
                                     </Select>
@@ -2412,10 +2412,10 @@ class AppRegistrationFormNew extends Component {
                     <div>
                         <InputWithHead heading={AppConstants.selectParentOrGuardian} />
                         <Select
-                        //    mode="multiple"
-                           style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                           onSelect={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
-                            {parents.length > 0 && parents.map((tParent, tpIndex) => (
+                            // mode="multiple"
+                            style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                            onSelect={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
+                            {parents?.length > 0 && parents.map((tParent, tpIndex) => (
                                 <Option key={tpIndex} value={tpIndex}>{tParent.firstName + " " + tParent.lastName}</Option>
                             ))}
                         </Select>
@@ -2430,14 +2430,14 @@ class AppRegistrationFormNew extends Component {
                     }
                     return (
                         <div key={"parent" + parentIndex} className="light-grey-border-box">
-                            {(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) && (
+                            {(registrationObj.parentOrGuardian?.length != 1 || isArrayNotEmpty(parents)) && (
                                 <div className="orange-action-txt" style={{ marginTop: "30px" }}
                                     onClick={() => { this.addParent("remove", parentIndex) }}
                                 >{AppConstants.cancel}
                                 </div>
                             )}
                             <div className="form-heading"
-                                style={(registrationObj.parentOrGuardian.length != 1 || isArrayNotEmpty(parents)) ?
+                                style={(registrationObj.parentOrGuardian?.length != 1 || isArrayNotEmpty(parents)) ?
                                     { paddingBottom: "0px", marginTop: "10px" } :
                                     { paddingBottom: "0px", marginTop: "30px" }}>
                                 {AppConstants.newParentOrGuardian}
@@ -2530,7 +2530,6 @@ class AppRegistrationFormNew extends Component {
                                             }],
                                         })(
                                             <InputWithHead
-                                                disabled={parent?.userId !== undefined}
                                                 required={"required-field pt-0 pb-0"}
                                                 heading={AppConstants.email}
                                                 placeholder={AppConstants.email}
@@ -2812,8 +2811,8 @@ class AppRegistrationFormNew extends Component {
                                 pageSize={this.state.competitionsCountPerPage}
                                 current={this.state.currentCompetitions}
                                 style={{ textAlign: "center" }}
-                                //total={this.state.organisationId == null ? this.state.allCompetitions.length : this.state.allCompetitionsByOrgId.length}
-                                total={this.state.allCompetitionsByOrgId.length}
+                                //total={this.state.organisationId == null ? this.state.allCompetitions?.length : this.state.allCompetitionsByOrgId?.length}
+                                total={this.state.allCompetitionsByOrgId?.length}
                                 itemRender={this.paginationItems} />
                         )
                         :
@@ -2940,7 +2939,7 @@ class AppRegistrationFormNew extends Component {
                                 </Select> */}
                                 <Select
                                     style={{ width: "100%", paddingRight: 1 }}
-                                    // value={competition.divisions.length == 0 ? null : competition.divisionInfoIndex}
+                                    // value={competition.divisions?.length == 0 ? null : competition.divisionInfoIndex}
                                     value={competition.divisionInfoIndex}
                                     onChange={(index) => this.onChangeDivisionInfo(index, competitionIndex, competition.divisionInfo)}
                                     notFoundContent={AppConstants.regoDivisionNotFound}
@@ -2991,12 +2990,12 @@ class AppRegistrationFormNew extends Component {
                             <div className="input-style-bold">{AppConstants.competitionVenue}</div>
                             <div
                                 className="competition-specifics-information">
-                                {competitionInfo.venues == null || competitionInfo.venues.length == 0 ? AppConstants.noInformationProvided :
+                                {competitionInfo.venues == null || competitionInfo.venues?.length == 0 ? AppConstants.noInformationProvided :
                                     <span>
                                         {(competitionInfo.venues || []).map((v, vIndex) => (
                                             <span>
                                                 <span>{v.venueName}</span>
-                                                <span>{competitionInfo.venues.length != (vIndex + 1) ? ', ' : ''}</span>
+                                                <span>{competitionInfo.venues?.length != (vIndex + 1) ? ', ' : ''}</span>
                                             </span>
                                         ))}
                                     </span>
@@ -3074,7 +3073,7 @@ class AppRegistrationFormNew extends Component {
                             <div className="inter-medium-font">{AppConstants.playWithFriendSubtitle}</div>
                             {(competition.friends || []).map((friend, friendIndex) => (
                                 <div className="light-grey-border-box">
-                                    {competition.friends.length != 1 && (
+                                    {competition.friends?.length != 1 && (
                                         <div
                                             className="orange-action-txt"
                                             style={{ marginTop: "20px" }}
@@ -3137,7 +3136,7 @@ class AppRegistrationFormNew extends Component {
                             <div className="inter-medium-font">{AppConstants.referFriendSubTitle}</div>
                             {(competition.referFriends || []).map((referFriend, referFriendIndex) => (
                                 <div className="light-grey-border-box">
-                                    {competition.referFriends.length != 1 && (
+                                    {competition.referFriends?.length != 1 && (
                                         <div
                                             className="orange-action-txt"
                                             style={{ marginTop: "20px" }}
@@ -3266,7 +3265,7 @@ class AppRegistrationFormNew extends Component {
                                         {(competition.products || []).map((product, productIndex) => (
                                             <span>
                                                 <span>{product.membershipTypeName}</span>
-                                                <span>{competition.products.length != productIndex + 1 ? ',' : ''}</span>
+                                                <span>{competition.products?.length != productIndex + 1 ? ',' : ''}</span>
                                             </span>
                                         ))}
                                     </div>
@@ -3438,7 +3437,7 @@ class AppRegistrationFormNew extends Component {
                                 placeholder={AppConstants.select}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e, "countryRefId")}
                                 setFieldsValue={registrationObj.additionalInfo.countryRefId}>
-                                {countryList.length > 0 && countryList.map((item) => (
+                                {countryList?.length > 0 && countryList.map((item) => (
                                     < Option key={item.id} value={item.id}> {item.description}</Option>
                                 ))}
                             </Select>
@@ -3613,7 +3612,7 @@ class AppRegistrationFormNew extends Component {
                                 placeholder={AppConstants.select}
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e, "otherSportsInfo")}
                                 setFieldsValue={registrationObj.additionalInfo.otherSportsInfo}>
-                                {otherSportsList.length > 0 && otherSportsList.map((item) => (
+                                {otherSportsList?.length > 0 && otherSportsList.map((item) => (
                                     < Option key={item.id} value={item.id}> {item.description}</Option>
                                 ))}
                             </Select>
@@ -3787,7 +3786,7 @@ class AppRegistrationFormNew extends Component {
                                                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "associationLevelInfo")}
                                                             value={registrationObj.additionalInfo.associationLevelInfo}
                                                         />
-                                                        {(registrationObj.additionalInfo.associationLevelInfo != null && registrationObj.additionalInfo.associationLevelInfo.length > 0) && (
+                                                        {(registrationObj.additionalInfo.associationLevelInfo != null && registrationObj.additionalInfo.associationLevelInfo?.length > 0) && (
                                                             <DatePicker
                                                                 size="large"
                                                                 placeholder={AppConstants.expiryDate}
