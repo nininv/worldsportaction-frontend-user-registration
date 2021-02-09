@@ -99,6 +99,7 @@ const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
+const { confirm } = Modal;
 
 const ADULT = 18; // years age is minimum for registration without parents
 
@@ -631,10 +632,24 @@ class AppRegistrationFormNew extends Component {
                     });
                 }, 300);
             }
-
-
-        }
-        else {
+        } else if (key === "tempParents") {
+            const userId = getUserId();
+            const sessionUser = userInfo.find((x) => x.id == userId);
+            if (parents[value].email === sessionUser.email) {
+                confirm({
+                    content: AppConstants.warningUseSessionEmailAsParentAddress,
+                    okText: 'Okay',
+                    okType: 'primary',
+                    cancelText: 'Cancel',
+                });
+            } else {
+                registrationObj.parentOrGuardian.splice(0, 1);
+                registrationObj.parentOrGuardian.push(parents[value]);
+                setTimeout(async () => {
+                    await this.setParticipantDetailStepFormFields();
+                });
+            }
+        } else {
             this.props.updateUserRegistrationObjectAction(value, key);
             // console.log("update field", registrationObj);
         }
@@ -2372,13 +2387,11 @@ class AppRegistrationFormNew extends Component {
                     <div>
                         <InputWithHead heading={AppConstants.selectParentOrGuardian} />
                         <Select
-                            mode="multiple"
-                            style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
-                            onChange={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
+                        //    mode="multiple"
+                           style={{ width: "100%", paddingRight: 1, minWidth: 182 }}
+                           onSelect={(e) => this.onChangeSetParticipantValue(e, "tempParents")} >
                             {parents.length > 0 && parents.map((tParent, tpIndex) => (
-                                <Option key={tParent.email} value={tParent.email}>
-                                    {tParent.firstName + " " + tParent.lastName}
-                                </Option>
+                                <Option key={tpIndex} value={tpIndex}>{tParent.firstName + " " + tParent.lastName}</Option>
                             ))}
                         </Select>
                     </div>
