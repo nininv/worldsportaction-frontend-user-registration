@@ -2450,7 +2450,7 @@ class AppRegistrationFormNew extends Component {
                                                 heading={AppConstants.firstName}
                                                 placeholder={AppConstants.firstName}
                                                 onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "firstName", parentIndex)}
-                                                setFieldsValue={parent.firstName}
+                                                setFieldsValue={parent?.firstName}
                                                 onBlur={(i) => this.props.form.setFieldsValue({
                                                     [`parentFirstName${parentIndex}`]: captializedString(i.target.value)
                                                 })}
@@ -2468,7 +2468,7 @@ class AppRegistrationFormNew extends Component {
                                                 heading={AppConstants.middleName}
                                                 placeholder={AppConstants.middleName}
                                                 onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "middleName", parentIndex)}
-                                                setFieldsValue={parent.middleName}
+                                                setFieldsValue={parent?.middleName}
                                                 onBlur={(i) => this.props.form.setFieldsValue({
                                                     [`parentMiddleName${parentIndex}`]: captializedString(i.target.value)
                                                 })}
@@ -2486,7 +2486,7 @@ class AppRegistrationFormNew extends Component {
                                                 heading={AppConstants.lastName}
                                                 placeholder={AppConstants.lastName}
                                                 onChange={(e) => this.onChangeSetParentValue(captializedString(e.target.value), "lastName", parentIndex)}
-                                                setFieldsValue={parent.lastName}
+                                                setFieldsValue={parent?.lastName}
                                                 onBlur={(i) => this.props.form.setFieldsValue({
                                                     [`parentLastName${parentIndex}`]: captializedString(i.target.value)
                                                 })}
@@ -2510,7 +2510,7 @@ class AppRegistrationFormNew extends Component {
                                                 heading={AppConstants.mobile}
                                                 placeholder={AppConstants.mobile}
                                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "mobileNumber", parentIndex)}
-                                                setFieldsValue={parent.mobileNumber}
+                                                setFieldsValue={parent?.mobileNumber}
                                                 maxLength={10}
                                             />
                                         )}
@@ -2527,12 +2527,12 @@ class AppRegistrationFormNew extends Component {
                                             }],
                                         })(
                                             <InputWithHead
-                                                disabled={(registrationObj.userId == getUserId()) && parent.userId != 0}
+                                                disabled={parent?.userId !== undefined}
                                                 required={"required-field pt-0 pb-0"}
                                                 heading={AppConstants.email}
                                                 placeholder={AppConstants.email}
                                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "email", parentIndex)}
-                                                setFieldsValue={parent.email}
+                                                setFieldsValue={parent?.email}
                                             />
                                         )}
                                     </Form.Item>
@@ -2540,11 +2540,11 @@ class AppRegistrationFormNew extends Component {
                             </div>
                             <Checkbox
                                 className="single-checkbox"
-                                checked={parent.isSameAddress}
+                                checked={parent?.isSameAddress}
                                 onChange={e => this.onChangeSetParentValue(e.target.checked, "isSameAddress", parentIndex)} >
                                 {AppConstants.sameAddress}
                             </Checkbox>
-                            {!parent.isSameAddress && (
+                            {!parent?.isSameAddress && (
                                 <div>{this.parentOrGuardianAddressView(parent, parentIndex, getFieldDecorator)}</div>
                             )}
                         </div>
