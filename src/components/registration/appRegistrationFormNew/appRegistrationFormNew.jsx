@@ -773,6 +773,9 @@ class AppRegistrationFormNew extends Component {
         try {
             const { registrationObj, userInfo } = this.props.userRegistrationState;
             if (key == "isSameAddress") {
+                if (!registrationObj.parentOrGuardian[parentIndex]) {
+                    registrationObj.parentOrGuardian[parentIndex] = {}
+                }
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
                 if (value) {
                     registrationObj.parentOrGuardian[parentIndex]["street1"] = registrationObj.street1;
