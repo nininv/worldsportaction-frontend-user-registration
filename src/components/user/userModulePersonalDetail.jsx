@@ -122,7 +122,7 @@ const columns = [
                             </div>
                         </div>
                     </div>
-                    {membershipType === "Umpire" && getStripeAccountConnectId().length === 0 && (
+                    {membershipType === "Umpire" && typeof(getStripeAccountConnectId()) !== 'undefined' && getStripeAccountConnectId().length === 0 && (
                         <div className="d-flex flex-row">
                             <img src={AppImages.ringing} alt="" width="22" height="22" />
                             <InputWithHead required="pt-0 pl-3" heading={AppConstants.umpireAvailabilityMessage} />
@@ -2254,7 +2254,7 @@ class UserModulePersonalDetail extends Component {
                                     </Breadcrumb.Item>
                                 </Breadcrumb>
                             </div>
-                            {this.state.registrationTeam.isRemove ? 
+                            {this.state.registrationTeam.isRemove ?
                                 <div className="orange-action-txt font-14" onClick={() => this.gotoAddTeamMembers()}>
                                     +
                                     {' '}

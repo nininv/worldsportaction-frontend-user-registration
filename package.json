@@ -23,6 +23,7 @@
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "node-modules": "^1.0.1",
+    "query-string": "^4.3.4",
     "rc-tabs": "^11.7.3",
     "react": "^16.14.0",
     "react-beautiful-dnd": "^13.0.0",
@@ -64,5 +65,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prop-types": "^15.7.2"
   }
 }

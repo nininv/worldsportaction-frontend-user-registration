@@ -1,5 +1,4 @@
 import ApiConstants from "../../../themes/apiConstants";
-import liveScoreModal from '../../objectModel/liveScoreMatchModal'
 
 const initialState = {
     onLoad: false,
@@ -43,6 +42,7 @@ function LiveScoreState(state = initialState, action) {
             };
 
         //// scorer list
+        case ApiConstants.API_CREATE_REFEREE_REPORT:
         case ApiConstants.API_LIVE_SCORE_GET_SCORER_LIST_LOAD:
             return { ...state, onLoad: true };
 
@@ -52,6 +52,12 @@ function LiveScoreState(state = initialState, action) {
                 ...state,
                 onLoad: false,
                 scorerListResult: action.result
+            };
+
+        case ApiConstants.API_CREATE_REFEREE_REPORT_SUCCESS:
+            return {
+                ...state,
+                onLoad: false,
             };
 
         default:

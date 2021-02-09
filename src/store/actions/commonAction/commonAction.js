@@ -17,7 +17,7 @@ function getCommonRefData(data) {
     return action;
 }
 
-//////get the grades reference data 
+//////get the grades reference data
 function gradesReferenceListAction() {
     const action = {
         type: ApiConstants.API_GRADES_REFERENCE_LIST_LOAD,
@@ -177,6 +177,13 @@ function combinedAccreditationUmpieCoachRefrence() {
     return action;
 }
 
+function getRefereeOffenceListAction(){
+    const action = {
+        type: ApiConstants.API_REFEREE_OFFENCE_LIST_LOAD,
+    };
+    return action;
+}
+
 
 export {
     timeSlotInit,
@@ -201,5 +208,6 @@ export {
     getSchoolListAction,
     validateRegistrationCapAction,
     netSetGoTshirtSizeAction,
-    combinedAccreditationUmpieCoachRefrence
+    combinedAccreditationUmpieCoachRefrence,
+    getRefereeOffenceListAction
 }

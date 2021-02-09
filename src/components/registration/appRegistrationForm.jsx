@@ -1942,7 +1942,7 @@ class AppRegistrationForm extends Component {
         let registrationState = this.props.endUserRegistrationState;
         let registrationDetail = registrationState.registrationDetail;
         let userRegistrations = registrationDetail.userRegistrations;
-        // let userRegistration = userRegistrations[index]; 
+        // let userRegistration = userRegistrations[index];
         let userInfo = registrationState.userInfo;
         let membershipProductInfo = registrationState.membershipProductInfo;
 
@@ -2005,7 +2005,7 @@ class AppRegistrationForm extends Component {
                         && x.competitionUniqueKey == this.state.competitionUniqueKey);
                 }
 
-                //    let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1 
+                //    let orgInfo = membershipProductInfo.find(x=>x.hasTeamRegistration == 1
                 //        && x.organisationUniqueKey == this.state.organisationUniqueKey);
 
                 // console.log("compInfo",compInfo);
@@ -2568,7 +2568,7 @@ class AppRegistrationForm extends Component {
             let addressError = false;
             console.log("saveRegistrationForm" + e);
             e.preventDefault();
-            // if (!this.state.addressSearch) {							   
+            // if (!this.state.addressSearch) {
             //     this.setState({ searchAddressError: ValidationConstants.addressRequiredError });
             //     message.error(AppConstants.addressError);
             //     addressError = true;
@@ -2779,7 +2779,7 @@ class AppRegistrationForm extends Component {
                     }
                     // else{
                     //     if(err){
-                    //         message.error(ValidationConstants.membershipProductValidation); 
+                    //         message.error(ValidationConstants.membershipProductValidation);
                     //     }
                     // }
                 }
@@ -2849,7 +2849,6 @@ class AppRegistrationForm extends Component {
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </Header>
-
             </div>
         );
     };
@@ -2949,7 +2948,7 @@ class AppRegistrationForm extends Component {
                                     // value={item.genderRefId}
                                     setFieldsValue={item.genderRefId}>
                                     {(genderList || []).map((gender, genderIndex) => (
-                                        <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
+                                        <Radio id={"gender-" + genderIndex} key={gender.id} value={gender.id}>{gender.description}</Radio>
                                     ))}
                                 </Radio.Group>
                             )}
@@ -3282,7 +3281,7 @@ class AppRegistrationForm extends Component {
                             </div>
                             <input
                                 type="file"
-                                id= {"user-your-info-pic" + index} 
+                                id= {"user-your-info-pic" + index}
                                 style={{ display: 'none' }}
                                 onChange={(evt) => this.setImage(evt.target, index, "yourInfoPhoto")} />
 
@@ -4302,8 +4301,8 @@ class AppRegistrationForm extends Component {
                     </div>
                 )}
                 {/* {this.state.showChildrenCheckNumber && (
-                    <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber} 
-                    onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )} 
+                    <InputWithHead heading={AppConstants.childrenCheckNumberInfo} placeholder={AppConstants.childrenNumber}
+                    onChange={(e) => this.onChangeSetRegistrationValue(e.target.value, "childrenCheckNumber" )}
                     value={registrationDetail.childrenCheckNumber}/>
                 )} */}
 
@@ -4573,7 +4572,7 @@ class AppRegistrationForm extends Component {
         //         }
         //     })
         // });
-        // text = text.replace(/,\s*$/, "");   
+        // text = text.replace(/,\s*$/, "");
         return (
             <div className="formView pb-5" style={{ background: "none" }}>
                 <Form.Item>
@@ -4582,13 +4581,14 @@ class AppRegistrationForm extends Component {
                     })(
                         <div >
                             <Checkbox
+                                id="agree-term"
                                 className="single-checkbox pt-3"
                                 checked={this.state.agreeTerm}
                                 onChange={e => this.setState({ agreeTerm: e.target.checked })}>
                                 {AppConstants.agreeTerm}
                                 {/* <span className="app-reg-terms">
-                                {AppConstants.termsAndConditions}{" "}
-                            </span> */}
+                                    {AppConstants.termsAndConditions}{" "}
+                                </span> */}
                                 <span className="required-field"></span>
                             </Checkbox>
                         </div>
@@ -4621,13 +4621,14 @@ class AppRegistrationForm extends Component {
                         })(
                             <div >
                                 <Checkbox
+                                    id="agree-term"
                                     className="single-checkbox mt-0"
                                     checked={this.state.agreeTerm}
                                     onChange={e => this.setState({ agreeTerm: e.target.checked })}>
                                     {AppConstants.agreeTerm}
                                     {/* <span className="app-reg-terms">
-                                    {AppConstants.termsAndConditions}{" "}
-                                </span> */}
+                                        {AppConstants.termsAndConditions}{" "}
+                                    </span> */}
                                     <span className="required-field"></span>
                                 </Checkbox>
                             </div>

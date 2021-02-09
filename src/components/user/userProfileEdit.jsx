@@ -29,7 +29,7 @@ import {
     genderReferenceAction, disabilityReferenceAction, combinedAccreditationUmpieCoachRefrence
 } from "../../store/actions/commonAction/commonAction";
 import UserAxiosApi from "../../store/http/userHttp/userAxiosApi";
-import { userProfileUpdateAction } from "../../store/actions/userAction/userAction";
+import { getUserParentDataAction, teamMemberUpdateAction, userProfileUpdateAction } from "../../store/actions/userAction/userAction";
 import InputWithHead from "../../customComponents/InputWithHead";
 import Loader from "../../customComponents/loader";
 import PlacesAutocomplete from "../registration/elements/PlaceAutoComplete";
@@ -119,6 +119,10 @@ class UserProfileEdit extends Component {
                 accreditationCoachExpiryDate: null
             },
             isSameEmail: false,
+            showSameEmailOption: false,
+            showParentEmailSelectbox: false,
+            enableEmailInputbox: true,
+            showEmailInputbox: true,
             titleLabel: "",
             section: "",
             isSameUserEmailChanged: false,
@@ -133,6 +137,7 @@ class UserProfileEdit extends Component {
             possibleMatches: [],
             isPossibleMatchShow: false,
             isLoading: false,
+            parentMatchingId: 0,
         };
         this.confirmOpend = false;
         // this.props.getCommonRefData();
@@ -190,12 +195,49 @@ class UserProfileEdit extends Component {
                 userDataTemp.userId = data.userId;
             }
 
+            const showSameEmailOption = !!data.dateOfBirth && (moment().year() - moment(data.dateOfBirth).year() <= 18)
+                                        && ((titleLabel === AppConstants.edit + ' ' + AppConstants.address)
+                                        || (titleLabel === AppConstants.edit + ' ' + AppConstants.child)
+                                        || (titleLabel === AppConstants.addChild));
+
+            await this.props.getUserParentDataAction();
+            const { parentData } = this.props.userState;
+            let additionalSettings = {};
+            if (showSameEmailOption) {
+                const matchingData = parentData.find((parent) => {
+                    return (parent.email?.toLowerCase() + '.' + data.firstName?.toLowerCase() === data.email?.toLowerCase());
+                });
+
+                if (matchingData) {
+                    additionalSettings = {
+                        ...additionalSettings,
+                        showParentEmailSelectbox: true,
+                        enableEmailInputbox: false,
+                        showEmailInputbox: false,
+                        isSameEmail: true,
+                        parentMatchingId: matchingData.id,
+                    };
+                }
+            }
+
+            const personalEmail = this.props.userState.personalData.email;
+            if ((personalEmail?.toLowerCase() + '.' + data.firstName?.toLowerCase()) === data.email?.toLowerCase()) {
+                data['email'] = personalEmail;
+                additionalSettings = {
+                    ...additionalSettings,
+                    isSameEmail: true,
+                    enableEmailInputbox: false,
+                };
+            }
+
             await this.setState({
                 displaySection: moduleFrom,
                 userData: (moduleFrom != "7" && moduleFrom != "8") ? data : userDataTemp,
+                showSameEmailOption,
                 titleLabel: titleLabel,
                 section: section,
-                loadValue: true
+                loadValue: true,
+                ...additionalSettings,
             });
             setTempUserId(data.userId);
         }
@@ -309,8 +351,21 @@ class UserProfileEdit extends Component {
         });
     };
 
-    onChangeSetValue = (value, key) => {
-        let data = this.state.userData;
+    setUserDataContactEmailDefault = () => {
+        const personalEmail = this.props.userState.personalData.email;
+        this.setUserDataContactEmail(personalEmail);
+    }
+
+    setUserDataContactEmail = async (email) => {
+        let data = {...this.state.userData};
+        data['email'] = email;
+        await this.setState({ userData: data });
+        await this.props.form.setFieldsValue({ email });
+    }
+
+    onChangeSetValue = async (value, key) => {
+        let data = {...this.state.userData};
+        let additionalSettings = {};
         if (key === "isDisability") {
             if (value == 0) {
                 data["disabilityCareNumber"] = null;
@@ -318,6 +373,30 @@ class UserProfileEdit extends Component {
             }
         } else if (key === "dateOfBirth") {
             value = value && (moment(value).format("YYYY-MM-DD"));
+            const age = moment().year() - moment(value).year();
+            if (age < 18) {
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    await this.setState({ showSameEmailOption: true });
+                }
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    data['email'] = this.props.userState.personalData.email;
+                    await this.props.form.setFieldsValue({ "email": data["email"] });
+                    additionalSettings = { ...additionalSettings, isSameEmail: true, enableEmailInputbox: false };
+                }
+            } else {
+                if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.child)
+                || this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)
+                || this.state.titleLabel === AppConstants.addChild) {
+                    await this.setState({
+                        showSameEmailOption: false,
+                        enableEmailInputbox: true,
+                        isSameEmail: false
+                    });
+                }
+            }
         } else if (key === "email" && this.state.section === "address") {
             if (data.userId == getUserId()) {
                 this.setState({ isSameUserEmailChanged: true });
@@ -366,6 +445,18 @@ class UserProfileEdit extends Component {
                     }, 300);
                 }
             }
+        } else if (key === "parentEmail") {
+            if (value === -1) {
+                await this.setState({ enableEmailInputbox: true, showEmailInputbox: true });
+                return;
+            } else {
+                const { parentData } = this.props.userState;
+                const parent = parentData.find((item) => item.id === value);
+                const updatedEmail = parent.email + '.' + data.firstName;
+                await this.setState({ enableEmailInputbox: false, showEmailInputbox: false });
+                key = "email";
+                value = updatedEmail;
+            }
         }
 
         if (key === 'accreditationLevelUmpireRefId') {
@@ -383,7 +474,7 @@ class UserProfileEdit extends Component {
         }
         data[key] = value;
 
-        this.setState({ userData: data });
+        this.setState({ userData: data, ...additionalSettings });
     };
 
     headerView = () => (
@@ -455,6 +546,8 @@ class UserProfileEdit extends Component {
         if (userData.street1) {
             defaultVenueAddress = `${userData.street1 && `${userData.street1},`} ${userData.suburb && `${userData.suburb},`} ${state && `${state},`} `;
         }
+
+        const { parentData } = this.props.userState;
 
         return (
             <div className="pt-0">
@@ -532,60 +625,111 @@ class UserProfileEdit extends Component {
                 )}
                 */}
 
-                {(!this.state.isSameEmail
-                    || (this.state.titleLabel !== AppConstants.addChild
-                        && this.state.titleLabel !== AppConstants.addParent_guardian)) && (
-                        <div className="row">
-                            <div className="col-sm">
-                                <Form.Item
-                                    help={hasErrorAddressEdit && ValidationConstants.mobileLength}
-                                    validateStatus={hasErrorAddressEdit ? "error" : 'validating'}
-                                >
-                                    {getFieldDecorator('mobileNumber', {
-                                        rules: [{ required: true, message: ValidationConstants.contactField }],
-                                    })(
-                                        <InputWithHead
-                                            required="required-field pb-0 pt-3"
-                                            heading={AppConstants.contactMobile}
-                                            placeholder={AppConstants.contactMobile}
-                                            name="mobileNumber"
-                                            setFieldsValue={userData.mobileNumber}
-                                            onChange={(e) => this.onChangeSetValue(e.target.value, "mobileNumber")}
-                                            maxLength={10}
-                                        />
-                                    )}
-                                </Form.Item>
-                            </div>
-                            <div className="col-sm">
-                                <Form.Item>
-                                    {getFieldDecorator('email', {
-                                        rules: [
-                                            { required: true, message: ValidationConstants.emailField[0] },
-                                            {
-                                                type: "email",
-                                                pattern: new RegExp(AppConstants.emailExp),
-                                                message: ValidationConstants.email_validation
-                                            }
-                                        ],
-                                    })(
-                                        <InputWithHead
-                                            required="required-field pb-0 pt-3"
-                                            heading={AppConstants.contactEmail}
-                                            placeholder={AppConstants.contactEmail}
-                                            name="email"
-                                            setFieldsValue={userData.email}
-                                            onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
-                                        />
-                                    )}
-                                </Form.Item>
-                                {(userData.userId == getUserId() && this.state.isSameUserEmailChanged) && (
-                                    <div className="same-user-validation">
-                                        {ValidationConstants.emailField[2]}
-                                    </div>
+                <div className="row">
+                    <div className="col-sm">
+                        <InputWithHead heading={AppConstants.contactMobile} />
+                        <Form.Item
+                            help={hasErrorAddressEdit && ValidationConstants.mobileLength}
+                            validateStatus={hasErrorAddressEdit ? "error" : 'validating'}
+                        >
+                            {getFieldDecorator('mobileNumber', {
+                                rules: [{ required: true, message: ValidationConstants.contactField }],
+                            })(
+                                <InputWithHead
+                                    required="required-field pb-0 pt-3"
+                                    placeholder={AppConstants.contactMobile}
+                                    name="mobileNumber"
+                                    setFieldsValue={userData.mobileNumber}
+                                    onChange={(e) => this.onChangeSetValue(e.target.value, "mobileNumber")}
+                                    maxLength={10}
+                                />
+                            )}
+                        </Form.Item>
+                    </div>
+                    <div className="col-sm">
+                        <InputWithHead heading={AppConstants.contactEmail} />
+                        {this.state.showParentEmailSelectbox && (
+                            <Select
+                                placeholder={AppConstants.selectParentEmail}
+                                name="parentEmail"
+                                onSelect={(e) => this.onChangeSetValue(e, "parentEmail")}
+                                defaultValue={this.state.parentMatchingId ? this.state.parentMatchingId: parentData[0].id}
+                            >
+                                {parentData?.map((item) => (
+                                    <Option key={item.id} value={item.id}>{item.firstName + " " + item.lastName}</Option>
+                                ))}
+                            </Select>
+                        )}
+                        {this.state.showEmailInputbox && (
+                            <Form.Item>
+                                {getFieldDecorator('email', {
+                                    rules: [
+                                        !this.state.isSameEmail && { required: true, message: ValidationConstants.emailField[0] },
+                                        !this.state.isSameEmail && {
+                                            type: "email",
+                                            pattern: new RegExp(AppConstants.emailExp),
+                                            message: ValidationConstants.email_validation
+                                        }
+                                    ],
+                                })(
+                                    <InputWithHead
+                                        required="required-field pb-0 pt-3"
+                                        style={{ marginTop: this.state.showParentEmailSelectbox && "10px" }}
+                                        placeholder={AppConstants.contactEmail}
+                                        name="email"
+                                        setFieldsValue={userData.email}
+                                        disabled={!this.state.enableEmailInputbox}
+                                        onChange={(e) => this.onChangeSetValue(e.target.value, "email")}
+                                    />
                                 )}
+                            </Form.Item>
+                        )}
+                        {(userData.userId == getUserId() && this.state.isSameUserEmailChanged) && (
+                            <div className="same-user-validation">
+                                {ValidationConstants.emailField[2]}
                             </div>
-                        </div>
-                    )}
+                        )}
+                        {this.state.showSameEmailOption && (
+                            <Checkbox
+                                className="single-checkbox"
+                                checked={this.state.isSameEmail}
+                                onChange={async (e) => {
+                                    if (e.target.checked) {
+                                        if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)) {
+                                            await this.setState({
+                                                showParentEmailSelectbox: true,
+                                                showEmailInputbox: false,
+                                                enableEmailInputbox: false,
+                                            });
+                                            await this.setUserDataContactEmail(parentData[0].email + '.' + this.state.userData.firstName);
+                                        } else {
+                                            await this.setUserDataContactEmailDefault();
+                                            await this.setState({
+                                                enableEmailInputbox: false,
+                                            });
+                                        }
+                                    } else {
+                                        if (this.state.titleLabel === (AppConstants.edit + ' ' + AppConstants.address)) {
+                                            await this.setUserDataContactEmailDefault();
+                                            await this.setState({
+                                                showParentEmailSelectbox: false,
+                                                showEmailInputbox: true,
+                                                enableEmailInputbox: true,
+                                            });
+                                        } else {
+                                            await this.setState({
+                                                enableEmailInputbox: true,
+                                            })
+                                        }
+                                    }
+                                    this.setState({ isSameEmail: e.target.checked });
+                                }}
+                            >
+                                {AppConstants.useParentsEmailAddress}
+                            </Checkbox>
+                        )}
+                    </div>
+                </div>
                 {!this.state.manualAddress && (
                     <PlacesAutocomplete
                         defaultValue={defaultVenueAddress && `${defaultVenueAddress}Australia`}
@@ -1364,6 +1508,12 @@ class UserProfileEdit extends Component {
             data["childUserId"] = 0;
         }
 
+        if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.edit + ' ' + AppConstants.child ) {
+            if (this.state.isSameEmail) {
+                data["email"] = this.props.userState.personalData.email + '.' + data.firstName;
+            }
+        }
+
         if (this.state.titleLabel === AppConstants.addChild || this.state.titleLabel === AppConstants.addParent_guardian) {
             const { status, result: { data: possibleMatches } } = await UserAxiosApi.findPossibleMerge(data);
             if ([1, 4].includes(status)) {
@@ -1450,7 +1600,8 @@ function mapDispatchToProps(dispatch) {
         nationalityReferenceAction,
         genderReferenceAction,
         disabilityReferenceAction,
-        combinedAccreditationUmpieCoachRefrence
+        combinedAccreditationUmpieCoachRefrence,
+        getUserParentDataAction,
     }, dispatch)
 }
 

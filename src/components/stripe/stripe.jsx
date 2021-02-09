@@ -250,8 +250,14 @@ const CheckoutForm = (props) => {
             <form id='my-form' className="form" onSubmit={handleSubmit} >
                 <div className="row">
                     <div className='col-sm'>
-                        <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
-                            checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                        <Radio
+                            id="credit"
+                            key={"1"}
+                            onChange={(e) => changePaymentOption(e, "credit")}
+                            checked={selectedPaymentOption.credit}
+                        >
+                            {AppConstants.creditCard}
+                        </Radio>
                         {selectedPaymentOption.credit == true &&
                             <div className="pt-5">
                                 <CardElement
@@ -267,7 +273,14 @@ const CheckoutForm = (props) => {
                 </div>
                 <div className="row">
                     <div className='col-sm'>
-                        <Radio key={"2"} onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                        <Radio
+                            id="direct-debit"
+                            key={"2"}
+                            onChange={(e) => changePaymentOption(e, "direct")}
+                            checked={selectedPaymentOption.direct}
+                        >
+                            {AppConstants.directDebit}
+                        </Radio>
                         {selectedPaymentOption.direct == true &&
                             <div className="sr-root">
                                 <div className="sr-main">

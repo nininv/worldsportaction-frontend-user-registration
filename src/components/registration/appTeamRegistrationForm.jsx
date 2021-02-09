@@ -1803,6 +1803,7 @@ class AppTeamRegistrationForm extends Component {
                         <div className="row">
                             <div className="col post-code-input" >
                                 <InputWithHead
+                                    id="competitions-postcode"
                                     allowClear
                                     heading={AppConstants.postCode}
                                     value={this.state.postalCode}
@@ -1819,6 +1820,7 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                         <InputWithHead heading={AppConstants.organisationName} />
                         <Select
+                            id="competition-organisations"
                             showSearch
                             optionFilterProp="children"
                             onChange={(e) => this.onChangeSetOrganisation(e)}
@@ -1827,8 +1829,8 @@ class AppTeamRegistrationForm extends Component {
                             {(this.state.organisationId == null || this.state.organisationId == undefined) && (
                                 < Option key={"Please select"} value={-1}> {AppConstants.pleaseSelect}</Option>
                             )}
-                            {(this.state.organisations || []).map((item) => (
-                                < Option key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
+                            {(this.state.organisations || []).map((item, index) => (
+                                <Option id={"competition-organisation-" + index} key={item.organisationUniqueKey} value={item.organisationUniqueKey}> {item.organisationName}</Option>
                             ))}
                         </Select>
                         {organisationInfo && (
@@ -1967,13 +1969,17 @@ class AppTeamRegistrationForm extends Component {
                                     rules: [{ required: true, message: ValidationConstants.membershipProductIsRequired }],
                                 })(
                                     <Select
+                                        id="competition-membership-products"
                                         setFieldsValue={teamRegistrationObj.competitionMembershipProductTypeId}
                                         style={{ width: "100%", paddingRight: 1 }}
                                         onChange={(e) => this.onChangeSetTeamValue(e, "competitionMembershipProductTypeId")}
                                     >
                                         {(teamRegistrationObj.membershipProductList || []).map((product, productIndex) => (
-                                            <Option key={product.competitionMembershipProductTypeId}
-                                                value={product.competitionMembershipProductTypeId}>
+                                            <Option
+                                                id={"competition-membership-product-" + productIndex}
+                                                key={product.competitionMembershipProductTypeId}
+                                                value={product.competitionMembershipProductTypeId}
+                                            >
                                                 {product.name}
                                             </Option>
                                         ))}
@@ -1988,14 +1994,20 @@ class AppTeamRegistrationForm extends Component {
                                             rules: [{ required: true, message: ValidationConstants.membershipProductDivisionRequired }],
                                         })(
                                             <Select
+                                                id="competition-divisions"
                                                 setFieldsValue={teamRegistrationObj.competitionMembershipProductDivisionId}
                                                 style={{ width: "100%", paddingRight: 1 }}
                                                 onChange={(e) => this.onChangeSetTeamValue(e, "competitionMembershipProductDivisionId")}
                                                 notFoundContent={AppConstants.regoDivisionNotFound}
                                             >
                                                 {(teamRegistrationObj.divisions || []).map((division, divisionIndex) => (
-                                                    <Option key={division.competitionMembershipProductDivisionId}
-                                                        value={division.competitionMembershipProductDivisionId}>{division.divisionName}</Option>
+                                                    <Option
+                                                        id={"competition-division-" + divisionIndex}
+                                                        key={division.competitionMembershipProductDivisionId}
+                                                        value={division.competitionMembershipProductDivisionId}
+                                                    >
+                                                        {division.divisionName}
+                                                    </Option>
                                                 ))}
                                             </Select>
                                         )}
@@ -2342,6 +2354,7 @@ class AppTeamRegistrationForm extends Component {
                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                         })(
                                             <InputWithHead
+                                                id="competitions-postcode"
                                                 required={"required-field pt-0 pb-0"}
                                                 placeholder={AppConstants.postcode}
                                                 maxLength={4}
@@ -2395,10 +2408,10 @@ class AppTeamRegistrationForm extends Component {
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetTeamValue(e.target.value, "personRoleRefId")}
                                 setFieldsValue={teamRegistrationObj.personRoleRefId}>
-                                <Radio value={1}>{AppConstants.admin}</Radio>
-                                <Radio value={2}>{AppConstants.coach}</Radio>
-                                <Radio value={3}>{AppConstants.manager}</Radio>
-                                <Radio value={4}>{AppConstants.player}</Radio>
+                                <Radio id="admin" value={1}>{AppConstants.admin}</Radio>
+                                <Radio id="coach" value={2}>{AppConstants.coach}</Radio>
+                                <Radio id="manaager" value={3}>{AppConstants.manager}</Radio>
+                                <Radio id="player" value={4}>{AppConstants.player}</Radio>
                             </Radio.Group>
                         )}
                     </Form.Item>
@@ -2413,7 +2426,7 @@ class AppTeamRegistrationForm extends Component {
                                 setFieldsValue={teamRegistrationObj.genderRefId}
                             >
                                 {(genderList || []).map((gender, genderIndex) => (
-                                    <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
+                                    <Radio id={"gender-" + genderIndex} key={gender.id} value={gender.id}>{gender.description}</Radio>
                                 ))}
                             </Radio.Group>
                         )}
@@ -3326,6 +3339,7 @@ class AppTeamRegistrationForm extends Component {
                                             rules: [{ required: true, message: ValidationConstants.postCodeField[0] }],
                                         })(
                                             <InputWithHead
+                                                id="competitions-postcode"
                                                 required={"required-field pt-0 pb-0"}
                                                 placeholder={AppConstants.postcode}
                                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "postalCode", parentIndex)}
@@ -3949,6 +3963,7 @@ class AppTeamRegistrationForm extends Component {
                             rules: [{ required: true, message: ValidationConstants.countryField }],
                         })(
                         <Select
+                            id="which-country-were-born"
                             style={{ width: "100%" }}
                             placeholder={AppConstants.select}
                             onChange={(e) => this.onChangeSetAdditionalInfo(e,"countryRefId")}
@@ -4376,10 +4391,13 @@ class AppTeamRegistrationForm extends Component {
                 <div className="form-registration-action">
                     {!this.state.showFindAnotherCompetitionview && (
                         <Button
+                            id={this.state.submitButtonText === AppConstants.signupToCompetition ? "sign-up-to-competition" : "next"}
                             htmlType="submit"
                             type="primary"
                             style={{ float: "right", color: "white", textTransform: "uppercase" }}
-                            className="open-reg-button">{this.state.submitButtonText}
+                            className="open-reg-button"
+                        >
+                            {this.state.submitButtonText}
                         </Button>
                     )}
                 </div>

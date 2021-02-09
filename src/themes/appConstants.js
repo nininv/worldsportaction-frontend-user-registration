@@ -789,6 +789,7 @@ const AppConstants = {
   todaysIncidents: "Today's Incidents",
   todaysMatch: "Today's Matches",
   recipientSelection: "Enter Recipients",
+  dateAndTimeIncident: "Date and Time of Incident",
 
   ////addedd 2 march
   ByMatch: "By Match",
@@ -891,7 +892,9 @@ const AppConstants = {
   includeGST: " (incl. GST)",
   history: "History",
   registrationChange: "Registration Change",
+  reportFouls: "Report Fouls",
   mobileNumber: "Mobile Number",
+  reportOffenceRequired: "Please select the offence (can choose multiple)",
   whatRegistrationChange: "What registration change do you need to make?",
   takenCourtforTraining: "Have you taken the court for training, grading or a competition game",
   reasonRegisterTitle: "Why would you like to de-register?",
@@ -977,6 +980,20 @@ const AppConstants = {
   yourOrder: "Your order",
   ConditionsForNetballQLD: "Terms and Conditions for Netball QLD",
   continue: "Continue",
+
+  //refereeReport offences form
+  firstReportFormStep: "First step",
+  secondReportFormStep: "Second step",
+  secondReportFormStepQ1: 'At what point in the game did te incident occur?',
+  secondReportFormStepQ2: 'What happened in the lead up to the incident?',
+  secondReportFormStepQ3: 'What happened that made you lodge this refereeReport?',
+  secondReportFormStepQ4: 'Where were you when the incident occurred?',
+  secondReportFormStepQ5: 'What did you do?',
+  secondReportFormStepQ6: 'What happened following the incident?',
+  reportFormThirdStep: "Third step",
+  thirdReportFormStepQ1: 'Is there anything that you would like to add that may assist in assessing these charges?',
+  nameOfWitness: 'Name of Witness',
+  addWitness: 'Add Witness',
 
   //new registration form
   participantDetails: "Participant Details",
@@ -1069,7 +1086,7 @@ const AppConstants = {
   useParentsEmailAddress: "Use parent's email address",
   useChildEmail: "Use same contact details as yourself",
   useParentEmail: "Use same contact details as yourself",
-  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. You child will not get their own login. If you would like them to have their own login please give them a separate email address.',
+  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a separate email address.',
   parentMsg2Child: 'You have elected to use the same email for your Parent and yourself. You will lose your login unless you update your own email address first. If you do go ahead with using the same email address, you will be logged out for security reasons, and need to log in again.',
   returnToSelectAddress: "Return to select address",
   returnToLogin: "Return to Login",
@@ -1214,6 +1231,7 @@ const AppConstants = {
   instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
   coachAccreditation: "Coach Accreditation",
   tShirtSizeList: "TShirtSize",
+  refereeOffence: "RefereeOffence",
 
   registeredBy: "Registered By",
   ownRegistration: "Own Registration",
@@ -1240,7 +1258,7 @@ const AppConstants = {
   parentDetails: "Parent details",
   unavailable: "unavailable",
   doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
-  warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process."
+  warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process.",
 };
 
 export default AppConstants;
