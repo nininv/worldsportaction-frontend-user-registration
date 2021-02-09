@@ -1236,7 +1236,11 @@ const AppConstants = {
   removeFromTeamPopUpMsg: "Do you want to remove this user from the team?",
   noPickupMessage:"There is no pick up or delivery applicable to this product.",
 
-  sameEmailAsChild: "This email address has already been used for your child’s profile. Please navigate back to the profile, and add yourself as the parent."
+  sameEmailAsChild: "This email address has already been used for your child’s profile. Please navigate back to the profile, and add yourself as the parent.",
+  parentDetails: "Parent details",
+  unavailable: "unavailable",
+  doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
+  warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process."
 };
 
 export default AppConstants;
