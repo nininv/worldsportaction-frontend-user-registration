@@ -3514,9 +3514,7 @@ class AppRegistrationFormNew extends Component {
                     </Form.Item>    */}
                     <InputWithHead heading={AppConstants.haveDisability} required={"required-field"} />
                     <Form.Item>
-                        {getFieldDecorator(`isDisability`, {
-                            rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[5] }],
-                        })(
+                        {getFieldDecorator(`isDisability`)(
                         <Radio.Group
                             className="registration-radio-group"
                             onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "isDisability")}
