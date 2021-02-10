@@ -236,7 +236,9 @@ function getUserUpdatedRegistrationObj(
             let selectedUser = state.userInfo.find(
                 (user) => user.id == getUserId()
             );
-            registrationObj.parentOrGuardian.push(selectedUser);
+            if (selectedUser) {
+                registrationObj.parentOrGuardian.push(selectedUser);
+            }
         }
 
         if (
