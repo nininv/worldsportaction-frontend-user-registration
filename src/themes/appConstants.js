@@ -1258,7 +1258,9 @@ const AppConstants = {
   incorrectContactDetails: "You have entered incorrect contact details.",
   parentDetails: "Parent details",
   unavailable: "unavailable",
-  doNotGiveChildTheirOwnLogin: "Do not give Child their own login"
+  doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
+
+  warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process.",
 };
 
 export default AppConstants;
