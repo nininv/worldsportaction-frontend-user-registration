@@ -1161,13 +1161,24 @@ function userRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.SELECT_PARTICIPANT:
             registrationObjTemp[action.key] = action.data;
-            state.registrationObj = getUserUpdatedRegistrationObj(
+
+            const registrationObj = getUserUpdatedRegistrationObj(
                 state,
                 action
             );
+
+            if (action.key === "userId" && action.data !== -1) {
+                if (action.data === parseInt(getUserId())) {
+                    registrationObj.registeringYourself = 1;
+                } else {
+                    registrationObj.registeringYourself = 2;
+                }
+            }
+
             setMembershipProductsInfo(state);
             return {
                 ...state,
+                registrationObj,
             };
 
         case ApiConstants.UPDATE_USER_REGISTATION_OBJECT:

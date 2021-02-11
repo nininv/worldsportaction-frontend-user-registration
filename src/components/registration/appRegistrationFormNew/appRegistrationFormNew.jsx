@@ -106,7 +106,7 @@ const lookForExistingUser = async (userInfo) => {
 
     const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data.users // User[]
+    return result.result.data // User[]
   } catch (error) {
     console.error(error);
   }
