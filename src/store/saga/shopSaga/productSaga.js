@@ -36,7 +36,71 @@ function* errorSaga(error) {
     }, 800);
 }
 
-//////////product listing get API 
+export function * getShopProductSaga(action) {
+    try {
+        const result = yield call(AxiosApi.getShopProduct, action.payload);
+        yield put({
+            type: ApiConstants.API_GET_SHOP_PRODUCTS_SUCCESS,
+            result: result.result.data,
+        });
+    } catch (error) {
+        yield put({
+            type: ApiConstants.API_GET_SHOP_PRODUCTS_ERROR,
+            error
+        })
+    }
+}
+
+export function * getShopOrganisationSaga() {
+    try {
+        const result = yield call(AxiosApi.getShopOrganisations);
+
+        yield put({
+            type: ApiConstants.API_GET_SHOP_ORGANISATIONS_SUCCESS,
+            result: result.result.data
+        })
+    } catch (error) {
+        yield put({
+            type: ApiConstants.API_GET_SHOP_ORGANISATIONS_ERROR,
+            error
+        })
+    }
+}
+
+export function * getShopCartSaga(action) {
+    try {
+        const result = yield call(AxiosApi.getShopCart, action.payload);
+        const { shopUniqueKey, ...data } = result.result.data;
+        localStorage.setItem('shopUniqueKey', shopUniqueKey);
+        yield put({
+            type: ApiConstants.API_GET_SHOP_CART_SUCCESS,
+            result: data
+        })
+    } catch (error) {
+        yield put({
+            type: ApiConstants.API_GET_SHOP_CART_ERROR,
+            error
+        })
+    }
+}
+
+export function * saveShopCartSaga(action) {
+    try {
+        const result = yield call(AxiosApi.saveShopCart, action.payload);
+        const { shopUniqueKey, ...data } = result.result.data;
+        yield put({
+            type: ApiConstants.API_SAVE_SHOP_CART_SUCCESS,
+            result: data
+        })
+    } catch (error) {
+        yield put({
+            type: ApiConstants.API_SAVE_SHOP_CART_ERROR,
+            error
+        })
+    }
+}
+
+//////////product listing get API
 export function* getProductListingSaga(action) {
     try {
         const result = yield call(AxiosApi.getProductListing, action.organisationUniqueKeys, action.offset, action.limit, action.productType);
