@@ -652,7 +652,10 @@ class AppRegistrationFormNew extends Component {
         } else if (key === "tempParents") {
             const userId = getUserId();
             const sessionUser = userInfo.find((x) => x.id == userId);
-            if (parents[value].email === sessionUser.email) {
+            const date = new Date(sessionUser.dateOfBirth);
+            const today = new Date();
+            const sessionAge = today.getFullYear() - date.getFullYear();
+            if (parents[value].email === sessionUser.email && sessionAge <= 18) {
                 confirm({
                     content: AppConstants.warningUseSessionEmailAsParentAddress,
                     okText: 'Okay',
