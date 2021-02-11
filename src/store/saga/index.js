@@ -104,6 +104,9 @@ export default function* root_saga() {
   //// Round List Saga
   yield takeEvery(ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD, liveScoreRoundListSaga)
 
+  /////API_GET_SHOP_INVOICE data
+  yield takeEvery(ApiConstants.API_GET_SHOP_INVOICE_LOAD, stripeSaga.getShopInvoiceSaga)
+
   /////API_GET_INVOICE data
   yield takeEvery(ApiConstants.API_GET_INVOICE_LOAD, stripeSaga.getInvoiceSaga)
 

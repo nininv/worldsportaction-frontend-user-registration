@@ -68,7 +68,7 @@ function getCharityRoundUpArray(allData) {
     return getCharityRoundUpArray
 }
 
-//for calculating subtotal 
+//for calculating subtotal
 function calculateSubTotal(allData) {
     let fees_All_Data = allData[0].fees
     let resultData = {
@@ -98,7 +98,7 @@ function calculateSubTotal(allData) {
 }
 
 
-//for calculating charity  amount 
+//for calculating charity  amount
 function charityAppliedAmount(total, charityId) {
     let charityIdAmount = 1
     if (charityId == 1) {
@@ -117,7 +117,7 @@ function charityAppliedAmount(total, charityId) {
     }
 }
 
-//for calculating charity  amount 
+//for calculating charity  amount
 function set_Charity_Selected(invoiceData) {
     let charitySelected = {
         roundUpId: 0,
@@ -139,7 +139,7 @@ function set_Charity_Selected(invoiceData) {
     return charitySelected
 }
 
-//for  showing charity after succesful payment 
+//for  showing charity after succesful payment
 function makeCharitySuccessData(charitySelected, charityRoundUpFilter) {
     let competitionId = charitySelected.competitionId
     let charity_Selected = {
@@ -228,6 +228,7 @@ function stripe(state = initialState, action) {
 
 
         ///get invoice
+        case ApiConstants.API_GET_SHOP_INVOICE_LOAD:
         case ApiConstants.API_GET_INVOICE_LOAD:
             return {
                 ...state,
@@ -235,6 +236,14 @@ function stripe(state = initialState, action) {
                 error: null,
 
             }
+
+        case ApiConstants.API_GET_SHOP_INVOICE_SUCCESS: {
+            state.invoiceData = action.result
+            return {
+                ...state,
+                onLoad: false,
+            }
+        }
 
         case ApiConstants.API_GET_INVOICE_SUCCESS:
             state.invoiceData = action.result
