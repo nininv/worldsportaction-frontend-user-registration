@@ -30,6 +30,7 @@ import {getRegistrationByIdAction, deleteRegistrationProductAction,
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
+import { Carousel } from 'react-responsive-carousel';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -393,8 +394,23 @@ class RegistrationShop extends Component {
                         <div className="shop-product-text card-header-text pt-4"
                         style={{height: "240px"}}
                         onClick={(e) => this.enableExpandView("show", item, index)}>
-                            <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
-                                <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                            <div>
+                                <Carousel
+                                    showStatus={false}
+                                    showThumbs={false}
+                                    infiniteLoop
+                                    showArrows
+                                >
+                                    {Array.apply(null, [item.productImgUrl, item.productImgUrl, item.productImgUrl]).map(
+                                        (url, index) => {
+                                            return (
+                                                <div className="carousel-div" key={item + index}>
+                                                    <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={url} className="carousel-img" alt={""} />
+                                                </div>
+                                            );
+                                        }
+                                    )}
+                                </Carousel>
                             </div>
                             <div className="px-4">
                                 <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
