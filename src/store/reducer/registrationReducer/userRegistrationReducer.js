@@ -631,6 +631,7 @@ function setValidateRegistrationBySingleProductCapObj(
             : "";
         validateRegistrationCapObj.isTeamRegistration = 0;
         validateRegistrationCapObj.products = [];
+        validateRegistrationCapObj.email = state.registrationObj.email ? state.registrationObj.email : "";
         if (fromNonProductsOrDivisions == 2 || isPlayer != 1) {
             for (let productItem of competition.products) {
                 let divisions = competition.divisions.filter(
