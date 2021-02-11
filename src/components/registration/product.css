@@ -1126,7 +1126,7 @@ input:focus, .StripeElement--focus {
   max-width: 475px;
 }
 
-div.carousel.carousel-slider {
+div.carousel-root > div.carousel.carousel-slider {
   overflow: visible;
 }
 
