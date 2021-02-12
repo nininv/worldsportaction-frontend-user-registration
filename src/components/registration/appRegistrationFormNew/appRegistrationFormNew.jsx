@@ -1478,7 +1478,7 @@ class AppRegistrationFormNew extends Component {
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
                     return false;
-                } 
+                }
                 // else {
                 //     this.onChangeSetParticipantValue(false, "referParentEmail");
                 // }
@@ -1642,6 +1642,8 @@ class AppRegistrationFormNew extends Component {
                                 }
                             }
                         }
+
+                        this.onChangeSetOrganisation(this.state.organisationId)
                     }
 
                     if (this.state.currentStep === 1) {
