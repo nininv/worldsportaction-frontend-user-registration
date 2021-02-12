@@ -482,7 +482,7 @@ class RegistrationShop extends Component {
                 </div>
                 <div className="row" style={{marginTop: "17px"}}>
                     <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
+                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl[0] : AppImages.userIcon}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>

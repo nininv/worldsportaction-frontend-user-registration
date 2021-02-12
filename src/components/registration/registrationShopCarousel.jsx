@@ -18,7 +18,7 @@ class ShopCarousel extends Component {
                     infiniteLoop
                     showArrows
                 >
-                    {Array.apply(null, [productImgUrl, productImgUrl, productImgUrl]).map(
+                    {Array.apply(null, [...productImgUrl]).map(
                         (url, index) => {
                             return (
                                 <div className="carousel-div" key={index}>
