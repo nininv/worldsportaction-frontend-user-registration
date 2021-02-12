@@ -388,32 +388,32 @@ const ShopPayment = (props) => {
                 <div style={{ borderBottom: "1px solid var(--app-e1e1f5)", marginTop: "-5px" }}>
                     <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.subTotal}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.subTotal}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.subTotal.toFixed(2)}</div>
                     </div>
                     <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.shipping}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.shipping}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.shipping.toFixed(2)}</div>
                     </div>
                     <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.gst}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.gst}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.gst.toFixed(2)}</div>
                     </div>
                 </div>
 
                 <div style={{ borderBottom: "1px solid var(--app-e1e1f5)" }}>
                     <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.total}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.total}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.total.toFixed(2)}</div>
                     </div>
                     <div className="product-text-common-light mt-10 mr-4" style={{ display: "flex" }}>
                         <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.transactionFee}</div>
-                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.transactionFee}</div>
+                        <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.transactionFee.toFixed(2)}</div>
                     </div>
                 </div>
 
                 <div className="product-text-common mt-10 mr-4 font-w600" style={{ display: "flex" }}>
                     <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{AppConstants.totalPaymentDue}</div>
-                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total && total.targetValue}</div>
+                    <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${total.targetValue.toFixed(2)}</div>
                 </div>
             </div>
         )
