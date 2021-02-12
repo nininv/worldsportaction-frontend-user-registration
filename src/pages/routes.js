@@ -37,6 +37,8 @@ import TeamInviteShop from "../components/registration/teamInviteShop";
 import TeamInvitePayment from "../components/registration/teamInvitePayment";
 import TeamInviteShipping from "../components/registration/teamInviteShipping";
 import SingleGamePayment from "../components/registration/singleGamePayment";
+import Shop from "../components/shop/shop";
+import ShopPayment from "../components/shop/shopPayment";
 
 import MyUmpiringAvailability from "../components/umpire/myUmpiringAvailability";
 import AddTeamMember from "../components/user/addTeamMember";
@@ -214,6 +216,9 @@ class Routes extends React.Component {
           />
 
         <PrivateRoute path="/teamMemberRegPayment" component={lazyLoad(TeamMemberRegPayment)}/>
+
+        <PrivateRoute path="/shop" component={lazyLoad(Shop)}/>
+        <PrivateRoute path="/shopPayment" component={lazyLoad(ShopPayment)}/>
 
         <Route path="/" component={lazyLoad(NotFound)} />
         <Redirect from="*" to="/404" />

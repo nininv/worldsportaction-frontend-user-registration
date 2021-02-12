@@ -104,6 +104,9 @@ export default function* root_saga() {
   //// Round List Saga
   yield takeEvery(ApiConstants.API_LIVE_SCORE_ROUND_LIST_LOAD, liveScoreRoundListSaga)
 
+  /////API_GET_SHOP_INVOICE data
+  yield takeEvery(ApiConstants.API_GET_SHOP_INVOICE_LOAD, stripeSaga.getShopInvoiceSaga)
+
   /////API_GET_INVOICE data
   yield takeEvery(ApiConstants.API_GET_INVOICE_LOAD, stripeSaga.getInvoiceSaga)
 
@@ -157,6 +160,18 @@ export default function* root_saga() {
 
   // user history
   yield takeEvery(ApiConstants.API_USER_MODULE_HISTORY_LOAD, userSaga.getUserHistorySaga)
+
+  // shop products
+  yield takeEvery(ApiConstants.API_GET_SHOP_PRODUCTS_LOAD, shopProductSaga.getShopProductSaga)
+
+  // shop organisations
+  yield takeEvery(ApiConstants.API_GET_SHOP_ORGANISATIONS_LOAD, shopProductSaga.getShopOrganisationSaga)
+
+  // shop cart get
+  yield takeEvery(ApiConstants.API_GET_SHOP_CART_LOAD, shopProductSaga.getShopCartSaga)
+
+  // shop cart save
+  yield takeEvery(ApiConstants.API_SAVE_SHOP_CART_LOAD, shopProductSaga.saveShopCartSaga)
 
   //////shop product listing
   yield takeEvery(ApiConstants.API_GET_SHOP_PRODUCT_LISTING_LOAD, shopProductSaga.getProductListingSaga)

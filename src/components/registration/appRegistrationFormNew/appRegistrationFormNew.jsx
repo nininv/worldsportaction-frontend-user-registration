@@ -106,7 +106,7 @@ const lookForExistingUser = async (userInfo) => {
 
     const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data.users // User[]
+    return result.result.data // User[]
   } catch (error) {
     console.error(error);
   }
@@ -652,7 +652,10 @@ class AppRegistrationFormNew extends Component {
         } else if (key === "tempParents") {
             const userId = getUserId();
             const sessionUser = userInfo.find((x) => x.id == userId);
-            if (parents[value].email === sessionUser.email) {
+            const date = new Date(sessionUser.dateOfBirth);
+            const today = new Date();
+            const sessionAge = today.getFullYear() - date.getFullYear();
+            if (parents[value].email === sessionUser.email && sessionAge <= 18) {
                 confirm({
                     content: AppConstants.warningUseSessionEmailAsParentAddress,
                     okText: 'Okay',

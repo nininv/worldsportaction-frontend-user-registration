@@ -2488,6 +2488,9 @@ class UserModulePersonalDetail extends Component {
                                         })}>
                                             <span>{AppConstants.editProfile}</span>
                                         </Menu.Item>
+                                        <Menu.Item onClick={() => history.push("/shop")}>
+                                            <span>{AppConstants.shop}</span>
+                                        </Menu.Item>
                                         <Menu.Item onClick={() => this.navigateTo("/appRegistrationForm")} >
                                             <span>{AppConstants.register}</span>
                                         </Menu.Item>
