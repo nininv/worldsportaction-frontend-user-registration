@@ -711,13 +711,18 @@ class AppRegistrationFormNew extends Component {
                             });
                         });
                     }
-                } else if (registrationObj.referParentEmail) {
-                    setTimeout(async () => {
-                        await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
-                        this.props.form.setFieldsValue({
-                            ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                } else {
+                    if (registrationObj.parentOrGuardian.length) {
+                        this.addParent('removeAllParent');
+                    }
+                    if (registrationObj.referParentEmail) {
+                        setTimeout(async () => {
+                            await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+                            this.props.form.setFieldsValue({
+                                ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                            });
                         });
-                    });
+                    }
                 }
             }
         }
