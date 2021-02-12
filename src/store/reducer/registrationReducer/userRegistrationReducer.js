@@ -817,23 +817,10 @@ function userRegistrationReducer(state = initialState, action){
 
 		case ApiConstants.SELECT_PARTICIPANT:
 			registrationObjTemp[action.key] = action.data;
-			const registrationObj = getUserUpdatedRegistrationObj(state,action);
+			state.registrationObj = getUserUpdatedRegistrationObj(state,action);
 			setMembershipProductsInfo(state);
-			if (action.key === "userId" && action.data !== -1) {
-				// the back end sends the registering yourself based on what the user was last selected at
-				// this means a person registered as "someone else" is unable to complete their registration by using the same email that they are signed in as
-				// because we do not allow a person being registered as someone else to have the same email address as the person who is logged in as 
-				// they are not supposed to be the same person!
-                if (action.data === parseInt(getUserId())) {
-                     registrationObj.registeringYourself = 1;
-                } else {
-                     registrationObj.registeringYourself = 2;
-                }
-            }
- 
 			return {
-				...state,
-				registrationObj
+				...state
 			}
 
 		case ApiConstants.UPDATE_USER_REGISTATION_OBJECT:
