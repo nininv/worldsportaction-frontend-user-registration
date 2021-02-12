@@ -766,7 +766,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total && total != null ? '$' + total.subTotal : '$0.00'}
+                                heading={total && total != null ? '$' + total.subTotal.toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
@@ -781,7 +781,7 @@ class RegistrationInvoice extends Component {
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total && total != null ? '$' + total.gst : '$0.00'}
+                                heading={total && total != null ? '$' + total.gst.toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
@@ -799,7 +799,7 @@ class RegistrationInvoice extends Component {
                                         <InputWithHead
                                             required={"pt-0"}
                                             style={{ display: "flex", justifyContent: 'flex-start' }}
-                                            heading={total ?  '$' + total.charityValue : '$0.00'}
+                                            heading={total ?  '$' + total.charityValue.toFixed(2) : '$0.00'}
                                         />
                                     </div>
                             </div>
@@ -815,7 +815,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ?  '$' + total.total : '$0.00')}
+                                    heading={(total && total != null ?  '$' + total.total.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -830,7 +830,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ? '$' + total.transactionFee : '$0.00')}
+                                    heading={(total && total != null ? '$' + total.transactionFee.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -845,7 +845,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ? '$' +total.targetValue : '$0.00')}
+                                    heading={(total && total != null ? '$' +total.targetValue.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>

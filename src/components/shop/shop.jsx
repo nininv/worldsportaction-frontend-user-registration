@@ -298,6 +298,9 @@ class Shop extends Component {
     }
     cardView = () =>{
         const { products } = this.props.shopProductState;
+        if (!isArrayNotEmpty(products)) {
+            return <div className="card-header-text pt-4">{AppConstants.notProductByOrganisation}</div>
+        }
         return(
             <div>
                 {window.innerWidth < 768 ?
@@ -361,7 +364,7 @@ class Shop extends Component {
                         <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
-                        <div class = "headline-text-common">{expandObj.productName}</div>
+                        <div className="headline-text-common">{expandObj.productName}</div>
                         <div className ="mt-5 body-text-common">{description}</div>
                         {(expandObj.variants || []).map((varnt, vIndex) => {
                             let maxQuantity = this.getMaxVariantsQuantity(this.state.variantOptionId, varnt, expandObj.productId);
