@@ -1612,7 +1612,6 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
-
                         // for logged in user, we don't handle any of the validation
                         if (!this.props.loginState.loggedIn) {
                             // check if the user in registration object is still the "verified" one in store
@@ -1626,22 +1625,22 @@ class AppRegistrationFormNew extends Component {
                                 // doesn't return any user, complete the process
                                 this.props.updateUserRegistrationObjectAction(true, 'isVerified')
                             }
-                        }
-                        // verify parents / guardian one by one
-                        const {parentOrGuardian} = registrationObj
-                        for (let i = 0; i < parentOrGuardian.length; i++){
-                            let pg = parentOrGuardian[i];
-                            const users = await lookForExistingUser(pg)
-                            this.onChangeSetParentValue(true, "isVerifyTouched", i)
-                            if (users && users.length) {
-                                this.onChangeSetParentValue(users, 'matchingUsers', i);
-                                return; // halt the process
-                            } else {
-                                // doesn't return any user, complete the process
-                                this.onChangeSetParentValue(true, 'isVerified', i)
+
+                            // verify parents / guardian one by one
+                            const {parentOrGuardian} = registrationObj
+                            for (let i = 0; i < parentOrGuardian.length; i++){
+                                let pg = parentOrGuardian[i];
+                                const users = await lookForExistingUser(pg)
+                                this.onChangeSetParentValue(true, "isVerifyTouched", i)
+                                if (users && users.length) {
+                                    this.onChangeSetParentValue(users, 'matchingUsers', i);
+                                    return; // halt the process
+                                } else {
+                                    // doesn't return any user, complete the process
+                                    this.onChangeSetParentValue(true, 'isVerified', i)
+                                }
                             }
                         }
-
                         this.onChangeSetOrganisation(this.state.organisationId)
                     }
 
