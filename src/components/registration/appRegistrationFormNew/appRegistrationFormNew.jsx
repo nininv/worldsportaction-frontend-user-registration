@@ -106,7 +106,7 @@ const lookForExistingUser = async (userInfo) => {
 
     const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data // User[]
+    return result.result.data.users // User[]
   } catch (error) {
     console.error(error);
   }
@@ -1618,33 +1618,27 @@ class AppRegistrationFormNew extends Component {
                             // check if the user in registration object is still the "verified" one in store
                             const {isVerified} = registrationObj
                             this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
-
-                            if (!isVerified) { // Requires verification
-                                const users = await lookForExistingUser(registrationObj);
-                                if (users && users.length) {
-                                    this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
-                                    return; // halt the process
-                                } else {
-                                    // doesn't return any user, complete the process
-                                    this.props.updateUserRegistrationObjectAction(true, 'isVerified')
-                                }
-
+                            const users = await lookForExistingUser(registrationObj);
+                            if (users && users.length) {
+                                this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
+                                return; // halt the process
+                            } else {
+                                // doesn't return any user, complete the process
+                                this.props.updateUserRegistrationObjectAction(true, 'isVerified')
                             }
                         }
                         // verify parents / guardian one by one
                         const {parentOrGuardian} = registrationObj
                         for (let i = 0; i < parentOrGuardian.length; i++){
                             let pg = parentOrGuardian[i];
-                            if (!pg.isVerified) {
-                                const users = await lookForExistingUser(pg)
-                                this.onChangeSetParentValue(true, "isVerifyTouched", i)
-                                if (users && users.length) {
-                                    this.onChangeSetParentValue(users, 'matchingUsers', i);
-                                    return; // halt the process
-                                } else {
-                                    // doesn't return any user, complete the process
-                                    this.onChangeSetParentValue(true, 'isVerified', i)
-                                }
+                            const users = await lookForExistingUser(pg)
+                            this.onChangeSetParentValue(true, "isVerifyTouched", i)
+                            if (users && users.length) {
+                                this.onChangeSetParentValue(users, 'matchingUsers', i);
+                                return; // halt the process
+                            } else {
+                                // doesn't return any user, complete the process
+                                this.onChangeSetParentValue(true, 'isVerified', i)
                             }
                         }
 
