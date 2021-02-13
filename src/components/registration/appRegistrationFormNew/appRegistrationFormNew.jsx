@@ -106,7 +106,7 @@ const lookForExistingUser = async (userInfo) => {
 
     const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data // User[]
+    return result.result.data.users // User[]
   } catch (error) {
     console.error(error);
   }
@@ -711,13 +711,18 @@ class AppRegistrationFormNew extends Component {
                             });
                         });
                     }
-                } else if (registrationObj.referParentEmail) {
-                    setTimeout(async () => {
-                        await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
-                        this.props.form.setFieldsValue({
-                            ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                } else {
+                    if (registrationObj.parentOrGuardian.length) {
+                        this.addParent('removeAllParent');
+                    }
+                    if (registrationObj.referParentEmail) {
+                        setTimeout(async () => {
+                            await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+                            this.props.form.setFieldsValue({
+                                ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                            });
                         });
-                    });
+                    }
                 }
             }
         }
@@ -1478,7 +1483,7 @@ class AppRegistrationFormNew extends Component {
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
                     return false;
-                } 
+                }
                 // else {
                 //     this.onChangeSetParticipantValue(false, "referParentEmail");
                 // }
@@ -1607,30 +1612,24 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
-
                         // for logged in user, we don't handle any of the validation
                         if (!this.props.loginState.loggedIn) {
                             // check if the user in registration object is still the "verified" one in store
                             const {isVerified} = registrationObj
                             this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
-
-                            if (!isVerified) { // Requires verification
-                                const users = await lookForExistingUser(registrationObj);
-                                if (users && users.length) {
-                                    this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
-                                    return; // halt the process
-                                } else {
-                                    // doesn't return any user, complete the process
-                                    this.props.updateUserRegistrationObjectAction(true, 'isVerified')
-                                }
-
+                            const users = await lookForExistingUser(registrationObj);
+                            if (users && users.length) {
+                                this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
+                                return; // halt the process
+                            } else {
+                                // doesn't return any user, complete the process
+                                this.props.updateUserRegistrationObjectAction(true, 'isVerified')
                             }
-                        }
-                        // verify parents / guardian one by one
-                        const {parentOrGuardian} = registrationObj
-                        for (let i = 0; i < parentOrGuardian.length; i++){
-                            let pg = parentOrGuardian[i];
-                            if (!pg.isVerified) {
+
+                            // verify parents / guardian one by one
+                            const {parentOrGuardian} = registrationObj
+                            for (let i = 0; i < parentOrGuardian.length; i++){
+                                let pg = parentOrGuardian[i];
                                 const users = await lookForExistingUser(pg)
                                 this.onChangeSetParentValue(true, "isVerifyTouched", i)
                                 if (users && users.length) {
@@ -1642,6 +1641,7 @@ class AppRegistrationFormNew extends Component {
                                 }
                             }
                         }
+                        this.onChangeSetOrganisation(this.state.organisationId)
                     }
 
                     if (this.state.currentStep === 1) {
