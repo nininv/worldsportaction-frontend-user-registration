@@ -1607,7 +1607,8 @@ class AppRegistrationFormNew extends Component {
                             return;
                         }
                         // for logged in user, we don't handle any of the validation
-                        if (!getUserId()) {
+                        const userId = getUserId();
+                        if (userId == 0) {
                             // check if the user in registration object is still the "verified" one in store
                             const {isVerified} = registrationObj
                             this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
