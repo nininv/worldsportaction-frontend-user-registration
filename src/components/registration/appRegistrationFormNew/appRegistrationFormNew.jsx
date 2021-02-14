@@ -1916,18 +1916,14 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         <div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`participantAddress`, {
-                                    rules: [{ required: true, message: ValidationConstants.addressField }],
-                                })(
-                                    <PlacesAutocomplete
-                                        defaultValue={this.getAddress(registrationObj)}
-                                        heading={AppConstants.addressSearch}
-                                        required
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => { this.setState({ searchAddressError: '' }) }}
-                                        onSetData={(e) => this.handlePlacesAutocomplete(e, "participant")}
-                                    />
-                                )}
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(registrationObj)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => { this.setState({ searchAddressError: '' }) }}
+                                    onSetData={(e) => this.handlePlacesAutocomplete(e, "participant")}
+                                />
                             </Form.Item>
                             <div
                                 className="orange-action-txt"
@@ -2341,22 +2337,18 @@ class AppRegistrationFormNew extends Component {
                             <div className="form-heading"
                                 style={(newUser || !hasAddressForExistingUserFlag) ? { marginTop: "20px", marginBottom: "-20px" } : { paddingBottom: "0px", marginBottom: "-20px" }}>{AppConstants.findAddress}</div>
                             <Form.Item name="addressSearch">
-                                {getFieldDecorator(`parentSelectAddress${parentIndex}`, {
-                                    rules: [{ required: true, message: ValidationConstants.addressField }],
-                                })(
-                                    <PlacesAutocomplete
-                                        defaultValue={this.getAddress(parent)}
-                                        heading={AppConstants.addressSearch}
-                                        required
-                                        error={this.state.searchAddressError}
-                                        onBlur={() => {
-                                            this.setState({
-                                                searchAddressError: ''
-                                            })
-                                        }}
-                                        onSetData={(e) => this.handlePlacesAutocomplete(e, "parent", parentIndex)}
-                                    />
-                                )}
+                                <PlacesAutocomplete
+                                    defaultValue={this.getAddress(parent)}
+                                    heading={AppConstants.addressSearch}
+                                    required
+                                    error={this.state.searchAddressError}
+                                    onBlur={() => {
+                                        this.setState({
+                                            searchAddressError: ''
+                                        })
+                                    }}
+                                    onSetData={(e) => this.handlePlacesAutocomplete(e, "parent", parentIndex)}
+                                />
                             </Form.Item>
                             <div className="orange-action-txt" style={{ marginTop: "10px" }}
                                 onClick={() => {
