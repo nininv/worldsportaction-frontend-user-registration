@@ -767,7 +767,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total ? '$' + total.subTotal : '$0.00'}
+                                heading={total ? '$' + total.subTotal.toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
@@ -782,7 +782,7 @@ class RegistrationInvoice extends Component {
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total ? '$' + total.gst : '$0.00'}
+                                heading={total ? '$' + total.gst.toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
@@ -800,7 +800,7 @@ class RegistrationInvoice extends Component {
                                         <InputWithHead
                                             required={"pt-0"}
                                             style={{ display: "flex", justifyContent: 'flex-start' }}
-                                            heading={total ?  '$' + total.charityValue : '$0.00'}
+                                            heading={total ?  '$' + total.charityValue.toFixed(2) : '$0.00'}
                                         />
                                     </div>
                             </div>
@@ -816,7 +816,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total ?  '$' + total.total : '$0.00')}
+                                    heading={(total ?  '$' + total.total.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -831,7 +831,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total ? '$' + total.transactionFee : '$0.00')}
+                                    heading={(total ? '$' + total.transactionFee.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -846,7 +846,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total ? '$' +total.targetValue : '$0.00')}
+                                    heading={(total ? '$' +total.targetValue.toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -889,6 +889,7 @@ class RegistrationInvoice extends Component {
         (shopProducts || []).map((x) =>{
             totalAmount += x.totalAmt;
         })
+
         return(
             <div>
                 {(shopProducts || []).map((item, index) =>(
@@ -912,7 +913,7 @@ class RegistrationInvoice extends Component {
                                 </div>
                                 <div className="col-sm invoice-description" >
                                     <InputWithHead
-                                        heading={'$' + (Number(item.amount)).toFixed(2)}
+                                        heading={'$' + (Number(item.amount) / Number(item.quantity)).toFixed(2)}
                                         required={"input-align-right"}
                                     />
                                 </div>
