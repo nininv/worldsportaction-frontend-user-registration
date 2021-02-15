@@ -1264,7 +1264,12 @@ const AppConstants = {
   doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
 
   warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process.",
-  cardValidationMsg: "Going forward this card will default as your payment for all future payments"
+  cardValidationMsg: "Going forward this card will default as your payment for all future payments",
+
+  cancelDeRegistrtaion: "Cancel De-registration",
+  cancelTransferReg: "Cancel Transfer registration",
+
+  userName: "Username"
 };
 
 export default AppConstants;

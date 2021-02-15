@@ -306,6 +306,7 @@ function userReducer(state = initialState, action) {
                 error: action.error,
                 status: action.status,
                 umpireActivityOnLoad: false,
+                cancelDeRegistrationLoad: false,
             };
 
         case ApiConstants.API_USER_ERROR:
@@ -315,6 +316,8 @@ function userReducer(state = initialState, action) {
                 error: action.error,
                 status: action.status,
                 umpireActivityOnLoad: false,
+                cancelDeRegistrationLoad: false
+
             };
         // get Role Entity List for current  user
         case ApiConstants.API_ROLE_LOAD:
@@ -743,6 +746,16 @@ function userReducer(state = initialState, action) {
                 parentData,
                 status: action.status,
                 getUserParentDataOnLoad: false
+            }
+
+        case ApiConstants.API_CANCEL_DEREGISTRATION_LOAD:
+            return {...state, cancelDeRegistrationLoad: true}
+
+        case ApiConstants.API_CANCEL_DEREGISTRATION_SUCCESS:
+            return {
+                ...state,
+                cancelDeRegistrationLoad: false,
+                status: action.status,
             }
 
         default:

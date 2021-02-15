@@ -323,4 +323,6 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
 
   yield takeEvery(ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD, userSaga.updateTeamMembersSaga);
+  yield takeEvery(ApiConstants.API_CANCEL_DEREGISTRATION_LOAD, userSaga.cancelDeRegistrationSaga);
+
 }

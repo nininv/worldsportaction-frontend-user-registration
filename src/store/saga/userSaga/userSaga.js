@@ -5,6 +5,7 @@ import userHttpApi from "../../http/userHttp/userAxiosApi";
 import registrationAxiosApi from "../../http/registrationHttp/registrationAxios";
 import livescoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
 import history from "../../../util/history";
+import { message } from "antd";
 
 function* failSaga(result) {
     yield put({ type: ApiConstants.API_USER_FAIL });
@@ -536,3 +537,21 @@ export function* getUsersByRoleSaga(action) {
       yield call(errorSaga, error);
     }
   }
+
+  export function* cancelDeRegistrationSaga(action) {
+    try {
+        const result = yield call(registrationAxiosApi.cancelDeRegistration, action.payload);
+        if (result.status === 1) {
+            message.success(result.result.data.message)
+            yield put({
+                type: ApiConstants.API_CANCEL_DEREGISTRATION_SUCCESS,
+                // result: result.result.data,
+                status: result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+    }
