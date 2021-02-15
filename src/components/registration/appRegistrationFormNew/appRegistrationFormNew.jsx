@@ -106,7 +106,7 @@ const lookForExistingUser = async (userInfo) => {
 
     const reqData = {...userInfo, dateOfBirth: DOBFormatted}
     const result = await userHttpApi.checkUserMatch(reqData);
-    return result.result.data // User[]
+    return result.result.data.users // User[]
   } catch (error) {
     console.error(error);
   }
@@ -138,9 +138,10 @@ class AppRegistrationFormNew extends Component {
             currentCompetitions: 1,
             organisations: [],
             postalCode: null,
-            hasErrorParticipitant: false,
+            hasErrorParticiptantNumber: 0,
+            hasErrorParticipantAddress: false,
             hasErrorParent: [],
-            hasErrorEmergency: false,
+            hasErrorEmergencyNumber: 0,
             registrationCapModalVisible: false,
             validateRegistrationCapOnLoad: false,
             validateRegistrationCapBySubmit: false,
@@ -362,7 +363,7 @@ class AppRegistrationFormNew extends Component {
         try {
             if (registrationObj) {
                 this.props.form.setFieldsValue({
-                    [`genderRefId`]: registrationObj.genderRefId,
+                    [`genderRefId`]: !!registrationObj.genderRefId ? registrationObj.genderRefId : null,
                     [`dateOfBirth`]: registrationObj.dateOfBirth ? moment(registrationObj.dateOfBirth, "MM-DD-YYYY") : null,
                     [`participantFirstName`]: registrationObj.firstName,
                     [`participantMiddleName`]: registrationObj.middleName,
@@ -606,13 +607,13 @@ class AppRegistrationFormNew extends Component {
         else if (key == "mobileNumber") {
             if (value?.length === 10) {
                 this.setState({
-                    hasErrorParticipitant: false
+                    hasErrorParticiptantNumber: 0
                 })
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
             } else if (value?.length < 10) {
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
                 this.setState({
-                    hasErrorParticipitant: true
+                    hasErrorParticiptantNumber: value?.length ? 1 : 2
                 })
             }
             setTimeout(() => {
@@ -624,23 +625,20 @@ class AppRegistrationFormNew extends Component {
         else if (key == 'emergencyContactNumber') {
             if (value?.length === 10) {
                 this.setState({
-                    hasErrorEmergency: false
+                    hasErrorEmergencyNumber: 0
                 })
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
             } else if (value?.length < 10) {
                 this.props.updateUserRegistrationObjectAction(regexNumberExpression(value), key);
                 this.setState({
-                    hasErrorEmergency: true
+                    hasErrorEmergencyNumber: value?.length ? 1 : 2
                 })
             }
-
-            if (!regexNumberExpression(value)) {
-                setTimeout(() => {
-                    this.props.form.setFieldsValue({
-                        [`emergencyContactNumber`]: null,
-                    });
-                }, 300);
-            }
+            setTimeout(() => {
+                this.props.form.setFieldsValue({
+                    [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
+                });
+            }, 300);
         } else if (key == 'email') {
             if (registrationObj.referParentEmail == true) {
                 this.props.form.setFieldsValue({
@@ -711,13 +709,18 @@ class AppRegistrationFormNew extends Component {
                             });
                         });
                     }
-                } else if (registrationObj.referParentEmail) {
-                    setTimeout(async () => {
-                        await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
-                        this.props.form.setFieldsValue({
-                            ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                } else {
+                    if (registrationObj.parentOrGuardian.length) {
+                        this.addParent('removeAllParent');
+                    }
+                    if (registrationObj.referParentEmail) {
+                        setTimeout(async () => {
+                            await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
+                            this.props.form.setFieldsValue({
+                                ['participantEmail']: registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName,
+                            });
                         });
-                    });
+                    }
                 }
             }
         }
@@ -853,11 +856,13 @@ class AppRegistrationFormNew extends Component {
                     this.setState({
                         hasErrorParent: hasError
                     })
-                    registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
-                    this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+                    const cloneObj = { ...registrationObj };
+                    cloneObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateUserRegistrationObjectAction(cloneObj, "registrationObj");
                 } else if (value?.length < 10) {
-                    registrationObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
-                    this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+                    const cloneObj = { ...registrationObj };
+                    cloneObj.parentOrGuardian[parentIndex][key] = regexNumberExpression(value);
+                    this.props.updateUserRegistrationObjectAction(cloneObj, "registrationObj");
                     // this.setState({
                     //     hasErrorParent: true
                     // })
@@ -869,22 +874,16 @@ class AppRegistrationFormNew extends Component {
                             parentIndex: parentIndex
                         })
                     };
-
-
                     this.setState({
                         hasErrorParent: hasError
                     })
-
-
                 }
 
-                if (!regexNumberExpression(value)) {
-                    setTimeout(() => {
-                        this.props.form.setFieldsValue({
-                            [`parentMobileNumber${parentIndex}`]: null,
-                        });
-                    }, 300);
-                }
+                setTimeout(() => {
+                    this.props.form.setFieldsValue({
+                        [`parentMobileNumber${parentIndex}`]: registrationObj.parentOrGuardian[parentIndex][key],
+                    });
+                }, 100);
             }
             else {
                 registrationObj.parentOrGuardian[parentIndex][key] = value;
@@ -940,6 +939,7 @@ class AppRegistrationFormNew extends Component {
                 }
                 this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
             }
+            this.setState({ hasErrorParticipantAddress: false });
         }
     };
 
@@ -1478,7 +1478,7 @@ class AppRegistrationFormNew extends Component {
                 if (isSameWithParentEmail) {
                     this.setState({ sameEmailValidationModalVisible: true });
                     return false;
-                } 
+                }
                 // else {
                 //     this.onChangeSetParticipantValue(false, "referParentEmail");
                 // }
@@ -1519,9 +1519,27 @@ class AppRegistrationFormNew extends Component {
                 await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
             }
 
+            if (registrationObj.stateRefId == null && registrationObj.street1 == null && registrationObj.suburb == null) {
+                this.setState({ hasErrorParticipantAddress: true });
+            }
+
             this.props.form.validateFieldsAndScroll(async (err, values) => {
                 if (err) {
                     message.error(AppConstants.pleaseReview)
+                    if (err.emergencyContactNumber) {
+                        if (err.emergencyContactNumber.errors[0].message === ValidationConstants.mobileLength) {
+                            this.setState({ hasErrorEmergencyNumber: 1 })
+                        } else {
+                            this.setState({ hasErrorEmergencyNumber: 2 })
+                        }
+                    }
+                    if (err.participantMobileNumber) {
+                        if (err.participantMobileNumber.errors[0].message === ValidationConstants.mobileLength) {
+                            this.setState({ hasErrorParticiptantNumber: 1 })
+                        } else {
+                            this.setState({ hasErrorParticiptantNumber: 2 })
+                        }
+                    }
                     if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian?.length > 0) {
                         for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
                             if (filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber == null || filteredSaveRegistrationObj.parentOrGuardian[a].mobileNumber?.length != 10) {
@@ -1559,7 +1577,6 @@ class AppRegistrationFormNew extends Component {
                             }
                         }
                     }
-
                 }
                 if (!err) {
                     // if(registrationObj.photoUrl == null){
@@ -1574,18 +1591,6 @@ class AppRegistrationFormNew extends Component {
                             message.error(ValidationConstants.addressDetailsIsRequired);
                             return;
                         };
-
-                        if (values.participantMobileNumber != null && values.participantMobileNumber?.length != 10) {
-                            // message.error(ValidationConstants.mobileLength);
-                            message.error(AppConstants.pleaseReview)
-                            this.setState({ hasErrorParticipitant: true })
-                            return false;
-                        }
-                        if (values.emergencyContactNumber != null && values.emergencyContactNumber?.length != 10) {
-                            message.error(AppConstants.pleaseReview)
-                            this.setState({ hasErrorEmergency: true })
-                            return false;
-                        }
                         let hasError = this.state.hasErrorParent;
                         if (filteredSaveRegistrationObj.parentOrGuardian != null && filteredSaveRegistrationObj.parentOrGuardian?.length > 0) {
                             for (let a in filteredSaveRegistrationObj.parentOrGuardian) {
@@ -1607,30 +1612,25 @@ class AppRegistrationFormNew extends Component {
                         if (!isSame) {
                             return;
                         }
-
                         // for logged in user, we don't handle any of the validation
-                        if (!this.props.loginState.loggedIn) {
+                        const userId = getUserId();
+                        const { isVerifyTouched } = registrationObj
+                        if (userId == 0 && !isVerifyTouched) {
                             // check if the user in registration object is still the "verified" one in store
-                            const {isVerified} = registrationObj
                             this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
-
-                            if (!isVerified) { // Requires verification
-                                const users = await lookForExistingUser(registrationObj);
-                                if (users && users.length) {
-                                    this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
-                                    return; // halt the process
-                                } else {
-                                    // doesn't return any user, complete the process
-                                    this.props.updateUserRegistrationObjectAction(true, 'isVerified')
-                                }
-
+                            const users = await lookForExistingUser(registrationObj);
+                            if (users && users.length) {
+                                this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
+                                return; // halt the process
+                            } else {
+                                // doesn't return any user, complete the process
+                                this.props.updateUserRegistrationObjectAction(true, 'isVerified')
                             }
-                        }
-                        // verify parents / guardian one by one
-                        const {parentOrGuardian} = registrationObj
-                        for (let i = 0; i < parentOrGuardian.length; i++){
-                            let pg = parentOrGuardian[i];
-                            if (!pg.isVerified) {
+
+                            // verify parents / guardian one by one
+                            const {parentOrGuardian} = registrationObj
+                            for (let i = 0; i < parentOrGuardian.length; i++){
+                                let pg = parentOrGuardian[i];
                                 const users = await lookForExistingUser(pg)
                                 this.onChangeSetParentValue(true, "isVerifyTouched", i)
                                 if (users && users.length) {
@@ -1642,6 +1642,7 @@ class AppRegistrationFormNew extends Component {
                                 }
                             }
                         }
+                        this.onChangeSetOrganisation(this.state.organisationId)
                     }
 
                     if (this.state.currentStep === 1) {
@@ -1869,6 +1870,8 @@ class AppRegistrationFormNew extends Component {
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         let hasAddressForExistingUserFlag = (user?.stateRefId) ? true : false;
+        const { hasErrorParticipantAddress } = this.state;
+
         return (
             <div>
                 {registrationObj.selectAddressFlag && (
@@ -1921,7 +1924,11 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.findAddress}
                         </div>
                         <div>
-                            <Form.Item name="addressSearch">
+                            <Form.Item
+                                name="addressSearch"
+                                help={hasErrorParticipantAddress && ValidationConstants.addressRequiredError}
+                                validateStatus={hasErrorParticipantAddress ? "error" : 'validating'}
+                            >
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(registrationObj)}
                                     heading={AppConstants.addressSearch}
@@ -2052,7 +2059,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     participantDetailView = (getFieldDecorator) => {
-        const { hasErrorParticipitant } = this.state;
+        const { hasErrorParticiptantNumber } = this.state;
         const { userRegistrationState, commonReducerState } = this.props;
         const { registrationObj } = userRegistrationState;
         const { genderList, stateList, countryList } = commonReducerState;
@@ -2158,12 +2165,17 @@ class AppRegistrationFormNew extends Component {
                         <InputWithHead heading={AppConstants.contactMobile} required={"required-field"} maxLength={10} />
                         <Form.Item
                             name={AppConstants.contactNO}
-                            rules={[{ required: true, message: ValidationConstants.contactField }]}
-                            help={hasErrorParticipitant && ValidationConstants.mobileLength}
-                            validateStatus={hasErrorParticipitant ? "error" : 'validating'}
+                            help={hasErrorParticiptantNumber && (hasErrorParticiptantNumber == 1 ? ValidationConstants.mobileLength : ValidationConstants.contactField)}
+                            validateStatus={hasErrorParticiptantNumber ? "error" : 'validating'}
                         >
                             {getFieldDecorator(`participantMobileNumber`, {
-                                rules: [{ required: true, message: ValidationConstants.contactField }]
+                                rules: [{
+                                    required: true, message: ValidationConstants.contactField
+                                }, {
+                                    min: 10, message: ValidationConstants.mobileLength
+                                }, {
+                                    max: 10, message: ValidationConstants.mobileLength
+                                }]
                             },
                             )(
                                 <InputWithHead
@@ -2637,7 +2649,7 @@ class AppRegistrationFormNew extends Component {
     }
 
     emergencyContactView = (getFieldDecorator) => {
-        let hasErrorEmergency = this.state.hasErrorEmergency;
+        const { hasErrorEmergencyNumber } = this.state;
         try {
             let { registrationObj } = this.props.userRegistrationState;
             return (
@@ -2682,11 +2694,17 @@ class AppRegistrationFormNew extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <Form.Item
-                                help={hasErrorEmergency && ValidationConstants.mobileLength}
-                                validateStatus={hasErrorEmergency ? "error" : 'validating'}
+                                help={hasErrorEmergencyNumber && (hasErrorEmergencyNumber == 1 ? ValidationConstants.mobileLength : ValidationConstants.pleaseEnterMobileNumber)}
+                                validateStatus={hasErrorEmergencyNumber ? "error" : 'validating'}
                             >
                                 {getFieldDecorator(`emergencyContactNumber`, {
-                                    rules: [{ required: true, message: ValidationConstants.pleaseEnterMobileNumber }],
+                                    rules: [{
+                                        required: true, message: ValidationConstants.pleaseEnterMobileNumber
+                                    }, {
+                                        min: 10, message: ValidationConstants.mobileLength
+                                    }, {
+                                        max: 10, message: ValidationConstants.mobileLength
+                                    }],
                                 })(
                                     <InputWithHead
                                         required={"required-field"}
@@ -4259,7 +4277,6 @@ class AppRegistrationFormNew extends Component {
         const { userRegistrationState } = this.props;
         const { onMembershipLoad, userInfoOnLoad, onParticipantByIdLoad, onSaveLoad } = userRegistrationState;
         const isLoading = (onMembershipLoad || userInfoOnLoad || onParticipantByIdLoad || onSaveLoad);
-
 
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
