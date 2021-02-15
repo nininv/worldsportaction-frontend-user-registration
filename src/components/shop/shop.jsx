@@ -21,7 +21,7 @@ import {
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import ShopCarousel from '../registration/registrationShopCarousel';
+import ShopCarousel from '../registration/shopCarousel';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -278,16 +278,13 @@ class Shop extends Component {
         }
     }
 
-    shopProductColumnView = (item, index) => {console.log('ITEM', item);
+    shopProductColumnView = (item, index) => {
         return (
             <div className="col-md-4">
                 <div>
                     <div className="shop-product-text card-header-text pt-4"
                          style={{height: "240px"}}
                          onClick={(e) => this.enableExpandView("show", item, index)}>
-                        <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
-                            <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
-                        </div>
                         <ShopCarousel item={item}/>
                         <div className="px-4">
                             <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
@@ -312,9 +309,7 @@ class Shop extends Component {
                                 <div className="shop-product-text card-header-text pt-4"
                                      style={{height: "240px"}}
                                      onClick={(e) => this.enableExpandView("show", item, index)}>
-                                    <div style={{display: "flex", justifyContent:"center"}}>
-                                        <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
-                                    </div>
+                                    <ShopCarousel item={item}/>
                                     <div className="px-4">
                                         <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
                                         <div className="subtitle-text-common">{this.renderPrice(item)}</div>
@@ -500,7 +495,9 @@ class Shop extends Component {
     }
 
     yourOrderView = () =>{
+
         const { cart: { cartProducts } } = this.props.shopProductState;
+        console.log('this.props.shopProductState', this.props.shopProductState);
         const total = cartProducts.reduce((sum, item) => sum + item.totalAmt, 0);
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>

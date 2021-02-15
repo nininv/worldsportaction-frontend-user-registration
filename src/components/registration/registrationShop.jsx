@@ -30,7 +30,7 @@ import {getRegistrationByIdAction, deleteRegistrationProductAction,
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
-import ShopCarousel from './registrationShopCarousel';
+import ShopCarousel from './shopCarousel';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
