@@ -139,6 +139,7 @@ class AppRegistrationFormNew extends Component {
             organisations: [],
             postalCode: null,
             hasErrorParticiptantNumber: 0,
+            hasErrorParticipantAddress: false,
             hasErrorParent: [],
             hasErrorEmergencyNumber: 0,
             registrationCapModalVisible: false,
@@ -938,6 +939,7 @@ class AppRegistrationFormNew extends Component {
                 }
                 this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
             }
+            this.setState({ hasErrorParticipantAddress: false });
         }
     };
 
@@ -1517,6 +1519,10 @@ class AppRegistrationFormNew extends Component {
                 await this.props.updateUserRegistrationObjectAction(registrationObj.parentOrGuardian[0]?.email + '.' + registrationObj.firstName, "email");
             }
 
+            if (registrationObj.stateRefId == null && registrationObj.street1 == null && registrationObj.suburb == null) {
+                this.setState({ hasErrorParticipantAddress: true });
+            }
+
             this.props.form.validateFieldsAndScroll(async (err, values) => {
                 if (err) {
                     message.error(AppConstants.pleaseReview)
@@ -1864,6 +1870,8 @@ class AppRegistrationFormNew extends Component {
         const { stateList, countryList } = this.props.commonReducerState;
         let newUser = (registrationObj.userId == -1 || registrationObj.userId == -2 || registrationObj.userId == null) ? true : false;
         let hasAddressForExistingUserFlag = (user?.stateRefId) ? true : false;
+        const { hasErrorParticipantAddress } = this.state;
+
         return (
             <div>
                 {registrationObj.selectAddressFlag && (
@@ -1916,7 +1924,11 @@ class AppRegistrationFormNew extends Component {
                             {AppConstants.findAddress}
                         </div>
                         <div>
-                            <Form.Item name="addressSearch">
+                            <Form.Item
+                                name="addressSearch"
+                                help={hasErrorParticipantAddress && ValidationConstants.addressRequiredError}
+                                validateStatus={hasErrorParticipantAddress ? "error" : 'validating'}
+                            >
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(registrationObj)}
                                     heading={AppConstants.addressSearch}
