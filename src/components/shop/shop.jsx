@@ -21,6 +21,7 @@ import {
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
+import ShopCarousel from '../registration/registrationShopCarousel';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -277,7 +278,7 @@ class Shop extends Component {
         }
     }
 
-    shopProductColumnView = (item, index) => {
+    shopProductColumnView = (item, index) => {console.log('ITEM', item);
         return (
             <div className="col-md-4">
                 <div>
@@ -287,6 +288,7 @@ class Shop extends Component {
                         <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
                             <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
                         </div>
+                        <ShopCarousel item={item}/>
                         <div className="px-4">
                             <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
                             <div className="subtitle-text-common">{this.renderPrice(item)}</div>
