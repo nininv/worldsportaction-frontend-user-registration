@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "./product.css";
+import {isArrayNotEmpty} from "../../util/helpers";
 
 class ShopCarousel extends Component {
     constructor(props) {
@@ -8,8 +9,13 @@ class ShopCarousel extends Component {
     }
 
     render() {
-        const { productImgUrl } = this.props.item;
-
+        const { productImgUrl } = this.props.item; // TODO need change productImgUrl to array
+        let urlArray;
+        if (isArrayNotEmpty(productImgUrl)) {
+            urlArray = [...productImgUrl];
+        } else {
+            urlArray = [productImgUrl];
+        }
         return (
             <div>
                 <Carousel
@@ -18,7 +24,7 @@ class ShopCarousel extends Component {
                     infiniteLoop
                     showArrows
                 >
-                    {productImgUrl.map(
+                    {urlArray.map(
                         (url, index) => {
                             return (
                                 <div className="carousel-div" key={index}>

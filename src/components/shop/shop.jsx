@@ -3,7 +3,8 @@ import {
     Layout,
     Select,
     Button,
-    Form, Modal, InputNumber,
+    Form,
+    InputNumber,
     Pagination
 } from "antd";
 import "../registration/product.css";
@@ -18,10 +19,12 @@ import { isArrayNotEmpty, feeIsNull } from '../../util/helpers';
 import {
     getShopProductsAction, getShopCartAction, getShopOrganisationsAction, saveShopCartAction
 } from '../../store/actions/shopAction/productAction';
+import { getUserModuleRegistrationAction } from '../../store/actions/userAction/userAction';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
 import ShopCarousel from '../registration/shopCarousel';
+import { getUserId } from "../../util/sessionStorage";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -41,7 +44,9 @@ class Shop extends Component {
             variantOptionId: null,
             quantity: null,
             loading: false,
-            shopSelectedRow: -1
+            shopSelectedRow: -1,
+            userId: getUserId(),
+            shopDataLoad: false,
         };
     }
 
@@ -50,6 +55,16 @@ class Shop extends Component {
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions.bind(this));
         this.getApiInfo(shopUniqueKey);
+    }
+
+    componentDidUpdate() {
+        const userState = this.props.userState;
+        const userRegistrationList = userState.userRegistrationList;
+        const { organisations } = this.props.shopProductState;
+        if (userRegistrationList && organisations.length && !this.state.shopDataLoad) {
+            this.getFirstShopProduct();
+            this.setState({ shopDataLoad: true });
+        }
     }
 
     componentWillUnmount() {
@@ -66,10 +81,57 @@ class Shop extends Component {
         }
     }
 
+    getFirstShopProduct = () => {
+        const userState = this.props.userState;
+        const userRegistrationList = userState.userRegistrationList;
+        const myRegistrations = userRegistrationList?.myRegistrations.registrationDetails ? userRegistrationList?.myRegistrations.registrationDetails : [];
+        const childRegistrations = userRegistrationList?.childRegistrations.childRegistrationDetails ? userRegistrationList?.childRegistrations.childRegistrationDetails : [];
+        const userFirstRegistration = myRegistrations[0] || childRegistrations[0];
+        if (userFirstRegistration) {
+            this.setState({ organisationUniqueKey: userFirstRegistration.organisationId });
+            this.getShopProducts( 1, -1,userFirstRegistration.organisationId);
+        } else {
+            this.getShopProducts( 1, -1,-1);
+        }
+    }
+
     getApiInfo = (shopUniqueKey) => {
+        const userState = this.props.userState;
+        const userRegistrationList = userState.userRegistrationList;
+        const { organisations } = this.props.shopProductState;
+        if (!userRegistrationList) {
+            this.getUserRegistrations();
+        } else if(organisations.length) {
+            this.getFirstShopProduct();
+        }
         this.props.getShopOrganisationsAction();
-        this.getShopProducts( 1, -1,-1);
         this.props.getShopCartAction({ shopUniqueKey });
+    }
+
+    getUserRegistrations = () => {
+        const filter = {
+            competitionId: -1,
+            userId: this.state.userId,
+            organisationId: null,
+            yearRefId: -1,
+            myRegPaging: {
+                limit: 10,
+                offset: 0,
+            },
+            otherRegPaging: {
+                limit: 10,
+                offset: 0,
+            },
+            teamRegPaging: {
+                limit: 10,
+                offset: 0,
+            },
+            childRegPaging: {
+                limit: 10,
+                offset: 0,
+            }
+        };
+        this.props.getUserModuleRegistrationAction(filter);
     }
 
     getShopProducts = (page, typeId, organisationUniqueKey) =>{
@@ -557,6 +619,7 @@ class Shop extends Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const { cartLoad, productsLoad, organisationsLoad } = this.props.shopProductState;
+        const { userRegistrationOnLoad } = this.props.userState;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
@@ -572,7 +635,7 @@ class Shop extends Component {
                         noValidate="noValidate"
                     >
                         <Content>
-                            <Loader visible={cartLoad || productsLoad || organisationsLoad} />
+                            <Loader visible={cartLoad || productsLoad || organisationsLoad || userRegistrationOnLoad} />
                             <div>
                                 {this.contentView(getFieldDecorator)}
                             </div>
@@ -591,13 +654,15 @@ function mapDispatchToProps(dispatch)
         getShopProductsAction,
         getShopCartAction,
         getShopOrganisationsAction,
-        saveShopCartAction
+        saveShopCartAction,
+        getUserModuleRegistrationAction
     }, dispatch);
 
 }
 
 function mapStateToProps(state){
     return {
+        userState: state.UserState,
         shopProductState: state.ShopProductState,
     }
 }
