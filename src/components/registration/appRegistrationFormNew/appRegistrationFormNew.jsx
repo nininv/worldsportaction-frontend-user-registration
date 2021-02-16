@@ -183,12 +183,18 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
-    componentDidUpdate(nextProps) {
-        let registrationState = this.props.userRegistrationState;
-        if (!registrationState.onMembershipLoad && this.state.getMembershipLoad) {
+    componentDidUpdate(prevProps, prevState) {
+        const { location, userRegistrationState } = this.props;
+        const { getMembershipLoad } = this.state;
+        const registrationState = userRegistrationState;
+
+        if (!registrationState.onMembershipLoad && getMembershipLoad) {
+            const organisationId = getOrganisationId();
+
+            this.onChangeSetOrganisation(organisationId)
             this.setState({ organisations: registrationState.membershipProductInfo });
-            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
-            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let participantId = location.state ? location.state.participantId : null;
+            let registrationId = location.state ? location.state.registrationId : null;
             this.props.updateUserRegistrationStateVarAction("participantId", participantId);
             this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
             this.setState({ participantId: participantId, registrationId: registrationId });
@@ -201,8 +207,6 @@ class AppRegistrationFormNew extends Component {
                     this.setState({ getParticipantByIdLoad: true })
                 }
             }
-            //Set all competitins of all organisation
-            // this.setAllCompetitions(registrationState.membershipProductInfo);
             this.setState({ getMembershipLoad: false });
         }
 
@@ -262,10 +266,10 @@ class AppRegistrationFormNew extends Component {
         }
 
         if (registrationState.expiredRegistrationFlag) {
-            if (getOrganisationId() && getCompetitonId()) {
+            if (getOrganisationId() && getOrganisationId()) {
                 let payload = {
                     organisationId: getOrganisationId(),
-                    competitionId: getCompetitonId()
+                    competitionId: getOrganisationId()
                 }
                 this.props.registrationExpiryCheckAction(payload);
             }
@@ -1402,17 +1406,37 @@ class AppRegistrationFormNew extends Component {
 
     stepNavigation = (registrationObj, expiredRegistration) => {
         try {
-            let nextStep = this.state.currentStep + 1;
+            const { competitionId, currentStep, allCompetitionsByOrgId, competitionInfo } = this.state;
+            const nextStep = currentStep + 1;
+
             this.scrollToTop();
-            if (nextStep == 1) {
-                if (registrationObj.competitions?.length == 0 &&
-                    expiredRegistration == null) {
+            if (nextStep === 1) {
+                const competitionUniqueKey = getCompetitonId();
+                const isCompetitionListEmpty =
+                    registrationObj.competitions?.length === 0;
+                const isRegistrationExpired = expiredRegistration == null;
+                const isShowAnotherCompetitions =
+                    isCompetitionListEmpty &&
+                    isRegistrationExpired &&
+                    !competitionId;
+
+                if (isShowAnotherCompetitions) {
                     this.setState({ showAddAnotherCompetitionView: true });
+                }
+
+                if (allCompetitionsByOrgId.length && !competitionInfo) {
+                    const currentCompetition = allCompetitionsByOrgId.find(c => {
+                        return c.competitionUniqueKey === competitionUniqueKey
+                    });
+
+                    if (currentCompetition) {
+                        this.addAnotherCompetition(currentCompetition)
+                    }
                 }
                 this.state.enabledSteps.push(0, nextStep);
             } else {
                 this.state.enabledSteps.push(nextStep);
-                if (nextStep == 2) {
+                if (nextStep === 2) {
                     setTimeout(() => {
                         this.setParticipantAdditionalInfoStepFormFields();
                     }, 300);
