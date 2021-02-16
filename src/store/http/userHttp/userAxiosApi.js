@@ -142,20 +142,15 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
 
-  sendAuthenticationCodeType(payload) {
-    const url = `api/user/existing-auth-code`;
-    return Method.dataPost(url, token, payload);
-  },
-
-  sendDigitCode(payload) {
-    const url = `api/user/existing-digit-code`;
+  requestDigitCode(payload) {
+    const url = `api/user/request-digit-code`;
     return Method.dataPost(url, token, payload);
   },
   checkDigitCode(payload) {
     const url = `api/user/check-existing-digit-code`;
     return Method.dataPost(url, token, payload);
   },
-  sendConfirmDetails(payload) {
+  confirmDetails(payload) {
     const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
   },
@@ -167,13 +162,15 @@ let userHttpApi = {
   findPossibleMerge(payload) {
     return Method.dataPost('userMerge/find', token, payload);
   },
-  async getUserParentData() {
-    let userId = await getUserId()
+  async getUserParentData(userId) {
+    if (!userId) {
+      userId = await getUserId()
+    }
     if (userId != 0) {
       var url = `api/parents?userId=${userId}`;
       return Method.dataGet(url, token)
     }
-  },
+  }
 }
 
 let Method = {

@@ -1,1 +1,1 @@
-export { default } from './appRegistrationFormNew';
+export { default } from "./appRegistrationFormNew";

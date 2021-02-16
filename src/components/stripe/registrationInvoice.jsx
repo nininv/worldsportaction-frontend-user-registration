@@ -11,6 +11,7 @@ import {
     onChangeCharityAction,
     saveInvoiceAction,
     getInvoiceStatusAction,
+    getShopInvoice,
 } from "../../store/actions/stripeAction/stripeAction"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -43,24 +44,22 @@ class RegistrationInvoice extends Component {
 
     componentDidMount() {
         let paymentSuccess = this.props.location.state ? this.props.location.state.paymentSuccess : false
-       // console.log("paymentSuccess" + paymentSuccess)
         this.setState({ invoiceDisabled: paymentSuccess })
         this.getInvoiceStatusAPI()
-
-
     }
 
     getInvoiceStatusAPI = () => {
-       // console.log("this.props.location.state.registrationId" + this.props.location.state.registrationId);
-       let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-       let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
-       let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
-       let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-    //    let registrationId = null;
-    //    let userRegId = "53673c37-7729-49f4-ba31-ba3a231a4e03";
-    //    let invoiceId = null;
-       this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId, teamMemberRegId);
-        //this.props.getInvoiceStatusAction('05c59bfc-9438-42e6-8917-4a60ed949281')
+        let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+        let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
+        let userRegId = this.props.location.state ? this.props.location.state.registrationId : null;
+        let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+
+        if (shopUniqueKey) {
+            this.props.getShopInvoice(shopUniqueKey, invoiceId);
+        } else {
+            this.props.getInvoiceStatusAction(registrationId, userRegId, invoiceId, teamMemberRegId);
+        }
         this.setState({ checkStatusLoad: true });
     }
 
@@ -75,7 +74,7 @@ class RegistrationInvoice extends Component {
                 })
             }
         }
-        if (stripeState.onLoad == false && this.state.checkStatusLoad === true) {
+        if (stripeState.onLoad == false && this.state.checkStatusLoad === true && !this.props.stripeState.invoiceData) {
             this.setState({ checkStatusLoad: false });
            // let invoiceId = this.props.stripeState.invoiceId
             let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
@@ -164,7 +163,7 @@ class RegistrationInvoice extends Component {
                             <div className="schoolInvoiceTxt">{msg}</div>
                         </div>
                         {/* <InputWithHead
-                            heading={"Receipt No.1234497"} 
+                            heading={"Receipt No.1234497"}
                         /> */}
                         {userDetail && userDetail.firstName &&
                             <Descriptions >
@@ -233,9 +232,9 @@ class RegistrationInvoice extends Component {
     membershipProductView = (membershipDetail, membershipProductName, mTypeName) => {
         let mOrganisationName = membershipDetail!= null ? membershipDetail.name : '';
         membershipProductName = membershipProductName!= null ? membershipProductName : '';
-        let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ? 
+        let childDiscountsToDeduct = membershipDetail.childDiscountsToDeduct!= null ?
                                         membershipDetail.childDiscountsToDeduct : 0;
-        let governmentVoucherAmount = membershipDetail.governmentVoucherAmount!= null ? 
+        let governmentVoucherAmount = membershipDetail.governmentVoucherAmount!= null ?
                                 membershipDetail.governmentVoucherAmount : 0;
 
         return (
@@ -264,7 +263,7 @@ class RegistrationInvoice extends Component {
                             </div>
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
-                                    heading={'$' + (parseFloat((membershipDetail.discountsToDeduct).toFixed(2)) 
+                                    heading={'$' + (parseFloat((membershipDetail.discountsToDeduct).toFixed(2))
                                         + parseFloat((childDiscountsToDeduct).toFixed(2))).toFixed(2)}
                                     required={"input-align-right"}
                                 />
@@ -297,9 +296,9 @@ class RegistrationInvoice extends Component {
     }
 
     competitionOrganiserView = (competitionDetails) => {
-        let childDiscountsToDeduct = competitionDetails.childDiscountsToDeduct!= null ? 
+        let childDiscountsToDeduct = competitionDetails.childDiscountsToDeduct!= null ?
                                 competitionDetails.childDiscountsToDeduct : 0;
-        let governmentVoucherAmount = competitionDetails.governmentVoucherAmount!= null ? 
+        let governmentVoucherAmount = competitionDetails.governmentVoucherAmount!= null ?
                                 competitionDetails.governmentVoucherAmount : 0;
         return (
             <div className="row" >
@@ -361,10 +360,10 @@ class RegistrationInvoice extends Component {
     }
 
     nominationCompOrgView = (competitionDetails) => {
-        let nominationGVAmount = competitionDetails.nominationGVAmount!= null ? 
+        let nominationGVAmount = competitionDetails.nominationGVAmount!= null ?
         competitionDetails.nominationGVAmount : 0;
         let nomDiscountsToDeduct = competitionDetails.nomDiscountsToDeduct ? competitionDetails.nomDiscountsToDeduct : 0;
-        let childDiscountsToDeduct = competitionDetails.nomChildDiscountsToDeduct!= null ? 
+        let childDiscountsToDeduct = competitionDetails.nomChildDiscountsToDeduct!= null ?
                 competitionDetails.nomChildDiscountsToDeduct : 0;
         return (
             <div className="row" >
@@ -424,9 +423,9 @@ class RegistrationInvoice extends Component {
     }
 
     competitionAffiliateView = (affiliateDetail) => {
-        let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ? 
+        let childDiscountsToDeduct = affiliateDetail.childDiscountsToDeduct!= null ?
                         affiliateDetail.childDiscountsToDeduct : 0;
-        let governmentVoucherAmount = affiliateDetail.governmentVoucherAmount!= null ? 
+        let governmentVoucherAmount = affiliateDetail.governmentVoucherAmount!= null ?
                                     affiliateDetail.governmentVoucherAmount : 0;
         return (
             <div className="row" >
@@ -497,10 +496,10 @@ class RegistrationInvoice extends Component {
     }
 
     nominationAffiliateView = (affiliateDetail) => {
-        let nominationGVAmount = affiliateDetail.nominationGVAmount!= null ? 
+        let nominationGVAmount = affiliateDetail.nominationGVAmount!= null ?
         affiliateDetail.nominationGVAmount : 0;
         let nomDiscountsToDeduct = affiliateDetail.nomDiscountsToDeduct ? affiliateDetail.nomDiscountsToDeduct : 0;
-        let childDiscountsToDeduct = affiliateDetail.nomChildDiscountsToDeduct!= null ? 
+        let childDiscountsToDeduct = affiliateDetail.nomChildDiscountsToDeduct!= null ?
                     affiliateDetail.nomChildDiscountsToDeduct : 0;
         return (
             <div className="row" >
@@ -557,7 +556,7 @@ class RegistrationInvoice extends Component {
                                 {affiliateDetail &&
                                     < InputWithHead
                                         required="invoice"
-                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2)) 
+                                        heading={'$' + (parseFloat((affiliateDetail.nominationFeeToPay).toFixed(2)) + parseFloat((affiliateDetail.nominationGSTToPay).toFixed(2)) - (parseFloat((nominationGVAmount).toFixed(2)) + parseFloat((nomDiscountsToDeduct).toFixed(2))
                                                     +  parseFloat((childDiscountsToDeduct).toFixed(2)))).toFixed(2)}
                                     />}
                             </div>
@@ -574,7 +573,9 @@ class RegistrationInvoice extends Component {
     contentView = (result) => {
         const { tShirtSizeList } = this.props.commonReducerState;
         let {invoiceData} = this.props.stripeState;
-        let data = invoiceData!= null ? invoiceData.compParticipants : []
+        let data = invoiceData!= null ? invoiceData.compParticipants : [];
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+
         return (
             <div className="content-view pt-0 pb-0">
                 <div className="invoice-row-view" >
@@ -604,12 +605,14 @@ class RegistrationInvoice extends Component {
                                     required={"input-align-right"}
                                 />
                             </div>
-                            <div className="col-sm invoice-description" >
-                                <InputWithHead
-                                    heading={"Government Voucher"}
-                                    required={"input-align-right"}
-                                />
-                            </div>
+                            {!shopUniqueKey &&
+                                <div className="col-sm invoice-description" >
+                                    <InputWithHead
+                                        heading={"Government Voucher"}
+                                        required={"input-align-right"}
+                                    />
+                                </div>
+                            }
                             <div className="col-sm invoice-description" >
                                 <InputWithHead
                                     heading={"GST"}
@@ -638,8 +641,8 @@ class RegistrationInvoice extends Component {
                                  let competitionDetails = mem && mem.fees.competitionOrganisorFee;
                                  let membershipDetail = mem && mem.fees.membershipFee;
                                  let affiliateDetail = mem && mem.fees.affiliateFee;
-                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) - 
-                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0) - 
+                                 let totalAmount = mem && (Number(mem.feesToPay) - Number(mem.discountsToDeduct) -
+                                 Number(mem.childDiscountsToDeduct!= null ? mem.childDiscountsToDeduct : 0) -
                                  Number(mem.governmentVoucherAmount!= null ? mem.governmentVoucherAmount : 0));
                                  let mTypeName = mem && mem.membershipTypeName!= null ?  mem.membershipTypeName : '';
                                  let typeName = mTypeName;
@@ -690,7 +693,7 @@ class RegistrationInvoice extends Component {
                                             this.nominationAffiliateView(affiliateDetail)
                                         }
 
-                                        {competitionDetails && 
+                                        {competitionDetails &&
                                             this.competitionOrganiserView(competitionDetails)
                                         }
                                          {competitionDetails && competitionDetails.nominationFeeToPay > 0 &&
@@ -699,8 +702,8 @@ class RegistrationInvoice extends Component {
 
                                         {membershipDetail != null &&
                                             this.membershipProductView(membershipDetail, mProductName, mTypeName)
-                                        }        
-            
+                                        }
+
                                         <div className="d-flex row d-flex justify-content-end" >
                                             <div className="col-sm " />
                                             <div className="col-sm pl-0 pr-0 d-flex justify-content-end p-0">
@@ -714,14 +717,14 @@ class RegistrationInvoice extends Component {
                                                         required="invoice"
                                                         heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "$0.00"}
                                                     />
-                                                </div> 
+                                                </div>
                                             </div>
                                             {data.length - 1 !== participantIndex &&
                                                 < Divider className="mt-0 mb-0" />
-            
+
                                             }
                                         </div>
-            
+
                                     </div>
                                  )
                             })
@@ -742,6 +745,7 @@ class RegistrationInvoice extends Component {
         let total = invoiceData!= null ? invoiceData.total: null;
         let paymentType = this.props.location.state ? this.props.location.state.paymentType : null;
         let userDetail = invoiceData != null ? invoiceData.billTo: null;
+
         return (
             <div className="content-view">
                 <div className="drop-reverse" >
@@ -763,7 +767,7 @@ class RegistrationInvoice extends Component {
                             <div className="col-sm invoice-right-column pr-0">
                             <InputWithHead
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total && total != null ? '$' + total.subTotal : '$0.00'}
+                                heading={total ? '$' + Number(total.subTotal).toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
@@ -778,25 +782,29 @@ class RegistrationInvoice extends Component {
                             <InputWithHead
                                 required={"pt-0"}
                                 style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total && total != null ? '$' + total.gst : '$0.00'}
+                                heading={total ? '$' + Number(total.gst).toFixed(2) : '$0.00'}
                             />
                             </div>
                         </div>
-                        <div className="col-sm d-flex justify-content-end p-0">
-                            <div className="col-8 pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
-                                <InputWithHead
-                                    required={"pt-0"}
-                                    heading={"Charity"}
-                                />
+                        {
+                            total && total.charityValue &&
+                            <div className="col-sm d-flex justify-content-end p-0">
+                                <div className="col-8 pr-0" style={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <InputWithHead
+                                        required={"pt-0"}
+                                        heading={"Charity"}
+                                    />
+                                </div>
+
+                                    <div className="col-sm invoice-right-column pr-0">
+                                        <InputWithHead
+                                            required={"pt-0"}
+                                            style={{ display: "flex", justifyContent: 'flex-start' }}
+                                            heading={total ?  '$' + Number(total.charityValue).toFixed(2) : '$0.00'}
+                                        />
+                                    </div>
                             </div>
-                            <div className="col-sm invoice-right-column pr-0">
-                            <InputWithHead
-                                required={"pt-0"}
-                                style={{ display: "flex", justifyContent: 'flex-start' }}
-                                heading={total && total != null ?  '$' + total.charityValue : '$0.00'}
-                            />
-                            </div>
-                        </div>
+                        }
                         <div className="col-sm d-flex justify-content-end p-0">
                             <div className="invoice-amount-border col-8 px-0 d-flex justify-content-end">
                                 <InputWithHead
@@ -808,7 +816,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ?  '$' + total.total : '$0.00')}
+                                    heading={(total ?  '$' + Number(total.total).toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -823,7 +831,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ? '$' + total.transactionFee : '$0.00')}
+                                    heading={(total ? '$' + Number(total.transactionFee).toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -838,7 +846,7 @@ class RegistrationInvoice extends Component {
                                 <InputWithHead
                                     required={"pt-3"}
                                     style={{ display: "flex", justifyContent: 'flex-start' }}
-                                    heading={(total && total != null ? '$' +total.targetValue : '$0.00')}
+                                    heading={(total ? '$' + Number(total.targetValue).toFixed(2) : '$0.00')}
                                 />
                             </div>
                         </div>
@@ -847,7 +855,7 @@ class RegistrationInvoice extends Component {
                 <div className="row">
                     <div className="col-sm pt-5 px-0 d-flex invoiceImage">
                         <label className="d-flex align-items-center">
-                            {userDetail && userDetail.state != "New South Wales" && 
+                            {userDetail && userDetail.state != "New South Wales" &&
                             <img
                                 src={AppImages.netballImages}
                                 name={'image'}
@@ -874,6 +882,26 @@ class RegistrationInvoice extends Component {
         )
     }
 
+    getShopProductDescription = (product) => {
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+        let result;
+        if (shopUniqueKey) {
+            let instruction = '';
+            let address = '';
+            if (product.deliveryType === AppConstants.deliveryTypePickup) {
+                instruction = `${product.pickupInstruction ? ' - ' + AppConstants.pickupInstruction + ' - ' + product.pickupInstruction + ',' : ''}`;
+                address = `${AppConstants.address} - ${product.address}, ${product.suburb}, ${product.postcode}, ${product.state}`;
+                result = `${AppConstants.pickupDescription}, ${instruction} ${address}`
+            } else {
+                address = `${AppConstants.address} - ${product.address}, ${product.suburb}, ${product.postcode}, ${product.state}`;
+                result = `${AppConstants.shippingDescription}, ${address}`
+            }
+        } else {
+            result = 'Shop Product Fees';
+        }
+        return `${product.organisationName} - ${product.productName} ${product.variantName ? '- ' + product.variantName : ''}${product.optionName ? '('+ product.optionName+')' : ''} - ` + result;
+    }
+
     shopView = () => {
         let {invoiceData} = this.props.stripeState;
         let shopProducts = invoiceData!= null ? invoiceData.shopProducts : []
@@ -881,14 +909,15 @@ class RegistrationInvoice extends Component {
         (shopProducts || []).map((x) =>{
             totalAmount += x.totalAmt;
         })
+
         return(
             <div>
                 {(shopProducts || []).map((item, index) =>(
-                    <div className="row" >
+                    <div className="row" key={index}>
                     <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                         {item.productName &&
                             <InputWithHead
-                                heading={item.organisationName + " - " + item.productName + " - " + item.variantName +'('+ item.optionName+')' + " - Shop Product Fees"}
+                                heading={this.getShopProductDescription(item)}
                                 required="pr-3 justify-content-start"
                             />
                         }
@@ -897,14 +926,14 @@ class RegistrationInvoice extends Component {
                         <div>
                             <div className="row flex-nowrap">
                                 <div className="col-sm invoice-description" >
-                                    <InputWithHead 
+                                    <InputWithHead
                                         heading={(Number(item.quantity)).toFixed(2)}
                                         required={"input-align-right"}
                                     />
                                 </div>
                                 <div className="col-sm invoice-description" >
                                     <InputWithHead
-                                        heading={'$' + (Number(item.amount)).toFixed(2)}
+                                        heading={'$' + (Number(item.amount) / Number(item.quantity)).toFixed(2)}
                                         required={"input-align-right"}
                                     />
                                 </div>
@@ -947,7 +976,7 @@ class RegistrationInvoice extends Component {
                                     required="invoice"
                                     heading={totalAmount ? "$" + (totalAmount).toFixed(2) : "N/A"}
                                 />
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 )}
@@ -981,15 +1010,24 @@ class RegistrationInvoice extends Component {
 
     thankYouRegisteringView = () => {
         let userId = getUserId();
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+
         return(
             <div className="thank-you-registering-view">
                 <div>
-                    <div className="thank-you-registering-view-title">{AppConstants.thankYouRegistering}</div>
-                    {userId != 0 ? (
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmExistingUserMessage}</div>
-                    ) : (
-                        <div className="thank-you-registering-view-content">{AppConstants.emailConfirmNewUserMessage}</div>
-                    )}
+                    <div className="thank-you-registering-view-title">
+                        {shopUniqueKey ? AppConstants.thankYouPurchasing : AppConstants.thankYouRegistering}
+                    </div>
+                    <div className="thank-you-registering-view-content">
+                        {
+                            shopUniqueKey ? AppConstants.emailConfirmShopMessage
+                                :
+                                userId != 0 ?
+                                    AppConstants.emailConfirmExistingUserMessage
+                                    :
+                                    AppConstants.emailConfirmNewUserMessage
+                        }
+                    </div>
                 </div>
                 {userId != 0 ? (
                     <div className="btn-text-common pointer" style={{marginLeft: "auto", marginRight: 0, minWidth: 85 }} onClick={() => this.gotoUserPage(userId)}>{AppConstants.yourProfile}</div>
@@ -1001,8 +1039,9 @@ class RegistrationInvoice extends Component {
     }
 
     render() {
-        let result = this.props.stripeState.getInvoicedata
-        console.log("result", result)
+        let result = this.props.stripeState.getInvoicedata;
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }} >
                 <DashboardLayout
@@ -1016,7 +1055,7 @@ class RegistrationInvoice extends Component {
                         <div className="formView mb-4" style={{ width: "100%" }}>
                             <div>{this.thankYouRegisteringView()}</div>
                             <PdfContainer createPdf={this.createPdf} showPdfButton={this.state.invoiceDisabled}>
-                                {this.topView(result)}
+                                {!shopUniqueKey && this.topView(result)}
                                 {this.contentView(result)}
                                 {this.totalInvoiceView(result)}
                             </PdfContainer>
@@ -1037,7 +1076,8 @@ function mapDispatchToProps(dispatch) {
         onChangeCharityAction,
         saveInvoiceAction,
         getInvoiceStatusAction,
-        netSetGoTshirtSizeAction
+        netSetGoTshirtSizeAction,
+        getShopInvoice
     }, dispatch)
 }
 

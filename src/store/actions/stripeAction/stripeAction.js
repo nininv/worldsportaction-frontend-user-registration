@@ -1,6 +1,16 @@
 import ApiConstants from "../../../themes/apiConstants";
 
-/////get invoice 
+/////get invoice for new shop
+function getShopInvoice(shopUniqueKey, invoiceId) {
+    const action = {
+        type: ApiConstants.API_GET_SHOP_INVOICE_LOAD,
+        shopUniqueKey,
+        invoiceId
+    };
+    return action;
+}
+
+/////get invoice
 function getInvoice(registrationid, userRegId, invoiceId, teamMemberRegId) {
     const action = {
         type: ApiConstants.API_GET_INVOICE_LOAD,
@@ -68,4 +78,5 @@ export {
     getInvoiceStatusAction,
     saveStripeAccountAction,
     getStripeLoginLinkAction,
+    getShopInvoice,
 }

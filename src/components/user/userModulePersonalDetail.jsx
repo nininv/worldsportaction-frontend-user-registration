@@ -22,6 +22,7 @@ import {
     getUserModuleTeamMembersAction,
     teamMemberUpdateAction,
     getUserOrganisationAction,
+    cancelDeRegistrationAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -154,6 +155,16 @@ const columns = [
                         {e.expiryDate === "Single Game" && (compEndDate >= currentDate) && (
                             <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
                                 <span>Purchase Single Game(s)</span>
+                            </Menu.Item>
+                        )}
+                        {e.alreadyDeRegistered == 0 && e.paymentStatusFlag == 1 && (
+                            <Menu.Item key="3" onClick={() => history.push("/deregistration", { regData: e, personal: this_Obj.props.userState.personalData })}>
+                                <span>{AppConstants.registrationChange}</span>
+                            </Menu.Item>
+                        )}
+                        {(e.paymentStatus == "Pending De-registration" || e.paymentStatus == "Pending Transfer") && (
+                            <Menu.Item key="4" onClick={() => this_Obj.cancelDeRegistrtaion(e.deRegisterId)}>
+                                <span>{e.paymentStatus == "Pending De-registration" ? AppConstants.cancelDeRegistrtaion : AppConstants.cancelTransferReg}</span>
                             </Menu.Item>
                         )}
                         {/* {e.teamId &&
@@ -1128,6 +1139,8 @@ class UserModulePersonalDetail extends Component {
 
         this.checkWidth();
         window.addEventListener('resize', this.checkWidth);
+        const { tabKey, competition, userId, yearRefId } = this.state;
+        this.tabApiCalls(tabKey, competition, userId, yearRefId);
     }
 
     componentWillUnmount() {
@@ -1230,6 +1243,17 @@ class UserModulePersonalDetail extends Component {
             this.props.getUserModuleTeamMembersAction(payload);
             this.setState({ removeTeamMemberLoad: false });
         }
+
+        if(this.props.userState.cancelDeRegistrationLoad == false && this.state.cancelDeRegistrationLoad == true){
+            this.handleRegistrationTableList(
+                1, 
+                this.state.userId,
+                this.state.competition,
+                this.state.yearRefId,
+                "myRegistrations"
+                );
+            this.setState({cancelDeRegistrationLoad: false})
+        }
     }
 
     apiCalls = async (userId) => {
@@ -1243,6 +1267,18 @@ class UserModulePersonalDetail extends Component {
         await this.props.getUserModulePersonalByCompetitionAction(payload)
         await this.props.getUserRole(userId)
     };
+
+    cancelDeRegistrtaion = (deRegisterId) => {
+        try{
+            let payload = {
+                deRegisterId: deRegisterId
+            }
+            this.props.cancelDeRegistrationAction(payload);
+            this.setState({cancelDeRegistrationLoad: true})
+        } catch(ex) {
+            console.log("Error in cancelDeRegistrtaion::" +ex)
+        }
+    }
 
     goToSigleGamePayment = (record) => {
         const { personalData } = this.props.userState;
@@ -2488,12 +2524,15 @@ class UserModulePersonalDetail extends Component {
                                         })}>
                                             <span>{AppConstants.editProfile}</span>
                                         </Menu.Item>
+                                        <Menu.Item onClick={() => history.push("/shop")}>
+                                            <span>{AppConstants.shop}</span>
+                                        </Menu.Item>
                                         <Menu.Item onClick={() => this.navigateTo("/appRegistrationForm")} >
                                             <span>{AppConstants.register}</span>
                                         </Menu.Item>
-                                        <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
+                                        {/* <Menu.Item onClick={() => history.push("/deRegistration", { userId: this.state.userId, regChangeTypeRefId: 1 })} >
                                             <span>{AppConstants.deRegistration}</span>
-                                        </Menu.Item>
+                                        </Menu.Item> */}
                                         {stripeConnectId ?
                                             userRole && <Menu.Item
                                                 onClick={() => this.stripeDashboardLoginUrl()}
@@ -2966,6 +3005,7 @@ function mapDispatchToProps(dispatch) {
         getUserModuleTeamMembersAction,
         teamMemberUpdateAction,
         getUserOrganisationAction,
+        cancelDeRegistrationAction
     }, dispatch);
 }
 

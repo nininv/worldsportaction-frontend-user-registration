@@ -18,7 +18,19 @@ const initialState = {
     onLoad: false,
     error: null,
     result: null,
+    cartLoad: false,
+    productsLoad: false,
+    organisationsLoad: false,
     status: 0,
+    products: [],
+    productsPage: 1,
+    productsTotalCount: 1,
+    cart: {
+        cartProducts: [],
+        securePaymentOptions: []
+    },
+    organisations: [],
+    types: [],
     productListingData: [],
     productListingTotalCount: 1,
     productListingCurrentPage: 1,
@@ -46,8 +58,75 @@ function shopProductState(state = initialState, action) {
                 status: action.status
             };
 
+        case ApiConstants.API_GET_SHOP_PRODUCTS_LOAD:
+            return {
+                ...state,
+                productsLoad: true,
+            };
 
-        /////////product listing get API 
+        case ApiConstants.API_GET_SHOP_PRODUCTS_SUCCESS:
+            const { products, page, types } = action.result;
+            return {
+                ...state,
+                productsLoad: false,
+                products,
+                productsPage: page,
+                productsTotalCount: page.totalCount,
+                types,
+            };
+
+
+        case ApiConstants.API_GET_SHOP_PRODUCTS_ERROR:
+            return {
+                ...state,
+                error: action.error,
+                productsLoad: false,
+            };
+
+        case ApiConstants.API_GET_SHOP_ORGANISATIONS_LOAD:
+            return {
+                ...state,
+                organisationsLoad: true,
+            };
+
+        case ApiConstants.API_GET_SHOP_ORGANISATIONS_SUCCESS:
+            return {
+                ...state,
+                organisationsLoad: false,
+                organisations: action.result,
+            };
+
+        case ApiConstants.API_GET_SHOP_ORGANISATIONS_ERROR:
+            return {
+                ...state,
+                organisationsLoad: false,
+                error: action.error,
+            };
+
+        case ApiConstants.API_GET_SHOP_CART_LOAD:
+        case ApiConstants.API_SAVE_SHOP_CART_LOAD:
+            return {
+                ...state,
+                cartLoad: true,
+            };
+
+        case ApiConstants.API_GET_SHOP_CART_SUCCESS:
+        case ApiConstants.API_SAVE_SHOP_CART_SUCCESS:
+            return {
+                ...state,
+                cart: action.result,
+                cartLoad: false,
+            };
+
+        case ApiConstants.API_GET_SHOP_CART_ERROR:
+        case ApiConstants.API_SAVE_SHOP_CART_ERROR:
+            return {
+                ...state,
+                cartLoad: false,
+                error: action.error,
+            };
+
+        /////////product listing get API
         case ApiConstants.API_GET_SHOP_PRODUCT_LISTING_LOAD:
             return { ...state, onLoad: true, error: null };
 

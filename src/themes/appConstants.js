@@ -425,6 +425,7 @@ const AppConstants = {
   username: "Username/Email",
   products: "Products",
   productDetails: "Product Details",
+  notProductByOrganisation: "There are no products for this organisation",
   playingMember: "Playing Member",
   nonPlayingMember: "Non Playing Member",
   Umpire_Referee: "Umpire/Referee",
@@ -1094,6 +1095,10 @@ const AppConstants = {
   selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
   addNewDetails: "Add new Details",
   pickupAddress: "Pickup Address",
+  deliveryTypePickup: 'pickup',
+  deliveryTypeShipping: 'shipping',
+  pickupDescription: 'Pick-up',
+  shippingDescription: 'Delivery',
   qty: "Qty",
   securePaymentMsg: "There is no payment required",
   submitButtonPressDescription: "You must press SUBMIT to complete your Registration.",
@@ -1168,8 +1173,10 @@ const AppConstants = {
   registeringTeamTo: "Membership Product you are registering Team to",
   registeringIndividualTo: "Membership Product you are registering Individual to",
   thankYouRegistering: "Thank you for registering!",
+  thankYouPurchasing: "Thank you for purchasing!",
   emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
   emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
+  emailConfirmShopMessage: "Please save this page for your reference.",
   successProfileUpdateMessage: "You have successfully updated your profile for this Registration.",
   exit: "Exit",
   profile: "Profile",
@@ -1214,6 +1221,8 @@ const AppConstants = {
   enterXDigitCode: "Enter {{number}} digit code",
   confirmDetails: "Please enter the complete {{detail}}",
   declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record.",
+  successCheckDigitCode: "Your user was matched successfully.",
+  declineCheckDigitCode: "You entered wrong code.",
 
   possibleMatches: 'Possible Matches',
   possibleMatchesDescription: 'Select the user you want to merge with and press Next',
@@ -1253,13 +1262,18 @@ const AppConstants = {
   addToTeam: "Add to Team",
   removeFromTeamPopUpMsg: "Do you want to remove this user from the team?",
   noPickupMessage:"There is no pick up or delivery applicable to this product.",
-
+  incorrectContactDetails: "You have entered incorrect contact details.",
   sameEmailAsChild: "This email address has already been used for your child’s profile. Please navigate back to the profile, and add yourself as the parent.",
   parentDetails: "Parent details",
   unavailable: "unavailable",
   doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
   warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process.",
-  cardValidationMsg: "Going forward this card will default as your payment for all future payments"
+  cardValidationMsg: "Going forward this card will default as your payment for all future payments",
+
+  cancelDeRegistrtaion: "Cancel De-registration",
+  cancelTransferReg: "Cancel Transfer registration",
+
+  userName: "Username"
 };
 
 export default AppConstants;

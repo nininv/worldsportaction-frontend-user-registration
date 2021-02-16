@@ -216,6 +216,12 @@ function getUserParentDataAction(data) {
     data,
   }
 }
+function cancelDeRegistrationAction(payload) {
+  return {
+      type: ApiConstants.API_CANCEL_DEREGISTRATION_LOAD,
+      payload,
+  };
+}
 
 export {
   getRoleAction,
@@ -246,6 +252,7 @@ export {
   getTeamMembersReviewAction,
   teamMemberUpdateAction,
   getUserParentDataAction,
-  getUsersByRoleAction
+  getUsersByRoleAction,
+  cancelDeRegistrationAction
 }
 

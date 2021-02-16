@@ -1,72 +1,75 @@
 {
-  "name": "netball",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@progress/kendo-drawing": "^1.9.3",
-    "@progress/kendo-react-pdf": "^3.18.0",
-    "@stripe/react-stripe-js": "^1.1.2",
-    "@stripe/stripe-js": "^1.11.0",
-    "antd": "^3.26.20",
-    "axios": "^0.19.0",
-    "base-64": "^0.1.0",
-    "bootstrap": "^4.5.3",
-    "chart.js": "^2.9.4",
-    "core-js": "^3.7.0",
-    "currency-formatter": "^1.5.6",
-    "draft-js": "^0.11.7",
-    "formik": "^2.2.5",
-    "jquery": "^3.5.1",
-    "jquery-ui-dist": "^1.12.1",
-    "jsonwebtoken": "^8.5.1",
-    "loadjs": "^4.2.0",
-    "md5": "^2.3.0",
-    "moment": "^2.29.1",
-    "node-modules": "^1.0.1",
-    "query-string": "^4.3.4",
-    "rc-tabs": "^11.7.3",
-    "react": "^16.14.0",
-    "react-beautiful-dnd": "^13.0.0",
-    "react-cool-onclickoutside": "^1.5.8",
-    "react-csv-reader": "^2.0.2",
-    "react-dom": "^16.14.0",
-    "react-draft-wysiwyg": "^1.14.5",
-    "react-player": "^1.15.3",
-    "react-png-tooltip": "^1.2.0",
-    "react-redux": "^7.2.2",
-    "react-responsive-carousel": "^3.2.10",
-    "react-router-dom": "^5.2.0",
-    "react-schedule-selector": "^3.0.0",
-    "react-scripts": "3.2.0",
-    "redux": "^4.0.5",
-    "redux-saga": "^1.1.3",
-    "redux-thunk": "^2.3.0",
-    "styled-components": "^5.2.1",
-    "use-places-autocomplete": "^1.6.0",
-    "yup": "^0.27.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "prop-types": "^15.7.2"
-  }
+    "name": "netball",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "lint": "eslint --fix ./src/**.*.{js,jsx}"
+    },
+    "dependencies": {
+        "@progress/kendo-drawing": "^1.9.3",
+        "@progress/kendo-react-pdf": "^3.18.0",
+        "@stripe/react-stripe-js": "^1.1.2",
+        "@stripe/stripe-js": "^1.11.0",
+        "antd": "^3.26.20",
+        "axios": "^0.19.0",
+        "base-64": "^0.1.0",
+        "bootstrap": "^4.5.3",
+        "chart.js": "^2.9.4",
+        "core-js": "^3.7.0",
+        "currency-formatter": "^1.5.6",
+        "draft-js": "^0.11.7",
+        "formik": "^2.2.5",
+        "jquery": "^3.5.1",
+        "jquery-ui-dist": "^1.12.1",
+        "jsonwebtoken": "^8.5.1",
+        "loadjs": "^4.2.0",
+        "md5": "^2.3.0",
+        "moment": "^2.29.1",
+        "node-modules": "^1.0.1",
+        "rc-tabs": "^11.7.3",
+        "react": "^16.14.0",
+        "react-beautiful-dnd": "^13.0.0",
+        "react-cool-onclickoutside": "^1.5.8",
+        "react-csv-reader": "^2.0.2",
+        "react-dom": "^16.14.0",
+        "react-draft-wysiwyg": "^1.14.5",
+        "react-player": "^1.15.3",
+        "react-png-tooltip": "^1.2.0",
+        "react-redux": "^7.2.2",
+        "react-responsive-carousel": "^3.2.10",
+        "react-router-dom": "^5.2.0",
+        "react-schedule-selector": "^3.0.0",
+        "react-scripts": "3.2.0",
+        "redux": "^4.0.5",
+        "redux-saga": "^1.1.3",
+        "redux-thunk": "^2.3.0",
+        "styled-components": "^5.2.1",
+        "use-places-autocomplete": "^1.6.0",
+        "yup": "^0.27.0"
+    },
+    "devDependencies": {
+        "prettier": "^2.2.1",
+        "eslint-plugin-react": "^7.21.5",
+        "eslint-plugin-prettier": "^3.3.1",
+        "eslint-config-prettier": "^7.2.0"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }

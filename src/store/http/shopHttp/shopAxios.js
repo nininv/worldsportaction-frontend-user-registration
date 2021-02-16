@@ -13,7 +13,27 @@ async function logout() {
 let token = getAuthToken();
 let AxiosApi = {
 
-    /////////////////product listing get API 
+    getShopProduct(payload) {
+        const url = '/api/shop/product';
+        return Method.dataPost(url, token, payload);
+    },
+
+    getShopOrganisations() {
+        const url = '/api/shop/organisations';
+        return Method.dataGet(url, token);
+    },
+
+    getShopCart(payload) {
+        const url = `/api/shop/cart?shopUniqueKey=${payload.shopUniqueKey}`;
+        return Method.dataGet(url, token);
+    },
+
+    saveShopCart(payload) {
+        const url = '/api/shop/cart/update';
+        return Method.dataPost(url, token, payload);
+    },
+
+    /////////////////product listing get API
     getProductListing(organisationUniqueKeys, offset, limit, productType) {
         let organisationUniqueKeysArray = JSON.stringify(organisationUniqueKeys)
         var url = `product/listForUser?organisationUniqueKeys=${organisationUniqueKeysArray}&offset=${offset}&limit=${limit}&type=${productType}`;
@@ -26,7 +46,7 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
-    /////////////////product listing get API 
+    /////////////////product listing get API
     getProductDetailsById(productId) {
         var url = `/product?id=${productId}`;
         return Method.dataGet(url, token);
