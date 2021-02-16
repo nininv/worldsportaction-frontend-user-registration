@@ -2099,6 +2099,7 @@ class AppRegistrationFormNew extends Component {
                                 },
                             )(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_firstName}
                                     onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "firstName")}
                                     setFieldsValue={registrationObj.firstName}
@@ -2133,6 +2134,7 @@ class AppRegistrationFormNew extends Component {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                             })(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_lastName}
                                     onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "lastName")}
                                     setFieldsValue={registrationObj.lastName}
@@ -2206,7 +2208,6 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
-                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.email}
@@ -2237,7 +2238,6 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
-                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.parentOrGuardian[0]?.email}
