@@ -97,7 +97,10 @@ let userHttpApi = {
     const url = `ure/byUserId?userId=${userId}`;
     return Method.dataGet(url, token);
   },
-
+  getUserRoles() {
+    const url = 'users/roles';
+    return Method.dataPost(url, token);
+  },
   getScorerActivityData(payload, roleId, matchStatus) {
     const url = `api/user/activity/roster?roleId=${roleId}&matchStatus=${matchStatus}`;
     return Method.dataPost(url, token, payload);
@@ -108,7 +111,6 @@ let userHttpApi = {
     const url = `api/organisations/all`;
     return Method.dataGet(url, token);
   },
-
   saveUserPhoto(payload, userId) {
     const url = userId ? `users/photo?userId=${userId}` : `users/photo`;
     return Method.dataPost(url, token, payload);
@@ -140,26 +142,35 @@ let userHttpApi = {
     return Method.dataPost(url, token, payload);
   },
 
-  sendAuthenticationCodeType(payload) {
-    const url = `api/user/existing-auth-code`;
-    return Method.dataPost(url, token, payload);
-  },
-
-  sendDigitCode(payload) {
-    const url = `api/user/existing-digit-code`;
+  requestDigitCode(payload) {
+    const url = `api/user/request-digit-code`;
     return Method.dataPost(url, token, payload);
   },
   checkDigitCode(payload) {
     const url = `api/user/check-existing-digit-code`;
     return Method.dataPost(url, token, payload);
   },
-  sendConfirmDetails(payload) {
+  confirmDetails(payload) {
     const url = `api/user/confirm-details`;
     return Method.dataPost(url, token, payload);
+  },
+  getUsersByRole(payload) {
+    const { roleId, entityTypeId, entityId, userName } = payload;
+    const url = `users/byRole?roleId=${roleId}&entityTypeId=${entityTypeId}&entityId=${entityId}&userName=${userName}`;
+    return Method.dataGet(url, token, payload);
   },
   findPossibleMerge(payload) {
     return Method.dataPost('userMerge/find', token, payload);
   },
+  async getUserParentData(userId) {
+    if (!userId) {
+      userId = await getUserId()
+    }
+    if (userId != 0) {
+      var url = `api/parents?userId=${userId}`;
+      return Method.dataGet(url, token)
+    }
+  }
 }
 
 let Method = {

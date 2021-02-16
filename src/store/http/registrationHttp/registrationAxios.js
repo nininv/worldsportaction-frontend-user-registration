@@ -286,6 +286,11 @@ let AxiosApi = {
         const url = `api/registration/teamparticipant/removeoradd?userRegUniqueKey=${payload.userRegUniqueKey}&processType=${payload.processType}`;
         return Method.dataPost(url, token, payload);
       },
+
+    cancelDeRegistration(payload) {
+        const url = `/api/deregisterortransfer/cancel`;
+        return Method.dataPost(url, token, payload);
+    },
 };
 
 const Method = {

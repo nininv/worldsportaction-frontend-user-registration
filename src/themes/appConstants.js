@@ -425,6 +425,7 @@ const AppConstants = {
   username: "Username/Email",
   products: "Products",
   productDetails: "Product Details",
+  notProductByOrganisation: "There are no products for this organisation",
   playingMember: "Playing Member",
   nonPlayingMember: "Non Playing Member",
   Umpire_Referee: "Umpire/Referee",
@@ -789,6 +790,7 @@ const AppConstants = {
   todaysIncidents: "Today's Incidents",
   todaysMatch: "Today's Matches",
   recipientSelection: "Enter Recipients",
+  dateAndTimeIncident: "Date and Time of Incident",
 
   ////addedd 2 march
   ByMatch: "By Match",
@@ -891,7 +893,9 @@ const AppConstants = {
   includeGST: " (incl. GST)",
   history: "History",
   registrationChange: "Registration Change",
+  reportFouls: "Report Fouls",
   mobileNumber: "Mobile Number",
+  reportOffenceRequired: "Please select the offence (can choose multiple)",
   whatRegistrationChange: "What registration change do you need to make?",
   takenCourtforTraining: "Have you taken the court for training, grading or a competition game",
   reasonRegisterTitle: "Why would you like to de-register?",
@@ -977,6 +981,20 @@ const AppConstants = {
   yourOrder: "Your order",
   ConditionsForNetballQLD: "Terms and Conditions for Netball QLD",
   continue: "Continue",
+
+  //refereeReport offences form
+  firstReportFormStep: "First step",
+  secondReportFormStep: "Second step",
+  secondReportFormStepQ1: 'At what point in the game did te incident occur?',
+  secondReportFormStepQ2: 'What happened in the lead up to the incident?',
+  secondReportFormStepQ3: 'What happened that made you lodge this refereeReport?',
+  secondReportFormStepQ4: 'Where were you when the incident occurred?',
+  secondReportFormStepQ5: 'What did you do?',
+  secondReportFormStepQ6: 'What happened following the incident?',
+  reportFormThirdStep: "Third step",
+  thirdReportFormStepQ1: 'Is there anything that you would like to add that may assist in assessing these charges?',
+  nameOfWitness: 'Name of Witness',
+  addWitness: 'Add Witness',
 
   //new registration form
   participantDetails: "Participant Details",
@@ -1069,7 +1087,7 @@ const AppConstants = {
   useParentsEmailAddress: "Use parent's email address",
   useChildEmail: "Use same contact details as yourself",
   useParentEmail: "Use same contact details as yourself",
-  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. You child will not get their own login. If you would like them to have their own login please give them a separate email address.',
+  childMsg2Parent: 'You have elected to use the same email for your Child and yourself. Your child will not get their own login. If you would like them to have their own login please give them a separate email address.',
   parentMsg2Child: 'You have elected to use the same email for your Parent and yourself. You will lose your login unless you update your own email address first. If you do go ahead with using the same email address, you will be logged out for security reasons, and need to log in again.',
   returnToSelectAddress: "Return to select address",
   returnToLogin: "Return to Login",
@@ -1077,6 +1095,10 @@ const AppConstants = {
   selectFromParticipantAndParentDetails: "Select from Participant and Parent Details",
   addNewDetails: "Add new Details",
   pickupAddress: "Pickup Address",
+  deliveryTypePickup: 'pickup',
+  deliveryTypeShipping: 'shipping',
+  pickupDescription: 'Pick-up',
+  shippingDescription: 'Delivery',
   qty: "Qty",
   securePaymentMsg: "There is no payment required",
   submitButtonPressDescription: "You must press SUBMIT to complete your Registration.",
@@ -1151,8 +1173,10 @@ const AppConstants = {
   registeringTeamTo: "Membership Product you are registering Team to",
   registeringIndividualTo: "Membership Product you are registering Individual to",
   thankYouRegistering: "Thank you for registering!",
+  thankYouPurchasing: "Thank you for purchasing!",
   emailConfirmNewUserMessage: "We have sent you an email confirmation with your new login details. Please log in to the website to manage your profile.",
   emailConfirmExistingUserMessage: "We have sent you an email confirmation. You can view your registrations and manage your profile on our website.",
+  emailConfirmShopMessage: "Please save this page for your reference.",
   successProfileUpdateMessage: "You have successfully updated your profile for this Registration.",
   exit: "Exit",
   profile: "Profile",
@@ -1197,6 +1221,8 @@ const AppConstants = {
   enterXDigitCode: "Enter {{number}} digit code",
   confirmDetails: "Please enter the complete {{detail}}",
   declineConfirmDetails: "Sorry, the details you’ve entered do not match the details we have on record.",
+  successCheckDigitCode: "Your user was matched successfully.",
+  declineCheckDigitCode: "You entered wrong code.",
 
   possibleMatches: 'Possible Matches',
   possibleMatchesDescription: 'Select the user you want to merge with and press Next',
@@ -1214,6 +1240,7 @@ const AppConstants = {
   instalmentTipMessage: "For those who want to play the entire competition and pay fees by Instalment",
   coachAccreditation: "Coach Accreditation",
   tShirtSizeList: "TShirtSize",
+  refereeOffence: "RefereeOffence",
 
   registeredBy: "Registered By",
   ownRegistration: "Own Registration",
@@ -1235,8 +1262,18 @@ const AppConstants = {
   addToTeam: "Add to Team",
   removeFromTeamPopUpMsg: "Do you want to remove this user from the team?",
   noPickupMessage:"There is no pick up or delivery applicable to this product.",
+  incorrectContactDetails: "You have entered incorrect contact details.",
+  sameEmailAsChild: "This email address has already been used for your child’s profile. Please navigate back to the profile, and add yourself as the parent.",
+  parentDetails: "Parent details",
+  unavailable: "unavailable",
+  doNotGiveChildTheirOwnLogin: "Do not give Child their own login",
+  warningUseSessionEmailAsParentAddress: "Your child is already logged in as the primary contact for your email address. Please log out and complete the registration so that we can correct the email address relationship as part of the registration process.",
+  cardValidationMsg: "Going forward this card will default as your payment for all future payments",
 
-  sameEmailAsChild: "This email address has already been used for your child’s profile. Please navigate back to the profile, and add yourself as the parent."
+  cancelDeRegistrtaion: "Cancel De-registration",
+  cancelTransferReg: "Cancel Transfer registration",
+
+  userName: "Username"
 };
 
 export default AppConstants;

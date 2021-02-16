@@ -936,15 +936,21 @@ class RegistrationShipping extends Component {
         return(
             <div style={{marginTop:23}}>
                 <div>
-                    <Button className="open-reg-button addToCart"
-                     htmlType="submit"
-                     type="primary">
+                    <Button
+                        id="continue"
+                        className="open-reg-button addToCart"
+                        htmlType="submit"
+                        type="primary"
+                    >
                         {AppConstants.continue}
                     </Button>
                 </div>
                 <div style={{marginTop:23}}>
-                    <Button className="back-btn-text btn-inner-view"
-                    onClick={() => this.goToShop()}>
+                    <Button
+                        id="back"
+                        className="back-btn-text btn-inner-view"
+                        onClick={() => this.goToShop()}
+                    >
                         {AppConstants.back}
                     </Button>
                 </div>

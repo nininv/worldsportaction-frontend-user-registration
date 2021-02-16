@@ -5,6 +5,7 @@ import userHttpApi from "../../http/userHttp/userAxiosApi";
 import registrationAxiosApi from "../../http/registrationHttp/registrationAxios";
 import livescoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
 import history from "../../../util/history";
+import { message } from "antd";
 
 function* failSaga(result) {
     yield put({ type: ApiConstants.API_USER_FAIL });
@@ -307,6 +308,23 @@ export function* getUserRole(action) {
     }
 }
 
+export function* getUserParentData(action) {
+    try {
+        const result = yield call(userHttpApi.getUserParentData, action.data);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_USER_PARENT_DATA_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result);
+        }
+    } catch (error) {
+        yield call(errorSaga, error);
+    }
+}
+
 // Get the Scorer Activity Data
 export function* getScorerActivitySaga(action) {
     try {
@@ -487,7 +505,7 @@ export function* addParentSaga(action) {
 export function* updateTeamMembersSaga(action) {
     try {
       const result = yield call(registrationAxiosApi.updateTeamMembers, action.data);
-  
+
       if (result.status === 1 || result.status === 4) {
         yield put({
           type: ApiConstants.API_TEAM_MEMBER_UPDATE_SUCCESS,
@@ -501,3 +519,39 @@ export function* updateTeamMembersSaga(action) {
       yield call(errorSaga, error);
     }
   }
+
+export function* getUsersByRoleSaga(action) {
+    try {
+      const result = yield call(userHttpApi.getUsersByRole, action.data);
+
+      if (result.status === 1) {
+        yield put({
+          type: ApiConstants.API_GET_USERS_BY_ROLE_SUCCESS,
+          result: result.result.data,
+          status: result.status,
+        });
+      } else {
+        yield call(failSaga, result);
+      }
+    } catch (error) {
+      yield call(errorSaga, error);
+    }
+  }
+
+  export function* cancelDeRegistrationSaga(action) {
+    try {
+        const result = yield call(registrationAxiosApi.cancelDeRegistration, action.payload);
+        if (result.status === 1) {
+            message.success(result.result.data.message)
+            yield put({
+                type: ApiConstants.API_CANCEL_DEREGISTRATION_SUCCESS,
+                // result: result.result.data,
+                status: result.status
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+    }

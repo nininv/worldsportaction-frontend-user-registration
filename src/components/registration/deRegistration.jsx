@@ -28,16 +28,24 @@ class DeRegistration extends Component {
             regChangeTypeRefId: 0,
             userId: 0,
             loading: false,
-            saveLoad: false
+            saveLoad: false,
+            regData: null,
+            personal: null
         }
     }
 
     componentDidMount() {
         let userId = this.props.location.state ? this.props.location.state.userId : null;
         let regChangeTypeRefId = this.props.location.state ? this.props.location.state.regChangeTypeRefId : null;
+        let regData = this.props.location.state ? this.props.location.state.regData : null;
+        let personal = this.props.location.state ? this.props.location.state.personal : null;
+        if (personal) {
+            this.setState({ userId: personal.userId });
+        }
+        this.setState({ regData, personal });
         console.log("regChangeTypeRefId::", regChangeTypeRefId)
         this.setState({ userId, regChangeTypeRefId });
-        this.apiCall(userId);
+        // this.apiCall(this.state.userId);
     }
 
     componentDidUpdate(nextProps) {
@@ -101,15 +109,14 @@ class DeRegistration extends Component {
     }
 
     getTransferOrgData = () => {
-        const { saveData } = this.props.deRegistrationState;
-        if (saveData.competitionId && saveData.membershipMappingId) {
-            let payload = {
-                competitionId: saveData.competitionId,
-                membershipMappingId: saveData.membershipMappingId
-            }
-            this.props.getTransferCompetitionsAction(payload);
+        let regData = this.state.regData;
+        let payload = {
+            competitionId: regData.competitionId,
+            membershipMappingId: regData.membershipMappingId
         }
-    }
+        this.props.getTransferCompetitionsAction(payload);
+        }
+    
 
     saveAPIsActionCall = (e) => {
         e.preventDefault();
@@ -130,12 +137,16 @@ class DeRegistration extends Component {
                     message.error(ValidationConstants.deRegisterReasonRequired);
                 }
                 else {
-                    if (saveData.isTeam == 1) {
-                        if (saveData.teamMembers.length == 0) {
-                            saveData.teamMembers = deRegisterState.teamMembers;
-                        }
-                    }
-                    console.log("SaveData" + JSON.stringify(saveData));
+                    let regData = this.state.regData;
+                    let personal = this.state.personal;
+                    saveData["isTeam"] = 0;
+                    saveData["userId"] = personal.userId;
+                    saveData["organisationId"] = regData.organisationId;
+                    saveData["competitionId"] = regData.competitionId;
+                    saveData["membershipMappingId"] = regData.membershipMappingId;
+                    saveData["teamId"] = regData.teamId;
+                    saveData["divisionId"] = regData.divisionId;
+                    saveData["registrationId"] = regData.registrationId;
                     this.props.saveDeRegisterDataAction(saveData);
                     this.setState({ saveLoad: true });
                 }
@@ -180,7 +191,7 @@ class DeRegistration extends Component {
         console.log(subItem, selectedOption)
         const { saveData, deRegistionOption } = this.props.deRegistrationState
         // if (subItem.id == 1 && selectedOption == 1) {
-        // } 
+        // }
         if ((subItem.id == 1 && selectedOption == 1) || (subItem.id == 2 && selectedOption == 2)) {
             return (
                 <div className="ml-5 pt-3">
@@ -368,127 +379,57 @@ class DeRegistration extends Component {
 
     ////////form content view
     contentView = (getFieldDecorator) => {
-        const { saveData, registrationSelection, deRegisterData, organisations, competitions, membershipTypes, teamMembers, divisions } = this.props.deRegistrationState;
-        let divisionList = divisions != null ? divisions : [];
+        const { saveData, registrationSelection} = this.props.deRegistrationState;
+        let regData = this.state.regData;
+        let personal = this.state.personal;
         return (
             <div className="content-view pt-5">
-                <InputWithHead heading={AppConstants.username} required={"required-field"} />
-                <Form.Item >
-                    {getFieldDecorator(`userId`, {
-                        rules: [{ required: true, message: ValidationConstants.userNameRequired }],
-                    })(
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "userId", "deRegister")}
-                            setFieldsValue={saveData.userId}
-                            placeholder={'User Name'}>
-                            {(deRegisterData || []).map((user, cIndex) => (
-                                <Option key={user.userId}
-                                    value={user.userId} >{user.isTeam == 0 ? user.userName : user.userName + '(Team)'}</Option>
-                            ))
-                            }
+                <InputWithHead
+                    disabled
+                    heading={AppConstants.userName}
+                    style={{ width: "100%", paddingRight: 1 }}
+                    required="pb-1"
+                    className="input-inside-table-venue-court team-mem_prod_type"
+                    value={personal ? (personal.firstName + ' ' + personal.lastName) : ""}
+                    placeholder={'User Name'} />
 
-                        </Select>
-                    )}
-                </Form.Item>
-                <InputWithHead heading={AppConstants.organisationName} required={"required-field"} />
-                <Form.Item >
-                    {getFieldDecorator(`organisationId`, {
-                        rules: [{ required: true, message: ValidationConstants.organisationName }],
-                    })(
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "organisationId", "deRegister")}
-                            setFieldsValue={saveData.organisationId}
-                            placeholder={'Organisation Name'}>
-                            {(organisations || []).map((org, cIndex) => (
-                                <Option key={org.organisationId}
-                                    value={org.organisationId} >{org.organisationName}</Option>
-                            ))
-                            }
+                <InputWithHead
+                    disabled
+                    heading={AppConstants.organisationName}
+                    style={{ width: "100%", paddingRight: 1 }}
+                    required="pb-1"
+                    className="input-inside-table-venue-court team-mem_prod_type"
+                    value={regData ? regData.affiliate : ''}
+                    placeholder={'Organisation Name'} />
 
-                        </Select>
-                    )}
-                </Form.Item>
-                <InputWithHead heading={AppConstants.competition_name} required={"required-field"} />
-                <Form.Item >
-                    {getFieldDecorator(`competitionId`, {
-                        rules: [{ required: true, message: ValidationConstants.competitionRequired }],
-                    })(
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "competitionId", "deRegister")}
-                            setFieldsValue={saveData.competitionId}
-                            placeholder={'Competition Name'}>
-                            {(competitions || []).map((comp, cIndex) => (
-                                <Option key={comp.competitionId}
-                                    value={comp.competitionId} >{comp.competitionName}</Option>
-                            ))
-                            }
+                <InputWithHead
+                    disabled
+                    heading={AppConstants.competition_name}
+                    style={{ width: "100%", paddingRight: 1 }}
+                    required="pb-1"
+                    className="input-inside-table-venue-court team-mem_prod_type"
+                    value={regData ? regData.competitionName : ''}
+                    placeholder={'Competition Name'} />
 
-                        </Select>
-                    )}
-                </Form.Item>
-                <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"} />
-                <Form.Item >
-                    {getFieldDecorator(`membershipMappingId`, {
-                        rules: [{ required: true, message: ValidationConstants.pleaseSelectMembershipTypes }],
-                    })(
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "membershipMappingId", "deRegister")}
-                            setFieldsValue={saveData.membershipMappingId}
-                            placeholder={AppConstants.membershipProduct}>
-                            {(membershipTypes || []).map((mem, mIndex) => (
-                                <Option key={mem.membershipMappingId}
-                                    value={mem.membershipMappingId} >{mem.productName + " - " + mem.typeName}</Option>
-                            ))
-                            }
+                <InputWithHead
+                    disabled
+                    style={{ width: "100%", paddingRight: 1 }}
+                    heading={AppConstants.membershipProduct}
+                    required="pb-1"
+                    className="input-inside-table-venue-court team-mem_prod_type"
+                    value={(regData ? regData.membershipProduct : '') + ' - ' + (regData ? regData.membershipType : '')}
+                    placeholder={AppConstants.membershipProduct} />
 
-                        </Select>
-                    )}
-                </Form.Item>
-
-                <InputWithHead heading={AppConstants.division} required={(divisionList.length > 0 ? "required-field" : "")} />
-                <Form.Item >
-                    {getFieldDecorator(`divisionId`, {
-                        rules: [{ required: (divisionList.length > 0 ? true : false), message: ValidationConstants.divisionField }],
-                    })(
-                        <Select
-                            showSearch
-                            optionFilterProp="children"
-                            style={{ width: "100%", paddingRight: 1 }}
-                            required={"required-field pt-0 pb-0"}
-                            className="input-inside-table-venue-court team-mem_prod_type"
-                            onChange={(e) => this.updateDeregistrationData(e, "divisionId", "deRegister")}
-                            setFieldsValue={saveData.divisionId}
-                            placeholder={AppConstants.divisionName}>
-                            {(divisionList || []).map((div, mIndex) => (
-                                <Option key={div.divisionId}
-                                    value={div.divisionId} >{div.divisionName}</Option>
-                            ))
-                            }
-
-                        </Select>
-                    )}
-                </Form.Item>
-                {saveData.isTeam == 1 &&
+                <InputWithHead
+                    disabled
+                    heading={AppConstants.division}
+                    style={{ width: "100%", paddingRight: 1 }}
+                    required="pb-1"
+                    className="input-inside-table-venue-court team-mem_prod_type"
+                    value={regData ? regData.divisionName : ''}
+                    placeholder={AppConstants.divisionName} />
+                            
+                {/* {saveData.isTeam == 1 &&
                     <div>
                         <InputWithHead heading={AppConstants.teamMember} style={{ paddingBottom: '0px' }} />
                         <Select
@@ -509,33 +450,31 @@ class DeRegistration extends Component {
 
                         </Select>
                     </div>
-                }
+                } */}
 
+                <InputWithHead
+                        required="pb-1"
+                        disabled={true}
+                        heading={AppConstants.teamName}
+                        placeholder={AppConstants.teamName}
+                        value={regData ? regData.teamName : ''}
+                />
 
-                <Form.Item  >
-                    {getFieldDecorator('mobileNumber', { rules: [{ required: false, message: ValidationConstants.pleaseEnterMobileNumber }] })(
-                        <InputWithHead
-                            required={"pt-0  pb-0"}
-                            disabled={true}
-                            heading={AppConstants.mobileNumber}
-                            placeholder={AppConstants.mobileNumber}
-                            setFieldsValue={saveData.mobileNumber}
-                            onChange={(e) => this.updateDeregistrationData(e.target.value, "mobileNumber", "deRegister")}
-                        />
-                    )}
-                </Form.Item>
-                <Form.Item  >
-                    {getFieldDecorator('email', { rules: [{ required: false, message: ValidationConstants.emailField[0] }] })(
-                        <InputWithHead
-                            required={"pt-0 pb-0"}
-                            disabled={true}
-                            heading={AppConstants.emailAdd}
-                            placeholder={AppConstants.emailAdd}
-                            setFieldsValue={saveData.email}
-                            onChange={(e) => this.updateDeregistrationData(e.target.value, "email")}
-                        />
-                    )}
-                </Form.Item>
+                <InputWithHead
+                    required="pb-1"
+                    disabled={true}
+                    heading={AppConstants.mobileNumber}
+                    placeholder={AppConstants.mobileNumber}
+                    value={personal ? (personal.mobileNumber) : ''}
+                />
+
+                <InputWithHead
+                    required="pb-1"
+                    disabled={true}
+                    heading={AppConstants.emailAdd}
+                    placeholder={AppConstants.emailAdd}
+                    value={personal ? (personal.email) : ''}
+                />
                 <InputWithHead
                     heading={AppConstants.whatRegistrationChange} />
                 <div>
@@ -631,7 +570,6 @@ class DeRegistration extends Component {
                     </Form>
                 </Layout>
             </div>
-
         );
     }
 

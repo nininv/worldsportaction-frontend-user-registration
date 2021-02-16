@@ -305,6 +305,7 @@ class TeamInviteShop extends Component{
                 <div style={{display:"flex", flexWrap: "wrap"}}>
                     <div style={{width:"230px",marginTop: "10px",marginRight: "15px"}}>
                         <Select
+                            id="merchandise-categories"
                             style={{ width: "100%", paddingRight: 1}}
                             placeholder={AppConstants.all}
                             className="custom-dropdown"
@@ -314,7 +315,7 @@ class TeamInviteShop extends Component{
                             <Option value={-1}>All</Option>
                             {
                                 (this.getOrganisationFilterList() || []).map((item, index) =>(
-                                    <Option key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
+                                    <Option id={"merchandise-category-" + index} key = {item.organisationUniqueKey} value={item.organisationUniqueKey}>{item.organisationName}</Option>
                                 ))
                             }
                         </Select>
@@ -623,15 +624,21 @@ class TeamInviteShop extends Component{
         return(
             <div style={{marginTop:23}}>
                 <div>
-                    <Button className="open-reg-button addToCart" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
-                      htmlType="submit"
-                      type="primary">
+                    <Button
+                        id="back"
+                        className="open-reg-button addToCart" style={{color:"var(--app-white) " , width:"100%",textTransform: "uppercase"}}
+                        htmlType="submit"
+                        type="primary"
+                    >
                         {AppConstants.continue}
                     </Button>
                 </div>
                 <div style={{marginTop:23}}>
-                    <Button className="back-btn-text btn-inner-view"
-                     onClick={()=> this.goToTeamInviteProducts()}>
+                    <Button
+                        id="back"
+                        className="back-btn-text btn-inner-view"
+                        onClick={()=> this.goToTeamInviteProducts()}
+                    >
                         {AppConstants.back}
                     </Button>
                 </div>

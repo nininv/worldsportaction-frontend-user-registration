@@ -137,7 +137,15 @@ class Login extends Component {
                             <div className="login-or-border"></div>
                         </div>
                         <div style={{ display: 'flex' }}>
-                            <Button className="ant-btn-proceed-text login-btn-proceed" onClick={() => this.redirect()} type="primary" disabled={this.state.loginButton}>{AppConstants.proceedToRegistration}</Button>
+                            <Button
+                                id="new-user-registration"
+                                className="ant-btn-proceed-text login-btn-proceed"
+                                onClick={() => this.redirect()}
+                                type="primary"
+                                disabled={this.state.loginButton}
+                            >
+                                {AppConstants.proceedToRegistration}
+                            </Button>
                         </div>
                     </div>
                 </div>

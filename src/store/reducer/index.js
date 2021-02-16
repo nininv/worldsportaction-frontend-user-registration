@@ -4,16 +4,16 @@ import MenuNavigationState from "./menuNavigationReducer";
 import AppState from "./appReducer";
 
 ////Year and Competition
-import CommonAppState from './appReducer'
+import CommonAppState from "./appReducer";
 import CommonReducerState from "./commonReducer/commonReducer";
 import EndUserRegistrationState from "./registrationReducer/endUserRegistrationReducer";
 import UserState from "./userReducer/userReducer";
 
-import LiveScoreState from './liveScoreReducer/liveScoreReducer';
-import LiveScoreUmpireState from './liveScoreReducer/liveScoreUmpireReducer';
-import LiveScoreFixturCompState from './liveScoreReducer/liveScoreFixtureCompetitionReducer';
-import LiveScoreLadderState from './liveScoreReducer/liveScoreLadderReducer'
-import LiveScoreRoundState from './liveScoreReducer/liveScoreRound';
+import LiveScoreState from "./liveScoreReducer/liveScoreReducer";
+import LiveScoreUmpireState from "./liveScoreReducer/liveScoreUmpireReducer";
+import LiveScoreFixturCompState from "./liveScoreReducer/liveScoreFixtureCompetitionReducer";
+import LiveScoreLadderState from "./liveScoreReducer/liveScoreLadderReducer";
+import LiveScoreRoundState from "./liveScoreReducer/liveScoreRound";
 import StripeState from "./stripeReducer/stripeReducer";
 import DeRegistrationState from "./registrationReducer/deRegisterReducer";
 import ShopProductState from "./shopReducer/productReducer";
@@ -24,25 +24,25 @@ import RegistrationProductState from "./registrationReducer/registrationProducts
 import TeamInviteState from "./registrationReducer/teamInviteReducer";
 
 const rootReducer = combineReducers({
-  LoginState,
-  MenuNavigationState,
-  AppState,
-  CommonAppState,
-  UserState,
-  EndUserRegistrationState,
-  CommonReducerState,
-  LiveScoreFixturCompState,
-  LiveScoreLadderState,
-  LiveScoreRoundState,
-  StripeState,
-  DeRegistrationState,
-  ShopProductState,
-  UserRegistrationState,
-  RegistrationProductState,
-  TeamRegistrationState,
-  TeamInviteState,
-  LiveScoreState,
-  LiveScoreUmpireState
+    LoginState,
+    MenuNavigationState,
+    AppState,
+    CommonAppState,
+    UserState,
+    EndUserRegistrationState,
+    CommonReducerState,
+    LiveScoreFixturCompState,
+    LiveScoreLadderState,
+    LiveScoreRoundState,
+    StripeState,
+    DeRegistrationState,
+    ShopProductState,
+    UserRegistrationState,
+    RegistrationProductState,
+    TeamRegistrationState,
+    TeamInviteState,
+    LiveScoreState,
+    LiveScoreUmpireState,
 });
 
 export default rootReducer;

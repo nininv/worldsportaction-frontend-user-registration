@@ -1,6 +1,29 @@
 import ApiConstants from "../../../themes/apiConstants";
 
-//product listing get API 
+//products shop get API
+const getShopProductsAction = (payload) => ({
+    type: ApiConstants.API_GET_SHOP_PRODUCTS_LOAD,
+    payload
+})
+
+//organisations shop get API
+const getShopOrganisationsAction = () => ({
+    type: ApiConstants.API_GET_SHOP_ORGANISATIONS_LOAD
+})
+
+//cart shop get API
+const getShopCartAction = (payload) => ({
+    type: ApiConstants.API_GET_SHOP_CART_LOAD,
+    payload
+})
+
+//cart shop save API
+const saveShopCartAction = (payload) => ({
+    type: ApiConstants.API_SAVE_SHOP_CART_LOAD,
+    payload
+})
+
+//product listing get API
 function getProductListingAction(organisationUniqueKeys, offset, limit, productType) {
     const action = {
         type: ApiConstants.API_GET_SHOP_PRODUCT_LISTING_LOAD,
@@ -17,7 +40,7 @@ function getTypesOfProductAction() {
     return action;
 }
 
-//product details on id API 
+//product details on id API
 function getProductDetailsByIdAction(productId) {
     const action = {
         type: ApiConstants.API_SHOP_GET_PRODUCT_DETAILS_BY_ID_LOAD,
@@ -45,6 +68,10 @@ function addToCartAction(payload) {
 }
 
 export {
+    getShopProductsAction,
+    getShopOrganisationsAction,
+    getShopCartAction,
+    saveShopCartAction,
     getProductListingAction,
     getTypesOfProductAction,
     getProductDetailsByIdAction,

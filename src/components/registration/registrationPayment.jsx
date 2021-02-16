@@ -369,9 +369,15 @@ const CheckoutForm = (props) => {
                                 {pay.securePaymentOptionRefId == 2 &&
                                     <div className="row">
                                         <div className='col-sm'>
-                                            <Radio key={"1"} onChange={(e) => changePaymentOption(e, "credit")}
+                                            <Radio
+                                                id="credit"
+                                                key={"1"}
+                                                onChange={(e) => changePaymentOption(e, "credit")}
                                                 className="payment-type-radio-style"
-                                                checked={selectedPaymentOption.credit}>{AppConstants.creditCard}</Radio>
+                                                checked={selectedPaymentOption.credit}
+                                            >
+                                                {AppConstants.creditCard}
+                                            </Radio>
                                             {selectedPaymentOption.credit == true && (
                                                 <div className="pt-5">
                                                     <CardElement
@@ -393,8 +399,12 @@ const CheckoutForm = (props) => {
                                     <div className="row">
                                         <div className='col-sm'>
                                             <Radio key={"2"}
+                                                id="direct-debit"
                                                 className="payment-type-radio-style"
-                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}>{AppConstants.directDebit}</Radio>
+                                                onChange={(e) => changePaymentOption(e, "direct")} checked={selectedPaymentOption.direct}
+                                            >
+                                                {AppConstants.directDebit}
+                                            </Radio>
                                             {selectedPaymentOption.direct == true &&
                                                 <div className="pt-5">
                                                     <div className="sr-root">
@@ -618,6 +628,7 @@ const CheckoutForm = (props) => {
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                             {/* {(paymentOptions.length > 0 || isSchoolRegistration == 1 || isHardshipEnabled == 1) ? */}
                             <Button
+                                id="submit"
                                 disabled={disabled}
                                 style={{ textTransform: "uppercase" }}
                                 className="open-reg-button"
@@ -645,7 +656,9 @@ class RegistrationPayment extends Component {
             id: null,
             onLoad: false,
             registrationCapModalVisible: false,
-            registrationCapValidationMessage: null
+            registrationCapValidationMessage: null,
+            registrationInfo: null,
+            cardDefaultModalVisible: false
         };
     }
 
@@ -691,6 +704,30 @@ class RegistrationPayment extends Component {
 
     removeFromCart = (index, key, subKey) => {
         this.props.updateReviewInfoAction(null, key, index, subKey, null);
+    }
+
+    handleCardValidation = (key) =>{
+        if(key == "ok"){
+            this.setState({ cardDefaultModalVisible: false});
+            let registrationInfo = this.state.registrationInfo;
+            console.log("&&&&&&&&&&&&&" + JSON.stringify(registrationInfo));
+            if(registrationInfo){
+
+                registrationInfo.payload["canCheckCard"] = 0;
+               
+                stripeTokenHandler(
+                    registrationInfo.token, registrationInfo.props, registrationInfo.selectedOption, 
+                    registrationInfo.setClientKey, registrationInfo.setRegId, registrationInfo.payload, 
+                    registrationInfo.registrationUniqueKey, registrationInfo.urlFlag, 
+                    registrationInfo.perMatchSelectedOption, registrationInfo.auBankAccount,
+                    registrationInfo.setBankError, registrationInfo.stripe, registrationInfo.card, 
+                    registrationInfo.setError);
+            }
+        }
+        else{
+            this.setState({ cardDefaultModalVisible: false });
+        }
+       
     }
 
     removeProductModal = (key, id) => {
@@ -740,7 +777,30 @@ class RegistrationPayment extends Component {
                         </Button>
                     ]}
                 >
-                    <p> {this.state.registrationCapValidationMessage}</p>
+                     <p> {this.state.registrationCapValidationMessage}</p>
+                   
+                </Modal>
+            </div>
+        )
+    }
+
+    cardValidationModal = () => {
+        return (
+            <div>
+                <Modal
+                    className="add-membership-type-modal"
+                    title={AppConstants.warning}
+                    visible={this.state.cardDefaultModalVisible}
+                    onOk={() => this.handleCardValidation("ok")}
+                    onCancel={() => this.handleCardValidation("cancel")}>
+                    {/* onCancel={() => this.setState({ cardDefaultModalVisible: false })}
+                    footer={[
+                        <Button onClick={() => this.handleCardValidation("ok")}>
+                            {AppConstants.ok}
+                        </Button>
+                    ]} 
+                >*/}
+                    <p> {AppConstants.cardValidationMsg}</p>
                 </Modal>
             </div>
         )
@@ -757,15 +817,18 @@ class RegistrationPayment extends Component {
                 {this.paymentLeftView()}
                 {this.paymentRighttView()}
                 {this.registrationCapValidationModal()}
+                {this.cardValidationModal()}
             </div>
         );
     }
 
     paymentLeftView = () => {
-        const { registrationReviewList } = this.props.registrationProductState;
+        let { registrationReviewList } = this.props.registrationProductState;
         let securePaymentOptions = registrationReviewList != null ? registrationReviewList.securePaymentOptions : [];
         let isSchoolRegistration = registrationReviewList != null ? registrationReviewList.isSchoolRegistration : 0;
         let isHardshipEnabled = registrationReviewList != null ? registrationReviewList.isHardshipEnabled : 0;
+        if(registrationReviewList)
+            registrationReviewList["canCheckCard"] = 1;
         return (
             <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
                 <div className="product-left-view outline-style mt-0">
@@ -778,7 +841,9 @@ class RegistrationPayment extends Component {
                                 payload={registrationReviewList} registrationUniqueKey={this.state.registrationUniqueKey}
                                 isSchoolRegistration={isSchoolRegistration} isHardshipEnabled={isHardshipEnabled}
                                 mainProps={this.props} registrationCapModalVisible={(status) => this.setState({ registrationCapModalVisible: status })}
-                                registrationCapValidationMessage={(error) => this.setState({ registrationCapValidationMessage: error })} />
+                                registrationCapValidationMessage={(error) => this.setState({ registrationCapValidationMessage: error })}
+                                cardDefaultModalVisible = {(status) => this.setState({cardDefaultModalVisible: status}) }
+                                registrationInfo = {(info) => this.setState({registrationInfo: info})}/>
                         </Elements>
                     </div>
                 </div>
@@ -964,7 +1029,10 @@ class RegistrationPayment extends Component {
                     </Button>
                 </div>                  */}
                 <div style={{ marginTop: 23 }}>
-                    <Button className="back-btn-text" style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
+                    <Button
+                        id="back"
+                        className="back-btn-text"
+                        style={{ boxShadow: "0px 1px 3px 0px", width: "100%", textTransform: "uppercase" }}
                         onClick={() => this.back()}>
                         {AppConstants.back}
                     </Button>
@@ -1087,8 +1155,10 @@ async function confirmDebitPayment(confirmDebitPaymentInput) {
             payment_method: {
                 au_becs_debit: confirmDebitPaymentInput.auBankAccount,
                 billing_details: {
-                    name: "Club Test 1", // accountholderName.value,
-                    email: "testclub@wsa.com"  // email.value,
+                    // name: "Club Test 1", // accountholderName.value,
+                    // email: "testclub@wsa.com"  // email.value,
+                    name: confirmDebitPaymentInput.payload.yourInfo.firstName + " " + confirmDebitPaymentInput.payload.yourInfo.lastName,
+                    email: confirmDebitPaymentInput.payload.yourInfo.email
                 },
             }
         });
@@ -1111,12 +1181,12 @@ async function confirmDebitPayment(confirmDebitPaymentInput) {
 
 // POST the token ID to your backend.
 async function stripeTokenHandler(token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption, auBankAccount, setBankError, stripe, card, setError) {
-    console.log(token, props, screenProps)
+    console.log( "Props:::::::",props)
     let paymentType = selectedOption;
     //let registrationId = screenProps.location.state ? screenProps.location.state.registrationId : null;
     // let invoiceId = screenProps.location.state ? screenProps.location.state.invoiceId : null
     console.log("Payload::" + JSON.stringify(payload.total));
-    console.log("Payload222::", setClientKey, setRegId,);
+    console.log("Payload222::", setClientKey, setRegId, props.canCheckCard);
 
     let url;
     if (urlFlag == 1) {
@@ -1127,8 +1197,9 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
     }
 
     let body;
-    if (paymentType === "card" || paymentType == "cash_card") {
-        let stripeToken = token.id
+    if (paymentType === "card") {
+        let stripeToken = token.id;
+       // let cardId = token.card.id;
         body = {
             registrationId: registrationUniqueKey,
             // invoiceId: invoiceId,
@@ -1139,7 +1210,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
             }
         }
     }
-    else if (paymentType === "direct_debit" || paymentType == "cash_direct_debit") {
+    else if (paymentType === "direct_debit") {
         body = {
             registrationId: registrationUniqueKey,
             //invoiceId: invoiceId,
@@ -1151,7 +1222,6 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         if (props.isSchoolRegistration || props.isHardshipEnabled) {
             body = {
                 registrationId: registrationUniqueKey,
-                //invoiceId: invoiceId,
                 payload: payload,
                 paymentType: null,
                 isSchoolRegistration: 1,
@@ -1162,13 +1232,13 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         else {
             body = {
                 registrationId: registrationUniqueKey,
-                //invoiceId: invoiceId,
                 payload: payload,
                 paymentType: null,
             }
         }
     }
-    console.log("body" + JSON.stringify(body));
+    //console.log("body" + JSON.stringify(body));
+  
     props.onLoad(true)
     return await new Promise((resolve, reject) => {
         fetch(`${StripeKeys.apiURL + url}`, {
@@ -1270,7 +1340,20 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                     }
                     else if (response.status === 212) {
                         props.onLoad(false)
-                        message.error(Response.message);
+                        if(Response.errorCode){
+                            if(Response.errorCode == "card_default_warning"){
+                                // Show the Modal Popup
+                                props.registrationInfo(
+                                    {token, props, selectedOption, setClientKey, setRegId, payload, registrationUniqueKey, urlFlag, perMatchSelectedOption, auBankAccount, setBankError, stripe, card, setError});
+                                props.cardDefaultModalVisible(true);
+                            }
+                            else{
+                                message.error(Response.message);
+                            }
+                        }
+                        else{
+                            message.error(Response.message);
+                        }
                     }
                     else if (response.status === 400) {
                         props.onLoad(false)
@@ -1295,7 +1378,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         console.log("then data in stripeTokenHandler ");
     }).catch((data) => {
         console.log("Error in stripeTokenHandler")
-    })
+    }) 
 }
 
 async function createPerMatchPayments(invoiceId, perMatchSeletedPaymentOption, props, registrationUniqueKey, token) {

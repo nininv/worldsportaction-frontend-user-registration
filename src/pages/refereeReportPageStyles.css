@@ -1,0 +1,31 @@
+.report-page .ant-steps-item .ant-steps-item-icon,
+.report-page .ant-steps .ant-steps-item:not(.ant-steps-item-active):not(.ant-steps-item-process) > .ant-steps-item-container[role='button']:hover .ant-steps-item-icon {
+    background-color: var(--app-77778f);
+    border-color: var(--app-77778f);
+}
+.report-page .ant-steps-item .ant-steps-item-icon .ant-steps-icon,
+.report-page .ant-steps .ant-steps-item:not(.ant-steps-item-active):not(.ant-steps-item-process) > .ant-steps-item-container[role='button']:hover .ant-steps-item-icon .ant-steps-icon{
+    color: #fff;
+}
+.report-page .ant-steps-item.ant-steps-item-active .ant-steps-item-title {
+    color: var(--app-color);
+}
+.report-page .ant-steps-item.ant-steps-item-active .ant-steps-item-icon {
+    background-color: var(--app-color);
+    border-color: var(--app-color);
+}
+.report-page .form__steps .anticon-check.ant-steps-finish-icon {
+    position: relative;
+    top: -3px;
+}
+.report-page .form__steps {
+    display: block;
+    width: 70%;
+    margin: 12px auto 32px;
+}
+.remove-row-button {
+    cursor: pointer;
+}
+.report-form .orange-action-txt {
+    display: inline-block;
+}
