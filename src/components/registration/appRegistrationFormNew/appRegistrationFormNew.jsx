@@ -1711,7 +1711,6 @@ class AppRegistrationFormNew extends Component {
         )
     }
 
-
     participantDetailsStepView = (getFieldDecorator) => {
         const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
         const { userId, dateOfBirth } = registrationObj;
@@ -2487,6 +2486,10 @@ class AppRegistrationFormNew extends Component {
     parentOrGuardianView = (getFieldDecorator) => {
         const { registrationObj, parents } = this.props.userRegistrationState;
         let hasErrorParent = this.state.hasErrorParent;
+
+        if (registrationObj.parentOrGuardian.length == 0) {
+            this.addParent("add");
+        }
 
         return (
             <div className="registration-form-view">
@@ -4071,6 +4074,13 @@ class AppRegistrationFormNew extends Component {
     contentView = (getFieldDecorator) => {
         const { registrationObj } = this.props.userRegistrationState;
         const { registrationId, completedSteps, currentStep } = this.state;
+
+        if (!!registrationObj) {
+            const { email } = registrationObj;
+            if (!!email && email.indexOf("player") == 0 && email.indexOf("wsa.com") == email.length - 7) {
+                this.props.updateUserRegistrationObjectAction(null, "email");
+            }
+        }
 
         const getStatus = (value) => {
             const isFinish = completedSteps.includes(value);
