@@ -338,7 +338,24 @@ const CheckoutForm = (props) => {
                 mainProps.updateReviewInfoAction(1, "direct_debit", 0, "total", null);
                 setTimeout(() => {
                     // stripeTokenHandler("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey,1,perMatchSelectedPaymentOption.selectedOption,auBankAccount,setBankError,stripe,card,setError);
-                    registrationCapValidate("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption, auBankAccount, setBankError, stripe, card, setError);
+                    if(clientSecretKey){
+                        let confirmDebitPaymentInput = {
+                            props: props,
+                            selectedOption: 'direct_debit',
+                            payload: payload,
+                            registrationUniqueKey: registrationUniqueKey,
+                            clientSecret: clientSecretKey,
+                            auBankAccount: auBankAccount,
+                            setBankError: setBankError,
+                            stripe: stripe,
+                            perMatchSelectedOption: perMatchSelectedPaymentOption,
+                            card: card,
+                            setError: setError
+                        }
+                        confirmDebitPayment(confirmDebitPaymentInput);
+                    }else{
+                        registrationCapValidate("", props, 'direct_debit', setClientKey, setRegId, payload, registrationUniqueKey, 1, perMatchSelectedPaymentOption.selectedOption, auBankAccount, setBankError, stripe, card, setError);
+                    }
                 }, 100);
             }
             else if (props.payload.total.targetValue == 0) {
@@ -1304,7 +1321,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
                                 })
                             }
                             else {
-                                // setClientKey(Response.clientSecret);
+                                setClientKey(Response.clientSecret);
                                 // setRegId(registrationUniqueKey)
                                 let confirmDebitPaymentInput = {
                                     props: props,
