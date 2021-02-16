@@ -155,7 +155,6 @@ class UserProfileEdit extends Component {
             let section = "";
             let data = this.props.history.location.state.userData;
             let moduleFrom = this.props.history.location.state.moduleFrom;
-
             if (moduleFrom == "1") {
                 titleLabel = AppConstants.edit + ' ' + AppConstants.address;
                 section = "address";
@@ -200,7 +199,7 @@ class UserProfileEdit extends Component {
                                         || (titleLabel === AppConstants.edit + ' ' + AppConstants.child)
                                         || (titleLabel === AppConstants.addChild));
 
-            await this.props.getUserParentDataAction();
+            await this.props.getUserParentDataAction(data.key);
             const { parentData } = this.props.userState;
             let additionalSettings = {};
             if (showSameEmailOption) {
