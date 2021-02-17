@@ -1661,7 +1661,7 @@ class AppRegistrationFormNew extends Component {
                             const {parentOrGuardian} = registrationObj
                             for (let i = 0; i < parentOrGuardian.length; i++){
                                 let pg = parentOrGuardian[i];
-                                await this.props.onChangeSetParentValue(null, 'matchingUsers', i);
+                                await this.onChangeSetParentValue(null, 'matchingUsers', i);
                                 registrationObj.parentOrGuardian[i]["isVerifyTouched"] = 1;
                                 await this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
                                 const users = await lookForExistingUser(pg);
