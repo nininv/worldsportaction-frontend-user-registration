@@ -1782,7 +1782,7 @@ class TeamInivteForm extends Component {
                         )}
                     </div>
 
-                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} required={"required-field"} />
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoPlayingOtherParticipantSports`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
