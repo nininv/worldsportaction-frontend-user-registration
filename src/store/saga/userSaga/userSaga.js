@@ -10,7 +10,11 @@ import { message } from "antd";
 function* failSaga(result) {
     yield put({ type: ApiConstants.API_USER_FAIL });
     setTimeout(() => {
-        alert(result.message);
+        message.config({
+            duration: 1.5,
+            maxCount: 1,
+          });
+          message.error(result.result.data.message)
     }, 800);
 }
 
