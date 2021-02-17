@@ -100,7 +100,6 @@ class RegistrationShop extends Component {
         let payload = {
             registrationId: registrationUniqueKey
         }
-        console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
         this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
@@ -220,7 +219,6 @@ class RegistrationShop extends Component {
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
         registrationReview["key"] = key;
-        console.log("registrationReview" + JSON.stringify(registrationReview));
         this.props.saveRegistrationReview(registrationReview);
         this.setState({loading: true, buttonPressed: key});
     }
@@ -472,7 +470,6 @@ class RegistrationShop extends Component {
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
-        console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
