@@ -58,7 +58,7 @@ import {
     walkingNetballQuesReferenceAction
 } from '../../store/actions/commonAction/commonAction';
 import Loader from '../../customComponents/loader';
-import { captializedString, deepCopyFunction, getAge, isArrayNotEmpty, regexNumberExpression } from '../../util/helpers';
+import { captializedString, deepCopyFunction, getAge, isArrayNotEmpty, regexNumberExpression, disabledFutureDate } from '../../util/helpers';
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
@@ -2497,6 +2497,7 @@ class AppTeamRegistrationForm extends Component {
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
+                                        disabledDate={disabledFutureDate}
                                     />
                                 )}
                             </Form.Item>
@@ -3083,6 +3084,7 @@ class AppTeamRegistrationForm extends Component {
                                         format={"DD-MM-YYYY"}
                                         showTime={false}
                                         name={'dateOfBirth'}
+                                        disabledDate={disabledFutureDate}
                                     />
                                 )}
                             </Form.Item>

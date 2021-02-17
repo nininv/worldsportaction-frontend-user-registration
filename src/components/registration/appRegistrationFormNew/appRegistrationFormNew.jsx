@@ -69,6 +69,7 @@ import {
     isArrayNotEmpty,
     regexNumberExpression,
     captializedString,
+    disabledFutureDate,
 } from '../../../util/helpers';
 import { nearByOrganisations } from "../../../util/geocode";
 import history from "../../../util/history";
@@ -2194,6 +2195,7 @@ class AppRegistrationFormNew extends Component {
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     name={'dateOfBirth'}
+                                    disabledDate={disabledFutureDate}
                                 />
                             )}
                         </Form.Item>
@@ -3958,7 +3960,8 @@ class AppRegistrationFormNew extends Component {
                                                                 onChange={(e, f) => this.dateConversion(f, "accreditationUmpireExpiryDate", "additionalInfo")}
                                                                 format={"DD-MM-YYYY"}
                                                                 showTime={false}
-                                                                value={accreditationUmpireExpiryDate} />
+                                                                value={accreditationUmpireExpiryDate}
+                                                            />
                                                         )}
 
                                                     </div>
