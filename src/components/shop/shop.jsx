@@ -154,6 +154,8 @@ class Shop extends Component {
             this.setState({organisationUniqueKey: value});
             this.getShopProducts(1, this.state.typeId, value);
         }
+
+        this.setState({ expandObj: null });
     }
 
     addToCart = (expandObj, varnt) =>{
@@ -379,7 +381,7 @@ class Shop extends Component {
                                 </div>
                                 {this.state.showCardView && index == this.state.expandObj.sIndex &&
                                 <div>
-                                    {this.cardExpandView()}
+                                    {this.state.expandObj && this.cardExpandView()}
                                 </div>
                                 }
                             </div>
@@ -393,7 +395,7 @@ class Shop extends Component {
                                 {item.shopProduct3 && this.shopProductColumnView(item.shopProduct3, index)}
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
                                 <div className="col-md-12">
-                                    {this.cardExpandView()}
+                                    {this.state.expandObj && this.cardExpandView()}
                                 </div>
                                 }
                             </div>
@@ -410,7 +412,6 @@ class Shop extends Component {
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
-        console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
