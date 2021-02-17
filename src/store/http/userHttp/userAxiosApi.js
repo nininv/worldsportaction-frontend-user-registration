@@ -165,6 +165,7 @@ let userHttpApi = {
   async getUserParentData(userId) {
     var url = `api/parents?userId=${userId || 0}`;
     return Method.dataGet(url, token)
+  },
 }
 
 let Method = {
