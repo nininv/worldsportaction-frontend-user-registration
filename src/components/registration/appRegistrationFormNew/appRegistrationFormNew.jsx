@@ -3581,6 +3581,7 @@ class AppRegistrationFormNew extends Component {
             let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "MM-DD-YYYY") : null;
             let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "MM-DD-YYYY") : null;
             let accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "MM-DD-YYYY") : null;
+
             return (
                 <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -3790,7 +3791,7 @@ class AppRegistrationFormNew extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
-                                value={4}
+                                value={registrationObj.additionalInfo.heardByRefId}
                             >
                                 {(heardByList || []).map((heard, index) => (
                                     <Radio

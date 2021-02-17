@@ -4146,21 +4146,21 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"} />
-                    {/* <Form.Item>
-                        {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
+                    <Form.Item>
+                        {getFieldDecorator(`heardByRefId`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })(  */}
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
-                        value={teamRegistrationObj.additionalInfo.heardByRefId}
-                    >
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                    </Radio.Group>
-                    {/* )}
-                    </Form.Item>    */}
+                        })(
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
+                                value={teamRegistrationObj.additionalInfo.heardByRefId}
+                            >
+                                {(heardByList || []).map((heard, index) => (
+                                    <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                                ))}
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
                     {teamRegistrationObj.additionalInfo.heardByRefId == 6 && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead
