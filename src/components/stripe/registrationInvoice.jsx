@@ -745,7 +745,7 @@ class RegistrationInvoice extends Component {
         let total = invoiceData!= null ? invoiceData.total: null;
         let paymentType = this.props.location.state ? this.props.location.state.paymentType : null;
         let userDetail = invoiceData != null ? invoiceData.billTo: null;
-    
+
         return (
             <div className="content-view">
                 <div className="drop-reverse" >
@@ -882,6 +882,26 @@ class RegistrationInvoice extends Component {
         )
     }
 
+    getShopProductDescription = (product) => {
+        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+        let result;
+        if (shopUniqueKey) {
+            let instruction = '';
+            let address = '';
+            if (product.deliveryType === AppConstants.deliveryTypePickup) {
+                instruction = `${product.pickupInstruction ? ' - ' + AppConstants.pickupInstruction + ' - ' + product.pickupInstruction + ',' : ''}`;
+                address = `${AppConstants.address} - ${product.address}, ${product.suburb}, ${product.postcode}, ${product.state}`;
+                result = `${AppConstants.pickupDescription}, ${instruction} ${address}`
+            } else {
+                address = `${AppConstants.address} - ${product.address}, ${product.suburb}, ${product.postcode}, ${product.state}`;
+                result = `${AppConstants.shippingDescription}, ${address}`
+            }
+        } else {
+            result = 'Shop Product Fees';
+        }
+        return `${product.organisationName} - ${product.productName} ${product.variantName ? '- ' + product.variantName : ''}${product.optionName ? '('+ product.optionName+')' : ''} - ` + result;
+    }
+
     shopView = () => {
         let {invoiceData} = this.props.stripeState;
         let shopProducts = invoiceData!= null ? invoiceData.shopProducts : []
@@ -897,7 +917,7 @@ class RegistrationInvoice extends Component {
                     <div className="col-md-3 col-8 pb-0 pr-0 pl-0 " >
                         {item.productName &&
                             <InputWithHead
-                                heading={`${item.organisationName} - ${item.productName} ${item.variantName ? '- ' + item.variantName : ''}${item.optionName ? '('+ item.optionName+')' : ''} - Shop Product Fees`}
+                                heading={this.getShopProductDescription(item)}
                                 required="pr-3 justify-content-start"
                             />
                         }

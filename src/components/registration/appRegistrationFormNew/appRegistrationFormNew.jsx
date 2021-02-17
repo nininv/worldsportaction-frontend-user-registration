@@ -69,6 +69,7 @@ import {
     isArrayNotEmpty,
     regexNumberExpression,
     captializedString,
+    disabledFutureDate,
 } from '../../../util/helpers';
 import { nearByOrganisations } from "../../../util/geocode";
 import history from "../../../util/history";
@@ -183,12 +184,18 @@ class AppRegistrationFormNew extends Component {
         }
     }
 
-    componentDidUpdate(nextProps) {
-        let registrationState = this.props.userRegistrationState;
-        if (!registrationState.onMembershipLoad && this.state.getMembershipLoad) {
+    componentDidUpdate(prevProps, prevState) {
+        const { location, userRegistrationState } = this.props;
+        const { getMembershipLoad } = this.state;
+        const registrationState = userRegistrationState;
+
+        if (!registrationState.onMembershipLoad && getMembershipLoad) {
+            const organisationId = getOrganisationId();
+
+            this.onChangeSetOrganisation(organisationId)
             this.setState({ organisations: registrationState.membershipProductInfo });
-            let participantId = this.props.location.state ? this.props.location.state.participantId : null;
-            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+            let participantId = location.state ? location.state.participantId : null;
+            let registrationId = location.state ? location.state.registrationId : null;
             this.props.updateUserRegistrationStateVarAction("participantId", participantId);
             this.props.updateUserRegistrationStateVarAction("registrationId", registrationId);
             this.setState({ participantId: participantId, registrationId: registrationId });
@@ -201,8 +208,6 @@ class AppRegistrationFormNew extends Component {
                     this.setState({ getParticipantByIdLoad: true })
                 }
             }
-            //Set all competitins of all organisation
-            // this.setAllCompetitions(registrationState.membershipProductInfo);
             this.setState({ getMembershipLoad: false });
         }
 
@@ -262,10 +267,10 @@ class AppRegistrationFormNew extends Component {
         }
 
         if (registrationState.expiredRegistrationFlag) {
-            if (getOrganisationId() && getCompetitonId()) {
+            if (getOrganisationId() && getOrganisationId()) {
                 let payload = {
                     organisationId: getOrganisationId(),
-                    competitionId: getCompetitonId()
+                    competitionId: getOrganisationId()
                 }
                 this.props.registrationExpiryCheckAction(payload);
             }
@@ -586,6 +591,8 @@ class AppRegistrationFormNew extends Component {
 
     onChangeSetParticipantValue = async (value, key) => {
         const { registrationObj, parents, userInfo } = this.props.userRegistrationState;
+        this.props.updateUserRegistrationObjectAction(0, 'isVerifyTouched');
+        this.props.updateUserRegistrationObjectAction(false, 'isVerified');
         if (key == "addOrRemoveAddressBySelect") {
             if (value) {
                 let user = deepCopyFunction(userInfo).find(x => x.id == registrationObj.userId);
@@ -811,6 +818,8 @@ class AppRegistrationFormNew extends Component {
     onChangeSetParentValue = (value, key, parentIndex) => {
         try {
             const { registrationObj, userInfo } = this.props.userRegistrationState;
+            registrationObj.parentOrGuardian[parentIndex]["isVerifyTouched"] = 0;
+            this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
             if (key == "isSameAddress") {
                 if (!registrationObj.parentOrGuardian[parentIndex]) {
                     registrationObj.parentOrGuardian[parentIndex] = {}
@@ -1402,17 +1411,37 @@ class AppRegistrationFormNew extends Component {
 
     stepNavigation = (registrationObj, expiredRegistration) => {
         try {
-            let nextStep = this.state.currentStep + 1;
+            const { competitionId, currentStep, allCompetitionsByOrgId, competitionInfo } = this.state;
+            const nextStep = currentStep + 1;
+
             this.scrollToTop();
-            if (nextStep == 1) {
-                if (registrationObj.competitions?.length == 0 &&
-                    expiredRegistration == null) {
+            if (nextStep === 1) {
+                const competitionUniqueKey = getCompetitonId();
+                const isCompetitionListEmpty =
+                    registrationObj.competitions?.length === 0;
+                const isRegistrationExpired = expiredRegistration == null;
+                const isShowAnotherCompetitions =
+                    isCompetitionListEmpty &&
+                    isRegistrationExpired &&
+                    !competitionId;
+
+                if (isShowAnotherCompetitions) {
                     this.setState({ showAddAnotherCompetitionView: true });
+                }
+
+                if (allCompetitionsByOrgId.length && !competitionInfo) {
+                    const currentCompetition = allCompetitionsByOrgId.find(c => {
+                        return c.competitionUniqueKey === competitionUniqueKey
+                    });
+
+                    if (currentCompetition) {
+                        this.addAnotherCompetition(currentCompetition)
+                    }
                 }
                 this.state.enabledSteps.push(0, nextStep);
             } else {
                 this.state.enabledSteps.push(nextStep);
-                if (nextStep == 2) {
+                if (nextStep === 2) {
                     setTimeout(() => {
                         this.setParticipantAdditionalInfoStepFormFields();
                     }, 300);
@@ -1614,31 +1643,34 @@ class AppRegistrationFormNew extends Component {
                         }
                         // for logged in user, we don't handle any of the validation
                         const userId = getUserId();
-                        const { isVerifyTouched } = registrationObj
-                        if (userId == 0 && !isVerifyTouched) {
+                        const { isVerifyTouched, isVerified } = registrationObj
+                        if (userId == 0 && isVerifyTouched == 0) {
                             // check if the user in registration object is still the "verified" one in store
-                            this.props.updateUserRegistrationObjectAction(true, 'isVerifyTouched')
+                            await this.props.updateUserRegistrationObjectAction(null, 'matchingUsers');
+                            await this.props.updateUserRegistrationObjectAction(1, 'isVerifyTouched');
                             const users = await lookForExistingUser(registrationObj);
                             if (users && users.length) {
-                                this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
+                                await this.props.updateUserRegistrationObjectAction(users, 'matchingUsers');
                                 return; // halt the process
                             } else {
                                 // doesn't return any user, complete the process
-                                this.props.updateUserRegistrationObjectAction(true, 'isVerified')
+                                this.props.updateUserRegistrationObjectAction(true, 'isVerified');
                             }
 
                             // verify parents / guardian one by one
                             const {parentOrGuardian} = registrationObj
                             for (let i = 0; i < parentOrGuardian.length; i++){
                                 let pg = parentOrGuardian[i];
-                                const users = await lookForExistingUser(pg)
-                                this.onChangeSetParentValue(true, "isVerifyTouched", i)
+                                await this.onChangeSetParentValue(null, 'matchingUsers', i);
+                                registrationObj.parentOrGuardian[i]["isVerifyTouched"] = 1;
+                                await this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
+                                const users = await lookForExistingUser(pg);
                                 if (users && users.length) {
                                     this.onChangeSetParentValue(users, 'matchingUsers', i);
                                     return; // halt the process
                                 } else {
                                     // doesn't return any user, complete the process
-                                    this.onChangeSetParentValue(true, 'isVerified', i)
+                                    this.onChangeSetParentValue(true, 'isVerified', i);
                                 }
                             }
                         }
@@ -1667,6 +1699,11 @@ class AppRegistrationFormNew extends Component {
                         // if(this.state.currentStep==0){
                         //     this.setState({sameEmailValidationModalVisible:true})
                         // }
+                        await this.props.updateUserRegistrationObjectAction(2, 'isVerifyTouched');
+                        for (let i = 0; i < registrationObj.parentOrGuardian.length; i++) {
+                            registrationObj.parentOrGuardian[i]["isVerifyTouched"] = 2;
+                        }
+                        await this.props.updateUserRegistrationObjectAction(registrationObj, "registrationObj");
                         this.stepNavigation(registrationObj, expiredRegistration);
                     }
                     setTimeout(() => {
@@ -1710,7 +1747,6 @@ class AppRegistrationFormNew extends Component {
             </div>
         )
     }
-
 
     participantDetailsStepView = (getFieldDecorator) => {
         const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
@@ -2099,6 +2135,7 @@ class AppRegistrationFormNew extends Component {
                                 },
                             )(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_firstName}
                                     onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "firstName")}
                                     setFieldsValue={registrationObj.firstName}
@@ -2133,6 +2170,7 @@ class AppRegistrationFormNew extends Component {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                             })(
                                 <InputWithHead
+                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_lastName}
                                     onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "lastName")}
                                     setFieldsValue={registrationObj.lastName}
@@ -2157,6 +2195,7 @@ class AppRegistrationFormNew extends Component {
                                     format={"DD-MM-YYYY"}
                                     showTime={false}
                                     name={'dateOfBirth'}
+                                    disabledDate={disabledFutureDate}
                                 />
                             )}
                         </Form.Item>
@@ -2206,7 +2245,6 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
-                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.email}
@@ -2237,7 +2275,6 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
-                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.parentOrGuardian[0]?.email}
@@ -2487,6 +2524,10 @@ class AppRegistrationFormNew extends Component {
     parentOrGuardianView = (getFieldDecorator) => {
         const { registrationObj, parents } = this.props.userRegistrationState;
         let hasErrorParent = this.state.hasErrorParent;
+
+        if (registrationObj.parentOrGuardian.length == 0) {
+            this.addParent("add");
+        }
 
         return (
             <div className="registration-form-view">
@@ -3542,6 +3583,7 @@ class AppRegistrationFormNew extends Component {
             let childrenCheckExpiryDate = registrationObj.additionalInfo.childrenCheckExpiryDate ? moment(registrationObj.additionalInfo.childrenCheckExpiryDate, "MM-DD-YYYY") : null;
             let accreditationCoachExpiryDate = registrationObj.additionalInfo.accreditationCoachExpiryDate ? moment(registrationObj.additionalInfo.accreditationCoachExpiryDate, "MM-DD-YYYY") : null;
             let accreditationUmpireExpiryDate = registrationObj.additionalInfo.accreditationUmpireExpiryDate ? moment(registrationObj.additionalInfo.accreditationUmpireExpiryDate, "MM-DD-YYYY") : null;
+
             return (
                 <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.additionalPersonalInformation}</div>
@@ -3751,7 +3793,7 @@ class AppRegistrationFormNew extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetAdditionalInfo(e.target.value, "heardByRefId")}
-                                value={4}
+                                value={registrationObj.additionalInfo.heardByRefId}
                             >
                                 {(heardByList || []).map((heard, index) => (
                                     <Radio
@@ -3918,7 +3960,8 @@ class AppRegistrationFormNew extends Component {
                                                                 onChange={(e, f) => this.dateConversion(f, "accreditationUmpireExpiryDate", "additionalInfo")}
                                                                 format={"DD-MM-YYYY"}
                                                                 showTime={false}
-                                                                value={accreditationUmpireExpiryDate} />
+                                                                value={accreditationUmpireExpiryDate}
+                                                            />
                                                         )}
 
                                                     </div>

@@ -1139,6 +1139,8 @@ class UserModulePersonalDetail extends Component {
 
         this.checkWidth();
         window.addEventListener('resize', this.checkWidth);
+        const { tabKey, competition, userId, yearRefId } = this.state;
+        this.tabApiCalls(tabKey, competition, userId, yearRefId);
     }
 
     componentWillUnmount() {

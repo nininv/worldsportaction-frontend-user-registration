@@ -314,7 +314,7 @@ export function* getUserRole(action) {
 
 export function* getUserParentData(action) {
     try {
-        const result = yield call(userHttpApi.getUserParentData);
+        const result = yield call(userHttpApi.getUserParentData, action.data);
         if (result.status === 1) {
             yield put({
                 type: ApiConstants.API_GET_USER_PARENT_DATA_SUCCESS,
