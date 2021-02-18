@@ -22,6 +22,26 @@ const UserAlreadyExists = ({
         // otherwise, user id is set on selecting radio
         next();
     };
+    const disableSMS = () => {
+        const user = matchingUsers.find(item => item.id === userId);
+        if (!!user) {
+            if (user.phone == null || user.phone == undefined || user.phone.length == 0) {
+                setType("email");
+                return true;
+            }
+        }
+        return false;
+    };
+    const disableEmail = () => {
+        const user = matchingUsers.find(item => item.id === userId);
+        if (!!user) {
+            if ((!!user.email && user.email.indexOf("player") == 0 && user.email.indexOf("wsa.com") == user.email.length - 7) || user.email == null || user.email == undefined || user.email.length == 0) {
+                setType("sms");
+                return true;
+            }
+        }
+        return false;
+    }
     return (
         <div className="registration-form-view user-already-exists-section">
             {matchingUsers && matchingUsers.length > 0 && (
@@ -71,8 +91,18 @@ const UserAlreadyExists = ({
                         onChange={({ target: { value } }) => setType(value)}
                         value={type}
                     >
-                        {<Radio value={"email"}>{AppConstants.email}</Radio>}
-                        {<Radio value={"sms"}>{AppConstants._sms}</Radio>}
+                        <Radio
+                            value={"email"}
+                            disabled={disableEmail()}
+                        >
+                            {AppConstants.email}
+                        </Radio>
+                        <Radio
+                            value={"sms"}
+                            disabled={disableSMS()}
+                        >
+                            {AppConstants._sms}
+                        </Radio>
                     </Radio.Group>
 
                     <div className="contextualHelp-RowDirection user-already-exists-buttons">
