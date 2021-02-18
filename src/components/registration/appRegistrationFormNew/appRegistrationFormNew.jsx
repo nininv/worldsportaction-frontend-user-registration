@@ -2655,6 +2655,7 @@ class AppRegistrationFormNew extends Component {
                                         })(
                                             <InputWithHead
                                                 required={"required-field pt-0 pb-0"}
+                                                disabled={parent?.userId == getUserId()}
                                                 heading={AppConstants.email}
                                                 placeholder={AppConstants.email}
                                                 onChange={(e) => this.onChangeSetParentValue(e.target.value, "email", parentIndex)}
