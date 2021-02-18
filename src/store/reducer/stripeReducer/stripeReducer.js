@@ -380,6 +380,13 @@ function stripe(state = initialState, action) {
                 status: action.status,
                 error: null
             };
+        
+        case ApiConstants.CLEAR_INVOICE_DATA:
+            state.invoiceData = null;
+
+            return {
+                ...state,
+            }
 
         default:
             return state;

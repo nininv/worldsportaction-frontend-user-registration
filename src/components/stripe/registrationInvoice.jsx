@@ -12,6 +12,7 @@ import {
     saveInvoiceAction,
     getInvoiceStatusAction,
     getShopInvoice,
+    clearInvoiceDataAction
 } from "../../store/actions/stripeAction/stripeAction"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -64,35 +65,40 @@ class RegistrationInvoice extends Component {
     }
 
     componentDidUpdate() {
-        let stripeState = this.props.stripeState
-        if (stripeState.onLoad == false && this.state.loading === true) {
-            this.setState({ loading: false });
-            if (!stripeState.error) {
-                history.push("/checkoutPayment", {
-                    registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
-                    invoiceId: this.props.stripeState.invoiceId,
-                })
+        try{
+            let stripeState = this.props.stripeState
+            if (stripeState.onLoad == false && this.state.loading === true) {
+                this.setState({ loading: false });
+                if (!stripeState.error) {
+                    history.push("/checkoutPayment", {
+                        registrationId: this.props.location.state ? this.props.location.state.registrationId : null,
+                        invoiceId: this.props.stripeState.invoiceId,
+                    })
+                }
             }
-        }
-        if (stripeState.onLoad == false && this.state.checkStatusLoad === true && !this.props.stripeState.invoiceData) {
-            this.setState({ checkStatusLoad: false });
-           // let invoiceId = this.props.stripeState.invoiceId
-            let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
-            let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
-            let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
-            let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
-            // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
-            // let userRegId = null;
-            // let invoiceId = null;
-            let data=this.props.location
-            data.pathname='/invoice'
-            this.props.getInvoice(registrationId, userRegId, invoiceId, teamMemberRegId)
-            window.history.pushState(data, document.title, window.location.href);
-            window.addEventListener('popstate', () => {
+            if (stripeState.onLoad == false && this.state.checkStatusLoad === true && !this.props.stripeState.invoiceData) {
+                this.setState({ checkStatusLoad: false });
+               // let invoiceId = this.props.stripeState.invoiceId
+                let registrationId = this.props.location.state ? this.props.location.state.registrationId : null;
+                let teamMemberRegId = this.props.location.state ? this.props.location.state.teamMemberRegId : null;
+                let userRegId = this.props.location.state ? this.props.location.state.userRegId : null;
+                let invoiceId = this.props.location.state ? this.props.location.state.invoiceId : null;
+                // let registrationId = "fd96ceef-196b-4654-aecd-0fc29d70a2d8";
+                // let userRegId = null;
+                // let invoiceId = null;
+                let data=this.props.location
+                data.pathname='/invoice'
+                this.props.getInvoice(registrationId, userRegId, invoiceId, teamMemberRegId)
                 window.history.pushState(data, document.title, window.location.href);
-            });
-            //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
+                window.addEventListener('popstate', () => {
+                    window.history.pushState(data, document.title, window.location.href);
+                });
+                //this.props.getInvoice('05c59bfc-9438-42e6-8917-4a60ed949281', invoiceId)
+            }
+        } catch(ex) {
+            console.log("Error in componentDidUpdate::" +ex)
         }
+
     }
 
 
@@ -112,6 +118,7 @@ class RegistrationInvoice extends Component {
     }
 
     gotoUserPage = (userId) => {
+        this.props.clearInvoiceDataAction();
         if(userId != 0){
             history.push({pathname: '/userPersonal'});
         }else{
@@ -1077,7 +1084,8 @@ function mapDispatchToProps(dispatch) {
         saveInvoiceAction,
         getInvoiceStatusAction,
         netSetGoTshirtSizeAction,
-        getShopInvoice
+        getShopInvoice,
+        clearInvoiceDataAction
     }, dispatch)
 }
 
