@@ -100,7 +100,6 @@ class RegistrationShop extends Component {
         let payload = {
             registrationId: registrationUniqueKey
         }
-        console.log("payload",payload);
         this.props.getRegistrationByIdAction(payload);
         this.getRegistrationProducts(registrationUniqueKey, 1, -1,-1);
     }
@@ -128,6 +127,8 @@ class RegistrationShop extends Component {
             this.setState({organisationUniqueKey: value});
             this.getRegistrationProducts(this.state.registrationUniqueKey , 1, this.state.typeId,value);
         }
+        this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
+            quantity: null});
     }
 
     goToShipping = () =>{
@@ -174,7 +175,7 @@ class RegistrationShop extends Component {
         let variantOption = varnt.variantOptions.find(x=>x.variantOptionId == this.state.variantOptionId);
         let obj ={
             productId: expandObj.productId,
-            productImgUrl: expandObj.productImgUrl,
+            productImgUrl: !!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl,
             productName: expandObj.productName,
             variantId: varnt.variantId,
             variantOptionId: this.state.variantOptionId,
@@ -220,7 +221,6 @@ class RegistrationShop extends Component {
 
     callSaveRegistrationProducts = (key, registrationReview) =>{
         registrationReview["key"] = key;
-        console.log("registrationReview" + JSON.stringify(registrationReview));
         this.props.saveRegistrationReview(registrationReview);
         this.setState({loading: true, buttonPressed: key});
     }
@@ -440,9 +440,9 @@ class RegistrationShop extends Component {
                                 {item.shopProduct2 && this.shopProductColumnView(item.shopProduct2, index)}
                                 {item.shopProduct3 && this.shopProductColumnView(item.shopProduct3, index)}
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
-                                <div className="col-md-12">
-                                    {this.cardExpandView()}
-                                </div>
+                                    <div className="col-md-12">
+                                        {this.cardExpandView()}
+                                    </div>
                                 }
                              </div>
 
@@ -472,7 +472,6 @@ class RegistrationShop extends Component {
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
-        console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
@@ -482,7 +481,7 @@ class RegistrationShop extends Component {
                 </div>
                 <div className="row" style={{marginTop: "17px"}}>
                     <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl[0] : AppImages.userIcon}/>
+                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={!!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
@@ -575,7 +574,9 @@ class RegistrationShop extends Component {
     }
 
     handlePagination = (page) => {
-        let {registrationUniqueKey,typeId,organisationUniqueKey} = this.state
+        let {registrationUniqueKey,typeId,organisationUniqueKey} = this.state;
+        this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
+            quantity: null});
         let payload = {
             registrationId: registrationUniqueKey,
             typeId: typeId,
