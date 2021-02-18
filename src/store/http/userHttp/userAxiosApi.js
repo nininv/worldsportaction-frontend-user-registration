@@ -163,14 +163,9 @@ let userHttpApi = {
     return Method.dataPost('userMerge/find', token, payload);
   },
   async getUserParentData(userId) {
-    if (!userId) {
-      userId = await getUserId()
-    }
-    if (userId != 0) {
-      var url = `api/parents?userId=${userId}`;
-      return Method.dataGet(url, token)
-    }
-  }
+    var url = `api/parents?userId=${userId || 0}`;
+    return Method.dataGet(url, token)
+  },
 }
 
 let Method = {

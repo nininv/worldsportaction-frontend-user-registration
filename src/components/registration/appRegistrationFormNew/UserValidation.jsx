@@ -31,8 +31,7 @@ export const UserValidation = ({ user, updateUser }) => {
     const [type, setType] = useState(null); // email / sms
 
     const { matchingUsers, isVerified, isVerifyTouched } = user; // store the matching users under a User, whether it is a Participant / Parent
-
-    if (!isVerifyTouched || isVerified) return null;
+    if (isVerifyTouched != 1) return null;
     return (
         <>
             {step === 1 && (
