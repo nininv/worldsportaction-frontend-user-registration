@@ -155,16 +155,17 @@ class Shop extends Component {
             this.getShopProducts(1, this.state.typeId, value);
         }
 
-        this.setState({ expandObj: null });
+        this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
+            quantity: null});
     }
 
     addToCart = (expandObj, varnt) =>{
         const { cart: { cartProducts: products }} = this.props.shopProductState;
-        const newProducts = [...products]
+        const newProducts = [...products];
         let variantOption = varnt.variantOptions.find(x=>x.variantOptionId == this.state.variantOptionId);
         let obj ={
             productId: expandObj.productId,
-            productImgUrl: expandObj.productImgUrl,
+            productImgUrl: !!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl,
             productName: expandObj.productName,
             variantId: varnt.variantId,
             variantOptionId: this.state.variantOptionId,
@@ -364,44 +365,48 @@ class Shop extends Component {
         if (!isArrayNotEmpty(products)) {
             return <div className="card-header-text pt-4">{AppConstants.notProductByOrganisation}</div>
         }
+        (products || []).forEach((item, index) =>{
+            item["sIndex"] = index;
+        });
         return(
             <div>
                 {window.innerWidth < 768 ?
                     <div>
-                        {(products || []).map((item, index) =>(
+                        {(products || []).map((item, index) => (
                             <div>
                                 <div className="shop-product-text card-header-text pt-4"
                                      style={{height: "240px"}}
                                      onClick={(e) => this.enableExpandView("show", item, index)}>
                                     <ShopCarousel item={item}/>
                                     <div className="px-4">
-                                        <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
+                                        <div className="subtitle-text-common" style={{
+                                            margin: "10px 0px 10px 0px",
+                                            fontWeight: 500
+                                        }}>{item.productName}</div>
                                         <div className="subtitle-text-common">{this.renderPrice(item)}</div>
                                     </div>
                                 </div>
                                 {this.state.showCardView && index == this.state.expandObj.sIndex &&
-                                <div>
-                                    {this.state.expandObj && this.cardExpandView()}
-                                </div>
+                                    <div>
+                                        {this.cardExpandView()}
+                                    </div>
                                 }
                             </div>
                         ))}
                     </div> :
                     <div >
-                        {(this.getShopProductList(products)  || []).map((item, index)=> (
+                        {(this.getShopProductList(products) || []).map((item, index) => (
                             <div className="row" key={index}>
                                 {this.shopProductColumnView(item.shopProduct1, index)}
                                 {item.shopProduct2 && this.shopProductColumnView(item.shopProduct2, index)}
                                 {item.shopProduct3 && this.shopProductColumnView(item.shopProduct3, index)}
                                 {this.state.showCardView && index == this.state.shopSelectedRow &&
-                                <div className="col-md-12">
-                                    {this.state.expandObj && this.cardExpandView()}
-                                </div>
+                                    <div className="col-md-12">
+                                        {this.cardExpandView()}
+                                    </div>
                                 }
                             </div>
-                        ))
-
-                        }
+                        ))}
                     </div>
 
                 }
@@ -415,7 +420,7 @@ class Shop extends Component {
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
-            <div class = "expand-product-text"  style={{marginTop: "23px"}}>
+            <div className="expand-product-text"  style={{marginTop: "23px"}}>
                 <div style={{textAlign:"right"}}>
                     <img  onClick={(e)=>this.enableExpandView("hide")} src={AppImages.crossImage}  style={{height:13 , width:13}}/>
                 </div>
@@ -514,7 +519,9 @@ class Shop extends Component {
     }
 
     handlePagination = (page) => {
-        let { typeId,organisationUniqueKey } = this.state
+        let { typeId,organisationUniqueKey } = this.state;
+        this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
+            quantity: null});
 
         let payload = {
             typeId: typeId,
