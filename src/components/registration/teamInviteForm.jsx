@@ -1782,7 +1782,7 @@ class TeamInivteForm extends Component {
                         )}
                     </div>
 
-                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} />
+                    <InputWithHead heading={AppConstants.playingOtherParticipantSports} required={"required-field"} />
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoPlayingOtherParticipantSports`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[7] }],
@@ -1810,21 +1810,21 @@ class TeamInivteForm extends Component {
                         </div>
                     )}
                     <InputWithHead heading={AppConstants.hearAbouttheCompition} required={"required-field"} />
-                    {/* <Form.Item>
-                        {getFieldDecorator(`additionalInfoHeardAboutTheCompition`, {
+                    <Form.Item>
+                        {getFieldDecorator(`heardByRefId`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[8] }],
-                        })(  */}
-                    <Radio.Group
-                        className="registration-radio-group"
-                        onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId", "userRegDetails")}
-                        value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : null}
-                    >
-                        {(heardByList || []).map((heard, index) => (
-                            <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
-                        ))}
-                    </Radio.Group>
-                    {/* )}
-                    </Form.Item>  */}
+                        })(
+                            <Radio.Group
+                                className="registration-radio-group"
+                                onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "heardByRefId", "userRegDetails")}
+                                value={userRegDetails.heardByRefId ? userRegDetails.heardByRefId : null}
+                            >
+                                {(heardByList || []).map((heard, index) => (
+                                    <Radio key={heard.id} value={heard.id}>{heard.description}</Radio>
+                                ))}
+                            </Radio.Group>
+                        )}
+                    </Form.Item>
                     {(userRegDetails.heardByRefId == 6) && (
                         <div style={{ marginTop: "10px" }}>
                             <InputWithHead

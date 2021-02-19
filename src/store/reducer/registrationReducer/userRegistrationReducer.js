@@ -1173,6 +1173,11 @@ function userRegistrationReducer(state = initialState, action) {
                 } else {
                     registrationObj.registeringYourself = 2;
                 }
+
+                const { email } = registrationObj;
+                if (!!email && email.indexOf("player") == 0 && email.indexOf("wsa.com") == email.length - 7) {
+                    registrationObj.email = null;
+                }
             }
 
             setMembershipProductsInfo(state);

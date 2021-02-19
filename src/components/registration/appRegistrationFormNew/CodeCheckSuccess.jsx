@@ -12,6 +12,7 @@ const CodeCheckSuccess = ({ updateUser, user, userId }) => {
         updateUser({
             ...user,
             isVerified: true,
+            isVerifyTouched: 2,
             userId,
         });
     };

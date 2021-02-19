@@ -154,6 +154,7 @@ class Shop extends Component {
             this.setState({organisationUniqueKey: value});
             this.getShopProducts(1, this.state.typeId, value);
         }
+
         this.setState({showCardView:false, expandObj: null, variantOptionId: null, shopSelectedRow: -1,
             quantity: null});
     }
@@ -416,7 +417,6 @@ class Shop extends Component {
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
-        console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
@@ -426,7 +426,7 @@ class Shop extends Component {
                 </div>
                 <div className="row" style={{marginTop: "17px"}}>
                     <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={expandObj.productImgUrl ? expandObj.productImgUrl : AppImages.userIcon}/>
+                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={!!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div className="headline-text-common">{expandObj.productName}</div>
@@ -567,7 +567,6 @@ class Shop extends Component {
     yourOrderView = () =>{
 
         const { cart: { cartProducts } } = this.props.shopProductState;
-        console.log('this.props.shopProductState', this.props.shopProductState);
         const total = cartProducts.reduce((sum, item) => sum + item.totalAmt, 0);
         return(
             <div className="outline-style " style={{padding: "36px 36px 22px 20px"}}>

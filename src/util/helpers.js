@@ -22,6 +22,11 @@ export const getAge = (birthDate) => {
 }
 // export const getAge = (birthDate) => (Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10));
 
+export const disabledFutureDate = (current) => {
+    // Can not select days before today and today
+    return current && current > moment().endOf('day');
+}
+
 export const deepCopyFunction = inObject => {
     let outObject, value, key
 

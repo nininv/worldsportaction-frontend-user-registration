@@ -71,6 +71,13 @@ function getStripeLoginLinkAction(userId) {
     return action;
 }
 
+function clearInvoiceDataAction() {
+    const action = {
+        type: ApiConstants.CLEAR_INVOICE_DATA,
+    };
+    return action;
+}
+
 export {
     getInvoice,
     onChangeCharityAction,
@@ -79,4 +86,5 @@ export {
     saveStripeAccountAction,
     getStripeLoginLinkAction,
     getShopInvoice,
+    clearInvoiceDataAction
 }
