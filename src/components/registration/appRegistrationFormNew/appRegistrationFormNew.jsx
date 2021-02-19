@@ -325,10 +325,15 @@ class AppRegistrationFormNew extends Component {
         if (this.state.enabledSteps.includes(current)) {
             if (this.state.currentStep === 1 && this.state.enabledSteps.includes(2)) {
                 let registrationCapValidationInputObj = this.getRegistrationCapValidationInputObj(registrationObj);
-                console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
+                // console.log("registrationCapValidationInputObj.products.find(x => x.competitionId)", registrationCapValidationInputObj.products.find(x => x.competitionId))
                 if (registrationCapValidationInputObj.products.find(x => x.competitionId)) {
                     this.props.validateRegistrationCapAction(registrationCapValidationInputObj);
                     this.setState({ validateRegistrationCapBySubmit: true, validateRegistrationCapOnLoad: true });
+                    return;
+                }
+                let productAdded = this.productValidation();
+                if (!productAdded) {
+                    message.error(ValidationConstants.fillMembershipProductDivisionInformation);
                     return;
                 }
             }
