@@ -3,6 +3,9 @@ import moment from 'moment';
 export const isArrayNotEmpty = array => {
     return (array !== null && Array.isArray(array) && array.length > 0);
 }
+export const isArrayEmpty = array => {
+    return (array !== null && Array.isArray(array) && array.length === 0);
+}
 
 export const isNullOrEmptyString = word => {
     return (word !== null && word !== undefined && word.length > 0);
