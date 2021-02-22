@@ -807,16 +807,20 @@ function setSeasonalFeeAndCasualFeeInput(
 function checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,products){
     try{
         let error = false;
-        if(membershipProductInfo.shortName == "Player"){
-            let netSetGoProduct = products.find((x) => x.membershipTypeName == "Player - NetSetGo");
-            if(netSetGoProduct){
-                error = true;
-            }
-        }else if(membershipProductInfo.shortName == "Player - NetSetGo"){
-            let playerProduct = products.find((x) => x.membershipTypeName == "Player");
-            if(playerProduct){
-                error = true;
-            }
+        // if(membershipProductInfo.shortName == "Player"){
+        //     let netSetGoProduct = products.find((x) => x.membershipTypeName == "Player - NetSetGo");
+        //     if(netSetGoProduct){
+        //         error = true;
+        //     }
+        // }else if(membershipProductInfo.shortName == "Player - NetSetGo"){
+        //     let playerProduct = products.find((x) => x.membershipTypeName == "Player");
+        //     if(playerProduct){
+        //         error = true;
+        //     }
+        // }
+        let isPlayer = products.find((x) => x.isPlayer);
+        if(isPlayer){
+            error = true;
         }
         return error;
     }catch(ex){
