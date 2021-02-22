@@ -818,9 +818,14 @@ function checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,products){
         //         error = true;
         //     }
         // }
-        let isPlayer = products.find((x) => x.isPlayer);
-        if(isPlayer){
+        let netSetGoProduct = products.find((x) => x.membershipTypeName == "Player - NetSetGo");
+        if(netSetGoProduct && membershipProductInfo.isPlayer){
             error = true;
+        }else{
+            let isPlayer = products.find((x) => x.isPlayer);
+            if(isPlayer && membershipProductInfo.shortName == "Player - NetSetGo"){
+                error = true;
+            }
         }
         return error;
     }catch(ex){
