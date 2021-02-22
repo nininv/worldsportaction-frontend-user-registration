@@ -840,10 +840,12 @@ function setMembershipProductsAndDivisionInfo(
                 .competitionInfo;
         let membershipProductInfo = competitionInfo.membershipProducts
             .filter(x => x.isIndividualRegistration == 1)[competitionSubIndex];
-        let error = checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,state.registrationObj.competitions[competitionIndex].products);
-        if(error){
-            message.error(ValidationConstants.playerNetSetGoValidation);
-            return;
+        if(competitionData){
+            let error = checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,state.registrationObj.competitions[competitionIndex].products);
+            if(error){
+                message.error(ValidationConstants.playerNetSetGoValidation);
+                return;
+            }
         }
         membershipProductInfo.isChecked = competitionData;
         let actionCheckBoxProduct;
