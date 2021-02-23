@@ -1738,6 +1738,8 @@ class AppTeamRegistrationForm extends Component {
                     }
 
                     if (this.state.currentStep == 2) {
+                        localStorage.removeItem("organisationId");
+                        localStorage.removeItem("competitionId");
                         let formData = new FormData();
                         formData.append("participantDetail", JSON.stringify(filteredTeamRegistrationObj));
                         this.props.saveTeamInfoAction(formData);

@@ -1719,6 +1719,8 @@ class AppRegistrationFormNew extends Component {
                         });
                     }, 100);
                     if (this.state.currentStep === 2) {
+                        localStorage.removeItem("organisationId");
+                        localStorage.removeItem("competitionId");
                         let formData = new FormData();
                         formData.append("participantPhoto", registrationObj.participantPhoto);
                         formData.append("participantDetail", JSON.stringify(filteredSaveRegistrationObj));
