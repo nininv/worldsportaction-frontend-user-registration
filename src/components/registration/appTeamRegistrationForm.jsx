@@ -2268,11 +2268,12 @@ class AppTeamRegistrationForm extends Component {
                             <div className="form-heading"
                                 style={{ paddingBottom: "0px", marginBottom: "-20px", marginTop: "20px" }}>{AppConstants.findAddress}</div>
                             <div>
-                                <Form.Item name="addressSearch">
+                                <Form.Item
+                                    name="addressSearch"
+                                >
                                     <PlacesAutocomplete
                                         defaultValue={this.getAddress(teamRegistrationObj)}
                                         heading={AppConstants.addressSearch}
-                                        required
                                         error={this.state.searchAddressError}
                                         onBlur={() => { this.setState({ searchAddressError: '' }) }}
                                         onSetData={(e) => this.handlePlacesAutocomplete(e, "yourDetails")}
@@ -2505,9 +2506,8 @@ class AppTeamRegistrationForm extends Component {
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.phone} required={"required-field"} />
                             <Form.Item
-                                rules={[{ required: true, message: ValidationConstants.contactField }]}
-                                help={hasErrorYourDetails && ValidationConstants.mobileLength}
-                                validateStatus={hasErrorYourDetails ? "error" : 'validating'}
+                                help={hasErrorYourDetails ? ValidationConstants.mobileLength : undefined}
+                                validateStatus={hasErrorYourDetails ? (hasErrorYourDetails ? "error" : 'validating') : undefined}
                             >
                                 {getFieldDecorator(`yourDetailsMobileNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.contactField }],
@@ -3091,11 +3091,12 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.phone} required={"required-field"} />
+
                             <Form.Item
                                 name={AppConstants.contactNO}
                                 rules={[{ required: true, message: ValidationConstants.contactField }]}
-                                help={hasError && ValidationConstants.mobileLength}
-                                validateStatus={hasError ? "error" : 'validating'}
+                                help={hasError ? (hasError && ValidationConstants.mobileLength) : undefined}
+                                validateStatus={hasError ? (hasError ? "error" : 'validating') : undefined}
                             >
                                 {getFieldDecorator(`teamMemberMobileNumber${teamMemberIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.contactField }],
@@ -3246,7 +3247,6 @@ class AppTeamRegistrationForm extends Component {
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(parent)}
                                     heading={AppConstants.addressSearch}
-                                    required
                                     error={this.state.searchAddressError}
                                     onBlur={() => {
                                         this.setState({
