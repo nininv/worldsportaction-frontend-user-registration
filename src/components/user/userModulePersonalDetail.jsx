@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon, Modal, Spin } from 'antd';
+import { Layout, Breadcrumb, Table, Select, Pagination, Button, Menu, Dropdown, Checkbox, Icon, Modal, Spin, message } from 'antd';
 
 import './user.css';
 import DashboardLayout from "../../pages/dashboardLayout";
@@ -22,7 +22,9 @@ import {
     getUserModuleTeamMembersAction,
     teamMemberUpdateAction,
     getUserOrganisationAction,
-    cancelDeRegistrationAction
+    cancelDeRegistrationAction,
+    liveScorePlayersToPayRetryPaymentAction,
+    registrationRetryPaymentAction
 } from "../../store/actions/userAction/userAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
@@ -142,8 +144,18 @@ const columns = [
             let compEndDate = moment(e.competitionEndDate).format("DD/MM/YYYY");
             let currentDate = moment().format("DD/MM/YYYY");
             return (
-                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
-                    <SubMenu
+                ((e.expiryDate === "Single Game" && compEndDate >= currentDate) ||
+                    (e.alreadyDeRegistered == 0 && e.paymentStatusFlag == 1) ||
+                    e.paymentStatus == "Pending De-registration" ||
+                    e.paymentStatus == "Pending Transfer" || 
+                    e.paymentStatus == "Failed") && (
+                    <Menu
+                        className="action-triple-dot-submenu"
+                        theme="light"
+                        mode="horizontal"
+                        style={{ lineHeight: "8px" }}
+                    >
+                        <SubMenu
                         key="sub1"
                         title={<img className="dot-image" src={AppImages.moreTripleDotActive}
                             alt="" width="16" height="16" />
@@ -167,6 +179,19 @@ const columns = [
                                 <span>{e.paymentStatus == "Pending De-registration" ? AppConstants.cancelDeRegistrtaion : AppConstants.cancelTransferReg}</span>
                             </Menu.Item>
                         )}
+                        { e.paymentStatusFlag == 2 ? (
+                            <Menu.Item key="6" onClick={() => this_Obj.setFailedRegistrationRetry(e)}>
+                                <span>{AppConstants.retryPayment}</span>
+                            </Menu.Item>
+                        )
+                        :
+                        e.paymentStatus == "Failed" && (
+                            <Menu.Item key="5" onClick={() => this_Obj.setFailedInstalmentRetry(e)}>
+                                <span>{AppConstants.retryPayment}</span>
+                            </Menu.Item>
+                        )
+
+                        }
                         {/* {e.teamId &&
                             <Menu.Item key="3" onClick={() => this_Obj.props.registrationResendEmailAction(e.teamId)}>
                                 <span>Resend Email</span>
@@ -174,7 +199,7 @@ const columns = [
                         } */}
                     </SubMenu>
                 </Menu>
-            )
+            ))
         }
     }
 ];
@@ -351,7 +376,47 @@ const childOrOtherRegistrationColumns = [
             )
 
         }
-    }
+    },
+    {
+        title: "Action",
+        dataIndex: "regForm",
+        key: "regForm",
+        width: 52,
+        render: (action, record) => {
+        return(
+        <Menu
+            className="action-triple-dot-submenu"
+            theme="light"
+            mode="horizontal"
+            style={{ lineHeight: "25px" }}
+        >
+            <SubMenu
+                key="sub1"
+                title={(
+                    <img
+                        className="dot-image"
+                        src={AppImages.moreTripleDot}
+                        alt=""
+                        width="16"
+                        height="16"
+                    />
+                )}
+            >
+                {record.invoiceFailedStatus == 1 ? 
+                    <Menu.Item key="1">
+                        <span onClick={() => this_Obj.setFailedRegistrationRetry(record)}>{AppConstants.retryPayment}</span>
+                    </Menu.Item>
+                    :
+                    record.transactionFailedStatus == 2 && 
+                    <Menu.Item key="2">
+                        <span onClick={() => this_Obj.setFailedInstalmentRetry(record)}>{AppConstants.retryPayment}</span>
+                    </Menu.Item>
+                }
+            </SubMenu>
+        </Menu>
+        )
+        }
+}
 ];
 
 const columnsPlayer = [
@@ -1058,6 +1123,11 @@ class UserModulePersonalDetail extends Component {
             removeTeamMemberLoad: false,
             showRemoveTeamMemberConfirmPopup: false,
             removeTeamMemberRecord: null,
+            selectedRow: null,
+            otherModalVisible: false,
+            modalTitle: null,
+            modalMessage: null,
+            actionView: 0
         }
     }
 
@@ -1254,6 +1324,18 @@ class UserModulePersonalDetail extends Component {
                 );
             this.setState({cancelDeRegistrationLoad: false})
         }
+
+        if((this.props.userState.onLoad == false || this.props.userState.onRetryPaymentLoad == false) && this.state.loading == true){
+            this.setState({loading: false});
+            this.handleRegistrationTableList(
+                1, 
+                this.state.userId,
+                this.state.competition,
+                this.state.yearRefId,
+                "myRegistrations"
+            );
+        }
+
     }
 
     apiCalls = async (userId) => {
@@ -1601,6 +1683,67 @@ class UserModulePersonalDetail extends Component {
             formData.append("profile_photo", file);
             isUserChild ? this.props.userPhotoUpdateAction(formData, userId) : this.props.userPhotoUpdateAction(formData);
         }
+    }
+
+    setFailedInstalmentRetry = (record) =>{
+        this.setState({
+            selectedRow: record, otherModalVisible: true,
+            actionView: 5, modalMessage : AppConstants.regRetryInstalmentModalMsg,
+            modalTitle: "Failed Instalment Retry"
+        });
+    }
+    setFailedRegistrationRetry = (record) =>{
+        this.setState({
+            selectedRow: record, otherModalVisible: true,
+            actionView: 6, modalMessage : AppConstants.regRetryModalMsg,
+            modalTitle: "Failed Registration Retry"
+        });
+    }
+
+    handleOtherModal = (key) =>{
+        const {selectedRow, actionView} = this.state;
+        const personal = this.props.userState.personalData;
+        if(actionView == 5){
+            if(key == "ok"){
+                let payload = {
+                    processTypeName: "instalment",
+                    registrationUniqueKey: selectedRow.registrationId,
+                    userId: personal.userId,
+                    divisionId: selectedRow.divisionId,
+                    competitionId: selectedRow.competitionId
+                }
+                this.props.liveScorePlayersToPayRetryPaymentAction(payload);
+                this.setState({ loading: true });
+            }
+        }
+        else if(actionView == 6){
+            const personal = this.props.userState.personalData;
+            if(key == "ok"){
+                let payload = {
+                    registrationId: selectedRow.registrationId,
+                }
+                this.props.registrationRetryPaymentAction(payload);
+                this.setState({ loading: true });
+            }
+        }
+        this.setState({otherModalVisible: false});
+    }
+
+    otherModalView = () => {
+        const { modalTitle, modalMessage } = this.state;
+        return(
+            <Modal
+                title= {modalTitle}
+                visible={this.state.otherModalVisible}
+                onCancel={() => this.handleOtherModal("cancel")}
+                okButtonProps={{ style: { backgroundColor: '#ff8237', borderColor: '#ff8237' } }}
+                okText="Update"
+                onOk={() => this.handleOtherModal("ok")}
+                centered
+            >
+               <p style = {{marginLeft: '20px'}}>{modalMessage}</p>
+            </Modal>
+        )
     }
 
     headerView = () => {
@@ -2973,6 +3116,7 @@ class UserModulePersonalDetail extends Component {
                         {this.unlinkParentConfirmPopup()}
                         {this.cannotUninkPopup()}
                         {this.removeTeamMemberConfirmPopup()}
+                        {this.otherModalView()}
                     </Content>
                 </Layout>
             </div>
@@ -3005,7 +3149,9 @@ function mapDispatchToProps(dispatch) {
         getUserModuleTeamMembersAction,
         teamMemberUpdateAction,
         getUserOrganisationAction,
-        cancelDeRegistrationAction
+        cancelDeRegistrationAction,
+        liveScorePlayersToPayRetryPaymentAction,
+        registrationRetryPaymentAction
     }, dispatch);
 }
 
