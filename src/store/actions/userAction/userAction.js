@@ -222,6 +222,22 @@ function cancelDeRegistrationAction(payload) {
       payload,
   };
 }
+function liveScorePlayersToPayRetryPaymentAction(payload){
+  const action = {
+      type: ApiConstants.API_LIVE_SCORE_PLAYERS_TO_PAY_RETRY_PAYMENT_LOAD,
+      payload
+  }
+
+  return action;
+}
+
+function registrationRetryPaymentAction(payload){
+  const action = {
+      type: ApiConstants.API_REGISTRATION_RETRY_PAYMENT_LOAD,
+      payload
+  }
+  return action
+}
 
 export {
   getRoleAction,
@@ -253,6 +269,8 @@ export {
   teamMemberUpdateAction,
   getUserParentDataAction,
   getUsersByRoleAction,
-  cancelDeRegistrationAction
+  cancelDeRegistrationAction,
+  liveScorePlayersToPayRetryPaymentAction,
+  registrationRetryPaymentAction
 }
 

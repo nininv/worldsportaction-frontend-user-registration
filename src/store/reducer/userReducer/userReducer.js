@@ -758,6 +758,27 @@ function userReducer(state = initialState, action) {
                 status: action.status,
             }
 
+        case ApiConstants.API_LIVE_SCORE_PLAYERS_TO_PAY_RETRY_PAYMENT_LOAD:
+            return { ...state, onRetryPaymentLoad: true };
+
+        case ApiConstants.API_LIVE_SCORE_PLAYERS_TO_PAY_RETRY_PAYMENT_SUCCESS:
+            return {
+                ...state,
+                onRetryPaymentLoad: false,
+                retryPaymentMessage: action.result.message,
+                retryPaymentSuccess: action.result.success,
+            };
+
+        case ApiConstants.API_REGISTRATION_RETRY_PAYMENT_LOAD:
+            return{...state,onLoad: true}
+        
+        case ApiConstants.API_REGISTRATION_RETRY_PAYMENT_SUCCESS:
+            return{
+                ...state,
+                onLoad: false,
+                status: action.status
+            }
+
         default:
             return state;
     }
