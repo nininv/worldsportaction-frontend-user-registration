@@ -356,36 +356,40 @@ const childOrOtherRegistrationColumns = [{
         width: 52,
         render: (action, record) => {
         return(
-        <Menu
-            className="action-triple-dot-submenu"
-            theme="light"
-            mode="horizontal"
-            style={{ lineHeight: "25px" }}
-        >
-            <SubMenu
-                key="sub1"
-                title={(
-                    <img
-                        className="dot-image"
-                        src={AppImages.moreTripleDot}
-                        alt=""
-                        width="16"
-                        height="16"
-                    />
-                )}
-            >
-                {record.invoiceFailedStatus == 1 ? 
-                    <Menu.Item key="1">
-                        <span onClick={() => this_Obj.setFailedRegistrationRetry(record)}>{AppConstants.retryPayment}</span>
-                    </Menu.Item>
-                    :
-                    record.transactionFailedStatus == 2 && 
-                    <Menu.Item key="2">
-                        <span onClick={() => this_Obj.setFailedInstalmentRetry(record)}>{AppConstants.retryPayment}</span>
-                    </Menu.Item>
-                }
-            </SubMenu>
-        </Menu>
+        <div>
+            {record.invoiceFailedStatus == 1 || record.transactionFailedStatus == 2 &&
+                <Menu
+                    className="action-triple-dot-submenu"
+                    theme="light"
+                    mode="horizontal"
+                    style={{ lineHeight: "25px" }}
+                >
+                    <SubMenu
+                        key="sub1"
+                        title={(
+                            <img
+                                className="dot-image"
+                                src={AppImages.moreTripleDot}
+                                alt=""
+                                width="16"
+                                height="16"
+                            />
+                        )}
+                    >
+                        {record.invoiceFailedStatus == 1 ? 
+                            <Menu.Item key="1">
+                                <span onClick={() => this_Obj.setFailedRegistrationRetry(record)}>{AppConstants.retryPayment}</span>
+                            </Menu.Item>
+                            :
+                            record.transactionFailedStatus == 2 && 
+                            <Menu.Item key="2">
+                                <span onClick={() => this_Obj.setFailedInstalmentRetry(record)}>{AppConstants.retryPayment}</span>
+                            </Menu.Item>
+                        }
+                    </SubMenu>
+                </Menu>
+        }
+        </div>
         )
         }
 }
