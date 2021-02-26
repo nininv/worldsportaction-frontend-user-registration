@@ -6,15 +6,11 @@ import {
     Select,
     Checkbox,
     Button,
-    Table,
     DatePicker,
     Radio,
     Form,
-    Modal,
     message,
     Steps,
-    Tag,
-    Pagination,
     Carousel
 } from "antd";
 import { connect } from 'react-redux';
@@ -25,14 +21,13 @@ import { bindActionCreators } from "redux";
 import "./product.css";
 import "../user/user.css";
 import '../competition/competition.css';
-import { isEmptyArray } from "formik";
 import Loader from '../../customComponents/loader';
-import { getAge, deepCopyFunction, isArrayNotEmpty, isNullOrEmptyString } from '../../util/helpers';
+import { getAge, deepCopyFunction, isArrayNotEmpty } from '../../util/helpers';
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import { getOrganisationId, getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId, getExistingUserRefId } from "../../util/sessionStorage";
+import { getUserId, getUserRegId, getExistingUserRefId } from "../../util/sessionStorage";
 import history from "../../util/history";
 import {
     getTeamRegistrationInviteAction,
@@ -44,24 +39,22 @@ import {
     getCommonRefData,
     favouriteTeamReferenceAction,
     firebirdPlayerReferenceAction,
-    registrationOtherInfoReferenceAction,
     countryReferenceAction,
-    nationalityReferenceAction,
     heardByReferenceAction,
     playerPositionReferenceAction,
     genderReferenceAction,
     disabilityReferenceAction,
-    personRegisteringRoleReferenceAction,
     identificationReferenceAction,
     otherSportsReferenceAction,
     accreditationUmpireReferenceAction,
     accreditationCoachReferenceAction,
     walkingNetballQuesReferenceAction,
     getSchoolListAction
-} from '../../store/actions/commonAction/commonAction';
+} from '../../store/actions/commonAction/commonAction'
 import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";
 import { regexNumberExpression } from '../../util/helpers';
+import RelationshipSelect from '../../components/registration/elements/RelationshipSelect/RelationshipSelect'
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -109,6 +102,7 @@ class TeamInivteForm extends Component {
                 userId: existingUserRefId == 1 ? getUserId() : 0
             }
             this.props.getTeamRegistrationInviteAction(payload);
+            this.props.getRelationshipListAction();
             this.setState({ inviteOnLoad: true });
         } catch (ex) {
             console.log("Error in componentDidMount::" + ex);
@@ -176,11 +170,12 @@ class TeamInivteForm extends Component {
                 [`emergencyFirstName`]: userRegDetails.emergencyFirstName,
                 [`emergencyLastName`]: userRegDetails.emergencyLastName,
                 [`emergencyContactNumber`]: userRegDetails.emergencyContactNumber,
+                [`emergencyRelationship`]: userRegDetails.emergencyRelationship,
                 [`yourDetailsStreet1`]: userRegDetails.street1,
                 [`yourDetailsSuburb`]: userRegDetails.suburb,
                 [`yourDetailsStateRefId`]: userRegDetails.stateRefId,
                 [`yourDetailsPostalCode`]: userRegDetails.postCode,
-                [`yourDetailsCountryRefId`]: userRegDetails.countryRefId
+                [`yourDetailsCountryRefId`]: userRegDetails.countryRefId,
             });
 
             if (getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18) {
@@ -1052,7 +1047,7 @@ class TeamInivteForm extends Component {
                                             {AppConstants.userLoginEmailChangeMessage}
                                         </div>
                                         :
-                                        null 
+                                        null
                                     }
                                 </div>
                             )}
@@ -1421,6 +1416,14 @@ class TeamInivteForm extends Component {
                                 )}
                             </Form.Item>
                         </div>
+                        <div className="col-sm-12 col-md-6">
+                            <RelationshipSelect
+                                value={userRegDetails.emergencyRelationship}
+                                form={this.props.form}
+                                getFieldDecorator={getFieldDecorator}
+                                onFormChange={this.onChangeSetParticipantValue}
+                            />
+                        </div>
                     </div>
                 </div>
             )
@@ -1691,10 +1694,10 @@ class TeamInivteForm extends Component {
                     <Form.Item>
                         {getFieldDecorator(`additionalInfoAllergies`, {
                             rules: [{ required: true, message: ValidationConstants.additionalInfoQuestions[4] }],
-                        })( 
+                        })(
                         <TextArea
                             placeholder={AppConstants.anyAllergies}
-                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")} 
+                            onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "allergyInfo","userRegDetails")}
                             setFieldsValue={userRegDetails.allergyInfo}
                             allowClear
                         />
@@ -1887,7 +1890,7 @@ class TeamInivteForm extends Component {
                                 <div>
                                     <InputWithHead heading={AppConstants.yourSchoolGrade} />
                                     <InputWithHead
-                                        // heading={(AppConstants.yourSchoolGrade)} 
+                                        // heading={(AppConstants.yourSchoolGrade)}
                                         placeholder={AppConstants.schoolGrade}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "schoolGradeInfo", "userRegDetails")}
                                         value={userRegDetails.schoolGradeInfo}
@@ -2103,7 +2106,7 @@ function mapDispatchToProps(dispatch) {
         teamInviteRegSettingsAction,
         updateInviteMemberInfoAction,
         saveInviteMemberInfoAction,
-        getSchoolListAction
+        getSchoolListAction,
     }, dispatch);
 
 }

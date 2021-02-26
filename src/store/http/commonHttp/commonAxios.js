@@ -43,6 +43,11 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
+    getRelationshipList() {
+        const url = `/common/reference/contactRelationship`;
+        return Method.dataGet(url, token);
+    },
+
     /////get the common membership product validity type list reference
     getProductValidityList() {
         var url = `/common/reference/MembershipProductValidity`;

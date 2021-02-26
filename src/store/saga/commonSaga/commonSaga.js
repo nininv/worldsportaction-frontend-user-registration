@@ -416,3 +416,20 @@ export function* getRefereeOffenceListSaga(){
         yield call(errorSaga, error)
     }
 }
+
+export function* getRelationshipListSaga(){
+    try {
+        const result = yield call(CommonAxiosApi.getRelationshipList, AppConstants.accreditationCoach);
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_RELATIONSHIP_LIST_SUCCESS,
+                result: result.result.data,
+                status: result.status,
+            });
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}

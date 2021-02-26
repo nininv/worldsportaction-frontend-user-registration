@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { Modal, Spin } from "antd";
 
-
-
 class Loader extends Component {
-    /////// render function 
+    /////// render function
     render() {
         return (
             <Modal
@@ -12,18 +10,16 @@ class Loader extends Component {
                 visible={this.props.visible}
                 // onOk={this.handleOk}
                 // onCancel={this.handleCancel}
-                cancelButtonProps={{ style: { display: 'none' } }}
-                okButtonProps={{ style: { display: 'none' } }}
+                cancelButtonProps={{ style: { display: "none" } }}
+                okButtonProps={{ style: { display: "none" } }}
                 centered={true}
-                width='unset'
-                height='unset'
+                width="unset"
+                height="unset"
                 closable={false}
                 footer={null}
                 className="custom-loader"
-
             >
                 <Spin tip="Loading..." />
-
             </Modal>
         );
     }

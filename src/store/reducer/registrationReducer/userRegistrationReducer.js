@@ -1,7 +1,7 @@
 import ApiConstants from "../../../themes/apiConstants";
 import {
     getOrganisationId,
-    getCompetitonId,
+    getCompetitionId,
     getUserId,
 } from "../../../util/sessionStorage.js";
 import {
@@ -80,6 +80,7 @@ let registrationObjTemp = {
     emergencyFirstName: null,
     emergencyLastName: null,
     emergencyContactNumber: null,
+    emergencyRelationship: null,
     regSetting: {
         netball_experience: 0,
         school_grade: 0,
@@ -96,8 +97,6 @@ let registrationObjTemp = {
         disabilityTypeRefId: null,
         disabilityCareNumber: null,
         emergencyContactNumber: null,
-        emergencyContactName: null,
-        //"playedBefore": 0,
         existingMedicalCondition: null,
         regularMedication: null,
         heardByRefId: null,
@@ -265,6 +264,8 @@ function getUserUpdatedRegistrationObj(
             registrationObj.emergencyLastName = selectedUser.emergencyLastName;
             registrationObj.emergencyContactNumber =
                 selectedUser.emergencyContactNumber;
+            registrationObj.emergencyRelationship =
+                selectedUser.emergencyRelationship;
             registrationObj.isInActive = selectedUser.isInActive;
             registrationObj.referParentEmail = selectedUser.isInActive
                 ? true
@@ -412,9 +413,9 @@ function setMembershipProductsInfo(state, organisationData) {
             let membershipProductInfo = deepCopyFunction(
                 state.membershipProductInfo
             );
-            if (getOrganisationId() != null && getCompetitonId() != null) {
+            if (getOrganisationId() != null && getCompetitionId() != null) {
                 competition.organisationId = getOrganisationId();
-                competition.competitionId = getCompetitonId();
+                competition.competitionId = getCompetitionId();
                 let organisatinInfoTemp = membershipProductInfo.find(
                     (x) => x.organisationUniqueKey == competition.organisationId
                 );
@@ -472,13 +473,13 @@ function setMembershipProductsInfo(state, organisationData) {
 
 function initiateExpiredRegistrationCall(state, membershipProductsInfoList) {
     try {
-        if (getOrganisationId() != null && getCompetitonId() != null) {
+        if (getOrganisationId() != null && getCompetitionId() != null) {
             let organisatinInfoTemp = membershipProductsInfoList.find(
                 (x) => x.organisationUniqueKey == getOrganisationId()
             );
             if (organisatinInfoTemp) {
                 let competitionInfoTemp = organisatinInfoTemp.competitions.find(
-                    (x) => x.competitionUniqueKey == getCompetitonId()
+                    (x) => x.competitionUniqueKey == getCompetitionId()
                 );
                 if (competitionInfoTemp == undefined) {
                     state.expiredRegistrationFlag = true;
@@ -499,7 +500,7 @@ function checkExistInFilteredOrgList(state, individualRegMembershipInfo) {
         );
         if (organisation) {
             let competition = organisation.competitions.find(
-                (x) => x.competitionUniqueKey == getCompetitonId()
+                (x) => x.competitionUniqueKey == getCompetitionId()
             );
             if (competition == undefined) {
                 state.individualCompetitionNotExist = true;
@@ -1281,6 +1282,7 @@ function userRegistrationReducer(state = initialState, action) {
                     state.parents = responseData.parents;
                     state.registeredParents = responseData.registeredParents;
                 }
+
                 return {
                     ...state,
                     onParticipantByIdLoad: false,
@@ -1298,7 +1300,7 @@ function userRegistrationReducer(state = initialState, action) {
             let data = action.result;
             initiateExpiredRegistrationCall(state, data);
             let individualRegMembershipInfo = getIndividualMembershipInfo(data);
-            if (getOrganisationId() && getCompetitonId()) {
+            if (getOrganisationId() && getCompetitionId()) {
                 checkExistInFilteredOrgList(state, individualRegMembershipInfo);
             }
             return {

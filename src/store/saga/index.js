@@ -6,14 +6,14 @@ import ApiConstants from "../../themes/apiConstants";
 import { getOnlyYearListSaga, getYearListingSaga } from "./appSaga";
 
 import {
-  getCommonDataSaga, getRefereeOffenceListSaga, countryReferenceSaga,
-  registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
-  nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
-  genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
-  identificationReferenceSaga, otherSportsReferenceSaga, accreditationUmpireReferenceSaga,
-  accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga, getSchoolsSaga, validateRegistrationCapSaga,
-  netSetGoTshirtSizeSaga, accreditationUmpireCoachReferenceSaga
-} from "./commonSaga/commonSaga";
+    getCommonDataSaga, getRefereeOffenceListSaga, countryReferenceSaga,
+    registrationOtherInfoReferenceSaga, firebirdPlayerReferenceSaga, favouriteTeamReferenceSaga,
+    nationalityReferenceSaga, heardByReferenceSaga, playerPositionReferenceSaga,
+    genderReferenceSaga, disabilityReferenceSaga, personRegisteringRoleReferenceSaga,
+    identificationReferenceSaga, otherSportsReferenceSaga, accreditationUmpireReferenceSaga,
+    accreditationCoachReferenceSaga, walkingNetballQuesReferenceSaga, getSchoolsSaga, validateRegistrationCapSaga,
+    netSetGoTshirtSizeSaga, accreditationUmpireCoachReferenceSaga, getRelationshipListSaga
+} from './commonSaga/commonSaga'
 
 // UserSaga
 import * as userSaga from '../saga/userSaga/userSaga';
@@ -49,6 +49,7 @@ export default function* root_saga() {
 
   yield takeEvery(ApiConstants.API_ONLY_YEAR_LIST__LOAD, getOnlyYearListSaga);
 
+  yield takeEvery(ApiConstants.API_RELATIONSHIP_LIST_LOAD, getRelationshipListSaga)
   yield takeEvery(ApiConstants.API_GET_COMMON_REF_DATA_LOAD, getCommonDataSaga)
   /// Favourite Team Reference Saga
   yield takeEvery(ApiConstants.API_FAVOURITE_TEAM_REFERENCE_LOAD, favouriteTeamReferenceSaga)
@@ -321,7 +322,6 @@ export default function* root_saga() {
 
 
   yield takeEvery(ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD, accreditationUmpireCoachReferenceSaga);
-
   yield takeEvery(ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD, userSaga.updateTeamMembersSaga);
   yield takeEvery(ApiConstants.API_CANCEL_DEREGISTRATION_LOAD, userSaga.cancelDeRegistrationSaga);
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Input } from 'antd';
+import React from "react";
+import { Input } from "antd";
 
 class InputWithHead extends React.Component {
     render() {
@@ -14,17 +14,23 @@ class InputWithHead extends React.Component {
             required,
             setFieldsValue,
             ...otherProps
-        } = this.props
+        } = this.props;
         return (
             <div>
                 {heading && (
-                    <span className={`input-style-bold ${required ? required : ''}`}>{heading}</span>
+                    <span
+                        className={`input-style-bold ${
+                            required ? required : ""
+                        }`}
+                    >
+                        {heading}
+                    </span>
                 )}
                 {placeholder && (
                     <Input
                         className="input"
                         placeholder={placeholder}
-                        name={name || 'hidden'}
+                        name={name || "hidden"}
                         // handleChange={(name) => alert(name)}
                         onBlur={handleBlur}
                         onChange={onChange}

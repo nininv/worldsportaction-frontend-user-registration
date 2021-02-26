@@ -14,7 +14,7 @@ import {
     Steps,
     Pagination,
     Carousel,
-    Spin
+    Spin,
 } from "antd";
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -75,13 +75,14 @@ import { nearByOrganisations } from "../../../util/geocode";
 import history from "../../../util/history";
 import {
     getOrganisationId,
-    getCompetitonId,
+    getCompetitionId,
     getUserId,
 } from "../../../util/sessionStorage";
 import PlacesAutocomplete from "../elements/PlaceAutoComplete/index";
 import Loader from '../../../customComponents/loader';
 import userHttpApi from "../../../store/http/userHttp/userAxiosApi";
 import UserValidation from "./UserValidation";
+import RelationshipSelect from '../../../components/registration/elements/RelationshipSelect/RelationshipSelect'
 
 const { Header, Content } = Layout;
 const { Step } = Steps;
@@ -171,23 +172,28 @@ class AppRegistrationFormNew extends Component {
     }
 
     componentDidMount() {
+        const competitionId = getCompetitionId();
         this.props.updateUserRegistrationObjectAction(null, "registrationObj");
         this.getUserInfo();
         this.props.membershipProductEndUserRegistrationAction({});
         this.setState({ getMembershipLoad: true });
-        if (getOrganisationId() != null && getCompetitonId() != null) {
+
+        if (getOrganisationId() !== null && competitionId !== null) {
             this.setState({
                 showAddAnotherCompetitionView: false,
                 organisationId: getOrganisationId(),
-                competitionId: getCompetitonId()
+                competitionId
             })
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { location, userRegistrationState } = this.props;
-        const { getMembershipLoad } = this.state;
-        const registrationState = userRegistrationState;
+        let registrationState = this.props.userRegistrationState;
+
+        const {
+            getMembershipLoad,
+        } = this.state;
+        const { location } = this.props;
 
         if (!registrationState.onMembershipLoad && getMembershipLoad) {
             const organisationId = getOrganisationId();
@@ -267,10 +273,10 @@ class AppRegistrationFormNew extends Component {
         }
 
         if (registrationState.expiredRegistrationFlag) {
-            if (getOrganisationId() && getOrganisationId()) {
+            if (getOrganisationId() && getCompetitionId()) {
                 let payload = {
                     organisationId: getOrganisationId(),
-                    competitionId: getOrganisationId()
+                    competitionId: getCompetitionId()
                 }
                 this.props.registrationExpiryCheckAction(payload);
             }
@@ -306,19 +312,6 @@ class AppRegistrationFormNew extends Component {
 
         }
     }
-
-    // setAllCompetitions = (membershipProductInfo) => {
-    //     try{
-    //         let allCompetitionsTemp = [];
-    //         for(let org of membershipProductInfo){
-    //             allCompetitionsTemp.push.apply(allCompetitionsTemp,org.competitions);
-    //         }
-    //         this.setState({allCompetitions: allCompetitionsTemp});
-    //         this.setState({competitions: allCompetitionsTemp.slice(0,this.state.competitionsCountPerPage)});
-    //     }catch(ex){
-    //         console.log("Error in setAllCompetitions"+ex);
-    //     }
-    // }
 
     changeStep = (current) => {
         const { registrationObj } = this.props.userRegistrationState;
@@ -370,6 +363,7 @@ class AppRegistrationFormNew extends Component {
 
     setParticipantDetailStepFormFields() {
         const { registrationObj } = this.props.userRegistrationState;
+
         try {
             if (registrationObj) {
                 this.props.form.setFieldsValue({
@@ -531,10 +525,11 @@ class AppRegistrationFormNew extends Component {
     getUserInfo = () => {
         if (getUserId() != 0) {
             let payload = {
-                competitionUniqueKey: getCompetitonId(),
+                competitionUniqueKey: getCompetitionId(),
                 organisationId: getOrganisationId(),
                 userId: getUserId()
             }
+
             this.setState({ getUserLoad: true });
             this.props.getUserRegistrationUserInfoAction(payload);
         } else {
@@ -651,7 +646,8 @@ class AppRegistrationFormNew extends Component {
                     [`emergencyContactNumber`]: registrationObj.emergencyContactNumber,
                 });
             }, 300);
-        } else if (key == 'email') {
+        }
+        else if (key == 'email') {
             if (registrationObj.referParentEmail == true) {
                 this.props.form.setFieldsValue({
                     ['participantEmail']: registrationObj.parentOrGuardian[0]?.email,
@@ -659,7 +655,8 @@ class AppRegistrationFormNew extends Component {
                 this.props.updateUserRegistrationObjectAction(false, "referParentEmail");
             }
             this.props.updateUserRegistrationObjectAction(value, key);
-        } else if (key === "tempParents") {
+        }
+        else if (key === "tempParents") {
             const userId = getUserId();
             const sessionUser = userInfo.find((x) => x.id == userId);
             const date = new Date(sessionUser.dateOfBirth);
@@ -679,7 +676,8 @@ class AppRegistrationFormNew extends Component {
                     await this.setParticipantDetailStepFormFields();
                 });
             }
-        } else {
+        }
+        else {
             this.props.updateUserRegistrationObjectAction(value, key);
         }
 
@@ -1037,8 +1035,9 @@ class AppRegistrationFormNew extends Component {
     addAnotherCompetition = (competition) => {
         this.setState({ competitionId: competition.competitionUniqueKey });
         let { membershipProductInfo } = this.props.userRegistrationState;
-        let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == competition.organisationUniqueKey);
+        let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey === competition.organisationUniqueKey);
         this.setState({ organisationId: organisationInfo.organisationUniqueKey });
+
         if (organisationInfo) {
             let organisation = {
                 organisationInfo: organisationInfo,
@@ -1162,10 +1161,10 @@ class AppRegistrationFormNew extends Component {
         try {
             const { membershipProductInfo } = this.props.userRegistrationState;
             let exist = false;
-            if (getOrganisationId() && getCompetitonId()) {
+            if (getOrganisationId() && getCompetitionId()) {
                 let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
                 if (organisation) {
-                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
                     if (competition) {
                         exist = true;
                     }
@@ -1188,11 +1187,11 @@ class AppRegistrationFormNew extends Component {
         });
 
         //For retain competitions based on the url for a another participant
-        if (getOrganisationId() != null && getCompetitonId() != null && this.isExistIndividualRegCompetition()) {
+        if (getOrganisationId() != null && getCompetitionId() != null && this.isExistIndividualRegCompetition()) {
             this.setState({
                 showAddAnotherCompetitionView: false,
                 organisationId: getOrganisationId(),
-                competitionId: getCompetitonId()
+                competitionId: getCompetitionId()
             })
         }
 
@@ -1284,11 +1283,13 @@ class AppRegistrationFormNew extends Component {
     onChangeSetOrganisation = (organisationId) => {
         try {
             let { membershipProductInfo } = this.props.userRegistrationState;
+            let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == organisationId);
+
             this.setState({
                 organisationId: organisationId,
                 currentCompetitions: 1
             });
-            let organisationInfo = deepCopyFunction(membershipProductInfo).find(x => x.organisationUniqueKey == organisationId);
+
             if (organisationInfo) {
                 this.setState({
                     allCompetitionsByOrgId: organisationInfo.competitions,
@@ -1421,7 +1422,7 @@ class AppRegistrationFormNew extends Component {
 
             this.scrollToTop();
             if (nextStep === 1) {
-                const competitionUniqueKey = getCompetitonId();
+                const competitionUniqueKey = getCompetitionId();
                 const isCompetitionListEmpty =
                     registrationObj.competitions?.length === 0;
                 const isRegistrationExpired = expiredRegistration == null;
@@ -1754,6 +1755,7 @@ class AppRegistrationFormNew extends Component {
             </div>
         )
     }
+
 
     participantDetailsStepView = (getFieldDecorator) => {
         const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
@@ -2142,7 +2144,6 @@ class AppRegistrationFormNew extends Component {
                                 },
                             )(
                                 <InputWithHead
-                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_firstName}
                                     onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "firstName")}
                                     setFieldsValue={registrationObj.firstName}
@@ -2177,7 +2178,6 @@ class AppRegistrationFormNew extends Component {
                                 rules: [{ required: true, message: ValidationConstants.nameField[1] }],
                             })(
                                 <InputWithHead
-                                    disabled={registrationObj.userId == getUserId()}
                                     placeholder={AppConstants.participant_lastName}
                                     onChange={(e) => this.onChangeSetParticipantValue(captializedString(e.target.value), "lastName")}
                                     setFieldsValue={registrationObj.lastName}
@@ -2252,6 +2252,7 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
+                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.email}
@@ -2282,6 +2283,7 @@ class AppRegistrationFormNew extends Component {
                                         ],
                                     })(
                                         <InputWithHead
+                                            disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
                                             onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.parentOrGuardian[0]?.email}
@@ -2532,10 +2534,6 @@ class AppRegistrationFormNew extends Component {
         const { registrationObj, parents } = this.props.userRegistrationState;
         let hasErrorParent = this.state.hasErrorParent;
 
-        if (registrationObj.parentOrGuardian.length == 0) {
-            this.addParent("add");
-        }
-
         return (
             <div className="registration-form-view">
                 <div className="form-heading" style={{ paddingBottom: "0px" }}>{AppConstants.parentOrGuardianDetail}</div>
@@ -2699,8 +2697,11 @@ class AppRegistrationFormNew extends Component {
 
     emergencyContactView = (getFieldDecorator) => {
         const { hasErrorEmergencyNumber } = this.state;
+        const { commonReducerState, userRegistrationState } = this.props;
+
         try {
-            let { registrationObj } = this.props.userRegistrationState;
+            const { registrationObj } = userRegistrationState;
+
             return (
                 <div className="registration-form-view">
                     <div className="form-heading">{AppConstants.emergencyContact}</div>
@@ -2769,6 +2770,14 @@ class AppRegistrationFormNew extends Component {
                                 )}
                             </Form.Item>
                         </div>
+                        <div className="col-sm-12 col-md-6">
+                            <RelationshipSelect
+                                value={registrationObj.emergencyRelationship}
+                                form={this.props.form}
+                                getFieldDecorator={getFieldDecorator}
+                                onFormChange={this.onChangeSetParticipantValue}
+                            />
+                        </div>
                     </div>
                 </div>
             )
@@ -2779,15 +2788,19 @@ class AppRegistrationFormNew extends Component {
 
     selectCompetitionStepView = (getFieldDecorator) => {
         const { registrationObj, expiredRegistration } = this.props.userRegistrationState;
+
         return (
             <div>
                 <div>{this.addedParticipantWithProfileView()}</div>
+
                 {!this.state.showAddAnotherCompetitionView && (
                     <div>
                         {expiredRegistration == null ?
                             <div>
                                 {(registrationObj.competitions || []).map((competition, competitionIndex) => (
-                                    <div ref={(ref) => this.ref = ref}>{this.competitionDetailView(competition, competitionIndex, getFieldDecorator)}</div>
+                                    <div ref={(ref) => this.ref = ref}>
+                                        {this.competitionDetailView(competition, competitionIndex, getFieldDecorator)}
+                                    </div>
                                 ))}
                             </div>
                             :
@@ -2856,6 +2869,7 @@ class AppRegistrationFormNew extends Component {
         try {
             let { membershipProductInfo } = this.props.userRegistrationState;
             let organisationInfo = membershipProductInfo.find(x => x.organisationUniqueKey == this.state.organisationId);
+
             return (
                 <div className="registration-form-view">
                     <div style={{ display: "flex", alignItems: "center" }}>
@@ -3581,8 +3595,7 @@ class AppRegistrationFormNew extends Component {
                 heardByList,
                 accreditationUmpireList,
                 accreditationCoachList,
-                walkingNetballQuesList,
-                schoolList
+                schoolList,
             } = this.props.commonReducerState;
             let yearsOfPlayingList = [{ years: '2' }, { years: '3' }, { years: '4' }, { years: '5' }, { years: '6' }, { years: '7' }, { years: '8' }, { years: '9' }, { years: '10+' }];
             let walkingNetballQuesKeys = Object.keys(registrationObj.additionalInfo.walkingNetball);
@@ -4338,7 +4351,6 @@ class AppRegistrationFormNew extends Component {
                 <InnerHorizontalMenu />
                 <Layout>
                     {this.headerView()}
-                    {/* <a onClick="javascript:window.open('mailto:mail@domain.com', 'mail');event.preventDefault()" href="mailto:example@example.com" target="_blank">Email</a> */}
                     <Form
                         autoComplete="off"
                         scrollToFirstError
@@ -4351,12 +4363,6 @@ class AppRegistrationFormNew extends Component {
                         </Content>
                         <div>{this.actionView()}</div>
                         <Loader visible={isLoading} />
-                        {/* <Loader visible={
-                            this.props.userRegistrationState.onMembershipLoad ||
-                            this.props.userRegistrationState.userInfoOnLoad ||
-                            this.props.userRegistrationState.onParticipantByIdLoad ||
-                            this.props.userRegistrationState.onSaveLoad
-                        } /> */}
                     </Form>
                 </Layout>
             </div>
@@ -4394,7 +4400,7 @@ function mapDispatchToProps(dispatch) {
         getSchoolListAction,
         validateRegistrationCapAction,
         lookForExistingUser,
-        netSetGoTshirtSizeAction
+        netSetGoTshirtSizeAction,
     }, dispatch);
 }
 

@@ -32,7 +32,7 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import ShopCarousel from "./shopCarousel";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
+import {getOrganisationId,  getCompetitionId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
 import history from "../../util/history";
 import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";

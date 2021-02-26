@@ -1,6 +1,6 @@
 import ApiConstants from "../../../themes/apiConstants";
 import { deepCopyFunction, getAge, isArrayNotEmpty, isNullOrEmptyString} from '../../../util/helpers';
-import { getOrganisationId,  getCompetitonId } from "../../../util/sessionStorage.js";
+import { getOrganisationId,  getCompetitionId } from "../../../util/sessionStorage.js";
 import moment from 'moment';
 
 let walkingNetballObj = {
@@ -153,7 +153,6 @@ const teamObj = {
     "walkingNetball": deepCopyFunction(walkingNetballObj),
     "associationLevelInfo": null,
     "disabilityCareNumber": null,
-    "emergencyContactName": null,
     "isConsentPhotosGiven": false,
     "isChildrenCheckNumber": null,
     "emergencyContactNumber": null,
@@ -234,9 +233,9 @@ function setTeamRegistrationObj(state,existingTeamInfo){
   try{
     state.teamRegistrationObj = existingTeamInfo ? existingTeamInfo : deepCopyFunction(teamObj);
     let membershipProducts = deepCopyFunction(state.membershipProductInfo)
-    if(getOrganisationId() != null && getCompetitonId() != null){
+    if(getOrganisationId() != null && getCompetitionId() != null){
       state.teamRegistrationObj.organisationId = getOrganisationId();
-      state.teamRegistrationObj.competitionId = getCompetitonId();
+      state.teamRegistrationObj.competitionId = getCompetitionId();
       let organisationInfoTemp = membershipProducts.find(x => x.organisationUniqueKey == state.teamRegistrationObj.organisationId);
       if(organisationInfoTemp != null){
         let competitionInfoTemp = organisationInfoTemp.competitions.find(x => x.competitionUniqueKey == state.teamRegistrationObj.competitionId);
@@ -262,11 +261,11 @@ function setTeamRegistrationObj(state,existingTeamInfo){
 
 function initiateExpiredRegistrationCall(state){
 	try{
-		if(getOrganisationId() != null && getCompetitonId() != null){
+		if(getOrganisationId() != null && getCompetitionId() != null){
       let membershipProductsInfoList = state.NonFilteredMembershipProductInfo;
 			let organisatinInfoTemp = membershipProductsInfoList.find(x => x.organisationUniqueKey == getOrganisationId());
 			if(organisatinInfoTemp){
-				let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+				let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
 				if(competitionInfoTemp == undefined){
 					state.expiredRegistrationFlag = true;
 				}
@@ -286,13 +285,13 @@ function setCompetitionDetails(state,details){
     state.teamRegistrationObj.competitionInfo = deepCopyFunction(details.competitionInfo);
     state.teamRegistrationObj.competitionId = state.teamRegistrationObj.competitionInfo.competitionUniqueKey;
     state.teamRegistrationObj.registrationRestrictionTypeRefId = state.teamRegistrationObj.competitionInfo.registrationRestrictionTypeRefId;
-    state.teamRegistrationObj.membershipProductList = []; 
+    state.teamRegistrationObj.membershipProductList = [];
     let filteredPayerAndTeamMembershipProducts = state.teamRegistrationObj.competitionInfo.membershipProducts.filter(x => x.isPlayer == 1);
     for(let productType of filteredPayerAndTeamMembershipProducts){
       let filteredTeamDivision = productType.divisions.find(x => x.isTeamRegistration == 1);
       if(filteredTeamDivision){
         state.teamRegistrationObj.membershipProductList.push(productType);
-      } 
+      }
     }
 
     //When it has one item set defualt the first position
@@ -520,7 +519,7 @@ function checkExistInFilteredOrgList(state,teamRegMembershipInfo){
 	try{
 		let organisation = teamRegMembershipInfo.find(x => x.organisationUniqueKey == getOrganisationId());
 		if(organisation){
-			let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+			let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
 			if(competition == undefined){
 				state.teamCompetitionNotExist = true;
 			}
@@ -540,7 +539,7 @@ function teamRegistrationReducer(state = initialState, action){
               ...state
             }
 
-        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD: 
+        case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_LOAD:
             return {...state,onMembershipLoad: true}
 
         case ApiConstants.API_MEMBERSHIP_PRODUCT_TEAM_REG_SUCCESS:
@@ -555,13 +554,13 @@ function teamRegistrationReducer(state = initialState, action){
               onMembershipLoad: false
             };
 
-        case ApiConstants.SELECT_TEAM: 
+        case ApiConstants.SELECT_TEAM:
             setTeamRegistrationObj(state);
-            return { 
+            return {
               ...state,
-              hasTeamSelected: true 
+              hasTeamSelected: true
             };
-        
+
         case ApiConstants.UPDATE_TEAM_REGISTRATION_OBJECT:
             if(action.key == "competitionDetail"){
               let details = action.data;
@@ -589,7 +588,7 @@ function teamRegistrationReducer(state = initialState, action){
             return{
               ...state
             };
-        
+
         case ApiConstants.UPDATE_REGISTRATION_TEAM_MEMBER_ACTION:
             if(action.key == "membershipProductTypes"){
               state.teamRegistrationObj.teamMembers[action.index][action.key][action.subIndex].isChecked = action.data;
@@ -599,10 +598,10 @@ function teamRegistrationReducer(state = initialState, action){
             return{
               ...state
             }
-            
+
         case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_LOAD:
             return { ...state, onLoad: true };
-    
+
         case ApiConstants.API_ORG_TEAM_REGISTRATION_SETTINGS_SUCCESS:
             let registrationSettings = action.result;
             setTeamRegistrationSetting(state,registrationSettings);
@@ -612,10 +611,10 @@ function teamRegistrationReducer(state = initialState, action){
               //inviteMemberRegSettings: registrationSettings,
               status: action.status
             };
-        
+
         case ApiConstants.API_SAVE_TEAM_LOAD:
             return { ...state, onSaveLoad: true };
-    
+
         case ApiConstants.API_SAVE_TEAM_SUCCESS:
             state.registrationId = action.result ? action.result.id : null;
             state.saveValidationErrorMsg = action.result ? action.result.errorMsg : null;
@@ -627,7 +626,7 @@ function teamRegistrationReducer(state = initialState, action){
               isSavedTeam: true
             };
 
-        case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO: 
+        case ApiConstants.UPDATE_TEAM_ADDITIONAL_INFO:
             let additionalInfoKey = action.key;
             let additionalInfoData = action.data;
             let additionalInfoSubKey = action.subKey;
@@ -647,7 +646,7 @@ function teamRegistrationReducer(state = initialState, action){
 
         case ApiConstants.API_GET_TEAM_BY_ID_LOAD:
             return { ...state, onTeamInfoByIdLoad: true };
-    
+
         case ApiConstants.API_GET_TEAM_BY_ID_SUCCESS:
             let responseData = action.result;
             let participantId = action.participantId;
@@ -663,7 +662,7 @@ function teamRegistrationReducer(state = initialState, action){
 
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_LOAD:
             return { ...state, onExistingTeamInfoByIdLoad: true };
-      
+
         case ApiConstants.API_GET_EXISTING_TEAM_BY_ID_SUCCESS:
             let existingTeamInfo = action.result;
             setTeamRegistrationObj(state,existingTeamInfo)
@@ -674,9 +673,9 @@ function teamRegistrationReducer(state = initialState, action){
               // teamRegistrationObj: existingTeamInfo
             };
 
-        case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD: 
+        case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_LOAD:
             return {...state,onExpiredRegistrationCheckLoad: true}
-          
+
         case ApiConstants.API_EXPIRED_TEAM_REGISTRATION_SUCCESS:
             let expiredRegistrationTemp = action.result;
             return {
@@ -686,9 +685,9 @@ function teamRegistrationReducer(state = initialState, action){
               status: action.status
             };
 
-        // case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD: 
+        // case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_LOAD:
         //     return {...state,inviteOnLoad: true}
-          
+
         // case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS:
         //     let iniviteMemberInfoTemp = action.result;
         //     return {
@@ -716,14 +715,14 @@ function teamRegistrationReducer(state = initialState, action){
 
         // case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD:
         //     return { ...state, inviteMemberSaveOnLoad: true };
-  
+
         // case ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_SUCCESS:
         //     return {
         //         ...state,
         //         inviteMemberSaveOnLoad: false,
         //         status: action.status
-        //     };  
-        
+        //     };
+
       case ApiConstants.API_GET_TEAM_SEASONAL_CASUAL_FEES_LOAD:
 				return {...state,getSeasonalCasualFeesOnLoad: true }
 
@@ -739,14 +738,14 @@ function teamRegistrationReducer(state = initialState, action){
           getSeasonalCasualFeesOnLoad: false
         }
 
-      case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD: 
+      case ApiConstants.TEAM_NAME_CHECK_VALIDATION_LOAD:
         return { ...state,onLoad: true};
 
       case ApiConstants.TEAM_NAME_CHECK_VALIDATION_SUCCESS:
-        state.teamNameValidationResultCode = action.result.resultCode;     
+        state.teamNameValidationResultCode = action.result.resultCode;
         return {
             ...state,
-            onLoad: false,                
+            onLoad: false,
         };
 
         default:

@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import './swappable.css';
+import React, { Component } from "react";
+import "./swappable.css";
 class SwappableComponentEdit extends Component {
     constructor() {
         super();
 
         this.state = {
-            customFunc: null
+            customFunc: null,
         };
     }
 
@@ -14,25 +14,28 @@ class SwappableComponentEdit extends Component {
     }
 
     drag(ev, customFunc = null) {
-        ev.dataTransfer.setData('src', ev.target.id);
+        ev.dataTransfer.setData("src", ev.target.id);
         // console.log(ev.target.parentNode, 'TARGET DRAGSTART');
 
         this.setState({
-            initialParentNode: ev.target.parentNode
+            initialParentNode: ev.target.parentNode,
         });
     }
 
     dragEnd(ev, customFunc = null) {
         // console.log(ev.target.parentNode, 'TARGET DRAGEND');
-        if (customFunc && ev.target.parentNode != this.state.initialParentNode) {
-            console.log('custom func');
+        if (
+            customFunc &&
+            ev.target.parentNode != this.state.initialParentNode
+        ) {
+            console.log("custom func");
             this.props.customFunc();
         }
     }
 
     drop(ev, dragableId, dropzoneId, customFunc = null, swappable = true) {
         ev.preventDefault();
-        let src = document.getElementById(ev.dataTransfer.getData('src'));
+        let src = document.getElementById(ev.dataTransfer.getData("src"));
         let srcParent = src.parentNode;
 
         let target = document.getElementById(dragableId);
@@ -48,8 +51,8 @@ class SwappableComponentEdit extends Component {
     }
 
     swapElements(src, target, srcParent, targetParent) {
-        let sourceIndexArray = src.id.split(':');
-        let targetIndexArray = target.id.split(':');
+        let sourceIndexArray = src.id.split(":");
+        let targetIndexArray = target.id.split(":");
         if (sourceIndexArray[3] === targetIndexArray[3]) {
             target.replaceWith(src);
             srcParent.appendChild(target);
@@ -70,37 +73,43 @@ class SwappableComponentEdit extends Component {
 
     render() {
         const dropZoneStyle = {
-            width: '50px',
-            minHeight: '50px',
+            width: "50px",
+            minHeight: "50px",
             //   padding: '10px',
-            border: '1px solid #aaaaaa'
+            border: "1px solid #aaaaaa",
         };
 
         const draggableStyle = {
-            width: '50px',
-            height: '50px',
+            width: "50px",
+            height: "50px",
             //   padding: '10px',
-            border: '1px solid red'
+            border: "1px solid red",
         };
 
         const { id, content, swappable, customFunc } = this.props;
-        const dropzoneId = 'drop' + id;
+        const dropzoneId = "drop" + id;
         // const dragableId = 'drag' + id;
         const dragableId = id;
         return (
             <div
                 id={dropzoneId}
-                onDrop={event =>
-                    this.drop(event, dragableId, dropzoneId, customFunc, swappable)
+                onDrop={(event) =>
+                    this.drop(
+                        event,
+                        dragableId,
+                        dropzoneId,
+                        customFunc,
+                        swappable
+                    )
                 }
-                onDragOver={event => this.allowDrop(event)}
+                onDragOver={(event) => this.allowDrop(event)}
                 className="dropzoneId"
             >
                 <div
                     id={dragableId}
                     draggable="true"
-                    onDragStart={event => this.drag(event)}
-                    onDragEnd={event => this.dragEnd(event, customFunc)}
+                    onDragStart={(event) => this.drag(event)}
+                    onDragEnd={(event) => this.dragEnd(event, customFunc)}
                     className="dragableId"
                 >
                     {this.props.children}

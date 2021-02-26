@@ -980,7 +980,7 @@ class UserProfileEdit extends Component {
                     <div className="col-sm-12 col-md-6">
                         <Form.Item>
                             {getFieldDecorator('emergencyFirstName', {
-                                rules: [{ required: true, message: ValidationConstants.emergencyContactName[0] }],
+                                rules: [{ required: true, message: ValidationConstants.emergencyFirstName }],
                             })(
                                 <InputWithHead
                                     required="required-field"
@@ -996,7 +996,7 @@ class UserProfileEdit extends Component {
                     <div className="col-sm-12 col-md-6">
                         <Form.Item>
                             {getFieldDecorator('emergencyLastName', {
-                                rules: [{ required: true, message: ValidationConstants.emergencyContactName[1] }],
+                                rules: [{ required: true, message: ValidationConstants.emergencyLastName }],
                             })(
                                 <InputWithHead
                                     required="required-field"

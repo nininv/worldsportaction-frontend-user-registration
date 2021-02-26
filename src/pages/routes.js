@@ -1,31 +1,26 @@
 import React from "react";
-import { Switch, Route, Redirect, HashRouter } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { Skeleton } from "antd";
 import PrivateRoute from "../util/protectedRoute";
-// import AppRegistrationForm from "../components/registration/appRegistrationForm";
 import AppRegistrationFormNew from "../components/registration/appRegistrationFormNew";
 import NotFound from "./404";
 import UserRegistration from "../components/userRegistration";
-import Login from '../components/login';
+import Login from "../components/login";
 import AppRegistrationSuccess from "../components/registration/appRegistrationSuccess";
 import Stripe from "../components/stripe/stripe";
-import RegistrationInvoice from "../components/stripe/registrationInvoice"
+import RegistrationInvoice from "../components/stripe/registrationInvoice";
 
 // Live Score Screesn
-import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder"
-import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture"
+import LiveScorePublicLadder from "../components/liveScore/liveScorePublicLadder";
+import LiveScoreSeasonFixture from "../components/liveScore/liveScoreSeasonFixture";
 
 import TeamRegistration from "../components/registration/teamRegistration";
 
 import UserModulePersonalDetail from "../components/user/userModulePersonalDetail";
-import UserProfileEdit from "../components/user/userProfileEdit"
+import UserProfileEdit from "../components/user/userProfileEdit";
 import DeRegistration from "../components/registration/deRegistration";
-// import RegistrationReviewForm from '../components/registration/registrationReviewForm';
-// import ReviewProducts from '../components/registration/reviewProducts';
 import ListProducts from "../components/shop/listProducts";
 import ProductDetails from "../components/shop/productDetails";
-import TeamRegistrationReview from '../components/registration/teamRegistrationReview';
-import TeamReviewProducts from '../components/registration/teamReviewProducts';
 import RegistrationProducts from "../components/registration/registrationProducts";
 import RegistrationShop from "../components/registration/registrationShop";
 import RegistrationPayment from "../components/registration/registrationPayment";
@@ -44,186 +39,177 @@ import MyUmpiringAvailability from "../components/umpire/myUmpiringAvailability"
 import AddTeamMember from "../components/user/addTeamMember";
 
 // changePassword
-import ManagePassword from './Accounts/password';
+import ManagePassword from "./Accounts/password";
 import TeamMemberRegPayment from "../components/user/teamMemberRegPayment";
-import ReportFoulsPage from '../pages/refereeReportPage'
+import ReportFoulsPage from "../pages/refereeReportPage";
 
-const lazyLoad = Component => {
-  const lazy = props => {
-    return (
-      <React.Suspense fallback={<Skeleton avatar paragraph={{ rows: 4 }} />}>
-        <Component {...props} />
-      </React.Suspense>
-    );
-  };
-  return lazy;
+const lazyLoad = (Component) => {
+    const lazy = (props) => {
+        return (
+            <React.Suspense
+                fallback={<Skeleton avatar paragraph={{ rows: 4 }} />}
+            >
+                <Component {...props} />
+            </React.Suspense>
+        );
+    };
+    return lazy;
 };
 
 class Routes extends React.Component {
-  render() {
-    return (
-      <Switch>
-        <Route exact path="/" render={() => <Redirect to="/userPersonal" />} />
-        {/* <PrivateRoute
-          path="/appRegistrationFormOld"
-          component={lazyLoad(AppRegistrationForm)}
-        /> */}
-        <PrivateRoute
-          path="/appRegistrationForm"
-          component={lazyLoad(AppRegistrationFormNew)}
-        />
-        <PrivateRoute
-          path="/appTeamRegistrationForm"
-          component={lazyLoad(AppTeamRegistrationForm)}
-        />
-        <PrivateRoute
-          path="/login"
-          component={lazyLoad(Login)}
-        />
-        <PrivateRoute
-          path="/userRegistration"
-          component={lazyLoad(UserRegistration)}
-        />
-        <PrivateRoute
-          path="/appRegistrationSuccess"
-          component={lazyLoad(AppRegistrationSuccess)}
-        />
-        <PrivateRoute
-          path="/checkoutPayment"
-          component={lazyLoad(Stripe)}
-        />
+    render() {
+        return (
+            <Switch>
+                <Route
+                    exact
+                    path="/"
+                    render={() => <Redirect to="/userPersonal" />}
+                />
+                <PrivateRoute
+                    path="/appRegistrationForm"
+                    component={lazyLoad(AppRegistrationFormNew)}
+                />
+                <PrivateRoute
+                    path="/appTeamRegistrationForm"
+                    component={lazyLoad(AppTeamRegistrationForm)}
+                />
+                <PrivateRoute path="/login" component={lazyLoad(Login)} />
+                <PrivateRoute
+                    path="/userRegistration"
+                    component={lazyLoad(UserRegistration)}
+                />
+                <PrivateRoute
+                    path="/appRegistrationSuccess"
+                    component={lazyLoad(AppRegistrationSuccess)}
+                />
+                <PrivateRoute
+                    path="/checkoutPayment"
+                    component={lazyLoad(Stripe)}
+                />
 
-        <PrivateRoute
-          path="/liveScorePublicLadder"
-          component={lazyLoad(LiveScorePublicLadder)}
-        />
+                <PrivateRoute
+                    path="/liveScorePublicLadder"
+                    component={lazyLoad(LiveScorePublicLadder)}
+                />
 
-        <PrivateRoute
-          path="/liveScoreSeasonFixture"
-          component={lazyLoad(LiveScoreSeasonFixture)}
-        />
+                <PrivateRoute
+                    path="/liveScoreSeasonFixture"
+                    component={lazyLoad(LiveScoreSeasonFixture)}
+                />
 
-        <PrivateRoute
-          path="/invoice"
-          component={lazyLoad(RegistrationInvoice)}
-        />
+                <PrivateRoute
+                    path="/invoice"
+                    component={lazyLoad(RegistrationInvoice)}
+                />
 
-        <PrivateRoute
-          path="/teamRegistration"
-          component={lazyLoad(TeamRegistration)}
-        />
+                <PrivateRoute
+                    path="/teamRegistration"
+                    component={lazyLoad(TeamRegistration)}
+                />
 
-        <PrivateRoute
-          path="/teamRegistrationForm"
-          component={lazyLoad(TeamInviteForm)}
-        />
+                <PrivateRoute
+                    path="/teamRegistrationForm"
+                    component={lazyLoad(TeamInviteForm)}
+                />
 
-        <PrivateRoute
-          path="/userPersonal"
-          component={lazyLoad(UserModulePersonalDetail)}
-        />
-        <PrivateRoute
-          path="/userProfileEdit"
-          component={lazyLoad(UserProfileEdit)}
-        />
-        <PrivateRoute
-          path="/deRegistration"
-          component={lazyLoad(DeRegistration)}
-        />
-        <Route
-          path="/refereeReport"
-          component={lazyLoad(ReportFoulsPage)}
-        />
-        <PrivateRoute
-          path="/listProducts"
-          component={lazyLoad(ListProducts)}
-        />
-        <PrivateRoute
-          path="/productDetails"
-          component={lazyLoad(ProductDetails)}
-        />
-        {/* <PrivateRoute
-          path="/registrationReview"
-          component={lazyLoad(RegistrationReviewForm)}
-        />
-        <PrivateRoute
-          path="/reviewProducts"
-          component={lazyLoad(ReviewProducts)}
-        /> */}
+                <PrivateRoute
+                    path="/userPersonal"
+                    component={lazyLoad(UserModulePersonalDetail)}
+                />
+                <PrivateRoute
+                    path="/userProfileEdit"
+                    component={lazyLoad(UserProfileEdit)}
+                />
+                <PrivateRoute
+                    path="/deRegistration"
+                    component={lazyLoad(DeRegistration)}
+                />
+                <Route
+                    path="/refereeReport"
+                    component={lazyLoad(ReportFoulsPage)}
+                />
+                <PrivateRoute
+                    path="/listProducts"
+                    component={lazyLoad(ListProducts)}
+                />
+                <PrivateRoute
+                    path="/productDetails"
+                    component={lazyLoad(ProductDetails)}
+                />
+                <PrivateRoute
+                    path="/teamInvitePayment"
+                    component={lazyLoad(TeamInvitePayment)}
+                />
 
-        {/* <PrivateRoute
-          path="/teamRegistrationReview"
-          component={lazyLoad(TeamRegistrationReview)}
-        /> */}
+                <PrivateRoute
+                    path="/teamInviteProductsReview"
+                    component={lazyLoad(TeamInviteProducts)}
+                />
 
-        <PrivateRoute
-          path="/teamInvitePayment"
-          component={lazyLoad(TeamInvitePayment)}
-        />
+                <PrivateRoute
+                    path="/teamInviteShop"
+                    component={lazyLoad(TeamInviteShop)}
+                />
 
-        <PrivateRoute
-          path="/teamInviteProductsReview"
-          component={lazyLoad(TeamInviteProducts)}
-        />
+                <PrivateRoute
+                    path="/teamInviteShipping"
+                    component={lazyLoad(TeamInviteShipping)}
+                />
 
-        <PrivateRoute
-          path="/teamInviteShop"
-          component={lazyLoad(TeamInviteShop)}
-        />
+                <PrivateRoute
+                    path="/registrationProducts"
+                    component={lazyLoad(RegistrationProducts)}
+                />
 
-        <PrivateRoute
-          path='/teamInviteShipping'
-          component={lazyLoad(TeamInviteShipping)}
-        />
+                <PrivateRoute
+                    path="/registrationShop"
+                    component={lazyLoad(RegistrationShop)}
+                />
 
-        <PrivateRoute
-          path="/registrationProducts"
-          component={lazyLoad(RegistrationProducts)}
-        />
+                <PrivateRoute
+                    path="/registrationPayment"
+                    component={lazyLoad(RegistrationPayment)}
+                />
 
-        <PrivateRoute
-          path="/registrationShop"
-          component={lazyLoad(RegistrationShop)}
-        />
+                <PrivateRoute
+                    path="/registrationShipping"
+                    component={lazyLoad(RegistrationShipping)}
+                />
 
-        <PrivateRoute
-          path="/registrationPayment"
-          component={lazyLoad(RegistrationPayment)}
-        />
+                <PrivateRoute
+                    path="/singleGamePayment"
+                    component={lazyLoad(SingleGamePayment)}
+                />
 
-        <PrivateRoute
-          path="/registrationShipping"
-          component={lazyLoad(RegistrationShipping)}
-        />
+                <PrivateRoute
+                    path="/myUmpiringAvailability"
+                    component={lazyLoad(MyUmpiringAvailability)}
+                />
 
-        <PrivateRoute
-          path="/singleGamePayment"
-          component={lazyLoad(SingleGamePayment)}
-        />
+                <PrivateRoute
+                    path="/managePassword"
+                    component={lazyLoad(ManagePassword)}
+                />
+                <PrivateRoute
+                    path="/addTeamMember"
+                    component={lazyLoad(AddTeamMember)}
+                />
 
-        <PrivateRoute
-          path="/myUmpiringAvailability"
-          component={lazyLoad(MyUmpiringAvailability)}
-          />
+                <PrivateRoute
+                    path="/teamMemberRegPayment"
+                    component={lazyLoad(TeamMemberRegPayment)}
+                />
 
-        <PrivateRoute
-          path="/managePassword"
-          component={lazyLoad(ManagePassword)}
-          />
-        <PrivateRoute
-          path="/addTeamMember"
-          component={lazyLoad(AddTeamMember)}
-          />
+                <PrivateRoute path="/shop" component={lazyLoad(Shop)} />
+                <PrivateRoute
+                    path="/shopPayment"
+                    component={lazyLoad(ShopPayment)}
+                />
 
-        <PrivateRoute path="/teamMemberRegPayment" component={lazyLoad(TeamMemberRegPayment)}/>
-
-        <PrivateRoute path="/shop" component={lazyLoad(Shop)}/>
-        <PrivateRoute path="/shopPayment" component={lazyLoad(ShopPayment)}/>
-
-        <Route path="/" component={lazyLoad(NotFound)} />
-        <Redirect from="*" to="/404" />
-      </Switch>
-    );
-  }
+                <Route path="/" component={lazyLoad(NotFound)} />
+                <Redirect from="*" to="/404" />
+            </Switch>
+        );
+    }
 }
 export default Routes;
