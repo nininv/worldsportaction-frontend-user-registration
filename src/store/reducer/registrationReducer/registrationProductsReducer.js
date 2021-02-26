@@ -85,7 +85,7 @@ function registrationProductsReducer(state = initialState, action){
                 status: action.status,
                 registrationReviewList: regReviewSaveData
             };
-    
+
         case ApiConstants.UPDATE_REVIEW_INFO:
             let reviewData = state.registrationReviewList;
             if(action.subKey == "charity"){
@@ -131,14 +131,13 @@ function registrationProductsReducer(state = initialState, action){
                 else {
                     reviewData["compParticipants"][action.index][action.subKey][action.key] = action.value;
                 }
-               
+
             }
             else if (action.subKey == "volunteerInfo"){
                 reviewData[action.subKey][action.index][action.key] = action.value;
             }
             else if(action.subKey == "shopProducts"){
                 if(action.key == "addShopProduct"){
-                    console.log("action.value", action.value);
                     let sameProduct = reviewData[action.subKey].find(x => x.productId == action.value.productId && x.variantOptionId == action.value.variantOptionId);
                     if(sameProduct){
                         let index = reviewData[action.subKey].indexOf(sameProduct);
@@ -149,33 +148,30 @@ function registrationProductsReducer(state = initialState, action){
                                             feeIsNull(action.value.amount);
                     reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) +
                                             feeIsNull(action.value.tax);
-                    console.log("total amount",reviewData["total"]["total"],action.value.amount,action.value.tax)
                     let total = feeIsNull(reviewData["total"]["total"]) +
                     feeIsNull(action.value.amount)+  feeIsNull(action.value.tax);
                     reviewData["total"]["total"] = total.toFixed(2);
-
-                                            
+                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["total"]);
                 }
                 else if(action.key == "removeShopProduct"){
                     let shopData = reviewData[action.subKey][action.index];
-                    reviewData["total"]["subTotal"] = feeIsNull(reviewData["total"]["subTotal"]) -
-                                                feeIsNull(shopData.amount);
-                    reviewData["total"]["gst"] = feeIsNull(reviewData["total"]["gst"]) -
-                                        feeIsNull(shopData.tax);
-                    reviewData["total"]["targetValue"] = feeIsNull(reviewData["total"]["targetValue"]) -
-                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax);
-                    
+                    reviewData["total"]["subTotal"] = (feeIsNull(reviewData["total"]["subTotal"]) -
+                                                feeIsNull(shopData.amount)).toFixed(2);
+                    reviewData["total"]["gst"] = (feeIsNull(reviewData["total"]["gst"]) -
+                                        feeIsNull(shopData.tax)).toFixed(2);
+                    const total = feeIsNull(reviewData["total"]['total']) - feeIsNull(shopData.totalAmt);
+                    reviewData["total"]['total'] = total.toFixed(2);
+                    reviewData["total"]["targetValue"] = (feeIsNull(reviewData["total"]["targetValue"]) -
+                    feeIsNull(shopData.amount) -  feeIsNull(shopData.tax)).toFixed(2);
                     reviewData[action.subKey].splice(action.index,1);
                 }
-                
-                console.log("reviewData", reviewData);
             }
             else if(action.subKey == "yourInfo"){
                 if(action.key == "emailSelection"){
                     setYourInfo(action,state);
                 }else{
                     reviewData[action.subKey][action.key] = action.value
-                }   
+                }
             }
             // else if(action.subKey == "shippingOptions"){
             //     let organisationId = action.value;
@@ -204,7 +200,7 @@ function registrationProductsReducer(state = initialState, action){
             }else if(action.subKey == "total"){
                 // console.log("***********************************" + action.key)
                 let type = action.key;
-                let totalVal = reviewData.total.total; 
+                let totalVal = reviewData.total.total;
                 console.log("totalVal" + totalVal);
                 let transactionVal = 0;
                 let targetVal = 0;
@@ -234,7 +230,7 @@ function registrationProductsReducer(state = initialState, action){
                     reviewData["total"]["targetValue"] = "0.00";
                     reviewData["total"]["transactionFee"] = "0.00";
                 }
-               
+
             }
             return {
                 ...state,
@@ -276,11 +272,11 @@ function registrationProductsReducer(state = initialState, action){
                 onLoad: false,
                 status: action.status,
                 termsAndConditions:  termsAndConditionsData
-            }; 
-        
+            };
+
             case ApiConstants.API_GET_REGISTRATION_BY_ID_LOAD:
                 return { ...state, onRegReviewLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_BY_ID_SUCCESS:
                 let registrationData = action.result;
                 return {
@@ -292,7 +288,7 @@ function registrationProductsReducer(state = initialState, action){
 
             case ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_LOAD:
                 return { ...state, onLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_SHOP_PRODUCTS_SUCCESS:
                 let shopProductData = action.result;
                 return {
@@ -305,10 +301,10 @@ function registrationProductsReducer(state = initialState, action){
                         ? shopProductData.page.currentPage: 1,
                     shopProductsTypes: shopProductData.types
                 };
-            
+
             case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_LOAD:
                 return { ...state, onLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_USERS_SUCCESS:
                 let participantUsers = action.result;
                 return {
@@ -320,7 +316,7 @@ function registrationProductsReducer(state = initialState, action){
 
             case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_LOAD:
                 return { ...state, onLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_PARTICIPANT_ADDRESS_SUCCESS:
                 let participantAddresses = action.result;
                 return {
@@ -332,7 +328,7 @@ function registrationProductsReducer(state = initialState, action){
 
             case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_LOAD:
                 return { ...state, pickupAddressLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_SHOP_PICKUP_ADDRESS_SUCCESS:
                 let shopPickupAddresses = action.result;
                 return {
@@ -344,7 +340,7 @@ function registrationProductsReducer(state = initialState, action){
 
             case ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_LOAD:
                 return { ...state, onLoad: true };
-        
+
             case ApiConstants.API_GET_REGISTRATION_SINGLE_GAME_SUCCESS:
                 let singlePaymentData = action.result;
                 return {
@@ -356,7 +352,7 @@ function registrationProductsReducer(state = initialState, action){
 
             case ApiConstants.UPDATE_SINGLE_FEE:
                 let singleGameData = state.singlePaymentData;
-                
+
                 if(action.subKey == "total"){
                     let type = action.key;
                     if(type == "noOfMatch"){
@@ -376,7 +372,7 @@ function registrationProductsReducer(state = initialState, action){
                                 singleGameData[action.subKey][type] = action.value;
                             }
                             else{
-                                singleGameData[action.subKey][type] = Number(action.value) - 1; 
+                                singleGameData[action.subKey][type] = Number(action.value) - 1;
                             }
                         }
                         else{
@@ -398,7 +394,7 @@ function registrationProductsReducer(state = initialState, action){
                         });
                     }
                     else{
-                        let totalVal = singleGameData.total.total; 
+                        let totalVal = singleGameData.total.total;
                         console.log("totalVal" + totalVal);
                         let transactionVal = 0;
                         let targetVal = 0;
@@ -412,7 +408,7 @@ function registrationProductsReducer(state = initialState, action){
                             else if(type == "DOMESTIC_CC"){
                                 transactionVal = (totalVal * 2.25/100)  + 0.30;
                             }
-                            
+
                             targetVal = feeIsNull(transactionVal) + feeIsNull(totalVal);
                             singleGameData["total"]["targetValue"] = formatValue(targetVal);
                             singleGameData["total"]["transactionFee"] = formatValue(transactionVal);
@@ -427,7 +423,7 @@ function registrationProductsReducer(state = initialState, action){
                     ...state,
                     error: null
                 }
-    
+
         default:
             return state;
     }
