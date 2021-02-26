@@ -359,29 +359,6 @@ const childOrOtherRegistrationColumns = [
         dataIndex: "regForm",
         key: "regForm",
         width: 52,
-        render: (regForm, e) => {
-            return (
-                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
-                    <SubMenu
-                        key="sub1"
-                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                            alt="" width="16" height="16" />
-                        }
-                    >
-                        <Menu.Item key="1">
-                            <span>View</span>
-                        </Menu.Item>
-                    </SubMenu>
-                </Menu>
-            )
-
-        }
-    },
-    {
-        title: "Action",
-        dataIndex: "regForm",
-        key: "regForm",
-        width: 52,
         render: (action, record) => {
         return(
         <Menu
