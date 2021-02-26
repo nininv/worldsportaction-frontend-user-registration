@@ -29,6 +29,7 @@ import Loader from '../../customComponents/loader';
 import { getAge,deepCopyFunction, isArrayNotEmpty, feeIsNull} from '../../util/helpers';
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
+import ShopCarousel from "./shopCarousel";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
 import {getOrganisationId,  getCompetitonId, getUserId, getAuthToken, getSourceSystemFlag, getUserRegId,getExistingUserRefId } from "../../util/sessionStorage";
@@ -352,7 +353,7 @@ class TeamInviteShop extends Component{
                         style={{height: "240px"}}
                         onClick={(e) => this.enableExpandView("show", item, index)}>
                             <div style={{display: "flex", justifyContent:"center", overflow:"hidden"}}>
-                                <img style={{height: "100px", width: "100%", objectFit:"contain" }} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                <ShopCarousel item={item}/>
                             </div>
                             <div className="px-4">
                                 <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
@@ -380,7 +381,7 @@ class TeamInviteShop extends Component{
                                 style={{height: "240px"}}
                                 onClick={(e) => this.enableExpandView("show", item, index)}>
                                     <div style={{display: "flex", justifyContent:"center"}}>
-                                        <img style={{height: "100px"}} src={item.productImgUrl ? item.productImgUrl : AppImages.userIcon}/>
+                                        <ShopCarousel item={item}/>
                                     </div>
                                     <div className="subtitle-text-common" style={{margin:"10px 0px 10px 0px",fontWeight:500}}>{item.productName}</div>
                                     <div className="subtitle-text-common">{this.renderPrice(item)}</div>
@@ -434,7 +435,6 @@ class TeamInviteShop extends Component{
 
     cardExpandView = () =>{
         let expandObj = this.state.expandObj;
-        console.log("expandObj", expandObj);
         var description = expandObj.description != null ? expandObj.description.replace(/<[^>]*>/g, ' ') : '';
         const isNullVariants = !expandObj.variants[0].variantId;
         return(
@@ -444,7 +444,7 @@ class TeamInviteShop extends Component{
                 </div>
                 <div className="row" style={{marginTop: "17px"}}>
                     <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px"}} src={!!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl}/>
+                        <ShopCarousel item={expandObj}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div class = "headline-text-common">{expandObj.productName}</div>
@@ -463,7 +463,7 @@ class TeamInviteShop extends Component{
                             }
 
                             return (
-                                <div>
+                                <div key={vIndex}>
                                     <div style={{display: "flex", flexWrap: "wrap"}}>
                                         {!isNullVariants && <div className="col-lg-6" style={{marginTop: 27, padding: 0}}>
                                             <div className="subtitle-text-common">
