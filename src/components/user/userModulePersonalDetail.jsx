@@ -362,7 +362,7 @@ const childOrOtherRegistrationColumns = [
         render: (action, record) => {
         return(
         <div>
-            {record.invoiceFailedStatus == 1 || record.transactionFailedStatus == 2 &&
+            {(record.invoiceFailedStatus == 1 || record.transactionFailedStatus == 2) &&
                 <Menu
                     className="action-triple-dot-submenu"
                     theme="light"
@@ -386,7 +386,7 @@ const childOrOtherRegistrationColumns = [
                                 <span onClick={() => this_Obj.setFailedRegistrationRetry(record)}>{AppConstants.retryPayment}</span>
                             </Menu.Item>
                             :
-                            record.transactionFailedStatus == 2 && 
+                            record.transactionFailedStatus == 1 && 
                             <Menu.Item key="2">
                                 <span onClick={() => this_Obj.setFailedInstalmentRetry(record)}>{AppConstants.retryPayment}</span>
                             </Menu.Item>
