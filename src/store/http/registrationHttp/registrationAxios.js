@@ -291,6 +291,14 @@ let AxiosApi = {
         const url = `/api/deregisterortransfer/cancel`;
         return Method.dataPost(url, token, payload);
     },
+    playersToPayRetryPayment(payload) {
+        const url = `api/playerstopay/pay`;
+        return Method.dataPost(url, token, payload);
+    },
+    registrationRetryPayment(payload){
+        const url = `api/payments/regitrations/retry`;
+        return Method.dataPost(url, token, payload);
+    }
 };
 
 const Method = {

@@ -1273,7 +1273,11 @@ const AppConstants = {
   cancelDeRegistrtaion: "Cancel De-registration",
   cancelTransferReg: "Cancel Transfer registration",
 
-  userName: "Username"
+  userName: "Username",
+  regRetryInstalmentModalMsg: "Do you want to retry the failed instalment?",
+  regRetryModalMsg: "Do you want to retry the failed registration?",
+  retryPayment: "Retry Payment",
+
 };
 
 export default AppConstants;

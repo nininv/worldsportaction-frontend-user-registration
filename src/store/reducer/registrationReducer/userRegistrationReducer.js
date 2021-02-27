@@ -10,6 +10,8 @@ import {
     isNullOrEmptyString,
 } from "../../../util/helpers";
 import moment from "moment";
+import {message} from "antd"
+import ValidationConstants from "../../../themes/validationConstant";
 
 let walkingNetballObj = {
     // "haveHeartTrouble" : null,
@@ -802,6 +804,35 @@ function setSeasonalFeeAndCasualFeeInput(
     }
 }
 
+function checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,products){
+    try{
+        let error = false;
+        // if(membershipProductInfo.shortName == "Player"){
+        //     let netSetGoProduct = products.find((x) => x.membershipTypeName == "Player - NetSetGo");
+        //     if(netSetGoProduct){
+        //         error = true;
+        //     }
+        // }else if(membershipProductInfo.shortName == "Player - NetSetGo"){
+        //     let playerProduct = products.find((x) => x.membershipTypeName == "Player");
+        //     if(playerProduct){
+        //         error = true;
+        //     }
+        // }
+        let netSetGoProduct = products.find((x) => x.membershipTypeName == "Player - NetSetGo");
+        if(netSetGoProduct && membershipProductInfo.isPlayer){
+            error = true;
+        }else{
+            let isPlayer = products.find((x) => x.isPlayer);
+            if(isPlayer && membershipProductInfo.shortName == "Player - NetSetGo"){
+                error = true;
+            }
+        }
+        return error;
+    }catch(ex){
+        console.log("Error in checkSelectedEitherNetsetgoOrPlayer::"+ex);
+    }
+}
+
 function setMembershipProductsAndDivisionInfo(
     state,
     competitionData,
@@ -814,6 +845,13 @@ function setMembershipProductsAndDivisionInfo(
                 .competitionInfo;
         let membershipProductInfo = competitionInfo.membershipProducts
             .filter(x => x.isIndividualRegistration == 1)[competitionSubIndex];
+        if(competitionData){
+            let error = checkSelectedEitherNetsetgoOrPlayer(membershipProductInfo,state.registrationObj.competitions[competitionIndex].products);
+            if(error){
+                message.error(ValidationConstants.playerNetSetGoValidation);
+                return;
+            }
+        }
         membershipProductInfo.isChecked = competitionData;
         let actionCheckBoxProduct;
         if (competitionData) {

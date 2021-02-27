@@ -325,4 +325,8 @@ export default function* root_saga() {
   yield takeEvery(ApiConstants.API_TEAM_MEMBER_UPDATE_LOAD, userSaga.updateTeamMembersSaga);
   yield takeEvery(ApiConstants.API_CANCEL_DEREGISTRATION_LOAD, userSaga.cancelDeRegistrationSaga);
 
+  yield takeEvery(ApiConstants.API_LIVE_SCORE_PLAYERS_TO_PAY_RETRY_PAYMENT_LOAD, userSaga.liveScorePlayersToPayRetryPaymentSaga);
+  yield takeEvery(ApiConstants.API_REGISTRATION_RETRY_PAYMENT_LOAD, userSaga.registrationRetryPaymentSaga);
+
+
 }
