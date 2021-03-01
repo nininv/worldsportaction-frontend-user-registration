@@ -173,29 +173,29 @@ function deRegistrationReducer(state = initialState, action) {
 
         case ApiConstants.API_GET_DE_REGISTRATION_SUCCESS:
             let deRegisterData = action.result;
-            state.saveData = clearSaveData();
-            state.organisations = [];
-            state.competitions = [];
-            state.membershipTypes = [];
-            state.teamMembers = [];
-            state.deRegisterData = deRegisterData;
-            if(isArrayNotEmpty(deRegisterData)){
-                try {
-                    let userData = deRegisterData[0];
-                    state.saveData.email = userData.email;
-                    state.saveData.mobileNumber = userData.mobileNumber;
-                    state.saveData.userId = userData.userId;
-                    state.saveData.isTeam = userData.isTeam;
-                    if(userData.isTeam == 1){
-                        state.teamMembers = userData.teamMembers;
-                    }
+            // state.saveData = clearSaveData();
+            // state.organisations = [];
+            // state.competitions = [];
+            // state.membershipTypes = [];
+            // state.teamMembers = [];
+            // state.deRegisterData = deRegisterData;
+            // if(isArrayNotEmpty(deRegisterData)){
+            //     try {
+            //         let userData = deRegisterData[0];
+            //         state.saveData.email = userData.email;
+            //         state.saveData.mobileNumber = userData.mobileNumber;
+            //         state.saveData.userId = userData.userId;
+            //         state.saveData.isTeam = userData.isTeam;
+            //         if(userData.isTeam == 1){
+            //             state.teamMembers = userData.teamMembers;
+            //         }
                    
-                    let organisations = setOrganisations(userData.userId, deRegisterData);
-                    state.organisations = organisations;
-                } catch (error) {
-                    console.log("Error", error);
-                }
-            }
+            //         let organisations = setOrganisations(userData.userId, deRegisterData);
+            //         state.organisations = organisations;
+            //     } catch (error) {
+            //         console.log("Error", error);
+            //     }
+            // }
 
         return {
             ...state,

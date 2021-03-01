@@ -157,26 +157,46 @@ const columns = [
                     >
                         <SubMenu
                         key="sub1"
-                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                            alt="" width="16" height="16" />
+                        title={
+                            <img
+                            className="dot-image"
+                            src={AppImages.moreTripleDotActive}
+                            alt=""
+                            width="16"
+                            height="16"
+                            />
                         }
-                    >
-                        <Menu.Item key="1" onClick={() => this_Obj.viewRegForm(e)}>
-                            <span>View</span>
-                        </Menu.Item>
-                        {e.expiryDate === "Single Game" && (compEndDate >= currentDate) && (
+                        >
+                        {e.expiryDate === "Single Game" && compEndDate >= currentDate && (
                             <Menu.Item key="2" onClick={() => this_Obj.goToSigleGamePayment(e)}>
-                                <span>Purchase Single Game(s)</span>
+                            <span>Purchase Single Game(s)</span>
                             </Menu.Item>
                         )}
                         {e.alreadyDeRegistered == 0 && e.paymentStatusFlag == 1 && (
-                            <Menu.Item key="3" onClick={() => history.push("/deregistration", { regData: e, personal: this_Obj.props.userState.personalData })}>
-                                <span>{AppConstants.registrationChange}</span>
+                            <Menu.Item
+                            key="3"
+                            onClick={() =>
+                                history.push("/deregistration", {
+                                regData: e,
+                                personal: this_Obj.props.userState.personalData,
+                                sourceFrom: AppConstants.ownRegistration
+                                })
+                            }
+                            >
+                            <span>{AppConstants.registrationChange}</span>
                             </Menu.Item>
                         )}
-                        {(e.paymentStatus == "Pending De-registration" || e.paymentStatus == "Pending Transfer") && (
-                            <Menu.Item key="4" onClick={() => this_Obj.cancelDeRegistrtaion(e.deRegisterId)}>
-                                <span>{e.paymentStatus == "Pending De-registration" ? AppConstants.cancelDeRegistrtaion : AppConstants.cancelTransferReg}</span>
+                        {(e.paymentStatus == "Pending De-registration" ||
+                            e.paymentStatus == "Pending Transfer") && (
+                            <Menu.Item
+                            key="4"
+                            onClick={() => this_Obj.cancelDeRegistrtaion(e.deRegisterId)}
+                            >
+                            <span>
+                                {e.paymentStatus == "Pending De-registration"
+                                ? AppConstants.cancelDeRegistrtaion
+                                : AppConstants.cancelTransferReg}
+                            </span>
                             </Menu.Item>
                         )}
                         { e.paymentStatusFlag == 2 ? (
@@ -197,64 +217,78 @@ const columns = [
                                 <span>Resend Email</span>
                             </Menu.Item>
                         } */}
-                    </SubMenu>
-                </Menu>
-            ))
+                        </SubMenu>
+                    </Menu>
+                )
+            )
         }
     }
 ];
 
-const teamRegistrationColumns = [
-    {
-        title: "",
-        dataIndex: "regData",
-        key: "regData",
-        render: (regData, record, index) => {
-            const { registeredBy, competitionName, teamName, productName, status, organisationName } = record;
-            return (
-                <div>
-                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
-                        <span className='year-select-heading mr-3'>{AppConstants.registeredBy}</span>
-                        <span className="user-details-info-text">{registeredBy} </span>
-                    </div>
-                    <div className="d-flex flex-wrap">
-                        <div>
-                            <div className="form-heading p-0">{teamName}</div>
-                            <div style={{ textAlign: "start" }}>{competitionName}</div>
-                            <div className="d-flex flex-wrap align-items-center">
-                                <div className="d-flex align-items-center py-3">
-                                    <span>{productName}</span>
-                                    <div className="status-indicator">{status}</div>
-                                </div>
+const teamRegistrationColumns = [{
+    title: "",
+    dataIndex: "regData",
+    key: "regData",
+    render: (regData, record, index) => {
+        const { registeredBy, competitionName, teamName, productName, status, organisationName } = record;
+        return (
+            <div>
+                <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                    <span className='year-select-heading mr-3'>{AppConstants.registeredBy}</span>
+                    <span className="user-details-info-text">{registeredBy} </span>
+                </div>
+                <div className="d-flex flex-wrap">
+                    <div>
+                        <div className="form-heading p-0">{teamName}</div>
+                        <div style={{ textAlign: "start" }}>{competitionName}</div>
+                        <div className="d-flex flex-wrap align-items-center">
+                            <div className="d-flex align-items-center py-3">
+                                <span>{productName}</span>
+                                <div className="status-indicator">{status}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            )
-        }
-    },
-    {
-        title: "Action",
-        dataIndex: "regForm",
-        key: "regForm",
-        width: 52,
-        render: (regForm, record) => {
-            return (
-                <Menu className="action-triple-dot-submenu" theme="light" mode="horizontal" style={{ lineHeight: "8px" }}>
-                    <SubMenu
-                        key="sub1"
-                        title={<img className="dot-image" src={AppImages.moreTripleDotActive}
-                            alt="" width="16" height="16" />
-                        }
-                    >
-                        <Menu.Item key="1" onClick={() => this_Obj.showTeamMembers(record, 1)}>
-                            <span>View</span>
-                        </Menu.Item>
-                    </SubMenu>
-                </Menu>
-            )
-        }
+            </div>
+        )
     }
+},
+{
+    title: 'Action',
+    dataIndex: 'status',
+    key: 'status',
+    width: 80,
+    render: (data, record) => (
+        <Menu
+            className="action-triple-dot-submenu" theme="light" mode="horizontal"
+            style={{ lineHeight: "25px" }}>
+            <SubMenu
+                key="sub1"
+                title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                    alt="" width="16" height="16" />}
+            >
+                <Menu.Item
+                key="1"
+                onClick={() =>this_Obj.showTeamMembers(record, 0)}
+                >
+                <span>{AppConstants.view}</span>
+                </Menu.Item>
+                <Menu.Item
+                key="2"
+                onClick={() =>
+                    history.push("/deregistration", {
+                    regData: record,
+                    personal: this_Obj.props.userState.personalData,
+                    sourceFrom: AppConstants.teamRegistration
+                    })
+                }
+                >
+                <span>{AppConstants.registrationChange}</span>
+                </Menu.Item>
+            </SubMenu>
+        </Menu>
+    )
+}
 ];
 
 const teamMembersColumns = [
@@ -294,7 +328,6 @@ const teamMembersColumns = [
         render: (data, record) => {
             return(
                 <div>
-                    {record.isRemove == 1 &&
                         <Menu
                             className="action-triple-dot-submenu"
                             theme="light"
@@ -313,48 +346,61 @@ const teamMembersColumns = [
                                     />
                                 )}
                             >
-                                <Menu.Item key="1">
-                                    <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                                {record.isRemove == 1 &
+                                    <Menu.Item key="1">
+                                        <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                                    </Menu.Item>
+                                }
+                                <Menu.Item
+                                    key="2"
+                                    onClick={() =>
+                                        history.push("/deregistration", {
+                                        regData: record,
+                                        personal: this_Obj.props.userState.personalData,
+                                        sourceFrom: AppConstants.teamMembers
+                                        })
+                                    }
+                                >
+                                    <span>{AppConstants.registrationChange}</span>
                                 </Menu.Item>
                             </SubMenu>
                         </Menu>
-                    }
+                    
                 </div>
             )
         },
     },
 ]
 
-const childOrOtherRegistrationColumns = [
-    {
-        title: "",
-        dataIndex: "regData",
-        key: "regData",
-        render: (regData, record, index) => {
-            const { dateOfBirth, name, email, feePaid } = record;
-            return (
-                <div>
-                    <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
-                        <span className='year-select-heading mr-3'>{AppConstants.dateOfBirth}</span>
-                        <span className="user-details-info-text">{moment(dateOfBirth).format("DD/MM/YYYY")}</span>
-                    </div>
-                    <div className="d-flex flex-wrap">
-                        <div>
-                            <div className="form-heading p-0">{name}</div>
-                            <div style={{ textAlign: "start" }}>{email}</div>
-                            <div className="d-flex flex-wrap align-items-center">
-                                <div className="d-flex align-items-center py-3">
-                                    <span>{AppConstants.feePaid}</span>
-                                    <div className="status-indicator">{feePaid}</div>
-                                </div>
+const childOrOtherRegistrationColumns = [{
+    title: "",
+    dataIndex: "regData",
+    key: "regData",
+    render: (regData, record, index) => {
+        const { dateOfBirth, name, email, feePaid } = record;
+        return (
+            <div>
+                <div className="d-flex flex-wrap" style={{ marginBottom: 19 }}>
+                    <span className='year-select-heading mr-3'>{AppConstants.dateOfBirth}</span>
+                    <span className="user-details-info-text">{moment(dateOfBirth).format("DD/MM/YYYY")}</span>
+                </div>
+                <div className="d-flex flex-wrap">
+                    <div>
+                        <div className="form-heading p-0">{name}</div>
+                        <div style={{ textAlign: "start" }}>{email}</div>
+                        <div className="d-flex flex-wrap align-items-center">
+                            <div className="d-flex align-items-center py-3">
+                                <span>{AppConstants.feePaid}</span>
+                                <div className="status-indicator">{feePaid}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            )
-        }
-    },
-    {
+            </div>
+        )
+    }
+},
+{
         title: "Action",
         dataIndex: "regForm",
         key: "regForm",
