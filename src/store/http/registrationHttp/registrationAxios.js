@@ -186,9 +186,9 @@ let AxiosApi = {
     //     var url = `/api/teaminvite/review/products?userRegId=${payload.userRegId}`;
     //     return Method.dataGet(url, token);
     // },
-    getDeRegisterData(userId) {
-        var url = `/api/deregister?userId=${userId}`;
-        return Method.dataGet(url, token);
+    getDeRegisterData(payload) {
+        var url = `/api/deRegister/details `;
+        return Method.dataPost(url, token, payload);
     },
     saveDeRegister(payload) {
         var url = `/api/deregister`;

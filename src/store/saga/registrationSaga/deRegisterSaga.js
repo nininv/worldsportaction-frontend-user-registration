@@ -30,7 +30,7 @@ function* failSaga(result) {
   ////// Get DeRegister Data
 export function* getDeRegisterSaga(action) {
     try {
-      const result = yield call(AxiosApi.getDeRegisterData, action.userId);
+      const result = yield call(AxiosApi.getDeRegisterData, action.payload);
       if (result.status === 1) {
         yield put({
           type: ApiConstants.API_GET_DE_REGISTRATION_SUCCESS,

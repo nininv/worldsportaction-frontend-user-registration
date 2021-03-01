@@ -179,6 +179,7 @@ const columns = [
                                 history.push("/deregistration", {
                                 regData: e,
                                 personal: this_Obj.props.userState.personalData,
+                                sourceFrom: AppConstants.ownRegistration
                                 })
                             }
                             >
@@ -251,7 +252,44 @@ const teamRegistrationColumns = [{
             </div>
         )
     }
-}];
+},
+{
+    title: 'Action',
+    dataIndex: 'status',
+    key: 'status',
+    width: 80,
+    render: (data, record) => (
+        <Menu
+            className="action-triple-dot-submenu" theme="light" mode="horizontal"
+            style={{ lineHeight: "25px" }}>
+            <SubMenu
+                key="sub1"
+                title={<img className="dot-image" src={AppImages.moreTripleDotActive}
+                    alt="" width="16" height="16" />}
+            >
+                <Menu.Item
+                key="1"
+                onClick={() =>this_Obj.showTeamMembers(record, 0)}
+                >
+                <span>{AppConstants.view}</span>
+                </Menu.Item>
+                <Menu.Item
+                key="2"
+                onClick={() =>
+                    history.push("/deregistration", {
+                    regData: record,
+                    personal: this_Obj.props.userState.personalData,
+                    sourceFrom: AppConstants.teamRegistration
+                    })
+                }
+                >
+                <span>{AppConstants.registrationChange}</span>
+                </Menu.Item>
+            </SubMenu>
+        </Menu>
+    )
+}
+];
 
 const teamMembersColumns = [
     {
@@ -290,7 +328,6 @@ const teamMembersColumns = [
         render: (data, record) => {
             return(
                 <div>
-                    {record.isRemove == 1 &&
                         <Menu
                             className="action-triple-dot-submenu"
                             theme="light"
@@ -309,12 +346,26 @@ const teamMembersColumns = [
                                     />
                                 )}
                             >
-                                <Menu.Item key="1">
-                                    <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                                {record.isRemove == 1 &
+                                    <Menu.Item key="1">
+                                        <span onClick={() => this_Obj.removeTeamMember(record)}>{record.isActive ? AppConstants.removeFromTeam : AppConstants.addToTeam}</span>
+                                    </Menu.Item>
+                                }
+                                <Menu.Item
+                                    key="2"
+                                    onClick={() =>
+                                        history.push("/deregistration", {
+                                        regData: record,
+                                        personal: this_Obj.props.userState.personalData,
+                                        sourceFrom: AppConstants.teamMembers
+                                        })
+                                    }
+                                >
+                                    <span>{AppConstants.registrationChange}</span>
                                 </Menu.Item>
                             </SubMenu>
                         </Menu>
-                    }
+                    
                 </div>
             )
         },

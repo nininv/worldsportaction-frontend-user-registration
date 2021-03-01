@@ -1350,7 +1350,7 @@ const AppConstants = {
     regRetryInstalmentModalMsg: "Do you want to retry the failed instalment?",
     regRetryModalMsg: "Do you want to retry the failed registration?",
     retryPayment: "Retry Payment",
-
+    view: "View"
 };
 
 export default AppConstants;

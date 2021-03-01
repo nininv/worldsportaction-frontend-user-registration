@@ -30,7 +30,8 @@ class DeRegistration extends Component {
             loading: false,
             saveLoad: false,
             regData: null,
-            personal: null
+            personal: null,
+            membershipMappingId: null
         }
     }
 
@@ -39,13 +40,45 @@ class DeRegistration extends Component {
         let regChangeTypeRefId = this.props.location.state ? this.props.location.state.regChangeTypeRefId : null;
         let regData = this.props.location.state ? this.props.location.state.regData : null;
         let personal = this.props.location.state ? this.props.location.state.personal : null;
+        let payload = {};
         if (personal) {
             this.setState({ userId: personal.userId });
         }
         this.setState({ regData, personal });
         console.log("regChangeTypeRefId::", regChangeTypeRefId)
         this.setState({ userId, regChangeTypeRefId });
-        // this.apiCall(this.state.userId);
+        if(this.props.location.state.sourceFrom == AppConstants.ownRegistration){
+            payload = {
+                userId: personal.userId,
+                teamId: 0,
+                registrationId: regData.registrationId,
+                competitionId: regData.competitionId,
+                organisationId: regData.organisationId,
+                division: regData.divisionId,
+                membershipMappingId: regData.membershipMappingId
+            }
+        } else if(this.props.location.state.sourceFrom == AppConstants.teamRegistration){
+            payload = {
+                userId: 0,
+                teamId: regData.teamId,
+                registrationId: regData.registrationUniqueKey,
+                competitionId: null,
+                organisationId: null,
+                division: 0,
+                membershipMappingId: 0
+            }
+        } else if(this.props.location.state.sourceFrom == AppConstants.teamMembers){
+            payload = {
+                userId: regData.userId,
+                teamId: regData.teamId,
+                registrationId: regData.registrationUniqueKey,
+                competitionId: regData.competitionId,
+                organisationId: regData.organisationId,
+                division: 0,
+                membershipMappingId: 0
+            }
+        }
+        this.apiCall(payload);
     }
 
     componentDidUpdate(nextProps) {
@@ -68,8 +101,8 @@ class DeRegistration extends Component {
         }
     }
 
-    apiCall(userId) {
-        this.props.getDeRegisterDataAction(userId);
+    apiCall(payload) {
+        this.props.getDeRegisterDataAction(payload);
         this.setState({ loading: true });
     }
 
@@ -128,6 +161,7 @@ class DeRegistration extends Component {
             if (!err) {
                 let deRegisterState = this.props.deRegistrationState;
                 let saveData = deRegisterState.saveData;
+                let deRegisterData = deRegisterState.deRegisterData
                 if (saveData.regChangeTypeRefId == 0 || saveData.regChangeTypeRefId == null) {
                     message.config({ duration: 0.9, maxCount: 1 });
                     message.error(ValidationConstants.deRegisterChangeTypeRequired);
@@ -138,17 +172,27 @@ class DeRegistration extends Component {
                 }
                 else {
                     let regData = this.state.regData;
-                    let personal = this.state.personal;
+                    let personal = this.state.personal
+                    if(this.props.location.state.sourceFrom != AppConstants.teamRegistration){
                     saveData["isTeam"] = 0;
-                    saveData["userId"] = personal.userId;
+                    saveData["userId"] = deRegisterData.userId;
                     saveData["organisationId"] = regData.organisationId;
                     saveData["competitionId"] = regData.competitionId;
-                    saveData["membershipMappingId"] = regData.membershipMappingId;
+                    saveData["membershipMappingId"] = this.props.location.state.sourceFrom == AppConstants.teamMembers ? this.state.membershipMappingId : deRegisterData.membershipMappingId;
                     saveData["teamId"] = regData.teamId;
-                    saveData["divisionId"] = regData.divisionId;
-                    saveData["registrationId"] = regData.registrationId;
+                    saveData["divisionId"] = deRegisterData.divisionId;
+                    saveData["registrationId"] = this.props.location.state.sourceFrom == AppConstants.teamMembers ? regData.registrationUniqueKey : regData.registrationId;
                     this.props.saveDeRegisterDataAction(saveData);
                     this.setState({ saveLoad: true });
+                    }
+                    else{
+                        saveData["isTeam"] = 1;
+                        saveData["userId"] = 0;
+                        saveData["teamId"] = regData.teamId;
+                        saveData["registrationId"] = regData.registrationUniqueKey;
+                        this.props.saveDeRegisterDataAction(saveData);
+                        this.setState({ saveLoad: true });
+                    }
                 }
             }
         })
@@ -379,19 +423,22 @@ class DeRegistration extends Component {
 
     ////////form content view
     contentView = (getFieldDecorator) => {
-        const { saveData, registrationSelection} = this.props.deRegistrationState;
+        const { saveData, registrationSelection, deRegisterData} = this.props.deRegistrationState;
         let regData = this.state.regData;
         let personal = this.state.personal;
+        let sourceFrom = this.props.location.state.sourceFrom
         return (
             <div className="content-view pt-5">
+                {sourceFrom != AppConstants.teamRegistration &&
                 <InputWithHead
                     disabled
                     heading={AppConstants.userName}
                     style={{ width: "100%", paddingRight: 1 }}
                     required="pb-1"
                     className="input-inside-table-venue-court team-mem_prod_type"
-                    value={personal ? (personal.firstName + ' ' + personal.lastName) : ""}
+                    value={deRegisterData ? (deRegisterData.firstName + ' ' + deRegisterData.lastName) : ""}
                     placeholder={'User Name'} />
+                }
 
                 <InputWithHead
                     disabled
@@ -399,7 +446,7 @@ class DeRegistration extends Component {
                     style={{ width: "100%", paddingRight: 1 }}
                     required="pb-1"
                     className="input-inside-table-venue-court team-mem_prod_type"
-                    value={regData ? regData.affiliate : ''}
+                    value={deRegisterData ? deRegisterData.organisationName : ''}
                     placeholder={'Organisation Name'} />
 
                 <InputWithHead
@@ -408,17 +455,41 @@ class DeRegistration extends Component {
                     style={{ width: "100%", paddingRight: 1 }}
                     required="pb-1"
                     className="input-inside-table-venue-court team-mem_prod_type"
-                    value={regData ? regData.competitionName : ''}
+                    value={deRegisterData ? deRegisterData.competitionName : ''}
                     placeholder={'Competition Name'} />
-
+                {sourceFrom == AppConstants.ownRegistration &&
                 <InputWithHead
                     disabled
                     style={{ width: "100%", paddingRight: 1 }}
                     heading={AppConstants.membershipProduct}
                     required="pb-1"
                     className="input-inside-table-venue-court team-mem_prod_type"
-                    value={(regData ? regData.membershipProduct : '') + ' - ' + (regData ? regData.membershipType : '')}
+                    value={(deRegisterData ? deRegisterData.membershipProduct : '') + ' - ' + (deRegisterData ? deRegisterData.membershipType : '')}
                     placeholder={AppConstants.membershipProduct} />
+                }
+                {sourceFrom == AppConstants.teamMembers &&
+                    <div>
+                        <InputWithHead heading={AppConstants.membershipProduct} required={"required-field"} />
+                        <Form.Item>
+                        {getFieldDecorator(`membershipProduct`, {
+                            rules: [{ required: true, message: ValidationConstants.pleaseSelectMembershipProduct }],
+                        })(
+                            <Select
+                                style={{ width: "100%" }}
+                                placeholder={AppConstants.select}
+                                className="input-inside-table-venue-court team-mem_prod_type"
+                                onChange={(e) => this.setState({membershipMappingId: e})}
+                                >
+                                {(deRegisterData?.membershipTypes || []).map((item) => (
+                                    < Option key={item.membershipMappingId} value={item.membershipMappingId}> {item.membershipProduct + ' - ' + item.membershipType}</Option>
+                                ))
+                                }
+                            </Select>
+                        )}
+
+                        </Form.Item>
+                    </div>
+                }
 
                 <InputWithHead
                     disabled
@@ -426,7 +497,7 @@ class DeRegistration extends Component {
                     style={{ width: "100%", paddingRight: 1 }}
                     required="pb-1"
                     className="input-inside-table-venue-court team-mem_prod_type"
-                    value={regData ? regData.divisionName : ''}
+                    value={deRegisterData ? deRegisterData.divisionName : ''}
                     placeholder={AppConstants.divisionName} />
                             
                 {/* {saveData.isTeam == 1 &&
@@ -457,24 +528,26 @@ class DeRegistration extends Component {
                         disabled={true}
                         heading={AppConstants.teamName}
                         placeholder={AppConstants.teamName}
-                        value={regData ? regData.teamName : ''}
+                        value={deRegisterData ? deRegisterData.teamName : ''}
                 />
-
+                {sourceFrom != AppConstants.teamRegistration &&
                 <InputWithHead
                     required="pb-1"
                     disabled={true}
                     heading={AppConstants.mobileNumber}
                     placeholder={AppConstants.mobileNumber}
-                    value={personal ? (personal.mobileNumber) : ''}
+                    value={deRegisterData ? (deRegisterData.mobileNumber) : ''}
                 />
-
+                 }
+                {sourceFrom != AppConstants.teamRegistration &&
                 <InputWithHead
                     required="pb-1"
                     disabled={true}
                     heading={AppConstants.emailAdd}
                     placeholder={AppConstants.emailAdd}
-                    value={personal ? (personal.email) : ''}
+                    value={deRegisterData ? (deRegisterData.email) : ''}
                 />
+                }
                 <InputWithHead
                     heading={AppConstants.whatRegistrationChange} />
                 <div>
