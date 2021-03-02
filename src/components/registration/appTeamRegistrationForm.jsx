@@ -763,6 +763,7 @@ class AppTeamRegistrationForm extends Component {
             switch (key) {
                 case("stateRefId"): {
                     this.getSchoolList(value);
+                    this.props.updateTeamRegistrationObjectAction(value, key);
                     break;
                 }
                 case("emergencyContactNumber"): {
@@ -1038,9 +1039,9 @@ class AppTeamRegistrationForm extends Component {
         try {
             const { stateList, countryList } = this.props.commonReducerState;
             const address = addressData;
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if (address) {
+                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
                 if (key === "yourDetails") {
                     this.onChangeSetTeamValue(address.addressOne, "street1");
                     this.onChangeSetTeamValue(address.suburb, "suburb");
