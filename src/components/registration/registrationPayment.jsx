@@ -1213,7 +1213,7 @@ async function stripeTokenHandler(token, props, selectedOption, setClientKey, se
         url = "/api/payments/createpayments/directdebit";
     }
 
-    let body;
+    let body = {};
     if (paymentType === "card") {
         let stripeToken = token.id;
        // let cardId = token.card.id;
