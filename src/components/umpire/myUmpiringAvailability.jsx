@@ -240,28 +240,28 @@ class MyUmpiringAvailability extends Component {
                                     <div className="inside-table-view mt-4" >
                                         {schedule && userRole &&
                                             <>
-                                                <div className="row">
-                                                    <div className="col-sm-8 inside-table-view d-flex justify-content-center">
-                                                        <span className="umpireAvailablityMessage">{AppConstants.please_sel_umpire_unavailable_time}</span>
+                                                <div className="row mb-4">
+                                                    <div className="col-12 col-lg-6 inside-table-view d-flex justify-content-center">
+                                                        <span className="umpireAvailablityMessage px-5 text-center">{AppConstants.please_sel_umpire_unavailable_time}</span>
                                                     </div>
-                                                    <div className="col-sm d-flex align-items-center">
-                                                        <div className="table-actions">
-                                                            <WeekPicker
-                                                                onChange={this.handleChangeDate}
-                                                                disabledDate={this.disabledDate}
-                                                                format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
-                                                            />
-                                                            <Button
-                                                                className="schedule-approval-button"
-                                                                type="primary"
-                                                                htmlType="submit"
-                                                                disabled={false}
-                                                                onClick={this.handleSaveAvailability}
-                                                                disabled={this.props.liveScoreUmpireState.onLoad}
-                                                            >
-                                                                {AppConstants.save}
-                                                            </Button>
-                                                        </div>
+                                                    <div className="col-12 col-sm-6 col-lg-3 d-flex align-items-center justify-content-center table-actions my-3">
+                                                        <WeekPicker
+                                                            onChange={this.handleChangeDate}
+                                                            disabledDate={this.disabledDate}
+                                                            format={`D/MM - ${moment(scheduleStartDate).endOf('week').format('D/MM')}`}
+                                                        />
+                                                    </div>
+                                                    <div className="col-12 col-sm-6 col-lg-3 d-flex align-items-center justify-content-center my-3">
+                                                        <Button
+                                                            className="schedule-approval-button"
+                                                            type="primary"
+                                                            htmlType="submit"
+                                                            disabled={false}
+                                                            onClick={this.handleSaveAvailability}
+                                                            disabled={this.props.liveScoreUmpireState.onLoad}
+                                                        >
+                                                            {AppConstants.save}
+                                                        </Button>
                                                     </div>
                                                 </div>
                                                 <div>
