@@ -122,13 +122,5 @@ export function* updatePasswordSaga(action) {
       error,
       status: error.status,
     });
-
-    setTimeout(() => {
-      message.config({
-        duration: 1.5,
-        maxCount: 1,
-      });
-      message.error('Something went wrong.');
-    }, 800);
   }
 }
