@@ -148,7 +148,7 @@ const columns = [
                     (e.alreadyDeRegistered == 0 && e.paymentStatusFlag == 1) ||
                     e.paymentStatus == "Pending De-registration" ||
                     e.paymentStatus == "Pending Transfer" || 
-                    e.paymentStatus == "Failed") && (
+                    e.paymentStatus == "Failed Registration") && (
                     <Menu
                         className="action-triple-dot-submenu"
                         theme="light"
@@ -205,7 +205,7 @@ const columns = [
                             </Menu.Item>
                         )
                         :
-                        e.paymentStatus == "Failed" && (
+                        e.paymentStatus == "Failed Registration" && (
                             <Menu.Item key="5" onClick={() => this_Obj.setFailedInstalmentRetry(e)}>
                                 <span>{AppConstants.retryPayment}</span>
                             </Menu.Item>
