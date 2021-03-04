@@ -23,6 +23,7 @@ import Doc from '../../util/DocService';
 import PdfContainer from '../../util/PdfContainer';
 import {getUserId } from '../../util/sessionStorage'
 import {netSetGoTshirtSizeAction} from '../../store/actions/commonAction/commonAction';
+import { NavLink } from 'react-router-dom';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -875,13 +876,15 @@ class RegistrationInvoice extends Component {
                     </div>
                     <div className="col-sm pt-5 px-0 invoiceImageMain ">
                         <label className="d-flex align-items-center">
-                            <img
-                                src={AppImages.netballLogoMain}
-                                name={'image'}
-                                onError={ev => {
-                                    ev.target.src = AppImages.netballLogoMain;
-                                }}
-                            />
+                            <NavLink to={{ pathname: "/" }} className="site-brand">
+                                <img
+                                    src={AppImages.netballLogoMain}
+                                    name={'image'}
+                                    onError={ev => {
+                                        ev.target.src = AppImages.netballLogoMain;
+                                    }}
+                                />
+                            </NavLink>
                         </label>
                     </div>
                 </div>
