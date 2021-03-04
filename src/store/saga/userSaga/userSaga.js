@@ -4,6 +4,7 @@ import ApiConstants from "../../../themes/apiConstants";
 import userHttpApi from "../../http/userHttp/userAxiosApi";
 import registrationAxiosApi from "../../http/registrationHttp/registrationAxios";
 import livescoreAxiosApi from "../../http/liveScoreHttp/liveScoreAxiosApi";
+import ShopAxiosApi from "../../http/shopHttp/shopAxios";
 import history from "../../../util/history";
 import { message } from "antd";
 
@@ -564,7 +565,7 @@ export function* getUsersByRoleSaga(action) {
         try {
             const result = yield call(registrationAxiosApi.playersToPayRetryPayment, action.payload);
             if (result.status === 1) {
-    
+
                 yield put({
                     type: ApiConstants.API_LIVE_SCORE_PLAYERS_TO_PAY_RETRY_PAYMENT_SUCCESS,
                     result: result.result.data,
@@ -586,6 +587,23 @@ export function* getUsersByRoleSaga(action) {
                     type: ApiConstants.API_REGISTRATION_RETRY_PAYMENT_SUCCESS,
                     result: result.result.data,
                     status: result.status,
+                });
+            } else {
+                yield call(failSaga, result)
+            }
+        } catch (error) {
+            yield call(errorSaga, error)
+        }
+    }
+
+    export function* getPurchasesSaga(action) {
+        try {
+            const result = yield call(ShopAxiosApi.getPurchasesListing, action.payload);
+            if (result.status === 1) {
+                yield put({
+                    type: ApiConstants.API_USER_PURCHASES_SUCCESS,
+                    result: result.result.data,
+                    status: result.status
                 });
             } else {
                 yield call(failSaga, result)
