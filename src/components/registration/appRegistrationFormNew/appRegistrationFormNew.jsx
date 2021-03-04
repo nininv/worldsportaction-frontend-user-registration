@@ -720,6 +720,7 @@ class AppRegistrationFormNew extends Component {
                         });
                     }
                 } else {
+                    await this.props.updateUserRegistrationObjectAction(false, "referParentEmail");
                     if (registrationObj.parentOrGuardian.length) {
                         this.addParent('removeAllParent');
                     }
