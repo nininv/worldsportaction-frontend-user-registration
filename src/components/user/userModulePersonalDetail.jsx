@@ -24,8 +24,10 @@ import {
     getUserOrganisationAction,
     cancelDeRegistrationAction,
     liveScorePlayersToPayRetryPaymentAction,
-    registrationRetryPaymentAction
+    registrationRetryPaymentAction,
+    getUserPurchasesAction
 } from "../../store/actions/userAction/userAction";
+import { getReferenceOrderStatus } from "../../store/actions/shopAction/orderStatusAction";
 import { clearRegistrationDataAction } from
     '../../store/actions/registrationAction/endUserRegistrationAction';
 import { getOnlyYearListAction, } from '../../store/actions/appAction'
@@ -147,8 +149,8 @@ const columns = [
                 ((e.expiryDate === "Single Game" && compEndDate >= currentDate) ||
                     (e.alreadyDeRegistered == 0 && e.paymentStatusFlag == 1) ||
                     e.paymentStatus == "Pending De-registration" ||
-                    e.paymentStatus == "Pending Transfer" || 
-                    e.paymentStatus == "Failed") && (
+                    e.paymentStatus == "Pending Transfer" ||
+                    e.paymentStatus == "Failed Registration") && (
                     <Menu
                         className="action-triple-dot-submenu"
                         theme="light"
@@ -205,7 +207,7 @@ const columns = [
                             </Menu.Item>
                         )
                         :
-                        e.paymentStatus == "Failed" && (
+                        e.paymentStatus == "Failed Registration" && (
                             <Menu.Item key="5" onClick={() => this_Obj.setFailedInstalmentRetry(e)}>
                                 <span>{AppConstants.retryPayment}</span>
                             </Menu.Item>
@@ -365,7 +367,7 @@ const teamMembersColumns = [
                                 </Menu.Item>
                             </SubMenu>
                         </Menu>
-                    
+
                 </div>
             )
         },
@@ -427,12 +429,12 @@ const childOrOtherRegistrationColumns = [{
                                 />
                             )}
                         >
-                            {record.invoiceFailedStatus == 1 ? 
+                            {record.invoiceFailedStatus == 1 ?
                                 <Menu.Item key="1">
                                     <span onClick={() => this_Obj.setFailedRegistrationRetry(record)}>{AppConstants.retryPayment}</span>
                                 </Menu.Item>
                                 :
-                                record.transactionFailedStatus == 1 && 
+                                record.transactionFailedStatus == 1 &&
                                 <Menu.Item key="2">
                                     <span onClick={() => this_Obj.setFailedInstalmentRetry(record)}>{AppConstants.retryPayment}</span>
                                 </Menu.Item>
@@ -1009,6 +1011,136 @@ const columnsHistory = [
     }
 ];
 
+function purchasesTableSort(key) {
+    let sortBy = key;
+    let sortOrder = null;
+    if (this_Obj.state.purchasesListSortBy !== key) {
+        sortOrder = 'asc';
+    } else if (this_Obj.state.purchasesListSortBy === key && this_Obj.state.purchasesListSortOrder === 'asc') {
+        sortOrder = 'desc';
+    } else if (this_Obj.state.purchasesListSortBy === key && this_Obj.state.purchasesListSortOrder === 'desc') {
+        sortBy = sortOrder = null;
+    }
+    const params = {
+        limit: 10,
+        offset: this_Obj.state.purchasesOffset,
+        order: sortOrder || "",
+        sorterBy: sortBy || "",
+        userId: this_Obj.state.userId,
+    };
+    this_Obj.props.getUserPurchasesAction(params);
+    this_Obj.setState({ purchasesListSortBy: sortBy, purchasesListSortOrder: sortOrder });
+}
+
+// listeners for sorting
+const purchaseListeners = (key) => ({
+    onClick: () => purchasesTableSort(key),
+});
+
+const purchasesColumn = [
+    {
+        title: 'Order ID',
+        dataIndex: 'orderId',
+        key: 'orderId',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners("id"),
+        render: (orderId) => (
+            <span className="desc-text-style pt-0">{orderId}</span>
+        ),
+    },
+    {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners("createdOn"),
+        render: (date) => <span>{date ? liveScore_formateDate(date) : ""}</span>,
+    },
+    {
+        title: 'Products',
+        dataIndex: 'orderDetails',
+        key: 'orderDetails',
+        // sorter: true,
+        // onHeaderCell: ({ dataIndex }) => purchaseListeners(dataIndex),
+        render: (orderDetails) => (
+            <div>
+                {orderDetails.length > 0 && orderDetails.map((item, i) => (
+                    <span key={`orderDetails${i}`} className="desc-text-style side-bar-profile-data">{item}</span>
+                ))}
+            </div>
+        ),
+    },
+    {
+        title: 'Organisation',
+        dataIndex: 'affiliateName',
+        key: 'affiliateName',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners("organisationId"),
+    },
+    {
+        title: 'Payment Status',
+        dataIndex: 'paymentStatus',
+        key: 'paymentStatus',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners(dataIndex),
+        render: (paymentStatus) => (
+            <span>{this_Obj.getOrderStatus(paymentStatus, "ShopPaymentStatus")}</span>
+        ),
+    },
+    {
+        title: 'Payment Method',
+        dataIndex: 'paymentMethod',
+        key: 'paymentMethod',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners(dataIndex),
+    },
+    {
+        title: 'Fulfillment Status',
+        dataIndex: 'fulfilmentStatus',
+        key: 'fulfilmentStatus',
+        sorter: true,
+        onHeaderCell: ({ dataIndex }) => purchaseListeners(dataIndex),
+        render: (fulfilmentStatus) => (
+            <span>{this_Obj.getOrderStatus(fulfilmentStatus, "ShopFulfilmentStatusArr")}</span>
+        ),
+    },
+    {
+        title: "Action",
+        key: "action",
+        render: (data, record) => (
+            <div>
+                <Menu
+                    className="action-triple-dot-submenu"
+                    theme="light"
+                    mode="horizontal"
+                    style={{ lineHeight: "25px" }}
+                >
+                    <SubMenu
+                        key="sub1"
+                        title={(
+                            <img
+                                className="dot-image"
+                                src={AppImages.moreTripleDot}
+                                alt=""
+                                width="16"
+                                height="16"
+                            />
+                        )}
+                    >
+                        <Menu.Item key="1">
+                            <span onClick={() => history.push("/invoice", {
+                                shopUniqueKey: record.shopUniqueKey,
+                                invoiceId: record.invoiceId,
+                                savedInvoice: true,
+                            })}>{AppConstants.invoice}</span>
+                        </Menu.Item>
+                    </SubMenu>
+                </Menu>
+            </div>
+        )
+    },
+];
+
 const menu = (
     <Menu>
         <Menu.Item>
@@ -1154,7 +1286,10 @@ class UserModulePersonalDetail extends Component {
             otherModalVisible: false,
             modalTitle: null,
             modalMessage: null,
-            actionView: 0
+            actionView: 0,
+            purchasesOffset: 0,
+            purchasesListSortBy: null,
+            purchasesListSortOrder: null,
         }
     }
 
@@ -1167,6 +1302,7 @@ class UserModulePersonalDetail extends Component {
         let user_Id = this.state.userId;
         await this.props.getUserOrganisationAction();
         const organisationData = this.props.userState.getUserOrganisation;
+        this.props.getReferenceOrderStatus();
         if (organisationData.length > 0) {
             await setOrganisationData(organisationData[0]);
         }
@@ -1262,6 +1398,17 @@ class UserModulePersonalDetail extends Component {
             .reduce((a, c) => { a[c[0]] = c[1]; return a; }, {});
     }
 
+    getOrderStatus = (value, state) => {
+        let statusValue = '';
+        const statusArr = this.props.shopProductState[state];
+        const getIndexValue = statusArr.findIndex((x) => x.id == value);
+        if (getIndexValue > -1) {
+            statusValue = statusArr[getIndexValue].description;
+            return statusValue;
+        }
+        return statusValue;
+    }
+
     componentDidUpdate(nextProps) {
         let userState = this.props.userState;
         let personal = userState.personalData;
@@ -1343,7 +1490,7 @@ class UserModulePersonalDetail extends Component {
 
         if(this.props.userState.cancelDeRegistrationLoad == false && this.state.cancelDeRegistrationLoad == true){
             this.handleRegistrationTableList(
-                1, 
+                1,
                 this.state.userId,
                 this.state.competition,
                 this.state.yearRefId,
@@ -1355,7 +1502,7 @@ class UserModulePersonalDetail extends Component {
         if((this.props.userState.onLoad == false || this.props.userState.onRetryPaymentLoad == false) && this.state.loading == true){
             this.setState({loading: false});
             this.handleRegistrationTableList(
-                1, 
+                1,
                 this.state.userId,
                 this.state.competition,
                 this.state.yearRefId,
@@ -1554,14 +1701,27 @@ class UserModulePersonalDetail extends Component {
             this.handleHistoryTableList(1, userId);
 
         } else if (tabKey === "7") {
-            let payload = {
+            payload = {
                 "paging": {
                     "limit": 10,
                     "offset": 0
                 }
             }
             this.props.getUmpireActivityListAction(payload, JSON.stringify([15]), userId, this.state.UmpireActivityListSortBy, this.state.UmpireActivityListSortOrder);
+        } else if (tabKey === "8") {
+            this.handlePurchasesTableList(1, userId);
         }
+    }
+
+    handlePurchasesTableList = (page, userId) => {
+        const params = {
+            limit: 10,
+            offset: (page ? (10 * (page - 1)) : 0),
+            order: "",
+            sorterBy: "",
+            userId,
+        };
+        this.props.getUserPurchasesAction(params);
     }
 
     handleActivityTableList = (page, userId, competition, key, yearRefId) => {
@@ -2756,6 +2916,38 @@ class UserModulePersonalDetail extends Component {
         )
     }
 
+    userPurchasesView = () => {
+        const {
+            userPurchasesList,
+            userPurchasesCount,
+            userPurchasesCurrentPage,
+        } = this.props.userState;
+        return (
+            <div className="comp-dash-table-view mt-2 default-bg">
+                <div className="table-responsive home-dash-table-view">
+                    <Table
+                        className="home-dashboard-table"
+                        columns={purchasesColumn}
+                        dataSource={userPurchasesList}
+                        pagination={false}
+                    />
+                </div>
+                <div className="d-flex justify-content-end">
+                    <Pagination
+                        className="antd-pagination pb-3"
+                        current={userPurchasesCurrentPage}
+                        total={userPurchasesCount}
+                        onChange={(page) => this.handlePurchasesTableList(
+                            page,
+                            this.state.userId,
+                        )}
+                        showSizeChanger={false}
+                    />
+                </div>
+            </div>
+        );
+    };
+
     userEmail = () => {
         let orgData = getOrganisationData()
         return orgData && orgData.email ? encodeURIComponent(orgData.email) : ""
@@ -3005,7 +3197,10 @@ class UserModulePersonalDetail extends Component {
             userHistoryLoad,
             onMedicalLoad,
 
-            personalData
+            personalData,
+            userPurchasesList,
+            userPurchasesOnLoad,
+
         } = this.props.userState;
 
         let personalDetails = personalByCompData != null ? personalByCompData : [];
@@ -3077,6 +3272,9 @@ class UserModulePersonalDetail extends Component {
                                                     <span>{AppConstants.umpireActivity}</span>
                                                 </Menu.Item>
                                             )}
+                                            <Menu.Item key="8">
+                                                <span>{AppConstants.purchases}</span>
+                                            </Menu.Item>
                                         </Menu>
 
                                         {this.state.tabKey === "1" && !isUserLoading && (
@@ -3134,6 +3332,13 @@ class UserModulePersonalDetail extends Component {
                                                 {!umpireActivityList.length && !umpireActivityOnLoad && this.noDataAvailable()}
                                             </>
                                         )}
+                                        {this.state.tabKey === "8" && (
+                                            <>
+                                                {!!userPurchasesList && !!userPurchasesList.length && !userPurchasesOnLoad && this.userPurchasesView()}
+                                                {userPurchasesOnLoad && this.tableLoadingView()}
+                                                {userPurchasesList && !userPurchasesList.length && !userPurchasesOnLoad && this.noDataAvailable()}
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -3178,7 +3383,9 @@ function mapDispatchToProps(dispatch) {
         getUserOrganisationAction,
         cancelDeRegistrationAction,
         liveScorePlayersToPayRetryPaymentAction,
-        registrationRetryPaymentAction
+        registrationRetryPaymentAction,
+        getUserPurchasesAction,
+        getReferenceOrderStatus
     }, dispatch);
 }
 
@@ -3189,6 +3396,7 @@ function mapStateToProps(state) {
         endUserRegistrationState: state.EndUserRegistrationState,
         stripeState: state.StripeState,
         userRegistrationState: state.UserRegistrationState,
+        shopProductState: state.ShopProductState,
     }
 }
 

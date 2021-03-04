@@ -42,6 +42,13 @@ function getUserModuleRegistrationAction(payload) {
   };
 }
 
+function getUserPurchasesAction(payload) {
+  return {
+    type: ApiConstants.API_USER_PURCHASES_LOAD,
+    payload,
+  }
+}
+
 function getUserModuleMedicalInfoAction(userId) {
   return {
     type: ApiConstants.API_USER_MODULE_MEDICAL_INFO_LOAD,
@@ -271,6 +278,7 @@ export {
   getUsersByRoleAction,
   cancelDeRegistrationAction,
   liveScorePlayersToPayRetryPaymentAction,
-  registrationRetryPaymentAction
+  registrationRetryPaymentAction,
+  getUserPurchasesAction
 }
 

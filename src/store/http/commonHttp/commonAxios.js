@@ -115,6 +115,15 @@ let AxiosApi = {
         return Method.dataPost(url, token, body);
     },
 
+    getRefOrderStatus() {
+        let body = {
+            ShopFulfilmentStatus: "ShopFulfilmentStatus",
+            ShopPaymentStatus: "ShopPaymentStatus",
+        }
+        const url = '/common/references';
+        return Method.dataPost(url, token, body);
+    },
+
     ////Add Venue Api
     addVenue(venuData) {
         console.log(venuData, 'venuData_FetchApi')

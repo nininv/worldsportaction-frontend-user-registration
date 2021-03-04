@@ -126,6 +126,10 @@ export default function* root_saga() {
   //Update Team Registration Invite
   // yield takeEvery(ApiConstants.API_UPDATE_TEAM_REGISTRATION_INIVTE_LOAD, endUserRegSaga.teamRegistrationInviteUpdateSaga)
 
+  //UserModule User Purchases
+  yield takeEvery(ApiConstants.API_USER_PURCHASES_LOAD, userSaga.getPurchasesSaga)
+
+yield takeEvery(ApiConstants.API_GET_REFERENCE_ORDER_STATUS_LOAD, shopProductSaga.getOrderStatusReferenceSaga)
 
   //UserModule Personal Info
   yield takeEvery(ApiConstants.API_USER_MODULE_PERSONAL_DETAIL_LOAD, userSaga.getUserModulePersonalDataSaga)
