@@ -1286,7 +1286,10 @@ class UserModulePersonalDetail extends Component {
             otherModalVisible: false,
             modalTitle: null,
             modalMessage: null,
-            actionView: 0
+            actionView: 0,
+            purchasesOffset: 0,
+            purchasesListSortBy: null,
+            purchasesListSortOrder: null,
         }
     }
 
