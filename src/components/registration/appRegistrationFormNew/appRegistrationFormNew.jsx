@@ -2272,7 +2272,7 @@ class AppRegistrationFormNew extends Component {
                             <div>
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
                                 <Form.Item >
-                                    {getFieldDecorator(`parentEmail0`, {
+                                    {getFieldDecorator(`parenEmail0`, {
                                         rules: [
                                             { required: true, message: ValidationConstants.emailField[0] },
                                             {
@@ -2285,7 +2285,7 @@ class AppRegistrationFormNew extends Component {
                                         <InputWithHead
                                             disabled={registrationObj.userId == getUserId()}
                                             placeholder={AppConstants.contactEmail}
-                                            onChange={(e) => this.onChangeSetParticipantValue(e.target.value, "email")}
+                                            onChange={(e) => this.onChangeSetParentValue(e.target.value, "email")}
                                             setFieldsValue={registrationObj.parentOrGuardian[0]?.email}
                                         />
                                     )}
