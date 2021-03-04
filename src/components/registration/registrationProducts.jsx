@@ -750,53 +750,54 @@ class RegistrationProducts extends Component {
                     )
                     }
                     <div style={item.paymentOptions.length > 1 ? { marginTop: 6 } : { marginTop: 12 }}>
-                        <Radio.Group className="body-text-common"
+                        <Radio.Group className="body-text-common row"
                             value={item.selectedOptions.paymentOptionRefId}
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index, "selectedOptions")}
                             style={{ display: "flex" }}>
                             {(this.getUpdatedPaymentOptions(item.paymentOptions) || []).map((p, pIndex) => {
-                                return (
-                                    <span key={p.paymentOptionRefId}>
-
-                                        {p.paymentOptionRefId == 3 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
-                                                <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                    <Tooltip placement='bottom' background="#ff8237">
-                                                        <span>{AppConstants.allMatchesTipMsg}</span>
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                        }
-                                        {p.paymentOptionRefId == 4 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-                                                <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                    <Tooltip placement='bottom' background="#ff8237">
-                                                        <span>{AppConstants.instalmentTipMessage}</span>
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                        }
-                                        {p.paymentOptionRefId == 5 &&
-                                            <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
-                                        }
-                                        {p.paymentOptionRefId == 1 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
-                                                {item.isTeamRegistration == 0 ?
+                                return !(p.paymentOptionRefId === 2 || p.paymentOptionRefId === 6) && (
+                                    <div className="col-6">
+                                        <span key={p.paymentOptionRefId}>
+                                            {p.paymentOptionRefId == 3 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
                                                     <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                         <Tooltip placement='bottom' background="#ff8237">
-                                                            <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                            <span>{AppConstants.allMatchesTipMsg}</span>
                                                         </Tooltip>
                                                     </div>
-                                                    :
-                                                    null
-                                                }
-                                            </div>
-                                        }
+                                                </div>
+                                            }
+                                            {p.paymentOptionRefId == 4 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
+                                                    <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                        <Tooltip placement='bottom' background="#ff8237">
+                                                            <span>{AppConstants.instalmentTipMessage}</span>
+                                                        </Tooltip>
+                                                    </div>
+                                                </div>
+                                            }
+                                            {p.paymentOptionRefId == 5 &&
+                                                <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                            }
+                                            {p.paymentOptionRefId == 1 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                                    {item.isTeamRegistration == 0 ?
+                                                        <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                            <Tooltip placement='bottom' background="#ff8237">
+                                                                <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                            </Tooltip>
+                                                        </div>
+                                                        :
+                                                        null
+                                                    }
+                                                </div>
+                                            }
 
-                                    </span>
+                                        </span>
+                                    </div>
                                 )
                             })}
                         </Radio.Group>
