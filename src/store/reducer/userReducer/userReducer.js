@@ -249,6 +249,10 @@ const initialState = {
     teamMemberDeletion: false,
     parentData: [],
     getUserParentDataOnLoad: false,
+    userPurchasesList: null,
+    userPurchasesCount: 1,
+    userPurchasesCurrentPage: 1,
+    userPurchasesOnLoad: false,
 };
 
 //get User Role
@@ -403,6 +407,21 @@ function userReducer(state = initialState, action) {
                 onMedicalLoad: false,
                 medicalData: medicalData,
                 status: action.status
+            };
+
+        case ApiConstants.API_USER_PURCHASES_LOAD:
+            return { ...state, userPurchasesOnLoad: true };
+
+        case ApiConstants.API_USER_PURCHASES_SUCCESS:
+            let purchasesData = action.result;
+            return {
+                ...state,
+                userPurchasesList: isArrayNotEmpty(purchasesData.orders) ? purchasesData.orders : [],
+                userPurchasesCount: purchasesData.page ? purchasesData.page.totalCount : 1,
+                userPurchasesCurrentPage: purchasesData.page ? purchasesData.page.currentPage : 1,
+                userPurchasesOnLoad: false,
+                status: action.status,
+                error: null
             };
 
         case ApiConstants.API_USER_MODULE_REGISTRATION_LOAD:
@@ -771,7 +790,7 @@ function userReducer(state = initialState, action) {
 
         case ApiConstants.API_REGISTRATION_RETRY_PAYMENT_LOAD:
             return{...state,onLoad: true}
-        
+
         case ApiConstants.API_REGISTRATION_RETRY_PAYMENT_SUCCESS:
             return{
                 ...state,

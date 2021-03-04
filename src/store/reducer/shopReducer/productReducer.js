@@ -36,6 +36,8 @@ const initialState = {
     productListingCurrentPage: 1,
     typesProductList: [],
     productDetailData: defaultProductObject,
+    ShopPaymentStatus:[],
+    ShopFulfilmentStatusArr:[],
 };
 
 
@@ -206,6 +208,22 @@ function shopProductState(state = initialState, action) {
                 status: action.status,
                 error: null
             };
+
+        case ApiConstants.API_GET_REFERENCE_ORDER_STATUS_LOAD:
+            return {
+                ...state,
+                onLoad: true, error: null
+            }
+
+        case ApiConstants.API_GET_REFERENCE_ORDER_STATUS_SUCCESS:
+            return {
+                ...state,
+                onLoad:false,
+                ShopFulfilmentStatusArr: action.result.ShopFulfilmentStatus,
+                ShopPaymentStatus: action.result.ShopPaymentStatus,
+                status: action.status,
+                error: null
+            }
 
         default:
             return state;
