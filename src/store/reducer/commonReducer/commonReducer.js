@@ -33,7 +33,8 @@ const initialState = {
     umpireAccreditation: [],
     coachAccreditation: [],
     stateListData: [],
-    refereeOffenceList: []
+    refereeOffenceList: [],
+    relationshipList: []
 };
 
 function commonReducerState(state = initialState, action) {
@@ -345,6 +346,15 @@ function commonReducerState(state = initialState, action) {
                 umpireAccreditation: action.result.accreditationUmpire,
                 coachAccreditation: action.result.accreditationCoach,
                 stateListData: action.result.State,
+                onLoad: false,
+                error: null
+            };
+
+        case ApiConstants.API_RELATIONSHIP_LIST_SUCCESS:
+            return {
+                ...state,
+                status: action.status,
+                relationshipList: action.result || [],
                 onLoad: false,
                 error: null
             };

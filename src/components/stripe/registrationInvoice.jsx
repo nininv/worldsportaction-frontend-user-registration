@@ -23,6 +23,7 @@ import Doc from '../../util/DocService';
 import PdfContainer from '../../util/PdfContainer';
 import {getUserId } from '../../util/sessionStorage'
 import {netSetGoTshirtSizeAction} from '../../store/actions/commonAction/commonAction';
+import { NavLink } from 'react-router-dom';
 
 const { Header, Footer, Content } = Layout;
 const { Option } = Select;
@@ -207,7 +208,7 @@ class RegistrationInvoice extends Component {
                         <div >
                             {(getAffiliteDetailData).map((item, index) => {
                                 return (
-                                    <div className="affiliate-detail-View-Invoice" >
+                                    <div key={index} className="affiliate-detail-View-Invoice" >
                                         <div className="pt-3" >
                                             <span className="roundUpDescription-text">{item.organisationName}</span>
                                             <Descriptions >
@@ -643,7 +644,7 @@ class RegistrationInvoice extends Component {
                      let tShirtDetails = tShirtSizeList ? tShirtSizeList.find(x => x.id == item.tShirtSizeRefId) : null;
                      let tShirtName = tShirtDetails ? tShirtDetails.name : null;
                     return(
-                        <div>
+                        <div key={participantIndex}>
                             {(item.membershipProducts || []).map((mem, memIndex) =>{
                                  let competitionDetails = mem && mem.fees.competitionOrganisorFee;
                                  let membershipDetail = mem && mem.fees.membershipFee;
@@ -655,7 +656,7 @@ class RegistrationInvoice extends Component {
                                  let typeName = mTypeName;
                                  let mProductName = mem && mem.membershipProductName!= null ? mem.membershipProductName : '';
                                  return (
-                                    <div>
+                                    <div key={memIndex}>
                                     <div className="invoice-row-view" >
                                             <div className="invoice-col-View pb-0 pl-0" >
                                                 <div className="invoice-col-View pb-0 pl-0 pr-0" >
@@ -875,13 +876,15 @@ class RegistrationInvoice extends Component {
                     </div>
                     <div className="col-sm pt-5 px-0 invoiceImageMain ">
                         <label className="d-flex align-items-center">
-                            <img
-                                src={AppImages.netballLogoMain}
-                                name={'image'}
-                                onError={ev => {
-                                    ev.target.src = AppImages.netballLogoMain;
-                                }}
-                            />
+                            <NavLink to={{ pathname: "/" }} className="site-brand">
+                                <img
+                                    src={AppImages.netballLogoMain}
+                                    name={'image'}
+                                    onError={ev => {
+                                        ev.target.src = AppImages.netballLogoMain;
+                                    }}
+                                />
+                            </NavLink>
                         </label>
                     </div>
                 </div>
@@ -1017,17 +1020,26 @@ class RegistrationInvoice extends Component {
 
     thankYouRegisteringView = () => {
         let userId = getUserId();
-        const shopUniqueKey = this.props.location.state ? this.props.location.state.shopUniqueKey : null;
+        const { shopUniqueKey, savedInvoice } = this.props.location.state;
+        let title;
+        if (shopUniqueKey) {
+            title = AppConstants.thankYouPurchasing;
+        } else {
+            title = AppConstants.thankYouRegistering;
+        }
 
+        if (savedInvoice) {
+            title = AppConstants.savedInvoice;
+        }
         return(
             <div className="thank-you-registering-view">
                 <div>
                     <div className="thank-you-registering-view-title">
-                        {shopUniqueKey ? AppConstants.thankYouPurchasing : AppConstants.thankYouRegistering}
+                        {title}
                     </div>
                     <div className="thank-you-registering-view-content">
                         {
-                            shopUniqueKey ? AppConstants.emailConfirmShopMessage
+                            shopUniqueKey || savedInvoice ? AppConstants.emailConfirmShopMessage
                                 :
                                 userId != 0 ?
                                     AppConstants.emailConfirmExistingUserMessage

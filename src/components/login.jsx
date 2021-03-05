@@ -100,7 +100,9 @@ class Login extends Component {
         return (
             <div className="content-view">
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                    <img src={AppImages.netballLogo1} alt="" />
+                    <NavLink to={{ pathname: "/" }} className="site-brand">
+                        <img src={AppImages.netballLogo1} alt="" />
+                    </NavLink>
                 </div>
                 <InputWithHead heading={AppConstants.username} placeholder={AppConstants.username}
                     name={"userName"}

@@ -1,27 +1,26 @@
-import moment from 'moment'
+import moment from "moment";
 function liveScore_formateDateTime(date) {
-    let formatedDate = moment(date).format("DD/MM/YYYY HH:MM")
-    return formatedDate
+    let formatedDate = moment(date).format("DD/MM/YYYY HH:MM");
+    return formatedDate;
 }
 
 function liveScore_formateDate(date) {
-    let formatedDate = moment(date).format("DD/MM/YYYY")
-    return formatedDate
+    let formatedDate = moment(date).format("DD/MM/YYYY");
+    return formatedDate;
 }
 
 function formateTime(time) {
-    let formatedDate = time.format('HH:mm')
-    return formatedDate
+    let formatedDate = time.format("HH:mm");
+    return formatedDate;
 }
 
-
 function getDayName(date) {
-    let dayName = moment(date).format('ddd');
+    let dayName = moment(date).format("ddd");
     return dayName;
 }
 
 function getTime(date) {
-    let time = moment(date).format('HH:mm');
+    let time = moment(date).format("HH:mm");
     return time;
 }
 
@@ -35,16 +34,15 @@ function sortArrayByDate(dateArray) {
     return sortedArray;
 }
 function formatDateTime(date_time) {
-    console.log(date_time)
+    console.log(date_time);
     var dt = new Date(date_time);
-    let formatedValue = dt.toISOString()
-    console.log(formatedValue)
-    return formatedValue
+    let formatedValue = dt.toISOString();
+    console.log(formatedValue);
+    return formatedValue;
 }
 function liveScore_MatchFormate(date) {
-    let formatedDate = moment(date).format("DD/MM/YYYY HH:mm")
-    return formatedDate
-
+    let formatedDate = moment(date).format("DD/MM/YYYY HH:mm");
+    return formatedDate;
 }
 
 export {
@@ -56,5 +54,5 @@ export {
     isDateSame,
     sortArrayByDate,
     formatDateTime,
-    liveScore_MatchFormate
-}
+    liveScore_MatchFormate,
+};

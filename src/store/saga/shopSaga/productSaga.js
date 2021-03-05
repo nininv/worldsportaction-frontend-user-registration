@@ -1,6 +1,7 @@
 import { put, call } from "redux-saga/effects";
 import ApiConstants from "../../../themes/apiConstants";
 import AxiosApi from "../../http/shopHttp/shopAxios";
+import commonAxiosApi from "../../http/commonHttp/commonAxios";
 import { message } from "antd";
 import AppConstants from "../../../themes/appConstants";
 
@@ -165,6 +166,24 @@ export function* addToCartSaga(action) {
                 status: result.status,
             });
             message.success(AppConstants.addedToCart);
+        } else {
+            yield call(failSaga, result)
+        }
+    } catch (error) {
+        yield call(errorSaga, error)
+    }
+}
+
+export function* getOrderStatusReferenceSaga(action) {
+    try {
+        const result = yield call(commonAxiosApi.getRefOrderStatus, action.keys);
+
+        if (result.status === 1) {
+            yield put({
+                type: ApiConstants.API_GET_REFERENCE_ORDER_STATUS_SUCCESS,
+                result: result.result.data,
+                status: result.status
+            });
         } else {
             yield call(failSaga, result)
         }

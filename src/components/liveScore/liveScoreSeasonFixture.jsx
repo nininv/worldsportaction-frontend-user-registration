@@ -715,7 +715,7 @@ class LiveScoreSeasonFixture extends Component {
                 <div className="reg-competition-radio">
                     {this.detailsContainer(AppImages.greenDot, AppConstants.final_description)}
                     {this.detailsContainer(AppImages.purpleDot, AppConstants.draft_description)}
-                    {this.detailsContainer(AppImages.redDot, AppConstants.disput_description)}
+                    {this.detailsContainer(AppImages.redDot, AppConstants.dispute_description)}
                 </div>
             </div>
 

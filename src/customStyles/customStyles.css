@@ -217,6 +217,10 @@
   padding-right: 20px;
 }
 
+.ant-message .anticon {
+  top: -3px !important;
+}
+
 @media (max-width: 767px) {
   .form-header-view.ant-layout-header {
     padding: 0 0px;

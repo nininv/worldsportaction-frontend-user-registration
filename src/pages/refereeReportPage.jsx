@@ -26,7 +26,6 @@ const RefereeReportPage = (props) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [stepsData, setStepsData] = useState({});
 
-    const { refereeOffenceList } = commonStore;
     const { location } = props;
     const { matchId, userId, competitionId, token } = queryString.parse(
         location.search
@@ -45,7 +44,7 @@ const RefereeReportPage = (props) => {
                 case 0: {
                     data = {
                         ...data,
-                        foulPlayerId: +stepValue.player.id,
+                        foulUserId: +stepValue.player.id,
                         foulPlayerRole: stepValue.role,
                         incidentTime: stepValue.dateAndTimeIncident,
                         offences: stepValue.offences,

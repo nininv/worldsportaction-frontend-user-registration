@@ -22,25 +22,42 @@ const UserAlreadyExists = ({
         // otherwise, user id is set on selecting radio
         next();
     };
-    const disableSMS = () => {
-        const user = matchingUsers.find(item => item.id === userId);
+    const isInvalidSMS = (profileUserId) => {
+        const user = matchingUsers.find(item => item.id === profileUserId);
         if (!!user) {
             if (user.phone == null || user.phone == undefined || user.phone.length == 0) {
-                setType("email");
+                if (profileUserId === userId)
+                    setType("email");
                 return true;
             }
         }
         return false;
     };
-    const disableEmail = () => {
-        const user = matchingUsers.find(item => item.id === userId);
+    const isInvalidEmail = (profileUserId) => {
+        const user = matchingUsers.find(item => item.id === profileUserId);
         if (!!user) {
             if ((!!user.email && user.email.indexOf("player") == 0 && user.email.indexOf("wsa.com") == user.email.length - 7) || user.email == null || user.email == undefined || user.email.length == 0) {
-                setType("sms");
+                if (profileUserId === userId)
+                    setType("sms");
                 return true;
             }
         }
         return false;
+    }
+    const showProfileString = (user) => {
+        let profileString = `${user.firstName} ${user.lastName}`;
+        if (!isInvalidEmail(user.id)) {
+            profileString += ` - Email: ${user.email}`;
+        }
+        if (!isInvalidSMS(user.id)) {
+            if (!isInvalidEmail(user.id)) {
+                profileString += ', ';
+            } else {
+                profileString += ' - ';
+            }
+            profileString += `Phone: ${user.phone}`
+        }
+        return profileString;
     }
     return (
         <div className="registration-form-view user-already-exists-section">
@@ -67,9 +84,7 @@ const UserAlreadyExists = ({
                                             value={user.id}
                                             key={user.id}
                                         >
-                                            {user.firstName} {user.lastName} -
-                                            Email: {user.email}, Phone:{" "}
-                                            {user.phone}
+                                            {showProfileString(user)}
                                         </Radio>
                                     );
                                 })}
@@ -93,13 +108,13 @@ const UserAlreadyExists = ({
                     >
                         <Radio
                             value={"email"}
-                            disabled={disableEmail()}
+                            disabled={isInvalidEmail(userId)}
                         >
                             {AppConstants.email}
                         </Radio>
                         <Radio
                             value={"sms"}
-                            disabled={disableSMS()}
+                            disabled={isInvalidSMS(userId)}
                         >
                             {AppConstants._sms}
                         </Radio>

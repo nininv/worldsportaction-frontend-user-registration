@@ -24,7 +24,7 @@ import {
 } from
     '../../store/actions/registrationAction/registrationProductsAction';
 import ValidationConstants from "../../themes/validationConstant";
-import { isArrayNotEmpty } from '../../util/helpers';
+import { isArrayNotEmpty, isArrayEmpty } from '../../util/helpers';
 import { bindActionCreators } from "redux";
 import history from "../../util/history";
 import Loader from '../../customComponents/loader';
@@ -521,13 +521,13 @@ class RegistrationProducts extends Component {
                 <span className="link-text-common" style={{ margin: "0px 15px 0px 10px" }}>
                     {AppConstants.edit}
                 </span>
-                <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.editIcon} /></span>
+                <span className="user-remove-btn" ><img className="marginIcon" src={AppImages.editIcon} /></span>
             </div>
             <div className="transfer-image-view pointer" onClick={() => this.removeParticipantModal('show', item.participantId, item.competitionUniqueKey, item.organisationUniqueKey, item.teamName)}>
                 <span className="link-text-common" style={{ marginRight: "15px" }}>
                     {AppConstants.remove}
                 </span>
-                <span className="user-remove-btn" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                <span className="user-remove-btn" ><img className="marginIcon" src={AppImages.removeIcon} /></span>
             </div>
         </div>
     )
@@ -750,53 +750,54 @@ class RegistrationProducts extends Component {
                     )
                     }
                     <div style={item.paymentOptions.length > 1 ? { marginTop: 6 } : { marginTop: 12 }}>
-                        <Radio.Group className="body-text-common"
+                        <Radio.Group className="body-text-common row"
                             value={item.selectedOptions.paymentOptionRefId}
                             onChange={(e) => this.setReviewInfo(e.target.value, "paymentOptionRefId", index, "selectedOptions")}
                             style={{ display: "flex" }}>
                             {(this.getUpdatedPaymentOptions(item.paymentOptions) || []).map((p, pIndex) => {
-                                return (
-                                    <span key={p.paymentOptionRefId}>
-
-                                        {p.paymentOptionRefId == 3 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
-                                                <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                    <Tooltip placement='bottom' background="#ff8237">
-                                                        <span>{AppConstants.allMatchesTipMsg}</span>
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                        }
-                                        {p.paymentOptionRefId == 4 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
-                                                <div style={{ marginLeft: -20, marginRight: 17 }}>
-                                                    <Tooltip placement='bottom' background="#ff8237">
-                                                        <span>{AppConstants.instalmentTipMessage}</span>
-                                                    </Tooltip>
-                                                </div>
-                                            </div>
-                                        }
-                                        {p.paymentOptionRefId == 5 &&
-                                            <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
-                                        }
-                                        {p.paymentOptionRefId == 1 &&
-                                            <div className="contextualHelp-RowDirection">
-                                                <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
-                                                {item.isTeamRegistration == 0 ?
+                                return !(p.paymentOptionRefId === 2 || p.paymentOptionRefId === 6) && (
+                                    <div className="col-6">
+                                        <span key={p.paymentOptionRefId}>
+                                            {p.paymentOptionRefId == 3 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="all-matches" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.allMatches}</Radio>
                                                     <div style={{ marginLeft: -20, marginRight: 17 }}>
                                                         <Tooltip placement='bottom' background="#ff8237">
-                                                            <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                            <span>{AppConstants.allMatchesTipMsg}</span>
                                                         </Tooltip>
                                                     </div>
-                                                    :
-                                                    null
-                                                }
-                                            </div>
-                                        }
+                                                </div>
+                                            }
+                                            {p.paymentOptionRefId == 4 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="payment-instalment" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.weeklyInstalment}</Radio>
+                                                    <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                        <Tooltip placement='bottom' background="#ff8237">
+                                                            <span>{AppConstants.instalmentTipMessage}</span>
+                                                        </Tooltip>
+                                                    </div>
+                                                </div>
+                                            }
+                                            {p.paymentOptionRefId == 5 &&
+                                                <Radio id="payment-school-registration" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{AppConstants.schoolRegistration}</Radio>
+                                            }
+                                            {p.paymentOptionRefId == 1 &&
+                                                <div className="contextualHelp-RowDirection">
+                                                    <Radio id="payment-one-match-only" key={p.paymentOptionRefId} value={p.paymentOptionRefId}>{item.isTeamRegistration == 1 ? AppConstants.payEachMatch : AppConstants.oneMatchOnly}</Radio>
+                                                    {item.isTeamRegistration == 0 ?
+                                                        <div style={{ marginLeft: -20, marginRight: 17 }}>
+                                                            <Tooltip placement='bottom' background="#ff8237">
+                                                                <span>{AppConstants.oneMatchOnlyTipMsg}</span>
+                                                            </Tooltip>
+                                                        </div>
+                                                        :
+                                                        null
+                                                    }
+                                                </div>
+                                            }
 
-                                    </span>
+                                        </span>
+                                    </div>
                                 )
                             })}
                         </Radio.Group>
@@ -883,7 +884,7 @@ class RegistrationProducts extends Component {
                         <div className="transfer-image-view pointer" style={{ paddingLeft: '15px', }}>
                             <span className="user-remove-btn"
                                 onClick={() => this.setReviewInfo(null, "removeDiscount", index, "selectedOptions", disIndex)}>
-                                <img class="marginIcon" src={AppImages.removeIcon} />
+                                <img className="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>
                         {dis.isValid == 0 &&
@@ -983,7 +984,7 @@ class RegistrationProducts extends Component {
                     <div className="transfer-image-view pointer" style={{ paddingLeft: '15px', }}>
                         <span className="user-remove-btn"
                             onClick={(e) => this.setReviewInfo(null, "selectedSchoolRegCode", index, "selectedOptions", "removeSchoolRegCode")}>
-                            <img class="marginIcon" src={AppImages.removeIcon} />
+                            <img className="marginIcon" src={AppImages.removeIcon} />
                         </span>
                     </div>
                     {item.selectedOptions.invalidSchoolRegCode == 1 &&
@@ -1055,7 +1056,7 @@ class RegistrationProducts extends Component {
                         <div className="transfer-image-view pointer" style={{ paddingLeft: '15px', paddingTop: 44 }}
                             onClick={() => this.setReviewInfo(null, "removeVoucher", index, "selectedOptions", govIndex)}>
                             <span className="user-remove-btn" >
-                                <img class="marginIcon" src={AppImages.removeIcon} />
+                                <img className="marginIcon" src={AppImages.removeIcon} />
                             </span>
                         </div>
                         {gov.isValid == 0 &&
@@ -1456,6 +1457,7 @@ class RegistrationProducts extends Component {
         let hasClubVolunteer = registrationReviewList != null ? registrationReviewList.hasClubVolunteer : 0;
         let compParticipants = registrationReviewList != null ? registrationReviewList.compParticipants : [];
         let hasTeamRegistration = compParticipants.find(x => x.isTeamRegistration == 1);
+        
         return (
             <div className="col-sm-12 col-md-7 col-lg-8 p-0" style={{ marginBottom: 23 }}>
                 <div className="product-left-view outline-style">
@@ -1463,7 +1465,7 @@ class RegistrationProducts extends Component {
                     {isSchoolRegistration == 0 && this.charityView()}
                     {hasClubVolunteer == 1 && this.otherinfoView()}
                 </div>
-                {!hasTeamRegistration && isArrayNotEmpty(participantUsers) ?
+                {!hasTeamRegistration && isArrayEmpty(participantUsers) ?
                     <div className="product-left-view outline-style">
                         {this.yourDetailsView(getFieldDecorator)}
                     </div>
@@ -1519,7 +1521,7 @@ class RegistrationProducts extends Component {
                                                 <div className="alignself-center pt-2" style={(mem.email !== item.email) ? { marginRight: 10 } : { marginRight: 30 }}>${mem.feesToPay}</div>
                                                 {(mem.email !== item.email) && (
                                                     <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId, item.teamName)}>
-                                                        <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                                        <span className="user-remove-btn pointer" ><img className="marginIcon" src={AppImages.removeIcon} /></span>
                                                     </div>
                                                 )}
                                             </div>
@@ -1529,7 +1531,7 @@ class RegistrationProducts extends Component {
                                             <div className="alignself-center pt-2" style={{ marginRight: "auto" }}>{mem.membershipTypeName + (mem.divisionId != null ? ' - ' + mem.divisionName : '')}</div>
                                             <div className="alignself-center pt-2" style={{ marginRight: 10 }}>${mem.feesToPay}</div>
                                             <div onClick={() => this.removeProductModal("show", mem.orgRegParticipantId, null)}>
-                                                <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                                                <span className="user-remove-btn pointer" ><img className="marginIcon" src={AppImages.removeIcon} /></span>
                                             </div>
                                         </div>
                                     }
@@ -1578,7 +1580,7 @@ class RegistrationProducts extends Component {
                         </div>
                         <div className="alignself-center pt-5 subtitle-text-common" style={{ fontWeight: 600, marginRight: 10 }}>${shop.totalAmt ? shop.totalAmt.toFixed(2) : '0.00'}</div>
                         <div style={{ paddingTop: 26 }} onClick={() => this.removeFromCart(index, 'removeShopProduct', 'shopProducts')}>
-                            <span className="user-remove-btn pointer" ><img class="marginIcon" src={AppImages.removeIcon} /></span>
+                            <span className="user-remove-btn pointer" ><img className="marginIcon" src={AppImages.removeIcon} /></span>
                         </div>
                     </div>
                 ))}

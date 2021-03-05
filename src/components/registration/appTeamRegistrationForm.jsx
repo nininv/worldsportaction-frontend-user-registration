@@ -56,20 +56,21 @@ import {
     playerPositionReferenceAction,
     validateRegistrationCapAction,
     walkingNetballQuesReferenceAction
-} from '../../store/actions/commonAction/commonAction';
+} from '../../store/actions/commonAction/commonAction'
 import Loader from '../../customComponents/loader';
 import { captializedString, deepCopyFunction, getAge, isArrayNotEmpty, regexNumberExpression, disabledFutureDate } from '../../util/helpers';
 import moment from 'moment';
 import InputWithHead from "../../customComponents/InputWithHead";
 import AppImages from "../../themes/appImages";
 import PlacesAutocomplete from "./elements/PlaceAutoComplete/index";
-import { getCompetitonId, getOrganisationId, getUserId } from "../../util/sessionStorage";
+import { getCompetitionId, getOrganisationId, getUserId } from "../../util/sessionStorage";
 import history from "../../util/history";
 import { NavLink } from "react-router-dom";
 import CSVReader from 'react-csv-reader';
 import { nearByOrganisations } from "../../util/geocode";
+import RelationshipSelect from '../..//components/registration/elements/RelationshipSelect/RelationshipSelect'
 
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -143,10 +144,10 @@ class AppTeamRegistrationForm extends Component {
 
     componentDidMount() {
         try {
-            if (getOrganisationId() != null && getCompetitonId() != null) {
+            if (getOrganisationId() != null && getCompetitionId() != null) {
                 this.setState({
                     organisationId: getOrganisationId(),
-                    competitionId: getCompetitonId()
+                    competitionId: getCompetitionId()
                 });
             }
 
@@ -187,6 +188,7 @@ class AppTeamRegistrationForm extends Component {
                 teamRegistrationObj.emergencyContactNumber = user.emergencyContactNumber;
                 teamRegistrationObj.emergencyFirstName = user.emergencyFirstName;
                 teamRegistrationObj.emergencyLastName = user.emergencyLastName;
+                teamRegistrationObj.emergencyRelationship = user.emergencyRelationship;
                 teamRegistrationObj.additionalInfo.countryRefId = user.additionalInfo.countryRefId;
                 teamRegistrationObj.additionalInfo.existingMedicalCondition = user.additionalInfo.existingMedicalCondition;
                 teamRegistrationObj.additionalInfo.regularMedication = user.additionalInfo.regularMedication;
@@ -199,7 +201,6 @@ class AppTeamRegistrationForm extends Component {
                 teamRegistrationObj.additionalInfo.disabilityCareNumber = user.additionalInfo.disabilityCareNumber;
                 teamRegistrationObj.additionalInfo.heardByRefId = user.additionalInfo.heardByRefId;
                 teamRegistrationObj.additionalInfo.isYearsPlayed = user.additionalInfo.isYearsPlayed;
-                console.log("team", teamRegistrationObj)
                 this.props.updateTeamRegistrationStateVarAction(teamRegistrationObj, "teamRegistrationObj")
             }
         } catch (ex) {
@@ -217,13 +218,13 @@ class AppTeamRegistrationForm extends Component {
             }
 
             if (teamRegistrationState.hasTeamSelected) {
-                if (getOrganisationId() == null && getCompetitonId() == null) {
+                if (getOrganisationId() == null && getCompetitionId() == null) {
                     this.setState({ showFindAnotherCompetitionview: true });
                 } else {
                     let membershipProductInfo = teamRegistrationState.membershipProductInfo;
                     let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
                     if (organisatinInfoTemp) {
-                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
                         if (competitionInfoTemp == undefined) {
                             this.setState({ showFindAnotherCompetitionview: true });
                         }
@@ -265,13 +266,13 @@ class AppTeamRegistrationForm extends Component {
 
             if (!teamRegistrationState.onExistingTeamInfoByIdLoad && this.state.onExistingTeamInfoByIdLoad) {
                 this.setState({ onExistingTeamInfoByIdLoad: false })
-                if (getOrganisationId() == null && getCompetitonId() == null) {
+                if (getOrganisationId() == null && getCompetitionId() == null) {
                     this.setState({ showFindAnotherCompetitionview: true });
                 } else {
                     let membershipProductInfo = teamRegistrationState.membershipProductInfo;
                     let organisatinInfoTemp = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
                     if (organisatinInfoTemp) {
-                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                        let competitionInfoTemp = organisatinInfoTemp.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
                         if (competitionInfoTemp == undefined) {
                             this.setState({ showFindAnotherCompetitionview: true });
                         }
@@ -294,10 +295,10 @@ class AppTeamRegistrationForm extends Component {
             }
 
             if (teamRegistrationState.expiredRegistrationFlag) {
-                if (getOrganisationId() && getCompetitonId()) {
+                if (getOrganisationId() && getCompetitionId()) {
                     let payload = {
                         organisationId: getOrganisationId(),
-                        competitionId: getCompetitonId()
+                        competitionId: getCompetitionId()
                     }
                     this.props.teamRegistrationExpiryCheckAction(payload);
                 }
@@ -354,10 +355,10 @@ class AppTeamRegistrationForm extends Component {
     isExistTeamRegCompetition = () => {
         try {
             const { membershipProductInfo } = this.props.teamRegistrationState;
-            if (getOrganisationId() && getCompetitonId()) {
+            if (getOrganisationId() && getCompetitionId()) {
                 let organisation = membershipProductInfo.find(x => x.organisationUniqueKey == getOrganisationId());
                 if (organisation) {
-                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitonId());
+                    let competition = organisation.competitions.find(x => x.competitionUniqueKey == getCompetitionId());
                     if (competition == undefined) {
                         this.setState({ organisationId: null, competitionId: null })
                     }
@@ -521,6 +522,7 @@ class AppTeamRegistrationForm extends Component {
                     [`emergencyFirstName`]: teamRegistrationObj.emergencyFirstName,
                     [`emergencyLastName`]: teamRegistrationObj.emergencyLastName,
                     [`emergencyContactNumber`]: teamRegistrationObj.emergencyContactNumber,
+                    [`emergencyRelationship`]: teamRegistrationObj.emergencyRelationship,
                 });
                 if (teamRegistrationObj.manualEnterAddressFlag) {
                     this.setParticipantDetailStepAddressFormFields("manualEnterAddressFlag");
@@ -758,48 +760,57 @@ class AppTeamRegistrationForm extends Component {
     onChangeSetTeamValue = (value, key) => {
         const { teamRegistrationObj } = this.props.teamRegistrationState;
         try {
-            this.props.updateTeamRegistrationObjectAction(value, key);
-            if (key === "stateRefId") {
-                this.getSchoolList(value);
-            }
-            if (key == 'mobileNumber') {
-                if (value.length === 10) {
-                    this.setState({
-                        hasErrorYourDetails: false
-                    })
-                    this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
-                } else if (value.length < 10) {
-                    this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
-                    this.setState({
-                        hasErrorYourDetails: true
-                    })
+            switch (key) {
+                case("stateRefId"): {
+                    this.getSchoolList(value);
+                    this.props.updateTeamRegistrationObjectAction(value, key);
+                    break;
                 }
-                setTimeout(() => {
-                    this.props.form.setFieldsValue({
-                        [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
-                    });
-                }, 300);
-            }
-            else if (key == 'emergencyContactNumber') {
-                if (value.length === 10) {
-                    this.setState({
-                        hasErrorEmergency: false
-                    })
-                    this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
-                } else if (value.length < 10) {
-                    this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
-                    this.setState({
-                        hasErrorEmergency: true
-                    })
+                case("emergencyContactNumber"): {
+                    if (value.length === 10) {
+                        this.setState({
+                            hasErrorEmergency: false
+                        })
+                        this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
+                    } else if (value.length < 10) {
+                        this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
+                        this.setState({
+                            hasErrorEmergency: true
+                        })
 
+                    }
+
+                    if (!regexNumberExpression(value)) {
+                        setTimeout(() => {
+                            this.props.form.setFieldsValue({
+                                [`emergencyContactNumber`]: null,
+                            });
+                        }, 300);
+                    }
+                    break;
                 }
-
-                if (!regexNumberExpression(value)) {
+                case("mobileNumber"): {
+                    if (value.length === 10) {
+                        this.setState({
+                            hasErrorYourDetails: false
+                        })
+                        this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
+                    } else if (value.length < 10) {
+                        this.props.updateTeamRegistrationObjectAction(regexNumberExpression(value), key);
+                        this.setState({
+                            hasErrorYourDetails: true
+                        })
+                    }
                     setTimeout(() => {
                         this.props.form.setFieldsValue({
-                            [`emergencyContactNumber`]: null,
+                            [`yourDetailsMobileNumber`]: teamRegistrationObj.mobileNumber,
                         });
                     }, 300);
+                    break;
+                }
+                default: {
+                    this.props.updateTeamRegistrationObjectAction(value, key);
+                    break;
                 }
             }
         } catch (ex) {
@@ -1028,9 +1039,9 @@ class AppTeamRegistrationForm extends Component {
         try {
             const { stateList, countryList } = this.props.commonReducerState;
             const address = addressData;
-            const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
-            const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
             if (address) {
+                const stateRefId = stateList.length > 0 && address.state ? stateList.find((state) => state.name === address?.state).id : null;
+                const countryRefId = countryList.length > 0 && address.country ? countryList.find((country) => country.name === address?.country).id : null;
                 if (key === "yourDetails") {
                     this.onChangeSetTeamValue(address.addressOne, "street1");
                     this.onChangeSetTeamValue(address.suburb, "suburb");
@@ -2270,11 +2281,12 @@ class AppTeamRegistrationForm extends Component {
                             <div className="form-heading"
                                 style={{ paddingBottom: "0px", marginBottom: "-20px", marginTop: "20px" }}>{AppConstants.findAddress}</div>
                             <div>
-                                <Form.Item name="addressSearch">
+                                <Form.Item
+                                    name="addressSearch"
+                                >
                                     <PlacesAutocomplete
                                         defaultValue={this.getAddress(teamRegistrationObj)}
                                         heading={AppConstants.addressSearch}
-                                        required
                                         error={this.state.searchAddressError}
                                         onBlur={() => { this.setState({ searchAddressError: '' }) }}
                                         onSetData={(e) => this.handlePlacesAutocomplete(e, "yourDetails")}
@@ -2507,9 +2519,8 @@ class AppTeamRegistrationForm extends Component {
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.phone} required={"required-field"} />
                             <Form.Item
-                                rules={[{ required: true, message: ValidationConstants.contactField }]}
-                                help={hasErrorYourDetails && ValidationConstants.mobileLength}
-                                validateStatus={hasErrorYourDetails ? "error" : 'validating'}
+                                help={hasErrorYourDetails ? ValidationConstants.mobileLength : undefined}
+                                validateStatus={hasErrorYourDetails ? (hasErrorYourDetails ? "error" : 'validating') : undefined}
                             >
                                 {getFieldDecorator(`yourDetailsMobileNumber`, {
                                     rules: [{ required: true, message: ValidationConstants.contactField }],
@@ -3093,11 +3104,12 @@ class AppTeamRegistrationForm extends Component {
                         </div>
                         <div className="col-sm-12 col-md-6">
                             <InputWithHead heading={AppConstants.phone} required={"required-field"} />
+
                             <Form.Item
                                 name={AppConstants.contactNO}
                                 rules={[{ required: true, message: ValidationConstants.contactField }]}
-                                help={hasError && ValidationConstants.mobileLength}
-                                validateStatus={hasError ? "error" : 'validating'}
+                                help={hasError ? (hasError && ValidationConstants.mobileLength) : undefined}
+                                validateStatus={hasError ? (hasError ? "error" : 'validating') : undefined}
                             >
                                 {getFieldDecorator(`teamMemberMobileNumber${teamMemberIndex}`, {
                                     rules: [{ required: true, message: ValidationConstants.contactField }],
@@ -3248,7 +3260,6 @@ class AppTeamRegistrationForm extends Component {
                                 <PlacesAutocomplete
                                     defaultValue={this.getAddress(parent)}
                                     heading={AppConstants.addressSearch}
-                                    required
                                     error={this.state.searchAddressError}
                                     onBlur={() => {
                                         this.setState({
@@ -3538,11 +3549,13 @@ class AppTeamRegistrationForm extends Component {
     }
 
     emergencyContactView = (getFieldDecorator) => {
-        let hasErrorEmergency = this.state.hasErrorEmergency;
+        const hasErrorEmergency = this.state.hasErrorEmergency;
+
         try {
-            let { teamRegistrationObj } = this.props.teamRegistrationState;
+            const { teamRegistrationObj } = this.props.teamRegistrationState;
             return (
                 <div className="registration-form-view">
+                    3333
                     <div className="form-heading">{AppConstants.emergencyContact}</div>
                     <div className="row">
                         <div className="col-sm-12 col-md-6">
@@ -3596,12 +3609,20 @@ class AppTeamRegistrationForm extends Component {
                                         onChange={(e) => this.onChangeSetTeamValue(e.target.value, "emergencyContactNumber")}
                                         setFieldsValue={teamRegistrationObj.emergencyContactNumber}
                                         onBlur={(i) => this.props.form.setFieldsValue({
-                                            [`emergencyContactNumber`]: captializedString(i.target.value)
+                                            [`emergenc\yContactNumber`]: captializedString(i.target.value)
                                         })}
                                         maxLength={10}
                                     />
                                 )}
                             </Form.Item>
+                        </div>
+                        <div className="col-sm-12 col-md-6">
+                            <RelationshipSelect
+                                value={teamRegistrationObj.emergencyRelationship}
+                                form={this.props.form}
+                                getFieldDecorator={getFieldDecorator}
+                                onFormChange={this.onChangeSetTeamValue}
+                            />
                         </div>
                     </div>
                 </div>
@@ -4514,7 +4535,7 @@ function mapDispatchToProps(dispatch) {
         getSeasonalAndCasualFees,
         getSchoolListAction,
         teamNameValidationAction,
-        validateRegistrationCapAction
+        validateRegistrationCapAction,
     }, dispatch);
 
 }

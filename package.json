@@ -7,7 +7,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "lint": "eslint --fix ./src/**.*.{js,jsx}"
+        "lint": "eslint --fix ./src/**/*.{js,jsx}"
     },
     "dependencies": {
         "@progress/kendo-drawing": "^1.9.3",
