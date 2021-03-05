@@ -36,6 +36,12 @@ export function* getInvitedTeamRegInfoSaga(action) {
                 result: result.result.data,
                 status: result.status
             });
+        }else if(result.status === 4){
+            yield put({
+                type: ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS,
+                result: result.result.data.message,
+                status: result.status
+            });
         } else {
             yield call(failSaga, result)
         }

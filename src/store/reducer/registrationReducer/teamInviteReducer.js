@@ -3,6 +3,7 @@ import { feeIsNull, formatValue } from "../../../util/helpers";
 
 const initialState = {
     iniviteMemberInfo: null,
+    inviteMemberDeregisterErrorMsg: null,
     inviteOnLoad: false,
     inviteMemberRegSettings: null,
     inviteMemberSaveOnLoad: false,
@@ -56,10 +57,14 @@ function teamInviteReducer(state = initialState, action){
 
         case ApiConstants.API_GET_TEAM_REGISTRATION_INVITE_INFO_SUCCESS:
             let iniviteMemberInfoTemp = action.result;
+            if(action.status == 1){
+                state.iniviteMemberInfo = updateInviteMemberInfo(iniviteMemberInfoTemp);
+            }else{
+                state.inviteMemberDeregisterErrorMsg = iniviteMemberInfoTemp;
+            }
             return {
               ...state,
               status: action.status,
-              iniviteMemberInfo : updateInviteMemberInfo(iniviteMemberInfoTemp),
               inviteOnLoad: false,
             };
 

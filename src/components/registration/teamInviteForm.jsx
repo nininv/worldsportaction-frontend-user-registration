@@ -55,6 +55,7 @@ import ValidationConstants from "../../themes/validationConstant";
 import { captializedString } from "../../util/helpers";
 import { regexNumberExpression } from '../../util/helpers';
 import RelationshipSelect from '../../components/registration/elements/RelationshipSelect/RelationshipSelect'
+import { NavLink } from "react-router-dom";
 
 const { Header, Footer, Content } = Layout;
 const { Step } = Steps;
@@ -102,7 +103,7 @@ class TeamInivteForm extends Component {
                 userId: existingUserRefId == 1 ? getUserId() : 0
             }
             this.props.getTeamRegistrationInviteAction(payload);
-            this.props.getRelationshipListAction();
+            // this.props.getRelationshipListAction();
             this.setState({ inviteOnLoad: true });
         } catch (ex) {
             console.log("Error in componentDidMount::" + ex);
@@ -113,13 +114,15 @@ class TeamInivteForm extends Component {
         try {
             let teamInviteState = this.props.teamInviteState;
             if (!teamInviteState.inviteOnLoad && this.state.inviteOnLoad) {
-                let payload = {
-                    "organisationUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.organisationUniqueKey,
-                    "competitionUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.competitionUniqueKey
+                if(teamInviteState.status == 1){
+                    let payload = {
+                        "organisationUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.organisationUniqueKey,
+                        "competitionUniqueKey": teamInviteState.iniviteMemberInfo.competitionDetails.competitionUniqueKey
+                    }
+                    this.props.teamInviteRegSettingsAction(payload);
+                    this.setYourDetailsValue();
+                    this.setState({ inviteOnLoad: false });
                 }
-                this.props.teamInviteRegSettingsAction(payload);
-                this.setYourDetailsValue();
-                this.setState({ inviteOnLoad: false });
             }
             if (!teamInviteState.inviteMemberSaveOnLoad && this.state.buttonSaveOnLoad) {
                 if (teamInviteState.teamInviteCount > 0) {
@@ -158,7 +161,7 @@ class TeamInivteForm extends Component {
         try {
             const { iniviteMemberInfo } = this.props.teamInviteState;
             let userRegDetails = iniviteMemberInfo?.userRegDetails;
-            let parentOrGuardians = userRegDetails.parentOrGaurdianDetails;
+            let parentOrGuardians = userRegDetails?.parentOrGaurdianDetails;
             this.props.form.setFieldsValue({
                 [`yourDetailsgenderRefId`]: userRegDetails.genderRefId,
                 [`yourDetailsFirstName`]: userRegDetails.firstName,
@@ -665,13 +668,13 @@ class TeamInivteForm extends Component {
                             <img style={{ height: "60px", borderRadius: "50%" }} src={competitionDetails?.compLogoUrl} />
                         </div>
                         <div className="col">
-                            <div className="form-heading" style={{ paddingBottom: "0px" }}>{competitionDetails.organisationName}</div>
-                            <div style={{ textAlign: "start", fontWeight: "600" }}>{competitionDetails.stateOrgName} - {competitionDetails.competitionName}</div>
+                            <div className="form-heading" style={{ paddingBottom: "0px" }}>{competitionDetails?.organisationName}</div>
+                            <div style={{ textAlign: "start", fontWeight: "600" }}>{competitionDetails?.stateOrgName} - {competitionDetails?.competitionName}</div>
                             <div style={{ display: "flex", marginTop: "15px", alignItems: "center" }}>
                                 <img className="icon-size-25" style={{ marginRight: "5px" }} src={AppImages.calendarGrey} />
-                                <div style={{ fontWeight: "600" }}>{competitionDetails.registrationOpenDate} - {competitionDetails.registrationCloseDate}</div>
+                                <div style={{ fontWeight: "600" }}>{competitionDetails?.registrationOpenDate} - {competitionDetails?.registrationCloseDate}</div>
                                 <img className="icon-size-25" style={{ marginRight: "5px", marginLeft: "25px" }} src={AppImages.teamLoadDefualtGrey} />
-                                <div style={{ fontWeight: "600" }}>{userRegDetails.resgistererDetails.teamName}</div>
+                                <div style={{ fontWeight: "600" }}>{userRegDetails?.resgistererDetails?.teamName}</div>
                             </div>
                         </div>
                     </div>
@@ -681,36 +684,36 @@ class TeamInivteForm extends Component {
                                 <InputWithHead heading={AppConstants.divisions} />
                                 <div
                                     className="inter-medium-font"
-                                    style={{ fontSize: "13px" }}>{competitionDetails.divisionName ?
-                                        competitionDetails.divisionName :
+                                    style={{ fontSize: "13px" }}>{competitionDetails?.divisionName ?
+                                        competitionDetails?.divisionName :
                                         AppConstants.noInformationProvided}
                                 </div>
                                 <InputWithHead heading={AppConstants.organisationName} />
                                 <div
                                     className="inter-medium-font"
-                                    style={{ fontSize: "13px" }}>{competitionDetails.organisationName ?
-                                        competitionDetails.organisationName :
+                                    style={{ fontSize: "13px" }}>{competitionDetails?.organisationName ?
+                                        competitionDetails?.organisationName :
                                         AppConstants.noInformationProvided}
                                 </div>
                                 <InputWithHead heading={AppConstants.training} />
                                 <div
                                     className="inter-medium-font"
-                                    style={{ fontSize: "13px" }}>{competitionDetails.training ?
-                                        competitionDetails.training :
+                                    style={{ fontSize: "13px" }}>{competitionDetails?.training ?
+                                        competitionDetails?.training :
                                         AppConstants.noInformationProvided}
                                 </div>
                                 <InputWithHead heading={AppConstants.specialNotes} />
                                 <div
                                     className="inter-medium-font"
-                                    style={{ fontSize: "13px" }}>{competitionDetails.specialNote ?
-                                        competitionDetails.specialNote :
+                                    style={{ fontSize: "13px" }}>{competitionDetails?.specialNote ?
+                                        competitionDetails?.specialNote :
                                         AppConstants.noInformationProvided}
                                 </div>
                                 <InputWithHead heading={AppConstants.competitionVenue} />
                                 <div
                                     className="inter-medium-font"
                                     style={{ fontSize: "13px" }}>
-                                    {competitionDetails.venues == null || competitionDetails.venues.length == 0 ? AppConstants.noInformationProvided :
+                                    {competitionDetails?.venues == null || competitionDetails?.venues.length == 0 ? AppConstants.noInformationProvided :
                                         <span>
                                             {(competitionDetails.venues || []).map((v, vIndex) => (
                                                 <span>
@@ -912,8 +915,8 @@ class TeamInivteForm extends Component {
                     <div
                         className="inter-medium-font"
                         style={{ fontSize: "13px" }}>
-                        {userRegDetails.membershipProductTypeName ?
-                            userRegDetails.membershipProductTypeName :
+                        {userRegDetails?.membershipProductTypeName ?
+                            userRegDetails?.membershipProductTypeName :
                             AppConstants.noInformationProvided}
                     </div>
                     <InputWithHead heading={AppConstants.gender} required={"required-field"} />
@@ -924,7 +927,7 @@ class TeamInivteForm extends Component {
                             <Radio.Group
                                 className="registration-radio-group"
                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "genderRefId", "userRegDetails")}
-                                setFieldsValue={userRegDetails.genderRefId}
+                                setFieldsValue={userRegDetails?.genderRefId}
                             >
                                 {(genderList || []).map((gender, genderIndex) => (
                                     <Radio key={gender.id} value={gender.id}>{gender.description}</Radio>
@@ -942,7 +945,7 @@ class TeamInivteForm extends Component {
                                     <InputWithHead
                                         placeholder={AppConstants.firstName}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "firstName", "userRegDetails")}
-                                        setFieldsValue={userRegDetails.firstName}
+                                        setFieldsValue={userRegDetails?.firstName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
                                             [`yourDetailsFirstName`]: captializedString(i.target.value)
                                         })}
@@ -959,7 +962,7 @@ class TeamInivteForm extends Component {
                                     <InputWithHead
                                         placeholder={AppConstants.middleName}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "middleName", "userRegDetails")}
-                                        setFieldsValue={userRegDetails.middleName}
+                                        setFieldsValue={userRegDetails?.middleName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
                                             [`yourDetailsMiddleName`]: captializedString(i.target.value)
                                         })}
@@ -976,7 +979,7 @@ class TeamInivteForm extends Component {
                                     <InputWithHead
                                         placeholder={AppConstants.lastName}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(captializedString(e.target.value), "lastName", "userRegDetails")}
-                                        setFieldsValue={userRegDetails.lastName}
+                                        setFieldsValue={userRegDetails?.lastName}
                                         onBlur={(i) => this.props.form.setFieldsValue({
                                             [`yourDetailsLastName`]: captializedString(i.target.value)
                                         })}
@@ -1015,15 +1018,15 @@ class TeamInivteForm extends Component {
                                     <InputWithHead
                                         placeholder={AppConstants.phone}
                                         onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "mobileNumber", "userRegDetails")}
-                                        setFieldsValue={userRegDetails.mobileNumber}
+                                        setFieldsValue={userRegDetails?.mobileNumber}
                                         maxLength={10}
                                     />
                                 )}
                             </Form.Item>
                         </div>
                         <div className="col-sm-12 col-md-6"
-                            style={userRegDetails.referParentEmail ? { alignSelf: "center", marginTop: "25px" } : {}}>
-                            {!userRegDetails.referParentEmail && (
+                            style={userRegDetails?.referParentEmail ? { alignSelf: "center", marginTop: "25px" } : {}}>
+                            {!userRegDetails?.referParentEmail && (
                                 <div>
                                     <InputWithHead heading={AppConstants.email} required={"required-field"} />
                                     <Form.Item >
@@ -1038,11 +1041,11 @@ class TeamInivteForm extends Component {
                                             <InputWithHead
                                                 placeholder={AppConstants.email}
                                                 onChange={(e) => this.onChangeSetMemberInfoValue(e.target.value, "email", "userRegDetails")}
-                                                setFieldsValue={userRegDetails.email}
+                                                setFieldsValue={userRegDetails?.email}
                                             />
                                         )}
                                     </Form.Item>
-                                    {userRegDetails.isInActive && (userRegDetails.email == null)?
+                                    {userRegDetails?.isInActive && (userRegDetails?.email == null)?
                                         <div style={{color:"var(--app-red)"}}>
                                             {AppConstants.userLoginEmailChangeMessage}
                                         </div>
@@ -1051,10 +1054,10 @@ class TeamInivteForm extends Component {
                                     }
                                 </div>
                             )}
-                            {getAge(moment(userRegDetails.dateOfBirth).format("MM-DD-YYYY")) <= 18 && (
+                            {getAge(moment(userRegDetails?.dateOfBirth).format("MM-DD-YYYY")) <= 18 && (
                                 <Checkbox
                                     className="single-checkbox"
-                                    checked={userRegDetails.referParentEmail}
+                                    checked={userRegDetails?.referParentEmail}
                                     onChange={e => this.onChangeSetMemberInfoValue(e.target.checked, "referParentEmail", "userRegDetails")} >
                                     {AppConstants.useParentsEmailAddress}
                                 </Checkbox>
@@ -2060,8 +2063,33 @@ class TeamInivteForm extends Component {
         }
     }
 
+
+    deRegisterErrorView = () => {
+        try{
+            const {inviteMemberDeregisterErrorMsg} = this.props.teamInviteState;
+            return(
+                <div className="login-formView padding-40">
+                    <div className="d-flex justify-content-center">
+                        <NavLink to={{ pathname: "/" }} className="site-brand">
+                            <img src={AppImages.netballLogo1} alt="" />
+                        </NavLink>
+                    </div>
+                    <div className={`input-style-bold justify-content-center`}>{inviteMemberDeregisterErrorMsg}</div>
+                    <div className="forgot-password-success-button-div">
+                        <NavLink to={{ pathname: "/login" }}>
+                            <Button className="open-reg-button" type="primary">{AppConstants.returnToLogin}</Button>
+                        </NavLink>
+                    </div>
+                </div>
+            )
+        }catch(ex){
+            console.log("Error in deRegisterErrorView::"+ex);
+        }
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
+        const {inviteMemberDeregisterErrorMsg} = this.props.teamInviteState;
         return (
             <div className="fluid-width" style={{ backgroundColor: "#f7fafc" }}>
                 <DashboardLayout
@@ -2070,14 +2098,23 @@ class TeamInivteForm extends Component {
                 />
                 <InnerHorizontalMenu />
                 <Layout>
-                    {this.headerView()}
+                    {!inviteMemberDeregisterErrorMsg && (
+                        <div>{this.headerView()}</div>
+                    )}
                     <Form
                         autoComplete="off"
                         scrollToFirstError={true}
                         onSubmit={this.saveReviewOrder}
                         noValidate="noValidate">
-                        <Content>{this.contentView(getFieldDecorator)}</Content>
-                        <Footer>{this.footerView()}</Footer>
+                        {inviteMemberDeregisterErrorMsg ? (
+                            <div>{this.deRegisterErrorView()}</div>
+                        ) : (
+                            <div>
+                                <Content>{this.contentView(getFieldDecorator)}</Content>
+                                <Footer>{this.footerView()}</Footer>
+                            </div>
+                        )}
+                       
                         <Loader visible={this.props.teamInviteState.inviteMemberSaveOnLoad ||
                             this.props.teamInviteState.inviteOnLoad} />
                     </Form>
