@@ -2273,7 +2273,7 @@ class AppRegistrationFormNew extends Component {
                             <div>
                                 <InputWithHead heading={AppConstants.contactEmail} required={"required-field"} />
                                 <Form.Item >
-                                    {getFieldDecorator(`parenEmail0`, {
+                                    {getFieldDecorator(`parentEmail0`, {
                                         rules: [
                                             { required: true, message: ValidationConstants.emailField[0] },
                                             {
