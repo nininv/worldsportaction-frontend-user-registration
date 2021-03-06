@@ -170,6 +170,13 @@ function netSetGoTshirtSizeAction(){
     return action;
 }
 
+function getRelationshipListAction(){
+    const action = {
+        type: ApiConstants.API_RELATIONSHIP_LIST_LOAD,
+    };
+    return action;
+}
+
 function combinedAccreditationUmpieCoachRefrence() {
     const action = {
         type: ApiConstants.API_ACCREDITATION_UMPIRE_COACH_COMBINED_REFERENCE_LOAD,
@@ -209,5 +216,6 @@ export {
     validateRegistrationCapAction,
     netSetGoTshirtSizeAction,
     combinedAccreditationUmpieCoachRefrence,
-    getRefereeOffenceListAction
+    getRefereeOffenceListAction,
+    getRelationshipListAction
 }

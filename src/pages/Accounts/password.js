@@ -17,7 +17,7 @@ import InputWithHead from "../../customComponents/InputWithHead";
 import AppConstants from '../../themes/appConstants';
 import DashboardLayout from '../dashboardLayout';
 import InnerHorizontalMenu from '../innerHorizontalMenu';
-import { updatePasswordFieldsAction , updatePasswordAction } from '../../store/actions/authentication'
+import { updatePasswordFieldsAction, updatePasswordAction } from '../../store/actions/authentication'
 import Loader from '../../customComponents/loader';
 const { Header, Footer, Content } = Layout;
 
@@ -31,30 +31,36 @@ class Password extends Component {
     };
   }
 
-  updatePassword = (e) => {      
+  updatePassword = (e) => {
     try {
-    e.preventDefault();  
-    const { passwordInputs } = this.props.LoginState;
-    console.log(passwordInputs)
-      
-    if(passwordInputs.currentPassword == '')
-    {
-      message.error('Please enter current password')
-      return
+      e.preventDefault();
+      const { passwordInputs } = this.props.LoginState;
+      console.log(passwordInputs)
+
+      if (passwordInputs.currentPassword == '') {
+        message.error('Please enter current password')
+        return
+      }
+      if (passwordInputs.newPassword == '' || passwordInputs.confirmPassword == '') {
+        message.error('Password is required')
+        return
+      }
+      if (passwordInputs.newPassword.length < 8 || passwordInputs.confirmPassword.length < 8) {
+        message.error('Password must be minimum 8 characters')
+        return
+      }
+      if (passwordInputs.newPassword !== passwordInputs.confirmPassword) {
+        message.error('Password does not match')
+        return
+      }
+      this.props.updatePasswordAction(passwordInputs);
     }
-    if(passwordInputs.newPassword !== passwordInputs.confirmPassword)
-    {
-      message.error('Password does not match')
-      return
+    catch (error) {
+      console.log(error)
     }
-    this.props.updatePasswordAction(passwordInputs);
-  }
-catch(error){
-  console.log(error)
-}
   }
 
- //view for breadcrumb
+  //view for breadcrumb
   headerView = () => {
     return (
       <div className="header-view">
@@ -69,7 +75,7 @@ catch(error){
           <Breadcrumb
             style={{ alignItems: "center", alignSelf: "center" }}
             separator=">"
-          >    
+          >
             <Breadcrumb.Item className="breadcrumb-add">
               {AppConstants.changeYourPassword}
             </Breadcrumb.Item>
@@ -100,8 +106,8 @@ catch(error){
     );
   };
 
-  updateFields = (value , type) => {    
-    this.props.updatePasswordFieldsAction(type , value)
+  updateFields = (value, type) => {
+    this.props.updatePasswordFieldsAction(type, value)
     this.props.form.setFieldsValue({
       [type]: value,
     });
@@ -122,15 +128,18 @@ catch(error){
               placeholder={AppConstants.enterCurrentPassword}
               minLength={8}
               type={'password'}
-              onChange={(e) => this.updateFields(e.target.value , 'currentPassword')}
-              
+              onChange={(e) => this.updateFields(e.target.value, 'currentPassword')}
+
             />
           )}
         </Form.Item>
 
         <Form.Item>
           {getFieldDecorator(AppConstants.newPassword, {
-            rules: [{ required: true, message: ValidationConstants.newPasswordRequired }],
+            rules: [
+              { required: true, message: ValidationConstants.newPasswordRequired },
+              { min: 8, message: ValidationConstants.passwordVerification }
+            ],
           })(
             <InputWithHead
               required="required-field"
@@ -138,8 +147,8 @@ catch(error){
               type="password"
               // name="newPassword"
               minLength={8}
-              placeholder={AppConstants.enterNewPassword}              
-              onChange={(e) => this.updateFields(e.target.value , 'newPassword')}
+              placeholder={AppConstants.enterNewPassword}
+              onChange={(e) => this.updateFields(e.target.value, 'newPassword')}
             />
           )}
         </Form.Item>
@@ -147,16 +156,19 @@ catch(error){
         <Form.Item
         >
           {getFieldDecorator(AppConstants.confirmPassword, {
-            rules: [{ required: true, message: ValidationConstants.confirmPasswordRequired }],
+            rules: [
+              { required: true, message: ValidationConstants.confirmPasswordRequired },
+              { min: 8, message: ValidationConstants.passwordVerification }
+            ],
           })(
             <InputWithHead
               required="required-field"
               heading={AppConstants.confirmPassword}
               type="password"
               // name="confirmPassword"
-              min={8}
-              placeholder={AppConstants.enterConfirmPassword}              
-              onChange={(e) => this.updateFields(e.target.value , 'confirmPassword')}
+              minLength={8}
+              placeholder={AppConstants.enterConfirmPassword}
+              onChange={(e) => this.updateFields(e.target.value, 'confirmPassword')}
             />
           )}
         </Form.Item>
@@ -205,7 +217,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStatetoProps(state) {
-  return {    
+  return {
     LoginState: state.LoginState,
   }
 }

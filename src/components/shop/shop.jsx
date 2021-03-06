@@ -426,7 +426,7 @@ class Shop extends Component {
                 </div>
                 <div className="row" style={{marginTop: "17px"}}>
                     <div className="col-lg-4 col-12" style={{textAlign: "center" , marginTop: "20px", width: "100px"}}>
-                        <img style={{width: "100%" , height: "180px", objectFit: "contain" }} src={!!expandObj.productImgUrl.length ? expandObj.productImgUrl[0] : expandObj.orgLogoUrl}/>
+                        <ShopCarousel item={expandObj}/>
                     </div>
                     <div className="col-lg-8" style={{paddingTop:"20px"}}>
                         <div className="headline-text-common">{expandObj.productName}</div>
@@ -445,7 +445,7 @@ class Shop extends Component {
                             }
 
                             return (
-                                <div>
+                                <div key={vIndex}>
                                     <div style={{display: "flex", flexWrap: "wrap"}}>
                                         {!isNullVariants && <div className="col-lg-6" style={{marginTop: 27, padding: 0}}>
                                             <div className="subtitle-text-common">

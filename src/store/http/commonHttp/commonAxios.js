@@ -43,6 +43,11 @@ let AxiosApi = {
         return Method.dataGet(url, token);
     },
 
+    getRelationshipList() {
+        const url = `/common/reference/contactRelationship`;
+        return Method.dataGet(url, token);
+    },
+
     /////get the common membership product validity type list reference
     getProductValidityList() {
         var url = `/common/reference/MembershipProductValidity`;
@@ -107,6 +112,15 @@ let AxiosApi = {
             HomeTeamRotation: "HomeTeamRotation",
         }
         var url = "/common/references";
+        return Method.dataPost(url, token, body);
+    },
+
+    getRefOrderStatus() {
+        let body = {
+            ShopFulfilmentStatus: "ShopFulfilmentStatus",
+            ShopPaymentStatus: "ShopPaymentStatus",
+        }
+        const url = '/common/references';
         return Method.dataPost(url, token, body);
     },
 

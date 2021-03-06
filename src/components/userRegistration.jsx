@@ -11,6 +11,8 @@ import { setAuthToken, setUserId, setOrganistaionId,
 import { clearRegistrationDataAction } from '../store/actions/registrationAction/endUserRegistrationAction';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
+import { NavLink } from "react-router-dom";
+
 const { Content, Header } = Layout;
 
 const token = 'f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9510c51d401fe5d10f9767759bbce7833692b87ccb78bc79cfff4edadaa661befa2039bc8fb88298d311d214306eea43776af229593a760ac82fff319046758e375b271a1756924aa4624b3435f458cef2e115e5ac93a4871d3b1daaf56c1a510218f2c680ba127512a358c990c3201c494b23833f9812beaf69f52213212a90d222e997040179e955f153593d9532905d';
@@ -117,7 +119,9 @@ class UserRegistration extends Component {
                     <div className="row m-0-res">
                         <div className="col-sm-12 d-flex">
                             <div className="logo-box">
-                                <img src={AppImages.netballLogo1} alt="" />
+                                <NavLink to={{ pathname: "/" }} className="site-brand">
+                                    <img src={AppImages.netballLogo1} alt="" />
+                                </NavLink>
                                 <div className="col-sm dashboard-layout-menu-heading-view">
                                     <span className="dashboard-layout-menu-heading">
                                         {this.props.menuHeading}

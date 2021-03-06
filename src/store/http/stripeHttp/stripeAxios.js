@@ -14,8 +14,6 @@ let token = getAuthToken();
 let AxiosApi = {
     // get invoice for new shop
     getShopInvoice(shopUniqueKey, invoiceId) {
-        console.log('shopUniqueKey, invoiceId =', shopUniqueKey, invoiceId );
-        console.log('get')
         const body = {
             shopUniqueKey,
             invoiceId

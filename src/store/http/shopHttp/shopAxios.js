@@ -64,7 +64,12 @@ let AxiosApi = {
     getRegistrationShopPickupAddress(payload){
         var url = `/api/registration/pickupaddress`;
         return Method.dataPost(url, token, payload);
-    }
+    },
+    getPurchasesListing(payload) {
+        const { limit, offset, userId, order, sorterBy } = payload;
+        const url = `/order/statusList?limit=${limit}&offset=${offset}&search=&year=-1&paymentStatus=-1&fulfilmentStatus=-1&product=All&order=${order}&sorterBy=${sorterBy}&userId=${userId}`;
+        return Method.dataGet(url, token);
+    },
 
 };
 

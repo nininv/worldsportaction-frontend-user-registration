@@ -10,10 +10,10 @@ function updateDeregistrationData(value, key, subKey) {
     return action;
 }
 
-function getDeRegisterDataAction(userId){
+function getDeRegisterDataAction(payload){
     const action = {
         type: ApiConstants.API_GET_DE_REGISTRATION_LOAD,
-        userId
+        payload
     }
 
     return action;
